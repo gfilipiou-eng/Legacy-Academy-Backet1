@@ -44,4 +44,26 @@ router.put("/:id", verifyToken, async (req, res) => {
     }
 });
 
+// 4. DELETE USER ACCOUNT (The Danger Zone)
+router.delete("/:id", verifyToken, async (req, res) => {
+    try {
+        const user = req.user;
+        // Only allow users to delete their own account or Founder to delete anyone
+        if (req.params.id !== (user.id || user.userId) && user.role !== 'Founder') {
+            return res.status(403).json("Μπορείτε να διαγράψετε μόνο τον δικό σας λογαριασμό!");
+        }
+
+        // 1. Delete all posts by this user
+        await Post.deleteMany({ author: req.params.id });
+
+        // 2. Delete the user
+        await User.findByIdAndDelete(req.params.id);
+
+        res.status(200).json("Ο λογαριασμός και όλα τα posts διαγράφηκαν οριστικά.");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 export default router;
+

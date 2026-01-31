@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import axios from "axios";
 
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
@@ -50,6 +51,14 @@ connectDB();
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT} 🚀`)
-);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} 🚀`);
+
+  // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
+  setInterval(() => {
+    const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+    axios.get(baseUrl)
+      .then(() => console.log("⚡ Keep-Alive: Server is awake"))
+      .catch((err) => console.log("⚠️ Keep-Alive ping failed (this is normal on first boot)"));
+  }, 600000); // 600,000ms = 10 minutes
+});

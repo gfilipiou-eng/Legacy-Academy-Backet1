@@ -10,7 +10,9 @@ router.get("/", async (req, res) => {
   // API MODE: Return JSON if requested
   if (req.headers.accept && req.headers.accept.includes("application/json") || req.query.json === 'true') {
     try {
-      const posts = await Post.find().sort({ createdAt: -1 });
+      const posts = await Post.find()
+        .populate('author', 'username profilePic role') // Get author details
+        .sort({ createdAt: -1 });
       return res.status(200).json(posts);
     } catch (err) {
       return res.status(500).json(err);
@@ -35,6 +37,9 @@ router.get("/", async (req, res) => {
   
   <!-- Canvas Confetti for Sparks -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <!-- Cloudinary Video Upload Widget -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
@@ -146,9 +151,100 @@ router.get("/", async (req, res) => {
         Shield: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>,
         ShieldCheck: (props) => <svg {...props} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>,
         User: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-        Settings: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
+        Settings: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
         Plus: (props) => <svg {...props} width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
-        Image: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        Image: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>,
+        
+        // VIDEO ICONS
+        Video: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
+        Play: (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+        Heart: (props) => <svg {...props} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
+        Share2: (props) => <svg {...props} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>,
+        TrendingUp: (props) => <svg {...props} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    };
+
+    // --- VIDEO POST COMPONENT ---
+    const VideoPost = ({ post, user, onDelete }) => {
+      const [liked, setLiked] = useState(post.likes?.includes(user._id || user.userId));
+      const isFounderPost = post.role === 'Founder';
+      const isBoosted = post.isBoosted && post.boostExpiry && new Date(post.boostExpiry) > new Date();
+      
+      const handleLike = () => {
+        setLiked(!liked);
+        // TODO: API call to toggle like
+      };
+
+      return (
+        <div className={\`liquid-glass antigravity-card overflow-hidden mb-6 border group \${isBoosted ? 'border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : isFounderPost ? 'border-yellow-500/20' : 'border-white/10'}\`}>
+          
+          {/* Boosted Badge */}
+          {isBoosted && (
+            <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 p-2 flex items-center justify-center gap-2 border-b border-yellow-500/20">
+              <Icons.TrendingUp className="text-yellow-500" />
+              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">BOOSTED POST</span>
+            </div>
+          )}
+
+          {/* Video Player */}
+          <div className="relative aspect-video bg-black rounded-t-2xl overflow-hidden">
+            {post.videoUrl ? (
+              <video 
+                src={post.videoUrl} 
+                controls 
+                className="w-full h-full object-cover"
+                poster={post.thumbnailUrl}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                <Icons.Play className="text-white/20" size={48} />
+              </div>
+            )}
+            
+            {/* Founder Tag */}
+            {isFounderPost && (
+              <div className="absolute top-4 left-4 bg-yellow-500 text-black text-[10px] font-black px-3 py-1.5 rounded-full shadow-[0_4px_12px_rgba(234,179,8,0.5)] flex items-center gap-1">
+                <Icons.ShieldCheck className="w-3 h-3" />
+                FOUNDER PICK
+              </div>
+            )}
+          </div>
+
+          {/* Info Section */}
+          <div className="p-4 bg-gradient-to-b from-white/5 to-transparent">
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold">
+                  {post.username?.[0]?.toUpperCase() || '?'}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white leading-none">@{post.username || 'user'}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">{post.videoDuration ? \`\${post.videoDuration}s\` : ''}</p>
+                </div>
+              </div>
+              
+              {/* Engagement Actions */}
+              <div className="flex gap-4">
+                <button onClick={handleLike} className={\`transition-all \${liked ? 'text-red-500 scale-110' : 'text-gray-400 hover:text-red-400'}\`}>
+                  <Icons.Heart className={liked ? 'fill-current' : ''} />
+                </button>
+                <button className="text-gray-400 hover:text-blue-400 transition-all">
+                  <Icons.Share2 />
+                </button>
+              </div>
+            </div>
+            
+            {/* Description */}
+            <p className="text-sm text-gray-300 line-clamp-2 leading-relaxed">{post.desc || post.title}</p>
+            
+            {/* Delete for Founder */}
+            {(user.role === 'Founder' || post.author === (user._id || user.userId)) && (
+              <button onClick={() => onDelete(post._id)} className="mt-3 text-red-500/50 hover:text-red-500 text-xs font-bold uppercase tracking-wider transition">
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+      );
     };
 
     // --- FOUNDER BADGE COMPONENT ---
@@ -406,9 +502,15 @@ router.get("/", async (req, res) => {
 
           <main className="p-4 mt-6 space-y-6 pb-32">
             {posts.map(post => {
+              // If post has video, use VideoPost component
+              if(post.videoUrl) {
+                return <VideoPost key={post._id} post={post} user={user} onDelete={handleDelete} />;
+              }
+              
+              // Otherwise, standard image/text post
               const isFounderPost = post.role === 'Founder';
               return (
-                <div key={post._id} className={\`liquid-glass antigravity-card p-0 overflow-hidden border group bg-black/20 \${isFounderPost ? 'border-yellow-500/20' : 'border-white/10'}\`}>
+                <div key={post._id} className={`liquid-glass antigravity - card p - 0 overflow - hidden border group bg - black / 20 ${ isFounderPost ? 'border-yellow-500/20' : 'border-white/10' } `}>
                   <div className="p-4 flex items-center justify-between bg-gradient-to-b from-white/5 to-transparent">
                       <div className="flex items-center gap-3">
                           <div className="w-9 h-9 bg-black/40 rounded-full flex items-center justify-center font-bold text-gray-300 border border-white/10 shadow-inner">{post.username ? post.username[0] : '?'}</div>
@@ -489,4 +591,24 @@ router.delete("/:id", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
+// ADD COMMENT
+router.post("/:id/comment", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const user = req.user;
+
+    const newComment = {
+      text: req.body.text,
+      authorName: user.username,
+      authorId: user.id || user.userId,
+      createdAt: new Date()
+    };
+
+    post.comments.push(newComment);
+    await post.save();
+    res.status(200).json(post);
+  } catch (e) { res.status(500).json(e); }
+});
+
 export default router;
+
