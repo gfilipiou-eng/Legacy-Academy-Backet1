@@ -28,8 +28,6 @@ router.post("/", upload.single("image"), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
-
-    // Count total posts
     const total = posts.length;
 
     let html = `
@@ -37,19 +35,70 @@ router.get("/", async (req, res) => {
       <head>
         <title>Legacy Academy Posts</title>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background: #f4f4f4; color: #333; }
+          body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f4f4f4; 
+            color: #333; 
+          }
           .container { max-width: 800px; margin: 0 auto; }
           h1 { text-align: center; color: #222; margin-bottom: 5px; }
           .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1em; }
-          .post { background: white; border: 1px solid #ddd; padding: 20px; margin-bottom: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-          .post img { max-width: 100%; height: auto; display: block; margin: 15px 0; border-radius: 8px; }
+          
+          .post { 
+            background: white; 
+            border: 1px solid #ddd; 
+            padding: 25px; 
+            margin-bottom: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+          }
+          
+          /* Responsive Image */
+          .post img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            margin: 20px 0; 
+            border-radius: 8px; 
+            object-fit: cover;
+          }
+          
           .post h2 { margin: 0 0 10px 0; color: #111; font-size: 1.8em; }
-          .post p { line-height: 1.6; color: #444; margin-bottom: 10px; }
-          .meta { font-size: 0.9em; color: #888; border-top: 1px solid #eee; padding-top: 10px; margin-top: 15px; }
-          .nav { text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #ddd; }
-          .nav a { text-decoration: none; color: #fff; background: #0077cc; padding: 10px 20px; border-radius: 5px; transition: background 0.2s; }
-          .nav a:hover { background: #005fa3; }
+          .post p { line-height: 1.6; color: #444; font-size: 1.05em; margin-bottom: 15px; }
+          
+          .meta { 
+            font-size: 0.9em; 
+            color: #888; 
+            border-top: 1px solid #eee; 
+            padding-top: 15px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          
+          .nav { text-align: center; margin-top: 50px; margin-bottom: 30px; }
+          .nav a { 
+            text-decoration: none; 
+            color: #fff; 
+            background: #0077cc; 
+            padding: 12px 25px; 
+            border-radius: 30px; 
+            font-weight: 600;
+            transition: background 0.2s, transform 0.2s;
+            display: inline-block;
+          }
+          .nav a:hover { background: #005fa3; transform: translateY(-2px); }
+
+          /* Mobile Tweaks */
+          @media (max-width: 600px) {
+            body { padding: 10px; }
+            .post { padding: 15px; }
+            .post h2 { font-size: 1.5em; }
+          }
         </style>
       </head>
       <body>
@@ -60,10 +109,10 @@ router.get("/", async (req, res) => {
           ${posts.map(post => `
             <div class="post">
               <h2>${post.title}</h2>
-              <img src="${post.image}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/600x300?text=No+Image'" />
+              <img src="${post.image}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/800x400?text=No+Image'" />
               <p>${post.desc}</p>
               <div class="meta">
-                📅 Created: ${new Date(post.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
+                <span>📅 ${new Date(post.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
               </div>
             </div>
           `).join("")}
