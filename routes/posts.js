@@ -30,6 +30,11 @@ router.get("/", async (req, res) => {
     const posts = await Post.find().sort({ createdAt: -1 });
     const total = posts.length;
 
+    // 1. Get unique Month-Year combinations for the dropdown
+    const dates = [...new Set(posts.map(post => {
+      return new Date(post.createdAt).toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
+    }))];
+
     let html = `
       <html>
       <head>
@@ -48,26 +53,43 @@ router.get("/", async (req, res) => {
           h1 { text-align: center; color: #222; margin-bottom: 5px; }
           .subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 1.1em; }
           
-          /* Search Bar Styles */
-          .search-wrapper {
-            text-align: center;
+          /* Controls Container (Search + Filter) */
+          .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
             margin-bottom: 30px;
+            flex-wrap: wrap;
           }
-          #searchInput {
+          
+          .search-wrapper { flex: 1; min-width: 250px; }
+          .filter-wrapper { flex: 0 0 200px; }
+          
+          input, select {
             padding: 12px 20px;
             width: 100%;
-            max-width: 400px;
             font-size: 16px;
             border: 2px solid #ddd;
             border-radius: 25px;
             outline: none;
             transition: all 0.3s;
+            box-sizing: border-box;
           }
-          #searchInput:focus {
+          
+          input:focus, select:focus {
             border-color: #0077cc;
             box-shadow: 0 0 8px rgba(0, 119, 204, 0.2);
           }
           
+          /* Custom Select Arrow */
+          select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right .7em top 50%;
+            background-size: .65em auto;
+          }
+
           .post { 
             background: white; 
             border: 1px solid #ddd; 
@@ -77,9 +99,7 @@ router.get("/", async (req, res) => {
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
             transition: transform 0.2s;
           }
-          /* .post:hover { transform: translateY(-2px); } */
           
-          /* Responsive Image */
           .post img { 
             width: 100%; 
             height: auto; 
@@ -115,11 +135,12 @@ router.get("/", async (req, res) => {
           }
           .nav a:hover { background: #005fa3; transform: translateY(-2px); }
 
-          /* Mobile Tweaks */
           @media (max-width: 600px) {
             body { padding: 10px; }
             .post { padding: 15px; }
             .post h2 { font-size: 1.5em; }
+            .controls { flex-direction: column; }
+            .filter-wrapper { flex: 1; }
           }
           
           .no-results {
@@ -132,14 +153,19 @@ router.get("/", async (req, res) => {
         <script>
           function filterPosts() {
             const query = document.getElementById("searchInput").value.toLowerCase();
+            const dateFilter = document.getElementById("dateFilter").value;
             const posts = document.getElementsByClassName("post");
             let visibleCount = 0;
             
             for (let i = 0; i < posts.length; i++) {
               const title = posts[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
               const desc = posts[i].getElementsByTagName("p")[0].innerText.toLowerCase();
+              const dateSpan = posts[i].querySelector(".meta span").innerText; // e.g., "📅 January 31, 2026"
               
-              if (title.includes(query) || desc.includes(query)) {
+              const matchesSearch = title.includes(query) || desc.includes(query);
+              const matchesDate = dateFilter === "all" || dateSpan.includes(dateFilter);
+              
+              if (matchesSearch && matchesDate) {
                 posts[i].style.display = "";
                 visibleCount++;
               } else {
@@ -147,13 +173,8 @@ router.get("/", async (req, res) => {
               }
             }
             
-            // Show "No results" message if needed
             const noResults = document.getElementById("no-results");
-            if (visibleCount === 0) {
-              noResults.style.display = "block";
-            } else {
-              noResults.style.display = "none";
-            }
+            noResults.style.display = visibleCount === 0 ? "block" : "none";
           }
         </script>
       </head>
@@ -162,8 +183,16 @@ router.get("/", async (req, res) => {
           <h1>Legacy Academy Posts</h1>
           <p class="subtitle">Total posts: ${total}</p>
           
-          <div class="search-wrapper">
-            <input type="text" id="searchInput" onkeyup="filterPosts()" placeholder="🔍 Search posts by title or description...">
+          <div class="controls">
+            <div class="search-wrapper">
+              <input type="text" id="searchInput" onkeyup="filterPosts()" placeholder="🔍 Search posts...">
+            </div>
+            <div class="filter-wrapper">
+              <select id="dateFilter" onchange="filterPosts()">
+                <option value="all">📅 All Dates</option>
+                ${dates.map(date => `<option value="${date}">${date}</option>`).join("")}
+              </select>
+            </div>
           </div>
           
           <div id="posts-list">
@@ -180,7 +209,8 @@ router.get("/", async (req, res) => {
           </div>
           
           <div id="no-results" class="no-results">
-            <h3>No posts found matching your search.</h3>
+            <h3>No posts found matching your filters.</h3>
+            <p>Try clearing your search or selecting "All Dates"</p>
           </div>
           
           <div class="nav">
