@@ -28,6 +28,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
+    console.log("Posts from DB:", posts); // 👈 Debug log
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
