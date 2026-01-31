@@ -26,10 +26,27 @@ app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 
 // MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB Connected ✅"))
-  .catch((err) => console.log("Mongo Error:", err));
+// MongoDB Connection
+const connectDB = async () => {
+  const mongoUrl = process.env.MONGO_URL;
+
+  if (!mongoUrl) {
+    console.error("❌ FATAL ERROR: MONGO_URL is not defined.");
+    console.error("   Please set MONGO_URL in your Render Environment Variables.");
+    return;
+  }
+
+  try {
+    console.log("🔄 Connecting to MongoDB...");
+    await mongoose.connect(mongoUrl);
+    console.log("✅ MongoDB Connected Successfully");
+  } catch (err) {
+    console.error("❌ MongoDB Connection Error:", err.message);
+    // Δεν κάνουμε exit για να μην κρασάρει ολόκληρο το app, αλλά το log είναι κρίσιμο
+  }
+};
+
+connectDB();
 
 // Start Server
 const PORT = process.env.PORT || 5000;
