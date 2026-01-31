@@ -46,7 +46,27 @@ router.get("/", async (req, res) => {
           }
           .container { max-width: 800px; margin: 0 auto; }
           h1 { text-align: center; color: #222; margin-bottom: 5px; }
-          .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1em; }
+          .subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 1.1em; }
+          
+          /* Search Bar Styles */
+          .search-wrapper {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          #searchInput {
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 400px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+          }
+          #searchInput:focus {
+            border-color: #0077cc;
+            box-shadow: 0 0 8px rgba(0, 119, 204, 0.2);
+          }
           
           .post { 
             background: white; 
@@ -55,7 +75,9 @@ router.get("/", async (req, res) => {
             margin-bottom: 30px; 
             border-radius: 12px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            transition: transform 0.2s;
           }
+          /* .post:hover { transform: translateY(-2px); } */
           
           /* Responsive Image */
           .post img { 
@@ -99,23 +121,67 @@ router.get("/", async (req, res) => {
             .post { padding: 15px; }
             .post h2 { font-size: 1.5em; }
           }
+          
+          .no-results {
+            text-align: center;
+            color: #777;
+            display: none;
+            margin-top: 40px;
+          }
         </style>
+        <script>
+          function filterPosts() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const posts = document.getElementsByClassName("post");
+            let visibleCount = 0;
+            
+            for (let i = 0; i < posts.length; i++) {
+              const title = posts[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
+              const desc = posts[i].getElementsByTagName("p")[0].innerText.toLowerCase();
+              
+              if (title.includes(query) || desc.includes(query)) {
+                posts[i].style.display = "";
+                visibleCount++;
+              } else {
+                posts[i].style.display = "none";
+              }
+            }
+            
+            // Show "No results" message if needed
+            const noResults = document.getElementById("no-results");
+            if (visibleCount === 0) {
+              noResults.style.display = "block";
+            } else {
+              noResults.style.display = "none";
+            }
+          }
+        </script>
       </head>
       <body>
         <div class="container">
           <h1>Legacy Academy Posts</h1>
           <p class="subtitle">Total posts: ${total}</p>
           
-          ${posts.map(post => `
-            <div class="post">
-              <h2>${post.title}</h2>
-              <img src="${post.image}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/800x400?text=No+Image'" />
-              <p>${post.desc}</p>
-              <div class="meta">
-                <span>📅 ${new Date(post.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <div class="search-wrapper">
+            <input type="text" id="searchInput" onkeyup="filterPosts()" placeholder="🔍 Search posts by title or description...">
+          </div>
+          
+          <div id="posts-list">
+            ${posts.map(post => `
+              <div class="post">
+                <h2>${post.title}</h2>
+                <img src="${post.image}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/800x400?text=No+Image'" />
+                <p>${post.desc}</p>
+                <div class="meta">
+                  <span>📅 ${new Date(post.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
               </div>
-            </div>
-          `).join("")}
+            `).join("")}
+          </div>
+          
+          <div id="no-results" class="no-results">
+            <h3>No posts found matching your search.</h3>
+          </div>
           
           <div class="nav">
             <a href="/api/posts/json" target="_blank">📄 View Raw JSON API</a>
