@@ -135,7 +135,13 @@ const { useState, useEffect, useRef } = React;
 const { motion, AnimatePresence } = window.Motion;
 const API = location.hostname === "localhost" ? "http://localhost:5000/api" : "https://legacy-academy-backet1.onrender.com/api";
 
+// Initialize sound enabled from localStorage
+window.SOUND_ENABLED = localStorage.getItem('soundEnabled') !== 'false';
+
 const playSound = (type) => {
+  // Check if sound is enabled
+  if (!window.SOUND_ENABLED) return;
+  
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
   
   // Sword Swish / Click
@@ -578,78 +584,329 @@ const CreateModal = ({ isOpen, onClose, onSuccess }) => {
   return (<><motion.div initial={{opacity:0}} animate={{opacity:1}} onClick={onClose} className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100]" /><motion.div initial={{opacity:0,scale:0.9,y:50}} animate={{opacity:1,scale:1,y:0}} className="fixed inset-x-4 top-[10%] md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-lg glass-3d p-6 z-[101]"><div className="flex justify-between mb-6"><h2 className="text-xl font-bold">New Post</h2><button onClick={() => { playSound('pop'); onClose(); }}><Icons.X className="w-6 h-6" /></button></div><form onSubmit={submit} className="space-y-4"><input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title (optional)" className="w-full p-4 bg-white/5 rounded-2xl outline-none border border-white/10 focus:border-purple-500 transition" /><textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="What's happening?" rows={3} className="w-full p-4 bg-white/5 rounded-2xl outline-none border border-white/10 resize-none focus:border-purple-500 transition" />{preview && <div className="relative"><img src={preview} className="w-full h-48 object-cover rounded-2xl" /><button type="button" onClick={() => {setImage(null);setPreview(null);}} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full"><Icons.X className="w-4 h-4" /></button></div>}<input ref={fileRef} type="file" hidden accept="image/*" onChange={e => {const f=e.target.files[0];if(f){setImage(f);setPreview(URL.createObjectURL(f));}}} /><button type="button" onClick={() => fileRef.current?.click()} className="w-full p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center gap-2 hover:bg-white/10"><Icons.Image className="w-5 h-5 text-purple-400" /> Add Photo</button><motion.button whileHover={{scale:1.02}} whileTap={{scale:0.98}} type="submit" disabled={loading} className="w-full p-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-bold disabled:opacity-50 shadow-lg shadow-purple-500/25">{loading ? 'Posting...' : 'Share'}</motion.button></form></motion.div></>);
 };
 
-// Settings Modal
+// Settings Modal - Full Featured
 const SettingsModal = ({ isOpen, onClose, user, logout }) => {
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [activeTab, setActiveTab] = useState('general');
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('soundEnabled') !== 'false');
+  const [notifications, setNotifications] = useState(() => localStorage.getItem('notifications') !== 'false');
+  const [privateAccount, setPrivateAccount] = useState(() => localStorage.getItem('privateAccount') === 'true');
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'en');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'purple');
+  const [showLanguages, setShowLanguages] = useState(false);
+  const [showThemes, setShowThemes] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'pt', name: 'Português', flag: '🇵🇹' },
+    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'ko', name: '한국어', flag: '🇰🇷' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+    { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
+    { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+    { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+    { code: 'pl', name: 'Polski', flag: '🇵🇱' },
+    { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
+    { code: 'no', name: 'Norsk', flag: '🇳🇴' },
+    { code: 'da', name: 'Dansk', flag: '🇩🇰' },
+    { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+  ];
+  
+  const themes = [
+    { id: 'purple', name: 'Purple Magic', colors: ['#8B5CF6', '#A855F7'] },
+    { id: 'pink', name: 'Pink Dreams', colors: ['#EC4899', '#F472B6'] },
+    { id: 'blue', name: 'Ocean Blue', colors: ['#3B82F6', '#60A5FA'] },
+    { id: 'green', name: 'Nature Fresh', colors: ['#10B981', '#34D399'] },
+    { id: 'orange', name: 'Sunset Glow', colors: ['#F97316', '#FB923C'] },
+    { id: 'red', name: 'Ruby Fire', colors: ['#EF4444', '#F87171'] },
+    { id: 'cyan', name: 'Cyber Neon', colors: ['#06B6D4', '#22D3EE'] },
+    { id: 'gold', name: 'Royal Gold', colors: ['#EAB308', '#FACC15'] },
+  ];
+  
+  const toggleSound = () => {
+    const newValue = !soundEnabled;
+    setSoundEnabled(newValue);
+    localStorage.setItem('soundEnabled', newValue);
+    window.SOUND_ENABLED = newValue;
+    if (newValue) playSound('pop');
+  };
+  
+  const toggleNotifications = () => {
+    const newValue = !notifications;
+    setNotifications(newValue);
+    localStorage.setItem('notifications', newValue);
+    playSound('pop');
+  };
+  
+  const togglePrivate = () => {
+    const newValue = !privateAccount;
+    setPrivateAccount(newValue);
+    localStorage.setItem('privateAccount', newValue);
+    playSound('pop');
+  };
+  
+  const changeLanguage = (code) => {
+    setLanguage(code);
+    localStorage.setItem('language', code);
+    setShowLanguages(false);
+    playSound('magic');
+    // Google Translate integration
+    if (window.google?.translate) {
+      const select = document.querySelector('.goog-te-combo');
+      if (select) { select.value = code; select.dispatchEvent(new Event('change')); }
+    }
+  };
+  
+  const changeTheme = (id) => {
+    setTheme(id);
+    localStorage.setItem('theme', id);
+    setShowThemes(false);
+    playSound('magic');
+    // Apply theme CSS variables
+    const themeColors = themes.find(t => t.id === id)?.colors || ['#8B5CF6', '#A855F7'];
+    document.documentElement.style.setProperty('--primary', themeColors[0]);
+    document.documentElement.style.setProperty('--primary-light', themeColors[1]);
+  };
+  
+  const currentLang = languages.find(l => l.code === language) || languages[0];
+  const currentTheme = themes.find(t => t.id === theme) || themes[0];
   
   if (!isOpen) return null;
+  
+  const SettingRow = ({ icon, title, subtitle, onClick, right }) => (
+    <button onClick={onClick} className="w-full p-4 glass-btn rounded-2xl flex items-center justify-between hover:bg-white/10 transition group">
+      <div className="flex items-center gap-3">
+        <span className="text-xl">{icon}</span>
+        <div className="text-left">
+          <span className="block font-medium">{title}</span>
+          {subtitle && <span className="text-xs text-gray-400">{subtitle}</span>}
+        </div>
+      </div>
+      {right}
+    </button>
+  );
+  
+  const Toggle = ({ enabled, onChange }) => (
+    <button onClick={onChange} className={"w-12 h-7 rounded-full transition-all relative " + (enabled ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white/20')}>
+      <motion.div layout className={"absolute top-1 w-5 h-5 bg-white rounded-full shadow-lg " + (enabled ? 'left-6' : 'left-1')} />
+    </button>
+  );
+  
   return (
     <>
       <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={onClose} className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100]" />
-      <motion.div initial={{opacity:0,y:100}} animate={{opacity:1,y:0}} className="fixed inset-x-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-md glass-3d p-6 z-[101]">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold">Settings</h2>
-          <button onClick={() => { playSound('pop'); onClose(); }} className="p-2 hover:bg-white/10 rounded-full"><Icons.X className="w-5 h-5" /></button>
+      <motion.div 
+        initial={{opacity:0,y:100,scale:0.95}} 
+        animate={{opacity:1,y:0,scale:1}}
+        transition={{type:'spring',damping:25}}
+        className="fixed inset-x-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-md glass-3d z-[101] overflow-hidden"
+        style={{maxHeight:'85vh'}}
+      >
+        {/* Header */}
+        <div className="p-6 pb-4 border-b border-white/10 flex justify-between items-center sticky top-0 bg-black/50 backdrop-blur-xl z-10">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <span className="text-2xl">⚙️</span> Settings
+          </h2>
+          <button onClick={() => { playSound('pop'); onClose(); }} className="p-2 hover:bg-white/10 rounded-full transition">
+            <Icons.X className="w-5 h-5" />
+          </button>
         </div>
         
-        <div className="space-y-3">
+        <div className="p-6 pt-4 space-y-3 overflow-y-auto" style={{maxHeight:'calc(85vh - 80px)'}}>
           {/* Profile Card */}
-          <div className="p-4 glass-btn rounded-2xl flex items-center gap-4">
+          <div className="p-4 glass-btn rounded-2xl flex items-center gap-4 border border-white/10">
             <div className={"w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold " + (user?.role === 'Founder' ? 'founder-avatar' : 'bg-gradient-to-br from-purple-500 to-pink-500')}>
               {user?.username?.[0]?.toUpperCase()}
             </div>
-            <div>
+            <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg">{user?.username}</span>
                 {user?.role === 'Founder' && <Icons.Shield className="w-4 h-4 text-yellow-500" />}
               </div>
               <span className="text-sm text-gray-400">{user?.email || user?.role}</span>
             </div>
+            <Icons.Back className="w-5 h-5 text-gray-500 rotate-180" />
           </div>
+          
+          <div className="h-px bg-white/10 my-4" />
           
           {/* Sound Toggle */}
-          <div className="p-4 glass-btn rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xl">🔊</span>
-              <span>Sound Effects</span>
-            </div>
-            <button onClick={() => setSoundEnabled(!soundEnabled)} className={"w-12 h-7 rounded-full transition-all " + (soundEnabled ? 'bg-purple-600' : 'bg-white/20')}>
-              <div className={"w-5 h-5 bg-white rounded-full transition-all " + (soundEnabled ? 'translate-x-6' : 'translate-x-1')} />
-            </button>
-          </div>
+          <SettingRow 
+            icon="🔊" 
+            title="Sound Effects" 
+            subtitle={soundEnabled ? 'Enabled' : 'Disabled'}
+            onClick={toggleSound}
+            right={<Toggle enabled={soundEnabled} onChange={toggleSound} />}
+          />
+          
+          {/* Notifications */}
+          <SettingRow 
+            icon="🔔" 
+            title="Notifications" 
+            subtitle={notifications ? 'All notifications' : 'Muted'}
+            onClick={toggleNotifications}
+            right={<Toggle enabled={notifications} onChange={toggleNotifications} />}
+          />
+          
+          <div className="h-px bg-white/10 my-4" />
           
           {/* Theme */}
-          <div className="p-4 glass-btn rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xl">🎨</span>
-              <span>Theme</span>
-            </div>
-            <span className="text-sm text-purple-400">Dark Mode</span>
-          </div>
+          <SettingRow 
+            icon="🎨" 
+            title="Theme" 
+            subtitle={currentTheme.name}
+            onClick={() => setShowThemes(!showThemes)}
+            right={
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full" style={{background: 'linear-gradient(135deg, ' + currentTheme.colors.join(', ') + ')'}} />
+                <Icons.Back className={"w-4 h-4 text-gray-500 transition " + (showThemes ? '-rotate-90' : 'rotate-180')} />
+              </div>
+            }
+          />
+          
+          <AnimatePresence>
+            {showThemes && (
+              <motion.div initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden">
+                <div className="grid grid-cols-4 gap-2 p-4 glass-btn rounded-2xl">
+                  {themes.map(t => (
+                    <button key={t.id} onClick={() => changeTheme(t.id)} className={"p-2 rounded-xl transition flex flex-col items-center gap-1 " + (theme === t.id ? 'bg-white/20 ring-2 ring-white/50' : 'hover:bg-white/10')}>
+                      <div className="w-8 h-8 rounded-full" style={{background: 'linear-gradient(135deg, ' + t.colors.join(', ') + ')'}} />
+                      <span className="text-[10px] text-gray-400">{t.name.split(' ')[0]}</span>
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           
           {/* Language */}
-          <div className="p-4 glass-btn rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xl">🌐</span>
-              <span>Language</span>
-            </div>
-            <span className="text-sm text-gray-400">English</span>
-          </div>
+          <SettingRow 
+            icon="🌐" 
+            title="Language" 
+            subtitle={currentLang.name}
+            onClick={() => setShowLanguages(!showLanguages)}
+            right={
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{currentLang.flag}</span>
+                <Icons.Back className={"w-4 h-4 text-gray-500 transition " + (showLanguages ? '-rotate-90' : 'rotate-180')} />
+              </div>
+            }
+          />
+          
+          <AnimatePresence>
+            {showLanguages && (
+              <motion.div initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden">
+                <div className="grid grid-cols-2 gap-2 p-4 glass-btn rounded-2xl max-h-48 overflow-y-auto">
+                  {languages.map(l => (
+                    <button key={l.code} onClick={() => changeLanguage(l.code)} className={"p-3 rounded-xl transition flex items-center gap-2 " + (language === l.code ? 'bg-purple-500/30 ring-2 ring-purple-500/50' : 'hover:bg-white/10')}>
+                      <span className="text-xl">{l.flag}</span>
+                      <span className="text-sm">{l.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          <div className="h-px bg-white/10 my-4" />
           
           {/* Privacy */}
-          <div className="p-4 glass-btn rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xl">🔒</span>
-              <span>Privacy</span>
-            </div>
-            <Icons.Back className="w-4 h-4 rotate-180 text-gray-500" />
-          </div>
+          <SettingRow 
+            icon="🔒" 
+            title="Privacy" 
+            subtitle="Account settings"
+            onClick={() => setShowPrivacy(!showPrivacy)}
+            right={<Icons.Back className={"w-4 h-4 text-gray-500 transition " + (showPrivacy ? '-rotate-90' : 'rotate-180')} />}
+          />
+          
+          <AnimatePresence>
+            {showPrivacy && (
+              <motion.div initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden">
+                <div className="p-4 glass-btn rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="block font-medium">Private Account</span>
+                      <span className="text-xs text-gray-400">Only followers can see your posts</span>
+                    </div>
+                    <Toggle enabled={privateAccount} onChange={togglePrivate} />
+                  </div>
+                  <div className="h-px bg-white/10" />
+                  <button className="w-full p-3 text-left hover:bg-white/5 rounded-xl transition">
+                    <span className="block font-medium">Blocked Accounts</span>
+                    <span className="text-xs text-gray-400">0 accounts blocked</span>
+                  </button>
+                  <button className="w-full p-3 text-left hover:bg-white/5 rounded-xl transition">
+                    <span className="block font-medium">Activity Status</span>
+                    <span className="text-xs text-gray-400">Show when you're online</span>
+                  </button>
+                  <button className="w-full p-3 text-left hover:bg-white/5 rounded-xl transition">
+                    <span className="block font-medium">Data & History</span>
+                    <span className="text-xs text-gray-400">Download your data</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {/* Video */}
+          <SettingRow 
+            icon="🎬" 
+            title="Video Settings" 
+            subtitle="Autoplay & quality"
+            onClick={() => playSound('pop')}
+            right={<Icons.Back className="w-4 h-4 text-gray-500 rotate-180" />}
+          />
+          
+          {/* Highlights */}
+          <SettingRow 
+            icon="⭐" 
+            title="Highlights" 
+            subtitle="Manage your story highlights"
+            onClick={() => playSound('pop')}
+            right={<Icons.Back className="w-4 h-4 text-gray-500 rotate-180" />}
+          />
+          
+          <div className="h-px bg-white/10 my-4" />
+          
+          {/* Help & About */}
+          <SettingRow 
+            icon="❓" 
+            title="Help & Support" 
+            onClick={() => playSound('pop')}
+            right={<Icons.Back className="w-4 h-4 text-gray-500 rotate-180" />}
+          />
+          
+          <SettingRow 
+            icon="📋" 
+            title="Terms of Service" 
+            onClick={() => playSound('pop')}
+            right={<Icons.Back className="w-4 h-4 text-gray-500 rotate-180" />}
+          />
+          
+          <div className="h-px bg-white/10 my-4" />
           
           {/* Logout */}
           <button onClick={() => { playSound('delete'); logout(); onClose(); }} className="w-full p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-500/20 transition">
             <Icons.Logout className="w-5 h-5" />
             Logout
           </button>
+          
+          {/* Delete Account */}
+          <button className="w-full p-3 text-gray-500 text-sm hover:text-red-400 transition">
+            Delete Account
+          </button>
+          
+          {/* App Version */}
+          <div className="text-center text-xs text-gray-600 pt-4">
+            Legacy Academy v2.0.0 • Made with 💜
+          </div>
         </div>
       </motion.div>
     </>
