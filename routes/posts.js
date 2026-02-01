@@ -566,8 +566,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
   }, [profileUser]);
 
   const fetchUserData = async () => {
+    if (!profileUser?._id && !profileUser?.id && !profileUser?.username) return;
     try {
-      const res = await axios.get(API + '/users/username/' + profileUser.username);
+      const identifier = profileUser._id || profileUser.id || profileUser.username;
+      const endpoint = (profileUser._id || profileUser.id) ? `/ users / find / ${ profileUser._id || profileUser.id }` : ` / users / username / ${ profileUser.username }`;
+      const res = await axios.get(API + endpoint);
       setUserData(res.data);
       const currentId = currentUser?._id || currentUser?.id;
       setFollowing(res.data.followers?.includes(currentId));
@@ -1944,7 +1947,7 @@ const App = () => {
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[28px] sm:rounded-[32px] p-[2px] bg-gradient-to-tr from-yellow-400 via-yellow-600 to-yellow-800 shadow-2xl group-hover:scale-105 transition-all duration-500 ring-2 ring-black">
                 <div className="w-full h-full rounded-[26px] sm:rounded-[30px] bg-black overflow-hidden border border-white/10 flex items-center justify-center">
                   {p.image ? (
-                    <img src={p.image.replaceAll('\\\\', '/')} className="w-full h-full object-cover group-hover:rotate-6 group-hover:scale-125 transition-transform duration-700" alt="Intel" />
+                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover:rotate-6 group-hover:scale-125 transition-transform duration-700" alt="Intel" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-zinc-900"><Icons.Zap className="w-8 h-8 text-yellow-500/30" /></div>
                   )}
