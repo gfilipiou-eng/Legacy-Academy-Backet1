@@ -156,7 +156,7 @@ router.get("/", async (req, res) => {
 const { useState, useEffect, useRef, useMemo } = React;
 const motion = (window.Motion && window.Motion.motion) ? window.Motion.motion : (window.framerMotion && window.framerMotion.motion) ? window.framerMotion.motion : null;
 const AnimatePresence = (window.Motion && window.Motion.AnimatePresence) ? window.Motion.AnimatePresence : (window.framerMotion && window.framerMotion.AnimatePresence) ? window.framerMotion.AnimatePresence : React.Fragment;
-const API = window.location.protocol === 'file:' ? 'http://localhost:5000/api' : window.location.origin + "/api";
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000/api' : 'https://legacy-academy-backet1.onrender.com/api';
 
 const TRANSLATIONS = {
   en: {
