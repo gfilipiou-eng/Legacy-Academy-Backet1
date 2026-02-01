@@ -18,6 +18,7 @@ const PostSchema = new mongoose.Schema({
 
   // ENGAGEMENT
   likes: { type: Array, default: [] },      // IDs of users who liked
+  dislikes: { type: Array, default: [] },   // IDs of users who disliked
   likesUsers: { type: Array, default: [] },
   comments: [{
     text: { type: String, required: true },

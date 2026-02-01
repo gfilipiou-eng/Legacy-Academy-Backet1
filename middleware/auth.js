@@ -1,36 +1,41 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-    // 1. Check for real JWT first (Future proof)
-    const token = req.header("Authorization");
-    if (token) {
+    const authHeader = req.header("Authorization");
+
+    if (authHeader) {
+        const token = authHeader.replace("Bearer ", "");
         try {
-            const verified = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET || "testsecret");
-            req.user = verified;
+            const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
+            req.user = {
+                id: verified.id,
+                userId: verified.id,
+                username: verified.username,
+                role: verified.role || 'User'
+            };
             return next();
         } catch (err) {
-            // Invalid token, fall through to check body
+            console.error("JWT verification failed:", err.message);
         }
     }
 
-    // 2. Fallback: Check for "Frontend Mock" user object in body (For our Monster UI)
-    // Our frontend sends 'user' as a JSON string inside FormData or direct JSON
+    // Fallback for FormData with user object
     let user = req.body.user;
-
     if (user) {
         if (typeof user === 'string') {
             try { user = JSON.parse(user); } catch (e) { }
         }
         req.user = {
-            id: user.userId,
+            id: user._id || user.id || user.userId,
+            userId: user._id || user.id || user.userId,
             username: user.username,
-            role: user.role
+            role: user.role || 'User'
         };
         return next();
     }
 
-    // If neither, forbid (unless it's a GET request which might be public)
+    // Allow GET requests without auth
     if (req.method === "GET") return next();
 
-    res.status(401).json("You are not authenticated!");
+    res.status(401).json({ message: "You are not authenticated!" });
 };

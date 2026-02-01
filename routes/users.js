@@ -5,6 +5,16 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
+// Get all users
+router.get("/", async (req, res) => {
+    try {
+        const users = await User.find().select('username role profilePic createdAt');
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).json([]);
+    }
+});
+
 // 1. Λήψη στοιχείων χρήστη
 router.get("/find/:id", async (req, res) => {
     try {
@@ -64,6 +74,82 @@ router.delete("/:id", verifyToken, async (req, res) => {
         return res.status(403).json("Μπορείτε να διαγράψετε μόνο τον δικό σας λογαριασμό!");
     } catch (err) {
         res.status(500).json("Σφάλμα κατά τη διαγραφή.");
+    }
+});
+
+// Get user by username
+router.get("/username/:username", async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.params.username }).select('-password');
+        if (!user) return res.status(404).json("User not found");
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// FOLLOW a user
+router.put("/:id/follow", verifyToken, async (req, res) => {
+    try {
+        const currentUserId = req.user.id || req.user.userId;
+        if (req.params.id === currentUserId) {
+            return res.status(400).json("You cannot follow yourself");
+        }
+
+        const userToFollow = await User.findById(req.params.id);
+        const currentUser = await User.findById(currentUserId);
+
+        if (!userToFollow || !currentUser) {
+            return res.status(404).json("User not found");
+        }
+
+        if (!userToFollow.followers.includes(currentUserId)) {
+            // Follow
+            await userToFollow.updateOne({ $push: { followers: currentUserId } });
+            await currentUser.updateOne({ $push: { following: req.params.id } });
+            res.status(200).json({
+                message: "Followed",
+                followers: userToFollow.followers.length + 1,
+                isFollowing: true
+            });
+        } else {
+            // Unfollow
+            await userToFollow.updateOne({ $pull: { followers: currentUserId } });
+            await currentUser.updateOne({ $pull: { following: req.params.id } });
+            res.status(200).json({
+                message: "Unfollowed",
+                followers: userToFollow.followers.length - 1,
+                isFollowing: false
+            });
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// Get followers list
+router.get("/:id/followers", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json("User not found");
+
+        const followers = await User.find({ _id: { $in: user.followers } }).select('username role profilePic');
+        res.status(200).json(followers);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// Get following list
+router.get("/:id/following", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json("User not found");
+
+        const following = await User.find({ _id: { $in: user.following } }).select('username role profilePic');
+        res.status(200).json(following);
+    } catch (err) {
+        res.status(500).json(err);
     }
 });
 

@@ -7,6 +7,10 @@ import axios from "axios";
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
+import resetPasswordRoutes from "./routes/resetPassword.js";
+
+// Import email service to initialize it
+import "./config/email.js";
 
 dotenv.config();
 
@@ -25,6 +29,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
+app.use("/reset-password", resetPasswordRoutes);
 
 // MongoDB Connection
 // MongoDB Connection
