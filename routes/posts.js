@@ -157,6 +157,14 @@ const { useState, useEffect, useRef, useMemo } = React;
 const motion = (window.Motion && window.Motion.motion) ? window.Motion.motion : (window.framerMotion && window.framerMotion.motion) ? window.framerMotion.motion : null;
 const AnimatePresence = (window.Motion && window.Motion.AnimatePresence) ? window.Motion.AnimatePresence : (window.framerMotion && window.framerMotion.AnimatePresence) ? window.framerMotion.AnimatePresence : React.Fragment;
 const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000/api' : 'https://legacy-academy-backet1.onrender.com/api';
+const BASE_URL = API.replace('/api', '');
+
+const resolveMediaUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path; // Already a full URL (Cloudinary)
+  return `${ BASE_URL }${ path.startsWith('/') ? '' : '/'
+}${ path }`; // Local/Render uploads
+};
 
 const TRANSLATIONS = {
   en: {
@@ -524,7 +532,7 @@ const UserList = ({ userId, type = 'followers', onViewProfile, currentUser }) =>
       {list.map(u => (
         <button key={u._id} onClick={() => { playSound('pop'); onViewProfile(u); }} className="w-full p-5 glass-3d flex items-center gap-4 hover:border-yellow-500/30 active:scale-95 transition-all border-none group">
           <div className={"w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl border-2 shadow-2xl overflow-hidden transition-transform group-hover:scale-105 " + (u.role === 'Founder' ? 'founder-avatar' : 'bg-gradient-to-tr from-gray-800 to-black border-white/5')}>
-            {u.profilePic ? <img src={u.profilePic.replaceAll('\\\\', '/')} className="w-full h-full object-cover" alt={u.username} /> : u.username?.[0]?.toUpperCase()}
+            {u.profilePic ? <img src={resolveMediaUrl(u.profilePic.replaceAll('\\\\', '/'))} className="w-full h-full object-cover" alt={u.username} /> : u.username?.[0]?.toUpperCase()}
           </div>
           <div className="flex-1 text-left">
             <div className="flex items-center gap-2"><span className="font-black italic text-white tracking-tight">{u.username.toUpperCase()}</span>{u.role === 'Founder' && <Icons.Shield className="w-4 h-4 text-yellow-500" />}</div>
@@ -650,7 +658,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             className={"w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full flex items-center justify-center text-3xl sm:text-4xl font-black shadow-2xl mb-4 sm:mb-6 relative group overflow-hidden border-2 " + (isOwnProfile ? 'cursor-pointer hover:border-yellow-500' : 'border-transparent') + " " + ((userData?.role || profileUser.role) === 'Founder' ? 'founder-avatar' : 'bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-500')}
           >
              {userData?.profilePic || profileUser.profilePic ? (
-               <img src={(userData?.profilePic || profileUser.profilePic).replaceAll('\\\\', '/')} className="w-full h-full object-cover" alt={profileUser.username} />
+               <img src={resolveMediaUrl((userData?.profilePic || profileUser.profilePic).replaceAll('\\\\', '/'))} className="w-full h-full object-cover" alt={profileUser.username} />
              ) : (
                profileUser.username?.[0]?.toUpperCase()
              )}
@@ -724,7 +732,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
                   {userPosts.map(post => (
                     <div key={post._id} className="aspect-square bg-white/5 rounded-lg sm:rounded-[20px] overflow-hidden border border-white/5 hover:scale-105 transition-transform cursor-pointer group relative">
-                      {post.image ? <img src={post.image} className="w-full h-full object-cover" alt="Post" /> : (
+                      {post.image ? <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover" alt="Post" /> : (
                         <div className="w-full h-full flex items-center justify-center text-[9px] sm:text-[10px] text-gray-500 font-bold p-2 sm:p-3 text-center uppercase tracking-tighter leading-tight">{post.title || post.desc?.slice(0,30)}</div>
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 sm:gap-3">
@@ -898,7 +906,7 @@ const PostCard = React.forwardRef(({ post, user, onDelete, onViewProfile, onUpda
       <div className="p-4 flex items-center justify-between bg-black/5">
         <button onClick={() => onViewProfile({ username: post.username, role: post.role })} className="flex items-center gap-3 hover:opacity-80 transition min-w-0 flex-1">
           <div className={"w-11 h-11 rounded-2xl flex items-center justify-center font-black text-lg flex-shrink-0 " + (post.role === 'Founder' ? 'founder-avatar' : 'bg-gradient-to-br from-gray-700 to-black border border-white/10')}>
-            {post.profilePic ? <img src={post.profilePic} className="w-full h-full object-cover rounded-xl" /> : (post.username?.[0]?.toUpperCase())}
+            {post.profilePic ? <img src={resolveMediaUrl(post.profilePic)} className="w-full h-full object-cover rounded-xl" /> : (post.username?.[0]?.toUpperCase())}
           </div>
           <div className="text-left min-w-0">
             <div className="flex items-center gap-1.5 overflow-hidden">
@@ -987,10 +995,10 @@ const PostCard = React.forwardRef(({ post, user, onDelete, onViewProfile, onUpda
             </div>
           )}
 
-          {post.image && <img src={post.image} className="w-full aspect-square object-cover" />}
+          {post.image && <img src={resolveMediaUrl(post.image)} className="w-full aspect-square object-cover" />}
           {post.videoUrl && (
             <div className="relative aspect-video bg-black/60 overflow-hidden group/vid">
-              <video src={post.videoUrl} className="w-full h-full object-contain" controls loop muted autoPlay playsInline />
+              <video src={resolveMediaUrl(post.videoUrl)} className="w-full h-full object-contain" controls loop muted autoPlay playsInline />
               <div className="absolute top-4 left-4 pointer-events-none">
                 <span className="px-4 py-1.5 bg-black/60 backdrop-blur-xl rounded-xl text-[10px] font-black tracking-[0.2em] uppercase border border-yellow-500/20 text-yellow-500 shadow-xl shadow-black">{t('LEGACY_INTEL')}</span>
               </div>
@@ -2445,7 +2453,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>`;
-  res.send(html);
+res.send(html);
 });
 
 
