@@ -230,7 +230,7 @@ const App = () => {
                 <button onClick={() => {
                     // Simple auth simulation for now, assuming external Login component or redirect
                     alert("Redirecting to login...");
-                    window.location.href = BASE_URL + '/posts';
+                    window.location.href = BASE_URL + '/api/posts';
                 }} className="w-full py-5 bg-yellow-500 rounded-2xl text-black font-black uppercase text-xl">ENTER SYSTEM</button>
             </div>
         </div>
