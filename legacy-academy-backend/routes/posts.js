@@ -7,7 +7,8 @@ import { verifyToken } from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  if (req.headers.accept?.includes("application/json") || req.query.json === 'true') {
+  const acceptsHtml = req.headers.accept?.includes("text/html");
+  if (!acceptsHtml && (req.headers.accept?.includes("application/json") || req.query.json === 'true')) {
     try {
       const limit = parseInt(req.query.limit) || 50;
       const posts = await Post.find()
