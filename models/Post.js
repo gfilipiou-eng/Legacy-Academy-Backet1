@@ -14,6 +14,7 @@ const PostSchema = new mongoose.Schema({
 
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to User for populate
   username: String, // Denormalized for quick access (backup)
+  profilePic: String, // Denormalized user profile pic
   role: String,   // User Role at creation
 
   // ENGAGEMENT
@@ -30,6 +31,7 @@ const PostSchema = new mongoose.Schema({
   // PREMIUM FEATURES
   isBoosted: { type: Boolean, default: false },  // Paid boost
   boostExpiry: Date,  // When boost expires
+  visibility: { type: String, enum: ['public', 'followers', 'private'], default: 'public' }
 
 }, { timestamps: true });
 

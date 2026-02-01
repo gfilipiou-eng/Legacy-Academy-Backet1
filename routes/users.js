@@ -2,13 +2,14 @@ import express from "express";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic createdAt');
+        const users = await User.find().select('username role profilePic isPrivate followers following createdAt');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);
@@ -39,43 +40,7 @@ router.get("/posts/:userId", async (req, res) => {
     }
 });
 
-// 3. Update User
-router.put("/:id", verifyToken, async (req, res) => {
-    // Χρησιμοποιούμε req.user.id ή req.user.userId ανάλογα με το τι στέλνει το middleware
-    const currentUserId = req.user.id || req.user.userId;
 
-    if (req.params.id === currentUserId || req.user.role === 'Founder') {
-        try {
-            const updatedUser = await User.findByIdAndUpdate(
-                req.params.id,
-                { $set: req.body },
-                { new: true }
-            );
-            res.status(200).json(updatedUser);
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    } else {
-        res.status(403).json("Δεν έχετε άδεια για αυτή την ενέργεια!");
-    }
-});
-
-// 4. DELETE USER ACCOUNT
-router.delete("/:id", verifyToken, async (req, res) => {
-    try {
-        const currentUserId = req.user.id || req.user.userId;
-
-        // Έλεγχος αν είναι ο ίδιος ο χρήστης ή ο Founder
-        if (req.params.id === currentUserId || req.user.role === 'Founder') {
-            await Post.deleteMany({ author: req.params.id });
-            await User.findByIdAndDelete(req.params.id);
-            return res.status(200).json("Deleted successfully.");
-        }
-        return res.status(403).json("Μπορείτε να διαγράψετε μόνο τον δικό σας λογαριασμό!");
-    } catch (err) {
-        res.status(500).json("Σφάλμα κατά τη διαγραφή.");
-    }
-});
 
 // Get user by username
 router.get("/username/:username", async (req, res) => {
@@ -88,7 +53,7 @@ router.get("/username/:username", async (req, res) => {
     }
 });
 
-// FOLLOW a user
+// FOLLOW or REQUEST TO FOLLOW a user
 router.put("/:id/follow", verifyToken, async (req, res) => {
     try {
         const currentUserId = req.user.id || req.user.userId;
@@ -99,32 +64,139 @@ router.put("/:id/follow", verifyToken, async (req, res) => {
         const userToFollow = await User.findById(req.params.id);
         const currentUser = await User.findById(currentUserId);
 
-        if (!userToFollow || !currentUser) {
-            return res.status(404).json("User not found");
-        }
+        if (!userToFollow || !currentUser) return res.status(404).json("User not found");
 
-        if (!userToFollow.followers.includes(currentUserId)) {
-            // Follow
-            await userToFollow.updateOne({ $push: { followers: currentUserId } });
-            await currentUser.updateOne({ $push: { following: req.params.id } });
-            res.status(200).json({
-                message: "Followed",
-                followers: userToFollow.followers.length + 1,
-                isFollowing: true
-            });
-        } else {
-            // Unfollow
+        // If already following, unfollow
+        if (userToFollow.followers.includes(currentUserId)) {
             await userToFollow.updateOne({ $pull: { followers: currentUserId } });
             await currentUser.updateOne({ $pull: { following: req.params.id } });
-            res.status(200).json({
-                message: "Unfollowed",
-                followers: userToFollow.followers.length - 1,
-                isFollowing: false
-            });
+            return res.status(200).json({ message: "Unfollowed", isFollowing: false });
         }
+
+        // If already requested, cancel request
+        if (userToFollow.followRequests?.includes(currentUserId)) {
+            await userToFollow.updateOne({ $pull: { followRequests: currentUserId } });
+            return res.status(200).json({ message: "Request cancelled", isRequested: false });
+        }
+
+        // If private or elite (followers only), send request
+        if (userToFollow.isPrivate || userToFollow.isFollowersOnly) {
+            await userToFollow.updateOne({
+                $push: {
+                    followRequests: currentUserId,
+                    notifications: {
+                        type: 'follow',
+                        from: currentUserId,
+                        fromUsername: currentUser.username,
+                        fromProfilePic: currentUser.profilePic || '',
+                        read: false,
+                        createdAt: new Date()
+                    }
+                }
+            });
+            return res.status(200).json({ message: "Request sent", isRequested: true });
+        }
+
+        // Direct follow if public
+        await userToFollow.updateOne({
+            $push: {
+                followers: currentUserId,
+                notifications: {
+                    type: 'follow',
+                    from: currentUserId,
+                    fromUsername: currentUser.username,
+                    fromProfilePic: currentUser.profilePic || '',
+                    read: false,
+                    createdAt: new Date()
+                }
+            }
+        });
+        await currentUser.updateOne({ $push: { following: req.params.id } });
+        res.status(200).json({ message: "Followed", isFollowing: true });
     } catch (err) {
         res.status(500).json(err);
     }
+});
+
+// ACCEPT follow request
+router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const requesterId = req.params.requestId;
+
+        const user = await User.findById(userId);
+        const requester = await User.findById(requesterId);
+
+        if (!user.followRequests.includes(requesterId)) return res.status(400).json("No request found");
+
+        await user.updateOne({ $pull: { followRequests: requesterId }, $push: { followers: requesterId } });
+        await requester.updateOne({ $push: { following: userId } });
+
+        res.status(200).json("Follower accepted");
+    } catch (err) { res.status(500).json(err); }
+});
+
+// REJECT follow request
+router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, { $pull: { followRequests: req.params.requestId } });
+        res.status(200).json("Request rejected");
+    } catch (err) { res.status(500).json(err); }
+});
+
+// GET pending requests
+router.get("/requests/pending", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId);
+        const requests = await User.find({ _id: { $in: user.followRequests } }).select("username profilePic role");
+        res.status(200).json(requests);
+    } catch (err) { res.status(500).json(err); }
+});
+
+// GET user notifications
+router.get("/notifications", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId).select('notifications');
+        const sortedNotifications = (user?.notifications || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.status(200).json(sortedNotifications);
+    } catch (err) {
+        console.error("Get notifications error:", err);
+        res.status(500).json(err);
+    }
+});
+
+// Mark notifications as read
+router.put("/notifications/read", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, {
+            $set: { 'notifications.$[].read': true }
+        });
+        res.status(200).json({ message: "Notifications marked as read" });
+    } catch (err) { res.status(500).json(err); }
+});
+
+// DELETE ALL notifications (Clear Log)
+router.delete("/notifications", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, { $set: { notifications: [] } });
+        res.status(200).json("Notifications cleared");
+    } catch (err) { res.status(500).json(err); }
+});
+
+// DELETE specific notification
+router.delete("/notifications/:id", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, {
+            $pull: { notifications: { _id: req.params.id } }
+        });
+        res.status(200).json("Notification deleted");
+    } catch (err) { res.status(500).json(err); }
 });
 
 // Get followers list
@@ -150,6 +222,151 @@ router.get("/:id/following", async (req, res) => {
         res.status(200).json(following);
     } catch (err) {
         res.status(500).json(err);
+    }
+});
+
+// Update user settings & privacy
+router.put("/settings", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        if (!userId) return res.status(401).json("Unauthorized - Neural Interface missing");
+
+        const oldUser = await User.findById(userId);
+        if (!oldUser) return res.status(404).json("Agent not found in mission database");
+
+        // Advanced flatten for dot notation support
+        const updateData = {};
+        Object.keys(req.body).forEach(key => {
+            if (typeof req.body[key] === 'object' && req.body[key] !== null && !Array.isArray(req.body[key])) {
+                Object.keys(req.body[key]).forEach(subKey => {
+                    updateData[`${key}.${subKey}`] = req.body[key][subKey];
+                });
+            } else {
+                updateData[key] = req.body[key];
+            }
+        });
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: updateData },
+            { new: true }
+        ).select('-password');
+
+        if (req.body.username && req.body.username !== oldUser.username) {
+            await Post.updateMany({ author: userId }, { $set: { username: req.body.username } });
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("CRITICAL SETTINGS FAILURE:", err);
+        res.status(500).json({ message: "Neural state corruption during update", error: err.message });
+    }
+});
+
+// Update profile picture
+router.post("/profile-pic", verifyToken, (req, res, next) => {
+    upload.single("image")(req, res, (err) => {
+        if (err) {
+            console.error("Profile Upload Error:", err.message);
+            return res.status(500).json({ message: "Upload service failed. Check configurations.", error: err.message });
+        }
+        next();
+    });
+}, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        if (!userId) return res.status(401).json("Unauthorized - Agent ID missing");
+        if (!req.file || !req.file.path) return res.status(400).json("No valid asset uploaded to terminal.");
+
+        console.log("High-Intel Identity Asset Received:", req.file);
+
+        // Format path correctly for local storage vs Cloudinary
+        let imagePath = req.file.path;
+
+        // If using local storage (path starts with 'uploads'), ensure it has leading slash for URL
+        if (imagePath.startsWith('uploads')) {
+            imagePath = '/' + imagePath.replace(/\\/g, '/'); // Also normalize Windows paths
+        }
+
+        console.log("Formatted Image Path:", imagePath);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { profilePic: imagePath } },
+            { new: true }
+        ).select('-password');
+
+        if (!updatedUser) return res.status(404).json("Agent not found in central core.");
+
+        // HYPER-SYNC: Global asset synchronization with fallback
+        try {
+            await Post.updateMany({ author: userId }, { $set: { profilePic: imagePath } });
+            console.log("Profile pic synced to all posts for user:", userId);
+        } catch (syncErr) {
+            console.warn("Minor sync delay detected. Assets will stabilize naturally.");
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("IDENTITY CORE COLLAPSE:", err);
+        res.status(500).json({ message: "SYSTEM ERROR: Asset integration failed.", error: err.message });
+    }
+});
+
+// 3. Update User (Generic + Username Update Logic)
+router.put("/:id", verifyToken, async (req, res) => {
+    const currentUserId = req.user.id || req.user.userId;
+    if (req.params.id === currentUserId || req.user.role === 'Founder') {
+        try {
+            // Check Username Update Constraints
+            if (req.body.username) {
+                const user = await User.findById(req.params.id);
+                // Uniqueness check
+                const existing = await User.findOne({ username: req.body.username });
+                if (existing && existing._id.toString() !== req.params.id) {
+                    return res.status(400).json("Username already taken.");
+                }
+
+                // Time restriction check (unless Founder)
+                if (req.user.role !== 'Founder' && user.lastUsernameChange) {
+                    const diffTime = Math.abs(new Date() - new Date(user.lastUsernameChange));
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays < 3) {
+                        return res.status(403).json(`You must wait ${3 - diffDays} more days to change username.`);
+                    }
+                }
+                req.body.lastUsernameChange = new Date();
+
+                // Propagate username change to all posts
+                await Post.updateMany({ author: req.params.id }, { $set: { username: req.body.username } });
+            }
+
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.id,
+                { $set: req.body },
+                { new: true }
+            );
+            res.status(200).json(updatedUser);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    } else {
+        res.status(403).json("Authorization Failed.");
+    }
+});
+
+// 4. DELETE USER ACCOUNT
+router.delete("/:id", verifyToken, async (req, res) => {
+    try {
+        const currentUserId = req.user.id || req.user.userId;
+        if (req.params.id === currentUserId || req.user.role === 'Founder') {
+            await Post.deleteMany({ author: req.params.id });
+            await User.findByIdAndDelete(req.params.id);
+            return res.status(200).json("Deleted successfully.");
+        }
+        return res.status(403).json("Μπορείτε να διαγράψετε μόνο τον δικό σας λογαριασμό!");
+    } catch (err) {
+        res.status(500).json("Σφάλμα κατά τη διαγραφή.");
     }
 });
 

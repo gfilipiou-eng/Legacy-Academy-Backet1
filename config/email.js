@@ -1,29 +1,42 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
-// Gmail transporter - sends REAL emails to users
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
+// Make sure env vars are loaded
+dotenv.config();
 
-// Test connection on startup
-transporter.verify((error, success) => {
-  if (error) {
-    console.log('❌ Gmail Email Error:', error.message);
-    console.log('💡 Make sure EMAIL_USER and EMAIL_PASSWORD are set in .env');
-    console.log('   Get App Password: https://myaccount.google.com/apppasswords');
-  } else {
-    console.log('✅ Gmail Email Service Ready - Real emails will be sent!');
+let transporter = null;
+
+// Create transporter on first use
+const getTransporter = () => {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    // Test connection
+    transporter.verify((error, success) => {
+      if (error) {
+        console.log('❌ Gmail Email Error:', error.message);
+        console.log('💡 Make sure EMAIL_USER and EMAIL_PASSWORD are set');
+      } else {
+        console.log('✅ Gmail Email Service Ready!');
+      }
+    });
   }
-});
+  return transporter;
+};
+
+// Initialize on startup
+setTimeout(() => getTransporter(), 100);
 
 export const sendPasswordResetEmail = async (email, resetToken, username) => {
   const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/reset-password?token=${resetToken}`;
@@ -81,7 +94,7 @@ export const sendPasswordResetEmail = async (email, resetToken, username) => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
+    const info = await getTransporter().sendMail(mailOptions);
     console.log('✅ Password reset email sent to:', email);
     console.log('   Message ID:', info.messageId);
     return { success: true, messageId: info.messageId };
@@ -92,4 +105,4 @@ export const sendPasswordResetEmail = async (email, resetToken, username) => {
   }
 };
 
-export default transporter;
+export default getTransporter;

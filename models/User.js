@@ -7,14 +7,38 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, default: "User" },
   profilePic: { type: String, default: "" },
   bio: { type: String, default: "" },
+  lastUsernameChange: { type: Date },
 
   // Follow System
   followers: { type: Array, default: [] },  // User IDs who follow this user
   following: { type: Array, default: [] },  // User IDs this user follows
+  followRequests: { type: Array, default: [] }, // Pending follower requests for private accounts
 
   // Password Reset
   resetToken: { type: String },
   resetTokenExpiry: { type: Date },
+
+  // Settings & Privacy
+  isPrivate: { type: Boolean, default: false },
+  isFollowersOnly: { type: Boolean, default: false },
+  settings: {
+    theme: { type: String, default: 'purple' },
+    language: { type: String, default: 'en' },
+    soundEnabled: { type: Boolean, default: true },
+    notifications: { type: Boolean, default: true }
+  },
+
+  // Notifications
+  notifications: [{
+    type: { type: String, enum: ['follow', 'comment', 'like', 'mention'], required: true },
+    from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    fromUsername: { type: String },
+    fromProfilePic: { type: String },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
+    text: { type: String },
+    read: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
+  }]
 
 }, { timestamps: true });
 
