@@ -1,15 +1,11 @@
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../config/cloudinary');
+import multer from "multer";
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'legacy_academy_posts', // Όνομα φακέλου στο Cloudinary
-    allowed_formats: ['jpg', 'png', 'jpeg'],
-  },
-});
+// Storage στη μνήμη (καλό για Render / cloud uploads)
+const storage = multer.memoryStorage();
 
+// Middleware upload
 const upload = multer({ storage });
 
-module.exports = upload;
+// Default export για να δουλεύει έτσι:
+// import upload from "../middleware/multer.js";
+export default upload;
