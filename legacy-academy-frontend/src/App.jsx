@@ -128,24 +128,29 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 </div>
 
                 <div className="relative">
-                    <button onClick={() => setShowMenu(!showMenu)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.Menu className="w-6 h-6 text-gray-400 rotate-90" /></button>
-                    <AnimatePresence>
-                        {showMenu && (
-                            <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute right-0 top-10 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-20 w-40 overflow-hidden backdrop-blur-xl">
-                                {isOwner && (
-                                    <button onClick={() => { onDelete(post._id); setShowMenu(false); }} className="w-full flex items-center gap-2 px-4 py-3 text-red-500 hover:bg-white/5 font-bold text-xs uppercase">
-                                        <Icons.Trash className="w-4 h-4" /> Delete Intel
-                                    </button>
+                    {isOwner ? (
+                        /* DIRECT TRASH BUTTON FOR OWNER */
+                        <button onClick={() => onDelete(post._id)} className="p-2 hover:bg-red-500/20 rounded-full transition-colors group/delete">
+                            <Icons.Trash className="w-6 h-6 text-gray-400 group-hover/delete:text-red-500 transition-colors" />
+                        </button>
+                    ) : (
+                        /* MENU FOR OTHERS */
+                        <>
+                            <button onClick={() => setShowMenu(!showMenu)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.Menu className="w-6 h-6 text-gray-400 rotate-90" /></button>
+                            <AnimatePresence>
+                                {showMenu && (
+                                    <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute right-0 top-10 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-20 w-40 overflow-hidden backdrop-blur-xl">
+                                        <button onClick={() => { onDislike(post._id); setShowMenu(false); }} className="w-full flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 text-xs font-bold uppercase border-t border-white/5">
+                                            <Icons.ThumbsDown className="w-4 h-4" /> Dislike
+                                        </button>
+                                        <button className="w-full flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 text-xs font-bold uppercase border-t border-white/5">
+                                            <Icons.Shield className="w-4 h-4" /> Report
+                                        </button>
+                                    </motion.div>
                                 )}
-                                <button onClick={() => { onDislike(post._id); setShowMenu(false); }} className="w-full flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 text-xs font-bold uppercase border-t border-white/5">
-                                    <Icons.ThumbsDown className="w-4 h-4" /> Dislike
-                                </button>
-                                <button className="w-full flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 text-xs font-bold uppercase border-t border-white/5">
-                                    <Icons.Shield className="w-4 h-4" /> Report
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                            </AnimatePresence>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -566,7 +571,7 @@ const App = () => {
                     <button onClick={() => setActiveTab('home')} className={`p-3 transition-all ${activeTab === 'home' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Home className="w-6 h-6" /></button>
                     <button onClick={() => setActiveTab('search')} className={`p-3 transition-all ${activeTab === 'search' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Search className="w-6 h-6" /></button>
 
-                    <div className="w-16 h-16 bg-gradient-to-tr from-yellow-600 to-yellow-400 center -mt-8 rounded-full border-4 border-black shadow-2xl shadow-yellow-500/30 cursor-pointer hover:scale-105 active:scale-95 transition-all z-50 flex items-center justify-center p-0"
+                    <div className="w-16 h-16 bg-gradient-to-tr from-yellow-600 to-yellow-400 -mt-8 rounded-full border-4 border-black shadow-2xl shadow-yellow-500/30 cursor-pointer hover:scale-105 active:scale-95 transition-all z-50 flex items-center justify-center"
                         onClick={() => setIsCreateOpen(true)}>
                         <Icons.Plus className="w-8 h-8 text-black drop-shadow-md" />
                     </div>
