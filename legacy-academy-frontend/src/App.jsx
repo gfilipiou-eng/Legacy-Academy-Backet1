@@ -556,7 +556,7 @@ const App = () => {
     useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
     useEffect(() => { if (user) { fetchPosts(); fetchUsers(); } }, [user]);
 
-    const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=100'); setPosts(res.data); } catch (e) { } };
+    const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
     const handleLike = async (postId) => { try { const res = await axios.put(`/posts/${postId}/like`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes } : p)); playSound('pop'); } catch (e) { } };
     const handleDislike = async (postId) => { try { await axios.put(`/posts/${postId}/dislike`); playSound('pop'); } catch (e) { } };
@@ -694,7 +694,12 @@ const App = () => {
                         )}
                         <div className="space-y-6">
                             {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} />)}
-                            {posts.length === 0 && <div className="h-96 center text-gray-700 font-bold text-sm uppercase tracking-widest italic">Decrypting Feed...</div>}
+                            {posts.length === 0 && (
+                                <div className="h-96 flex flex-col items-center justify-center space-y-4">
+                                    <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                                </div>
+                            )}
                         </div>
                     </>
                 )}
