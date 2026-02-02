@@ -227,11 +227,26 @@ const App = () => {
         <div className="min-h-screen bg-black flex items-center justify-center p-6">
             <div className="w-full max-w-md text-center">
                 <h1 className="text-5xl font-black italic tracking-tighter text-white mb-10">LEGACY</h1>
-                <button onClick={() => {
-                    // Simple auth simulation for now, assuming external Login component or redirect
-                    alert("Redirecting to login...");
-                    window.location.href = BASE_URL + '/api/posts';
-                }} className="w-full py-5 bg-yellow-500 rounded-2xl text-black font-black uppercase text-xl">ENTER SYSTEM</button>
+                <div className="space-y-4 w-full max-w-xs mx-auto">
+                    <input type="email" placeholder={t('EMAIL')} id="login-email" className="cyber-input text-center" />
+                    <input type="password" placeholder={t('PASSWORD')} id="login-pass" className="cyber-input text-center" />
+                    <button onClick={async () => {
+                        const email = document.getElementById('login-email').value;
+                        const password = document.getElementById('login-pass').value;
+                        if (!email || !password) return alert("CREDENTIALS REQUIRED");
+                        try {
+                            const res = await axios.post('/auth/login', { email, password });
+                            localStorage.setItem('token', res.data.token);
+                            localStorage.setItem('user', JSON.stringify(res.data.user));
+                            setUser(res.data.user);
+                            playSound('success');
+                        } catch (e) { alert("ACCESS DENIED"); playSound('error'); }
+                    }} className="w-full py-4 bg-yellow-500 rounded-2xl text-black font-black uppercase text-lg hover:scale-105 transition-transform shadow-lg shadow-yellow-500/20">{t('LOGIN')}</button>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-4">
+                        <button className="hover:text-white">{t('FORGOT')}</button>
+                        <button className="hover:text-yellow-500">{t('REGISTER')}</button>
+                    </div>
+                </div>
             </div>
         </div>
     );
