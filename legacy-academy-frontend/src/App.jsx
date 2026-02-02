@@ -12,7 +12,6 @@ const BASE_URL = API_URL.replace('/api', '');
 const resolveMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    // Add timestamp to force cache refresh if it's a profile pic (heuristically)
     const sep = path.includes('?') ? '&' : '?';
     return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 };
@@ -21,38 +20,24 @@ const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((pa
 
 // --- COMPONENTS ---
 
-// Generates a consistent random gradient based on the username
 const DefaultAvatar = ({ name, size = "normal" }) => {
     const COLORS = [
-        'from-red-500 to-orange-600',
-        'from-blue-500 to-cyan-600',
-        'from-emerald-500 to-green-600',
-        'from-violet-500 to-purple-600',
-        'from-amber-500 to-yellow-600',
-        'from-rose-500 to-pink-600',
-        'from-indigo-500 to-blue-600',
-        'from-teal-500 to-emerald-600'
+        'from-red-500 to-orange-600', 'from-blue-500 to-cyan-600', 'from-emerald-500 to-green-600',
+        'from-violet-500 to-purple-600', 'from-amber-500 to-yellow-600', 'from-rose-500 to-pink-600',
+        'from-indigo-500 to-blue-600', 'from-teal-500 to-emerald-600'
     ];
-
     const hash = name ? name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
     const gradient = COLORS[hash % COLORS.length];
 
     return (
         <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-inner relative overflow-hidden`}>
-            {/* Subtile texture overlay for premium feel */}
             <div className="absolute inset-0 bg-white/10 mix-blend-overlay" />
-            {name ? (
-                <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase drops-shadow-md select-none`}>
-                    {name.substring(0, 1)}
-                </span>
-            ) : (
-                <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-80`} />
-            )}
+            {name ? <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase select-none`}>{name.substring(0, 1)}</span> : <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-80`} />}
         </div>
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete }) => {
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete, onShare }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
     const isOwner = post.author?._id === user._id || post.author === user._id;
@@ -81,11 +66,12 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
                             {post.comments?.map((c, i) => (
                                 <div key={i} className="flex gap-3 items-start">
                                     <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-white border border-white/10">
-                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.authorName || c.user?.username} />}
+                                        {/* Fix: Prefer current user image if available, falling back securely */}
+                                        {c.user?.profilePic || c.authorProfilePic ? <img src={resolveMediaUrl(c.user?.profilePic || c.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.user?.username || c.authorName} />}
                                     </div>
-                                    <div className="text-sm">
-                                        <span className="font-bold text-white mr-2">{c.authorName || c.user?.username}</span>
-                                        <span className="text-gray-400">{c.text}</span>
+                                    <div className="bg-white/5 rounded-2xl px-3 py-2">
+                                        <span className="font-bold text-white mr-2 text-xs">{c.user?.username || c.authorName}</span>
+                                        <span className="text-gray-300 text-xs">{c.text}</span>
                                     </div>
                                 </div>
                             ))}
@@ -93,18 +79,15 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
                     </div>
 
                     <div className="p-4 border-t border-white/10 bg-black/20">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex gap-4">
-                                <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${post.likes?.includes(user._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
-                                <button onClick={() => onDislike(post._id)}><Icons.ThumbsDown className="w-7 h-7 text-white hover:text-red-500" /></button>
-                                <Icons.Send className="w-7 h-7 text-white" />
-                            </div>
-                            <Icons.Bookmark className="w-7 h-7 text-white" />
+                        <div className="flex items-center gap-4 mb-4">
+                            <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${post.likes?.includes(user._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
+                            <button onClick={() => onDislike(post._id)}><Icons.ThumbsDown className="w-7 h-7 text-white hover:text-red-500" /></button>
+                            <button onClick={() => onShare(post)}><Icons.Send className="w-7 h-7 text-white hover:text-blue-500" /></button>
                         </div>
                         <div className="font-bold text-white text-sm mb-2">{post.likes?.length} Likes</div>
-                        <form onSubmit={(e) => { e.preventDefault(); onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2">
+                        <form onSubmit={(e) => { e.preventDefault(); onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center">
                             <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-transparent text-sm outline-none text-white placeholder-gray-500" />
-                            <button className="text-blue-500 font-bold text-sm">Post</button>
+                            <button className="p-2 bg-blue-600 rounded-full hover:bg-blue-500 text-white"><Icons.ArrowRight className="w-4 h-4" /></button>
                         </form>
                     </div>
                 </div>
@@ -137,7 +120,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail }) => {
+const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare }) => {
     const [showComments, setShowComments] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [commentText, setCommentText] = useState('');
@@ -202,9 +185,9 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                     <div className="flex items-center gap-4">
                         <button onClick={() => onLike(post._id)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.Heart className={`w-8 h-8 drop-shadow-lg ${post.likes?.includes(user._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
                         <button onClick={() => setShowComments(!showComments)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.MessageCircle className="w-7 h-7 text-white drop-shadow-lg" /></button>
-                        <Icons.Send className="w-7 h-7 text-white hover:scale-110 active:scale-90 transition-transform cursor-pointer drop-shadow-lg" />
+                        <button onClick={() => onShare(post)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.Send className="w-7 h-7 text-white drop-shadow-lg" /></button>
                     </div>
-                    <Icons.Bookmark className="w-7 h-7 text-white cursor-pointer hover:scale-110 active:scale-90 transition-transform drop-shadow-lg" />
+                    {/* Bookmark Removed as requested */}
                 </div>
 
                 <div className="font-bold text-sm mb-2 text-white/90">{post.likes?.length || 0} Likes</div>
@@ -226,17 +209,20 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             {post.comments?.map((c, idx) => (
                                 <div key={idx} className="flex gap-3 items-start">
                                     <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
-                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.authorName || c.user?.username} />}
+                                        {/* Fix: Comments Avatar */}
+                                        {c.user?.profilePic || c.authorProfilePic ? <img src={resolveMediaUrl(c.user?.profilePic || c.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.user?.username || c.authorName} />}
                                     </div>
                                     <div className="bg-white/10 rounded-2xl px-4 py-2 flex-1 shadow-lg backdrop-blur-sm border border-white/5">
-                                        <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{c.authorName || c.user?.username}</span>
+                                        <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{c.user?.username || c.authorName}</span>
                                         <span className="text-xs text-gray-200">{c.text}</span>
                                     </div>
                                 </div>
                             ))}
                             <form onSubmit={handleComment} className="flex gap-2 items-center pt-2">
                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-xs outline-none focus:border-yellow-500 shadow-inner" />
-                                <button className="text-yellow-500 font-black text-xs uppercase px-2 hover:text-yellow-400 disabled:opacity-50">Post</button>
+                                <button className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center hover:bg-yellow-400 text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-all">
+                                    <Icons.ArrowRight className="w-4 h-4" />
+                                </button>
                             </form>
                         </motion.div>
                     )}
@@ -245,6 +231,9 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
         </motion.div>
     );
 };
+
+// ... ChatModal, SettingsModal, ProfileModal, CreateModal same logic ...
+// Re-inserting them with minor fixes (no changes needed for them based on this prompt, assuming previous context valid)
 
 const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
     const [activeChat, setActiveChat] = useState(null);
@@ -329,7 +318,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 try {
                                     const res = await axios.post('/users/profile-pic', fd);
                                     alert("Profile Updated!");
-                                    // CRITICAL FIX: Update State and Local Storage immediately
                                     const updatedUser = res.data;
                                     localStorage.setItem('user', JSON.stringify(updatedUser));
                                     onUpdateUser(updatedUser);
@@ -339,14 +327,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-yellow-500 outline-none resize-none h-24" placeholder="Enter your bio..." />
                         <button onClick={async () => {
                             try {
-                                // CRITICAL FIX: Update Bio and Sync State
                                 const res = await axios.put(`/users/${user._id}`, { bio });
                                 alert("Bio Updated!");
                                 if (res.data) {
                                     localStorage.setItem('user', JSON.stringify(res.data));
                                     onUpdateUser(res.data);
                                 } else {
-                                    // Fallback if backend returns generic success
                                     const updatedUser = { ...user, bio };
                                     localStorage.setItem('user', JSON.stringify(updatedUser));
                                     onUpdateUser(updatedUser);
@@ -378,7 +364,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [activeList, setActiveList] = useState(null); // 'followers' | 'following' | null
     const userPosts = posts.filter(p => p.username === profileUser?.username);
 
-    // FIX: Prioritize currentUser data if viewing own profile to see live updates
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
             setUserData(currentUser);
@@ -389,10 +374,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     if (!isOpen || !profileUser) return null;
 
-    // Use synced userData for display
     const displayUser = (profileUser?._id === currentUser?._id) ? currentUser : userData;
 
-    // Get List Data
     const getListUsers = () => {
         if (!activeList || !displayUser) return [];
         const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
@@ -406,7 +389,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
                     <button onClick={() => activeList ? setActiveList(null) : onClose()} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : displayUser.username}</div>
-                    <div className="w-10" /> {/* Spacer to balance the larger back button */}
+                    <div className="w-10" />
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505]">
@@ -472,6 +455,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     );
 };
 
+// ... CreateModal same logic ...
 const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
@@ -539,8 +523,23 @@ const App = () => {
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=100'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
     const handleLike = async (postId) => { try { const res = await axios.put(`/posts/${postId}/like`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes } : p)); playSound('pop'); } catch (e) { } };
-    const handleDislike = async (postId) => { try { await axios.put(`/posts/${postId}/dislike`); alert("Dislike registered."); } catch (e) { } };
+    const handleDislike = async (postId) => { try { await axios.put(`/posts/${postId}/dislike`); playSound('pop'); } catch (e) { } };
     const handleComment = async (postId, text) => { try { const res = await axios.post(`/posts/${postId}/comment`, { text }); setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: res.data } : p)); } catch (e) { } };
+
+    // FIX: Real Share Functionality
+    const handleShare = async (post) => {
+        const shareData = {
+            title: 'Legacy Academy Intel',
+            text: `Check out this post by ${post.author?.username}`,
+            url: window.location.href // Ideally this would be a direct post link
+        };
+        if (navigator.share) {
+            try { await navigator.share(shareData); } catch (e) { }
+        } else {
+            navigator.clipboard.writeText(shareData.url);
+            alert("Link copied to clipboard.");
+        }
+    };
 
     const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); } catch (e) { } } };
 
@@ -549,6 +548,7 @@ const App = () => {
 
     if (!user) return (
         <div className="min-h-screen bg-black flex items-center justify-center p-6 relative">
+      // ... Login/Register UI (no changes requested here) ...
             <div className="liquid-bg" />
             <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
                 <h1 className="text-4xl font-black italic gold-text mb-8">LEGACY</h1>
@@ -626,7 +626,7 @@ const App = () => {
                             </div>
                         )}
                         <div className="space-y-6">
-                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} />)}
+                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} />)}
                             {posts.length === 0 && <div className="h-96 center text-gray-700 font-bold text-sm uppercase tracking-widest italic">Decrypting Feed...</div>}
                         </div>
                     </>
@@ -644,15 +644,15 @@ const App = () => {
                     </div>
 
                     <button onClick={() => setActiveTab('alerts')} className={`p-3 transition-all ${activeTab === 'alerts' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Bell className="w-6 h-6" /></button>
-                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}</div></button>
+                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[10px]">{user.username?.[0]}</div>}</div></button>
                 </div>
             </div>
 
             <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
-            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} />
+            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} />}
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onShare={handleShare} />}
 
             <div className="fixed top-4 right-4 z-50"><button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-black/50 rounded-full backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button></div>
         </div>
