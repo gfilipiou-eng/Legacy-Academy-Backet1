@@ -353,10 +353,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="relative bg-[#0a0a0a] w-full max-w-lg h-full sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
-                <div className="p-4 flex items-center justify-between border-b border-white/10 bg-black/50 backdrop-blur sticky top-0 z-10">
-                    <button onClick={() => activeList ? setActiveList(null) : onClose()}><Icons.Back className="w-6 h-6 text-white" /></button>
+                <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
+                    <button onClick={() => activeList ? setActiveList(null) : onClose()} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : profileUser.username}</div>
-                    <div className="w-6" /> {/* Placeholder to balance title, removed Menu icon */}
+                    <div className="w-10" /> {/* Spacer to balance the larger back button */}
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505]">
