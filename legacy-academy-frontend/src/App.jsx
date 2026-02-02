@@ -12,6 +12,8 @@ const BASE_URL = API_URL.replace('/api', '');
 const resolveMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http')) return path;
+    // Add timestamp to force cache refresh if it's a profile pic (heuristically)
+    const sep = path.includes('?') ? '&' : '?';
     return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 
@@ -19,11 +21,36 @@ const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((pa
 
 // --- COMPONENTS ---
 
-const DefaultAvatar = ({ name, size = "normal" }) => (
-    <div className={`w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-gray-500`}>
-        <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"}`} />
-    </div>
-);
+// Generates a consistent random gradient based on the username
+const DefaultAvatar = ({ name, size = "normal" }) => {
+    const COLORS = [
+        'from-red-500 to-orange-600',
+        'from-blue-500 to-cyan-600',
+        'from-emerald-500 to-green-600',
+        'from-violet-500 to-purple-600',
+        'from-amber-500 to-yellow-600',
+        'from-rose-500 to-pink-600',
+        'from-indigo-500 to-blue-600',
+        'from-teal-500 to-emerald-600'
+    ];
+
+    const hash = name ? name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
+    const gradient = COLORS[hash % COLORS.length];
+
+    return (
+        <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-inner relative overflow-hidden`}>
+            {/* Subtile texture overlay for premium feel */}
+            <div className="absolute inset-0 bg-white/10 mix-blend-overlay" />
+            {name ? (
+                <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase drops-shadow-md select-none`}>
+                    {name.substring(0, 1)}
+                </span>
+            ) : (
+                <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-80`} />
+            )}
+        </div>
+    );
+};
 
 const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete }) => {
     if (!post) return null;
@@ -54,7 +81,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
                             {post.comments?.map((c, i) => (
                                 <div key={i} className="flex gap-3 items-start">
                                     <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-white border border-white/10">
-                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}
+                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.authorName || c.user?.username} />}
                                     </div>
                                     <div className="text-sm">
                                         <span className="font-bold text-white mr-2">{c.authorName || c.user?.username}</span>
@@ -90,7 +117,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
     return (
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors cursor-pointer border-b border-white/5">
             <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender) }}>
-                {note.sender?.profilePic ? <img src={resolveMediaUrl(note.sender.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}
+                {note.sender?.profilePic ? <img src={resolveMediaUrl(note.sender.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={note.sender?.username} />}
             </div>
             <div className="flex-1 text-sm">
                 <span className="font-bold text-white mr-1" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender) }}>{note.sender?.username}</span>
@@ -128,7 +155,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
             <div className="p-4 flex items-center justify-between relative">
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => onViewProfile(post.author)}>
                     <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 overflow-hidden bg-gray-900 shadow-lg shadow-yellow-500/10">
-                        {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}
+                        {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
                     </div>
                     <div><h4 className="font-bold text-sm text-white drop-shadow-md">{post.author?.username}</h4><p className="text-[10px] text-gray-400 uppercase tracking-widest leading-none">Verified Agent</p></div>
                 </div>
@@ -199,7 +226,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             {post.comments?.map((c, idx) => (
                                 <div key={idx} className="flex gap-3 items-start">
                                     <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
-                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}
+                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.authorName || c.user?.username} />}
                                     </div>
                                     <div className="bg-white/10 rounded-2xl px-4 py-2 flex-1 shadow-lg backdrop-blur-sm border border-white/5">
                                         <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{c.authorName || c.user?.username}</span>
@@ -244,7 +271,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
                         {allUsers.filter(u => u._id !== user._id).map(u => (
                             <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                <div className="relative"><div className="w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md">{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}</div><div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" /></div>
+                                <div className="relative"><div className="w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md">{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" /></div>
                                 <div><div className="font-bold text-sm text-white">{u.username}</div><div className="text-[10px] text-gray-500 uppercase tracking-tighter">Online • Agent</div></div>
                             </div>
                         ))}
@@ -255,7 +282,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}</div>
+                                <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat.username} />}</div>
                                 <div><div className="font-bold text-sm">{activeChat.username}</div><div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Active Now</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
@@ -273,7 +300,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
     );
 };
 
-const SettingsModal = ({ isOpen, onClose, logout, user }) => {
+const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isPrivate, setIsPrivate] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [bio, setBio] = useState(user.bio || "Entrepreneur. Legacy Member.");
@@ -292,22 +319,39 @@ const SettingsModal = ({ isOpen, onClose, logout, user }) => {
                     <div className="p-6 text-center space-y-4">
                         <h3 className="text-white font-bold text-lg">Update Profile</h3>
                         <div onClick={() => fileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 cursor-pointer relative group shadow-lg">
-                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" />}
+                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={user.username} />}
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8" /></div>
                         </div>
                         <input type="file" ref={fileRef} hidden onChange={async (e) => {
                             const file = e.target.files[0];
                             if (file) {
                                 const fd = new FormData(); fd.append('image', file);
-                                try { await axios.post('/users/profile-pic', fd); alert("Profile Updated! Please refresh."); window.location.reload(); } catch (e) { alert("Failed to update."); }
+                                try {
+                                    const res = await axios.post('/users/profile-pic', fd);
+                                    alert("Profile Updated!");
+                                    // CRITICAL FIX: Update State and Local Storage immediately
+                                    const updatedUser = res.data;
+                                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                                    onUpdateUser(updatedUser);
+                                } catch (e) { alert("Failed to update."); }
                             }
                         }} />
                         <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-yellow-500 outline-none resize-none h-24" placeholder="Enter your bio..." />
                         <button onClick={async () => {
                             try {
-                                await axios.put(`/users/${user._id}`, { bio });
-                                alert("Bio Updated Successfully.");
-                                window.location.reload();
+                                // CRITICAL FIX: Update Bio and Sync State
+                                const res = await axios.put(`/users/${user._id}`, { bio });
+                                alert("Bio Updated!");
+                                if (res.data) {
+                                    localStorage.setItem('user', JSON.stringify(res.data));
+                                    onUpdateUser(res.data);
+                                } else {
+                                    // Fallback if backend returns generic success
+                                    const updatedUser = { ...user, bio };
+                                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                                    onUpdateUser(updatedUser);
+                                }
+                                setIsEditing(false);
                             } catch (e) { console.error(e); alert("Failed to update bio."); }
                         }} className="w-full py-3 bg-yellow-500 rounded-xl text-black font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">SAVE CHANGES</button>
                         <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500 hover:text-white font-bold uppercase tracking-wider">Cancel</button>
@@ -334,18 +378,24 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [activeList, setActiveList] = useState(null); // 'followers' | 'following' | null
     const userPosts = posts.filter(p => p.username === profileUser?.username);
 
+    // FIX: Prioritize currentUser data if viewing own profile to see live updates
     useEffect(() => {
-        if (profileUser?.username) {
+        if (profileUser?._id === currentUser?._id) {
+            setUserData(currentUser);
+        } else if (profileUser?.username) {
             axios.get(`/users/username/${profileUser.username}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
         }
-    }, [profileUser]);
+    }, [profileUser, currentUser]);
 
     if (!isOpen || !profileUser) return null;
 
+    // Use synced userData for display
+    const displayUser = (profileUser?._id === currentUser?._id) ? currentUser : userData;
+
     // Get List Data
     const getListUsers = () => {
-        if (!activeList || !userData) return [];
-        const ids = activeList === 'followers' ? userData.followers : userData.following;
+        if (!activeList || !displayUser) return [];
+        const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
         return allUsers.filter(u => ids?.includes(u._id));
     };
 
@@ -355,7 +405,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="relative bg-[#0a0a0a] w-full max-w-lg h-full sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
                     <button onClick={() => activeList ? setActiveList(null) : onClose()} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
-                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : profileUser.username}</div>
+                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : displayUser.username}</div>
                     <div className="w-10" /> {/* Spacer to balance the larger back button */}
                 </div>
 
@@ -366,7 +416,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             {getListUsers().map(u => (
                                 <div key={u._id} onClick={() => { onViewProfile(u); setActiveList(null); }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer">
                                     <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                        {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}
+                                        {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
                                     </div>
                                     <div className="font-bold text-white text-sm">{u.username}</div>
                                 </div>
@@ -376,23 +426,23 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
-                                    {profileUser.profilePic ? <img src={resolveMediaUrl(profileUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" />}
+                                    {displayUser.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser.username} />}
                                 </div>
                                 <div className="flex gap-4 sm:gap-8 text-center flex-1 justify-end px-2">
                                     <div><div className="font-black text-white text-lg sm:text-xl">{userPosts.length}</div><div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Posts</div></div>
                                     <div onClick={() => setActiveList('followers')} className="cursor-pointer hover:scale-105 transition-transform">
-                                        <div className="font-black text-white text-lg sm:text-xl text-yellow-500">{userData?.followers?.length || 0}</div>
+                                        <div className="font-black text-white text-lg sm:text-xl text-yellow-500">{displayUser?.followers?.length || 0}</div>
                                         <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Followers</div>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="cursor-pointer hover:scale-105 transition-transform">
-                                        <div className="font-black text-white text-lg sm:text-xl">{userData?.following?.length || 0}</div>
+                                        <div className="font-black text-white text-lg sm:text-xl">{displayUser?.following?.length || 0}</div>
                                         <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Following</div>
                                     </div>
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
-                                <div className="font-black text-white text-xl mb-2">{profileUser.username}</div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">{profileUser.bio || "Entrepreneur. Legacy Member."}</div>
+                                <div className="font-black text-white text-xl mb-2">{displayUser.username}</div>
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">{displayUser.bio || "Entrepreneur. Legacy Member."}</div>
                             </div>
 
                             <div className="w-full h-px bg-white/10 mb-4" />
@@ -435,7 +485,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD INTEL</h2>
                 <div className="flex gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                        {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar />}
+                        {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
                     </div>
                     <textarea id="c-desc" placeholder="Decrypt your thoughts..." className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
                 </div>
@@ -594,12 +644,12 @@ const App = () => {
                     </div>
 
                     <button onClick={() => setActiveTab('alerts')} className={`p-3 transition-all ${activeTab === 'alerts' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Bell className="w-6 h-6" /></button>
-                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[10px]">{user.username?.[0]}</div>}</div></button>
+                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}</div></button>
                 </div>
             </div>
 
             <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
-            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} />
+            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
             {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} />}
