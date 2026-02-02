@@ -19,7 +19,6 @@ const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((pa
 
 // --- COMPONENTS ---
 
-// Full Screen Post View (Zoom)
 const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
@@ -28,14 +27,10 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
     return (
         <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
             <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 z-50"><Icons.X className="w-6 h-6 text-white" /></button>
-
             <div className="w-full max-w-4xl h-[90vh] bg-[#0a0a0a] rounded-3xl overflow-hidden flex flex-col md:flex-row border border-white/10 shadow-2xl">
-                {/* Media Side */}
-                <div className="flex-1 bg-black flex items-center justify-center relative">
-                    {post.image ? <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" /> : <div className="text-gray-700 font-black text-4xl italic">LEGACY</div>}
+                <div className="flex-1 bg-black flex items-center justify-center relative shadow-inner">
+                    {post.image ? <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" /> : <div className="p-10 text-center font-bold text-2xl text-white italic">{post.desc}</div>}
                 </div>
-
-                {/* Details Side */}
                 <div className="w-full md:w-[400px] flex flex-col bg-[#111] border-l border-white/10">
                     <div className="p-4 border-b border-white/10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -154,9 +149,17 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 </div>
             </div>
 
-            <div onClick={() => onOpenDetail(post)} className="aspect-square bg-black overflow-hidden relative shadow-inner cursor-pointer">
-                {post.image ? <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-800 font-bold text-4xl italic">LEGACY</div>}
-            </div>
+            {post.image ? (
+                <div onClick={() => onOpenDetail(post)} className="aspect-square bg-black overflow-hidden relative shadow-inner cursor-pointer">
+                    <img src={resolveMediaUrl(post.image)} className="w-full h-full object-contain bg-black" />
+                </div>
+            ) : (
+                <div onClick={() => onOpenDetail(post)} className="p-8 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center min-h-[300px] cursor-pointer">
+                    <p className="text-xl md:text-2xl font-black text-center text-white italic leading-relaxed">
+                        "{post.desc}"
+                    </p>
+                </div>
+            )}
 
             <div className="p-4 bg-gradient-to-b from-transparent to-black/40">
                 <div className="flex items-center justify-between mb-4">
@@ -169,10 +172,13 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 </div>
 
                 <div className="font-bold text-sm mb-2 text-white/90">{post.likes?.length || 0} Likes</div>
-                <div className="text-sm mb-3">
-                    <span className="font-bold mr-2 text-white">{post.author?.username}</span>
-                    <span className="text-gray-200">{parseHashtags(post.desc)}</span>
-                </div>
+
+                {post.image && (
+                    <div className="text-sm mb-3">
+                        <span className="font-bold mr-2 text-white">{post.author?.username}</span>
+                        <span className="text-gray-200">{parseHashtags(post.desc)}</span>
+                    </div>
+                )}
 
                 <button onClick={() => setShowComments(!showComments)} className="text-xs text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-colors">
                     {post.comments?.length > 0 ? `View all ${post.comments.length} comments` : 'Add a comment'}
@@ -377,8 +383,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
                             <div className="grid grid-cols-3 gap-0.5 mt-2 border-t border-white/10 pt-4">
                                 {userPosts.map(p => (
-                                    <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-black overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity">
-                                        {p.image ? <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" /> : null}
+                                    <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-black overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center">
+                                        {p.image ? (
+                                            <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-[10px] text-gray-500 p-1 text-center font-bold">{p.desc?.substring(0, 10)}...</span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -510,7 +520,13 @@ const App = () => {
         </div>
     );
 
-    const filteredPosts = posts.filter(p => p.desc?.toLowerCase().includes(searchQuery.toLowerCase()) || p.author?.username?.toLowerCase().includes(searchQuery.toLowerCase()));
+    // FIX: Safe search filtering to prevent crash on missing desc/author
+    const filteredPosts = posts.filter(p => {
+        const q = searchQuery.toLowerCase();
+        const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
+        const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : false;
+        return descMatch || authorMatch;
+    });
 
     return (
         <div className="min-h-screen bg-black text-white relative font-sans">
@@ -550,7 +566,7 @@ const App = () => {
                     <button onClick={() => setActiveTab('home')} className={`p-3 transition-all ${activeTab === 'home' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Home className="w-6 h-6" /></button>
                     <button onClick={() => setActiveTab('search')} className={`p-3 transition-all ${activeTab === 'search' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Search className="w-6 h-6" /></button>
 
-                    <div className="w-16 h-16 bg-gradient-to-tr from-yellow-600 to-yellow-400 center -mt-8 rounded-full border-4 border-black shadow-2xl shadow-yellow-500/30 cursor-pointer hover:scale-105 active:scale-95 transition-all z-50"
+                    <div className="w-16 h-16 bg-gradient-to-tr from-yellow-600 to-yellow-400 center -mt-8 rounded-full border-4 border-black shadow-2xl shadow-yellow-500/30 cursor-pointer hover:scale-105 active:scale-95 transition-all z-50 flex items-center justify-center p-0"
                         onClick={() => setIsCreateOpen(true)}>
                         <Icons.Plus className="w-8 h-8 text-black drop-shadow-md" />
                     </div>
