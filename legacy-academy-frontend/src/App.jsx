@@ -302,21 +302,26 @@ const SettingsModal = ({ isOpen, onClose, logout, user }) => {
                                 try { await axios.post('/users/profile-pic', fd); alert("Profile Updated! Please refresh."); window.location.reload(); } catch (e) { alert("Failed to update."); }
                             }
                         }} />
-                        <input value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded p-2 text-white text-center text-sm" placeholder="Bio" />
-                        {/* Save Bio Button Logic needed in Backend - placeholder for now */}
-                        <button onClick={() => { alert("Bio Saved (Visual Only)"); setIsEditing(false); }} className="w-full py-2 bg-yellow-500 rounded text-black font-bold">SAVE</button>
-                        <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500 hover:text-white">Cancel</button>
+                        <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-yellow-500 outline-none resize-none h-24" placeholder="Enter your bio..." />
+                        <button onClick={async () => {
+                            try {
+                                await axios.put(`/users/${user._id}`, { bio });
+                                alert("Bio Updated Successfully.");
+                                window.location.reload();
+                            } catch (e) { console.error(e); alert("Failed to update bio."); }
+                        }} className="w-full py-3 bg-yellow-500 rounded-xl text-black font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">SAVE CHANGES</button>
+                        <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500 hover:text-white font-bold uppercase tracking-wider">Cancel</button>
                     </div>
                 ) : (
                     <div className="p-2">
-                        <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5 cursor-pointer">
-                            <span className="text-sm">Private Account</span>
+                        <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5 cursor-pointer rounded-xl">
+                            <span className="text-sm font-bold text-gray-300">Private Account</span>
                             <div onClick={() => setIsPrivate(!isPrivate)} className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-green-500' : 'bg-gray-700'}`}>
                                 <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${isPrivate ? 'translate-x-4' : ''}`} />
                             </div>
                         </div>
-                        <button onClick={() => setIsEditing(true)} className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between text-sm"><span>Edit Profile</span><Icons.ChevronRight className="w-4 h-4 text-gray-600" /></button>
-                        <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
+                        <button onClick={() => setIsEditing(true)} className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between text-sm rounded-xl font-bold text-gray-300"><span>Edit Profile</span><Icons.ChevronRight className="w-4 h-4 text-gray-600" /></button>
+                        <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5 rounded-xl"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
                     </div>
                 )}
             </div>
@@ -347,14 +352,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     return (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[95vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
-                <div className="p-3 flex items-center justify-between border-b border-white/10 bg-black/50 backdrop-blur">
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="relative bg-[#0a0a0a] w-full max-w-lg h-full sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
+                <div className="p-4 flex items-center justify-between border-b border-white/10 bg-black/50 backdrop-blur sticky top-0 z-10">
                     <button onClick={() => activeList ? setActiveList(null) : onClose()}><Icons.Back className="w-6 h-6 text-white" /></button>
-                    <div className="font-bold text-white text-sm">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : profileUser.username}</div>
+                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : profileUser.username}</div>
                     <div className="w-6" /> {/* Placeholder to balance title, removed Menu icon */}
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar relative">
+                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505]">
                     {activeList ? (
                         <div className="p-2 space-y-2">
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">No users found.</div>}
@@ -368,39 +373,47 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             ))}
                         </div>
                     ) : (
-                        <div className="p-5">
+                        <div className="p-4 sm:p-6">
                             <div className="flex items-center justify-between mb-6">
-                                <div className="w-20 h-20 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20">
+                                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
                                     {profileUser.profilePic ? <img src={resolveMediaUrl(profileUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" />}
                                 </div>
-                                <div className="flex gap-6 text-center">
-                                    <div><div className="font-black text-white text-lg">{userPosts.length}</div><div className="text-xs text-gray-400 uppercase tracking-wider">Posts</div></div>
+                                <div className="flex gap-4 sm:gap-8 text-center flex-1 justify-end px-2">
+                                    <div><div className="font-black text-white text-lg sm:text-xl">{userPosts.length}</div><div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Posts</div></div>
                                     <div onClick={() => setActiveList('followers')} className="cursor-pointer hover:scale-105 transition-transform">
-                                        <div className="font-black text-white text-lg text-yellow-500">{userData?.followers?.length || 0}</div>
-                                        <div className="text-xs text-gray-400 uppercase tracking-wider">Followers</div>
+                                        <div className="font-black text-white text-lg sm:text-xl text-yellow-500">{userData?.followers?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Followers</div>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="cursor-pointer hover:scale-105 transition-transform">
-                                        <div className="font-black text-white text-lg">{userData?.following?.length || 0}</div>
-                                        <div className="text-xs text-gray-400 uppercase tracking-wider">Following</div>
+                                        <div className="font-black text-white text-lg sm:text-xl">{userData?.following?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Following</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="mb-6">
-                                <div className="font-black text-white text-xl mb-1">{profileUser.username}</div>
-                                {/* Dynamic Bio */}
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-xs">{profileUser.bio || "Entrepreneur. Legacy Member."}</div>
+                            <div className="mb-6 px-1">
+                                <div className="font-black text-white text-xl mb-2">{profileUser.username}</div>
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">{profileUser.bio || "Entrepreneur. Legacy Member."}</div>
                             </div>
-                            <div className="grid grid-cols-3 gap-1 mt-2 border-t border-white/10 pt-4">
-                                {userPosts.map(p => (
-                                    <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-white/10 rounded-lg overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center">
-                                        {p.image ? (
-                                            <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="text-[10px] text-gray-500 p-2 text-center font-bold break-words">{p.desc?.substring(0, 15)}...</span>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+
+                            <div className="w-full h-px bg-white/10 mb-4" />
+
+                            {userPosts.length === 0 ? (
+                                <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">No Intel Uploaded Yet</div>
+                            ) : (
+                                <div className="grid grid-cols-3 gap-1 pb-20">
+                                    {userPosts.map(p => (
+                                        <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center">
+                                            {p.image ? (
+                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
+                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
