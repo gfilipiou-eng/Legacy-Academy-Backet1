@@ -48,14 +48,14 @@ const NotificationItem = ({ note, onDelete, onViewProfile }) => {
                 <span className="font-bold text-white mr-1" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender) }}>{note.sender?.username}</span>
                 <span className="text-gray-400 font-normal">
                     {note.type === 'like' && 'liked your post.'}
-                    {note.type === 'comment' && 'commented: "Nice work"'}
+                    {note.type === 'comment' && 'commented.'}
                     {note.type === 'follow' && 'started following you.'}
                     {note.type === 'message' && 'sent you a message.'}
                 </span>
-                <div className="text-[10px] text-gray-600 mt-0.5">2h ago</div>
+                <div className="text-[10px] text-gray-600 mt-0.5">Just now</div>
             </div>
             {note.type === 'follow' ?
-                <button className="px-3 py-1.5 bg-blue-600 rounded-lg text-xs font-bold text-white">Follow</button> :
+                <button className="px-3 py-1.5 bg-blue-600 rounded-lg text-xs font-bold text-white">Follow Back</button> :
                 (note.postImage && <div className="w-10 h-10 rounded-md overflow-hidden bg-gray-800"><img src={note.postImage} className="w-full h-full object-cover" /></div>)
             }
         </motion.div>
@@ -79,10 +79,10 @@ const UserListModal = ({ isOpen, onClose, users, title, currentUser, onViewProfi
                             </div>
                             <div className="flex-1">
                                 <div className="font-semibold text-sm text-white">{u.username}</div>
-                                <div className="text-xs text-gray-500">Legacy Member</div>
                             </div>
                         </div>
                     ))}
+                    {users.length === 0 && <div className="p-4 text-center text-gray-500 text-xs">No users found.</div>}
                 </div>
             </div>
         </div>
@@ -169,19 +169,8 @@ const ChatModal = ({ isOpen, onClose, user, following }) => {
     const [activeChat, setActiveChat] = useState(null);
     const bottomRef = useRef(null);
 
-    // Mock response logic
-    useEffect(() => {
-        if (messages[activeChat?._id]?.length > 0) {
-            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-            const lastMsg = messages[activeChat._id][messages[activeChat._id].length - 1];
-            if (lastMsg.sender === user._id) {
-                setTimeout(() => {
-                    const reply = { id: Date.now(), text: "Received.", sender: activeChat._id, createdAt: new Date().toISOString() };
-                    setMessages(prev => ({ ...prev, [activeChat._id]: [...(prev[activeChat._id] || []), reply] }));
-                }, 2000);
-            }
-        }
-    }, [messages, activeChat]);
+    // Mock response logic removed for realism - users must talk first
+    // Keeping data structure for persistence
 
     if (!isOpen) return null;
 
@@ -202,6 +191,7 @@ const ChatModal = ({ isOpen, onClose, user, following }) => {
                         <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6 text-white" /></button>
                     </div>
                     <div className="flex-1 overflow-y-auto">
+                        {following.length === 0 && <div className="p-4 text-gray-500 text-xs center">No followers to chat with.</div>}
                         {following.map(u => (
                             <div key={u._id} onClick={() => setActiveChat(u)} className="p-4 flex items-center gap-3 hover:bg-white/5 cursor-pointer">
                                 <div className="relative">
@@ -292,6 +282,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const userPosts = posts.filter(p => p.username === profileUser?.username);
     const isOwnProfile = profileUser?.username === currentUser?.username;
 
+    // Use EFFECT to get fresh user data including real follower count
+    useEffect(() => {
+        if (profileUser?.username) {
+            axios.get(`/users/username/${profileUser.username}`).then(res => {
+                setUserData(res.data);
+            }).catch(() => setUserData(profileUser));
+        }
+    }, [profileUser]);
+
     if (!isOpen || !profileUser) return null;
 
     return (
@@ -313,8 +312,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
                             <div className="flex gap-6 text-center">
                                 <div><div className="font-bold text-white text-lg">{userPosts.length}</div><div className="text-xs text-gray-400">Posts</div></div>
-                                <div><div className="font-bold text-white text-lg">1.2M</div><div className="text-xs text-gray-400">Followers</div></div>
-                                <div><div className="font-bold text-white text-lg">0</div><div className="text-xs text-gray-400">Following</div></div>
+                                {/* REAL DATA BINDING */}
+                                <div><div className="font-bold text-white text-lg">{userData?.followers?.length || 0}</div><div className="text-xs text-gray-400">Followers</div></div>
+                                <div><div className="font-bold text-white text-lg">{userData?.following?.length || 0}</div><div className="text-xs text-gray-400">Following</div></div>
                             </div>
                         </div>
                         <div className="mb-4">
@@ -368,11 +368,8 @@ const App = () => {
     const [profileUser, setProfileUser] = useState(null);
     const [searchOpen, setSearchOpen] = useState(false);
 
-    // Initial Mock Alerts
-    const [alerts, setAlerts] = useState([
-        { id: 1, type: 'like', sender: { username: 'tristan_tate', profilePic: '/uploads/tristan.jpg' }, postImage: 'https://via.placeholder.com/50' },
-        { id: 2, type: 'comment', sender: { username: 'charlie', profilePic: '' }, postImage: 'https://via.placeholder.com/50' },
-    ]);
+    // REAL ALERTS (Empty default)
+    const [alerts, setAlerts] = useState([]);
 
     const { t } = useTranslation(user);
 
@@ -435,7 +432,7 @@ const App = () => {
                     <button onClick={() => setCreateOpen(true)}><Icons.Plus className="w-6 h-6 text-white" /></button>
                     <button onClick={() => setChatOpen(true)} className="relative">
                         <Icons.MessageCircle className="w-6 h-6 text-white" />
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-bold">2</div>
+                        {alerts.length > 0 && <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-bold">{alerts.length}</div>}
                     </button>
                 </div>
             </header>
@@ -447,13 +444,18 @@ const App = () => {
                             <h2 className="font-bold text-xl text-white">Notifications</h2>
                         </div>
                         <div className="space-y-1">
-                            {alerts.map((n) => <NotificationItem key={n.id} note={n} onViewProfile={viewProfile} onDelete={() => { }} />)}
+                            {alerts.length === 0 ? (
+                                <div className="text-center text-gray-500 py-10 text-sm">No new notifications.</div>
+                            ) : (
+                                alerts.map((n) => <NotificationItem key={n.id} note={n} onViewProfile={viewProfile} onDelete={() => { }} />)
+                            )}
                         </div>
                     </div>
                 ) : (
                     // Post list
                     <div className="divide-y divide-[#1a1a1a]">
                         <Highlights />
+                        {posts.length === 0 && <div className="text-center py-10 text-gray-500">No posts yet.</div>}
                         {posts.map(post => (
                             <div key={post._id} className="bg-black pb-4">
                                 <div className="px-3 py-3 flex items-center justify-between">
