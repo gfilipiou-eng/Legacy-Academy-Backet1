@@ -19,6 +19,72 @@ const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((pa
 
 // --- COMPONENTS ---
 
+// Full Screen Post View (Zoom)
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete }) => {
+    if (!post) return null;
+    const [commentText, setCommentText] = useState('');
+    const isOwner = post.author?._id === user._id || post.author === user._id;
+
+    return (
+        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
+            <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 z-50"><Icons.X className="w-6 h-6 text-white" /></button>
+
+            <div className="w-full max-w-4xl h-[90vh] bg-[#0a0a0a] rounded-3xl overflow-hidden flex flex-col md:flex-row border border-white/10 shadow-2xl">
+                {/* Media Side */}
+                <div className="flex-1 bg-black flex items-center justify-center relative">
+                    {post.image ? <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" /> : <div className="text-gray-700 font-black text-4xl italic">LEGACY</div>}
+                </div>
+
+                {/* Details Side */}
+                <div className="w-full md:w-[400px] flex flex-col bg-[#111] border-l border-white/10">
+                    <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden">
+                                {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full">{post.author?.username?.[0]}</div>}
+                            </div>
+                            <span className="font-bold text-white">{post.author?.username}</span>
+                        </div>
+                        {isOwner && <button onClick={() => { onDelete(post._id); onClose(); }} className="text-red-500 hover:text-red-400"><Icons.Trash className="w-5 h-5" /></button>}
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div className="mb-4 text-sm text-gray-300">{parseHashtags(post.desc)}</div>
+                        <div className="space-y-4">
+                            {post.comments?.map((c, i) => (
+                                <div key={i} className="flex gap-3 items-start">
+                                    <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-white">
+                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : (c.authorName?.[0] || c.user?.username?.[0] || '?')}
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className="font-bold text-white mr-2">{c.authorName || c.user?.username}</span>
+                                        <span className="text-gray-400">{c.text}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="p-4 border-t border-white/10 bg-black/20">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex gap-4">
+                                <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${post.likes?.includes(user._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
+                                <button onClick={() => onDislike(post._id)}><Icons.ThumbsDown className="w-7 h-7 text-white hover:text-red-500" /></button>
+                                <Icons.Send className="w-7 h-7 text-white" />
+                            </div>
+                            <Icons.Bookmark className="w-7 h-7 text-white" />
+                        </div>
+                        <div className="font-bold text-white text-sm mb-2">{post.likes?.length} Likes</div>
+                        <form onSubmit={(e) => { e.preventDefault(); onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2">
+                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-transparent text-sm outline-none text-white placeholder-gray-500" />
+                            <button className="text-blue-500 font-bold text-sm">Post</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const NotificationItem = ({ note, onViewProfile }) => {
     return (
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors cursor-pointer border-b border-white/5">
@@ -43,7 +109,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile }) => {
+const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail }) => {
     const [showComments, setShowComments] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [commentText, setCommentText] = useState('');
@@ -88,7 +154,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 </div>
             </div>
 
-            <div className="aspect-square bg-black overflow-hidden relative shadow-inner">
+            <div onClick={() => onOpenDetail(post)} className="aspect-square bg-black overflow-hidden relative shadow-inner cursor-pointer">
                 {post.image ? <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-800 font-bold text-4xl italic">LEGACY</div>}
             </div>
 
@@ -117,8 +183,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mt-4 space-y-4 overflow-hidden">
                             {post.comments?.map((c, idx) => (
                                 <div key={idx} className="flex gap-3 items-start">
-                                    <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm">
-                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full center text-[10px] bg-gray-700">{c.authorName?.[0] || c.user?.username?.[0]}</div>}
+                                    <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
+                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : (c.authorName?.[0] || c.user?.username?.[0] || '?')}
                                     </div>
                                     <div className="bg-white/10 rounded-2xl px-4 py-2 flex-1 shadow-lg backdrop-blur-sm border border-white/5">
                                         <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{c.authorName || c.user?.username}</span>
@@ -195,7 +261,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
 const SettingsModal = ({ isOpen, onClose, logout, user }) => {
     const [isPrivate, setIsPrivate] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [bio, setBio] = useState(user.bio || "Entrepreneur. Legacy Member.");
     const fileRef = useRef(null);
+
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 z-[250] flex items-center justify-center p-4">
@@ -219,6 +287,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user }) => {
                                 try { await axios.put('/users/profile', fd); alert("Profile Updated! Please refresh."); window.location.reload(); } catch (e) { alert("Failed to update."); }
                             }
                         }} />
+                        <input value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded p-2 text-white text-center text-sm" placeholder="Bio" />
+                        {/* Save Bio Button Logic needed in Backend - placeholder for now */}
+                        <button onClick={() => { alert("Bio Saved (Visual Only)"); setIsEditing(false); }} className="w-full py-2 bg-yellow-500 rounded text-black font-bold">SAVE</button>
                         <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500 hover:text-white">Cancel</button>
                     </div>
                 ) : (
@@ -238,7 +309,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail }) => {
     const [userData, setUserData] = useState(profileUser);
     const [activeList, setActiveList] = useState(null); // 'followers' | 'following' | null
     const userPosts = posts.filter(p => p.username === profileUser?.username);
@@ -301,11 +372,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
                             <div className="mb-6">
                                 <div className="font-black text-white text-xl mb-1">{profileUser.username}</div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-xs">Entrepreneur. Legacy Member. Building the future.</div>
+                                {/* Dynamic Bio */}
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-xs">{profileUser.bio || "Entrepreneur. Legacy Member."}</div>
                             </div>
                             <div className="grid grid-cols-3 gap-0.5 mt-2 border-t border-white/10 pt-4">
                                 {userPosts.map(p => (
-                                    <div key={p._id} className="aspect-square bg-gray-900 border border-black overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity">
+                                    <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-black overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity">
                                         {p.image ? <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" /> : null}
                                     </div>
                                 ))}
@@ -376,6 +448,8 @@ const App = () => {
     const [profileUser, setProfileUser] = useState(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [alerts, setAlerts] = useState([]);
+    const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
+    const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'forgot'
 
     useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
     useEffect(() => { if (user) { fetchPosts(); fetchUsers(); } }, [user]);
@@ -397,12 +471,40 @@ const App = () => {
             <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
                 <h1 className="text-4xl font-black italic gold-text mb-8">LEGACY</h1>
                 <div className="space-y-4">
-                    <input type="email" placeholder="Agent Email" id="l-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                    <input type="password" placeholder="Security Key" id="l-pass" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                    <button onClick={async () => {
-                        const email = document.getElementById('l-email').value; const password = document.getElementById('l-pass').value;
-                        try { const res = await axios.post('/auth/login', { email, password }); localStorage.setItem('token', res.data.token); localStorage.setItem('user', JSON.stringify(res.data.user)); setUser(res.data.user); } catch (e) { alert("Access Denied."); }
-                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">INITIALIZE SESSION</button>
+                    {authMode === 'login' && (
+                        <>
+                            <input type="email" placeholder="Agent Email" id="l-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            <input type="password" placeholder="Security Key" id="l-pass" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            <button onClick={async () => {
+                                const email = document.getElementById('l-email').value; const password = document.getElementById('l-pass').value;
+                                try { const res = await axios.post('/auth/login', { email, password }); localStorage.setItem('token', res.data.token); localStorage.setItem('user', JSON.stringify(res.data.user)); setUser(res.data.user); } catch (e) { alert("Access Denied."); }
+                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">INITIALIZE SESSION</button>
+                            <div className="flex justify-between text-xs text-gray-500 px-2">
+                                <span onClick={() => setAuthMode('register')} className="cursor-pointer hover:text-white">Join Protocol</span>
+                                <span onClick={() => setAuthMode('forgot')} className="cursor-pointer hover:text-white">Forgot Key?</span>
+                            </div>
+                        </>
+                    )}
+                    {authMode === 'register' && (
+                        <>
+                            <input type="text" placeholder="Codename (Username)" id="r-user" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            <input type="email" placeholder="Agent Email" id="r-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            <input type="password" placeholder="Create Key" id="r-pass" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            <button onClick={async () => {
+                                const username = document.getElementById('r-user').value; const email = document.getElementById('r-email').value; const password = document.getElementById('r-pass').value;
+                                try { await axios.post('/auth/register', { username, email, password }); alert("Protocol Joined. Login now."); setAuthMode('login'); } catch (e) { alert("Registration Failed."); }
+                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">JOIN PROTOCOL</button>
+                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white" onClick={() => setAuthMode('login')}>Back to Login</div>
+                        </>
+                    )}
+                    {authMode === 'forgot' && (
+                        <>
+                            <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
+                            <input type="email" placeholder="Agent Email" id="f-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            <button onClick={() => alert("Reset Key Sent (Simulation)")} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">SEND KEY</button>
+                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white" onClick={() => setAuthMode('login')}>Back to Login</div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -436,7 +538,7 @@ const App = () => {
                             </div>
                         )}
                         <div className="space-y-6">
-                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} />)}
+                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} />)}
                             {posts.length === 0 && <div className="h-96 center text-gray-700 font-bold text-sm uppercase tracking-widest italic">Decrypting Feed...</div>}
                         </div>
                     </>
@@ -460,8 +562,10 @@ const App = () => {
 
             <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} />
-            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} />
+            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} />}
+
             <div className="fixed top-4 right-4 z-50"><button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-black/50 rounded-full backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button></div>
         </div>
     );
