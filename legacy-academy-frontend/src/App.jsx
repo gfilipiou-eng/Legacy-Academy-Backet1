@@ -50,11 +50,106 @@ const SettingsModal = ({ isOpen, onClose, user, logout }) => {
                     <button onClick={logout} className="w-full py-4 bg-red-500/10 text-red-500 font-black uppercase rounded-2xl mt-4 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
                         {t('LOGOUT')}
                     </button>
-                    <button onClick={() => { if(confirm(t('CONFIRM_DELETE'))) alert('Feature coming soon'); }} className="w-full py-3 text-gray-600 text-[10px] font-bold uppercase tracking-widest hover:text-red-500 transition-colors">
+                    <button onClick={() => { if (confirm(t('CONFIRM_DELETE'))) alert('Feature coming soon'); }} className="w-full py-3 text-gray-600 text-[10px] font-bold uppercase tracking-widest hover:text-red-500 transition-colors">
                         {t('DELETE_ACCOUNT')}
                     </button>
                 </div>
             </div>
+        </div>
+    );
+};
+
+const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
+    const { t } = useTranslation(user);
+    const [preview, setPreview] = useState(null);
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
+            <div className="w-full max-w-lg bg-[#111] rounded-t-3xl sm:rounded-3xl border border-white/10 shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                    <h2 className="text-lg font-black italic text-yellow-500 uppercase flex items-center gap-2"><Icons.Plus className="w-5 h-5" /> NEW INTEL</h2>
+                    <button onClick={onClose}><Icons.X className="w-6 h-6 text-gray-400 hover:text-white" /></button>
+                </div>
+                <div className="p-6 space-y-4">
+                    <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0">
+                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold">{user.username[0]}</div>}
+                        </div>
+                        <textarea id="post-desc" placeholder="What's the intel, Agent?" className="flex-1 bg-transparent border-none text-white resize-none h-24 outline-none text-lg p-2 placeholder-gray-600" />
+                    </div>
+
+                    <div className="relative group cursor-pointer" onClick={() => document.getElementById('post-file').click()}>
+                        {preview ? (
+                            <div className="w-full h-64 rounded-xl overflow-hidden relative">
+                                <img src={preview} className="w-full h-full object-cover" />
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); document.getElementById('post-file').value = ''; }} className="absolute top-2 right-2 p-1 bg-black/50 rounded-full"><Icons.X className="w-4 h-4 text-white" /></button>
+                            </div>
+                        ) : (
+                            <div className="w-full h-32 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-yellow-500/50 hover:bg-yellow-500/5 transition-all">
+                                <Icons.Camera className="w-8 h-8 text-gray-500" />
+                                <span className="text-xs font-bold text-gray-600 uppercase tracking-widest">ADD MEDIA</span>
+                            </div>
+                        )}
+                        <input type="file" id="post-file" hidden onChange={(e) => {
+                            if (e.target.files[0]) setPreview(URL.createObjectURL(e.target.files[0]));
+                        }} />
+                    </div>
+
+                    <button onClick={async () => {
+                        const desc = document.getElementById('post-desc').value;
+                        const file = document.getElementById('post-file').files[0];
+                        if (!desc && !file) return alert("EMPTY INTEL");
+                        const button = document.getElementById('publish-btn');
+                        button.innerText = "UPLOADING...";
+                        button.disabled = true;
+
+                        const fd = new FormData();
+                        fd.append('desc', desc);
+                        if (file) fd.append('image', file);
+                        try {
+                            await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                            onSuccess();
+                            setPreview(null);
+                            playSound('magic');
+                            explodeEffect();
+                        } catch (e) { alert("DEPLOY FAILED"); button.innerText = "PUBLISH INTEL"; button.disabled = false; }
+                    }} id="publish-btn" className="w-full py-4 bg-yellow-500 rounded-xl font-black uppercase text-black hover:scale-105 transition-transform shadow-lg shadow-yellow-500/20">{t('PUBLISH_INTEL')}</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SideMenu = ({ isOpen, onClose, user, logout, onViewProfile, onOpenSettings, onOpenNotifications, setActiveTab }) => {
+    const { t } = useTranslation(user);
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-[150] flex">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} className="relative w-3/4 max-w-xs bg-[#050505] border-r border-yellow-500/20 p-6 flex flex-col h-full shadow-[0_0_50px_rgba(234,179,8,0.1)]">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-yellow-600 to-black p-[2px]">
+                        <div className="w-full h-full bg-black rounded-2xl flex items-center justify-center overflow-hidden">
+                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <span className="text-xl font-black text-white">{user.username[0]}</span>}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-black italic text-lg text-white">{user.username}</h3>
+                        <div className="text-[9px] bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded uppercase font-bold tracking-widest w-fit">{user.role || 'AGENT'}</div>
+                    </div>
+                </div>
+
+                <div className="space-y-1 flex-1">
+                    <button onClick={() => { setActiveTab('home'); onClose(); }} className="w-full p-4 hover:bg-white/5 rounded-xl flex items-center gap-4 font-bold text-gray-400 hover:text-white transition-all"><Icons.Home className="w-5 h-5" /> {t('HOME')}</button>
+                    <button onClick={() => { onViewProfile(user); onClose(); }} className="w-full p-4 hover:bg-white/5 rounded-xl flex items-center gap-4 font-bold text-gray-400 hover:text-white transition-all"><Icons.User className="w-5 h-5" /> {t('PROFILE')}</button>
+                    <button onClick={onOpenNotifications} className="w-full p-4 hover:bg-white/5 rounded-xl flex items-center gap-4 font-bold text-gray-400 hover:text-white transition-all"><Icons.Bell className="w-5 h-5" /> {t('ALERTS')}</button>
+                    <button onClick={onOpenSettings} className="w-full p-4 hover:bg-white/5 rounded-xl flex items-center gap-4 font-bold text-gray-400 hover:text-white transition-all"><Icons.Settings className="w-5 h-5" /> {t('SETTINGS')}</button>
+                </div>
+
+                <button onClick={logout} className="w-full p-4 bg-red-900/10 text-red-500 rounded-xl font-black uppercase flex items-center justify-center gap-2 mt-4 hover:bg-red-900/30 transition-all text-sm">
+                    <Icons.Logout className="w-4 h-4" /> {t('LOGOUT')}
+                </button>
+            </motion.div>
         </div>
     );
 };
@@ -209,7 +304,6 @@ const PostCard = ({ post, user, onDelete, onViewProfile }) => {
     const isAuthor = (typeof post.author === 'object' ? post.author._id : post.author) === user._id;
 
     const handleLike = async () => {
-        const newDoc = { ...post };
         setLiked(!liked);
         setLikesCount(prev => liked ? prev - 1 : prev + 1);
         playSound('pop');
@@ -238,13 +332,13 @@ const PostCard = ({ post, user, onDelete, onViewProfile }) => {
             </div>
 
             {post.desc && <div className="px-4 py-2 text-sm font-medium text-gray-300 leading-relaxed">{parseHashtags(post.desc)}</div>}
-            
+
             {post.image && (
                 <div className="w-full mt-2 bg-black border-y border-white/5">
-                     <img src={resolveMediaUrl(post.image)} className="w-full max-h-[500px] object-contain" />
+                    <img src={resolveMediaUrl(post.image)} className="w-full max-h-[500px] object-contain" />
                 </div>
             )}
-            
+
             {post.videoUrl && (
                 <div className="w-full mt-2 bg-black border-y border-white/5">
                     <video src={resolveMediaUrl(post.videoUrl)} controls className="w-full max-h-[500px]" />
@@ -279,8 +373,8 @@ const App = () => {
         const savedUser = localStorage.getItem('user');
         const token = localStorage.getItem('token');
         if (savedUser && token) {
-             const parsedUser = JSON.parse(savedUser);
-             setUser(parsedUser);
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
         }
     }, []);
 
@@ -291,13 +385,13 @@ const App = () => {
         }
     }, [user]);
 
-    const fetchPosts = async () => { 
-        try { 
-            const r = await axios.get('/posts?limit=100'); 
-            setPosts(r.data); 
-        } catch (e) { console.error("Fetch posts failed", e); } 
+    const fetchPosts = async () => {
+        try {
+            const r = await axios.get('/posts?limit=100');
+            setPosts(r.data);
+        } catch (e) { console.error("Fetch posts failed", e); }
     };
-    
+
     const fetchUsers = async () => { try { const r = await axios.get('/users'); setUsers(r.data); } catch (e) { } };
 
     const deletePost = async (postId) => {
@@ -313,7 +407,7 @@ const App = () => {
     const viewProfile = (u) => { setProfileUser(u); setProfileOpen(true); };
 
     if (!user) return (
-         <div className="min-h-screen bg-black flex items-center justify-center p-6">
+        <div className="min-h-screen bg-black flex items-center justify-center p-6">
             <div className="w-full max-w-md text-center relative z-10 glass-3d p-8 rounded-3xl">
                 <h1 className="text-6xl font-black italic text-white mb-10">LEGACY</h1>
                 <input type="email" placeholder="EMAIL" id="login-email" className="cyber-input text-center w-full mb-4" />
@@ -336,10 +430,10 @@ const App = () => {
     return (
         <div className="min-h-screen bg-black text-white max-w-xl mx-auto border-x border-white/5 pb-24 relative overflow-hidden shadow-2xl">
             <div className="liquid-bg fixed inset-0 z-0" />
-            
+
             <header className="sticky top-0 p-4 z-40 bg-black/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between">
                 <button onClick={() => { setMenuOpen(true); playSound('click'); }} className="p-2 bg-white/5 rounded-xl"><Icons.Menu className="w-6 h-6 text-white" /></button>
-                <div onClick={() => { window.scrollTo({top:0, behavior:'smooth'}); playSound('click'); }} className="text-2xl font-black italic tracking-tighter cursor-pointer">LEGACY <span className="text-yellow-500">INTEL</span></div>
+                <div onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); playSound('click'); }} className="text-2xl font-black italic tracking-tighter cursor-pointer">LEGACY <span className="text-yellow-500">INTEL</span></div>
                 <div className="flex gap-2">
                     <button onClick={() => { setCreateOpen(true); playSound('pop'); }} className="p-2 bg-yellow-500 text-black rounded-xl shadow-lg shadow-yellow-500/20"><Icons.Plus className="w-6 h-6" /></button>
                 </div>
@@ -347,54 +441,34 @@ const App = () => {
 
             <main className="relative z-10 p-4 space-y-6">
                 {posts.map(post => (
-                    <PostCard 
-                        key={post._id} 
-                        post={post} 
-                        user={user} 
+                    <PostCard
+                        key={post._id}
+                        post={post}
+                        user={user}
                         onDelete={() => deletePost(post._id)}
-                        onViewProfile={viewProfile} 
+                        onViewProfile={viewProfile}
                     />
                 ))}
             </main>
 
             {/* OVERLAYS */}
-            {createOpen && (
-                <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6">
-                    <div className="bg-[#111] p-6 rounded-3xl w-full max-w-lg border border-white/10">
-                        <div className="flex justify-between mb-4"><h2 className="text-xl font-bold text-yellow-500">NEW INTEL</h2><button onClick={()=>setCreateOpen(false)}><Icons.X className="w-6 h-6"/></button></div>
-                        <input type="file" id="post-file" className="block w-full mb-4 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:bg-yellow-500 file:text-black hover:file:bg-yellow-400"/>
-                        <textarea id="post-desc" placeholder="Details..." className="w-full bg-black border border-white/10 rounded-xl p-4 text-white resize-none h-32 mb-4"/>
-                        <button onClick={async () => {
-                            const desc = document.getElementById('post-desc').value;
-                            const file = document.getElementById('post-file').files[0];
-                            if(!desc && !file) return alert("Content required");
-                            const fd = new FormData();
-                            fd.append('desc', desc);
-                            if(file) fd.append('image', file);
-                            try {
-                                await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                                setCreateOpen(false);
-                                fetchPosts();
-                            } catch(e) { alert("Failed"); }
-                        }} className="w-full py-4 bg-yellow-500 text-black font-black uppercase rounded-xl">UPLOAD</button>
-                    </div>
-                </div>
-            )}
+            <CreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} onSuccess={() => { setCreateOpen(false); fetchPosts(); }} user={user} />
 
             <AnimatePresence>
                 {menuOpen && (
-                    <motion.div initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-[#050505] border-r border-yellow-500/20 z-[91] p-6 flex flex-col shadow-2xl">
-                         <div className="flex justify-end"><button onClick={()=>setMenuOpen(false)}><Icons.X className="w-6 h-6"/></button></div>
-                         <div className="flex items-center gap-4 mb-10 mt-4">
-                            <div className="w-16 h-16 rounded-2xl bg-gray-800 overflow-hidden">{user.profilePic && <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover"/>}</div>
-                            <h3 className="font-black italic text-xl text-white">{user.username}</h3>
-                        </div>
-                        <button onClick={()=>{setMenuOpen(false); setSettingsOpen(true);}} className="w-full p-4 mb-2 hover:bg-white/5 rounded-xl flex items-center gap-4 font-bold text-gray-400 hover:text-white"><Icons.Settings/> SETTINGS</button>
-                        <button onClick={logout} className="w-full p-4 bg-red-900/20 text-red-500 rounded-xl font-black uppercase flex items-center justify-center gap-2 mt-auto"><Icons.Logout className="w-5 h-5"/> LOGOUT</button>
-                    </motion.div>
+                    <SideMenu
+                        isOpen={menuOpen}
+                        onClose={() => setMenuOpen(false)}
+                        user={user}
+                        logout={logout}
+                        onViewProfile={viewProfile}
+                        onOpenSettings={() => { setMenuOpen(false); setSettingsOpen(true); }}
+                        setActiveTab={setActiveTab}
+                        onOpenNotifications={() => { }} // Placeholder functionality
+                    />
                 )}
             </AnimatePresence>
-            
+
             <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} user={user} logout={logout} />
             <ProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} />
 
