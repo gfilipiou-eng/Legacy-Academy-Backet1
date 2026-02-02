@@ -43,9 +43,10 @@ const NotificationItem = ({ note, onViewProfile }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onComment, onViewProfile }) => {
+const PostCard = ({ post, user, onLike, onComment, onDelete, onViewProfile }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
+    const isOwner = post.author?._id === user._id || post.author === user._id;
 
     const handleComment = (e) => {
         e.preventDefault();
@@ -55,7 +56,7 @@ const PostCard = ({ post, user, onLike, onComment, onViewProfile }) => {
     };
 
     return (
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="glass-card mb-6 rounded-3xl overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="glass-card mb-6 rounded-3xl overflow-hidden relative group">
             <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => onViewProfile(post.author)}>
                     <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden bg-gray-900">
@@ -63,10 +64,13 @@ const PostCard = ({ post, user, onLike, onComment, onViewProfile }) => {
                     </div>
                     <div><h4 className="font-bold text-sm text-white">{post.author?.username}</h4><p className="text-[10px] text-gray-500 uppercase tracking-widest leading-none">Verified Agent</p></div>
                 </div>
-                <Icons.Menu className="w-5 h-5 text-gray-500 rotate-90" />
+                <div className="flex gap-2">
+                    {isOwner && <button onClick={() => onDelete(post._id)} className="text-red-500 hover:text-red-400 p-2"><Icons.Trash className="w-5 h-5" /></button>}
+                    <Icons.Menu className="w-5 h-5 text-gray-500 rotate-90 my-auto" />
+                </div>
             </div>
 
-            <div className="aspect-square bg-black overflow-hidden relative group">
+            <div className="aspect-square bg-black overflow-hidden relative">
                 {post.image ? <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /> : <div className="w-full h-full flex items-center justify-center text-gray-800 font-bold text-4xl italic">LEGACY</div>}
             </div>
 
@@ -93,10 +97,14 @@ const PostCard = ({ post, user, onLike, onComment, onViewProfile }) => {
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mt-4 space-y-3 overflow-hidden">
                             {post.comments?.map((c, idx) => (
                                 <div key={idx} className="flex gap-2 items-start">
-                                    <div className="w-6 h-6 rounded-full bg-gray-800 overflow-hidden shrink-0">
-                                        {c.user?.profilePic ? <img src={resolveMediaUrl(c.user.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full center text-[10px]">{c.user?.username?.[0]}</div>}
+                                    <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
+                                        {c.authorProfilePic || c.user?.profilePic ? <img src={resolveMediaUrl(c.authorProfilePic || c.user?.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full center text-[10px] bg-gray-700">{c.authorName?.[0] || c.user?.username?.[0]}</div>}
                                     </div>
-                                    <div><span className="font-bold text-xs mr-2">{c.user?.username}</span><span className="text-xs text-gray-300">{c.text}</span></div>
+                                    <div className="bg-white/5 rounded-xl px-3 py-2 flex-1 relative group/comment">
+                                        <span className="font-bold text-xs mr-2 text-yellow-500">{c.authorName || c.user?.username}</span>
+                                        <span className="text-xs text-gray-300">{c.text}</span>
+                                        {/* Trash icon for comment (future implementation: verify ownership) */}
+                                    </div>
                                 </div>
                             ))}
                             <form onSubmit={handleComment} className="flex gap-2 items-center pt-2">
@@ -165,9 +173,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
     );
 };
 
-const SettingsModal = ({ isOpen, onClose, logout }) => {
+const SettingsModal = ({ isOpen, onClose, logout, user }) => {
     const [isPrivate, setIsPrivate] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const fileRef = useRef(null);
+
     if (!isOpen) return null;
+
     return (
         <div className="fixed inset-0 z-[250] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
@@ -176,16 +188,35 @@ const SettingsModal = ({ isOpen, onClose, logout }) => {
                     <h2 className="font-bold uppercase tracking-widest text-sm text-gray-400">Settings</h2>
                     <button onClick={onClose}><Icons.X className="w-5 h-5" /></button>
                 </div>
-                <div className="p-2">
-                    <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5">
-                        <span className="text-sm">Private Account</span>
-                        <div onClick={() => setIsPrivate(!isPrivate)} className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-green-500' : 'bg-gray-700'}`}>
-                            <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${isPrivate ? 'translate-x-4' : ''}`} />
+
+                {isEditing ? (
+                    <div className="p-6 text-center space-y-4">
+                        <h3 className="text-white font-bold text-lg">Update Profile</h3>
+                        <div onClick={() => fileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 cursor-pointer relative group">
+                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-2xl">{user.username[0]}</div>}
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8" /></div>
                         </div>
+                        <input type="file" ref={fileRef} hidden onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const fd = new FormData(); fd.append('image', file);
+                                try { await axios.put('/users/profile', fd); alert("Profile Updated! Please refresh."); window.location.reload(); } catch (e) { alert("Failed to update."); }
+                            }
+                        }} />
+                        <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500">Cancel</button>
                     </div>
-                    <button className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between text-sm"><span>Edit Profile</span><Icons.ChevronRight className="w-4 h-4 text-gray-600" /></button>
-                    <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
-                </div>
+                ) : (
+                    <div className="p-2">
+                        <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5">
+                            <span className="text-sm">Private Account</span>
+                            <div onClick={() => setIsPrivate(!isPrivate)} className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-green-500' : 'bg-gray-700'}`}>
+                                <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${isPrivate ? 'translate-x-4' : ''}`} />
+                            </div>
+                        </div>
+                        <button onClick={() => setIsEditing(true)} className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between text-sm"><span>Edit Profile</span><Icons.ChevronRight className="w-4 h-4 text-gray-600" /></button>
+                        <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -309,7 +340,12 @@ const App = () => {
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=100'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
     const handleLike = async (postId) => { try { const res = await axios.put(`/posts/${postId}/like`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes } : p)); playSound('pop'); } catch (e) { } };
-    const handleComment = async (postId, text) => { try { const res = await axios.put(`/posts/${postId}/comment`, { text }); setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: res.data.comments } : p)); } catch (e) { } };
+
+    // FIX: Use POST for comments, not PUT
+    const handleComment = async (postId, text) => { try { const res = await axios.post(`/posts/${postId}/comment`, { text }); setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: res.data } : p)); } catch (e) { } };
+
+    // FIX: Added Delete functionality
+    const handleDeletePost = async (postId) => { if (confirm("Delete intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); } catch (e) { } } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     const logout = () => { localStorage.clear(); setUser(null); window.location.reload(); };
@@ -359,25 +395,31 @@ const App = () => {
                             </div>
                         )}
                         <div className="space-y-4">
-                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onComment={handleComment} onViewProfile={viewProfile} />)}
+                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} />)}
                             {posts.length === 0 && <div className="h-96 center text-gray-700 font-bold text-sm uppercase tracking-widest italic">Decrypting Feed...</div>}
                         </div>
                     </>
                 )}
             </main>
 
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50">
-                <div className="liquid-nav h-16 rounded-full px-6 flex items-center justify-between">
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50" style={{ pointerEvents: 'none' }}>
+                <div className="liquid-nav h-16 rounded-full px-6 flex items-center justify-between" style={{ pointerEvents: 'auto' }}>
                     <button onClick={() => setActiveTab('home')} className={`p-3 transition-all ${activeTab === 'home' ? 'text-white scale-110 drop-shadow-[0_0_8px_white]' : 'text-white/40'}`}><Icons.Home className="w-6 h-6" /></button>
                     <button onClick={() => setActiveTab('search')} className={`p-3 transition-all ${activeTab === 'search' ? 'text-white scale-110 drop-shadow-[0_0_8px_white]' : 'text-white/40'}`}><Icons.Search className="w-6 h-6" /></button>
-                    <div className="w-14 h-14 bg-white/10 center -mt-10 rounded-full border border-white/20 backdrop-blur-xl shadow-2xl cursor-pointer hover:scale-105 transition-transform" onClick={() => setIsCreateOpen(true)}><Icons.Plus className="w-6 h-6 text-white" /></div>
+
+                    <div className="w-14 h-14 bg-white/10 center -mt-10 rounded-full border border-white/20 backdrop-blur-xl shadow-2xl cursor-pointer hover:scale-110 transition-transform active:scale-95"
+                        onClick={(e) => { e.stopPropagation(); setIsCreateOpen(true); }}
+                        style={{ pointerEvents: 'auto' }}>
+                        <Icons.Plus className="w-6 h-6 text-white" />
+                    </div>
+
                     <button onClick={() => setActiveTab('alerts')} className={`p-3 transition-all ${activeTab === 'alerts' ? 'text-white scale-110 drop-shadow-[0_0_8px_white]' : 'text-white/40'}`}><Icons.Bell className="w-6 h-6" /></button>
                     <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-7 h-7 rounded-full border border-white/30 overflow-hidden bg-gray-900">{user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[10px]">{user.username?.[0]}</div>}</div></button>
                 </div>
             </div>
 
             <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
-            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} />
+            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} />
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} onViewProfile={viewProfile} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
             <div className="fixed top-4 right-4 z-50"><button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-black/50 rounded-full backdrop-blur-md border border-white/10"><Icons.Settings className="w-5 h-5 text-gray-400" /></button></div>
