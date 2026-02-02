@@ -38,51 +38,81 @@ const NotificationItem = ({ note, onViewProfile }) => {
 
 const ChatModal = ({ isOpen, onClose, user, following }) => {
     const [activeChat, setActiveChat] = useState(null);
-    const [messages, setMessages] = useState({});
+    const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem('chat_history');
+        return saved ? JSON.parse(saved) : {};
+    });
     const [txt, setTxt] = useState('');
     const fileRef = useRef(null);
+    const bottomRef = useRef(null);
 
-    // Filter only following users for anti-spam (Premium Feature)
-    const availableContacts = following; // Logic: In a real app check mutual follows
+    // Filter only following users
+    const availableContacts = following;
+
+    useEffect(() => {
+        localStorage.setItem('chat_history', JSON.stringify(messages));
+    }, [messages]);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, activeChat]);
 
     if (!isOpen) return null;
 
     const sendMessage = (imageFile = null) => {
-        if (!txt.trim() && !imageFile) return;
+        if ((!txt.trim() && !imageFile) || !activeChat) return;
+
         const msg = {
+            id: Date.now(),
             text: txt,
             image: imageFile ? URL.createObjectURL(imageFile) : null,
             sender: user._id,
-            createdAt: new Date()
+            createdAt: new Date().toISOString()
         };
+
         setMessages(prev => ({
             ...prev,
             [activeChat._id]: [...(prev[activeChat._id] || []), msg]
         }));
         setTxt('');
         playSound('pop');
+
+        // Simulate Reply
+        setTimeout(() => {
+            const reply = {
+                id: Date.now() + 1,
+                text: "Message received. Standing by.",
+                sender: activeChat._id,
+                createdAt: new Date().toISOString()
+            };
+            setMessages(prev => ({
+                ...prev,
+                [activeChat._id]: [...(prev[activeChat._id] || []), reply]
+            }));
+            playSound('pop');
+        }, 3000);
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-fade-in">
-            <div className="w-full max-w-4xl h-[90vh] sm:h-[80vh] bg-[#0a0a0a] border border-white/10 sm:rounded-3xl flex overflow-hidden shadow-2xl relative">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl animate-fade-in p-4 sm:p-0">
+            <div className="w-full max-w-4xl h-full sm:h-[80vh] bg-[#0a0a0a] border border-white/10 sm:rounded-3xl flex overflow-hidden shadow-2xl relative flex-col sm:flex-row">
                 {/* SIDEBAR */}
-                <div className={`w-full sm:w-1/3 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
+                <div className={`w-full sm:w-1/3 border-b sm:border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'} h-full`}>
                     <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/50">
-                        <h2 className="font-black italic text-lg gold-text tracking-widest">MESSENGER</h2>
+                        <h2 className="font-black italic text-base gold-text tracking-widest">MESSENGER</h2>
                         <button onClick={onClose}><Icons.X className="w-6 h-6 text-gray-400" /></button>
                     </div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
-                        {availableContacts.length === 0 && <div className="p-4 text-center text-xs text-gray-500 uppercase">Follow Agents to start encrypted comms.</div>}
+                        {availableContacts.length === 0 && <div className="p-4 text-center text-xs text-gray-500 uppercase">Follow Agents to start chat.</div>}
                         {availableContacts.map(u => (
-                            <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-all ${activeChat?._id === u._id ? 'bg-yellow-500/10 border border-yellow-500/20' : ''}`}>
-                                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden relative border border-white/10">
-                                    {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold">{u.username[0]}</div>}
-                                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black"></div>
+                            <div key={u._id} onClick={() => setActiveChat(u)} className={`p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-all ${activeChat?._id === u._id ? 'bg-yellow-500/10 border border-yellow-500/20' : ''}`}>
+                                <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden relative border border-white/10 shrink-0">
+                                    {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold text-xs">{u.username[0]}</div>}
+                                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border border-black"></div>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="font-bold text-sm text-white truncate">{u.username}</div>
-                                    <div className="text-[10px] text-gray-500 uppercase tracking-widest">ENCRYPTED</div>
+                                    <div className="text-[9px] text-gray-500 uppercase tracking-widest">ENCRYPTED • ONLINE</div>
                                 </div>
                                 <Icons.ChevronRight className="w-4 h-4 text-gray-600" />
                             </div>
@@ -91,23 +121,23 @@ const ChatModal = ({ isOpen, onClose, user, following }) => {
                 </div>
 
                 {/* CHAT AREA */}
-                <div className={`w-full sm:w-2/3 flex flex-col bg-black/20 ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
+                <div className={`w-full sm:w-2/3 flex flex-col bg-black/20 ${!activeChat ? 'hidden sm:flex' : 'flex'} h-full absolute sm:relative inset-0 sm:inset-auto`}>
                     {!activeChat ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-gray-500 opacity-50 relative">
                             <div className="liquid-bg opacity-20" />
-                            <Icons.MessageCircle className="w-20 h-20 mb-4 text-yellow-500/50" />
+                            <Icons.MessageCircle className="w-16 h-16 mb-4 text-yellow-500/50" />
                             <p className="font-bold uppercase tracking-[0.2em] text-xs text-yellow-500">Secure Line Ready</p>
                         </div>
                     ) : (
                         <>
-                            <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-black/50 backdrop-blur-md sticky top-0 z-10">
-                                <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                    {activeChat.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold">{activeChat.username[0]}</div>}
+                            <div className="p-3 border-b border-white/5 flex items-center gap-3 bg-black/80 backdrop-blur-md sticky top-0 z-10">
+                                <button onClick={() => setActiveChat(null)} className="sm:hidden p-1 rounded-full hover:bg-white/10"><Icons.Back className="w-6 h-6" /></button>
+                                <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                                    {activeChat.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold text-xs">{activeChat.username[0]}</div>}
                                 </div>
                                 <div>
-                                    <div className="font-bold italic text-white uppercase">{activeChat.username}</div>
-                                    <div className="text-[8px] text-green-500 font-bold uppercase tracking-widest">ONLINE</div>
+                                    <div className="font-bold italic text-white uppercase text-sm">{activeChat.username}</div>
+                                    <div className="text-[8px] text-green-500 font-bold uppercase tracking-widest flex items-center gap-1"><div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> ONLINE</div>
                                 </div>
                             </div>
 
@@ -117,20 +147,22 @@ const ChatModal = ({ isOpen, onClose, user, following }) => {
                                         <div className={`max-w-[75%] space-y-1`}>
                                             {m.image && <img src={m.image} className="rounded-xl border border-white/10 max-h-60 object-cover" />}
                                             {m.text && (
-                                                <div className={`p-3 rounded-2xl text-sm font-medium ${m.sender === user._id ? 'bg-gradient-to-r from-yellow-600 to-yellow-500 text-black rounded-tr-none' : 'bg-white/10 text-white rounded-tl-none border border-white/5'}`}>
+                                                <div className={`px-4 py-2 rounded-2xl text-sm font-medium ${m.sender === user._id ? 'bg-gradient-to-r from-yellow-600 to-yellow-500 text-black rounded-tr-none' : 'bg-[#1a1a1a] text-white rounded-tl-none border border-white/5'}`}>
                                                     {m.text}
                                                 </div>
                                             )}
+                                            <div className={`text-[9px] text-gray-600 ${m.sender === user._id ? 'text-right' : 'text-left'}`}>{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                                         </div>
                                     </div>
                                 ))}
+                                <div ref={bottomRef} />
                             </div>
 
-                            <div className="p-3 border-t border-white/10 flex gap-2 bg-black/60 backdrop-blur-md">
-                                <button onClick={() => fileRef.current.click()} className="p-3 bg-white/5 rounded-xl text-gray-400 hover:text-white transition-colors"><Icons.Image className="w-5 h-5" /></button>
+                            <div className="p-3 border-t border-white/10 flex gap-2 bg-black/80 backdrop-blur-md mb-safe">
+                                <button onClick={() => fileRef.current.click()} className="p-2 bg-white/5 rounded-xl text-gray-400 hover:text-white transition-colors"><Icons.Image className="w-5 h-5" /></button>
                                 <input type="file" hidden ref={fileRef} onChange={(e) => sendMessage(e.target.files[0])} accept="image/*" />
-                                <input value={txt} onChange={e => setTxt(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()} placeholder="Write a message..." className="flex-1 bg-transparent border-none outline-none text-white font-medium placeholder-gray-600" />
-                                <button onClick={() => sendMessage()} className="p-3 text-yellow-500 hover:bg-yellow-500/10 rounded-xl font-bold uppercase text-xs">SEND</button>
+                                <input value={txt} onChange={e => setTxt(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()} placeholder="Message..." className="flex-1 bg-transparent border-none outline-none text-white font-medium placeholder-gray-600 text-sm" />
+                                <button onClick={() => sendMessage()} className="p-2 text-yellow-500 hover:bg-yellow-500/10 rounded-xl font-bold uppercase text-[10px]">SEND</button>
                             </div>
                         </>
                     )}
@@ -161,7 +193,7 @@ const CommentItem = ({ c, user, post }) => {
                         <button onClick={() => setEditing(false)} className="text-green-500 text-[10px] font-bold uppercase hover:bg-green-500/10 px-2 rounded">SAVE</button>
                     </div>
                 ) : (
-                    <p className="text-gray-200 leading-snug font-medium">{val}</p>
+                    <p className="text-gray-200 leading-snug font-medium text-xs">{val}</p>
                 )}
                 <div className="flex gap-3 mt-2">
                     <button className="text-[9px] font-bold text-gray-500 hover:text-white transition-colors">REPLY</button>
@@ -262,7 +294,6 @@ const SearchModal = ({ isOpen, onClose, users, onViewProfile }) => {
 };
 
 const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
-    // ... [CREATE MODAL - SAME AS BEFORE, WORKS WELL]
     const { t } = useTranslation(user);
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
@@ -313,7 +344,6 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
 };
 
 const PostCard = ({ post, user, onDelete, onViewProfile }) => {
-    // ... [POST CARD - OPTIMIZED STYLING]
     const { t } = useTranslation(user);
     const [liked, setLiked] = useState((post.likes || []).includes(user._id));
     const [likesCount, setLikesCount] = useState((post.likes || []).length);
@@ -402,8 +432,10 @@ const PostCard = ({ post, user, onDelete, onViewProfile }) => {
     );
 };
 
+// ... SideMenu, ProfileModal (Standard code preserved for brevity but included in output logic) ...
+// Assuming standard implementations for SideMenu/Profile as previously perfectly working, focusing on App Login/Chat fixes.
+
 const SideMenu = ({ isOpen, onClose, user, logout, onViewProfile, onOpenSettings, setActiveTab, notifications }) => {
-    // ... [SIDE MENU - SAME AS BEFORE, WORKS WELL]
     const { t } = useTranslation(user);
     if (!isOpen) return null;
     return (
@@ -440,9 +472,7 @@ const SideMenu = ({ isOpen, onClose, user, logout, onViewProfile, onOpenSettings
         </div>
     );
 };
-
 const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers, onViewProfile }) => {
-    // ... [PROFILE MODAL - SAME AS BEFORE, WORKS WELL]
     const { t } = useTranslation(currentUser);
     const [tab, setTab] = useState('posts');
     const [following, setFollowing] = useState(false);
@@ -516,6 +546,7 @@ const App = () => {
     const [searchOpen, setSearchOpen] = useState(false);
     const [chatOpen, setChatOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
+    const [isRegister, setIsRegister] = useState(false); // FOR LOGIN/REGISTER TOGGLE
     const { t } = useTranslation(user);
 
     // MOCK ALERTS (Improved for demo)
@@ -560,29 +591,46 @@ const App = () => {
     if (!user) return (
         <div className="min-h-screen bg-black flex items-center justify-center p-6 relative overflow-hidden">
             <div className="liquid-bg" />
-            <div className="w-full max-w-md text-center relative z-10 glass-panel p-10 rounded-3xl border-t border-yellow-500/20 shadow-2xl">
-                <div className="mb-8">
-                    <h1 className="text-6xl font-black italic gold-text mb-2 tracking-tighter">LEGACY</h1>
-                    <div className="h-1 w-24 bg-yellow-500 mx-auto rounded-full shadow-[0_0_20px_rgba(255,215,0,0.5)]"></div>
-                    <p className="text-xs text-yellow-500/50 uppercase tracking-[0.5em] mt-3">Global Network</p>
+            <div className="w-full max-w-sm text-center relative z-10 glass-panel p-8 rounded-3xl border-t border-yellow-500/20 shadow-2xl">
+                <div className="mb-6">
+                    <h1 className="text-4xl font-black italic gold-text mb-2 tracking-tighter">LEGACY</h1>
+                    <div className="h-1 w-16 bg-yellow-500 mx-auto rounded-full shadow-[0_0_20px_rgba(255,215,0,0.5)]"></div>
+                    <p className="text-[10px] text-yellow-500/50 uppercase tracking-[0.4em] mt-3">Global Network</p>
                 </div>
-                <div className="space-y-4">
-                    <input type="email" placeholder="CODENAME" id="login-email" className="cyber-input w-full text-center" />
-                    <input type="password" placeholder="PASSWORD" id="login-pass" className="cyber-input w-full text-center" />
+
+                <div className="space-y-3">
+                    {isRegister && <input type="text" placeholder="CODENAME (USERNAME)" id="reg-username" className="cyber-input w-full text-center text-sm" />}
+                    <input type="email" placeholder="EMAIL ADDRESS" id="login-email" className="cyber-input w-full text-center text-sm" />
+                    <input type="password" placeholder="PASSWORD" id="login-pass" className="cyber-input w-full text-center text-sm" />
+
                     <button onClick={async () => {
                         const email = document.getElementById('login-email').value;
                         const password = document.getElementById('login-pass').value;
-                        if (!email || !password) return alert("CREDENTIALS REQUIRED");
-                        try {
-                            const res = await axios.post('/auth/login', { email, password });
-                            localStorage.setItem('token', res.data.token);
-                            localStorage.setItem('user', JSON.stringify(res.data.user));
-                            setUser(res.data.user);
-                        } catch (e) { alert("ACCESS DENIED"); }
-                    }} className="liquid-btn w-full py-4 rounded-xl shadow-lg shadow-yellow-500/10 mt-6 text-lg tracking-widest">ENTER SYSTEM</button>
-                    <div className="flex justify-between text-[10px] text-gray-500 font-bold uppercase mt-6 px-4">
-                        <button className="hover:text-white">Apply for Access</button>
-                        <button className="hover:text-white">Recover Key</button>
+
+                        if (isRegister) {
+                            const username = document.getElementById('reg-username').value;
+                            if (!username || !email || !password) return alert("MISSING INTEL");
+                            try {
+                                await axios.post('/auth/register', { username, email, password });
+                                alert("AGENT REGISTERED. LOG IN.");
+                                setIsRegister(false);
+                            } catch (e) { alert("REGISTRATION FAILED"); }
+                        } else {
+                            if (!email || !password) return alert("CREDENTIALS REQUIRED");
+                            try {
+                                const res = await axios.post('/auth/login', { email, password });
+                                localStorage.setItem('token', res.data.token);
+                                localStorage.setItem('user', JSON.stringify(res.data.user));
+                                setUser(res.data.user);
+                            } catch (e) { alert("ACCESS DENIED"); }
+                        }
+                    }} className="liquid-btn w-full py-3 rounded-xl shadow-lg shadow-yellow-500/10 mt-4 text-sm tracking-widest font-black">
+                        {isRegister ? 'INITIALIZE AGENT' : 'ENTER SYSTEM'}
+                    </button>
+
+                    <div className="flex justify-between text-[10px] text-gray-500 font-bold uppercase mt-6 px-2">
+                        <button onClick={() => setIsRegister(!isRegister)} className="hover:text-yellow-500 transition-colors">{isRegister ? 'Back to Login' : 'Create Agent ID'}</button>
+                        <button onClick={() => alert("Contact High Command.")} className="hover:text-white transition-colors">Forgot Password?</button>
                     </div>
                 </div>
             </div>
@@ -597,8 +645,7 @@ const App = () => {
             <header className="sticky top-0 p-4 z-40 bg-black/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between">
                 <button onClick={() => { setMenuOpen(true); playSound('click'); }} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.Menu className="w-6 h-6 text-white" /></button>
                 <div onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex flex-col items-center cursor-pointer group">
-                    <div className="text-2xl font-black italic tracking-tighter gold-text leading-none group-hover:scale-105 transition-transform">LEGACY</div>
-                    <div className="text-[8px] font-bold tracking-[0.4em] text-white/50">NETWORK</div>
+                    <div className="text-xl font-black italic tracking-tighter gold-text leading-none group-hover:scale-105 transition-transform">LEGACY</div>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={() => { setChatOpen(true); playSound('pop'); }} className="p-2 bg-white/5 rounded-xl relative hover:bg-white/10 transition-colors">
@@ -644,7 +691,7 @@ const App = () => {
             <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} user={user} logout={logout} />
             <ProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} />
 
-            {/* FLOATING CAPSULE NAVIGATION (PHOTO MATCH) */}
+            {/* FLOATING CAPSULE NAVIGATION */}
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50">
                 <div className="liquid-nav rounded-full px-6 py-4 flex justify-between items-center shadow-2xl">
                     <button onClick={() => handleNav('home')} className={`transition-all duration-300 ${activeTab === 'home' ? 'text-yellow-500 scale-125' : 'text-white/70 hover:text-white'}`}><Icons.Home className="w-6 h-6" /></button>
@@ -653,8 +700,8 @@ const App = () => {
                         <Icons.Plus className="w-6 h-6 text-black" />
                     </div>
                     <button onClick={() => handleNav('alerts')} className={`transition-all duration-300 ${activeTab === 'alerts' ? 'text-yellow-500 scale-125' : 'text-white/70 hover:text-white'}`}><Icons.Bell className="w-6 h-6" /></button>
-                    <button onClick={() => handleNav('profile')} className={`transition-all duration-300 ${activeTab === 'profile' ? 'ring-2 ring-yellow-500 rounded-full' : 'text-white/70 hover:text-white'}`}>
-                        <div className="w-6 h-6 rounded-full bg-gray-700 overflow-hidden">
+                    <button onClick={() => handleNav('profile')} className={`transition-all duration-300 ${activeTab === 'profile' ? 'ring-2 ring-yellow-500 rounded-full scale-110' : 'text-white/70 hover:text-white'}`}>
+                        <div className="w-6 h-6 rounded-full bg-gray-700 overflow-hidden border border-transparent">
                             {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="text-[8px] font-bold w-full h-full flex items-center justify-center">{user.username[0]}</div>}
                         </div>
                     </button>
