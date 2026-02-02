@@ -24,7 +24,7 @@ const SettingsModal = ({ isOpen, onClose, user, logout }) => {
     const { t, lang } = useTranslation(user);
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[160] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
             <div className="relative glass-panel w-full max-w-sm rounded-3xl overflow-hidden p-6 space-y-4">
                 <div className="flex justify-between items-center text-yellow-500">
@@ -54,6 +54,38 @@ const SettingsModal = ({ isOpen, onClose, user, logout }) => {
     );
 };
 
+const SearchModal = ({ isOpen, onClose, users, onViewProfile }) => {
+    const [query, setQuery] = useState('');
+    const filtered = users.filter(u => u.username.toLowerCase().includes(query.toLowerCase()));
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-[160] flex flex-col bg-black/95 backdrop-blur-xl animate-fade-in">
+            <div className="p-4 flex gap-3 border-b border-white/10 mt-10 sm:mt-0">
+                <div className="flex-1 bg-white/10 rounded-xl flex items-center px-4 py-3 border border-white/5 focus-within:border-yellow-500/50 transition-colors">
+                    <Icons.Search className="w-5 h-5 text-gray-400 mr-2" />
+                    <input autoFocus value={query} onChange={e => setQuery(e.target.value)} placeholder="SEARCH AGENT..." className="bg-transparent border-none outline-none text-white w-full font-bold uppercase placeholder-gray-500 text-sm" />
+                </div>
+                <button onClick={onClose} className="p-3 bg-white/5 rounded-xl text-white hover:bg-white/10 hover:text-red-500 transition-colors"><Icons.X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                {filtered.map(u => (
+                    <button key={u._id} onClick={() => { onViewProfile(u); onClose(); }} className="w-full p-4 glass-card rounded-xl flex items-center gap-4 hover:border-yellow-500/30 transition-all group text-left">
+                        <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10 group-hover:border-yellow-500 transition-colors">
+                            {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold text-white/50 text-xl">{u.username[0]}</div>}
+                        </div>
+                        <div className="flex-1">
+                            <div className="font-bold text-white text-lg">{u.username}</div>
+                            <div className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">{u.role || 'AGENT'}</div>
+                        </div>
+                        <Icons.ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-yellow-500 ml-auto" />
+                    </button>
+                ))}
+                {filtered.length === 0 && <div className="text-center py-20 text-gray-600 font-bold uppercase text-xs tracking-widest">NO AGENTS FOUND</div>}
+            </div>
+        </div>
+    );
+};
+
 const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const { t } = useTranslation(user);
     const [preview, setPreview] = useState(null);
@@ -71,7 +103,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6">
+        <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center p-0 sm:p-6">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose} />
             <div className="relative glass-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden border-t border-yellow-500/20 shadow-2xl">
                 <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
@@ -186,7 +218,7 @@ const PostCard = ({ post, user, onDelete, onViewProfile }) => {
                 </div>
             )}
 
-            <div className="p-4 flex items-center gap-6 border-b border-white/5">
+            <div className="p-4 flex items-center gap-6 border-b border-white/5 relative">
                 <button onClick={handleLike} className={"flex items-center gap-2 font-bold transition-transform active:scale-90 " + (liked ? 'text-red-500' : 'text-gray-400 hover:text-white')}>
                     <Icons.Heart className={"w-6 h-6 " + (liked ? 'fill-current' : '')} />
                     <span>{likesCount}</span>
@@ -195,7 +227,7 @@ const PostCard = ({ post, user, onDelete, onViewProfile }) => {
                     <Icons.MessageCircle className="w-6 h-6" />
                     <span>{comments.length}</span>
                 </button>
-                <button className="flex items-center gap-2 font-bold text-gray-400 hover:text-red-500 transition-colors">
+                <button className="flex items-center gap-2 font-bold text-gray-400 hover:text-red-500 transition-colors ml-auto">
                     <Icons.ThumbsDown className="w-6 h-6" />
                 </button>
             </div>
@@ -210,10 +242,11 @@ const PostCard = ({ post, user, onDelete, onViewProfile }) => {
                                     <span className="text-gray-300">{c.text}</span>
                                 </div>
                             ))}
+                            {comments.length === 0 && <div className="text-[10px] text-gray-600 font-bold uppercase">NO COMMENTS YET</div>}
                         </div>
                         <div className="p-3 border-t border-white/10 flex gap-2">
-                            <input id={`comment-${post._id}`} placeholder="Write a comment..." className="flex-1 bg-transparent text-sm outline-none text-white" />
-                            <button onClick={handleComment} className="text-yellow-500 font-bold text-xs uppercase">POST</button>
+                            <input id={`comment-${post._id}`} placeholder="Write a comment..." className="flex-1 bg-transparent text-sm outline-none text-white placeholder-gray-600" />
+                            <button onClick={handleComment} className="text-yellow-500 font-bold text-xs uppercase px-2 hover:bg-yellow-500/10 rounded">POST</button>
                         </div>
                     </motion.div>
                 )}
@@ -407,6 +440,7 @@ const App = () => {
     const [createOpen, setCreateOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
     const { t } = useTranslation(user);
 
@@ -500,6 +534,7 @@ const App = () => {
             </main>
 
             <CreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} onSuccess={() => { setCreateOpen(false); fetchPosts(); }} user={user} />
+            <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} users={users} onViewProfile={viewProfile} />
 
             <AnimatePresence>
                 {menuOpen && (
@@ -520,6 +555,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 max-w-xl mx-auto bg-black/80 backdrop-blur-xl border-t border-white/10 p-4 flex justify-around z-50">
                 <button onClick={() => { setActiveTab('home'); }} className={`p-2 transition-colors ${activeTab === 'home' ? 'text-yellow-500' : 'text-gray-500 hover:text-white'}`}><Icons.Home className="w-6 h-6" /></button>
+                <button onClick={() => { setActiveTab('search'); setSearchOpen(true); }} className={`p-2 transition-colors ${activeTab === 'search' ? 'text-yellow-500' : 'text-gray-500 hover:text-white'}`}><Icons.Search className="w-6 h-6" /></button>
                 <button onClick={() => { setActiveTab('profile'); viewProfile(user); }} className={`p-2 transition-colors ${activeTab === 'profile' ? 'text-yellow-500' : 'text-gray-500 hover:text-white'}`}><Icons.User className="w-6 h-6" /></button>
             </div>
         </div>
