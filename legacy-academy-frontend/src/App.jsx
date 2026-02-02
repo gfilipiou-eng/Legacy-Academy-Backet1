@@ -19,15 +19,13 @@ const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((pa
 
 // --- UTILS ---
 const applyTheme = (color) => {
-    // Theme logic preserved but refined for subtler accents
     const root = document.documentElement;
-    let primary = '#3b82f6'; // Default Blue-ish/Gold mix preferred for cleaner look? let's stick to user preference or default
+    let primary = '#3b82f6';
     if (color === 'gold') primary = '#d4af37';
     if (color === 'red') primary = '#ef4444';
     if (color === 'green') primary = '#22c55e';
     if (color === 'purple') primary = '#a855f7';
 
-    // Override mostly accent colors, keep text white/clean
     const styleTag = document.getElementById('theme-override') || document.createElement('style');
     styleTag.id = 'theme-override';
     document.head.appendChild(styleTag);
@@ -115,7 +113,56 @@ const Highlights = () => {
     );
 };
 
-// CLEANER CHAT MODAL
+const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
+    const { t } = useTranslation(user);
+    const [preview, setPreview] = useState(null);
+    const [isVideo, setIsVideo] = useState(false);
+    const fileRef = useRef(null);
+    if (!isOpen) return null;
+    const handleFileChange = (e) => { const file = e.target.files[0]; if (file) { setPreview(URL.createObjectURL(file)); setIsVideo(file.type.startsWith('video')); } };
+    return (
+        <div className="fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/90">
+            <div className="w-full max-w-sm bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/10 shadow-3xl">
+                <div className="p-3 border-b border-white/10 flex justify-between items-center bg-[#1a1a1a]">
+                    <h2 className="text-sm font-bold text-white">New Post</h2>
+                    <button onClick={onClose}><Icons.X className="w-5 h-5 text-gray-400" /></button>
+                </div>
+                <div className="p-4 space-y-4">
+                    <div className="flex gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0">
+                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="w-full h-full center text-gray-500 font-bold">{user.username[0]}</div>}
+                        </div>
+                        <textarea id="post-desc" placeholder="Write something..." className="flex-1 bg-transparent border-none text-white resize-none h-20 outline-none text-sm placeholder-gray-500" />
+                    </div>
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer">
+                        {preview ? (
+                            <div className="w-full h-48 rounded-lg overflow-hidden relative bg-black border border-white/10">
+                                {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full"><Icons.X className="w-3 h-3 text-white" /></button>
+                            </div>
+                        ) : (
+                            <div className="w-full py-8 border border-gray-800 rounded-lg flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all">
+                                <Icons.Image className="w-6 h-6 text-gray-500" />
+                                <span className="text-xs font-bold text-gray-500">Add Photo/Video</span>
+                            </div>
+                        )}
+                        <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
+                    </div>
+                    <button onClick={async () => {
+                        const desc = document.getElementById('post-desc').value;
+                        const file = fileRef.current.files[0];
+                        if (!desc && !file) return;
+                        const btn = document.getElementById('btn-upload'); btn.innerText = "Posting..."; btn.disabled = true;
+                        const fd = new FormData(); fd.append('desc', desc); if (file) fd.append('image', file);
+                        try { await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } }); onSuccess(); setPreview(null); playSound('pop'); }
+                        catch (e) { alert("Failed"); btn.innerText = "Share"; btn.disabled = false; }
+                    }} id="btn-upload" className="w-full py-3 bg-blue-600 rounded-lg text-sm font-bold text-white hover:bg-blue-700">{t('POST') || 'Share'}</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ChatModal = ({ isOpen, onClose, user, following }) => {
     const [messages, setMessages] = useState({});
     const [txt, setTxt] = useState('');
@@ -241,11 +288,8 @@ const SettingsModal = ({ isOpen, onClose, user, logout }) => {
 };
 
 const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers, onViewProfile }) => {
-    // Standard Profile - Refined UI
     const [userData, setUserData] = useState(profileUser);
     const userPosts = posts.filter(p => p.username === profileUser?.username);
-
-    // ... [Logic same as before] ...
     const isOwnProfile = profileUser?.username === currentUser?.username;
 
     if (!isOpen || !profileUser) return null;
