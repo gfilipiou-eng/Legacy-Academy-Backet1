@@ -245,6 +245,27 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
   }
 });
 
+// UPDATE COMMENT
+router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json("Post not found");
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json("Comment not found");
+
+    const userId = req.user.id || req.user.userId;
+    // Only comment author can edit
+    if (comment.authorId?.toString() !== userId && req.user.role !== "Founder") {
+      return res.status(403).json("Forbidden");
+    }
+
+    comment.text = req.body.text;
+    await post.save();
+    res.status(200).json(post.comments);
+  } catch (e) { res.status(500).json(e); }
+});
+
 // DELETE COMMENT
 router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
   try {

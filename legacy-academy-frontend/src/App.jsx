@@ -37,7 +37,59 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete, onShare }) => {
+const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editText, setEditText] = useState(comment.text);
+
+    // PERMISSIONS:
+    // 1. Comment Author -> Edit, Delete
+    // 2. Post Author -> Delete Only
+    // 3. Founder -> Delete, Edit (Everything)
+    const isFounder = user?.role === 'Founder';
+    const isCommentAuthor = (comment.authorId || comment.user?._id) === user._id;
+    const isPostAuthor = (post.author?._id || post.author) === user._id;
+
+    const canEdit = isCommentAuthor || isFounder;
+    const canDelete = isCommentAuthor || isPostAuthor || isFounder;
+
+    const handleSave = () => {
+        onEdit(post._id, comment._id, editText);
+        setIsEditing(false);
+    };
+
+    return (
+        <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 items-start group/comment relative">
+            <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
+                {comment.user?.profilePic || comment.authorProfilePic ? <img src={resolveMediaUrl(comment.user?.profilePic || comment.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={comment.user?.username || comment.authorName} />}
+            </div>
+
+            <div className="flex-1">
+                <div className={`bg-white/10 rounded-2xl px-4 py-2 shadow-lg backdrop-blur-sm border border-white/5 transition-all ${isEditing ? 'bg-white/20' : ''}`}>
+                    <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{comment.user?.username || comment.authorName}</span>
+                    {isEditing ? (
+                        <div className="mt-1">
+                            <input autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-xs text-white outline-none mb-2" />
+                            <div className="flex gap-2">
+                                <button onClick={handleSave} className="text-[10px] uppercase font-bold text-green-500 hover:text-green-400">Save</button>
+                                <button onClick={() => setIsEditing(false)} className="text-[10px] uppercase font-bold text-gray-400 hover:text-white">Cancel</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <span className="text-xs text-gray-200">{comment.text}</span>
+                    )}
+                </div>
+
+                {/* ACTIONS */}
+                <div className="flex gap-3 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                    {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-bold uppercase tracking-widest">Edit</button>}
+                    {canDelete && <button onClick={() => onDelete(post._id, comment._id)} className="text-[10px] text-gray-500 hover:text-red-500 font-bold uppercase tracking-widest">Delete</button>}
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete, onShare, onExampleEdit, onEditComment, onDeleteComment }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
     const isOwner = post.author?._id === user._id || post.author === user._id;
@@ -62,19 +114,13 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
 
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                         <div className="mb-4 text-sm text-gray-300">{parseHashtags(post.desc)}</div>
+                        {/* MAGIC ANIMATION LIST */}
                         <div className="space-y-4">
-                            {post.comments?.map((c, i) => (
-                                <div key={i} className="flex gap-3 items-start">
-                                    <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-white border border-white/10">
-                                        {/* Fix: Prefer current user image if available, falling back securely */}
-                                        {c.user?.profilePic || c.authorProfilePic ? <img src={resolveMediaUrl(c.user?.profilePic || c.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.user?.username || c.authorName} />}
-                                    </div>
-                                    <div className="bg-white/5 rounded-2xl px-3 py-2">
-                                        <span className="font-bold text-white mr-2 text-xs">{c.user?.username || c.authorName}</span>
-                                        <span className="text-gray-300 text-xs">{c.text}</span>
-                                    </div>
-                                </div>
-                            ))}
+                            <AnimatePresence>
+                                {post.comments?.map((c, i) => (
+                                    <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
+                                ))}
+                            </AnimatePresence>
                         </div>
                     </div>
 
@@ -87,7 +133,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
                         <div className="font-bold text-white text-sm mb-2">{post.likes?.length} Likes</div>
                         <form onSubmit={(e) => { e.preventDefault(); onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center">
                             <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-transparent text-sm outline-none text-white placeholder-gray-500" />
-                            <button className="p-2 bg-blue-600 rounded-full hover:bg-blue-500 text-white"><Icons.ArrowRight className="w-4 h-4" /></button>
+                            <button className="p-2 bg-blue-600 rounded-full hover:bg-blue-500 text-white shadow-lg active:scale-95 transition-transform"><Icons.ArrowRight className="w-4 h-4" /></button>
                         </form>
                     </div>
                 </div>
@@ -120,7 +166,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare }) => {
+const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment }) => {
     const [showComments, setShowComments] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [commentText, setCommentText] = useState('');
@@ -134,7 +180,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     };
 
     return (
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="glass-card mb-6 rounded-3xl overflow-hidden relative group">
+        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card mb-6 rounded-3xl overflow-hidden relative group border border-white/5">
             <div className="p-4 flex items-center justify-between relative">
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => onViewProfile(post.author)}>
                     <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 overflow-hidden bg-gray-900 shadow-lg shadow-yellow-500/10">
@@ -187,7 +233,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         <button onClick={() => setShowComments(!showComments)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.MessageCircle className="w-7 h-7 text-white drop-shadow-lg" /></button>
                         <button onClick={() => onShare(post)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.Send className="w-7 h-7 text-white drop-shadow-lg" /></button>
                     </div>
-                    {/* Bookmark Removed as requested */}
+                    {/* Bookmark Removed */}
                 </div>
 
                 <div className="font-bold text-sm mb-2 text-white/90">{post.likes?.length || 0} Likes</div>
@@ -207,16 +253,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                     {showComments && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mt-4 space-y-4 overflow-hidden">
                             {post.comments?.map((c, idx) => (
-                                <div key={idx} className="flex gap-3 items-start">
-                                    <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
-                                        {/* Fix: Comments Avatar */}
-                                        {c.user?.profilePic || c.authorProfilePic ? <img src={resolveMediaUrl(c.user?.profilePic || c.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={c.user?.username || c.authorName} />}
-                                    </div>
-                                    <div className="bg-white/10 rounded-2xl px-4 py-2 flex-1 shadow-lg backdrop-blur-sm border border-white/5">
-                                        <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{c.user?.username || c.authorName}</span>
-                                        <span className="text-xs text-gray-200">{c.text}</span>
-                                    </div>
-                                </div>
+                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
                             ))}
                             <form onSubmit={handleComment} className="flex gap-2 items-center pt-2">
                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-xs outline-none focus:border-yellow-500 shadow-inner" />
@@ -233,7 +270,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 };
 
 // ... ChatModal, SettingsModal, ProfileModal, CreateModal same logic ...
-// Re-inserting them with minor fixes (no changes needed for them based on this prompt, assuming previous context valid)
+// Re-inserting them to ensure full file integrity
 
 const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
     const [activeChat, setActiveChat] = useState(null);
@@ -455,7 +492,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     );
 };
 
-// ... CreateModal same logic ...
 const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
@@ -541,6 +577,37 @@ const App = () => {
         }
     };
 
+    // COMMENT MANAGEMENT
+    const handleDeleteComment = async (postId, commentId) => {
+        try {
+            await axios.delete(`/posts/${postId}/comment/${commentId}`);
+            setPosts(prev => prev.map(p => {
+                if (p._id === postId) {
+                    return { ...p, comments: p.comments.filter(c => c._id !== commentId) };
+                }
+                return p;
+            }));
+            playSound('pop');
+        } catch (err) {
+            console.error("Failed to delete comment", err);
+            alert("Failed to delete.");
+        }
+    };
+
+    const handleEditComment = async (postId, commentId, text) => {
+        try {
+            const res = await axios.put(`/posts/${postId}/comment/${commentId}`, { text });
+            setPosts(prev => prev.map(p => {
+                if (p._id === postId) {
+                    return { ...p, comments: res.data };
+                }
+                return p;
+            }));
+        } catch (e) {
+            console.error("Failed to edit comment", e);
+        }
+    };
+
     const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); } catch (e) { } } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
@@ -548,7 +615,6 @@ const App = () => {
 
     if (!user) return (
         <div className="min-h-screen bg-black flex items-center justify-center p-6 relative">
-      // ... Login/Register UI (no changes requested here) ...
             <div className="liquid-bg" />
             <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
                 <h1 className="text-4xl font-black italic gold-text mb-8">LEGACY</h1>
@@ -626,7 +692,7 @@ const App = () => {
                             </div>
                         )}
                         <div className="space-y-6">
-                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} />)}
+                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} />)}
                             {posts.length === 0 && <div className="h-96 center text-gray-700 font-bold text-sm uppercase tracking-widest italic">Decrypting Feed...</div>}
                         </div>
                     </>
@@ -652,7 +718,7 @@ const App = () => {
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onShare={handleShare} />}
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onShare={handleShare} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
 
             <div className="fixed top-4 right-4 z-50"><button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-black/50 rounded-full backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button></div>
         </div>
