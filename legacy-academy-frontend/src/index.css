@@ -7,8 +7,9 @@
 :root {
   --gold-primary: #ffd700;
   --gold-secondary: #b8860b;
-  --glass-bg: rgba(20, 20, 20, 0.6);
-  --glass-border: rgba(255, 215, 0, 0.15);
+  --glass-bg: rgba(20, 20, 20, 0.4);
+  /* Πιο διάφανο για να περνάνε τα χρώματα */
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -18,12 +19,34 @@ body {
   overflow-x: hidden;
 }
 
-/* --- LIQUID GLASS AESTHETIC (TATE STYLE) --- */
+/* --- SUPER LIQUID GLASS (PHOTO MATCH) --- */
+
+.liquid-nav {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(25px) saturate(200%) contrast(120%);
+  /* ULTRA BLUR & VIBRANCY */
+  -webkit-backdrop-filter: blur(25px) saturate(200%) contrast(120%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  /* Inner shine */
+}
+
+/* Ειδικό εφέ για το Active Button μέσα στο Liquid Nav */
+.nav-active {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+}
 
 .liquid-bg {
   position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: radial-gradient(circle at 50% 10%, #1a1500 0%, #000000 60%);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 10%, #2a2000 0%, #000000 70%);
   z-index: -1;
   pointer-events: none;
 }
@@ -37,28 +60,28 @@ body {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(30, 30, 30, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 215, 0, 0.1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 215, 0, 0.3);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.2);
   transform: translateY(-2px);
 }
 
 /* --- TEXT & BRANDING --- */
 
 .gold-text {
-  background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+  background: linear-gradient(to bottom, #fff 0%, #ffd700 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 900;
   letter-spacing: -1px;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
 .founder-glow {
@@ -68,37 +91,43 @@ body {
 }
 
 @keyframes pulse-gold {
-  0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
-  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-  100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+  0% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  }
 }
 
 /* --- LIQUID BUTTON ANIMATION --- */
 
 .liquid-btn {
   position: relative;
-  background: linear-gradient(45deg, #FFD700, #DAA520);
+  background: linear-gradient(180deg, #FFD700, #b8860b);
   color: black;
   font-weight: 800;
   overflow: hidden;
   border: none;
-  background-size: 200% auto;
-  transition: 0.5s;
+  transition: 0.3s;
   text-transform: uppercase;
   letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
 }
 
-.liquid-btn:hover {
-  background-position: right center;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-  transform: scale(1.02);
+.liquid-btn:active {
+  transform: scale(0.95);
 }
 
 /* --- UTILITIES --- */
 
 .cyber-input {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
   padding: 12px;
   border-radius: 12px;
@@ -109,18 +138,19 @@ body {
 
 .cyber-input:focus {
   border-color: #ffd700;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #333;
   border-radius: 4px;
 }
 
-/* Hide file input text default */
 input[type="file"] {
-    display: none;
+  display: none;
 }
