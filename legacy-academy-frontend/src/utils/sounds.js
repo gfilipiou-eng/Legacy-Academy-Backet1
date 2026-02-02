@@ -100,6 +100,53 @@ export const playSound = (type) => {
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
         osc.start();
         osc.stop(ctx.currentTime + 0.2);
+    } else if (type === 'sword') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        // Metallic overtone
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(12000, ctx.currentTime + 0.1);
+
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(400, ctx.currentTime);
+        filter.frequency.linearRampToValueAtTime(8000, ctx.currentTime + 0.05);
+
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+
+        // White noise "shing"
+        const bufferSize = ctx.sampleRate * 0.3;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = 'bandpass';
+        noiseFilter.Q.value = 8;
+        noiseFilter.frequency.setValueAtTime(2000, ctx.currentTime);
+        noiseFilter.frequency.exponentialRampToValueAtTime(8000, ctx.currentTime + 0.2);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.1, ctx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noise.start();
     }
 };
 

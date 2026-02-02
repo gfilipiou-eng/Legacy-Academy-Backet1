@@ -587,7 +587,7 @@ const App = () => {
                 }
                 return p;
             }));
-            playSound('pop');
+            playSound('sword');
         } catch (err) {
             console.error("Failed to delete comment", err);
             alert("Failed to delete.");
@@ -608,7 +608,7 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); } catch (e) { } } };
+    const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); } catch (e) { } } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     const logout = () => { localStorage.clear(); setUser(null); window.location.reload(); };
@@ -674,6 +674,7 @@ const App = () => {
                 <div className="flex items-center gap-4">
                     <button onClick={() => setIsCreateOpen(true)} className="p-2 bg-yellow-500 rounded-xl text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform"><Icons.Plus className="w-5 h-5" /></button>
                     <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.MessageCircle className="w-5 h-5" /><div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" /></button>
+                    <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button>
                 </div>
             </header>
 
@@ -720,7 +721,7 @@ const App = () => {
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
             {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onShare={handleShare} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
 
-            <div className="fixed top-4 right-4 z-50"><button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-black/50 rounded-full backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button></div>
+
         </div>
     );
 };
