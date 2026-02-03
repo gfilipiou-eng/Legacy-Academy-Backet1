@@ -19,13 +19,20 @@ router.get("/", async (req, res) => {
 // Heartbeat endpoint - update lastSeen for presence
 router.put('/heartbeat', verifyToken, async (req, res) => {
     try {
-        const userId = req.user.id || req.user.userId;
+        const userId = req.user?.id || req.user?.userId;
+        if (!userId) return res.status(401).json("Auth error: No ID found in token");
+
         const updated = await User.findByIdAndUpdate(userId, { lastSeen: new Date() }, { new: true }).select('lastSeen');
-        if (!updated) return res.status(404).json("Agent not found");
-        res.status(200).json({ lastSeen: updated.lastSeen });
+        if (!updated) return res.status(404).json("Agent not found in database");
+
+        res.status(200).json({ status: "alive", lastSeen: updated.lastSeen });
     } catch (err) {
-        console.error('Heartbeat error:', err);
-        res.status(500).json(err);
+        console.error('🔥 Heartbeat Critical Failure (subdir):', err);
+        res.status(500).json({
+            message: "Neural heartbeat failure",
+            error: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        });
     }
 });
 
