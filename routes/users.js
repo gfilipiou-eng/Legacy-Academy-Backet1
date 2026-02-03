@@ -57,13 +57,11 @@ router.put('/heartbeat', heartbeatHandler);
 router.get('/heartbeat', heartbeatHandler);
 
 
-// 2. Follow - Absolute Priority
+// 2. Follow - Updated for Private Accounts
 router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
         const currentUserId = req.user?.id || req.user?.userId;
         const targetId = req.params.id;
-
-        console.log(`📡 FOLLOW REQ: ${currentUserId} -> ${targetId}`);
 
         if (!currentUserId || !targetId) return res.status(401).json("Auth error");
         if (targetId === currentUserId) return res.status(400).json("Cannot follow self");
@@ -73,15 +71,38 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         if (!userToFollow || !currentUser) return res.status(404).json("User not found");
 
-        if (userToFollow.followers?.includes(currentUserId)) {
-            // Unfollow: remove follower from target and remove following from current user
+        const isFollowing = userToFollow.followers?.includes(currentUserId);
+        const hasRequested = userToFollow.followRequests?.includes(currentUserId);
+
+        if (isFollowing) {
+            // Unfollow
             const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
             await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetId } });
             const refreshedCurrent = await User.findById(currentUserId).select('following');
-            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers, following: refreshedCurrent.following });
+            return res.status(200).json({ message: "Unfollowed", isFollowing: false, requested: false, followers: updatedUser.followers, following: refreshedCurrent.following });
         }
 
-        // Follow: add follower and a notification
+        if (hasRequested) {
+            // Cancel request
+            const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followRequests: currentUserId } }, { new: true });
+            return res.status(200).json({ message: "Request cancelled", isFollowing: false, requested: false, followers: updatedUser.followers });
+        }
+
+        // If private, send request
+        if (userToFollow.isPrivate) {
+            const updatedUser = await User.findByIdAndUpdate(targetId, {
+                $push: {
+                    followRequests: currentUserId,
+                    notifications: {
+                        type: 'follow_request', from: currentUserId, fromUsername: currentUser.username,
+                        fromProfilePic: currentUser.profilePic || '', read: false, createdAt: new Date()
+                    }
+                }
+            }, { new: true });
+            return res.status(200).json({ message: "Requested", isFollowing: false, requested: true, followers: updatedUser.followers });
+        }
+
+        // Normal Flow: Immediately follow
         const updatedUser = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,
@@ -94,7 +115,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         await User.findByIdAndUpdate(currentUserId, { $push: { following: targetId } });
         const refreshedCurrent = await User.findById(currentUserId).select('following');
-        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers, following: refreshedCurrent.following });
+        res.status(200).json({ message: "Followed", isFollowing: true, requested: false, followers: updatedUser.followers, following: refreshedCurrent.following });
     } catch (err) {
         console.error("🔥 Follow Error:", err.message);
         res.status(500).json({ message: "Follow error", error: err.message });

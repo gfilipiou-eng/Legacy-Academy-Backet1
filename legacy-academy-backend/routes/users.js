@@ -11,7 +11,7 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate followers following createdAt lastSeen');
+        const users = await User.find().select('username role profilePic isPrivate isFollowersOnly followers following followRequests createdAt lastSeen');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);

@@ -30,8 +30,12 @@ const getYouTubeEmbedUrl = (url) => {
 };
 
 const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
-const isUserOnline = (u) => {
+const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
+    // Rule: Only show online status if the user follows me (the current viewer)
+    const isFollower = u.following?.includes(currentUser?._id) || (currentUser && u.following?.includes(String(currentUser._id)));
+    if (!isFollower && u._id !== currentUser?._id) return false;
+
     try { return (Date.now() - new Date(u.lastSeen).getTime()) < 60000; } catch (e) { return false; }
 };
 
@@ -211,45 +215,58 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
     );
 };
 
-const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat }) => {
+const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest }) => {
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors cursor-pointer border-b border-white/5"
+            className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-pointer border-b border-white/5 group"
             onClick={() => {
-                if (note.type === 'message') {
-                    onOpenChat(note.sender);
-                } else if (note.post || note.postId) {
-                    onOpenPost(note.post || note.postId);
-                } else {
-                    onViewProfile(note.sender);
-                }
+                if (note.type === 'message') onOpenChat(note.sender);
+                else if (note.type === 'follow_request') onViewProfile(note.sender);
+                else if (note.post || note.postId) onOpenPost(note.post || note.postId);
+                else onViewProfile(note.sender);
                 playSound('pop');
             }}
         >
             <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all shadow-lg">
                     {note.fromProfilePic ? <img src={resolveMediaUrl(note.fromProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={note.fromUsername} />}
                 </div>
-                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-0.5 border border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-0.5 border border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-0.5 border border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'mention' && <div className="absolute -bottom-1 -right-1 bg-yellow-500 rounded-full p-0.5 border border-black"><Icons.Bell className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black shadow-glow-red"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black shadow-glow-blue"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black shadow-glow-green"><Icons.Mail className="w-3 h-3 text-white" /></div>}
+                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-yellow-500 rounded-full p-1 border-2 border-black shadow-glow-yellow"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
+                {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black shadow-glow-purple"><Icons.Shield className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm">
-                    <span className="font-bold text-white">{note.fromUsername}</span>
-                    <span className="text-gray-400 text-xs ml-1">
-                        {note.type === 'follow' ? 'started following you' : note.type === 'like' ? 'liked your post' : note.type === 'comment' ? 'commented on your post' : note.type === 'message' ? 'sent a message' : note.type === 'mention' ? 'mentioned you' : ''}
+                    <span className="font-black text-white group-hover:text-yellow-500 transition-colors uppercase tracking-tight">{note.fromUsername}</span>
+                    <span className="text-gray-500 text-[11px] ml-1 uppercase tracking-widest font-bold">
+                        {note.type === 'follow' ? 'joined your network' :
+                            note.type === 'like' ? 'endorsed your intel' :
+                                note.type === 'comment' ? 'briefed your post' :
+                                    note.type === 'message' ? 'encrypted a message' :
+                                        note.type === 'mention' ? 'flagged you' :
+                                            note.type === 'follow_request' ? 'requests clearance' : ''}
                     </span>
                 </div>
-                {note.text && <div className="text-xs text-gray-500 mt-0.5 line-clamp-1 italic">"{note.text}"</div>}
-                <div className="text-[10px] text-gray-600 font-bold uppercase tracking-wider mt-1">{formatDate(note.createdAt)}</div>
+                {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
+                <div className="flex items-center gap-3 mt-2">
+                    <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt)}</div>
+                    {!note.read && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full shadow-glow-yellow" />}
+                </div>
+
+                {note.type === 'follow_request' && (
+                    <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-yellow-500/20 uppercase tracking-widest">Authorize</button>
+                        <button onClick={() => onRejectRequest(note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">Deny</button>
+                    </div>
+                )}
             </div>
             {note.postImage && (
-                <div className="w-10 h-10 rounded-md bg-gray-800 border border-white/10 overflow-hidden">
-                    <img src={resolveMediaUrl(note.postImage)} className="w-full h-full object-cover opacity-50" />
+                <div className="w-12 h-12 rounded-xl bg-gray-800 border border-white/10 overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
+                    <img src={resolveMediaUrl(note.postImage)} className="w-full h-full object-cover opacity-60" />
                 </div>
             )}
         </motion.div>
@@ -477,7 +494,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                     <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">CHATS</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
                         {allUsers.filter(u => u._id !== user?._id).map(u => {
-                            const online = isUserOnline(u);
+                            const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                     <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}>{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
@@ -493,7 +510,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
                                 <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
-                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat) ? 'Active Now' : 'Offline'}</div></div>
+                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? 'Active Now' : 'Offline'}</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar modal-content-scroller">
                                 {(messages[activeChat._id] || []).map((m, i) => (
@@ -520,26 +537,65 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     );
 };
 
-const SettingsModal = ({ isOpen, onClose, logout, user }) => {
+const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
+    const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            setIsPrivate(user.isPrivate || false);
+            setIsFollowersOnly(user.isFollowersOnly || false);
+        }
+    }, [user]);
+
+    const handleSave = async (key, val) => {
+        setSaving(true);
+        try {
+            const res = await axios.put('/users/settings', { [key]: val });
+            if (onUpdateUser) onUpdateUser(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+            playSound('pop');
+        } catch (e) { console.error("Settings update failed", e); }
+        finally { setSaving(false); }
+    };
 
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 z-[250] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative w-full max-w-sm bg-[#111] border border-white/10 rounded-3xl overflow-hidden animate-pop-in shadow-2xl">
+            <div className="relative w-full max-w-sm bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl">
                 <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5">
-                    <h2 className="font-bold uppercase tracking-widest text-sm text-gray-400">Settings</h2>
-                    <button onClick={onClose}><Icons.X className="w-5 h-5" /></button>
+                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">Security & Privacy</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
-                <div className="modal-content-scroller custom-scrollbar p-2">
-                    <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5 cursor-pointer rounded-xl">
-                        <span className="text-sm font-bold text-gray-300">Private Account</span>
-                        <div onClick={() => setIsPrivate(!isPrivate)} className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-green-500' : 'bg-gray-700'}`}>
-                            <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${isPrivate ? 'translate-x-4' : ''}`} />
+                <div className="modal-content-scroller custom-scrollbar p-3 space-y-2">
+                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-yellow-500/30 group">
+                        <div>
+                            <div className="text-sm font-bold text-white group-hover:text-yellow-500 transition-colors">Private Account</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Only accepted followers see content</div>
+                        </div>
+                        <div onClick={() => { setIsPrivate(!isPrivate); handleSave('isPrivate', !isPrivate); }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-yellow-500' : 'bg-gray-700'}`}>
+                            <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
                         </div>
                     </div>
-                    <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5 rounded-xl mt-2"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
+
+                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-blue-500/30 group">
+                        <div>
+                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">Guard Chat</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Messages only from your followers</div>
+                        </div>
+                        <div onClick={() => { setIsFollowersOnly(!isFollowersOnly); handleSave('isFollowersOnly', !isFollowersOnly); }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'}`}>
+                            <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isFollowersOnly ? 'translate-x-5' : ''}`} />
+                        </div>
+                    </div>
+
+                    <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-black text-sm border border-red-500/20 rounded-2xl transition-all hover:scale-[0.98]">
+                        <span className="tracking-[0.2em]">TERMINATE SESSION</span>
+                        <Icons.Logout className="w-5 h-5" />
+                    </button>
+
+                    {saving && <div className="text-[10px] text-yellow-500 text-center font-bold animate-pulse">SYNCING WITH NEURAL LINK...</div>}
                 </div>
             </div>
         </div>
@@ -688,9 +744,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <button
                                             onClick={() => onFollow(displayUser?._id || displayUser)}
                                             disabled={!!followLoading[displayUser?._id]}
-                                            className={`flex-1 py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'} ${followLoading[displayUser?._id] ? 'opacity-60 cursor-wait' : ''}`}
+                                            className={`flex-1 py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) || displayUser?.followRequests?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'} ${followLoading[displayUser?._id] ? 'opacity-60 cursor-wait' : ''}`}
                                         >
-                                            {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : 'FOLLOW')}
+                                            {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : displayUser?.followRequests?.includes(currentUser?._id) ? 'REQUESTED' : 'FOLLOW')}
                                         </button>
                                         <button
                                             onClick={() => { onClose(); onOpenChat(displayUser); }}
@@ -1156,48 +1212,46 @@ const App = () => {
     };
 
     const handleFollow = async (targetId) => {
-        if (!targetId) return;
+        if (!targetId || !user) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
         try {
-            // Optimistic UI
-            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: (u.followers || []).includes(user._id) ? u.followers.filter(id => id !== user._id) : [...(u.followers || []), user._id] } : u));
-            setUser(prev => ({ ...prev, following: prev.following?.includes(targetId) ? prev.following.filter(id => id !== targetId) : [...(prev.following || []), targetId] }));
-            if (profileUser?._id === targetId || profileUser === targetId) {
-                setProfileUser(prev => ({ ...prev, followers: (prev.followers || []).includes(user._id) ? prev.followers.filter(id => id !== user._id) : [...(prev.followers || []), user._id] }));
-            }
-
             const res = await axios.post(`/users/${targetId}/follow`);
+            const { followers, following, message } = res.data;
 
-            // Sync to server response
-            const serverFollowers = res.data.followers;
-            const serverFollowing = res.data.following;
-
-            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: serverFollowers } : u));
-
-            setUser(prev => {
-                if (Array.isArray(serverFollowing)) return { ...prev, following: serverFollowing };
-                const isFollowing = res.data.isFollowing;
-                if (isFollowing) return { ...prev, following: [...new Set([...(prev.following || []), targetId])] };
-                return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
-            });
-
-            if (profileUser?._id === targetId || profileUser === targetId) {
-                setProfileUser(prev => ({ ...prev, followers: serverFollowers }));
+            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers } : u));
+            if (profileUser && String(profileUser._id) === String(targetId)) {
+                setProfileUser(prev => ({ ...prev, followers }));
             }
 
-            playSound('pop');
-
-        } catch (e) {
-            // Silently sync state if user is gone
-            if (e.response?.status === 404) {
-                fetchUsers();
-                if (isProfileOpen) setIsProfileOpen(false);
+            if (following) {
+                const updatedUser = { ...user, following };
+                setUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
             } else {
-                console.warn('Follow action sync needed', e.message);
+                fetchUsers(); // Refresh for requests
             }
-        } finally {
-            setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; });
-        }
+
+            if (message === 'Requested') alert("Verification requested from agent.");
+            playSound('pop');
+        } catch (e) { console.error('Follow failed', e); }
+        finally { setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; }); }
+    };
+
+    const handleAcceptRequest = async (requesterId) => {
+        try {
+            await axios.post(`/users/requests/${requesterId}/accept`);
+            fetchNotifications();
+            fetchUsers();
+            playSound('pop');
+        } catch (e) { console.error('Accept request failed', e); }
+    };
+
+    const handleRejectRequest = async (requesterId) => {
+        try {
+            await axios.post(`/users/requests/${requesterId}/reject`);
+            fetchNotifications();
+            playSound('pop');
+        } catch (e) { console.error('Reject request failed', e); }
     };
 
     // FIX: Real Share Functionality
@@ -1435,7 +1489,7 @@ const App = () => {
                                         </button>
                                     )}
                                 </div>
-                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} />)}
+                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} />)}
                             </div>
                         ) : (
                             <>
@@ -1482,7 +1536,7 @@ const App = () => {
                 </div>
 
                 <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
-                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} />
+                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
                 <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={setUser} />
                 <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                 <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
