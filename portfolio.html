@@ -78,17 +78,23 @@
             position: relative;
         }
 
-        .cyber-ring {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-top: 2px solid var(--red);
-            border-bottom: 2px solid var(--red);
-            animation: spin 3s linear infinite;
-            box-shadow: 0 0 15px var(--red-deep);
-            z-index: 1;
-        }
+        .cyber-ring { position:absolute; inset:0; border-radius:50%; z-index:1; pointer-events:none; }
+        /* smaller solid red ring, no glow */
+        .cyber-ring .ring { position:absolute; inset:10%; border-radius:inherit; border: 2px solid rgba(204,0,26,0.95); background: transparent; mix-blend-mode: normal; animation: spin 14s linear infinite; transform-origin:center center; }
+        /* remove inner and scan overlays for a cleaner look */
+        .cyber-ring .inner { display:none; }
+        .cyber-ring .scan { display:none; }
+        .ring-halo { display:none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* small simple orbiting dots (no glow) */
+        .orbit-dot { position:absolute; width:6px; height:6px; border-radius:50%; background: #cc001a; box-shadow:none; transform: translate(-50%, -50%) scale(1); pointer-events:none; opacity:0.9; }
+        .orbit-dot::after { display:none; }
+
+        /* orbiting neon dots */
+        .orbit-dot { position:absolute; width:8px; height:8px; border-radius:50%; background: radial-gradient(circle, #00f2ea, #ff0080); box-shadow: 0 0 16px rgba(0,242,234,0.6), inset 0 0 4px rgba(255,255,255,0.4); transform: translate(-50%, -50%); pointer-events:none; }
+        .photo-wrapper::after { content:""; position:absolute; inset:0; border-radius:50%; background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.03) 1px); mix-blend-mode: overlay; pointer-events:none; }
+
 
         .cyber-ring::before {
             content: "";
@@ -249,27 +255,59 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Liquid glass sheen + pointer parallax for cards and profile photo
+        // Cyberpunk ring animation + orbiting dots + performant parallax
         (function(){
-            const cards = document.querySelectorAll('.card');
-            function onMove(e){
-                for(const c of cards){
-                    const rect = c.getBoundingClientRect();
-                    const mx = ((e.clientX - rect.left) / rect.width) * 100;
-                    const my = ((e.clientY - rect.top) / rect.height) * 100;
-                    c.style.setProperty('--mx', mx + '%');
-                    c.style.setProperty('--my', my + '%');
-                }
-                // subtle profile parallax
-                const photo = document.querySelector('.profile-photo');
-                if(photo){
-                    const rx = (e.clientX - window.innerWidth/2) / (window.innerWidth/20);
-                    const ry = (e.clientY - window.innerHeight/2) / (window.innerHeight/40);
-                    photo.style.transform = `translate3d(${rx}px, ${ry}px, 0) scale(1.01)`;
-                }
+            const wrapper = document.querySelector('.photo-wrapper');
+            if(!wrapper) return;
+
+            // add rings markup
+            const ring = document.createElement('div'); ring.className = 'cyber-ring';
+            ring.innerHTML = '<div class="ring"></div><div class="scan"></div><div class="inner"></div><div class="ring-halo"></div>';
+            wrapper.appendChild(ring);
+
+            // create small orbit dots (no glow)
+            const dots = [];
+            for(let i=0;i<3;i++){
+                const d = document.createElement('div');
+                d.className = 'orbit-dot';
+                d.dataset.base = Math.random()*Math.PI*2;
+                d.dataset.radius = 48 + i*6;
+                wrapper.appendChild(d);
+                d.style.opacity = '0.9';
+                dots.push(d);
             }
-            document.addEventListener('pointermove', onMove);
-            cards.forEach(c => { const s = document.createElement('div'); s.className = 'sheen'; c.appendChild(s); });
+
+            // animation loop (compute positions relative to wrapper)
+            let start = performance.now();
+            function loop(now){
+                const t = (now - start)/1000;
+                const rc = wrapper.getBoundingClientRect(); const cx = rc.width/2; const cy = rc.height/2;
+                dots.forEach((d, i)=>{
+                    const base = parseFloat(d.dataset.base);
+                    const speed = 0.6 + i*0.03;
+                    const angle = base + t*speed;
+                    const radius = parseFloat(d.dataset.radius);
+                    const x = cx + Math.cos(angle)*radius;
+                    const y = cy + Math.sin(angle)*radius*0.78;
+                    d.style.left = x + 'px'; d.style.top = y + 'px';
+                    d.style.transform = 'translate(-50%,-50%) scale(1)';
+                    d.style.opacity = '0.9';
+                });
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+
+n            // lightweight pointer parallax using rAF (only desktop)
+            if(!('ontouchstart' in window)){
+                let raf = null, last = null;
+                document.addEventListener('pointermove', e => { last = e; if(!raf) raf = requestAnimationFrame(function frame(){
+                    if(!last){ raf=null; return; }
+                    const e = last; last = null;
+                    const rc = wrapper.getBoundingClientRect(); const rx = (e.clientX - (rc.left + rc.width/2))/ (rc.width/6); const ry = (e.clientY - (rc.top + rc.height/2))/ (rc.height/8);
+                    wrapper.style.transform = `translate3d(${rx}px, ${ry}px, 0) rotateX(${ -ry }deg) rotateY(${ rx }deg)`;
+                    raf = requestAnimationFrame(frame);
+                }); });
+            }
         })();
     </script>
 </body>
