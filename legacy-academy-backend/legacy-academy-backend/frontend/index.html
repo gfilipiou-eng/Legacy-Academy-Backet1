@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legacy Academy</title>
+</head>
+<body>
+<h1>Legacy Academy</h1>
+
+<h2>Register</h2>
+<form id="registerForm">
+  <input type="text" id="regUsername" placeholder="Username" required>
+  <input type="email" id="regEmail" placeholder="Email" required>
+  <input type="password" id="regPassword" placeholder="Password" required>
+  <button type="submit">Register</button>
+</form>
+
+<h2>Login</h2>
+<form id="loginForm">
+  <input type="email" id="loginEmail" placeholder="Email" required>
+  <input type="password" id="loginPassword" placeholder="Password" required>
+  <button type="submit">Login</button>
+</form>
+
+<h2>Create Post</h2>
+<form id="postForm">
+  <input type="text" id="postText" placeholder="Text" required>
+  <input type="file" id="postImage">
+  <button type="submit">Post</button>
+</form>
+
+<h2>Posts</h2>
+<div id="postsContainer"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
