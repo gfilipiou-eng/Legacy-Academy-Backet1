@@ -897,7 +897,11 @@ const App = () => {
             console.error('Follow failed', e);
             fetchUsers();
             if (profileUser?._id) axios.get(`/users/find/${profileUser._id}`).then(r => setProfileUser(r.data)).catch(() => { });
-            alert(e?.response?.data || 'Follow action failed. Please try again.');
+
+            // Only alert if it's NOT a 404 (User no longer exists)
+            if (e?.response?.status !== 404) {
+                alert(e?.response?.data || 'Follow action failed. Please try again.');
+            }
         } finally {
             setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; });
         }
