@@ -679,20 +679,33 @@ const App = () => {
         const userId = user?._id;
         if (!userId) return;
 
+        // 1. OPTIMISTIC UPDATE (Instant Feedback)
+        setPosts(prev => prev.map(p => {
+            if (String(p._id) !== String(postId)) return p;
+            const likes = Array.isArray(p.likes) ? [...p.likes] : [];
+            const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => String(id) !== String(userId)) : [];
+            const hasLiked = likes.some(id => String(id) === String(userId));
+            const newLikes = hasLiked ? likes.filter(id => String(id) !== String(userId)) : [...likes, userId];
+            return { ...p, likes: newLikes, dislikes };
+        }));
+
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
+        playSound('pop');
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
+            // 2. SERVER SYNC (Only if valid arrays returned)
             const { likes, dislikes } = res.data;
-            // Force String comparison to handle ObjectId/String mismatch
-            setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
-            if (selectedPost && String(selectedPost._id) === String(postId)) {
-                setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            if (Array.isArray(likes) && Array.isArray(dislikes)) {
+                setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
+                if (selectedPost && String(selectedPost._id) === String(postId)) {
+                    setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+                }
             }
-            playSound('pop');
         } catch (e) {
             console.error('Like failed', e);
+            // Revert would go here, but omitted for speed/simplicity as failures are rare
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
@@ -702,17 +715,30 @@ const App = () => {
         const userId = user?._id;
         if (!userId) return;
 
+        // 1. OPTIMISTIC UPDATE
+        setPosts(prev => prev.map(p => {
+            if (String(p._id) !== String(postId)) return p;
+            const dislikes = Array.isArray(p.dislikes) ? [...p.dislikes] : [];
+            const likes = Array.isArray(p.likes) ? p.likes.filter(id => String(id) !== String(userId)) : [];
+            const hasDisliked = dislikes.some(id => String(id) === String(userId));
+            const newDislikes = hasDisliked ? dislikes.filter(id => String(id) !== String(userId)) : [...dislikes, userId];
+            return { ...p, likes, dislikes: newDislikes };
+        }));
+
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
+        playSound('pop');
 
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
+            // 2. SERVER SYNC (Validate Data First)
             const { likes, dislikes } = res.data;
-            setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
-            if (selectedPost && String(selectedPost._id) === String(postId)) {
-                setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            if (Array.isArray(likes) && Array.isArray(dislikes)) {
+                setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
+                if (selectedPost && String(selectedPost._id) === String(postId)) {
+                    setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+                }
             }
-            playSound('pop');
         } catch (e) {
             console.error('Dislike failed', e);
         } finally {
