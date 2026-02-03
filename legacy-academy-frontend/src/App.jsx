@@ -3,7 +3,7 @@ import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
-import { playSound } from './utils/sounds';
+import { playSound, explodeEffect } from './utils/sounds';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
@@ -168,9 +168,9 @@ const NotificationItem = ({ note, onViewProfile }) => {
 
 const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment }) => {
     const [showComments, setShowComments] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
     const [commentText, setCommentText] = useState('');
     const isOwner = post.author?._id === user._id || post.author === user._id;
+    const dislikeCount = post.dislikes?.length || 0;
 
     const handleComment = (e) => {
         e.preventDefault();
@@ -179,92 +179,94 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
         setCommentText('');
     };
 
-    return (
-        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card mb-6 rounded-3xl overflow-hidden relative group border border-white/5">
-            <div className="p-4 flex items-center justify-between relative">
-                <div className="flex items-center gap-3 cursor-pointer" onClick={() => onViewProfile(post.author)}>
-                    <div className="w-12 h-12 rounded-full border-2 border-yellow-500/50 overflow-hidden bg-gray-900 shadow-lg shadow-yellow-500/10">
-                        {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
-                    </div>
-                    <div><h4 className="font-bold text-sm text-white drop-shadow-md">{post.author?.username}</h4><p className="text-[10px] text-gray-400 uppercase tracking-widest leading-none">Verified Agent</p></div>
-                </div>
+    const handleDelete = () => {
+        onDelete(post._id);
+    };
 
-                <div className="relative">
-                    {isOwner ? (
-                        <button onClick={() => onDelete(post._id)} className="p-2 hover:bg-red-500/20 rounded-full transition-colors group/delete">
-                            <Icons.Trash className="w-6 h-6 text-gray-400 group-hover/delete:text-red-500 transition-colors" />
-                        </button>
-                    ) : (
-                        <>
-                            <button onClick={() => setShowMenu(!showMenu)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.Menu className="w-6 h-6 text-gray-400 rotate-90" /></button>
-                            <AnimatePresence>
-                                {showMenu && (
-                                    <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute right-0 top-10 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-20 w-40 overflow-hidden backdrop-blur-xl">
-                                        <button onClick={() => { onDislike(post._id); setShowMenu(false); }} className="w-full flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 text-xs font-bold uppercase border-t border-white/5">
-                                            <Icons.ThumbsDown className="w-4 h-4" /> Dislike
-                                        </button>
-                                        <button className="w-full flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-white/5 text-xs font-bold uppercase border-t border-white/5">
-                                            <Icons.Shield className="w-4 h-4" /> Report
-                                        </button>
-                                    </motion.div>
+    return (
+        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card mb-4 rounded-3xl overflow-hidden relative border border-white/5 bg-[#050505]">
+            {/* WRAPPER LINK FOR DETAILS */}
+            <div className="p-4" >
+                <div className="flex items-start gap-3">
+                    <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                            {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
+                        </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col">
+                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight">{post.author?.username}</span>
+                                <span className="text-gray-500 text-xs">@{post.author?.username?.toLowerCase()} · 2h</span>
+                            </div>
+                            {isOwner && (
+                                <button onClick={(e) => { e.stopPropagation(); handleDelete(); }} className="text-gray-500 hover:text-red-500 p-1">
+                                    <Icons.Trash className="w-4 h-4" />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* POST TEXT CONTENT */}
+                        <div onClick={() => onOpenDetail(post)} className="mt-1 text-sm text-white/90 whitespace-pre-wrap break-words cursor-pointer mb-2 font-normal">
+                            {parseHashtags(post.desc)}
+                        </div>
+
+                        {/* MEDIA CONTENT */}
+                        {post.image && (
+                            <div onClick={() => onOpenDetail(post)} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm cursor-pointer bg-black/50" style={{ maxHeight: '500px' }}>
+                                {/* DETECT VIDEO VS IMAGE - SIMPLE CHECK BASED ON EXTENSION OR TYPE field if available. Using onError fallback for safety */}
+                                {post.videoUrl || (post.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-full object-cover max-h-[500px]" />
+                                ) : (
+                                    <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover max-h-[500px]" loading="lazy" />
                                 )}
-                            </AnimatePresence>
-                        </>
-                    )}
+                            </div>
+                        )}
+
+                        {/* ACTIONS BAR - BLUESKY STYLE */}
+                        <div className="flex items-center justify-between mt-4 pr-4 max-w-md">
+                            <button onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-blue-400 transition-colors">
+                                <div className="p-1.5 rounded-full group-hover:bg-blue-500/10"><Icons.MessageCircle className="w-5 h-5" /></div>
+                                <span className="text-xs font-medium">{post.comments?.length || 0}</span>
+                            </button>
+
+                            <button onClick={(e) => { e.stopPropagation(); onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.likes?.includes(user._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${post.likes?.includes(user._id) ? 'fill-current' : ''}`} /></div>
+                                <span className="text-xs font-medium">{post.likes?.length || 0}</span>
+                            </button>
+
+                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.dislikes?.includes(user._id) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
+                                <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
+                                <span className="text-xs font-medium">{dislikeCount}</span>
+                            </button>
+
+                            <button onClick={(e) => { e.stopPropagation(); onShare(post); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-green-400 transition-colors">
+                                <div className="p-1.5 rounded-full group-hover:bg-green-500/10"><Icons.Send className="w-5 h-5" /></div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {post.image ? (
-                <div onClick={() => onOpenDetail(post)} className="aspect-square bg-black overflow-hidden relative shadow-inner cursor-pointer">
-                    <img src={resolveMediaUrl(post.image)} className="w-full h-full object-contain bg-black" />
-                </div>
-            ) : (
-                <div onClick={() => onOpenDetail(post)} className="p-8 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center min-h-[300px] cursor-pointer">
-                    <p className="text-xl md:text-2xl font-black text-center text-white italic leading-relaxed">
-                        "{post.desc}"
-                    </p>
-                </div>
-            )}
-
-            <div className="p-4 bg-gradient-to-b from-transparent to-black/40">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => onLike(post._id)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.Heart className={`w-8 h-8 drop-shadow-lg ${post.likes?.includes(user._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
-                        <button onClick={() => setShowComments(!showComments)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.MessageCircle className="w-7 h-7 text-white drop-shadow-lg" /></button>
-                        <button onClick={() => onShare(post)} className="hover:scale-110 active:scale-90 transition-transform"><Icons.Send className="w-7 h-7 text-white drop-shadow-lg" /></button>
-                    </div>
-                    {/* Bookmark Removed */}
-                </div>
-
-                <div className="font-bold text-sm mb-2 text-white/90">{post.likes?.length || 0} Likes</div>
-
-                {post.image && (
-                    <div className="text-sm mb-3">
-                        <span className="font-bold mr-2 text-white">{post.author?.username}</span>
-                        <span className="text-gray-200">{parseHashtags(post.desc)}</span>
-                    </div>
-                )}
-
-                <button onClick={() => setShowComments(!showComments)} className="text-xs text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-colors">
-                    {post.comments?.length > 0 ? `View all ${post.comments.length} comments` : 'Add a comment'}
-                </button>
-
-                <AnimatePresence>
-                    {showComments && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mt-4 space-y-4 overflow-hidden">
+            {/* INLINE COMMENTS EXPANSION */}
+            <AnimatePresence>
+                {showComments && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
+                        <div className="p-4 space-y-4">
                             {post.comments?.map((c, idx) => (
                                 <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
                             ))}
-                            <form onSubmit={handleComment} className="flex gap-2 items-center pt-2">
-                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-xs outline-none focus:border-yellow-500 shadow-inner" />
-                                <button className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center hover:bg-yellow-400 text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-all">
-                                    <Icons.ArrowRight className="w-4 h-4" />
-                                </button>
+                            <form onSubmit={handleComment} className="flex gap-3 items-center mt-4">
+                                <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
+                                    {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
+                                </div>
+                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Post your reply..." className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
+                                <button disabled={!commentText.trim()} className="text-blue-500 font-bold text-sm disabled:opacity-50">Post</button>
                             </form>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };
@@ -608,7 +610,7 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); } catch (e) { } } };
+    const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     const logout = () => { localStorage.clear(); setUser(null); window.location.reload(); };
