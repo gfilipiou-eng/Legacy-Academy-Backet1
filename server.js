@@ -11,6 +11,15 @@ import crypto from 'crypto';
 // Load environment variables FIRST!
 dotenv.config();
 
+// Auto-enable request dump on startup for quick debugging when explicitly opted-in.
+// Set REQUEST_DUMP_AUTO=true (e.g., in Render env) and the server will enable
+// REQUEST_DUMP=true and default REQUEST_DUMP_TTL_MINUTES=5 (unless you set a different TTL).
+if (process.env.REQUEST_DUMP_AUTO === 'true') {
+  if (!process.env.REQUEST_DUMP) process.env.REQUEST_DUMP = 'true';
+  if (!process.env.REQUEST_DUMP_TTL_MINUTES && !process.env.REQUEST_DUMP_EXPIRES_AT) process.env.REQUEST_DUMP_TTL_MINUTES = '5';
+  console.warn(`🔧 REQUEST_DUMP_AUTO enabled: REQUEST_DUMP=true, TTL=${process.env.REQUEST_DUMP_TTL_MINUTES} minute(s)`);
+}
+
 console.log("🟢 Server initialization started...");
 console.log("Environment: ", process.env.NODE_ENV || 'production');
 console.log("Port: ", process.env.PORT || 5000);
