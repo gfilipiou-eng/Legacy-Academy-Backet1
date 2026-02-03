@@ -16,22 +16,52 @@ router.get("/", async (req, res) => {
     }
 });
 
-// Heartbeat endpoint - update lastSeen for presence
+// 1. Heartbeat - Move to top
 router.put('/heartbeat', verifyToken, async (req, res) => {
     try {
         const userId = req.user?.id || req.user?.userId;
-        if (!userId) return res.status(401).json("Auth error: No ID found in token");
-
-        const result = await User.updateOne(
-            { _id: userId },
-            { $set: { lastSeen: new Date() } }
-        );
-
-        if (result.matchedCount === 0) return res.status(404).json("Agent not found");
+        if (!userId) return res.status(200).json({ status: "no_id" });
+        await User.updateOne({ _id: userId }, { $set: { lastSeen: new Date() } });
         res.status(200).json({ status: "alive" });
     } catch (err) {
-        console.error('🔥 Heartbeat Error (subdir):', err.message);
-        res.status(500).json({ message: "Neural heartbeat failure", error: err.message });
+        res.status(200).json({ status: "silent_fail" });
+    }
+});
+
+// 2. Follow - Move to top
+router.post("/:id/follow", verifyToken, async (req, res) => {
+    try {
+        const currentUserId = req.user?.id || req.user?.userId;
+        const targetId = req.params.id;
+
+        if (!currentUserId || !targetId) return res.status(401).json("Auth error");
+        if (targetId === currentUserId) return res.status(400).json("Cannot follow self");
+
+        const userToFollow = await User.findById(targetId);
+        const currentUser = await User.findById(currentUserId);
+
+        if (!userToFollow || !currentUser) return res.status(404).json("User not found");
+
+        if (userToFollow.followers?.includes(currentUserId)) {
+            const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
+            await currentUser.updateOne({ $pull: { following: targetId } });
+            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(targetId, {
+            $push: {
+                followers: currentUserId,
+                notifications: {
+                    type: 'follow', from: currentUserId, fromUsername: currentUser.username,
+                    fromProfilePic: currentUser.profilePic || '', read: false, createdAt: new Date()
+                }
+            }
+        }, { new: true });
+
+        await currentUser.updateOne({ $push: { following: targetId } });
+        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
+    } catch (err) {
+        res.status(500).json({ message: "Follow error", error: err.message });
     }
 });
 
@@ -72,52 +102,7 @@ router.get("/username/:username", async (req, res) => {
     }
 });
 
-// FOLLOW or REQUEST TO FOLLOW a user
-router.post("/:id/follow", verifyToken, async (req, res) => {
-    try {
-        const currentUserId = req.user?.id || req.user?.userId;
-        const targetId = req.params.id;
-
-        console.log(`📡 DEBUG: Follow attempt (subdir) ${currentUserId} -> ${targetId}`);
-
-        if (!currentUserId) return res.status(401).json("Unauthorized: ID missing");
-        if (targetId === currentUserId) return res.status(400).json("You cannot follow yourself");
-
-        const userToFollow = await User.findById(targetId);
-        const currentUser = await User.findById(currentUserId);
-
-        if (!userToFollow) return res.status(404).json("Target user not found");
-        if (!currentUser) return res.status(404).json("Current user session invalid");
-
-        // If already following, unfollow
-        if (userToFollow.followers?.includes(currentUserId)) {
-            const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
-            await currentUser.updateOne({ $pull: { following: targetId } });
-            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
-        }
-
-        // Direct follow
-        const updatedUser = await User.findByIdAndUpdate(targetId, {
-            $push: {
-                followers: currentUserId,
-                notifications: {
-                    type: 'follow',
-                    from: currentUserId,
-                    fromUsername: currentUser.username,
-                    fromProfilePic: currentUser.profilePic || '',
-                    read: false,
-                    createdAt: new Date()
-                }
-            }
-        }, { new: true });
-
-        await currentUser.updateOne({ $push: { following: targetId } });
-        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
-    } catch (err) {
-        console.error("🔥 Follow Error (subdir):", err);
-        res.status(500).json({ message: "Follow system failure", error: err.message });
-    }
-});
+// ... follow route moved to top ...
 
 // ACCEPT follow request
 router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {

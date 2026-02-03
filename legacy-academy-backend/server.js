@@ -49,13 +49,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "v3-loop-fix" });
+  res.status(200).json({ status: "healthy", deployed: "v4-final-fix" });
 });
 
 // DIAGNOSTIC LOGGING - All requests logged for debugging
 app.use((req, res, next) => {
   const timestamp = new Date().toLocaleTimeString();
-  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - FORCE DEPLOY v2`);
+  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - V4 SUBDIR DEPLOY`);
   if (req.method !== 'GET') {
     console.log(`   Headers:`, {
       auth: req.headers.authorization ? 'Present' : 'Missing',
