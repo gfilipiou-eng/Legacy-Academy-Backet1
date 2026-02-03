@@ -164,13 +164,13 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                                 {post.author?.role === 'Founder' ? (
                                     <span className="text-[10px] text-red-600 mt-1 uppercase font-black tracking-widest drop-shadow-sm">FOUNDER</span>
                                 ) : (
-                                    <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">LEGACY AGENT</span>
+                                    <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">MEMBER</span>
                                 )}
                             </div>
                         </div>
                         <div className="flex gap-1">
                             {isOwner && <button onClick={() => onEdit(post)} className="p-2 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
-                            {isOwner && <button onClick={() => { if (confirm("Delete Intel?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                            {isOwner && <button onClick={() => { if (confirm("Delete post?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
 
@@ -181,7 +181,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                                 {post.comments?.map((c, i) => (
                                     <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
                                 ))}
-                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No strategic resonance yet.</div>}
+                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No strategic discussion yet.</div>}
                             </AnimatePresence>
                         </div>
                     </div>
@@ -241,7 +241,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat }) => {
                 <div className="text-sm">
                     <span className="font-bold text-white">{note.fromUsername}</span>
                     <span className="text-gray-400 text-xs ml-1">
-                        {note.type === 'follow' ? 'started following you' : note.type === 'like' ? 'liked your intel' : note.type === 'comment' ? 'commented on your intel' : note.type === 'message' ? 'sent a message' : note.type === 'mention' ? 'mentioned you' : ''}
+                        {note.type === 'follow' ? 'started following you' : note.type === 'like' ? 'liked your post' : note.type === 'comment' ? 'commented on your post' : note.type === 'message' ? 'sent a message' : note.type === 'mention' ? 'mentioned you' : ''}
                     </span>
                 </div>
                 {note.text && <div className="text-xs text-gray-500 mt-0.5 line-clamp-1 italic">"{note.text}"</div>}
@@ -305,12 +305,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`glass-card mb-4 rounded-3xl overflow-hidden relative border transform transition-all ${isPostAuthorFounder ? 'bg-red-950/10 border-red-500/30 shadow-glow-red' : 'bg-[#050505] border-white/5'}`}>
+        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card mb-4 rounded-3xl overflow-hidden relative border transform transition-all bg-[#050505] border-white/5">
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
                     <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
-                        <div className={`w-12 h-12 rounded-full bg-gray-800 overflow-hidden border ${isPostAuthorFounder ? 'border-red-600 shadow-md shadow-red-600/20' : 'border-white/10'}`}>
+                        <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10">
                             {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
                         </div>
                     </div>
@@ -519,7 +519,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [activeList, setActiveList] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [bio, setBio] = useState(currentUser?.bio || "");
-    const [activeTab, setActiveTab] = useState('ALL'); // ALL, INTEL, VIDEO
+    const [activeTab, setActiveTab] = useState('ALL'); // ALL, POSTS, VIDEO
     const fileRef = useRef(null);
 
     useEffect(() => {
@@ -536,7 +536,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (p.isStory) return false; // Hide stories from grid
 
         if (activeTab === 'VIDEO') return isYouTubeUrl(p.videoUrl) || (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i)));
-        if (activeTab === 'INTEL') return !p.videoUrl && !isYouTubeUrl(p.videoUrl) && !(p.image && p.image.match(/\.(mp4|mov|webm)$/i));
+        if (activeTab === 'POSTS') return !p.videoUrl && !isYouTubeUrl(p.videoUrl) && !(p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         return true;
     });
 
@@ -664,14 +664,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <div className="w-full h-px bg-white/10 mb-4" />
 
-                            <div className="flex gap-4 mb-4 border-b border-white/10 pb-2">
-                                <button onClick={() => setActiveTab('ALL')} className={`text-xs font-black uppercase tracking-widest pb-2 ${activeTab === 'ALL' ? 'text-yellow-500 border-b-2 border-yellow-500' : 'text-gray-500'}`}>ALL</button>
-                                <button onClick={() => setActiveTab('INTEL')} className={`text-xs font-black uppercase tracking-widest pb-2 ${activeTab === 'INTEL' ? 'text-yellow-500 border-b-2 border-yellow-500' : 'text-gray-500'}`}>INTEL</button>
-                                <button onClick={() => setActiveTab('VIDEO')} className={`text-xs font-black uppercase tracking-widest pb-2 ${activeTab === 'VIDEO' ? 'text-yellow-500 border-b-2 border-yellow-500' : 'text-gray-500'}`}>VIDEO</button>
+                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl">
+                                {['ALL', 'POSTS', 'VIDEO'].map(tab => (
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'text-gray-500 hover:text-white'}`}>{tab}</button>
+                                ))}
                             </div>
 
                             {userPosts.length === 0 ? (
-                                <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">No Intel Found</div>
+                                <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">No Content Found</div>
                             ) : (
                                 <div className="grid grid-cols-3 gap-1 pb-20">
                                     {userPosts.map(p => (
@@ -744,7 +744,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
         <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
-                <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD INTEL</h2>
+                <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD</h2>
                 <div className="flex gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
                         {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
@@ -815,7 +815,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             setPreview(null); fileRef.current.value = '';
                             setIsStory(false);
                         } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                    }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? 'POST STORY' : 'POST INTEL')}</button>
+                    }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? 'POST STORY' : 'POST')}</button>
                 </div>
             </motion.div>
         </div>
@@ -894,9 +894,9 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
-                <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">EDIT INTEL</h2>
+                <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">EDIT POST</h2>
                 <div className="flex flex-col gap-4">
-                    <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update intelligence..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
+                    <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update content..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
                     <div className="mb-3">
                         <input id="edit-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
                             const v = e.target.value || '';
