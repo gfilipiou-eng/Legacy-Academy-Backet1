@@ -194,6 +194,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
 const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, loadingActions }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
+    const [showHeart, setShowHeart] = useState(false);
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = post.author?.role === 'Founder';
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
@@ -208,6 +209,16 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 
     const handleDelete = () => {
         onDelete(post._id);
+    };
+
+    const handleDoubleTap = (e) => {
+        e.stopPropagation();
+        const isLiked = Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id));
+        if (!isLiked) {
+            onLike(post._id);
+        }
+        setShowHeart(true);
+        setTimeout(() => setShowHeart(false), 800);
     };
 
     return (
@@ -250,13 +261,20 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 
                         {/* MEDIA CONTENT */}
                         {post.image && (
-                            <div onClick={() => onOpenDetail(post)} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm cursor-pointer bg-black/50" style={{ maxHeight: '500px' }}>
+                            <div onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm cursor-pointer bg-black/50" style={{ maxHeight: '500px' }}>
                                 {/* DETECT VIDEO VS IMAGE - SIMPLE CHECK BASED ON EXTENSION OR TYPE field if available. Using onError fallback for safety */}
                                 {post.videoUrl || (post.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                     <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-full object-cover max-h-[500px]" />
                                 ) : (
                                     <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover max-h-[500px]" loading="lazy" />
                                 )}
+                                <AnimatePresence>
+                                    {showHeart && (
+                                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                            <Icons.Heart className="w-24 h-24 text-yellow-500 fill-yellow-500 drop-shadow-2xl" />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         )}
 
@@ -895,6 +913,10 @@ const App = () => {
                     <img src="/image/Logo.png" className="w-10 h-10" alt="Logo" />
                 </div>
                 <div className="flex items-center gap-4">
+                    <button onClick={() => setActiveTab('alerts')} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
+                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : 'text-gray-400'}`} />
+                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
+                    </button>
                     <button onClick={() => setIsCreateOpen(true)} className="p-2 bg-yellow-500 rounded-xl text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform"><Icons.Plus className="w-5 h-5" /></button>
                     <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.MessageCircle className="w-5 h-5" /><div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" /></button>
                     <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button>
