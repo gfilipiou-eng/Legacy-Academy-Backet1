@@ -298,7 +298,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                         {allUsers.filter(u => u._id !== user._id).map(u => (
                             <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                 <div className="relative"><div className="w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md">{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" /></div>
-                                <div><div className="font-bold text-sm text-white">{u.username}</div><div className="text-[10px] text-gray-500 uppercase tracking-tighter">Online • Agent</div></div>
+                                <div><div className="font-bold text-sm text-white">{u?.username}</div><div className="text-[10px] text-gray-500 uppercase tracking-tighter">Online • Agent</div></div>
                             </div>
                         ))}
                     </div>
@@ -308,8 +308,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat.username} />}</div>
-                                <div><div className="font-bold text-sm">{activeChat.username}</div><div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Active Now</div></div>
+                                <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
+                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Active Now</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
                             <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
@@ -425,7 +425,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="relative bg-[#0a0a0a] w-full max-w-lg h-full sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
                     <button onClick={() => activeList ? setActiveList(null) : onClose()} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
-                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : displayUser.username}</div>
+                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : displayUser?.username}</div>
                     <div className="w-10" />
                 </div>
 
@@ -438,7 +438,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
                                         {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
                                     </div>
-                                    <div className="font-bold text-white text-sm">{u.username}</div>
+                                    <div className="font-bold text-white text-sm">{u?.username}</div>
                                 </div>
                             ))}
                         </div>
@@ -446,7 +446,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
-                                    {displayUser.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser.username} />}
+                                    {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
                                 <div className="flex gap-4 sm:gap-8 text-center flex-1 justify-end px-2">
                                     <div><div className="font-black text-white text-lg sm:text-xl">{userPosts.length}</div><div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Posts</div></div>
@@ -461,8 +461,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
-                                <div className="font-black text-white text-xl mb-2">{displayUser.username}</div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">{displayUser.bio || "Entrepreneur. Legacy Member."}</div>
+                                <div className="font-black text-white text-xl mb-2">{displayUser?.username || "Unknown Agent"}</div>
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">{displayUser?.bio || "Entrepreneur. Legacy Member."}</div>
                             </div>
 
                             <div className="w-full h-px bg-white/10 mb-4" />
@@ -662,7 +662,7 @@ const App = () => {
     const filteredPosts = posts.filter(p => {
         const q = searchQuery.toLowerCase();
         const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
-        const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : false;
+        const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : (p.username ? p.username.toLowerCase().includes(q) : false);
         return descMatch || authorMatch;
     });
 
