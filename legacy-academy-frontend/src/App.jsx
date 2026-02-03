@@ -523,18 +523,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
-                                <div className="flex w-full justify-between items-center sm:pl-4">
-                                    <div className="text-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
-                                        <div className="font-black text-white text-lg sm:text-xl group-hover:text-yellow-500 transition-colors">{userPosts.length}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-bold">Posts</div>
+                                <div className="flex w-full justify-around items-center pl-4 sm:pl-8">
+                                    <div className="flex flex-col items-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-2xl group-hover:text-yellow-500 transition-colors">{userPosts.length}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Posts</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="text-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
-                                        <div className="font-black text-white text-lg sm:text-xl text-yellow-500">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-bold">Followers</div>
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-2xl text-yellow-500">{displayUser?.followers?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Followers</div>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="text-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
-                                        <div className="font-black text-white text-lg sm:text-xl group-hover:text-yellow-500 transition-colors">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-bold">Following</div>
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-2xl group-hover:text-yellow-500 transition-colors">{displayUser?.following?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Following</div>
                                     </div>
                                 </div>
                             </div>
@@ -1098,7 +1098,7 @@ const App = () => {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto no-scrollbar p-4 pb-32">
+                <main className="flex-1 overflow-y-auto no-scrollbar p-4 pb-32 pt-2">
                     {activeTab === 'alerts' ? (
                         <div className="animate-fade-in">
                             <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
