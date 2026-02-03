@@ -1099,7 +1099,7 @@ const App = () => {
                 </header>
 
                 <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
-                    <div className="pt-6 px-4">
+                    <div className="pt-8 px-4 sm:px-8 max-w-4xl mx-auto">
                         {activeTab === 'alerts' ? (
                             <div className="animate-fade-in">
                                 <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
