@@ -10,6 +10,10 @@ import { fileURLToPath } from 'url';
 // Load environment variables FIRST!
 dotenv.config();
 
+console.log("🟢 Server initialization started...");
+console.log("Environment: ", process.env.NODE_ENV || 'production');
+console.log("Port: ", process.env.PORT || 5000);
+
 // Verify Cloudinary Config
 if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
   console.warn("⚠️  WARNING: Cloudinary configuration is missing in .env. Falling back to local storage.");
@@ -20,7 +24,8 @@ import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 import resetPasswordRoutes from "./routes/resetPassword.js";
 
-// Import email service AFTER dotenv.config()
+// Import email service AFTER dotenv.config() - non-critical
+console.log("Loading email service...");
 import "./config/email.js";
 
 const app = express();
@@ -109,8 +114,12 @@ connectDB();
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
+
+console.log("🟡 Starting Express server on port", PORT);
+
+const server = app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT} 🚀`);
+  console.log(`📍 Backend URL: https://legacy-academy-backet1.onrender.com`);
 
   // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
   setInterval(() => {
@@ -119,4 +128,10 @@ app.listen(PORT, () => {
       .then(() => console.log("⚡ Keep-Alive: Server is awake"))
       .catch((err) => console.log("⚠️ Keep-Alive ping failed (this is normal on first boot)"));
   }, 600000); // 600,000ms = 10 minutes
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  console.error("🔥 Server error:", err);
+  process.exit(1);
 });
