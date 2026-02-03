@@ -605,7 +605,31 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [creating, setCreating] = useState(false);
     const fileRef = useRef(null);
     if (!isOpen) return null;
-    const handleFileChange = (e) => { const file = e.target.files[0]; if (file) { setPreview(URL.createObjectURL(file)); setIsVideo(file.type.startsWith('video')); } };
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        // Quick client-side duration check for video files (<= 10s)
+        if (file.type.startsWith('video')) {
+            const url = URL.createObjectURL(file);
+            const vid = document.createElement('video');
+            vid.preload = 'metadata';
+            vid.src = url;
+            const dur = await new Promise((resolve) => {
+                vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
+                vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
+            });
+            if (dur && dur > 10) {
+                alert('Video must be 10 seconds or shorter. Please trim your clip.');
+                e.target.value = '';
+                return;
+            }
+            setPreview(URL.createObjectURL(file));
+            setIsVideo(true);
+        } else {
+            setPreview(URL.createObjectURL(file));
+            setIsVideo(false);
+        }
+    };
     return (
         <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
@@ -632,6 +656,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             setIsVideo(false);
                         }
                     }} />
+                    <div className="text-[10px] text-gray-400 mt-1">Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.</div>
                 </div>
 
                 <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
@@ -699,11 +724,28 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
 
     if (!isOpen) return null;
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
+        if (!file) return;
+        if (file.type.startsWith('video')) {
+            const url = URL.createObjectURL(file);
+            const vid = document.createElement('video');
+            vid.preload = 'metadata';
+            vid.src = url;
+            const dur = await new Promise((resolve) => {
+                vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
+                vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
+            });
+            if (dur && dur > 10) {
+                alert('Video must be 10 seconds or shorter. Please trim your clip.');
+                e.target.value = '';
+                return;
+            }
             setPreview(URL.createObjectURL(file));
-            setIsVideo(file.type.startsWith('video'));
+            setIsVideo(true);
+        } else {
+            setPreview(URL.createObjectURL(file));
+            setIsVideo(false);
         }
     };
 
@@ -747,6 +789,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                                     setIsVideo(false);
                                 }
                             }} />
+                        <div className="text-[10px] text-gray-400 mt-1">Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.</div>
                     </div>
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer">
                         {preview ? (

@@ -1,8 +1,14 @@
 import express from "express";
+import fs from "fs";
+import ffmpeg from "fluent-ffmpeg";
+import ffprobeStatic from "ffprobe-static";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import upload from "../middleware/upload.js";
 import { verifyToken } from "../middleware/auth.js";
+
+// Ensure fluent-ffmpeg uses the static ffprobe binary
+ffmpeg.setFfprobePath(ffprobeStatic.path);
 
 const router = express.Router();
 
@@ -268,6 +274,25 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     // garbage collect key after short time
     setTimeout(() => _recentCreates.delete(signature), 15_000);
 
+    // SERVER-SIDE: If user uploaded a local video file, probe duration and reject >10s
+    try {
+      const isLocalUpload = req.file && req.file.path && String(req.file.path).startsWith('uploads');
+      if (isFileVideo && isLocalUpload && req.file.path) {
+        const durMeta = await new Promise((resolve, reject) => {
+          ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
+        });
+        const duration = durMeta?.format?.duration || 0;
+        if (duration > 10) {
+          // delete the uploaded file to avoid orphaned large assets
+          try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup large-upload', e && e.message); }
+          return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+        }
+      }
+    } catch (probeErr) {
+      console.warn('Video duration probe failed:', probeErr && probeErr.message);
+      // proceed but warn -- client-side validation should catch most cases
+    }
+
     const newPost = new Post({
       title: title || '',
       desc: desc || description || '',
@@ -355,6 +380,21 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
     if (req.file) {
       const isVideo = req.file.mimetype.includes("video");
       if (isVideo) {
+        // If local upload, probe duration and reject > 10s
+        try {
+          const isLocalUpload = req.file.path && String(req.file.path).startsWith('uploads');
+          if (isLocalUpload) {
+            const durMeta = await new Promise((resolve, reject) => {
+              ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
+            });
+            const duration = durMeta?.format?.duration || 0;
+            if (duration > 10) {
+              try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup long video', e && e.message); }
+              return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+            }
+          }
+        } catch (probeErr) { console.warn('Update-probe failed:', probeErr && probeErr.message); }
+
         post.videoUrl = req.file.path;
         post.image = "";
       } else {
