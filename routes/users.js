@@ -69,7 +69,7 @@ router.get("/username/:username", async (req, res) => {
 router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
         const currentUserId = req.user.id || req.user.userId;
-        console.log(`Follow attempt: ${currentUserId} -> ${req.params.id}`);
+        console.log(`DEBUG: Follow path hit. ${currentUserId} -> ${req.params.id}`);
         if (req.params.id === currentUserId) {
             return res.status(400).json("You cannot follow yourself");
         }
