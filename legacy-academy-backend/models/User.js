@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema({
 
   // Notifications
   notifications: [{
-    type: { type: String, enum: ['follow', 'comment', 'like', 'mention'], required: true },
+    type: { type: String, enum: ['follow', 'comment', 'like', 'mention', 'message', 'follow_request'], required: true },
     from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     fromUsername: { type: String },
     fromProfilePic: { type: String },

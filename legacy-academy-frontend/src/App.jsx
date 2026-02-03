@@ -1076,11 +1076,13 @@ const App = () => {
             fetchPosts();
             fetchUsers();
             startHeartbeat();
+            startUserPoll();
             fetchNotifications();
             startNotificationPoll();
         } else if (!user) {
             lastInitializedId.current = null;
             stopHeartbeat();
+            stopUserPoll();
             stopNotificationPoll();
         }
         return () => { }; // Cleanup handled by functions
@@ -1118,9 +1120,15 @@ const App = () => {
     const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
 
     // Heartbeat for presence
+    // Heartbeat for presence (updates lastSeen in DB)
     let _hbInterval = null;
-    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 20000); };
+    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 10000); };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
+
+    // User Presence Polling (refresh user list to see online status)
+    let _userInterval = null;
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 15000); };
+    const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
 
     // react to activeTab change to mark notifications read
