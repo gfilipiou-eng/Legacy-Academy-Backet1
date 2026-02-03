@@ -90,27 +90,26 @@ app.use((err, req, res, next) => {
 });
 
 // MongoDB Connection
-// MongoDB Connection
 const connectDB = async () => {
   const mongoUrl = process.env.MONGO_URL;
 
   if (!mongoUrl) {
-    console.error("❌ FATAL ERROR: MONGO_URL is not defined.");
-    console.error("   Please set MONGO_URL in your Render Environment Variables.");
+    console.warn("⚠️ WARNING: MONGO_URL is not set. Database connection skipped.");
     return;
   }
 
   try {
     console.log("🔄 Connecting to MongoDB...");
-    await mongoose.connect(mongoUrl);
+    await mongoose.connect(mongoUrl, { serverSelectionTimeoutMS: 5000 });
     console.log("✅ MongoDB Connected Successfully");
   } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err.message);
-    // Δεν κάνουμε exit για να μην κρασάρει ολόκληρο το app, αλλά το log είναι κρίσιμο
+    console.warn("⚠️ MongoDB Connection Error (non-fatal):", err.message);
+    console.warn("   Server will still run without database connection");
   }
 };
 
-connectDB();
+// Start connection but don't block server startup
+connectDB().catch(err => console.warn("DB connection error:", err.message));
 
 // Start Server
 const PORT = process.env.PORT || 5000;
