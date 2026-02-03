@@ -116,21 +116,32 @@ const PORT = process.env.PORT || 5000;
 
 console.log("🟡 Starting Express server on port", PORT);
 
-const server = app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT} 🚀`);
-  console.log(`📍 Backend URL: https://legacy-academy-backet1.onrender.com`);
+try {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server running on port ${PORT} 🚀`);
+    console.log(`📍 Backend URL: https://legacy-academy-backet1.onrender.com`);
+    console.log(`🌐 Listening on: http://0.0.0.0:${PORT}`);
 
-  // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
-  setInterval(() => {
-    const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
-    axios.get(baseUrl)
-      .then(() => console.log("⚡ Keep-Alive: Server is awake"))
-      .catch((err) => console.log("⚠️ Keep-Alive ping failed (this is normal on first boot)"));
-  }, 600000); // 600,000ms = 10 minutes
-});
+    // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
+    setInterval(() => {
+      try {
+        const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+        axios.get(baseUrl, { timeout: 5000 })
+          .then(() => console.log("⚡ Keep-Alive: Server is awake"))
+          .catch((err) => console.log("⚠️ Keep-Alive ping failed (normal)"));
+      } catch (err) {
+        console.log("⚠️ Keep-Alive error:", err.message);
+      }
+    }, 600000); // 600,000ms = 10 minutes
+  });
 
-// Handle server errors
-server.on('error', (err) => {
-  console.error("🔥 Server error:", err);
+  // Handle server errors
+  server.on('error', (err) => {
+    console.error("🔥 Server error:", err);
+    process.exit(1);
+  });
+} catch (err) {
+  console.error("🔴 Failed to start server:", err.message);
+  console.error(err.stack);
   process.exit(1);
-});
+}
