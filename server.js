@@ -123,16 +123,19 @@ try {
     console.log(`🌐 Listening on: http://0.0.0.0:${PORT}`);
 
     // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
-    setInterval(() => {
-      try {
-        const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
-        axios.get(baseUrl, { timeout: 5000 })
-          .then(() => console.log("⚡ Keep-Alive: Server is awake"))
-          .catch((err) => console.log("⚠️ Keep-Alive ping failed (normal)"));
-      } catch (err) {
-        console.log("⚠️ Keep-Alive error:", err.message);
-      }
-    }, 600000); // 600,000ms = 10 minutes
+    // Delayed by 5 seconds to avoid early startup issues
+    setTimeout(() => {
+      setInterval(() => {
+        try {
+          const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+          axios.get(baseUrl, { timeout: 5000 })
+            .then(() => console.log("⚡ Keep-Alive: Server is awake"))
+            .catch(() => {}); // Silently fail if server is down
+        } catch (err) {
+          // Silently fail
+        }
+      }, 600000); // 600,000ms = 10 minutes
+    }, 5000);
   });
 
   // Handle server errors
