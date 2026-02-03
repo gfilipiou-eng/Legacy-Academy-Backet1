@@ -18,30 +18,28 @@ router.get("/", async (req, res) => {
     }
 });
 
-// 1. Heartbeat - Hybrid (Auth + Silent Fail)
+// 1. Heartbeat - Ultra-Resilient (Bypasses Mongoose hooks to prevent 500s)
 router.put('/heartbeat', async (req, res) => {
     try {
         const authHeader = req.header("Authorization");
-        if (authHeader && authHeader.startsWith("Bearer ")) {
-            const token = authHeader.substring(7);
-            const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
-            const userId = verified.id || verified.userId;
+        if (!authHeader?.startsWith("Bearer ")) return res.status(200).json({ status: "no_token" });
 
-            if (userId) {
-                await User.findByIdAndUpdate(userId, {
-                    $set: {
-                        lastSeen: new Date(),
-                        lastActive: new Date()
-                    }
-                });
-                return res.status(200).json("Heartbeat success");
-            }
+        const token = authHeader.substring(7);
+        const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
+        const userId = verified.id || verified.userId;
+
+        if (userId && mongoose.Types.ObjectId.isValid(String(userId))) {
+            // Direct collection update is faster and bypasses schema validation/hooks
+            await User.collection.updateOne(
+                { _id: new mongoose.Types.ObjectId(String(userId)) },
+                { $set: { lastSeen: new Date(), lastActive: new Date() } }
+            );
+            return res.status(200).json({ status: "alive" });
         }
-        // If no token or invalid, just return 200 to keep console clean
-        res.status(200).json({ status: "ignored" });
+        res.status(200).json({ status: "invalid_id" });
     } catch (err) {
-        // Silent fail for expired tokens etc
-        res.status(200).json({ status: "ignored_error" });
+        // Absolute silence to prevent console noise
+        res.status(200).json({ status: "fail_silent" });
     }
 });
 

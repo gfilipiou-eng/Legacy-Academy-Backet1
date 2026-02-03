@@ -523,18 +523,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
-                                <div className="flex w-full justify-around items-center pl-4 sm:pl-8">
-                                    <div className="flex flex-col items-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
-                                        <div className="font-black text-white text-lg sm:text-2xl group-hover:text-yellow-500 transition-colors">{userPosts.length}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Posts</div>
+                                <div className="flex-1 grid grid-cols-3 gap-0 px-2 sm:px-4">
+                                    <div className="flex flex-col items-center justify-center">
+                                        <div className="font-black text-white text-base sm:text-2xl">{userPosts.length}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-400 uppercase tracking-tighter sm:tracking-widest font-bold">Posts</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
-                                        <div className="font-black text-white text-lg sm:text-2xl text-yellow-500">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Followers</div>
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 p-1 rounded-lg transition-all">
+                                        <div className="font-black text-yellow-500 text-base sm:text-2xl">{displayUser?.followers?.length || 0}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-400 uppercase tracking-tighter sm:tracking-widest font-bold">Followers</div>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
-                                        <div className="font-black text-white text-lg sm:text-2xl group-hover:text-yellow-500 transition-colors">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mt-1">Following</div>
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 p-1 rounded-lg transition-all">
+                                        <div className="font-black text-white text-base sm:text-2xl">{displayUser?.following?.length || 0}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-400 uppercase tracking-tighter sm:tracking-widest font-bold">Following</div>
                                     </div>
                                 </div>
                             </div>
@@ -1024,6 +1024,7 @@ const App = () => {
                                         {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                     </button>
                                 </div>
+
                                 <button disabled={authLoading} onClick={async () => {
                                     setAuthLoading(true);
                                     try {
@@ -1083,7 +1084,7 @@ const App = () => {
         <div className="app-container">
             <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
                 <div className="liquid-bg" />
-                <header className="px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl shrink-0 z-50">
+                <header className="px-4 py-4 flex items-center justify-between bg-black border-b border-white/10 shadow-2xl shrink-0 z-[100] relative">
                     <div className="flex items-center gap-2">
                         <img src="/image/Logo.png?v=3" className="h-10 w-auto object-contain" alt="Logo" />
                     </div>
@@ -1098,31 +1099,33 @@ const App = () => {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto no-scrollbar p-4 pb-32 pt-2">
-                    {activeTab === 'alerts' ? (
-                        <div className="animate-fade-in">
-                            <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
-                            {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} />)}
-                        </div>
-                    ) : (
-                        <>
-                            {activeTab === 'search' && (
-                                <div className="mb-8 space-y-4 animate-fade-in">
-                                    <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
-                                    <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
-                                </div>
-                            )}
-                            <div className="space-y-6">
-                                {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
-                                {posts.length === 0 && (
-                                    <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                        <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-                                        <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
+                    <div className="pt-6 px-4">
+                        {activeTab === 'alerts' ? (
+                            <div className="animate-fade-in">
+                                <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
+                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} />)}
+                            </div>
+                        ) : (
+                            <>
+                                {activeTab === 'search' && (
+                                    <div className="mb-8 space-y-4 animate-fade-in">
+                                        <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
+                                        <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
                                     </div>
                                 )}
-                            </div>
-                        </>
-                    )}
+                                <div className="space-y-6">
+                                    {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
+                                    {posts.length === 0 && (
+                                        <div className="h-96 flex flex-col items-center justify-center space-y-4">
+                                            <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </main>
 
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
