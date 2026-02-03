@@ -121,11 +121,11 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
-                                <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{width: '100%', height: '100%'}} frameBorder="0" allowFullScreen />
+                                <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{ width: '100%', height: '100%' }} frameBorder="0" allowFullScreen />
                             </div>
                         ) : (post.videoUrl || (post.image && post.image.match(/(mp4|mov|webm)$/i))) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
-                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
+                                <video src={resolveMediaUrl(post.videoUrl || post.image)} autoPlay muted loop playsInline controls className="max-w-full max-h-full" />
                             </div>
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
@@ -280,14 +280,18 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         </div>
 
                         {/* MEDIA CONTENT */}
-                        {post.image && (
+                        {(post.image || post.videoUrl) && (
                             <div onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm cursor-pointer bg-black/50" style={{ maxHeight: '500px' }}>
-                                {/* DETECT VIDEO VS IMAGE - SIMPLE CHECK BASED ON EXTENSION OR TYPE field if available. Using onError fallback for safety */}
-                                {post.videoUrl || (post.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
-                                ) : (
+                                {/* DETECT VIDEO VS IMAGE */}
+                                {isYouTubeUrl(post.videoUrl) ? (
+                                    <div className="w-full aspect-video bg-black">
+                                        <iframe title="youtube-feed" src={getYouTubeEmbedUrl(post.videoUrl)} className="w-full h-full" frameBorder="0" allowFullScreen />
+                                    </div>
+                                ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} autoPlay muted loop playsInline controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
+                                ) : post.image ? (
                                     <img src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black" loading="lazy" />
-                                )}
+                                ) : null}
                                 <AnimatePresence>
                                     {showHeart && (
                                         <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
@@ -578,8 +582,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="grid grid-cols-3 gap-1 pb-20">
                                     {userPosts.map(p => (
                                         <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center">
-                                            { (isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl||'').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
+                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
+                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                <div className="relative w-full h-full">
+                                                    <video src={resolveMediaUrl(p.videoUrl || p.image)} muted className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                        <Icons.Play className="w-6 h-6 text-white/80" />
+                                                    </div>
+                                                </div>
                                             ) : p.image ? (
                                                 <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
                                             ) : (
@@ -778,17 +789,17 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                     <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update intelligence..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
                     <div className="mb-3">
                         <input id="edit-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
-                                const v = e.target.value || '';
-                                if (isYouTubeUrl(v)) {
-                                    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
-                                    const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
-                                    setPreview(thumb ? thumb : null);
-                                    setIsVideo(true);
-                                } else if (!v) {
-                                    setPreview(null);
-                                    setIsVideo(false);
-                                }
-                            }} />
+                            const v = e.target.value || '';
+                            if (isYouTubeUrl(v)) {
+                                const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
+                                const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+                                setPreview(thumb ? thumb : null);
+                                setIsVideo(true);
+                            } else if (!v) {
+                                setPreview(null);
+                                setIsVideo(false);
+                            }
+                        }} />
                         <div className="text-[10px] text-gray-400 mt-1">Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.</div>
                     </div>
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer">
