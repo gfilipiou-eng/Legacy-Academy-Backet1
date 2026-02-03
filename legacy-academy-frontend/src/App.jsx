@@ -188,14 +188,23 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
     );
 };
 
-const NotificationItem = ({ note, onViewProfile }) => {
+const NotificationItem = ({ note, onViewProfile, onOpenPost }) => {
     return (
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors cursor-pointer border-b border-white/5">
-            <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender) }}>
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors cursor-pointer border-b border-white/5"
+            onClick={() => {
+                if (note.postId) onOpenPost(note.postId);
+                else onViewProfile(note.sender);
+                playSound('pop');
+            }}
+        >
+            <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender); playSound('pop'); }}>
                 {note.sender?.profilePic ? <img src={resolveMediaUrl(note.sender.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={note.sender?.username} />}
             </div>
             <div className="flex-1 text-sm">
-                <span className="font-bold text-white mr-1" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender) }}>{note.sender?.username}</span>
+                <span className="font-bold text-white mr-1" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender); playSound('pop'); }}>{note.sender?.username}</span>
                 <span className="text-gray-400 font-normal">
                     {note.type === 'like' && 'liked your post.'}
                     {note.type === 'comment' && 'commented.'}
@@ -205,7 +214,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
                 <div className="text-[10px] text-gray-600 mt-0.5">Just now</div>
             </div>
             {note.type === 'follow' ?
-                <button className="px-3 py-1.5 bg-blue-600 rounded-lg text-xs font-bold text-white text-3d">Follow Back</button> :
+                <button className="px-3 py-1.5 bg-blue-600 rounded-lg text-xs font-bold text-white text-3d hover:scale-105 active:scale-95 transition-transform" onClick={(e) => { e.stopPropagation(); onViewProfile(note.sender); }}>Follow Back</button> :
                 (note.postImage && <div className="w-10 h-10 rounded-md overflow-hidden bg-gray-800"><img src={note.postImage} className="w-full h-full object-cover" /></div>)
             }
         </motion.div>
@@ -914,10 +923,10 @@ const App = () => {
 
     // react to activeTab change to mark notifications read
     useEffect(() => {
-        if (activeTab === 'alerts') {
+        if (activeTab === 'alerts' && user?.notifications?.some(n => !n.read)) {
             markAllNotificationsRead();
         }
-    }, [activeTab]);
+    }, [activeTab, user]);
 
 
 
@@ -1224,7 +1233,7 @@ const App = () => {
                         <img src="/image/Logo.png?v=3" className="h-10 w-auto object-contain" alt="Logo" />
                     </div>
                     <div className="flex items-center gap-4">
-                        <button onClick={() => setActiveTab('alerts')} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
+                        <button onClick={(e) => { e.stopPropagation(); setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors active:scale-95 transition-transform">
                             <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : 'text-gray-400'}`} />
                             {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
                         </button>
@@ -1239,7 +1248,7 @@ const App = () => {
                         {activeTab === 'alerts' ? (
                             <div className="animate-fade-in">
                                 <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
-                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} />)}
+                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} />)}
                             </div>
                         ) : (
                             <>
