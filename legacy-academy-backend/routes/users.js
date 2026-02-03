@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
@@ -9,30 +10,39 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate followers following createdAt');
+        const users = await User.find().select('username role profilePic isPrivate followers following createdAt lastSeen');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);
     }
 });
 
-// 1. Heartbeat - Move to top
+// 1. Heartbeat - Absolute Priority
 router.put('/heartbeat', verifyToken, async (req, res) => {
     try {
         const userId = req.user?.id || req.user?.userId;
-        if (!userId) return res.status(200).json({ status: "no_id" });
-        await User.updateOne({ _id: userId }, { $set: { lastSeen: new Date() } });
+        if (!userId) {
+            console.log("📡 Heartbeat: No User ID");
+            return res.status(200).json({ status: "no_id" });
+        }
+
+        await User.collection.updateOne(
+            { _id: new mongoose.Types.ObjectId(userId) },
+            { $set: { lastSeen: new Date() } }
+        );
         res.status(200).json({ status: "alive" });
     } catch (err) {
         res.status(200).json({ status: "silent_fail" });
     }
 });
 
-// 2. Follow - Move to top
+// 2. Follow - Absolute Priority
 router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
         const currentUserId = req.user?.id || req.user?.userId;
         const targetId = req.params.id;
+
+        console.log(`📡 FOLLOW REQ: ${currentUserId} -> ${targetId}`);
 
         if (!currentUserId || !targetId) return res.status(401).json("Auth error");
         if (targetId === currentUserId) return res.status(400).json("Cannot follow self");
@@ -61,6 +71,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         await currentUser.updateOne({ $push: { following: targetId } });
         res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
     } catch (err) {
+        console.error("🔥 Follow Error:", err.message);
         res.status(500).json({ message: "Follow error", error: err.message });
     }
 });
@@ -81,15 +92,12 @@ router.get("/find/:id", async (req, res) => {
 // 2. Λήψη όλων των posts ενός χρήστη
 router.get("/posts/:userId", async (req, res) => {
     try {
-        // Σύμφωνα με το Post.js, το field είναι 'author'
         const posts = await Post.find({ author: req.params.userId }).sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json(err);
     }
 });
-
-
 
 // Get user by username
 router.get("/username/:username", async (req, res) => {
@@ -101,8 +109,6 @@ router.get("/username/:username", async (req, res) => {
         res.status(500).json(err);
     }
 });
-
-// ... follow route moved to top ...
 
 // ACCEPT follow request
 router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
@@ -220,7 +226,6 @@ router.put("/settings", verifyToken, async (req, res) => {
         const oldUser = await User.findById(userId);
         if (!oldUser) return res.status(404).json("Agent not found in mission database");
 
-        // Advanced flatten for dot notation support
         const updateData = {};
         Object.keys(req.body).forEach(key => {
             if (typeof req.body[key] === 'object' && req.body[key] !== null && !Array.isArray(req.body[key])) {
@@ -264,17 +269,10 @@ router.post("/profile-pic", verifyToken, (req, res, next) => {
         if (!userId) return res.status(401).json("Unauthorized - Agent ID missing");
         if (!req.file || !req.file.path) return res.status(400).json("No valid asset uploaded to terminal.");
 
-        console.log("High-Intel Identity Asset Received:", req.file);
-
-        // Format path correctly for local storage vs Cloudinary
         let imagePath = req.file.path;
-
-        // If using local storage (path starts with 'uploads'), ensure it has leading slash for URL
         if (imagePath.startsWith('uploads')) {
-            imagePath = '/' + imagePath.replace(/\\/g, '/'); // Also normalize Windows paths
+            imagePath = '/' + imagePath.replace(/\\/g, '/');
         }
-
-        console.log("Formatted Image Path:", imagePath);
 
         const updatedUser = await User.findByIdAndUpdate(
             userId,
@@ -284,17 +282,14 @@ router.post("/profile-pic", verifyToken, (req, res, next) => {
 
         if (!updatedUser) return res.status(404).json("Agent not found in central core.");
 
-        // HYPER-SYNC: Global asset synchronization with fallback
         try {
             await Post.updateMany({ author: userId }, { $set: { profilePic: imagePath } });
-            console.log("Profile pic synced to all posts for user:", userId);
         } catch (syncErr) {
-            console.warn("Minor sync delay detected. Assets will stabilize naturally.");
+            console.warn("Minor sync delay detected.");
         }
 
         res.status(200).json(updatedUser);
     } catch (err) {
-        console.error("IDENTITY CORE COLLAPSE:", err);
         res.status(500).json({ message: "SYSTEM ERROR: Asset integration failed.", error: err.message });
     }
 });
@@ -304,16 +299,13 @@ router.put("/:id", verifyToken, async (req, res) => {
     const currentUserId = req.user.id || req.user.userId;
     if (req.params.id === currentUserId || req.user.role === 'Founder') {
         try {
-            // Check Username Update Constraints
             if (req.body.username) {
                 const user = await User.findById(req.params.id);
-                // Uniqueness check
                 const existing = await User.findOne({ username: req.body.username });
                 if (existing && existing._id.toString() !== req.params.id) {
                     return res.status(400).json("Username already taken.");
                 }
 
-                // Time restriction check (unless Founder)
                 if (req.user.role !== 'Founder' && user.lastUsernameChange) {
                     const diffTime = Math.abs(new Date() - new Date(user.lastUsernameChange));
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -322,8 +314,6 @@ router.put("/:id", verifyToken, async (req, res) => {
                     }
                 }
                 req.body.lastUsernameChange = new Date();
-
-                // Propagate username change to all posts
                 await Post.updateMany({ author: req.params.id }, { $set: { username: req.body.username } });
             }
 

@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-    const authHeader = req.header("Authorization");
-
-    if (authHeader) {
-        const token = authHeader.replace("Bearer ", "");
-        try {
+    try {
+        const authHeader = req.header("Authorization");
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            const token = authHeader.substring(7);
             const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
             req.user = {
                 id: verified.id,
@@ -14,28 +13,27 @@ export const verifyToken = (req, res, next) => {
                 role: verified.role || 'User'
             };
             return next();
-        } catch (err) {
-            console.error("JWT verification failed:", err.message);
         }
-    }
 
-    // Fallback for FormData with user object
-    let user = req.body.user;
-    if (user) {
-        if (typeof user === 'string') {
-            try { user = JSON.parse(user); } catch (e) { }
+        // Fallback for FormData / Body
+        const userObj = req.body.user;
+        if (userObj) {
+            let user = userObj;
+            if (typeof user === 'string') {
+                try { user = JSON.parse(user); } catch (e) { }
+            }
+            const id = user._id || user.id || user.userId;
+            if (id) {
+                req.user = { id, userId: id, username: user.username, role: user.role || 'User' };
+                return next();
+            }
         }
-        req.user = {
-            id: user._id || user.id || user.userId,
-            userId: user._id || user.id || user.userId,
-            username: user.username,
-            role: user.role || 'User'
-        };
-        return next();
+
+        if (req.method === "GET") return next();
+        res.status(401).json({ message: "Neural handshake failed. Please login." });
+    } catch (err) {
+        if (req.method === "GET") return next();
+        console.error("🔥 AUTH ERROR:", err.message);
+        res.status(401).json({ message: "Authentication expired or invalid." });
     }
-
-    // Allow GET requests without auth
-    if (req.method === "GET") return next();
-
-    res.status(401).json({ message: "You are not authenticated!" });
 };
