@@ -126,7 +126,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
 
                     <div className="p-4 border-t border-white/10 bg-black/20">
                         <div className="flex items-center gap-4 mb-4">
-                            <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${post.likes?.includes(user?._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
+                            <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
                             <button onClick={() => onDislike(post._id)}><Icons.ThumbsDown className="w-7 h-7 text-white hover:text-red-500" /></button>
                             <button onClick={() => onShare(post)}><Icons.Send className="w-7 h-7 text-white hover:text-blue-500" /></button>
                         </div>
@@ -230,12 +230,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} /></div>
+                            <button onClick={(e) => { e.stopPropagation(); onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} /></div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
+                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
                                 <span className="text-xs font-medium">{dislikeCount}</span>
                             </button>
@@ -560,8 +560,8 @@ const App = () => {
 
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
-    const handleLike = async (postId) => { try { const res = await axios.post(`/posts/${postId}/like`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p)); playSound('pop'); } catch (e) { } };
-    const handleDislike = async (postId) => { try { const res = await axios.post(`/posts/${postId}/dislike`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p)); playSound('pop'); } catch (e) { } };
+    const handleLike = async (postId) => { try { const res = await axios.post(`/posts/${postId}/like`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes || [], dislikes: res.data.dislikes || [] } : p)); playSound('pop'); } catch (e) { } };
+    const handleDislike = async (postId) => { try { const res = await axios.post(`/posts/${postId}/dislike`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes || [], dislikes: res.data.dislikes || [] } : p)); playSound('pop'); } catch (e) { } };
     const handleComment = async (postId, text) => { try { const res = await axios.post(`/posts/${postId}/comment`, { text }); setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: res.data } : p)); } catch (e) { } };
 
     // FIX: Real Share Functionality
