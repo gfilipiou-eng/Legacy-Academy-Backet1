@@ -90,7 +90,7 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment }) => {
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
@@ -145,7 +145,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                     <div className="p-4 border-t border-white/5 bg-black sticky bottom-0 z-10">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-6">
-                                <button disabled={loadingActions[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-xs font-black text-gray-500">{post.likes?.length || 0}</span>
                                 </button>
@@ -262,7 +262,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                            <button disabled={loadingActions?.[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} /></div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
@@ -960,7 +960,7 @@ const App = () => {
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
             <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
+{selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} /> }
 
 
         </div>
