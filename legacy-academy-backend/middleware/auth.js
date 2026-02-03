@@ -38,13 +38,17 @@ export const verifyToken = (req, res, next) => {
             }
         }
 
-        // Allow GET requests without auth (read-only)
-        if (req.method === "GET") return next();
+        // If we reach here and it's not a GET request, it's definitely unauthorized
+        if (req.method !== "GET") {
+            return res.status(401).json({ message: "You are not authenticated!" });
+        }
 
-        res.status(401).json({ message: "You are not authenticated!" });
+        // For GET requests, if no user was found, we still call next() 
+        // BUT we need to be careful in the routes.
+        // Actually, the best way is to let the route decide.
+        next();
     } catch (error) {
         console.error("🔥 Global Auth Exception:", error.message);
-        if (req.method === "GET") return next();
         res.status(401).json({ message: "Auth interface error" });
     }
 };

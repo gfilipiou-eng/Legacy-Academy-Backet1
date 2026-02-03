@@ -51,6 +51,7 @@ router.get("/conversation/:otherUserId", verifyToken, async (req, res) => {
 // Get recent chats/conversations list for a user
 router.get("/conversations", verifyToken, async (req, res) => {
     try {
+        if (!req.user) return res.status(401).json("Auth required");
         const userId = req.user.id || req.user.userId;
 
         // Find all unique users I've chatted with

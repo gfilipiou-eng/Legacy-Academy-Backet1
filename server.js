@@ -33,6 +33,7 @@ import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 import resetPasswordRoutes from "./routes/resetPassword.js";
+import messageRoutes from "./routes/messages.js";
 
 // Import email service AFTER dotenv.config() - non-critical
 console.log("Loading email service...");
@@ -131,7 +132,7 @@ app.use((req, res, next) => {
 
   if (req.body) {
     try {
-      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0,2000);
+      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0, 2000);
       console.warn(`🔍 [${reqId}] Body Preview:`, preview);
     } catch (e) {
       console.warn(`🔍 [${reqId}] Body serialize failed:`, e && e.message);
@@ -147,6 +148,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/reset-password", resetPasswordRoutes);
 
 // Static Uploads Serving (For Local Storage Fallback)

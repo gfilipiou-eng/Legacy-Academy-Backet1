@@ -29,8 +29,10 @@ export const verifyToken = (req, res, next) => {
             }
         }
 
-        if (req.method === "GET") return next();
-        res.status(401).json({ message: "Neural handshake failed. Please login." });
+        if (req.method !== "GET") {
+            return res.status(401).json({ message: "Neural handshake failed. Please login." });
+        }
+        next();
     } catch (err) {
         if (req.method === "GET") return next();
         console.error("🔥 AUTH ERROR:", err.message);
