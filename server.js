@@ -55,9 +55,18 @@ app.get("/api/health", (req, res) => {
 // DIAGNOSTIC LOGGING - All requests logged for debugging
 app.use((req, res, next) => {
   const timestamp = new Date().toLocaleTimeString();
-  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - V4 DEPLOY`);
+  // Simple request-id for correlation
+  try {
+    const crypto = awaitImportCrypto();
+    req.requestId = crypto.randomBytes(6).toString('hex');
+  } catch (e) {
+    // fallback
+    req.requestId = (Date.now()).toString(36);
+  }
+  res.set('X-Request-Id', req.requestId);
+  console.log(`📡 [${timestamp}] [${req.requestId}] ${req.method} ${req.originalUrl} - V4 DEPLOY`);
   if (req.method !== 'GET') {
-    console.log(`   Headers:`, {
+    console.log(`   [${req.requestId}] Headers:`, {
       auth: req.headers.authorization ? 'Present' : 'Missing',
       contentType: req.headers['content-type'],
       origin: req.headers.origin
@@ -65,6 +74,13 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// small helper to avoid top-level require in ESM for crypto, safe to call synchronously
+function awaitImportCrypto() {
+  // Using dynamic import - returns module with randomBytes
+  // but crypto.randomBytes is synchronous; use Node's built-in crypto
+  try { return require('crypto'); } catch (e) { return global.crypto || { randomBytes: () => ({ toString: () => String(Math.random()) }) }; }
+} 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
@@ -79,12 +95,16 @@ app.use('/api/uploads', express.static(path.join(__dirname, 'uploads'))); // Ali
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error("🔥 SERVER ERROR:", err.message);
-  if (err.message && err.message.includes('Cloudinary')) {
-    return res.status(500).json({ message: 'System Error: Image upload service not configured.' });
+  const reqId = req?.requestId || 'no-id';
+  console.error(`🔥 SERVER ERROR [${reqId}]:`, (err && (err.stack || err.message)) || err);
+  if (err && err.message && err.message.includes('Cloudinary')) {
+    res.set('X-Request-Id', reqId);
+    return res.status(500).json({ message: 'System Error: Image upload service not configured.', requestId: reqId });
   }
+  res.set('X-Request-Id', reqId);
   res.status(500).json({
     message: err.message || "An unexpected system error occurred",
+    requestId: reqId,
     error: process.env.NODE_ENV === 'development' ? err : {}
   });
 });
@@ -141,8 +161,17 @@ try {
 
   // Handle server errors
   server.on('error', (err) => {
-    console.error("🔥 Server error:", err);
+    console.error("🔥 Server error:", (err && (err.stack || err)) || err);
     process.exit(1);
+  });
+
+  // Process-level handlers to capture unexpected failures
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('🔥 UNHANDLED REJECTION:', reason && (reason.stack || reason));
+  });
+  process.on('uncaughtException', (err) => {
+    console.error('🔥 UNCAUGHT EXCEPTION:', err && (err.stack || err));
+    // Note: consider exiting process to allow a restart in production
   });
 } catch (err) {
   console.error("🔴 Failed to start server:", err.message);

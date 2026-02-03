@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 // 1. Heartbeat - Bulletproof (Returns 200 immediately, updates in background)
-router.put('/heartbeat', (req, res) => {
+const heartbeatHandler = (req, res) => {
     // Ensure response is always sent (defensive)
     try {
         res.status(200).json({ status: "alive" });
@@ -32,14 +32,14 @@ router.put('/heartbeat', (req, res) => {
     (async () => {
         try {
             const authHeader = (typeof req.header === 'function') ? req.header("Authorization") : req.headers.authorization;
-            console.log("📡 Heartbeat hit - auth present:", !!authHeader);
+            console.log("📡 Heartbeat hit - auth present:", !!authHeader, "reqId:", req?.requestId || 'no-id');
             if (!authHeader || !String(authHeader).startsWith("Bearer ")) return;
 
             const token = String(authHeader).substring(7);
             let decoded = null;
             try { decoded = jwt.decode(token); } catch (dErr) { console.warn("Heartbeat token decode failed:", dErr && dErr.message); return; }
             const userId = decoded?.id || decoded?.userId;
-            console.log("📡 Heartbeat decoded userId:", userId);
+            console.log("📡 Heartbeat decoded userId:", userId, "reqId:", req?.requestId || 'no-id');
 
             if (userId && mongoose.Types.ObjectId.isValid(String(userId))) {
                 await User.updateOne(
@@ -51,7 +51,11 @@ router.put('/heartbeat', (req, res) => {
             console.warn("Heartbeat background error:", e && e.message);
         }
     })();
-});
+};
+
+router.put('/heartbeat', heartbeatHandler);
+router.get('/heartbeat', heartbeatHandler);
+
 
 // 2. Follow - Absolute Priority
 router.post("/:id/follow", verifyToken, async (req, res) => {
