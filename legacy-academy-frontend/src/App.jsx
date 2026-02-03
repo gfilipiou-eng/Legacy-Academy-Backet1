@@ -95,21 +95,21 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
 
     return (
-        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4">
-            <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
-            <div className="w-full max-w-5xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl">
-                <div className="flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[35vh] md:min-h-0">
+        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4 overflow-y-auto">
+            <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
+            <div className="w-full max-w-5xl h-fit min-h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl my-auto">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[30vh] max-h-[50vh] md:max-h-full md:min-h-0">
                     {post.image ? (
                         post.videoUrl || post.image.match(/(mp4|mov|webm)$/i) ? (
                             <div className="w-full h-full flex items-center justify-center">
-                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
+                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full object-contain" />
                             </div>
                         ) : (
                             <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" />
                         )
                     ) : <div className="p-10 text-center font-bold text-2xl text-white italic">{post.desc}</div>}
                 </div>
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 h-[65vh] md:h-full">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 md:h-full">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -122,7 +122,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 min-h-[30vh] md:min-h-0">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed">{parseHashtags(post.desc)}</div>
                         <div className="space-y-4">
                             <AnimatePresence>
@@ -134,7 +134,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                         </div>
                     </div>
 
-                    <div className="p-4 border-t border-white/5 bg-black pb-8 md:pb-4">
+                    <div className="p-4 border-t border-white/5 bg-black sticky bottom-0">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-5">
                                 <button onClick={() => onLike(post._id)} className="flex items-center gap-1.5 group">
@@ -652,23 +652,26 @@ const App = () => {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
             setPosts(prev => prev.map(p => {
                 if (p._id === postId) {
-                    return { ...p, comments: p.comments.filter(c => c._id !== commentId) };
+                    const filtered = p.comments.filter(c => c._id !== commentId);
+                    if (selectedPost?._id === postId) setSelectedPost({ ...selectedPost, comments: filtered });
+                    return { ...p, comments: filtered };
                 }
                 return p;
             }));
             playSound('sword');
         } catch (err) {
             console.error("Failed to delete comment", err);
-            alert("Failed to delete.");
         }
     };
 
     const handleEditComment = async (postId, commentId, text) => {
         try {
             const res = await axios.put(`/posts/${postId}/comment/${commentId}`, { text });
+            const updatedComments = res.data;
             setPosts(prev => prev.map(p => {
                 if (p._id === postId) {
-                    return { ...p, comments: res.data };
+                    if (selectedPost?._id === postId) setSelectedPost({ ...selectedPost, comments: updatedComments });
+                    return { ...p, comments: updatedComments };
                 }
                 return p;
             }));
