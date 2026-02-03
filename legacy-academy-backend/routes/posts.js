@@ -17,7 +17,9 @@ const moderateContent = (text) => {
 };
 
 // PING
-router.post("/ping", (req, res) => res.status(200).json("PONG"));
+router.get("/ping", (req, res) => res.status(200).json("PONG (GET)"));
+router.post("/ping", (req, res) => res.status(200).json("PONG (POST)"));
+router.post("/debug/ping", (req, res) => res.status(200).json({ status: "alive", received: req.body }));
 
 // LIKE HANDLER
 const handleLike = async (req, res) => {
@@ -89,10 +91,12 @@ const handleDislike = async (req, res) => {
 // This ensures /like, /dislike, /comment/:id routes match before /:id
 
 // LIKE ROUTES
+router.get("/:id/like", (req, res) => res.status(200).send("Like endpoint is LIVE. Use POST or PUT to engage."));
 router.post("/:id/like", verifyToken, handleLike);
 router.put("/:id/like", verifyToken, handleLike);
 
 // DISLIKE ROUTES
+router.get("/:id/dislike", (req, res) => res.status(200).send("Dislike endpoint is LIVE. Use POST or PUT to engage."));
 router.post("/:id/dislike", verifyToken, handleDislike);
 router.put("/:id/dislike", verifyToken, handleDislike);
 
@@ -403,6 +407,20 @@ router.get("/:id", async (req, res) => {
     if (!post) return res.status(404).json("Post not found");
     res.status(200).json(post);
   } catch (e) { res.status(500).json(e); }
+});
+
+// CATCH-ALL FOR DEBUGGING
+router.use((req, res) => {
+  console.log(`📡 [${new Date().toLocaleTimeString()}] ${req.method} ${req.originalUrl}`); // Added logging
+  console.warn(`❌ [ROUTER 404] No match for: ${req.method} ${req.url}`);
+  res.status(404).json({
+    message: `Endpoint ${req.method} ${req.url} not found in Intel Router.`,
+    debug: {
+      method: req.method,
+      url: req.url,
+      params: req.params
+    }
+  });
 });
 
 export default router;
