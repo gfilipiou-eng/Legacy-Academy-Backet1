@@ -18,30 +18,23 @@ router.get("/", async (req, res) => {
     }
 });
 
-// 1. Heartbeat - Fully Resilient
-router.put('/heartbeat', async (req, res) => {
+// 1. Heartbeat - Standardized & Robust
+router.put('/heartbeat', verifyToken, async (req, res) => {
     try {
-        const authHeader = req.header("Authorization");
-        let userId = null;
-        if (authHeader && authHeader.startsWith("Bearer ")) {
-            try {
-                const token = authHeader.substring(7);
-                const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
-                userId = verified.id || verified.userId;
-            } catch (e) { }
-        }
+        const userId = req.user.id || req.user.userId;
 
-        if (userId && mongoose.Types.ObjectId.isValid(String(userId))) {
-            await User.collection.updateOne(
-                { _id: new mongoose.Types.ObjectId(String(userId)) },
-                { $set: { lastSeen: new Date() } }
-            ).catch(() => { });
-            return res.status(200).json({ status: "alive" });
-        }
+        // Update both lastSeen (for frontend) and lastActive (for request compliance)
+        await User.findByIdAndUpdate(userId, {
+            $set: {
+                lastSeen: new Date(),
+                lastActive: new Date()
+            }
+        });
 
-        res.status(200).json({ status: "anonymous_pulse" });
+        res.status(200).json("Heartbeat received");
     } catch (err) {
-        res.status(200).json({ status: "silent_fail" });
+        console.error("Heartbeat Error:", err.message);
+        res.status(200).json({ status: "error_handled" });
     }
 });
 
