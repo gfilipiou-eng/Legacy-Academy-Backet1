@@ -677,43 +677,19 @@ const App = () => {
 
     const handleLike = async (postId) => {
         const userId = user?._id;
-        const prevPosts = posts;
-        const prevSelected = selectedPost;
-
-        // Optimistic local update
-        setPosts(prev => prev.map(p => {
-            if (p._id !== postId) return p;
-            const likes = Array.isArray(p.likes) ? [...p.likes] : [];
-            const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => id !== userId) : [];
-            const hasLiked = likes.includes(userId);
-            const newLikes = hasLiked ? likes.filter(id => id !== userId) : [...likes, userId];
-            return { ...p, likes: newLikes, dislikes };
-        }));
-
-        if (selectedPost?._id === postId) {
-            setSelectedPost(prev => {
-                const likes = Array.isArray(prev.likes) ? [...prev.likes] : [];
-                const dislikes = Array.isArray(prev.dislikes) ? prev.dislikes.filter(id => id !== userId) : [];
-                const hasLiked = likes.includes(userId);
-                const newLikes = hasLiked ? likes.filter(id => id !== userId) : [...likes, userId];
-                return { ...prev, likes: newLikes, dislikes };
-            });
-        }
+        if (!userId) return;
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
-        playSound('pop');
-        if (navigator.vibrate) navigator.vibrate(50); // Haptic Feedback
+        if (navigator.vibrate) navigator.vibrate(50);
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
             const { likes, dislikes } = res.data;
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            playSound('pop');
         } catch (e) {
-            console.error('Failed to like', e);
-            // Rollback
-            setPosts(prevPosts);
-            setSelectedPost(prevSelected);
+            console.error('Like failed', e);
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
@@ -721,31 +697,9 @@ const App = () => {
 
     const handleDislike = async (postId) => {
         const userId = user?._id;
-        const prevPosts = posts;
-        const prevSelected = selectedPost;
-
-        // Optimistic local update
-        setPosts(prev => prev.map(p => {
-            if (p._id !== postId) return p;
-            const dislikes = Array.isArray(p.dislikes) ? [...p.dislikes] : [];
-            const likes = Array.isArray(p.likes) ? p.likes.filter(id => id !== userId) : [];
-            const hasDisliked = dislikes.includes(userId);
-            const newDislikes = hasDisliked ? dislikes.filter(id => id !== userId) : [...dislikes, userId];
-            return { ...p, likes, dislikes: newDislikes };
-        }));
-
-        if (selectedPost?._id === postId) {
-            setSelectedPost(prev => {
-                const dislikes = Array.isArray(prev.dislikes) ? [...prev.dislikes] : [];
-                const likes = Array.isArray(prev.likes) ? prev.likes.filter(id => id !== userId) : [];
-                const hasDisliked = dislikes.includes(userId);
-                const newDislikes = hasDisliked ? dislikes.filter(id => id !== userId) : [...dislikes, userId];
-                return { ...prev, likes, dislikes: newDislikes };
-            });
-        }
+        if (!userId) return;
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
-        playSound('pop');
         if (navigator.vibrate) navigator.vibrate(50);
 
         try {
@@ -753,11 +707,9 @@ const App = () => {
             const { likes, dislikes } = res.data;
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            playSound('pop');
         } catch (e) {
-            console.error('Failed to dislike', e);
-            // Rollback
-            setPosts(prevPosts);
-            setSelectedPost(prevSelected);
+            console.error('Dislike failed', e);
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
