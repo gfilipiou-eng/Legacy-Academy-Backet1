@@ -284,14 +284,18 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         </div>
 
                         {/* POST TEXT CONTENT */}
-                        <div onClick={() => onOpenDetail(post)} className="mt-1 text-sm text-white/90 whitespace-pre-wrap break-words cursor-pointer mb-2 font-normal">
+                        {/* POST TEXT CONTENT */}
+                        <div onClick={() => {
+                            const isVid = (isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i)));
+                            if (!isVid) onOpenDetail(post);
+                        }} className={`mt-1 text-sm text-white/90 whitespace-pre-wrap break-words mb-2 font-normal ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
                             {parseHashtags(post.desc)}
                         </div>
 
                         {/* MEDIA CONTENT */}
                         {(post.image || post.videoUrl) && (
-                            <div onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm cursor-pointer bg-black/50" style={{ maxHeight: '500px' }}>
-                                {/* DETECT VIDEO VS IMAGE */}
+                            <div onDoubleClick={handleDoubleTap} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm bg-black/50" style={{ maxHeight: '500px' }}>
+                                {/* DETECT VIDEO VS IMAGE - DO NOT ZOOM VIDEOS TO PREVENT GLITCHES */}
                                 {isYouTubeUrl(post.videoUrl) ? (
                                     <div className="w-full aspect-video bg-black">
                                         <iframe title="youtube-feed" src={getYouTubeEmbedUrl(post.videoUrl)} className="w-full h-full" frameBorder="0" allowFullScreen />
@@ -299,7 +303,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                     <video src={resolveMediaUrl(post.videoUrl || post.image)} autoPlay muted loop playsInline controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
                                 ) : post.image ? (
-                                    <img src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black" loading="lazy" />
+                                    <img onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
                                 ) : null}
                                 <AnimatePresence>
                                     {showHeart && (
@@ -590,7 +594,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             ) : (
                                 <div className="grid grid-cols-3 gap-1 pb-20">
                                     {userPosts.map(p => (
-                                        <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center">
+                                        <div
+                                            key={p._id}
+                                            onClick={() => {
+                                                const isVid = (isYouTubeUrl(p.videoUrl) || p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i)));
+                                                if (!isVid) onOpenDetail(p);
+                                                // Removed alert for cleaner UX
+                                            }}
+                                            className={`aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative transition-opacity flex items-center justify-center ${!(isYouTubeUrl(p.videoUrl) || p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
+                                        >
                                             {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
                                                 <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
                                             ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
