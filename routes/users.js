@@ -21,10 +21,11 @@ router.put('/heartbeat', verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const updated = await User.findByIdAndUpdate(userId, { lastSeen: new Date() }, { new: true }).select('lastSeen');
+        if (!updated) return res.status(404).json("Agent not found");
         res.status(200).json({ lastSeen: updated.lastSeen });
     } catch (err) {
         console.error('Heartbeat error:', err);
-        res.status(500).json(err);
+        res.status(500).json({ message: "Heartbeat failure", error: err.message });
     }
 });
 
