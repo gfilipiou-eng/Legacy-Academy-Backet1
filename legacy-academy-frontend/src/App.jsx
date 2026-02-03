@@ -357,11 +357,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                         {allUsers.filter(u => u._id !== user?._id).map(u => {
                             const online = isUserOnline(u);
                             return (
-                            <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}>{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                <div><div className="font-bold text-sm text-white">{u?.username}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? 'Active Now' : 'Offline'}</div></div>
-                            </div>
-                        )})}
+                                <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
+                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}>{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div><div className="font-bold text-sm text-white">{u?.username}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? 'Active Now' : 'Offline'}</div></div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
                 <div className={`flex-1 flex flex-col bg-[#050505] ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
@@ -533,7 +534,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     >
                                         {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : 'FOLLOW')}
                                     </button>
-                                )} 
+                                )}
                             </div>
 
                             <div className="w-full h-px bg-white/10 mb-4" />
@@ -734,42 +735,9 @@ const App = () => {
 
     // Heartbeat for presence
     let _hbInterval = null;
-    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => {}); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => {}); }, 20000); };
+    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 20000); };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
-    // FOLLOW with optimistic update + server sync
-    const handleFollow = async (targetId) => {
-        try {
-            // Optimistic UI
-            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: (u.followers || []).includes(user._id) ? u.followers.filter(id => id !== user._id) : [...(u.followers || []), user._id] } : u));
-            setUser(prev => ({ ...prev, following: prev.following?.includes(targetId) ? prev.following.filter(id => id !== targetId) : [...(prev.following || []), targetId] }));
-            if (profileUser?._id === targetId || profileUser === targetId) {
-                setProfileUser(prev => ({ ...prev, followers: (prev.followers || []).includes(user._id) ? prev.followers.filter(id => id !== user._id) : [...(prev.followers || []), user._id] }));
-            }
-
-            const res = await axios.post(`/users/${targetId}/follow`);
-
-            // Sync to server response
-            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
-            setUser(prev => {
-                const isFollowing = res.data.isFollowing;
-                if (isFollowing) return { ...prev, following: [...new Set([...(prev.following || []), targetId])] };
-                return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
-            });
-            if (profileUser?._id === targetId || profileUser === targetId) {
-                setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
-            }
-
-            playSound('pop');
-
-        } catch (e) {
-            console.error('Follow failed', e);
-            // Re-fetch to restore consistency
-            fetchUsers();
-            if (profileUser?._id) axios.get(`/users/find/${profileUser._id}`).then(r => setProfileUser(r.data)).catch(() => {});
-            alert('Follow action failed. Please try again.');
-        }
-    };
 
     // react to activeTab change to mark notifications read
     useEffect(() => {
@@ -814,7 +782,6 @@ const App = () => {
             }
         } catch (e) {
             console.error('Like failed', e);
-            // Revert would go here, but omitted for speed/simplicity as failures are rare
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
@@ -854,6 +821,7 @@ const App = () => {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
     };
+
     const handleComment = async (postId, text) => {
         try {
             const res = await axios.post(`/posts/${postId}/comment`, { text });
@@ -867,34 +835,37 @@ const App = () => {
         if (!targetId) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
         try {
+            // Optimistic UI
+            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: (u.followers || []).includes(user._id) ? u.followers.filter(id => id !== user._id) : [...(u.followers || []), user._id] } : u));
+            setUser(prev => ({ ...prev, following: prev.following?.includes(targetId) ? prev.following.filter(id => id !== targetId) : [...(prev.following || []), targetId] }));
+            if (profileUser?._id === targetId || profileUser === targetId) {
+                setProfileUser(prev => ({ ...prev, followers: (prev.followers || []).includes(user._id) ? prev.followers.filter(id => id !== user._id) : [...(prev.followers || []), user._id] }));
+            }
+
             const res = await axios.post(`/users/${targetId}/follow`);
-            if (res.status === 200 && res.data && Array.isArray(res.data.followers)) {
-                setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
-                setUser(prev => {
-                    const isFollowing = res.data.isFollowing;
-                    if (isFollowing) return { ...prev, following: [...(prev.following || []), targetId] };
-                    return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
-                });
-                if (profileUser?._id === targetId || profileUser === targetId) {
-                    setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
-                }
-                playSound('pop');
-            } else {
-                // Unexpected response - re-sync user list
-                await fetchUsers();
+
+            // Sync to server response
+            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
+            setUser(prev => {
+                const isFollowing = res.data.isFollowing;
+                if (isFollowing) return { ...prev, following: [...new Set([...(prev.following || []), targetId])] };
+                return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
+            });
+            if (profileUser?._id === targetId || profileUser === targetId) {
+                setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
             }
-        } catch (err) {
-            console.error('Follow error:', err);
-            const message = err?.response?.data || err.message || 'Failed to follow/unfollow';
-            alert(message);
-            if (err?.response?.status === 404) {
-                // If target user not found, refresh users list to remove stale entries
-                await fetchUsers();
-            }
+
+            playSound('pop');
+
+        } catch (e) {
+            console.error('Follow failed', e);
+            fetchUsers();
+            if (profileUser?._id) axios.get(`/users/find/${profileUser._id}`).then(r => setProfileUser(r.data)).catch(() => { });
+            alert(e?.response?.data || 'Follow action failed. Please try again.');
         } finally {
             setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; });
         }
-    }; 
+    };
 
     // FIX: Real Share Functionality
     const handleShare = async (post) => {
@@ -955,7 +926,7 @@ const App = () => {
             <div className="liquid-bg" />
             <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
                 <div className="flex flex-col items-center mb-8">
-                    <img src="/image/Logo.png?v=2" className="w-28 h-28 mb-2" alt="Legacy Logo" />
+                    <img src="/image/Logo.png?v=3" className="w-28 h-28 mb-2" alt="Legacy Logo" />
                 </div>
                 <div className="space-y-4">
                     {authMode === 'login' && (
@@ -1010,7 +981,7 @@ const App = () => {
             <div className="liquid-bg" />
             <header className="sticky top-0 z-50 px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl">
                 <div className="flex items-center gap-2">
-                    <img src="/image/Logo.png?v=2" className="w-10 h-10" alt="Logo" />
+                    <img src="/image/Logo.png?v=3" className="w-10 h-10" alt="Logo" />
                 </div>
                 <div className="flex items-center gap-4">
                     <button onClick={() => setActiveTab('alerts')} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">

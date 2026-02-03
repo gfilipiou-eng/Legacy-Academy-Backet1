@@ -248,6 +248,29 @@
             document.getElementById('lightbox').classList.remove('active');
             document.body.style.overflow = 'auto';
         }
+
+        // Liquid glass sheen + pointer parallax for cards and profile photo
+        (function(){
+            const cards = document.querySelectorAll('.card');
+            function onMove(e){
+                for(const c of cards){
+                    const rect = c.getBoundingClientRect();
+                    const mx = ((e.clientX - rect.left) / rect.width) * 100;
+                    const my = ((e.clientY - rect.top) / rect.height) * 100;
+                    c.style.setProperty('--mx', mx + '%');
+                    c.style.setProperty('--my', my + '%');
+                }
+                // subtle profile parallax
+                const photo = document.querySelector('.profile-photo');
+                if(photo){
+                    const rx = (e.clientX - window.innerWidth/2) / (window.innerWidth/20);
+                    const ry = (e.clientY - window.innerHeight/2) / (window.innerHeight/40);
+                    photo.style.transform = `translate3d(${rx}px, ${ry}px, 0) scale(1.01)`;
+                }
+            }
+            document.addEventListener('pointermove', onMove);
+            cards.forEach(c => { const s = document.createElement('div'); s.className = 'sheen'; c.appendChild(s); });
+        })();
     </script>
 </body>
 </html>

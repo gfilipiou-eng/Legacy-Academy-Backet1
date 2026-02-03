@@ -169,6 +169,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
 });
 
 router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
+  console.log(`📡 [DEBUG/SUB] Comment Edit HIT: Post ${req.params.id}, Comment ${req.params.commentId}`);
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
