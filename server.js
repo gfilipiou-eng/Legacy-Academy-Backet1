@@ -35,9 +35,17 @@ app.get("/", (req, res) => {
   res.redirect("/api/posts");
 });
 
-// Routes
+// DIAGNOSTIC LOGGING - All requests logged for debugging
 app.use((req, res, next) => {
-  console.log(`📡 [${new Date().toLocaleTimeString()}] ${req.method} ${req.originalUrl}`);
+  const timestamp = new Date().toLocaleTimeString();
+  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - FORCE DEPLOY v2`);
+  if (req.method !== 'GET') {
+    console.log(`   Headers:`, {
+      auth: req.headers.authorization ? 'Present' : 'Missing',
+      contentType: req.headers['content-type'],
+      origin: req.headers.origin
+    });
+  }
   next();
 });
 
