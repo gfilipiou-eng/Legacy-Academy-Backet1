@@ -234,9 +234,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1">
+                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight">
                                     {post.author?.username}
-                                    {isPostAuthorFounder && <Icons.Shield className="w-3 h-3 text-yellow-500 fill-current" />}
                                 </span>
                                 <span className="text-gray-500 text-xs">@{post.author?.username?.toLowerCase()} · 2h</span>
                             </div>
@@ -518,10 +517,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
-                                <div className="font-black text-white text-xl mb-1 flex items-center justify-center gap-2">
-                                    {displayUser?.username || "Unknown Agent"}
-                                    {displayUser?.role === 'Founder' && <Icons.Shield className="w-5 h-5 text-yellow-500 fill-current" />}
-                                </div>
+                                <div className="font-black text-white text-xl mb-1">{displayUser?.username || "Unknown Agent"}</div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || "Entrepreneur. Legacy Member."}</div>
 
                                 {displayUser?._id !== currentUser?._id && (
