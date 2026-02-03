@@ -220,8 +220,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat }) => {
             onClick={() => {
                 if (note.type === 'message') {
                     onOpenChat(note.sender);
-                } else if (note.postId) {
-                    onOpenPost(note.postId);
+                } else if (note.post || note.postId) {
+                    onOpenPost(note.post || note.postId);
                 } else {
                     onViewProfile(note.sender);
                 }
@@ -247,9 +247,9 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat }) => {
                 {note.text && <div className="text-xs text-gray-500 mt-0.5 line-clamp-1 italic">"{note.text}"</div>}
                 <div className="text-[10px] text-gray-600 font-bold uppercase tracking-wider mt-1">{formatDate(note.createdAt)}</div>
             </div>
-            {note.post && post?.image && (
+            {note.postImage && (
                 <div className="w-10 h-10 rounded-md bg-gray-800 border border-white/10 overflow-hidden">
-                    <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover opacity-50" />
+                    <img src={resolveMediaUrl(note.postImage)} className="w-full h-full object-cover opacity-50" />
                 </div>
             )}
         </motion.div>

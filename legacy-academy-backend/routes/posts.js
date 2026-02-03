@@ -39,6 +39,26 @@ const handleLike = async (req, res) => {
         { $push: { likes: userId }, $pull: { dislikes: userId } },
         { new: true }
       );
+
+      // Send notification to post author
+      if (post.author.toString() !== userId) {
+        const currentUser = await User.findById(userId);
+        await User.findByIdAndUpdate(post.author, {
+          $push: {
+            notifications: {
+              type: 'like',
+              from: userId,
+              fromUsername: req.user.username,
+              fromProfilePic: currentUser?.profilePic || '',
+              post: post._id,
+              postImage: post.image || (post.thumbnailUrl || ''),
+              read: false,
+              createdAt: new Date()
+            }
+          }
+        });
+      }
+
       res.status(200).json({ message: "Liked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     } else {
       const updatedPost = await Post.findByIdAndUpdate(
@@ -129,6 +149,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
             fromUsername: req.user.username,
             fromProfilePic: currentUser?.profilePic || '',
             post: post._id,
+            postImage: post.image || '',
             text: req.body.text.substring(0, 50),
             read: false,
             createdAt: new Date()
