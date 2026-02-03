@@ -161,7 +161,11 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-bold text-white leading-none">{post.author?.username}</span>
-                                <span className="text-[10px] text-yellow-500 mt-1 uppercase font-black tracking-widest">High Integrity</span>
+                                {post.author?.role === 'Founder' ? (
+                                    <span className="text-[10px] text-red-600 mt-1 uppercase font-black tracking-widest drop-shadow-sm">FOUNDER</span>
+                                ) : (
+                                    <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">LEGACY AGENT</span>
+                                )}
                             </div>
                         </div>
                         <div className="flex gap-1">
