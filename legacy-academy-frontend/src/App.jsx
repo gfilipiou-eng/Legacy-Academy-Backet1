@@ -676,7 +676,7 @@ const App = () => {
 
     const handleLike = async (postId) => {
         try {
-            const res = await axios.post(`/posts/${postId}/like`);
+            const res = await axios.put(`/posts/${postId}/like`);
             const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
             setPosts(updated);
             if (selectedPost?._id === postId) {
@@ -688,7 +688,7 @@ const App = () => {
 
     const handleDislike = async (postId) => {
         try {
-            const res = await axios.post(`/posts/${postId}/dislike`);
+            const res = await axios.put(`/posts/${postId}/dislike`);
             const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
             setPosts(updated);
             if (selectedPost?._id === postId) {
