@@ -152,7 +152,8 @@ body {
 }
 
 .shadow-glow-red {
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 5px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.8);
+  filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.6));
 }
 
 /* --- LIQUID BUTTON ANIMATION --- */
