@@ -144,35 +144,51 @@ router.delete("/:id", verifyToken, async (req, res) => {
 });
 
 // LIKE POST
-router.put("/:id/like", verifyToken, async (req, res) => {
+router.post("/:id/like", verifyToken, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
 
     const userId = req.user.id || req.user.userId;
     if (!post.likes.includes(userId)) {
-      await post.updateOne({ $push: { likes: userId }, $pull: { dislikes: userId } });
-      res.status(200).json({ message: "Liked", likes: post.likes.length + 1 });
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $push: { likes: userId }, $pull: { dislikes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Liked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     } else {
-      await post.updateOne({ $pull: { likes: userId } });
-      res.status(200).json({ message: "Unliked", likes: post.likes.length - 1 });
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { likes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Unliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     }
   } catch (e) { res.status(500).json(e); }
 });
 
 // DISLIKE POST
-router.put("/:id/dislike", verifyToken, async (req, res) => {
+router.post("/:id/dislike", verifyToken, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
 
     const userId = req.user.id || req.user.userId;
     if (!post.dislikes?.includes(userId)) {
-      await post.updateOne({ $push: { dislikes: userId }, $pull: { likes: userId } });
-      res.status(200).json({ message: "Disliked" });
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $push: { dislikes: userId }, $pull: { likes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Disliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     } else {
-      await post.updateOne({ $pull: { dislikes: userId } });
-      res.status(200).json({ message: "Removed dislike" });
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { dislikes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Removed dislike", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     }
   } catch (e) { res.status(500).json(e); }
 });
