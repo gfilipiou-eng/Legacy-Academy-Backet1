@@ -457,7 +457,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {} }) => {
     const [userData, setUserData] = useState(profileUser);
     const [activeList, setActiveList] = useState(null); // 'followers' | 'following' | null
     const userPosts = posts.filter(p => p.author?._id === profileUser?._id || p.author === profileUser?._id || p.username === profileUser?.username);
@@ -528,11 +528,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 {displayUser?._id !== currentUser?._id && (
                                     <button
                                         onClick={() => onFollow(displayUser?._id || displayUser)}
-                                        className={`w-full py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'}`}
+                                        disabled={!!followLoading[displayUser?._id]}
+                                        className={`w-full py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'} ${followLoading[displayUser?._id] ? 'opacity-60 cursor-wait' : ''}`}
                                     >
-                                        {displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : 'FOLLOW'}
+                                        {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : 'FOLLOW')}
                                     </button>
-                                )}
+                                )} 
                             </div>
 
                             <div className="w-full h-px bg-white/10 mb-4" />
@@ -694,7 +695,8 @@ const App = () => {
     const [alerts, setAlerts] = useState([]);
     const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
     const [loadingActions, setLoadingActions] = useState({}); // per-post loading state for optimistic UI
-    const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'forgot'
+    const [followLoading, setFollowLoading] = useState({}); // per-user follow loading state
+    const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'forgot' 
 
     useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
     useEffect(() => { if (user) { fetchPosts(); fetchUsers(); startHeartbeat(); fetchNotifications(); startNotificationPoll(); } else { stopHeartbeat(); stopNotificationPoll(); } return () => { stopHeartbeat(); stopNotificationPoll(); } }, [user]);
@@ -862,20 +864,37 @@ const App = () => {
     };
 
     const handleFollow = async (targetId) => {
+        if (!targetId) return;
+        setFollowLoading(prev => ({ ...prev, [targetId]: true }));
         try {
             const res = await axios.post(`/users/${targetId}/follow`);
-            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
-            setUser(prev => {
-                const isFollowing = res.data.isFollowing;
-                if (isFollowing) return { ...prev, following: [...(prev.following || []), targetId] };
-                return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
-            });
-            if (profileUser?._id === targetId || profileUser === targetId) {
-                setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
+            if (res.status === 200 && res.data && Array.isArray(res.data.followers)) {
+                setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
+                setUser(prev => {
+                    const isFollowing = res.data.isFollowing;
+                    if (isFollowing) return { ...prev, following: [...(prev.following || []), targetId] };
+                    return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
+                });
+                if (profileUser?._id === targetId || profileUser === targetId) {
+                    setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
+                }
+                playSound('pop');
+            } else {
+                // Unexpected response - re-sync user list
+                await fetchUsers();
             }
-            playSound('pop');
-        } catch (e) { }
-    };
+        } catch (err) {
+            console.error('Follow error:', err);
+            const message = err?.response?.data || err.message || 'Failed to follow/unfollow';
+            alert(message);
+            if (err?.response?.status === 404) {
+                // If target user not found, refresh users list to remove stale entries
+                await fetchUsers();
+            }
+        } finally {
+            setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; });
+        }
+    }; 
 
     // FIX: Real Share Functionality
     const handleShare = async (post) => {
@@ -1053,7 +1072,7 @@ const App = () => {
 
             <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
-            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} />
+            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} followLoading={followLoading} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
             <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
             {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}

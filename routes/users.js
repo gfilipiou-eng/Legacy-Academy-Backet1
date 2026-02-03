@@ -69,6 +69,7 @@ router.get("/username/:username", async (req, res) => {
 router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
         const currentUserId = req.user.id || req.user.userId;
+        console.log(`Follow attempt: ${currentUserId} -> ${req.params.id}`);
         if (req.params.id === currentUserId) {
             return res.status(400).json("You cannot follow yourself");
         }
@@ -76,7 +77,10 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         const userToFollow = await User.findById(req.params.id);
         const currentUser = await User.findById(currentUserId);
 
-        if (!userToFollow || !currentUser) return res.status(404).json("User not found");
+        if (!userToFollow || !currentUser) {
+            console.warn(`Follow failed: userToFollow:${!!userToFollow} currentUser:${!!currentUser} -> ${req.params.id}`);
+            return res.status(404).json("User not found");
+        }
 
         // If already following, unfollow
         if (userToFollow.followers.includes(currentUserId)) {
