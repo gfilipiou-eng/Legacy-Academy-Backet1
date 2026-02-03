@@ -117,10 +117,11 @@ const PORT = process.env.PORT || 5000;
 console.log("🟡 Starting Express server on port", PORT);
 
 try {
-  const server = app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT} 🚀`);
     console.log(`📍 Backend URL: https://legacy-academy-backet1.onrender.com`);
-    console.log(`🌐 Listening on: http://0.0.0.0:${PORT}`);
+    console.log(`🌐 Server started - accepting connections`);
+    console.log(`📌 Test: curl http://localhost:${PORT}/api/health`);
 
     // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
     // Delayed by 5 seconds to avoid early startup issues
