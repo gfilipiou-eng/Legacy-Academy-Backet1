@@ -949,105 +949,107 @@ const App = () => {
     const logout = () => { localStorage.clear(); setUser(null); window.location.reload(); };
 
     if (!user) return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-6 relative">
-            <div className="liquid-bg" />
-            <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
-                <div className="flex flex-col items-center mb-8">
-                    <img src="/image/Logo.png?v=3" className="h-28 w-auto object-contain mb-2" alt="Legacy Logo" />
-                </div>
-                <div className="space-y-4">
-                    {authMode === 'login' && (
-                        <>
-                            <div className="relative">
-                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            </div>
-                            <div className="relative">
-                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                                    {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+        <div className="app-container">
+            <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
+                <div className="liquid-bg" />
+                <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
+                    <div className="flex flex-col items-center mb-8">
+                        <img src="/image/Logo.png?v=3" className="h-28 w-auto object-contain mb-2" alt="Legacy Logo" />
+                    </div>
+                    <div className="space-y-4">
+                        {authMode === 'login' && (
+                            <>
+                                <div className="relative">
+                                    <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                </div>
+                                <div className="relative">
+                                    <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                        {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                                <button disabled={authLoading} onClick={async () => {
+                                    setAuthLoading(true);
+                                    try {
+                                        const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
+                                        localStorage.setItem('token', res.data.token);
+                                        localStorage.setItem('user', JSON.stringify(res.data.user));
+                                        setUser(res.data.user);
+                                    } catch (e) {
+                                        alert(e.response?.data?.message || "Access Denied.");
+                                    } finally {
+                                        setAuthLoading(false);
+                                    }
+                                }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                    {authLoading ? "DECRYPTING..." : "INITIALIZE SESSION"}
                                 </button>
-                            </div>
-                            <button disabled={authLoading} onClick={async () => {
-                                setAuthLoading(true);
-                                try {
-                                    const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
-                                    localStorage.setItem('token', res.data.token);
-                                    localStorage.setItem('user', JSON.stringify(res.data.user));
-                                    setUser(res.data.user);
-                                } catch (e) {
-                                    alert(e.response?.data?.message || "Access Denied.");
-                                } finally {
-                                    setAuthLoading(false);
-                                }
-                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                {authLoading ? "DECRYPTING..." : "INITIALIZE SESSION"}
-                            </button>
-                            <div className="flex justify-between text-xs text-gray-500 px-2">
-                                <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Join Protocol</span>
-                                <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Forgot Key?</span>
-                            </div>
-                        </>
-                    )}
-                    {authMode === 'register' && (
-                        <>
-                            <div className="relative">
-                                <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            </div>
-                            <div className="relative">
-                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            </div>
-                            <div className="relative">
-                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                                    {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                <div className="flex justify-between text-xs text-gray-500 px-2">
+                                    <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Join Protocol</span>
+                                    <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Forgot Key?</span>
+                                </div>
+                            </>
+                        )}
+                        {authMode === 'register' && (
+                            <>
+                                <div className="relative">
+                                    <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                </div>
+                                <div className="relative">
+                                    <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                </div>
+                                <div className="relative">
+                                    <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                        {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                                <button disabled={authLoading} onClick={async () => {
+                                    setAuthLoading(true);
+                                    try {
+                                        await axios.post('/auth/register', { username: formData.username, email: formData.email, password: formData.password });
+                                        alert("Protocol Joined. Login now.");
+                                        setAuthMode('login');
+                                    } catch (e) {
+                                        alert(e.response?.data?.message || "Registration Failed.");
+                                    } finally {
+                                        setAuthLoading(false);
+                                    }
+                                }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                    {authLoading ? "ENCRYPTING..." : "JOIN PROTOCOL"}
                                 </button>
-                            </div>
-                            <button disabled={authLoading} onClick={async () => {
-                                setAuthLoading(true);
-                                try {
-                                    await axios.post('/auth/register', { username: formData.username, email: formData.email, password: formData.password });
-                                    alert("Protocol Joined. Login now.");
-                                    setAuthMode('login');
-                                } catch (e) {
-                                    alert(e.response?.data?.message || "Registration Failed.");
-                                } finally {
-                                    setAuthLoading(false);
-                                }
-                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                {authLoading ? "ENCRYPTING..." : "JOIN PROTOCOL"}
-                            </button>
-                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
-                        </>
-                    )}
-                    {authMode === 'forgot' && (
-                        <>
-                            <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
-                            <div className="relative">
-                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            </div>
-                            <button disabled={authLoading} onClick={async () => {
-                                setAuthLoading(true);
-                                try {
-                                    await axios.post('/auth/forgot-password', { email: formData.email });
-                                    alert("If this email is in our database, a reset key has been sent.");
-                                    setAuthMode('login');
-                                } catch (e) {
-                                    alert("Reset request failed.");
-                                } finally {
-                                    setAuthLoading(false);
-                                }
-                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                {authLoading ? "TRANSMITTING..." : "SEND RESET KEY"}
-                            </button>
-                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
-                        </>
-                    )}
+                                <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
+                            </>
+                        )}
+                        {authMode === 'forgot' && (
+                            <>
+                                <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
+                                <div className="relative">
+                                    <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                </div>
+                                <button disabled={authLoading} onClick={async () => {
+                                    setAuthLoading(true);
+                                    try {
+                                        await axios.post('/auth/forgot-password', { email: formData.email });
+                                        alert("If this email is in our database, a reset key has been sent.");
+                                        setAuthMode('login');
+                                    } catch (e) {
+                                        alert("Reset request failed.");
+                                    } finally {
+                                        setAuthLoading(false);
+                                    }
+                                }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                    {authLoading ? "TRANSMITTING..." : "SEND RESET KEY"}
+                                </button>
+                                <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -1062,78 +1064,79 @@ const App = () => {
     });
 
     return (
-        <div className="min-h-screen bg-black text-white relative font-sans">
-            <div className="liquid-bg" />
-            <header className="sticky top-0 z-50 px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl">
-                <div className="flex items-center gap-2">
-                    <img src="/image/Logo.png?v=3" className="h-10 w-auto object-contain" alt="Logo" />
-                </div>
-                <div className="flex items-center gap-4">
-                    <button onClick={() => setActiveTab('alerts')} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
-                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : 'text-gray-400'}`} />
-                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
-                    </button>
-                    <button onClick={() => setIsCreateOpen(true)} className="p-2 bg-yellow-500 rounded-xl text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform"><Icons.Plus className="w-5 h-5" /></button>
-                    <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.MessageCircle className="w-5 h-5" /><div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" /></button>
-                    <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button>
-                </div>
-            </header>
-
-            <main className="max-w-2xl mx-auto p-4 pb-32">
-                {activeTab === 'alerts' ? (
-                    <div className="animate-fade-in">
-                        <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
-                        {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} />)}
+        <div className="app-container">
+            <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
+                <div className="liquid-bg" />
+                <header className="sticky top-0 z-50 px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl shrink-0">
+                    <div className="flex items-center gap-2">
+                        <img src="/image/Logo.png?v=3" className="h-10 w-auto object-contain" alt="Logo" />
                     </div>
-                ) : (
-                    <>
-                        {activeTab === 'search' && (
-                            <div className="mb-8 space-y-4 animate-fade-in">
-                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
-                                <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
-                            </div>
-                        )}
-                        <div className="space-y-6">
-                            {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
-                            {posts.length === 0 && (
-                                <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                    <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-                                    <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => setActiveTab('alerts')} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
+                            <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : 'text-gray-400'}`} />
+                            {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
+                        </button>
+                        <button onClick={() => setIsCreateOpen(true)} className="p-2 bg-yellow-500 rounded-xl text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform"><Icons.Plus className="w-5 h-5" /></button>
+                        <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.MessageCircle className="w-5 h-5" /><div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" /></button>
+                        <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.Settings className="w-5 h-5 text-gray-400" /></button>
+                    </div>
+                </header>
+
+                <main className="flex-1 overflow-y-auto no-scrollbar p-4 pb-32">
+                    {activeTab === 'alerts' ? (
+                        <div className="animate-fade-in">
+                            <h2 className="text-xl font-bold mb-6 px-2 text-white/90">Notifications</h2>
+                            {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} />)}
+                        </div>
+                    ) : (
+                        <>
+                            {activeTab === 'search' && (
+                                <div className="mb-8 space-y-4 animate-fade-in">
+                                    <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
+                                    <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
                                 </div>
                             )}
-                        </div>
-                    </>
-                )}
-            </main>
+                            <div className="space-y-6">
+                                {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
+                                {posts.length === 0 && (
+                                    <div className="h-96 flex flex-col items-center justify-center space-y-4">
+                                        <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </main>
 
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
-                <div className="liquid-glass-nav h-[68px] rounded-[2rem] px-5 flex items-center justify-between shadow-2xl">
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></motion.button>
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></motion.button>
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
+                    <div className="liquid-glass-nav h-[68px] rounded-[2rem] px-5 flex items-center justify-between shadow-2xl">
+                        <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></motion.button>
+                        <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></motion.button>
 
-                    {/* CENTER ACTION */}
-                    <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.8 }} onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
-                        <Icons.Plus className="w-7 h-7 text-yellow-500" />
-                    </motion.button>
+                        {/* CENTER ACTION */}
+                        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.8 }} onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
+                            <Icons.Plus className="w-7 h-7 text-yellow-500" />
+                        </motion.button>
 
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></motion.button>
+                        <motion.button whileTap={{ scale: 0.9 }} onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></motion.button>
 
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
-                        <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
-                            {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
-                        </div>
-                    </motion.button>
+                        <motion.button whileTap={{ scale: 0.9 }} onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                            <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
+                                {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
+                            </div>
+                        </motion.button>
+                    </div>
                 </div>
+
+                <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
+                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
+                <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} followLoading={followLoading} />
+                <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+                <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
+                {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
+
             </div>
-
-            <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} allUsers={users} />
-            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
-            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} followLoading={followLoading} />
-            <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-            <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
-
-
         </div>
     );
 };
