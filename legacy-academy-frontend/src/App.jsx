@@ -1394,9 +1394,9 @@ const App = () => {
             <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
                 <div className="liquid-bg" />
                 <header className="sticky top-0 z-[100] bg-black/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shrink-0">
-                    <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+                    <div className="w-full px-6 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-14 w-auto object-contain" alt="Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-20 w-auto object-contain" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={(e) => { e.stopPropagation(); setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors active:scale-95 transition-transform">
