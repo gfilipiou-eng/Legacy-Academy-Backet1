@@ -15,16 +15,16 @@ export const verifyToken = (req, res, next) => {
             return next();
         }
 
-        // Fallback for FormData / Body
-        const userObj = req.body.user;
+        // Fallback for FormData / Body with optional chaining
+        const userObj = req.body?.user;
         if (userObj) {
             let user = userObj;
             if (typeof user === 'string') {
                 try { user = JSON.parse(user); } catch (e) { }
             }
-            const id = user._id || user.id || user.userId;
+            const id = user?._id || user?.id || user?.userId;
             if (id) {
-                req.user = { id, userId: id, username: user.username, role: user.role || 'User' };
+                req.user = { id, userId: id, username: user?.username, role: user?.role || 'User' };
                 return next();
             }
         }

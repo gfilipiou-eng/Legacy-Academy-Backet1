@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -17,20 +18,28 @@ router.get("/", async (req, res) => {
     }
 });
 
-// 1. Heartbeat - Absolute Priority
-router.put('/heartbeat', verifyToken, async (req, res) => {
+// 1. Heartbeat - Fully Resilient
+router.put('/heartbeat', async (req, res) => {
     try {
-        const userId = req.user?.id || req.user?.userId;
-        if (!userId) {
-            console.log("📡 Heartbeat: No User ID");
-            return res.status(200).json({ status: "no_id" });
+        const authHeader = req.header("Authorization");
+        let userId = null;
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            try {
+                const token = authHeader.substring(7);
+                const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
+                userId = verified.id || verified.userId;
+            } catch (e) { }
         }
 
-        await User.collection.updateOne(
-            { _id: new mongoose.Types.ObjectId(userId) },
-            { $set: { lastSeen: new Date() } }
-        );
-        res.status(200).json({ status: "alive" });
+        if (userId && mongoose.Types.ObjectId.isValid(String(userId))) {
+            await User.collection.updateOne(
+                { _id: new mongoose.Types.ObjectId(String(userId)) },
+                { $set: { lastSeen: new Date() } }
+            ).catch(() => { });
+            return res.status(200).json({ status: "alive" });
+        }
+
+        res.status(200).json({ status: "anonymous_pulse" });
     } catch (err) {
         res.status(200).json({ status: "silent_fail" });
     }
@@ -152,11 +161,25 @@ router.get("/notifications", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const user = await User.findById(userId).select('notifications');
-        const sortedNotifications = (user?.notifications || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        // Transform backend 'from' to frontend 'sender' for compatibility
+        const notifications = (user?.notifications || []).map(n => {
+            const doc = n._doc || n;
+            return {
+                ...doc,
+                sender: {
+                    _id: doc.from,
+                    username: doc.fromUsername,
+                    profilePic: doc.fromProfilePic
+                }
+            };
+        });
+
+        const sortedNotifications = notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         res.status(200).json(sortedNotifications);
     } catch (err) {
         console.error("Get notifications error:", err);
-        res.status(500).json(err);
+        res.status(200).json([]); // Return empty array instead of 500
     }
 });
 

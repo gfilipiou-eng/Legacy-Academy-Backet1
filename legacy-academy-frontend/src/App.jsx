@@ -465,9 +465,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 };
 
 const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {} }) => {
-    const [userData, setUserData] = useState(profileUser);
+    const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null); // 'followers' | 'following' | null
-    const userPosts = posts.filter(p => p.author?._id === profileUser?._id || p.author === profileUser?._id || p.username === profileUser?.username);
+
+    // Robust post filtering
+    const userPosts = (posts || []).filter(p => {
+        const pId = String(p.author?._id || p.author || '');
+        const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
+        const uName = profileUser?.username || '';
+        return (pId && uId && pId === uId) || (p.username && uName && p.username === uName);
+    });
 
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
@@ -479,7 +486,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     if (!isOpen || !profileUser) return null;
 
-    const displayUser = (profileUser?._id === currentUser?._id) ? currentUser : userData;
+    const displayUser = (profileUser?._id === currentUser?._id || profileUser === currentUser?._id) ? currentUser : (userData || profileUser);
 
     const getListUsers = () => {
         if (!activeList || !displayUser) return [];
