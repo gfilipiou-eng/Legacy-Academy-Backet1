@@ -35,6 +35,25 @@ const isUserOnline = (u) => {
     try { return (Date.now() - new Date(u.lastSeen).getTime()) < 60000; } catch (e) { return false; }
 };
 
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+
+        if (diffInSeconds < 60) return 'Just now';
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        if (diffInMinutes < 60) return `${diffInMinutes}m`;
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) return `${diffInHours}h`;
+        const diffInDays = Math.floor(diffInHours / 24);
+        if (diffInDays < 7) return `${diffInDays}d`;
+
+        return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch (e) { return ''; }
+};
+
 // --- COMPONENTS ---
 
 const DefaultAvatar = ({ name, size = "normal" }) => {
@@ -252,22 +271,25 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`glass-card mb-4 rounded-3xl overflow-hidden relative border bg-[#050505] transform transition-all ${isPostAuthorFounder ? 'border-yellow-500/50 shadow-[0_0_30px_-5px_rgba(234,179,8,0.15)]' : 'border-white/5'}`}>
+        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`glass-card mb-4 rounded-3xl overflow-hidden relative border transform transition-all ${isPostAuthorFounder ? 'bg-red-950/10 border-red-500/30 shadow-[0_0_30px_-5px_rgba(220,38,38,0.15)]' : 'bg-[#050505] border-white/5'}`}>
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
                     <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
-                        <div className={`w-12 h-12 rounded-full bg-gray-800 overflow-hidden border ${isPostAuthorFounder ? 'border-yellow-500 shadow-md shadow-yellow-500/20' : 'border-white/10'}`}>
+                        <div className={`w-12 h-12 rounded-full bg-gray-800 overflow-hidden border ${isPostAuthorFounder ? 'border-red-600 shadow-md shadow-red-600/20' : 'border-white/10'}`}>
                             {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
                         </div>
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight">
+                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1">
                                     {post.author?.username}
+                                    {isPostAuthorFounder && <span className="bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-sm shadow-red-500/50">FOUNDER</span>}
                                 </span>
-                                <span className="text-gray-500 text-xs">@{post.author?.username?.toLowerCase()} · 2h</span>
+                                <span className={`text-xs ${isPostAuthorFounder ? 'text-red-400 font-medium' : 'text-gray-500'}`}>
+                                    @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt)}
+                                </span>
                             </div>
                             <div className="flex gap-1">
                                 {isOwner && (
@@ -554,7 +576,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                     ) : (
                         <div className="p-4 sm:p-6">
                             <div className="flex items-center justify-between mb-6">
-                                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-xl shadow-yellow-500/20 shrink-0">
+                                <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-yellow-500 shadow-yellow-500/20'}`}>
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
                                 <div className="flex-1 flex justify-around items-center pl-8">
@@ -573,7 +595,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
-                                <div className="font-black text-white text-xl mb-1">{displayUser?.username || "Unknown Agent"}</div>
+                                <div className="font-black text-white text-xl mb-1 flex items-center gap-2">
+                                    {displayUser?.username || "Unknown Agent"}
+                                    {displayUser?.role === 'Founder' && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}
+                                </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || "Entrepreneur. Legacy Member."}</div>
 
                                 {displayUser?._id !== currentUser?._id && (
@@ -596,12 +621,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {userPosts.map(p => (
                                         <div
                                             key={p._id}
-                                            onClick={() => {
-                                                const isVid = (isYouTubeUrl(p.videoUrl) || p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i)));
-                                                if (!isVid) onOpenDetail(p);
-                                                // Removed alert for cleaner UX
-                                            }}
-                                            className={`aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative transition-opacity flex items-center justify-center ${!(isYouTubeUrl(p.videoUrl) || p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
+                                            onClick={() => onOpenDetail(p)}
+                                            className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center"
                                         >
                                             {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
                                                 <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
