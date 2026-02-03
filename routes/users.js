@@ -9,10 +9,22 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate followers following createdAt');
+        const users = await User.find().select('username role profilePic isPrivate followers following createdAt lastSeen');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);
+    }
+});
+
+// Heartbeat endpoint - update lastSeen for presence
+router.put('/heartbeat', verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const updated = await User.findByIdAndUpdate(userId, { lastSeen: new Date() }, { new: true }).select('lastSeen');
+        res.status(200).json({ lastSeen: updated.lastSeen });
+    } catch (err) {
+        console.error('Heartbeat error:', err);
+        res.status(500).json(err);
     }
 });
 

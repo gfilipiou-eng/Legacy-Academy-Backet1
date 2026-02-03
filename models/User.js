@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   profilePic: { type: String, default: "" },
   bio: { type: String, default: "" },
   lastUsernameChange: { type: Date },
+  lastSeen: { type: Date, default: Date.now },
 
   // Follow System
   followers: { type: Array, default: [] },  // User IDs who follow this user

@@ -337,11 +337,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
     const handleSend = () => {
         if (!inputText.trim()) return;
-        const msg = { id: Date.now(), text: inputText, sender: user?._id, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+        const msg = { id: Date.now(), text: inputText, sender: user?._id, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) };
         setMessages(prev => ({ ...prev, [activeChat._id]: [...(prev[activeChat._id] || []), msg] }));
         setInputText('');
         playSound('pop');
     };
+
+    // In Chat list render, compute online status
+    // (replace later in JSX)
 
     if (!isOpen) return null;
     return (
@@ -351,12 +354,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">CHATS</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
-                        {allUsers.filter(u => u._id !== user?._id).map(u => (
+                        {allUsers.filter(u => u._id !== user?._id).map(u => {
+                            const online = isUserOnline(u);
+                            return (
                             <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                <div className="relative"><div className="w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md">{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" /></div>
-                                <div><div className="font-bold text-sm text-white">{u?.username}</div><div className="text-[10px] text-gray-500 uppercase tracking-tighter">Online • Agent</div></div>
+                                <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}>{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                <div><div className="font-bold text-sm text-white">{u?.username}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? 'Active Now' : 'Offline'}</div></div>
                             </div>
-                        ))}
+                        )})}
                     </div>
                 </div>
                 <div className={`flex-1 flex flex-col bg-[#050505] ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
@@ -692,10 +697,90 @@ const App = () => {
     const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'forgot'
 
     useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
-    useEffect(() => { if (user) { fetchPosts(); fetchUsers(); } }, [user]);
+    useEffect(() => { if (user) { fetchPosts(); fetchUsers(); startHeartbeat(); fetchNotifications(); startNotificationPoll(); } else { stopHeartbeat(); stopNotificationPoll(); } return () => { stopHeartbeat(); stopNotificationPoll(); } }, [user]);
 
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
+
+    // Notifications
+    const fetchNotifications = async () => {
+        if (!user) return;
+        try {
+            const res = await axios.get('/users/notifications');
+            setAlerts(res.data);
+            const updatedUser = { ...user, notifications: res.data };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (e) { console.error('Fetch notifications failed', e); }
+    };
+
+    const markAllNotificationsRead = async () => {
+        try {
+            await axios.put('/users/notifications/read');
+            const updatedAlerts = alerts.map(a => ({ ...a, read: true }));
+            setAlerts(updatedAlerts);
+            const updatedUser = { ...user, notifications: updatedAlerts };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (e) { console.error('Mark read failed', e); }
+    };
+
+    // Polling for notifications (simple fallback to websockets)
+    let _notifInterval = null;
+    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 20000); };
+    const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
+
+    // Heartbeat for presence
+    let _hbInterval = null;
+    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => {}); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => {}); }, 20000); };
+    const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
+
+    // FOLLOW with optimistic update + server sync
+    const handleFollow = async (targetId) => {
+        try {
+            // Optimistic UI
+            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: (u.followers || []).includes(user._id) ? u.followers.filter(id => id !== user._id) : [...(u.followers || []), user._id] } : u));
+            setUser(prev => ({ ...prev, following: prev.following?.includes(targetId) ? prev.following.filter(id => id !== targetId) : [...(prev.following || []), targetId] }));
+            if (profileUser?._id === targetId || profileUser === targetId) {
+                setProfileUser(prev => ({ ...prev, followers: (prev.followers || []).includes(user._id) ? prev.followers.filter(id => id !== user._id) : [...(prev.followers || []), user._id] }));
+            }
+
+            const res = await axios.post(`/users/${targetId}/follow`);
+
+            // Sync to server response
+            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
+            setUser(prev => {
+                const isFollowing = res.data.isFollowing;
+                if (isFollowing) return { ...prev, following: [...new Set([...(prev.following || []), targetId])] };
+                return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
+            });
+            if (profileUser?._id === targetId || profileUser === targetId) {
+                setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
+            }
+
+            playSound('pop');
+
+        } catch (e) {
+            console.error('Follow failed', e);
+            // Re-fetch to restore consistency
+            fetchUsers();
+            if (profileUser?._id) axios.get(`/users/find/${profileUser._id}`).then(r => setProfileUser(r.data)).catch(() => {});
+            alert('Follow action failed. Please try again.');
+        }
+    };
+
+    // react to activeTab change to mark notifications read
+    useEffect(() => {
+        if (activeTab === 'alerts') {
+            markAllNotificationsRead();
+        }
+    }, [activeTab]);
+
+    // Helper to compute if user is online (lastSeen within 60s)
+    const isUserOnline = (u) => {
+        if (!u || !u.lastSeen) return false;
+        try { return (Date.now() - new Date(u.lastSeen).getTime()) < 60000; } catch (e) { return false; }
+    };
 
     const handleLike = async (postId) => {
         const userId = user?._id;
