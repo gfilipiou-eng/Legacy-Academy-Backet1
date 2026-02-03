@@ -215,10 +215,10 @@ input[type="file"] {
     overflow: hidden;
   }
 
-  /* iPhone 16 Pro Dimensions: 393 x 852 */
+  /* Custom Desktop Dimensions */
   .app-container {
-    width: 393px;
-    height: 852px;
+    width: 473px;
+    height: 857px;
     max-height: 95vh;
     border: 12px solid #1a1a1a;
     border-radius: 4rem;
