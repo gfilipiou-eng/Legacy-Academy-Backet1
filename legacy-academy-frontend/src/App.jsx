@@ -685,8 +685,11 @@ const App = () => {
         try {
             const res = await axios.put(`/posts/${postId}/like`);
             const { likes, dislikes } = res.data;
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            // Force String comparison to handle ObjectId/String mismatch
+            setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
+            if (selectedPost && String(selectedPost._id) === String(postId)) {
+                setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            }
             playSound('pop');
         } catch (e) {
             console.error('Like failed', e);
@@ -705,8 +708,10 @@ const App = () => {
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
             const { likes, dislikes } = res.data;
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
+            if (selectedPost && String(selectedPost._id) === String(postId)) {
+                setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+            }
             playSound('pop');
         } catch (e) {
             console.error('Dislike failed', e);
