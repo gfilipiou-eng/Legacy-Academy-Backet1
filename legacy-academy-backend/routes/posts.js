@@ -256,7 +256,9 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       username: req.user.username,
       profilePic: author?.profilePic || "",
       role: req.user.role,
-      visibility: visibility || 'public'
+      visibility: visibility || 'public',
+      isStory: req.body.isStory === 'true' || req.body.isStory === true,
+      expiresAt: (req.body.isStory === 'true' || req.body.isStory === true) ? new Date(Date.now() + 24 * 60 * 60 * 1000) : null
     });
 
     const savedPost = await newPost.save();
