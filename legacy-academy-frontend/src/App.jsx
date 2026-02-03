@@ -619,7 +619,10 @@ const App = () => {
         <div className="min-h-screen bg-black flex items-center justify-center p-6 relative">
             <div className="liquid-bg" />
             <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
-                <h1 className="text-4xl font-black italic gold-text mb-8">LEGACY</h1>
+                <div className="flex flex-col items-center mb-8">
+                    <img src="/image/Logo.png" className="w-24 h-24 mb-2 drop-shadow-[0_0_15px_rgba(255,215,0,0.3)]" alt="Legacy Logo" />
+                    <h1 className="text-4xl font-black italic gold-text">LEGACY</h1>
+                </div>
                 <div className="space-y-4">
                     {authMode === 'login' && (
                         <>
@@ -672,7 +675,10 @@ const App = () => {
         <div className="min-h-screen bg-black text-white relative font-sans">
             <div className="liquid-bg" />
             <header className="sticky top-0 z-50 px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl">
-                <h1 className="text-2xl font-black italic tracking-tighter gold-text drop-shadow-md">LEGACY</h1>
+                <div className="flex items-center gap-2">
+                    <img src="/image/Logo.png" className="w-8 h-8 drop-shadow-[0_0_5px_rgba(255,215,0,0.3)]" alt="Logo" />
+                    <h1 className="text-2xl font-black italic tracking-tighter gold-text drop-shadow-md">LEGACY</h1>
+                </div>
                 <div className="flex items-center gap-4">
                     <button onClick={() => setIsCreateOpen(true)} className="p-2 bg-yellow-500 rounded-xl text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform"><Icons.Plus className="w-5 h-5" /></button>
                     <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"><Icons.MessageCircle className="w-5 h-5" /><div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" /></button>

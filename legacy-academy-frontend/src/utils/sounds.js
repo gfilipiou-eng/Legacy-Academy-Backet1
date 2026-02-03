@@ -10,7 +10,7 @@ export const playSound = (type) => {
 
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-    if (type === 'pop' || type === 'click') {
+    if (type === 'pop' || type === 'click' || type === 'tap') {
         const osc = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         const gain = ctx.createGain();
