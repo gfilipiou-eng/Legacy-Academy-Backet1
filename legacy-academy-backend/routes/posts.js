@@ -85,10 +85,128 @@ const handleDislike = async (req, res) => {
   }
 };
 
+// DEFINE SPECIFIC ROUTES FIRST (before generic /:id routes)
+// This ensures /like, /dislike, /comment/:id routes match before /:id
+
+// LIKE ROUTES
 router.post("/:id/like", verifyToken, handleLike);
 router.put("/:id/like", verifyToken, handleLike);
+
+// DISLIKE ROUTES
 router.post("/:id/dislike", verifyToken, handleDislike);
 router.put("/:id/dislike", verifyToken, handleDislike);
+
+// COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
+router.post("/:id/comment", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json("Post not found");
+
+    const currentUserId = req.user.id || req.user.userId;
+    const currentUser = await User.findById(currentUserId);
+
+    const newComment = {
+      text: req.body.text,
+      authorName: req.user.username,
+      authorId: currentUserId,
+      authorProfilePic: currentUser?.profilePic || '',
+      createdAt: new Date()
+    };
+    post.comments.push(newComment);
+    await post.save();
+
+    // Send notification to post author if commenter is not the author
+    if (post.author.toString() !== currentUserId) {
+      await User.findByIdAndUpdate(post.author, {
+        $push: {
+          notifications: {
+            type: 'comment',
+            from: currentUserId,
+            fromUsername: req.user.username,
+            fromProfilePic: currentUser?.profilePic || '',
+            post: post._id,
+            text: req.body.text.substring(0, 50),
+            read: false,
+            createdAt: new Date()
+          }
+        }
+      });
+    }
+
+    // HANDLE MENTIONS IN COMMENTS
+    const mentionRegex = /@([\w.]+)/g;
+    const mentions = [...new Set((req.body.text.match(mentionRegex) || []).map(m => m.slice(1)))];
+
+    for (const username of mentions) {
+      const mentionedUser = await User.findOne({ username });
+      if (mentionedUser && mentionedUser._id.toString() !== currentUserId && mentionedUser._id.toString() !== post.author.toString()) {
+        await mentionedUser.updateOne({
+          $push: {
+            notifications: {
+              type: 'mention',
+              from: currentUserId,
+              fromUsername: req.user.username,
+              fromProfilePic: currentUser?.profilePic || '',
+              post: post._id,
+              text: `Mentioned you in a comment: ${req.body.text.substring(0, 30)}...`,
+              read: false,
+              createdAt: new Date()
+            }
+          }
+        });
+      }
+    }
+
+    res.status(200).json(post.comments);
+  } catch (e) {
+    console.error("Add comment error:", e);
+    res.status(500).json(e);
+  }
+});
+
+router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json("Post not found");
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json("Comment not found");
+
+    const userId = req.user.id || req.user.userId;
+    // Only comment author can edit
+    if (comment.authorId?.toString() !== userId && req.user.role !== "Founder") {
+      return res.status(403).json("Forbidden");
+    }
+
+    comment.text = req.body.text;
+    await post.save();
+    res.status(200).json(post.comments);
+  } catch (e) { res.status(500).json(e); }
+});
+
+router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
+  console.log("Processing COMMENT DELETE: Post:", req.params.id, "Comment:", req.params.commentId);
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      console.warn("COMMENT DELETE FAILED: Post not found:", req.params.id);
+      return res.status(404).json("Post not found");
+    }
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) {
+      console.warn("COMMENT DELETE FAILED: Comment not found in post:", req.params.commentId);
+      return res.status(404).json("Comment not found");
+    }
+    const userId = req.user.id || req.user.userId;
+    if (comment.authorId?.toString() !== userId && req.user.role !== "Founder" && post.author.toString() !== userId) {
+      return res.status(403).json("Forbidden");
+    }
+    post.comments.pull(req.params.commentId);
+    await post.save();
+    res.status(200).json("Deleted");
+  } catch (e) { res.status(500).json(e); }
+});
 
 // GET ALL POSTS (Public API)
 router.get("/", async (req, res) => {
@@ -223,133 +341,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
-// GET SINGLE POST
-router.get("/:id", async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id).populate('author', 'username profilePic role');
-    if (!post) return res.status(404).json("Post not found");
-    res.status(200).json(post);
-  } catch (e) { res.status(500).json(e); }
-});
-
-// Handlers moved to top for routing priority
-
-
-// ADD COMMENT
-router.post("/:id/comment", verifyToken, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
-
-    const currentUserId = req.user.id || req.user.userId;
-    const currentUser = await User.findById(currentUserId);
-
-    const newComment = {
-      text: req.body.text,
-      authorName: req.user.username,
-      authorId: currentUserId,
-      authorProfilePic: currentUser?.profilePic || '',
-      createdAt: new Date()
-    };
-    post.comments.push(newComment);
-    await post.save();
-
-    // Send notification to post author if commenter is not the author
-    if (post.author.toString() !== currentUserId) {
-      await User.findByIdAndUpdate(post.author, {
-        $push: {
-          notifications: {
-            type: 'comment',
-            from: currentUserId,
-            fromUsername: req.user.username,
-            fromProfilePic: currentUser?.profilePic || '',
-            post: post._id,
-            text: req.body.text.substring(0, 50),
-            read: false,
-            createdAt: new Date()
-          }
-        }
-      });
-    }
-
-    // HANDLE MENTIONS IN COMMENTS
-    const mentionRegex = /@([\w.]+)/g;
-    const mentions = [...new Set((req.body.text.match(mentionRegex) || []).map(m => m.slice(1)))];
-
-    for (const username of mentions) {
-      const mentionedUser = await User.findOne({ username });
-      if (mentionedUser && mentionedUser._id.toString() !== currentUserId && mentionedUser._id.toString() !== post.author.toString()) {
-        await mentionedUser.updateOne({
-          $push: {
-            notifications: {
-              type: 'mention',
-              from: currentUserId,
-              fromUsername: req.user.username,
-              fromProfilePic: currentUser?.profilePic || '',
-              post: post._id,
-              text: `Mentioned you in a comment: ${req.body.text.substring(0, 30)}...`,
-              read: false,
-              createdAt: new Date()
-            }
-          }
-        });
-      }
-    }
-
-    res.status(200).json(post.comments);
-  } catch (e) {
-    console.error("Add comment error:", e);
-    res.status(500).json(e);
-  }
-});
-
-// UPDATE COMMENT
-router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
-
-    const comment = post.comments.id(req.params.commentId);
-    if (!comment) return res.status(404).json("Comment not found");
-
-    const userId = req.user.id || req.user.userId;
-    // Only comment author can edit
-    if (comment.authorId?.toString() !== userId && req.user.role !== "Founder") {
-      return res.status(403).json("Forbidden");
-    }
-
-    comment.text = req.body.text;
-    await post.save();
-    res.status(200).json(post.comments);
-  } catch (e) { res.status(500).json(e); }
-});
-
-// DELETE COMMENT
-router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
-  console.log("Processing COMMENT DELETE: Post:", req.params.id, "Comment:", req.params.commentId);
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      console.warn("COMMENT DELETE FAILED: Post not found:", req.params.id);
-      return res.status(404).json("Post not found");
-    }
-
-    const comment = post.comments.id(req.params.commentId);
-    if (!comment) {
-      console.warn("COMMENT DELETE FAILED: Comment not found in post:", req.params.commentId);
-      return res.status(404).json("Comment not found");
-    }
-    const userId = req.user.id || req.user.userId;
-    if (comment.authorId?.toString() !== userId && req.user.role !== "Founder" && post.author.toString() !== userId) {
-      return res.status(403).json("Forbidden");
-    }
-    post.comments.pull(req.params.commentId);
-    await post.save();
-    res.status(200).json("Deleted");
-  } catch (e) { res.status(500).json(e); }
-});
-
-// GET FILTERED FEED (respects privacy settings)
+// GET FILTERED FEED (respects privacy settings) - MUST BE BEFORE GET /:id
 router.get("/feed", verifyToken, async (req, res) => {
   try {
     const currentUserId = req.user.id || req.user.userId;
@@ -402,6 +394,15 @@ router.get("/feed", verifyToken, async (req, res) => {
     console.error("Feed error:", e);
     res.status(500).json(e);
   }
+});
+
+// GET SINGLE POST - MUST BE AFTER SPECIFIC ROUTES LIKE /feed
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('author', 'username profilePic role');
+    if (!post) return res.status(404).json("Post not found");
+    res.status(200).json(post);
+  } catch (e) { res.status(500).json(e); }
 });
 
 export default router;
