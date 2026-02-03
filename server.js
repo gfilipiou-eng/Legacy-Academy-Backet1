@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import axios from "axios";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 
 // Load environment variables FIRST!
 // Load environment variables FIRST!
@@ -57,10 +58,8 @@ app.use((req, res, next) => {
   const timestamp = new Date().toLocaleTimeString();
   // Simple request-id for correlation
   try {
-    const crypto = awaitImportCrypto();
     req.requestId = crypto.randomBytes(6).toString('hex');
   } catch (e) {
-    // fallback
     req.requestId = (Date.now()).toString(36);
   }
   res.set('X-Request-Id', req.requestId);
@@ -75,12 +74,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// small helper to avoid top-level require in ESM for crypto, safe to call synchronously
-function awaitImportCrypto() {
-  // Using dynamic import - returns module with randomBytes
-  // but crypto.randomBytes is synchronous; use Node's built-in crypto
-  try { return require('crypto'); } catch (e) { return global.crypto || { randomBytes: () => ({ toString: () => String(Math.random()) }) }; }
-} 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
