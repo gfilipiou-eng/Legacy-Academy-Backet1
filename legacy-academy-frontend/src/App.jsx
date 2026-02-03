@@ -90,17 +90,17 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onDeleteComment, onEditComment }) => {
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
-    const isOwner = post.author?._id === user?._id || post.author === user?._id;
+    const isOwner = String(post.author?._id || post.author) === String(user?._id);
 
     return (
-        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4 overflow-hidden">
+        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-y-auto">
             <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
-            <div className="w-full max-w-5xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl">
-                {/* Image Section - Scaled for mobile */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
+            <div className="w-full max-w-5xl h-fit md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
+                {/* Image Section - Responsive height */}
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[50vh] min-h-[30vh] md:max-h-full md:h-full shrink-0">
                     {post.image ? (
                         post.videoUrl || post.image.match(/(mp4|mov|webm)$/i) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -112,8 +112,8 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-yellow-500/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
                 </div>
 
-                {/* Info Section - Scrollable on mobile */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0">
+                {/* Info Section - Fixed height or scrolling */}
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 h-fit md:h-full">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -124,10 +124,13 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                                 <span className="text-[10px] text-yellow-500 mt-1 uppercase font-black tracking-widest">High Integrity</span>
                             </div>
                         </div>
-                        {isOwner && <button onClick={() => { if (confirm("Delete Intel?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                        <div className="flex gap-1">
+                            {isOwner && <button onClick={() => onEdit(post)} className="p-2 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Edit3 className="w-5 h-5" /></button>}
+                            {isOwner && <button onClick={() => { if (confirm("Delete Intel?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                        </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 max-h-[60vh] md:max-h-full">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
                         <div className="space-y-4 pb-4">
                             <AnimatePresence>
@@ -188,7 +191,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment }) => {
+const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
@@ -221,11 +224,18 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight">{post.author?.username}</span>
                                 <span className="text-gray-500 text-xs">@{post.author?.username?.toLowerCase()} · 2h</span>
                             </div>
-                            {isOwner && (
-                                <button onClick={(e) => { e.stopPropagation(); handleDelete(); }} className="text-gray-500 hover:text-red-500 p-1">
-                                    <Icons.Trash className="w-4 h-4" />
-                                </button>
-                            )}
+                            <div className="flex gap-1">
+                                {isOwner && (
+                                    <button onClick={(e) => { e.stopPropagation(); onEditPost(post); }} className="text-gray-500 hover:text-blue-500 p-1">
+                                        <Icons.Edit3 className="w-4 h-4" />
+                                    </button>
+                                )}
+                                {isOwner && (
+                                    <button onClick={(e) => { e.stopPropagation(); handleDelete(); }} className="text-gray-500 hover:text-red-500 p-1">
+                                        <Icons.Trash className="w-4 h-4" />
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* POST TEXT CONTENT */}
@@ -571,6 +581,76 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     );
 };
 
+const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
+    const [desc, setDesc] = useState(post?.desc || '');
+    const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
+    const [isVideo, setIsVideo] = useState(false);
+    const fileRef = useRef(null);
+
+    useEffect(() => {
+        if (post) {
+            setDesc(post.desc || '');
+            setPreview(post.image ? resolveMediaUrl(post.image) : null);
+            setIsVideo(post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
+        }
+    }, [post]);
+
+    if (!isOpen) return null;
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPreview(URL.createObjectURL(file));
+            setIsVideo(file.type.startsWith('video'));
+        }
+    };
+
+    const handleSave = async () => {
+        const fd = new FormData();
+        fd.append('desc', desc);
+        const file = fileRef.current?.files[0];
+        if (file) fd.append('image', file);
+
+        try {
+            await axios.put(`/posts/${post._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            onSuccess();
+            playSound('pop');
+        } catch (e) {
+            console.error("Edit failed", e);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+                <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">EDIT INTEL</h2>
+                <div className="flex flex-col gap-4">
+                    <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update intelligence..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer">
+                        {preview ? (
+                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10">
+                                {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
+                            </div>
+                        ) : (
+                            <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500">
+                                <Icons.Image className="w-8 h-8 opacity-50" />
+                                <span className="text-xs font-bold uppercase tracking-widest">Update Media</span>
+                            </div>
+                        )}
+                        <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
+                    </div>
+                </div>
+                <div className="flex gap-4 mt-6">
+                    <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs text-white uppercase tracking-widest">Cancel</button>
+                    <button onClick={handleSave} className="flex-1 py-3 bg-yellow-500 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">Update</button>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
 const App = () => {
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
@@ -579,6 +659,8 @@ const App = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -597,7 +679,9 @@ const App = () => {
             const res = await axios.post(`/posts/${postId}/like`);
             const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
             setPosts(updated);
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
+            if (selectedPost?._id === postId) {
+                setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
+            }
             playSound('pop');
         } catch (e) { }
     };
@@ -607,7 +691,9 @@ const App = () => {
             const res = await axios.post(`/posts/${postId}/dislike`);
             const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
             setPosts(updated);
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
+            if (selectedPost?._id === postId) {
+                setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
+            }
             playSound('pop');
         } catch (e) { }
     };
@@ -658,7 +744,7 @@ const App = () => {
             setPosts(prev => prev.map(p => {
                 if (p._id === postId) {
                     const filtered = p.comments.filter(c => c._id !== commentId);
-                    if (selectedPost?._id === postId) setSelectedPost({ ...selectedPost, comments: filtered });
+                    if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: filtered }));
                     return { ...p, comments: filtered };
                 }
                 return p;
@@ -675,7 +761,7 @@ const App = () => {
             const updatedComments = res.data;
             setPosts(prev => prev.map(p => {
                 if (p._id === postId) {
-                    if (selectedPost?._id === postId) setSelectedPost({ ...selectedPost, comments: updatedComments });
+                    if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
                     return { ...p, comments: updatedComments };
                 }
                 return p;
@@ -774,7 +860,7 @@ const App = () => {
                             </div>
                         )}
                         <div className="space-y-6">
-                            {(activeTab === 'search' ? filteredPosts : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} />)}
+                            {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} />)}
                             {posts.length === 0 && (
                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
                                     <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
@@ -810,7 +896,8 @@ const App = () => {
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
+            <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
 
 
         </div>

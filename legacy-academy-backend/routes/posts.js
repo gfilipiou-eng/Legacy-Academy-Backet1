@@ -103,8 +103,14 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Not found");
-    if (post.username !== req.user.username && req.user.role !== "Founder") return res.status(403).json("Forbidden");
+    if (!post) {
+      console.warn("UPDATE POST FAILED: Not found:", req.params.id);
+      return res.status(404).json("Not found");
+    }
+    const currentUserId = req.user.id || req.user.userId;
+    if (String(post.author) !== String(currentUserId) && req.user.role !== "Founder") {
+      return res.status(403).json("Forbidden");
+    }
 
     // Update fields
     if (req.body.title) post.title = req.body.title;
@@ -143,9 +149,10 @@ router.delete("/:id", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
-// LIKE POST
-router.post("/:id/like", verifyToken, async (req, res) => {
-  console.log("Processing LIKE for post:", req.params.id, "by user:", req.user?.username);
+// LIKE POST (Supports both PUT and POST for seamless transition)
+router.all("/:id/like", verifyToken, async (req, res) => {
+  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json("Method Not Allowed");
+  console.log(`[${req.method}] Processing LIKE for post:`, req.params.id, "by user:", req.user?.username);
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
@@ -175,9 +182,10 @@ router.post("/:id/like", verifyToken, async (req, res) => {
   }
 });
 
-// DISLIKE POST
-router.post("/:id/dislike", verifyToken, async (req, res) => {
-  console.log("Processing DISLIKE for post:", req.params.id, "by user:", req.user?.username);
+// DISLIKE POST (Supports both PUT and POST)
+router.all("/:id/dislike", verifyToken, async (req, res) => {
+  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json("Method Not Allowed");
+  console.log(`[${req.method}] Processing DISLIKE for post:`, req.params.id, "by user:", req.user?.username);
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
@@ -298,12 +306,19 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
 
 // DELETE COMMENT
 router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
+  console.log("Processing COMMENT DELETE: Post:", req.params.id, "Comment:", req.params.commentId);
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
+    if (!post) {
+      console.warn("COMMENT DELETE FAILED: Post not found:", req.params.id);
+      return res.status(404).json("Post not found");
+    }
 
     const comment = post.comments.id(req.params.commentId);
-    if (!comment) return res.status(404).json("Comment not found");
+    if (!comment) {
+      console.warn("COMMENT DELETE FAILED: Comment not found in post:", req.params.commentId);
+      return res.status(404).json("Comment not found");
+    }
     const userId = req.user.id || req.user.userId;
     if (comment.authorId?.toString() !== userId && req.user.role !== "Founder" && post.author.toString() !== userId) {
       return res.status(403).json("Forbidden");
