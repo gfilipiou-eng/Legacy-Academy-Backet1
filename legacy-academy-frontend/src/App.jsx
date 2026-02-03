@@ -134,7 +134,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 max-h-[60vh] md:max-h-full">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 max-h-[60vh] md:max-h-full modal-content-scroller">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
                         <div className="space-y-4 pb-4">
                             <AnimatePresence>
@@ -377,7 +377,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                                 <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
                                 <div><div className="font-bold text-sm">{activeChat?.username}</div><div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Active Now</div></div>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user?._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user?._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar modal-content-scroller">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user?._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user?._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
                             <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
                                 <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm outline-none focus:border-blue-500 shadow-inner" />
                                 <button onClick={handleSend} className="text-blue-500 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform">Send</button>
@@ -407,56 +407,58 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <h2 className="font-bold uppercase tracking-widest text-sm text-gray-400">Settings</h2>
                     <button onClick={onClose}><Icons.X className="w-5 h-5" /></button>
                 </div>
-                {isEditing ? (
-                    <div className="p-6 text-center space-y-4">
-                        <h3 className="text-white font-bold text-lg">Update Profile</h3>
-                        <div onClick={() => fileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 cursor-pointer relative group shadow-lg">
-                            {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={user?.username} />}
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8" /></div>
-                        </div>
-                        <input type="file" ref={fileRef} hidden onChange={async (e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                                const fd = new FormData(); fd.append('image', file);
-                                try {
-                                    const res = await axios.post('/users/profile-pic', fd);
-                                    alert("Profile Updated!");
-                                    const updatedUser = res.data;
-                                    localStorage.setItem('user', JSON.stringify(updatedUser));
-                                    onUpdateUser(updatedUser);
-                                } catch (e) { alert("Failed to update."); }
-                            }
-                        }} />
-                        <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-yellow-500 outline-none resize-none h-24" placeholder="Enter your bio..." />
-                        <button onClick={async () => {
-                            try {
-                                const res = await axios.put(`/users/${user?._id}`, { bio });
-                                alert("Bio Updated!");
-                                if (res.data) {
-                                    localStorage.setItem('user', JSON.stringify(res.data));
-                                    onUpdateUser(res.data);
-                                } else {
-                                    const updatedUser = { ...user, bio };
-                                    localStorage.setItem('user', JSON.stringify(updatedUser));
-                                    onUpdateUser(updatedUser);
-                                }
-                                setIsEditing(false);
-                            } catch (e) { console.error(e); alert("Failed to update bio."); }
-                        }} className="w-full py-3 bg-yellow-500 rounded-xl text-black font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">SAVE CHANGES</button>
-                        <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500 hover:text-white font-bold uppercase tracking-wider">Cancel</button>
-                    </div>
-                ) : (
-                    <div className="p-2">
-                        <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5 cursor-pointer rounded-xl">
-                            <span className="text-sm font-bold text-gray-300">Private Account</span>
-                            <div onClick={() => setIsPrivate(!isPrivate)} className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-green-500' : 'bg-gray-700'}`}>
-                                <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${isPrivate ? 'translate-x-4' : ''}`} />
+                <div className="modal-content-scroller custom-scrollbar">
+                    {isEditing ? (
+                        <div className="p-6 text-center space-y-4">
+                            <h3 className="text-white font-bold text-lg">Update Profile</h3>
+                            <div onClick={() => fileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 cursor-pointer relative group shadow-lg">
+                                {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={user?.username} />}
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8" /></div>
                             </div>
+                            <input type="file" ref={fileRef} hidden onChange={async (e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    const fd = new FormData(); fd.append('image', file);
+                                    try {
+                                        const res = await axios.post('/users/profile-pic', fd);
+                                        alert("Profile Updated!");
+                                        const updatedUser = res.data;
+                                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                                        onUpdateUser(updatedUser);
+                                    } catch (e) { alert("Failed to update."); }
+                                }
+                            }} />
+                            <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-yellow-500 outline-none resize-none h-24" placeholder="Enter your bio..." />
+                            <button onClick={async () => {
+                                try {
+                                    const res = await axios.put(`/users/${user?._id}`, { bio });
+                                    alert("Bio Updated!");
+                                    if (res.data) {
+                                        localStorage.setItem('user', JSON.stringify(res.data));
+                                        onUpdateUser(res.data);
+                                    } else {
+                                        const updatedUser = { ...user, bio };
+                                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                                        onUpdateUser(updatedUser);
+                                    }
+                                    setIsEditing(false);
+                                } catch (e) { console.error(e); alert("Failed to update bio."); }
+                            }} className="w-full py-3 bg-yellow-500 rounded-xl text-black font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">SAVE CHANGES</button>
+                            <button onClick={() => setIsEditing(false)} className="text-sm text-gray-500 hover:text-white font-bold uppercase tracking-wider">Cancel</button>
                         </div>
-                        <button onClick={() => setIsEditing(true)} className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between text-sm rounded-xl font-bold text-gray-300"><span>Edit Profile</span><Icons.ChevronRight className="w-4 h-4 text-gray-600" /></button>
-                        <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5 rounded-xl"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
-                    </div>
-                )}
+                    ) : (
+                        <div className="p-2">
+                            <div className="p-4 flex items-center justify-between border-b border-white/5 hover:bg-white/5 cursor-pointer rounded-xl">
+                                <span className="text-sm font-bold text-gray-300">Private Account</span>
+                                <div onClick={() => setIsPrivate(!isPrivate)} className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-green-500' : 'bg-gray-700'}`}>
+                                    <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${isPrivate ? 'translate-x-4' : ''}`} />
+                                </div>
+                            </div>
+                            <button onClick={() => setIsEditing(true)} className="w-full text-left p-4 hover:bg-white/5 flex items-center justify-between text-sm rounded-xl font-bold text-gray-300"><span>Edit Profile</span><Icons.ChevronRight className="w-4 h-4 text-gray-600" /></button>
+                            <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-bold text-sm border-t border-white/5 rounded-xl"><span>LOG OUT</span><Icons.Logout className="w-4 h-4" /></button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -495,7 +497,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                     <div className="w-10" />
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505]">
+                <div className="flex-1 overflow-y-auto custom-scrollbar modal-content-scroller relative bg-[#050505]">
                     {activeList ? (
                         <div className="p-2 space-y-2">
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">No users found.</div>}
@@ -577,7 +579,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     return (
         <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
                 <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD INTEL</h2>
                 <div className="flex gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
@@ -656,7 +658,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
     return (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
                 <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">EDIT INTEL</h2>
                 <div className="flex flex-col gap-4">
                     <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update intelligence..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
