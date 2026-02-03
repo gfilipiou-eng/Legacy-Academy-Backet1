@@ -90,7 +90,7 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment }) => {
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
@@ -145,11 +145,11 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                     <div className="p-4 border-t border-white/5 bg-black sticky bottom-0 z-10">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-6">
-                                <button disabled={loadingActions[post._id]} onClick={() => { if (!loadingActions[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <button disabled={loadingActions?.[post._id]} onClick={() => { if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-xs font-black text-gray-500">{post.likes?.length || 0}</span>
                                 </button>
-                                <button disabled={loadingActions[post._id]} onClick={() => { if (!loadingActions[post._id]) onDislike(post._id); }} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <button disabled={loadingActions?.[post._id]} onClick={() => { if (!loadingActions?.[post._id]) onDislike(post._id); }} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-xs font-black text-gray-500">{post.dislikes?.length || 0}</span>
                                 </button>
@@ -191,7 +191,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost }) => {
+const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, loadingActions }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
@@ -262,12 +262,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                            <button disabled={loadingActions?.[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} /></div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions[post._id]) onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
+                            <button disabled={loadingActions?.[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions?.[post._id]) onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
                                 <span className="text-xs font-medium">{dislikeCount}</span>
                             </button>
@@ -921,7 +921,7 @@ const App = () => {
                             </div>
                         )}
                         <div className="space-y-6">
-                            {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} />)}
+                            {(activeTab === 'search' ? (posts.filter(p => (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : posts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
                             {posts.length === 0 && (
                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
                                     <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
@@ -958,7 +958,7 @@ const App = () => {
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
             <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
 
 
         </div>
