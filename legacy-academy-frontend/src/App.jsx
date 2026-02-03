@@ -905,6 +905,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                                 const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
                                 setPreview(thumb ? thumb : null);
                                 setIsVideo(true);
+                            } else if (!v) {
                                 setPreview(null);
                                 setIsVideo(false);
                             }
