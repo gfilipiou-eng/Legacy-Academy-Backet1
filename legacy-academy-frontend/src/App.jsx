@@ -46,8 +46,8 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
     // 2. Post Author -> Delete Only
     // 3. Founder -> Delete, Edit (Everything)
     const isFounder = user?.role === 'Founder';
-    const isCommentAuthor = (comment.authorId || comment.user?._id) === user._id;
-    const isPostAuthor = (post.author?._id || post.author) === user._id;
+    const isCommentAuthor = (comment.authorId || comment.user?._id) === user?._id;
+    const isPostAuthor = (post.author?._id || post.author) === user?._id;
 
     const canEdit = isCommentAuthor || isFounder;
     const canDelete = isCommentAuthor || isPostAuthor || isFounder;
@@ -92,7 +92,7 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
 const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, onDelete, onShare, onExampleEdit, onEditComment, onDeleteComment }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
-    const isOwner = post.author?._id === user._id || post.author === user._id;
+    const isOwner = post.author?._id === user?._id || post.author === user?._id;
 
     return (
         <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
@@ -126,7 +126,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onComment, on
 
                     <div className="p-4 border-t border-white/10 bg-black/20">
                         <div className="flex items-center gap-4 mb-4">
-                            <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${post.likes?.includes(user._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
+                            <button onClick={() => onLike(post._id)}><Icons.Heart className={`w-7 h-7 ${post.likes?.includes(user?._id) ? 'fill-red-500 stroke-red-500' : 'text-white'}`} /></button>
                             <button onClick={() => onDislike(post._id)}><Icons.ThumbsDown className="w-7 h-7 text-white hover:text-red-500" /></button>
                             <button onClick={() => onShare(post)}><Icons.Send className="w-7 h-7 text-white hover:text-blue-500" /></button>
                         </div>
@@ -169,7 +169,7 @@ const NotificationItem = ({ note, onViewProfile }) => {
 const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
-    const isOwner = post.author?._id === user._id || post.author === user._id;
+    const isOwner = post.author?._id === user?._id || post.author === user?._id;
     const dislikeCount = post.dislikes?.length || 0;
 
     const handleComment = (e) => {
@@ -230,12 +230,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.likes?.includes(user._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${post.likes?.includes(user._id) ? 'fill-current' : ''}`} /></div>
+                            <button onClick={(e) => { e.stopPropagation(); onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} /></div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.dislikes?.includes(user._id) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
+                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
                                 <span className="text-xs font-medium">{dislikeCount}</span>
                             </button>
@@ -258,7 +258,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             ))}
                             <form onSubmit={handleComment} className="flex gap-3 items-center mt-4">
                                 <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
-                                    {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
+                                    {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user?.username} />}
                                 </div>
                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Post your reply..." className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
                                 <button disabled={!commentText.trim()} className="text-blue-500 font-bold text-sm disabled:opacity-50">Post</button>
@@ -283,7 +283,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
     const handleSend = () => {
         if (!inputText.trim()) return;
-        const msg = { id: Date.now(), text: inputText, sender: user._id, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+        const msg = { id: Date.now(), text: inputText, sender: user?._id, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
         setMessages(prev => ({ ...prev, [activeChat._id]: [...(prev[activeChat._id] || []), msg] }));
         setInputText('');
         playSound('pop');
@@ -297,7 +297,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">CHATS</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
-                        {allUsers.filter(u => u._id !== user._id).map(u => (
+                        {allUsers.filter(u => u._id !== user?._id).map(u => (
                             <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                 <div className="relative"><div className="w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md">{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" /></div>
                                 <div><div className="font-bold text-sm text-white">{u?.username}</div><div className="text-[10px] text-gray-500 uppercase tracking-tighter">Online • Agent</div></div>
@@ -313,7 +313,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                                 <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
                                 <div><div className="font-bold text-sm">{activeChat?.username}</div><div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Active Now</div></div>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user?._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user?._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
                             <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
                                 <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm outline-none focus:border-blue-500 shadow-inner" />
                                 <button onClick={handleSend} className="text-blue-500 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform">Send</button>
@@ -331,7 +331,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
 const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isPrivate, setIsPrivate] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [bio, setBio] = useState(user.bio || "Entrepreneur. Legacy Member.");
+    const [bio, setBio] = useState(user?.bio || "Entrepreneur. Legacy Member.");
     const fileRef = useRef(null);
 
     if (!isOpen) return null;
@@ -347,7 +347,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-6 text-center space-y-4">
                         <h3 className="text-white font-bold text-lg">Update Profile</h3>
                         <div onClick={() => fileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 cursor-pointer relative group shadow-lg">
-                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={user.username} />}
+                            {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={user?.username} />}
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8" /></div>
                         </div>
                         <input type="file" ref={fileRef} hidden onChange={async (e) => {
@@ -366,7 +366,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-yellow-500 outline-none resize-none h-24" placeholder="Enter your bio..." />
                         <button onClick={async () => {
                             try {
-                                const res = await axios.put(`/users/${user._id}`, { bio });
+                                const res = await axios.put(`/users/${user?._id}`, { bio });
                                 alert("Bio Updated!");
                                 if (res.data) {
                                     localStorage.setItem('user', JSON.stringify(res.data));
@@ -718,7 +718,7 @@ const App = () => {
                     </div>
 
                     <button onClick={() => setActiveTab('alerts')} className={`p-3 transition-all ${activeTab === 'alerts' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Bell className="w-6 h-6" /></button>
-                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[10px]">{user.username?.[0]}</div>}</div></button>
+                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[10px]">{user?.username?.[0]}</div>}</div></button>
                 </div>
             </div>
 
