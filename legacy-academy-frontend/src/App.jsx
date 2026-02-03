@@ -713,7 +713,25 @@ const App = () => {
     const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'forgot' 
 
     useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
-    useEffect(() => { if (user) { fetchPosts(); fetchUsers(); startHeartbeat(); fetchNotifications(); startNotificationPoll(); } else { stopHeartbeat(); stopNotificationPoll(); } return () => { stopHeartbeat(); stopNotificationPoll(); } }, [user]);
+
+    // Use a ref to track the last user ID we initialized for, to avoid loops
+    const lastInitializedId = useRef(null);
+
+    useEffect(() => {
+        if (user && user._id !== lastInitializedId.current) {
+            lastInitializedId.current = user._id;
+            fetchPosts();
+            fetchUsers();
+            startHeartbeat();
+            fetchNotifications();
+            startNotificationPoll();
+        } else if (!user) {
+            lastInitializedId.current = null;
+            stopHeartbeat();
+            stopNotificationPoll();
+        }
+        return () => { }; // Cleanup handled by functions
+    }, [user]);
 
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };

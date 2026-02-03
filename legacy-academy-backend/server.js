@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "v2" });
+  res.status(200).json({ status: "healthy", deployed: "v3-loop-fix" });
 });
 
 // DIAGNOSTIC LOGGING - All requests logged for debugging
@@ -131,7 +131,7 @@ try {
           const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
           axios.get(baseUrl, { timeout: 5000 })
             .then(() => console.log("⚡ Keep-Alive: Server is awake"))
-            .catch(() => {}); // Silently fail if server is down
+            .catch(() => { }); // Silently fail if server is down
         } catch (err) {
           // Silently fail
         }
