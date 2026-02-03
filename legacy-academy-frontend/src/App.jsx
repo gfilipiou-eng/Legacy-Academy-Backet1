@@ -267,9 +267,9 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             <div onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm cursor-pointer bg-black/50" style={{ maxHeight: '500px' }}>
                                 {/* DETECT VIDEO VS IMAGE - SIMPLE CHECK BASED ON EXTENSION OR TYPE field if available. Using onError fallback for safety */}
                                 {post.videoUrl || (post.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-full object-cover max-h-[500px]" />
+                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
                                 ) : (
-                                    <img src={resolveMediaUrl(post.image)} className="w-full h-full object-cover max-h-[500px]" loading="lazy" />
+                                    <img src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black" loading="lazy" />
                                 )}
                                 <AnimatePresence>
                                     {showHeart && (
@@ -523,15 +523,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
-                                <div className="flex gap-4 sm:gap-8 text-center flex-1 justify-end px-2">
-                                    <div><div className="font-black text-white text-lg sm:text-xl">{userPosts.length}</div><div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Posts</div></div>
-                                    <div onClick={() => setActiveList('followers')} className="cursor-pointer hover:scale-105 transition-transform">
-                                        <div className="font-black text-white text-lg sm:text-xl text-yellow-500">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Followers</div>
+                                <div className="flex w-full justify-between items-center sm:pl-4">
+                                    <div className="text-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-xl group-hover:text-yellow-500 transition-colors">{userPosts.length}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-bold">Posts</div>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="cursor-pointer hover:scale-105 transition-transform">
-                                        <div className="font-black text-white text-lg sm:text-xl">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider">Following</div>
+                                    <div onClick={() => setActiveList('followers')} className="text-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-xl text-yellow-500">{displayUser?.followers?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-bold">Followers</div>
+                                    </div>
+                                    <div onClick={() => setActiveList('following')} className="text-center group cursor-pointer hover:bg-white/5 p-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-xl group-hover:text-yellow-500 transition-colors">{displayUser?.following?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-bold">Following</div>
                                     </div>
                                 </div>
                             </div>
@@ -1080,7 +1083,7 @@ const App = () => {
         <div className="app-container">
             <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
                 <div className="liquid-bg" />
-                <header className="sticky top-0 z-50 px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl shrink-0">
+                <header className="px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl shrink-0 z-50">
                     <div className="flex items-center gap-2">
                         <img src="/image/Logo.png?v=3" className="h-10 w-auto object-contain" alt="Logo" />
                     </div>
