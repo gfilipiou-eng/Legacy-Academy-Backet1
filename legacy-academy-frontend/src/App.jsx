@@ -702,6 +702,7 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         playSound('pop');
+        if (navigator.vibrate) navigator.vibrate(50); // Haptic Feedback
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
@@ -745,6 +746,7 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         playSound('pop');
+        if (navigator.vibrate) navigator.vibrate(50);
 
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
