@@ -1108,21 +1108,21 @@ const App = () => {
 
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
                 <div className="liquid-glass-nav h-[68px] rounded-[2rem] px-5 flex items-center justify-between shadow-2xl">
-                    <button onClick={() => setActiveTab('home')} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
-                    <button onClick={() => setActiveTab('search')} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></motion.button>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></motion.button>
 
                     {/* CENTER ACTION */}
-                    <button onClick={() => setIsCreateOpen(true)} className="nav-center-action">
+                    <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.8 }} onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
                         <Icons.Plus className="w-7 h-7 text-yellow-500" />
-                    </button>
+                    </motion.button>
 
-                    <button onClick={logout} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></motion.button>
 
-                    <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
                         <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
                             {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
                         </div>
-                    </button>
+                    </motion.button>
                 </div>
             </div>
 
