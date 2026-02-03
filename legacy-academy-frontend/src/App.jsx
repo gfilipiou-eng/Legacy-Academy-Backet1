@@ -523,18 +523,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
-                                <div className="flex-1 flex justify-evenly items-baseline pl-4 pr-1">
+                                <div className="flex-1 flex justify-around items-center pl-6">
                                     <div className="flex flex-col items-center">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[9px] sm:text-[11px] text-gray-500 uppercase tracking-wider font-bold mt-1.5">Posts</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide font-bold mt-1.5">Posts</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-1 px-2 rounded-xl transition-all">
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-1 rounded-xl transition-all">
                                         <div className="font-black text-yellow-500 text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-[11px] text-gray-500 uppercase tracking-wider font-bold mt-1.5">Followers</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide font-bold mt-1.5">Followers</div>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-1 px-2 rounded-xl transition-all">
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-1 rounded-xl transition-all">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-[11px] text-gray-500 uppercase tracking-wider font-bold mt-1.5">Following</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide font-bold mt-1.5">Following</div>
                                     </div>
                                 </div>
                             </div>
