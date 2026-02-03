@@ -262,12 +262,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions?.[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} /></div>
+                            <button disabled={loadingActions?.[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} /></div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
+                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
                                 <span className="text-xs font-medium">{dislikeCount}</span>
                             </button>
