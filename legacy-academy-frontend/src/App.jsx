@@ -676,31 +676,17 @@ const App = () => {
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
 
     const handleLike = async (postId) => {
-        console.log("🖱️ handleLike clicked for:", postId);
         const userId = user?._id;
-        console.log("👤 User ID:", userId);
-
-        if (!userId) {
-            console.warn("⚠️ No user ID found - cannot like");
-            return;
-        }
-
         const prevPosts = posts;
         const prevSelected = selectedPost;
 
         // Optimistic local update
-        console.log("⚡ Triggering Optimistic Update...");
         setPosts(prev => prev.map(p => {
             if (p._id !== postId) return p;
             const likes = Array.isArray(p.likes) ? [...p.likes] : [];
             const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => id !== userId) : [];
             const hasLiked = likes.includes(userId);
-            console.log("   Current Likes:", likes);
-            console.log("   Has Liked:", hasLiked);
-
             const newLikes = hasLiked ? likes.filter(id => id !== userId) : [...likes, userId];
-            console.log("   New Likes:", newLikes);
-
             return { ...p, likes: newLikes, dislikes };
         }));
 
@@ -718,14 +704,12 @@ const App = () => {
         playSound('pop');
 
         try {
-            console.log("📡 Sending API Request...");
             const res = await axios.put(`/posts/${postId}/like`);
-            console.log("✅ API Success:", res.data);
             const { likes, dislikes } = res.data;
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
         } catch (e) {
-            console.error('❌ Failed to like', e);
+            console.error('Failed to like', e);
             // Rollback
             setPosts(prevPosts);
             setSelectedPost(prevSelected);
