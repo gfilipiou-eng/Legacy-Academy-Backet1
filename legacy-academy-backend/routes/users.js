@@ -54,7 +54,7 @@ router.get("/username/:username", async (req, res) => {
 });
 
 // FOLLOW or REQUEST TO FOLLOW a user
-router.put("/:id/follow", verifyToken, async (req, res) => {
+router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
         const currentUserId = req.user.id || req.user.userId;
         if (req.params.id === currentUserId) {
@@ -68,37 +68,13 @@ router.put("/:id/follow", verifyToken, async (req, res) => {
 
         // If already following, unfollow
         if (userToFollow.followers.includes(currentUserId)) {
-            await userToFollow.updateOne({ $pull: { followers: currentUserId } });
+            const updatedUser = await User.findByIdAndUpdate(req.params.id, { $pull: { followers: currentUserId } }, { new: true });
             await currentUser.updateOne({ $pull: { following: req.params.id } });
-            return res.status(200).json({ message: "Unfollowed", isFollowing: false });
-        }
-
-        // If already requested, cancel request
-        if (userToFollow.followRequests?.includes(currentUserId)) {
-            await userToFollow.updateOne({ $pull: { followRequests: currentUserId } });
-            return res.status(200).json({ message: "Request cancelled", isRequested: false });
-        }
-
-        // If private or elite (followers only), send request
-        if (userToFollow.isPrivate || userToFollow.isFollowersOnly) {
-            await userToFollow.updateOne({
-                $push: {
-                    followRequests: currentUserId,
-                    notifications: {
-                        type: 'follow',
-                        from: currentUserId,
-                        fromUsername: currentUser.username,
-                        fromProfilePic: currentUser.profilePic || '',
-                        read: false,
-                        createdAt: new Date()
-                    }
-                }
-            });
-            return res.status(200).json({ message: "Request sent", isRequested: true });
+            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
         }
 
         // Direct follow if public
-        await userToFollow.updateOne({
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, {
             $push: {
                 followers: currentUserId,
                 notifications: {
@@ -110,9 +86,10 @@ router.put("/:id/follow", verifyToken, async (req, res) => {
                     createdAt: new Date()
                 }
             }
-        });
+        }, { new: true });
+
         await currentUser.updateOne({ $push: { following: req.params.id } });
-        res.status(200).json({ message: "Followed", isFollowing: true });
+        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
     } catch (err) {
         res.status(500).json(err);
     }
