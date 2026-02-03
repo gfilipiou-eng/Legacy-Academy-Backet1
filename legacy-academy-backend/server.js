@@ -50,13 +50,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "v6-presence-fix" });
+  res.status(200).json({ status: "healthy", deployed: "v7-route-fix" });
 });
+
+app.get("/api/ping", (req, res) => res.json({ status: "pong", time: new Date() }));
 
 // DIAGNOSTIC LOGGING - All requests logged for debugging
 app.use((req, res, next) => {
   const timestamp = new Date().toLocaleTimeString();
-  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - V6 PRESENCE FIX`);
+  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - V7 ROUTE FIX`);
   if (req.method !== 'GET') {
     console.log(`   Headers:`, {
       auth: req.headers.authorization ? 'Present' : 'Missing',
@@ -73,10 +75,13 @@ app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/reset-password", resetPasswordRoutes);
 
-// Catch-all 404 for API
-app.use("/api/*", (req, res) => {
-  console.log(`❌ 404 on API: ${req.method} ${req.originalUrl}`);
-  res.status(404).json({ error: "Neural Link Endpoint Not Found", path: req.originalUrl });
+// 404 - Should be at the end
+app.use((req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
+    console.log(`❌ API 404: ${req.method} ${req.originalUrl}`);
+    return res.status(404).json({ error: "Endpoint Not Found", path: req.originalUrl });
+  }
+  res.status(404).send("Not Found");
 });
 
 // Static Uploads Serving (For Local Storage Fallback)
