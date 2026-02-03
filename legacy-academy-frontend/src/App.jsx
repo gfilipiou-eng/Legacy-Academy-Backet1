@@ -46,8 +46,9 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
     // 2. Post Author -> Delete Only
     // 3. Founder -> Delete, Edit (Everything)
     const isFounder = user?.role === 'Founder';
-    const isCommentAuthor = (comment.authorId || comment.user?._id) === user?._id;
-    const isPostAuthor = (post.author?._id || post.author) === user?._id;
+    const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
+    const isCommentAuthor = String(currentCommentAuthorId) === String(user?._id);
+    const isPostAuthor = String(post.author?._id || post.author) === String(user?._id);
 
     const canEdit = isCommentAuthor || isFounder;
     const canDelete = isCommentAuthor || isPostAuthor || isFounder;
@@ -89,27 +90,30 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDeleteComment, onEditComment }) => {
+const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onDeleteComment, onEditComment }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
 
     return (
-        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4 overflow-hidden">
             <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
-            <div className="w-full max-w-5xl h-fit min-h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl my-auto">
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[30vh] max-h-[50vh] md:max-h-full md:min-h-0">
+            <div className="w-full max-w-5xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl">
+                {/* Image Section - Scaled for mobile */}
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
                     {post.image ? (
                         post.videoUrl || post.image.match(/(mp4|mov|webm)$/i) ? (
-                            <div className="w-full h-full flex items-center justify-center">
-                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full object-contain" />
+                            <div className="w-full h-full flex items-center justify-center bg-black">
+                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
                             </div>
                         ) : (
                             <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" />
                         )
-                    ) : <div className="p-10 text-center font-bold text-2xl text-white italic">{post.desc}</div>}
+                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-yellow-500/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
                 </div>
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 md:h-full">
+
+                {/* Info Section - Scrollable on mobile */}
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -117,40 +121,41 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-bold text-white leading-none">{post.author?.username}</span>
-                                <span className="text-[10px] text-gray-500 mt-1">Strategic Asset</span>
+                                <span className="text-[10px] text-yellow-500 mt-1 uppercase font-black tracking-widest">High Integrity</span>
                             </div>
                         </div>
+                        {isOwner && <button onClick={() => { if (confirm("Delete Intel?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 min-h-[30vh] md:min-h-0">
-                        <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed">{parseHashtags(post.desc)}</div>
-                        <div className="space-y-4">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20">
+                        <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
+                        <div className="space-y-4 pb-4">
                             <AnimatePresence>
                                 {post.comments?.map((c, i) => (
                                     <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
                                 ))}
-                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No intelligence gathered yet.</div>}
+                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No strategic resonance yet.</div>}
                             </AnimatePresence>
                         </div>
                     </div>
 
-                    <div className="p-4 border-t border-white/5 bg-black sticky bottom-0">
+                    <div className="p-4 border-t border-white/5 bg-black sticky bottom-0 z-10">
                         <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-5">
-                                <button onClick={() => onLike(post._id)} className="flex items-center gap-1.5 group">
-                                    <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500 scale-110' : 'text-gray-400 group-hover:text-white'}`} />
-                                    <span className="text-[10px] font-bold text-gray-500">{post.likes?.length || 0}</span>
+                            <div className="flex items-center gap-6">
+                                <button onClick={() => onLike(post._id)} className="flex items-center gap-2 group transition-all active:scale-125">
+                                    <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
+                                    <span className="text-xs font-black text-gray-500">{post.likes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onDislike(post._id)} className="flex items-center gap-1.5 group">
-                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500 scale-110' : 'text-gray-400 group-hover:text-white'}`} />
-                                    <span className="text-[10px] font-bold text-gray-500">{post.dislikes?.length || 0}</span>
+                                <button onClick={() => onDislike(post._id)} className="flex items-center gap-2 group transition-all active:scale-125">
+                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-400 group-hover:text-white'}`} />
+                                    <span className="text-xs font-black text-gray-500">{post.dislikes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white"><Icons.Send className="w-5 h-5 transition-transform active:rotate-45" /></button>
+                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-colors active:rotate-45"><Icons.Send className="w-5 h-5" /></button>
                             </div>
                         </div>
-                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-yellow-500/30 transition-all">
-                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Share Intel..." className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
-                            <button disabled={!commentText.trim()} className="text-yellow-500 font-bold text-sm disabled:opacity-30 uppercase tracking-tighter">Submit</button>
+                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-yellow-500/50 transition-all">
+                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Engage..." className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
+                            <button disabled={!commentText.trim()} className="text-yellow-500 font-black text-xs uppercase tracking-widest disabled:opacity-20">Post</button>
                         </form>
                     </div>
                 </div>
@@ -805,7 +810,7 @@ const App = () => {
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
             <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} />
             <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} />}
 
 
         </div>
