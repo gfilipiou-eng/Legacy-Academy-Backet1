@@ -18,23 +18,30 @@ router.get("/", async (req, res) => {
     }
 });
 
-// 1. Heartbeat - Standardized & Robust
-router.put('/heartbeat', verifyToken, async (req, res) => {
+// 1. Heartbeat - Hybrid (Auth + Silent Fail)
+router.put('/heartbeat', async (req, res) => {
     try {
-        const userId = req.user.id || req.user.userId;
+        const authHeader = req.header("Authorization");
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            const token = authHeader.substring(7);
+            const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
+            const userId = verified.id || verified.userId;
 
-        // Update both lastSeen (for frontend) and lastActive (for request compliance)
-        await User.findByIdAndUpdate(userId, {
-            $set: {
-                lastSeen: new Date(),
-                lastActive: new Date()
+            if (userId) {
+                await User.findByIdAndUpdate(userId, {
+                    $set: {
+                        lastSeen: new Date(),
+                        lastActive: new Date()
+                    }
+                });
+                return res.status(200).json("Heartbeat success");
             }
-        });
-
-        res.status(200).json("Heartbeat received");
+        }
+        // If no token or invalid, just return 200 to keep console clean
+        res.status(200).json({ status: "ignored" });
     } catch (err) {
-        console.error("Heartbeat Error:", err.message);
-        res.status(200).json({ status: "error_handled" });
+        // Silent fail for expired tokens etc
+        res.status(200).json({ status: "ignored_error" });
     }
 });
 
