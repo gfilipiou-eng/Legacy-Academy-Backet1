@@ -707,21 +707,21 @@ const App = () => {
                 )}
             </main>
 
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-lg z-50">
-                <div className="gold-liquid-nav h-20 rounded-[2.5rem] px-6 flex items-center justify-between shadow-2xl">
-                    <button onClick={() => setActiveTab('home')} className={`p-4 transition-all rounded-full ${activeTab === 'home' ? 'nav-item-active text-white scale-110' : 'text-black/80'}`}><Icons.Home className="w-6 h-6" /></button>
-                    <button onClick={() => setActiveTab('search')} className={`p-4 transition-all rounded-full ${activeTab === 'search' ? 'nav-item-active text-white scale-110' : 'text-black/80'}`}><Icons.Search className="w-6 h-6" /></button>
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
+                <div className="liquid-glass-nav h-[68px] rounded-[2rem] px-5 flex items-center justify-between shadow-2xl">
+                    <button onClick={() => setActiveTab('home')} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
+                    <button onClick={() => setActiveTab('search')} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
 
                     {/* CENTER ACTION */}
-                    <button onClick={() => setIsCreateOpen(true)} className="w-14 h-14 bg-black rounded-full flex items-center justify-center shadow-2xl border border-yellow-500/50 hover:scale-110 active:scale-95 transition-all">
-                        <Icons.Plus className="w-8 h-8 text-yellow-500" />
+                    <button onClick={() => setIsCreateOpen(true)} className="nav-center-action">
+                        <Icons.Plus className="w-7 h-7 text-yellow-500" />
                     </button>
 
-                    <button onClick={logout} className="p-4 transition-all nav-item-logout text-white shadow-lg"><Icons.Logout className="w-6 h-6" /></button>
+                    <button onClick={logout} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
 
-                    <button onClick={() => viewProfile(user)} className={`p-1 transition-all rounded-full border-2 ${activeTab === 'profile' ? 'border-white' : 'border-transparent'}`}>
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-black/20 shadow-inner">
-                            {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[12px] font-bold text-black">{user?.username?.[0]}</div>}
+                    <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                        <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
+                            {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
                         </div>
                     </button>
                 </div>

@@ -21,50 +21,70 @@ body {
 
 /* --- SUPER LIQUID GLASS (PHOTO MATCH) --- */
 
-/* --- GOLD LIQUID NAV (PHOTO MATCH) --- */
-.gold-liquid-nav {
-  background: url('/gold_liquid_bar_bg_1770110448125.png');
-  background-size: cover;
-  background-position: center;
+/* --- LIQUID GLASS NAV (REFINED) --- */
+.liquid-glass-nav {
+  background: rgba(15, 15, 15, 0.4);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
-  box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.8),
-    inset 0 0 20px rgba(255, 215, 0, 0.4);
-  border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
-.gold-liquid-nav::before {
+.liquid-glass-nav::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  animation: shine-sweep 3s infinite;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  transform: skewX(-20deg);
+  animation: liquid-glass-sweep 4s infinite linear;
 }
 
-@keyframes shine-sweep {
+@keyframes liquid-glass-sweep {
   0% {
-    transform: translateX(-100%) skewX(-15deg);
+    left: -150%;
   }
 
   100% {
-    transform: translateX(200%) skewX(-15deg);
+    left: 150%;
   }
 }
 
-.nav-item-active {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+.nav-item-btn {
+  @apply p-2.5 rounded-full transition-all duration-300;
+  color: rgba(255, 255, 255, 0.4);
 }
 
-.nav-item-logout {
-  background: linear-gradient(135deg, #ff4444, #990000);
-  box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
-  border-radius: 50%;
+.nav-item-btn:active {
+  transform: scale(0.9);
+}
+
+.nav-item-active {
+  background: rgba(255, 215, 0, 0.1) !important;
+  color: #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+}
+
+.nav-center-action {
+  @apply w-12 h-12 bg-black/80 rounded-full flex items-center justify-center border border-yellow-500/40 shadow-xl transition-all;
+}
+
+.nav-center-action:active {
+  transform: scale(0.9);
+}
+
+.nav-logout-btn {
+  @apply p-2.5 rounded-full bg-red-600/20 text-red-500 border border-red-500/20 transition-all;
+}
+
+.nav-logout-btn:active {
+  transform: scale(0.9);
 }
 
 .liquid-bg {
