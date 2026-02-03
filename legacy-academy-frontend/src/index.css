@@ -215,20 +215,20 @@ input[type="file"] {
     overflow: hidden;
   }
 
-  /* Custom Desktop Dimensions */
+  /* Custom Tablet-Style Desktop Dimensions */
   .app-container {
-    width: 473px;
-    height: 857px;
-    max-height: 95vh;
-    border: 12px solid #1a1a1a;
-    border-radius: 4rem;
+    width: 720px;
+    height: 960px;
+    max-height: 98vh;
+    border: 10px solid #1a1a1a;
+    border-radius: 3rem;
     position: relative;
     overflow: hidden;
     background: #000;
     box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 1),
       0 30px 60px -30px rgba(0, 0, 0, 0.5),
       inset 0 0 4px 2px rgba(255, 255, 255, 0.1);
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
 
   /* REMOVED DYNAMIC ISLAND */

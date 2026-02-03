@@ -74,6 +74,66 @@ app.use((req, res, next) => {
   next();
 });
 
+// TEMP: Request dump middleware (short-lived). Enable with env var REQUEST_DUMP=true or set header X-Debug-Requests: 1
+// Use with care - may log PII. Will be removed after debugging.
+app.use((req, res, next) => {
+  // Initialize cached expiry on first invocation (so TTL is calculated at startup/runtime set)
+  if (typeof global.__reqDumpExpiry === 'undefined') {
+    if (process.env.REQUEST_DUMP_TTL_MINUTES) {
+      const mins = parseInt(process.env.REQUEST_DUMP_TTL_MINUTES, 10);
+      global.__reqDumpExpiry = isNaN(mins) ? null : Date.now() + mins * 60000;
+      if (global.__reqDumpExpiry) console.warn(`🔒 Request dump enabled for ${mins} minute(s); will expire at ${new Date(global.__reqDumpExpiry).toISOString()}`);
+    } else if (process.env.REQUEST_DUMP_EXPIRES_AT) {
+      const t = Date.parse(process.env.REQUEST_DUMP_EXPIRES_AT);
+      global.__reqDumpExpiry = isNaN(t) ? null : t;
+      if (global.__reqDumpExpiry) console.warn(`🔒 Request dump will expire at ${new Date(global.__reqDumpExpiry).toISOString()}`);
+    } else {
+      global.__reqDumpExpiry = null; // no expiry configured
+      if (process.env.REQUEST_DUMP === 'true') console.warn('🔒 Request dump enabled indefinitely (no TTL configured)');
+    }
+  }
+
+  const headerEnabled = req.headers['x-debug-requests'] === '1';
+  const envEnabled = process.env.REQUEST_DUMP === 'true';
+  const now = Date.now();
+
+  // If TTL expired, turn off env flag for runtime (but allow header override)
+  if (global.__reqDumpExpiry && now > global.__reqDumpExpiry) {
+    if (envEnabled) {
+      console.warn(`🔒 Request dump expired at ${new Date(global.__reqDumpExpiry).toISOString()}; disabling env flag for runtime.`);
+      process.env.REQUEST_DUMP = 'false';
+    }
+    if (!headerEnabled) return next();
+  }
+
+  const enabled = envEnabled || headerEnabled;
+  if (!enabled) return next();
+
+  const reqId = req.requestId || (Date.now()).toString(36);
+
+  // Mask sensitive headers
+  const safeHeaders = { ...req.headers };
+  if (safeHeaders.authorization) {
+    safeHeaders.authorization = String(safeHeaders.authorization).replace(/(Bearer\s+)(.+)/i, '$1[REDACTED]');
+  }
+
+  console.warn(`🔍 [${reqId}] REQUEST DUMP -> ${req.method} ${req.originalUrl}`);
+  console.warn(`🔍 [${reqId}] Headers:`, safeHeaders);
+
+  if (req.body) {
+    try {
+      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0,2000);
+      console.warn(`🔍 [${reqId}] Body Preview:`, preview);
+    } catch (e) {
+      console.warn(`🔍 [${reqId}] Body serialize failed:`, e && e.message);
+    }
+  }
+
+  if (global.__reqDumpExpiry) res.set('X-Debug-Expires', new Date(global.__reqDumpExpiry).toISOString());
+  res.set('X-Debug-Dumped', '1');
+  next();
+});
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
