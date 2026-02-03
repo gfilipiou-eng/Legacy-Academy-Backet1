@@ -803,7 +803,7 @@ const App = () => {
             <div className="liquid-bg" />
             <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
                 <div className="flex flex-col items-center mb-8">
-                    <img src="/image/Logo.png" className="w-28 h-28 mb-2 drop-shadow-[0_0_20px_rgba(255,215,0,0.4)]" alt="Legacy Logo" />
+                    <img src="/image/Logo.png" className="w-28 h-28 mb-2" alt="Legacy Logo" />
                 </div>
                 <div className="space-y-4">
                     {authMode === 'login' && (
@@ -858,7 +858,7 @@ const App = () => {
             <div className="liquid-bg" />
             <header className="sticky top-0 z-50 px-4 py-4 flex items-center justify-between bg-black/50 backdrop-blur-3xl border-b border-white/5 shadow-2xl">
                 <div className="flex items-center gap-2">
-                    <img src="/image/Logo.png" className="w-10 h-10 drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" alt="Logo" />
+                    <img src="/image/Logo.png" className="w-10 h-10" alt="Logo" />
                 </div>
                 <div className="flex items-center gap-4">
                     <button onClick={() => setIsCreateOpen(true)} className="p-2 bg-yellow-500 rounded-xl text-black shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform"><Icons.Plus className="w-5 h-5" /></button>
