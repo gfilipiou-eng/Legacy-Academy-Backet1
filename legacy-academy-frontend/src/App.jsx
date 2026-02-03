@@ -145,11 +145,11 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                     <div className="p-4 border-t border-white/5 bg-black sticky bottom-0 z-10">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-6">
-                                <button onClick={() => onLike(post._id)} className="flex items-center gap-2 group transition-all active:scale-125">
+                                <button disabled={loadingActions[post._id]} onClick={() => { if (!loadingActions[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-xs font-black text-gray-500">{post.likes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onDislike(post._id)} className="flex items-center gap-2 group transition-all active:scale-125">
+                                <button disabled={loadingActions[post._id]} onClick={() => { if (!loadingActions[post._id]) onDislike(post._id); }} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-xs font-black text-gray-500">{post.dislikes?.length || 0}</span>
                                 </button>
@@ -262,12 +262,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                            <button disabled={loadingActions[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} /></div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
+                            <button disabled={loadingActions[post._id]} onClick={(e) => { e.stopPropagation(); if (!loadingActions[post._id]) onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${loadingActions[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
                                 <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
                                 <span className="text-xs font-medium">{dislikeCount}</span>
                             </button>
@@ -666,6 +666,7 @@ const App = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [alerts, setAlerts] = useState([]);
     const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
+    const [loadingActions, setLoadingActions] = useState({}); // per-post loading state for optimistic UI
     const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'forgot'
 
     useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
@@ -675,27 +676,87 @@ const App = () => {
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
 
     const handleLike = async (postId) => {
+        const userId = user?._id;
+        const prevPosts = posts;
+        const prevSelected = selectedPost;
+
+        // Optimistic local update
+        setPosts(prev => prev.map(p => {
+            if (p._id !== postId) return p;
+            const likes = Array.isArray(p.likes) ? [...p.likes] : [];
+            const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => id !== userId) : [];
+            const hasLiked = likes.includes(userId);
+            const newLikes = hasLiked ? likes.filter(id => id !== userId) : [...likes, userId];
+            return { ...p, likes: newLikes, dislikes };
+        }));
+
+        if (selectedPost?._id === postId) {
+            setSelectedPost(prev => {
+                const likes = Array.isArray(prev.likes) ? [...prev.likes] : [];
+                const dislikes = Array.isArray(prev.dislikes) ? prev.dislikes.filter(id => id !== userId) : [];
+                const hasLiked = likes.includes(userId);
+                const newLikes = hasLiked ? likes.filter(id => id !== userId) : [...likes, userId];
+                return { ...prev, likes: newLikes, dislikes };
+            });
+        }
+
+        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        playSound('pop');
+
         try {
             const res = await axios.put(`/posts/${postId}/like`);
-            const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
-            setPosts(updated);
-            if (selectedPost?._id === postId) {
-                setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
-            }
-            playSound('pop');
-        } catch (e) { }
+            const { likes, dislikes } = res.data;
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+        } catch (e) {
+            console.error('Failed to like', e);
+            setPosts(prevPosts);
+            setSelectedPost(prevSelected);
+        } finally {
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+        }
     };
 
     const handleDislike = async (postId) => {
+        const userId = user?._id;
+        const prevPosts = posts;
+        const prevSelected = selectedPost;
+
+        // Optimistic local update
+        setPosts(prev => prev.map(p => {
+            if (p._id !== postId) return p;
+            const dislikes = Array.isArray(p.dislikes) ? [...p.dislikes] : [];
+            const likes = Array.isArray(p.likes) ? p.likes.filter(id => id !== userId) : [];
+            const hasDisliked = dislikes.includes(userId);
+            const newDislikes = hasDisliked ? dislikes.filter(id => id !== userId) : [...dislikes, userId];
+            return { ...p, likes, dislikes: newDislikes };
+        }));
+
+        if (selectedPost?._id === postId) {
+            setSelectedPost(prev => {
+                const dislikes = Array.isArray(prev.dislikes) ? [...prev.dislikes] : [];
+                const likes = Array.isArray(prev.likes) ? prev.likes.filter(id => id !== userId) : [];
+                const hasDisliked = dislikes.includes(userId);
+                const newDislikes = hasDisliked ? dislikes.filter(id => id !== userId) : [...dislikes, userId];
+                return { ...prev, likes, dislikes: newDislikes };
+            });
+        }
+
+        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        playSound('pop');
+
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
-            const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
-            setPosts(updated);
-            if (selectedPost?._id === postId) {
-                setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
-            }
-            playSound('pop');
-        } catch (e) { }
+            const { likes, dislikes } = res.data;
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes, dislikes } : p));
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+        } catch (e) {
+            console.error('Failed to dislike', e);
+            setPosts(prevPosts);
+            setSelectedPost(prevSelected);
+        } finally {
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+        }
     };
     const handleComment = async (postId, text) => {
         try {
