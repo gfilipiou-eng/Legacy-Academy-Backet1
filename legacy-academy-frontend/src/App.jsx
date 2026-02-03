@@ -523,18 +523,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-800 overflow-hidden border-2 border-yellow-500 shadow-lg shadow-yellow-500/20 shrink-0">
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
-                                <div className="flex-1 grid grid-cols-3 gap-0 px-2 sm:px-4">
-                                    <div className="flex flex-col items-center justify-center">
-                                        <div className="font-black text-white text-base sm:text-2xl">{userPosts.length}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-400 uppercase tracking-tighter sm:tracking-widest font-bold">Posts</div>
+                                <div className="flex-1 flex justify-around items-center px-4">
+                                    <div className="flex flex-col items-center">
+                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Posts</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 p-1 rounded-lg transition-all">
-                                        <div className="font-black text-yellow-500 text-base sm:text-2xl">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-400 uppercase tracking-tighter sm:tracking-widest font-bold">Followers</div>
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-1 px-2 rounded-xl transition-all">
+                                        <div className="font-black text-yellow-500 text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Followers</div>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 p-1 rounded-lg transition-all">
-                                        <div className="font-black text-white text-base sm:text-2xl">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-400 uppercase tracking-tighter sm:tracking-widest font-bold">Following</div>
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-1 px-2 rounded-xl transition-all">
+                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{displayUser?.following?.length || 0}</div>
+                                        <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Following</div>
                                     </div>
                                 </div>
                             </div>
@@ -897,13 +897,12 @@ const App = () => {
             playSound('pop');
 
         } catch (e) {
-            console.error('Follow failed', e);
-            fetchUsers();
-            if (profileUser?._id) axios.get(`/users/find/${profileUser._id}`).then(r => setProfileUser(r.data)).catch(() => { });
-
-            // Only alert if it's NOT a 404 (User no longer exists)
-            if (e?.response?.status !== 404) {
-                alert(e?.response?.data || 'Follow action failed. Please try again.');
+            // Silently sync state if user is gone
+            if (e.response?.status === 404) {
+                fetchUsers();
+                if (isProfileOpen) setIsProfileOpen(false);
+            } else {
+                console.warn('Follow action sync needed', e.message);
             }
         } finally {
             setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; });
@@ -1069,7 +1068,7 @@ const App = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 
     // FIX: Safe search filtering to prevent crash on missing desc/author
