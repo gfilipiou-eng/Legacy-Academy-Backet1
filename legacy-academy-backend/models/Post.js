@@ -25,6 +25,7 @@ const PostSchema = new mongoose.Schema({
     text: { type: String, required: true },
     authorName: String,
     authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    authorProfilePic: String,
     createdAt: { type: Date, default: Date.now }
   }],
 

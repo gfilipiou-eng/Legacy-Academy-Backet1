@@ -145,9 +145,13 @@ router.delete("/:id", verifyToken, async (req, res) => {
 
 // LIKE POST
 router.post("/:id/like", verifyToken, async (req, res) => {
+  console.log("Processing LIKE for post:", req.params.id, "by user:", req.user?.username);
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
+    if (!post) {
+      console.warn("LIKE FAILED: Post not found:", req.params.id);
+      return res.status(404).json("Post not found");
+    }
 
     const userId = req.user.id || req.user.userId;
     if (!post.likes.includes(userId)) {
@@ -165,14 +169,21 @@ router.post("/:id/like", verifyToken, async (req, res) => {
       );
       res.status(200).json({ message: "Unliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     }
-  } catch (e) { res.status(500).json(e); }
+  } catch (e) {
+    console.error("LIKE ERROR:", e);
+    res.status(500).json(e);
+  }
 });
 
 // DISLIKE POST
 router.post("/:id/dislike", verifyToken, async (req, res) => {
+  console.log("Processing DISLIKE for post:", req.params.id, "by user:", req.user?.username);
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
+    if (!post) {
+      console.warn("DISLIKE FAILED: Post not found:", req.params.id);
+      return res.status(404).json("Post not found");
+    }
 
     const userId = req.user.id || req.user.userId;
     if (!post.dislikes?.includes(userId)) {
@@ -190,7 +201,10 @@ router.post("/:id/dislike", verifyToken, async (req, res) => {
       );
       res.status(200).json({ message: "Removed dislike", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     }
-  } catch (e) { res.status(500).json(e); }
+  } catch (e) {
+    console.error("DISLIKE ERROR:", e);
+    res.status(500).json(e);
+  }
 });
 
 // ADD COMMENT

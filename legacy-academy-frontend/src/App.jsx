@@ -98,16 +98,18 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
         <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4">
             <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
             <div className="w-full max-w-5xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl">
-                <div className="flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[300px]">
+                <div className="flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[35vh] md:min-h-0">
                     {post.image ? (
                         post.videoUrl || post.image.match(/(mp4|mov|webm)$/i) ? (
-                            <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
+                            <div className="w-full h-full flex items-center justify-center">
+                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
+                            </div>
                         ) : (
                             <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" />
                         )
                     ) : <div className="p-10 text-center font-bold text-2xl text-white italic">{post.desc}</div>}
                 </div>
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 h-[65vh] md:h-full">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -115,7 +117,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-bold text-white leading-none">{post.author?.username}</span>
-                                <span className="text-[10px] text-gray-500 mt-1">Active Now</span>
+                                <span className="text-[10px] text-gray-500 mt-1">Strategic Asset</span>
                             </div>
                         </div>
                     </div>
@@ -127,12 +129,12 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                                 {post.comments?.map((c, i) => (
                                     <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
                                 ))}
-                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No strategic feedback yet.</div>}
+                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No intelligence gathered yet.</div>}
                             </AnimatePresence>
                         </div>
                     </div>
 
-                    <div className="p-4 border-t border-white/5 bg-black">
+                    <div className="p-4 border-t border-white/5 bg-black pb-8 md:pb-4">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-5">
                                 <button onClick={() => onLike(post._id)} className="flex items-center gap-1.5 group">
@@ -143,12 +145,12 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                                     <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500 scale-110' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-[10px] font-bold text-gray-500">{post.dislikes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white"><Icons.Send className="w-5 h-5" /></button>
+                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white"><Icons.Send className="w-5 h-5 transition-transform active:rotate-45" /></button>
                             </div>
                         </div>
-                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-white/20 transition-all">
-                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Post your reply..." className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
-                            <button disabled={!commentText.trim()} className="text-blue-500 font-bold text-sm disabled:opacity-30">Post</button>
+                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-yellow-500/30 transition-all">
+                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Share Intel..." className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
+                            <button disabled={!commentText.trim()} className="text-yellow-500 font-bold text-sm disabled:opacity-30 uppercase tracking-tighter">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -584,9 +586,50 @@ const App = () => {
 
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
-    const handleLike = async (postId) => { try { const res = await axios.post(`/posts/${postId}/like`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes || [], dislikes: res.data.dislikes || [] } : p)); playSound('pop'); } catch (e) { } };
-    const handleDislike = async (postId) => { try { const res = await axios.post(`/posts/${postId}/dislike`); setPosts(prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes || [], dislikes: res.data.dislikes || [] } : p)); playSound('pop'); } catch (e) { } };
-    const handleComment = async (postId, text) => { try { const res = await axios.post(`/posts/${postId}/comment`, { text }); setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: res.data } : p)); } catch (e) { } };
+
+    const handleLike = async (postId) => {
+        try {
+            const res = await axios.post(`/posts/${postId}/like`);
+            const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
+            setPosts(updated);
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
+            playSound('pop');
+        } catch (e) { }
+    };
+
+    const handleDislike = async (postId) => {
+        try {
+            const res = await axios.post(`/posts/${postId}/dislike`);
+            const updated = prev => prev.map(p => p._id === postId ? { ...p, likes: res.data.likes, dislikes: res.data.dislikes } : p);
+            setPosts(updated);
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, likes: res.data.likes, dislikes: res.data.dislikes }));
+            playSound('pop');
+        } catch (e) { }
+    };
+    const handleComment = async (postId, text) => {
+        try {
+            const res = await axios.post(`/posts/${postId}/comment`, { text });
+            const updatedComments = res.data;
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
+        } catch (e) { }
+    };
+
+    const handleFollow = async (targetId) => {
+        try {
+            const res = await axios.post(`/users/${targetId}/follow`);
+            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
+            setUser(prev => {
+                const isFollowing = res.data.isFollowing;
+                if (isFollowing) return { ...prev, following: [...(prev.following || []), targetId] };
+                return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
+            });
+            if (profileUser?._id === targetId || profileUser === targetId) {
+                setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
+            }
+            playSound('pop');
+        } catch (e) { }
+    };
 
     // FIX: Real Share Functionality
     const handleShare = async (post) => {
