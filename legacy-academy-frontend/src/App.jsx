@@ -428,19 +428,41 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const [inputText, setInputText] = useState('');
     const scrollRef = useRef();
 
+    const fetchMessages = async (otherUserId) => {
+        try {
+            const res = await axios.get(`/messages/conversation/${otherUserId}`);
+            setMessages(prev => ({ ...prev, [otherUserId]: res.data }));
+        } catch (e) { console.error('Failed to fetch messages', e); }
+    };
+
     useEffect(() => {
-        if (isOpen && initialChatUser) {
-            setActiveChat(initialChatUser);
-        }
+        if (isOpen && initialChatUser) setActiveChat(initialChatUser);
     }, [isOpen, initialChatUser]);
 
+    useEffect(() => {
+        if (!isOpen || !activeChat) return;
+        fetchMessages(activeChat._id);
+        const interval = setInterval(() => fetchMessages(activeChat._id), 3000);
+        return () => clearInterval(interval);
+    }, [isOpen, activeChat]);
+
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
-    const handleSend = () => {
-        if (!inputText.trim()) return;
-        const msg = { id: Date.now(), text: inputText, sender: user?._id, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) };
-        setMessages(prev => ({ ...prev, [activeChat._id]: [...(prev[activeChat._id] || []), msg] }));
+
+    const handleSend = async () => {
+        if (!inputText.trim() || !activeChat) return;
+        const text = inputText;
         setInputText('');
-        playSound('pop');
+        try {
+            const res = await axios.post('/messages', { recipient: activeChat._id, text });
+            setMessages(prev => ({
+                ...prev,
+                [activeChat._id]: [...(prev[activeChat._id] || []), res.data]
+            }));
+            playSound('pop');
+        } catch (e) {
+            console.error('Send failed', e);
+            setInputText(text); // Restore text on failure
+        }
     };
 
     // In Chat list render, compute online status
@@ -473,7 +495,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
                                 <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat) ? 'Active Now' : 'Offline'}</div></div>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar modal-content-scroller">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user?._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user?._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar modal-content-scroller">
+                                {(messages[activeChat._id] || []).map((m, i) => (
+                                    <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
+                                            {m.text}
+                                            <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt)}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div ref={scrollRef} />
+                            </div>
                             <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
                                 <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm outline-none focus:border-blue-500 shadow-inner" />
                                 <button onClick={handleSend} className="text-blue-500 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform">Send</button>

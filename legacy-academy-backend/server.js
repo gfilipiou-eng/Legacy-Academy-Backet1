@@ -23,6 +23,7 @@ import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 import resetPasswordRoutes from "./routes/resetPassword.js";
+import messageRoutes from "./routes/messages.js";
 
 // Import email service AFTER dotenv.config() - non-critical
 console.log("Loading email service...");
@@ -69,6 +70,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/reset-password", resetPasswordRoutes);
 
 // Static Uploads Serving (For Local Storage Fallback)
