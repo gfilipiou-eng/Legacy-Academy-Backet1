@@ -392,7 +392,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers }) => {
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
                                 <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
-                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Active Now</div></div>
+                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat) ? 'Active Now' : 'Offline'}</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar modal-content-scroller">{(messages[activeChat._id] || []).map((m, i) => (<div key={i} className={`flex ${m.sender === user?._id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${m.sender === user?._id ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>{m.text}<div className="text-[9px] opacity-50 text-right mt-1">{m.time}</div></div></div>))}<div ref={scrollRef} /></div>
                             <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
@@ -602,6 +602,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
+    const [creating, setCreating] = useState(false);
     const fileRef = useRef(null);
     if (!isOpen) return null;
     const handleFileChange = (e) => { const file = e.target.files[0]; if (file) { setPreview(URL.createObjectURL(file)); setIsVideo(file.type.startsWith('video')); } };
@@ -649,7 +650,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 </div>
                 <div className="flex gap-4">
                     <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">CANCEL</button>
-                    <button onClick={async () => {
+                    <button disabled={creating} onClick={async () => {
+                        if (creating) return;
                         const desc = document.getElementById('c-desc').value;
                         const youtube = document.getElementById('c-youtube').value;
                         const file = fileRef.current.files[0];
@@ -659,14 +661,15 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         else if (file) fd.append('image', file);
 
                         try {
+                            setCreating(true);
                             await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
                             onSuccess(); playSound('pop');
                             // clear inputs
                             document.getElementById('c-desc').value = '';
                             document.getElementById('c-youtube').value = '';
                             setPreview(null); fileRef.current.value = '';
-                        } catch (e) { console.error('Create post failed', e); alert('Post failed'); }
-                    }} className="flex-1 py-3 bg-yellow-500 rounded-xl text-black font-black text-xs hover:bg-yellow-400 uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">POST</button>
+                        } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
+                    }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : 'POST'}</button>
                 </div>
             </motion.div>
         </div>
@@ -677,6 +680,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
     const [desc, setDesc] = useState(post?.desc || '');
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
+    const [saving, setSaving] = useState(false);
     const fileRef = useRef(null);
 
     useEffect(() => {
@@ -704,6 +708,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
     };
 
     const handleSave = async () => {
+        if (saving) return;
         const fd = new FormData();
         fd.append('desc', desc);
         const file = fileRef.current?.files[0];
@@ -712,13 +717,14 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
         if (file) fd.append('image', file);
 
         try {
+            setSaving(true);
             await axios.put(`/posts/${post._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
             onSuccess();
             playSound('pop');
         } catch (e) {
             console.error("Edit failed", e);
             alert('Update failed');
-        }
+        } finally { setSaving(false); }
     };
 
     return (
@@ -759,7 +765,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                 </div>
                 <div className="flex gap-4 mt-6">
                     <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs text-white uppercase tracking-widest">Cancel</button>
-                    <button onClick={handleSave} className="flex-1 py-3 bg-yellow-500 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">Update</button>
+                    <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-yellow-500'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{saving ? '...' : 'Update'}</button>
                 </div>
             </motion.div>
         </div>

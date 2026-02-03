@@ -230,6 +230,8 @@ router.get("/", async (req, res) => {
 });
 
 // CREATE POST
+// NOTE: Add a short-lived duplicate-submission guard to reduce accidental double-uploads
+const _recentCreates = new Map(); // key -> timestamp
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   try {
     const { title, desc, description, visibility, videoUrl } = req.body;
@@ -248,6 +250,23 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     const isYouTube = typeof videoUrl === 'string' && /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(videoUrl || '');
 
     const author = await User.findById(req.user.id || req.user.userId);
+
+    // Short-circuit duplicate submissions within a small time window (5 seconds)
+    const signature = `${req.user.id || req.user.userId}::${(desc||description||'').trim()}::${(videoUrl||'').trim()}::${req.file?.size || 0}`;
+    const now = Date.now();
+    const prev = _recentCreates.get(signature);
+    if (prev && (now - prev) < 5000) {
+      // attempt to find a recent matching post in DB to return instead of creating a duplicate
+      const recent = await Post.findOne({ author: req.user.id || req.user.userId, desc: (desc||description||'').trim() }).sort({ createdAt: -1 }).limit(1);
+      if (recent && (now - new Date(recent.createdAt).getTime()) < 10000) {
+        console.log("Duplicate submission detected - returning recent post", recent._id);
+        return res.status(200).json(recent);
+      }
+      return res.status(409).json({ message: "Duplicate submission ignored" });
+    }
+    _recentCreates.set(signature, now);
+    // garbage collect key after short time
+    setTimeout(() => _recentCreates.delete(signature), 15_000);
 
     const newPost = new Post({
       title: title || '',

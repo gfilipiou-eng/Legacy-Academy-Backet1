@@ -43,6 +43,9 @@ if (hasCloudinary) {
   });
 }
 
-const upload = multer({ storage });
+const MAX_UPLOAD_BYTES = parseInt(process.env.MAX_UPLOAD_BYTES || String(200 * 1024 * 1024)); // 200MB
+const upload = multer({ storage, limits: { fileSize: MAX_UPLOAD_BYTES } });
+
+// Note: clients will receive a 413 if a file exceeds the configured limit.
 
 export default upload;
