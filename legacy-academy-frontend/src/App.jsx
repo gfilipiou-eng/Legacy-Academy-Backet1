@@ -707,18 +707,23 @@ const App = () => {
                 )}
             </main>
 
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50">
-                <div className="liquid-nav h-16 rounded-full px-6 flex items-center justify-between border border-white/10 shadow-2xl backdrop-blur-3xl bg-black/40">
-                    <button onClick={() => setActiveTab('home')} className={`p-3 transition-all ${activeTab === 'home' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Home className="w-6 h-6" /></button>
-                    <button onClick={() => setActiveTab('search')} className={`p-3 transition-all ${activeTab === 'search' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Search className="w-6 h-6" /></button>
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-lg z-50">
+                <div className="gold-liquid-nav h-20 rounded-[2.5rem] px-6 flex items-center justify-between shadow-2xl">
+                    <button onClick={() => setActiveTab('home')} className={`p-4 transition-all rounded-full ${activeTab === 'home' ? 'nav-item-active text-white scale-110' : 'text-black/80'}`}><Icons.Home className="w-6 h-6" /></button>
+                    <button onClick={() => setActiveTab('search')} className={`p-4 transition-all rounded-full ${activeTab === 'search' ? 'nav-item-active text-white scale-110' : 'text-black/80'}`}><Icons.Search className="w-6 h-6" /></button>
 
-                    <div className="w-16 h-16 bg-gradient-to-tr from-yellow-600 to-yellow-400 -mt-8 rounded-full border-4 border-black shadow-2xl shadow-yellow-500/30 cursor-pointer hover:scale-105 active:scale-95 transition-all z-50 flex items-center justify-center p-0"
-                        onClick={() => setIsCreateOpen(true)}>
-                        <Icons.Plus className="w-8 h-8 text-black drop-shadow-md" />
-                    </div>
+                    {/* CENTER ACTION */}
+                    <button onClick={() => setIsCreateOpen(true)} className="w-14 h-14 bg-black rounded-full flex items-center justify-center shadow-2xl border border-yellow-500/50 hover:scale-110 active:scale-95 transition-all">
+                        <Icons.Plus className="w-8 h-8 text-yellow-500" />
+                    </button>
 
-                    <button onClick={() => setActiveTab('alerts')} className={`p-3 transition-all ${activeTab === 'alerts' ? 'text-white scale-110 drop-shadow-[0_0_10px_white]' : 'text-gray-500'}`}><Icons.Bell className="w-6 h-6" /></button>
-                    <button onClick={() => viewProfile(user)} className={`p-3 transition-all text-white/40 hover:text-white`}><div className="w-8 h-8 rounded-full border-2 border-white/20 overflow-hidden bg-gray-900 shadow-md">{user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[10px]">{user?.username?.[0]}</div>}</div></button>
+                    <button onClick={logout} className="p-4 transition-all nav-item-logout text-white shadow-lg"><Icons.Logout className="w-6 h-6" /></button>
+
+                    <button onClick={() => viewProfile(user)} className={`p-1 transition-all rounded-full border-2 ${activeTab === 'profile' ? 'border-white' : 'border-transparent'}`}>
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-black/20 shadow-inner">
+                            {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[12px] font-bold text-black">{user?.username?.[0]}</div>}
+                        </div>
+                    </button>
                 </div>
             </div>
 
