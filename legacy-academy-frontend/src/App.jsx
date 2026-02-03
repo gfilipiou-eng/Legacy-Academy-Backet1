@@ -194,6 +194,8 @@ const NotificationItem = ({ note, onViewProfile }) => {
 const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, loadingActions }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
+    const isFounder = user?.role === 'Founder';
+    const isPostAuthorFounder = post.author?.role === 'Founder';
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
     const dislikeCount = post.dislikes?.length || 0;
 
@@ -209,19 +211,22 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card mb-4 rounded-3xl overflow-hidden relative border border-white/5 bg-[#050505]">
+        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`glass-card mb-4 rounded-3xl overflow-hidden relative border bg-[#050505] transform transition-all ${isPostAuthorFounder ? 'border-yellow-500/50 shadow-[0_0_30px_-5px_rgba(234,179,8,0.15)]' : 'border-white/5'}`}>
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
                     <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                        <div className={`w-12 h-12 rounded-full bg-gray-800 overflow-hidden border ${isPostAuthorFounder ? 'border-yellow-500 shadow-md shadow-yellow-500/20' : 'border-white/10'}`}>
                             {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
                         </div>
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight">{post.author?.username}</span>
+                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1">
+                                    {post.author?.username}
+                                    {isPostAuthorFounder && <Icons.Shield className="w-3 h-3 text-yellow-500 fill-current" />}
+                                </span>
                                 <span className="text-gray-500 text-xs">@{post.author?.username?.toLowerCase()} · 2h</span>
                             </div>
                             <div className="flex gap-1">
@@ -230,7 +235,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         <Icons.Settings className="w-4 h-4" />
                                     </button>
                                 )}
-                                {isOwner && (
+                                {(isOwner || isFounder) && (
                                     <button onClick={(e) => { e.stopPropagation(); handleDelete(); }} className="text-gray-500 hover:text-red-500 p-1">
                                         <Icons.Trash className="w-4 h-4" />
                                     </button>
@@ -495,7 +500,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
-                                <div className="font-black text-white text-xl mb-1">{displayUser?.username || "Unknown Agent"}</div>
+                                <div className="font-black text-white text-xl mb-1 flex items-center justify-center gap-2">
+                                    {displayUser?.username || "Unknown Agent"}
+                                    {displayUser?.role === 'Founder' && <Icons.Shield className="w-5 h-5 text-yellow-500 fill-current" />}
+                                </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || "Entrepreneur. Legacy Member."}</div>
 
                                 {displayUser?._id !== currentUser?._id && (
