@@ -686,6 +686,15 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
 
 const App = () => {
     const [user, setUser] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [authLoading, setAuthLoading] = useState(false);
+    const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+
+    const handleAuthInputChange = (e) => {
+        const { id, value } = e.target;
+        const key = id.replace('l-', '').replace('r-', '').replace('f-', '');
+        setFormData(prev => ({ ...prev, [key]: value }));
+    };
     const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('home');
@@ -931,36 +940,94 @@ const App = () => {
                 <div className="space-y-4">
                     {authMode === 'login' && (
                         <>
-                            <input type="email" placeholder="Agent Email" id="l-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            <input type="password" placeholder="Security Key" id="l-pass" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            <button onClick={async () => {
-                                const email = document.getElementById('l-email').value; const password = document.getElementById('l-pass').value;
-                                try { const res = await axios.post('/auth/login', { email, password }); localStorage.setItem('token', res.data.token); localStorage.setItem('user', JSON.stringify(res.data.user)); setUser(res.data.user); } catch (e) { alert("Access Denied."); }
-                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">INITIALIZE SESSION</button>
+                            <div className="relative">
+                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            </div>
+                            <div className="relative">
+                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-pass" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                    {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                            <button disabled={authLoading} onClick={async () => {
+                                setAuthLoading(true);
+                                try {
+                                    const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
+                                    localStorage.setItem('token', res.data.token);
+                                    localStorage.setItem('user', JSON.stringify(res.data.user));
+                                    setUser(res.data.user);
+                                } catch (e) {
+                                    alert(e.response?.data?.message || "Access Denied.");
+                                } finally {
+                                    setAuthLoading(false);
+                                }
+                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                {authLoading ? "DECRYPTING..." : "INITIALIZE SESSION"}
+                            </button>
                             <div className="flex justify-between text-xs text-gray-500 px-2">
-                                <span onClick={() => setAuthMode('register')} className="cursor-pointer hover:text-white">Join Protocol</span>
-                                <span onClick={() => setAuthMode('forgot')} className="cursor-pointer hover:text-white">Forgot Key?</span>
+                                <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Join Protocol</span>
+                                <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Forgot Key?</span>
                             </div>
                         </>
                     )}
                     {authMode === 'register' && (
                         <>
-                            <input type="text" placeholder="Codename (Username)" id="r-user" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            <input type="email" placeholder="Agent Email" id="r-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            <input type="password" placeholder="Create Key" id="r-pass" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            <button onClick={async () => {
-                                const username = document.getElementById('r-user').value; const email = document.getElementById('r-email').value; const password = document.getElementById('r-pass').value;
-                                try { await axios.post('/auth/register', { username, email, password }); alert("Protocol Joined. Login now."); setAuthMode('login'); } catch (e) { alert("Registration Failed."); }
-                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">JOIN PROTOCOL</button>
-                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white" onClick={() => setAuthMode('login')}>Back to Login</div>
+                            <div className="relative">
+                                <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            </div>
+                            <div className="relative">
+                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            </div>
+                            <div className="relative">
+                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                    {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                            <button disabled={authLoading} onClick={async () => {
+                                setAuthLoading(true);
+                                try {
+                                    await axios.post('/auth/register', { username: formData.username, email: formData.email, password: formData.password });
+                                    alert("Protocol Joined. Login now.");
+                                    setAuthMode('login');
+                                } catch (e) {
+                                    alert(e.response?.data?.message || "Registration Failed.");
+                                } finally {
+                                    setAuthLoading(false);
+                                }
+                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                {authLoading ? "ENCRYPTING..." : "JOIN PROTOCOL"}
+                            </button>
+                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
                         </>
                     )}
                     {authMode === 'forgot' && (
                         <>
                             <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
-                            <input type="email" placeholder="Agent Email" id="f-email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                            <button onClick={() => alert("Reset Key Sent (Simulation)")} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform">SEND KEY</button>
-                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white" onClick={() => setAuthMode('login')}>Back to Login</div>
+                            <div className="relative">
+                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                            </div>
+                            <button disabled={authLoading} onClick={async () => {
+                                setAuthLoading(true);
+                                try {
+                                    await axios.post('/auth/forgot-password', { email: formData.email });
+                                    alert("If this email is in our database, a reset key has been sent.");
+                                    setAuthMode('login');
+                                } catch (e) {
+                                    alert("Reset request failed.");
+                                } finally {
+                                    setAuthLoading(false);
+                                }
+                            }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                {authLoading ? "TRANSMITTING..." : "SEND RESET KEY"}
+                            </button>
+                            <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
                         </>
                     )}
                 </div>
