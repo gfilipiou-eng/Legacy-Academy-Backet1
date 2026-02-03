@@ -964,7 +964,7 @@ const App = () => {
                             </div>
                             <div className="relative">
                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-pass" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
                                 <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
                                     {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                 </button>
