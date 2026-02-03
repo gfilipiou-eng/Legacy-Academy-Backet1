@@ -508,7 +508,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                                 {displayUser?._id !== currentUser?._id && (
                                     <button
-                                        onClick={() => onFollow(displayUser?._id)}
+                                        onClick={() => onFollow(displayUser?._id || displayUser)}
                                         className={`w-full py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'}`}
                                     >
                                         {displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : 'FOLLOW'}
