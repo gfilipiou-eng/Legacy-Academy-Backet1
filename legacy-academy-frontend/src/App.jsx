@@ -125,7 +125,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             </div>
                         </div>
                         <div className="flex gap-1">
-                            {isOwner && <button onClick={() => onEdit(post)} className="p-2 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Edit3 className="w-5 h-5" /></button>}
+                            {isOwner && <button onClick={() => onEdit(post)} className="p-2 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
                             {isOwner && <button onClick={() => { if (confirm("Delete Intel?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
@@ -227,7 +227,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             <div className="flex gap-1">
                                 {isOwner && (
                                     <button onClick={(e) => { e.stopPropagation(); onEditPost(post); }} className="text-gray-500 hover:text-blue-500 p-1">
-                                        <Icons.Edit3 className="w-4 h-4" />
+                                        <Icons.Settings className="w-4 h-4" />
                                     </button>
                                 )}
                                 {isOwner && (

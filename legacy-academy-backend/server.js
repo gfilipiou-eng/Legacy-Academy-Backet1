@@ -36,6 +36,12 @@ app.get("/", (req, res) => {
 });
 
 // Routes
+app.use((req, res, next) => {
+  console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url}`);
+  if (req.method !== 'GET') console.log("📦 Body:", JSON.stringify(req.body).substring(0, 100));
+  next();
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);

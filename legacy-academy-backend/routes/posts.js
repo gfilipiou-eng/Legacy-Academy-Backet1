@@ -16,6 +16,80 @@ const moderateContent = (text) => {
   return { success: true };
 };
 
+// PING
+router.post("/ping", (req, res) => res.status(200).json("PONG"));
+
+// LIKE HANDLER
+const handleLike = async (req, res) => {
+  const method = req.method;
+  console.log(`[${method}] Processing LIKE for post:`, req.params.id, "by user:", req.user?.username);
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      console.warn("LIKE FAILED: Post not found:", req.params.id);
+      return res.status(404).json("Post not found");
+    }
+
+    const userId = req.user.id || req.user.userId;
+    if (!post.likes.includes(userId)) {
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $push: { likes: userId }, $pull: { dislikes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Liked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
+    } else {
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { likes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Unliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
+    }
+  } catch (e) {
+    console.error("LIKE ERROR:", e);
+    res.status(500).json(e);
+  }
+};
+
+// DISLIKE HANDLER
+const handleDislike = async (req, res) => {
+  const method = req.method;
+  console.log(`[${method}] Processing DISLIKE for post:`, req.params.id, "by user:", req.user?.username);
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      console.warn("DISLIKE FAILED: Post not found:", req.params.id);
+      return res.status(404).json("Post not found");
+    }
+
+    const userId = req.user.id || req.user.userId;
+    if (!post.dislikes?.includes(userId)) {
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $push: { dislikes: userId }, $pull: { likes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Disliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
+    } else {
+      const updatedPost = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { dislikes: userId } },
+        { new: true }
+      );
+      res.status(200).json({ message: "Removed dislike", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
+    }
+  } catch (e) {
+    console.error("DISLIKE ERROR:", e);
+    res.status(500).json(e);
+  }
+};
+
+router.post("/:id/like", verifyToken, handleLike);
+router.put("/:id/like", verifyToken, handleLike);
+router.post("/:id/dislike", verifyToken, handleDislike);
+router.put("/:id/dislike", verifyToken, handleDislike);
+
 // GET ALL POSTS (Public API)
 router.get("/", async (req, res) => {
   try {
@@ -149,71 +223,17 @@ router.delete("/:id", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
-// LIKE POST (Supports both PUT and POST for seamless transition)
-router.all("/:id/like", verifyToken, async (req, res) => {
-  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json("Method Not Allowed");
-  console.log(`[${req.method}] Processing LIKE for post:`, req.params.id, "by user:", req.user?.username);
+// GET SINGLE POST
+router.get("/:id", async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      console.warn("LIKE FAILED: Post not found:", req.params.id);
-      return res.status(404).json("Post not found");
-    }
-
-    const userId = req.user.id || req.user.userId;
-    if (!post.likes.includes(userId)) {
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.id,
-        { $push: { likes: userId }, $pull: { dislikes: userId } },
-        { new: true }
-      );
-      res.status(200).json({ message: "Liked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
-    } else {
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.id,
-        { $pull: { likes: userId } },
-        { new: true }
-      );
-      res.status(200).json({ message: "Unliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
-    }
-  } catch (e) {
-    console.error("LIKE ERROR:", e);
-    res.status(500).json(e);
-  }
+    const post = await Post.findById(req.params.id).populate('author', 'username profilePic role');
+    if (!post) return res.status(404).json("Post not found");
+    res.status(200).json(post);
+  } catch (e) { res.status(500).json(e); }
 });
 
-// DISLIKE POST (Supports both PUT and POST)
-router.all("/:id/dislike", verifyToken, async (req, res) => {
-  if (req.method !== 'POST' && req.method !== 'PUT') return res.status(405).json("Method Not Allowed");
-  console.log(`[${req.method}] Processing DISLIKE for post:`, req.params.id, "by user:", req.user?.username);
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      console.warn("DISLIKE FAILED: Post not found:", req.params.id);
-      return res.status(404).json("Post not found");
-    }
+// Handlers moved to top for routing priority
 
-    const userId = req.user.id || req.user.userId;
-    if (!post.dislikes?.includes(userId)) {
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.id,
-        { $push: { dislikes: userId }, $pull: { likes: userId } },
-        { new: true }
-      );
-      res.status(200).json({ message: "Disliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
-    } else {
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.id,
-        { $pull: { dislikes: userId } },
-        { new: true }
-      );
-      res.status(200).json({ message: "Removed dislike", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
-    }
-  } catch (e) {
-    console.error("DISLIKE ERROR:", e);
-    res.status(500).json(e);
-  }
-});
 
 // ADD COMMENT
 router.post("/:id/comment", verifyToken, async (req, res) => {
