@@ -20,26 +20,35 @@ router.get("/", async (req, res) => {
 
 // 1. Heartbeat - Bulletproof (Returns 200 immediately, updates in background)
 router.put('/heartbeat', (req, res) => {
-    res.status(200).json({ status: "alive" });
+    // Ensure response is always sent (defensive)
+    try {
+        res.status(200).json({ status: "alive" });
+    } catch (err) {
+        console.error("Heartbeat response error:", err && err.message);
+        try { res.status(200).json({ status: "alive" }); } catch (e) { /* give up silently */ }
+    }
 
     // Background execution to prevent blocking or 500 errors
     (async () => {
         try {
-            const authHeader = req.header("Authorization");
-            if (!authHeader?.startsWith("Bearer ")) return;
+            const authHeader = (typeof req.header === 'function') ? req.header("Authorization") : req.headers.authorization;
+            console.log("📡 Heartbeat hit - auth present:", !!authHeader);
+            if (!authHeader || !String(authHeader).startsWith("Bearer ")) return;
 
-            const token = authHeader.substring(7);
-            const decoded = jwt.decode(token);
+            const token = String(authHeader).substring(7);
+            let decoded = null;
+            try { decoded = jwt.decode(token); } catch (dErr) { console.warn("Heartbeat token decode failed:", dErr && dErr.message); return; }
             const userId = decoded?.id || decoded?.userId;
+            console.log("📡 Heartbeat decoded userId:", userId);
 
             if (userId && mongoose.Types.ObjectId.isValid(String(userId))) {
                 await User.updateOne(
                     { _id: new mongoose.Types.ObjectId(String(userId)) },
                     { $set: { lastSeen: new Date(), lastActive: new Date() } }
-                ).catch(() => { });
+                ).catch((uErr) => { console.warn("Heartbeat DB update failed:", uErr && uErr.message); });
             }
         } catch (e) {
-            // Background fail - completely silent
+            console.warn("Heartbeat background error:", e && e.message);
         }
     })();
 });
