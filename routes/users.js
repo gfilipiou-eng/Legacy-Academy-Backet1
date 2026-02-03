@@ -76,29 +76,29 @@ router.get("/username/:username", async (req, res) => {
 // FOLLOW or REQUEST TO FOLLOW a user
 router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
-        const currentUserId = req.user.id || req.user.userId;
-        console.log(`DEBUG: Follow path hit. ${currentUserId} -> ${req.params.id}`);
-        if (req.params.id === currentUserId) {
-            return res.status(400).json("You cannot follow yourself");
-        }
+        const currentUserId = req.user?.id || req.user?.userId;
+        const targetId = req.params.id;
 
-        const userToFollow = await User.findById(req.params.id);
+        console.log(`📡 DEBUG: Follow attempt ${currentUserId} -> ${targetId}`);
+
+        if (!currentUserId) return res.status(401).json("Unauthorized: ID missing");
+        if (targetId === currentUserId) return res.status(400).json("You cannot follow yourself");
+
+        const userToFollow = await User.findById(targetId);
         const currentUser = await User.findById(currentUserId);
 
-        if (!userToFollow || !currentUser) {
-            console.warn(`Follow failed: userToFollow:${!!userToFollow} currentUser:${!!currentUser} -> ${req.params.id}`);
-            return res.status(404).json("User not found");
-        }
+        if (!userToFollow) return res.status(404).json("Target user not found");
+        if (!currentUser) return res.status(404).json("Current user session invalid");
 
         // If already following, unfollow
-        if (userToFollow.followers.includes(currentUserId)) {
-            const updatedUser = await User.findByIdAndUpdate(req.params.id, { $pull: { followers: currentUserId } }, { new: true });
-            await currentUser.updateOne({ $pull: { following: req.params.id } });
+        if (userToFollow.followers?.includes(currentUserId)) {
+            const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
+            await currentUser.updateOne({ $pull: { following: targetId } });
             return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
         }
 
-        // Direct follow if public
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+        // Direct follow
+        const updatedUser = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,
                 notifications: {
@@ -112,10 +112,11 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             }
         }, { new: true });
 
-        await currentUser.updateOne({ $push: { following: req.params.id } });
+        await currentUser.updateOne({ $push: { following: targetId } });
         res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
     } catch (err) {
-        res.status(500).json(err);
+        console.error("🔥 Follow Error:", err);
+        res.status(500).json({ message: "Follow system failure", error: err.message });
     }
 });
 
