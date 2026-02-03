@@ -74,11 +74,14 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         if (!userToFollow || !currentUser) return res.status(404).json("User not found");
 
         if (userToFollow.followers?.includes(currentUserId)) {
+            // Unfollow: remove follower from target and remove following from current user
             const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
-            await currentUser.updateOne({ $pull: { following: targetId } });
-            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
+            await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetId } });
+            const refreshedCurrent = await User.findById(currentUserId).select('following');
+            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers, following: refreshedCurrent.following });
         }
 
+        // Follow: add follower and a notification
         const updatedUser = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,
@@ -89,8 +92,9 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             }
         }, { new: true });
 
-        await currentUser.updateOne({ $push: { following: targetId } });
-        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
+        await User.findByIdAndUpdate(currentUserId, { $push: { following: targetId } });
+        const refreshedCurrent = await User.findById(currentUserId).select('following');
+        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers, following: refreshedCurrent.following });
     } catch (err) {
         console.error("🔥 Follow Error:", err.message);
         res.status(500).json({ message: "Follow error", error: err.message });

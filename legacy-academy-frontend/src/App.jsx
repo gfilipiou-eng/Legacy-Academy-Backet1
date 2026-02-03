@@ -16,6 +16,19 @@ const resolveMediaUrl = (path) => {
     return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 
+// Helpers for Youtube detection/embed
+const isYouTubeUrl = (url) => {
+    if (!url) return false;
+    try {
+        return /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(url);
+    } catch (e) { return false; }
+};
+const getYouTubeEmbedUrl = (url) => {
+    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(url || '');
+    if (!m) return null;
+    return `https://www.youtube.com/embed/${m[1]}`;
+};
+
 const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u) => {
     if (!u || !u.lastSeen) return false;
@@ -105,13 +118,17 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
             <div className="w-full max-w-5xl h-fit md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
                 {/* Image Section - Responsive height */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[50vh] min-h-[30vh] md:max-h-full md:h-full shrink-0">
-                    {post.image ? (
-                        post.videoUrl || post.image.match(/(mp4|mov|webm)$/i) ? (
+                    {(post.image || post.videoUrl || post.thumbnailUrl) ? (
+                        (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
+                            <div className="w-full h-full flex items-center justify-center bg-black">
+                                <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{width: '100%', height: '100%'}} frameBorder="0" allowFullScreen />
+                            </div>
+                        ) : (post.videoUrl || (post.image && post.image.match(/(mp4|mov|webm)$/i))) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
                                 <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
                             </div>
                         ) : (
-                            <img src={resolveMediaUrl(post.image)} className="max-w-full max-h-full object-contain" />
+                            <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-yellow-500/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
                 </div>
@@ -561,7 +578,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="grid grid-cols-3 gap-1 pb-20">
                                     {userPosts.map(p => (
                                         <div key={p._id} onClick={() => onOpenDetail(p)} className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center">
-                                            {p.image ? (
+                                            { (isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl||'').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
+                                            ) : p.image ? (
                                                 <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
@@ -597,6 +616,23 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                     </div>
                     <textarea id="c-desc" placeholder="Decrypt your thoughts..." className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
                 </div>
+
+                {/* YouTube URL input */}
+                <div className="mb-3">
+                    <input id="c-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
+                        const v = e.target.value || '';
+                        if (isYouTubeUrl(v)) {
+                            const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
+                            const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+                            setPreview(thumb);
+                            setIsVideo(true);
+                        } else if (!v) {
+                            setPreview(null);
+                            setIsVideo(false);
+                        }
+                    }} />
+                </div>
+
                 <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
                     {preview ? (
                         <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
@@ -615,10 +651,21 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                     <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">CANCEL</button>
                     <button onClick={async () => {
                         const desc = document.getElementById('c-desc').value;
+                        const youtube = document.getElementById('c-youtube').value;
                         const file = fileRef.current.files[0];
-                        if (!desc && !file) return;
-                        const fd = new FormData(); fd.append('desc', desc); if (file) fd.append('image', file);
-                        try { await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } }); onSuccess(); playSound('pop'); } catch (e) { }
+                        if (!desc && !file && !youtube) return;
+                        const fd = new FormData(); fd.append('desc', desc);
+                        if (youtube) fd.append('videoUrl', youtube.trim());
+                        else if (file) fd.append('image', file);
+
+                        try {
+                            await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                            onSuccess(); playSound('pop');
+                            // clear inputs
+                            document.getElementById('c-desc').value = '';
+                            document.getElementById('c-youtube').value = '';
+                            setPreview(null); fileRef.current.value = '';
+                        } catch (e) { console.error('Create post failed', e); alert('Post failed'); }
                     }} className="flex-1 py-3 bg-yellow-500 rounded-xl text-black font-black text-xs hover:bg-yellow-400 uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">POST</button>
                 </div>
             </motion.div>
@@ -635,8 +682,14 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
     useEffect(() => {
         if (post) {
             setDesc(post.desc || '');
-            setPreview(post.image ? resolveMediaUrl(post.image) : null);
+            setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
             setIsVideo(post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
+            // initialize youtube field when editing
+            const isYT = isYouTubeUrl(post?.videoUrl);
+            setTimeout(() => {
+                const el = document.getElementById('edit-youtube');
+                if (el) el.value = isYT ? post.videoUrl : '';
+            }, 0);
         }
     }, [post]);
 
@@ -654,6 +707,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
         const fd = new FormData();
         fd.append('desc', desc);
         const file = fileRef.current?.files[0];
+        const yt = document.getElementById('edit-youtube')?.value;
+        if (yt && yt.trim()) fd.append('videoUrl', yt.trim());
         if (file) fd.append('image', file);
 
         try {
@@ -662,6 +717,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
             playSound('pop');
         } catch (e) {
             console.error("Edit failed", e);
+            alert('Update failed');
         }
     };
 
@@ -672,6 +728,20 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                 <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">EDIT INTEL</h2>
                 <div className="flex flex-col gap-4">
                     <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update intelligence..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
+                    <div className="mb-3">
+                        <input id="edit-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
+                                const v = e.target.value || '';
+                                if (isYouTubeUrl(v)) {
+                                    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
+                                    const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+                                    setPreview(thumb ? thumb : null);
+                                    setIsVideo(true);
+                                } else if (!v) {
+                                    setPreview(null);
+                                    setIsVideo(false);
+                                }
+                            }} />
+                    </div>
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer">
                         {preview ? (
                             <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10">
@@ -884,14 +954,20 @@ const App = () => {
             const res = await axios.post(`/users/${targetId}/follow`);
 
             // Sync to server response
-            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: res.data.followers } : u));
+            const serverFollowers = res.data.followers;
+            const serverFollowing = res.data.following;
+
+            setUsers(prev => prev.map(u => u._id === targetId ? { ...u, followers: serverFollowers } : u));
+
             setUser(prev => {
+                if (Array.isArray(serverFollowing)) return { ...prev, following: serverFollowing };
                 const isFollowing = res.data.isFollowing;
                 if (isFollowing) return { ...prev, following: [...new Set([...(prev.following || []), targetId])] };
                 return { ...prev, following: (prev.following || []).filter(id => id !== targetId) };
             });
+
             if (profileUser?._id === targetId || profileUser === targetId) {
-                setProfileUser(prev => ({ ...prev, followers: res.data.followers }));
+                setProfileUser(prev => ({ ...prev, followers: serverFollowers }));
             }
 
             playSound('pop');

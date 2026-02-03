@@ -232,26 +232,29 @@ router.get("/", async (req, res) => {
 // CREATE POST
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   try {
-    const { title, desc, description, visibility } = req.body;
+    const { title, desc, description, visibility, videoUrl } = req.body;
     const contentText = (title || "") + " " + (desc || description || "");
     const mod = moderateContent(contentText);
     if (!mod.success) return res.status(400).json(mod.error);
 
     console.log("Creating post. Body:", req.body, "User:", req.user?.username, "File:", req.file?.filename);
 
-    if (!req.file && !desc && !title) {
+    if (!req.file && !desc && !title && !videoUrl) {
       return res.status(400).json("Intel content required.");
     }
 
-    const isVideo = req.file?.mimetype?.includes("video") || req.file?.path?.match(/\.(mp4|mov|avi|webm)$|video\/upload/i);
+    // Determine media type: file upload or provided videoUrl
+    const isFileVideo = req.file?.mimetype?.includes("video") || (req.file?.path && req.file.path.match(/\.(mp4|mov|avi|webm)$/i));
+    const isYouTube = typeof videoUrl === 'string' && /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(videoUrl || '');
 
     const author = await User.findById(req.user.id || req.user.userId);
 
     const newPost = new Post({
       title: title || '',
       desc: desc || description || '',
-      image: !isVideo ? req.file?.path || "" : "",
-      videoUrl: isVideo ? req.file?.path || "" : "",
+      image: (!isFileVideo && req.file) ? req.file.path || "" : "",
+      videoUrl: isFileVideo ? (req.file?.path || "") : (isYouTube ? videoUrl.trim() : (videoUrl || "")),
+      thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl||'').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
       author: req.user.id || req.user.userId,
       username: req.user.username,
       profilePic: author?.profilePic || "",
@@ -314,7 +317,22 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
     if (req.body.desc) post.desc = req.body.desc;
     if (req.body.visibility) post.visibility = req.body.visibility;
 
-    // Handle new media upload
+    // If body contains videoUrl (YouTube or external), apply it and clear file-based image
+    if (req.body.videoUrl) {
+      const maybe = String(req.body.videoUrl || '').trim();
+      const ytMatch = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(maybe);
+      if (ytMatch) {
+        post.videoUrl = maybe;
+        post.thumbnailUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+        post.image = "";
+      } else {
+        // treat as generic external video link
+        post.videoUrl = maybe;
+        post.image = "";
+      }
+    }
+
+    // Handle new media upload (file wins)
     if (req.file) {
       const isVideo = req.file.mimetype.includes("video");
       if (isVideo) {
