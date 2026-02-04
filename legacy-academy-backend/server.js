@@ -50,7 +50,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "v9-realtime-fix" });
+  res.status(200).json({ status: "healthy", deployed: "v13-sync-final" });
+});
+
+app.get("/api/messages/debug", (req, res) => {
+  res.json({ message: "Messages endpoint is active (V13 Sync)", time: new Date() });
 });
 
 app.get("/api/ping", (req, res) => res.json({ status: "pong", time: new Date() }));
@@ -58,7 +62,7 @@ app.get("/api/ping", (req, res) => res.json({ status: "pong", time: new Date() }
 // DIAGNOSTIC LOGGING - All requests logged for debugging
 app.use((req, res, next) => {
   const timestamp = new Date().toLocaleTimeString();
-  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - V9 REALTIME FIX`);
+  console.log(`📡 [${timestamp}] ${req.method} ${req.originalUrl} - V13 SYNC FINAL`);
   if (req.method !== 'GET') {
     console.log(`   Headers:`, {
       auth: req.headers.authorization ? 'Present' : 'Missing',

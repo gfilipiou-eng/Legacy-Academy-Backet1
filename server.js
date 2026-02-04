@@ -60,7 +60,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "v9-realtime-fix" });
+  res.status(200).json({ status: "healthy", deployed: "v13-sync-final" });
+});
+
+app.get("/api/messages/debug", (req, res) => {
+  res.json({ message: "Messages endpoint is active and reachable", time: new Date() });
 });
 
 app.get("/api/ping", (req, res) => res.json({ status: "pong", time: new Date() }));
@@ -75,7 +79,7 @@ app.use((req, res, next) => {
     req.requestId = (Date.now()).toString(36);
   }
   res.set('X-Request-Id', req.requestId);
-  console.log(`📡 [${timestamp}] [${req.requestId}] ${req.method} ${req.originalUrl} - V9 REALTIME FIX`);
+  console.log(`📡 [${timestamp}] [${req.requestId}] ${req.method} ${req.originalUrl} - V13 SYNC FINAL`);
   if (req.method !== 'GET') {
     console.log(`   [${req.requestId}] Headers:`, {
       auth: req.headers.authorization ? 'Present' : 'Missing',
