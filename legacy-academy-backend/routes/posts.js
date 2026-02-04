@@ -1,8 +1,14 @@
 import express from "express";
+import fs from "fs";
+import ffmpeg from "fluent-ffmpeg";
+import ffprobeStatic from "ffprobe-static";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import upload from "../middleware/upload.js";
 import { verifyToken } from "../middleware/auth.js";
+
+// Ensure fluent-ffmpeg uses the static ffprobe binary
+ffmpeg.setFfprobePath(ffprobeStatic.path);
 
 const router = express.Router();
 
@@ -39,26 +45,6 @@ const handleLike = async (req, res) => {
         { $push: { likes: userId }, $pull: { dislikes: userId } },
         { new: true }
       );
-
-      // Send notification to post author
-      if (post.author.toString() !== userId) {
-        const currentUser = await User.findById(userId);
-        await User.findByIdAndUpdate(post.author, {
-          $push: {
-            notifications: {
-              type: 'like',
-              from: userId,
-              fromUsername: req.user.username,
-              fromProfilePic: currentUser?.profilePic || '',
-              post: post._id,
-              postImage: post.image || (post.thumbnailUrl || ''),
-              read: false,
-              createdAt: new Date()
-            }
-          }
-        });
-      }
-
       res.status(200).json({ message: "Liked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     } else {
       const updatedPost = await Post.findByIdAndUpdate(
@@ -149,7 +135,6 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
             fromUsername: req.user.username,
             fromProfilePic: currentUser?.profilePic || '',
             post: post._id,
-            postImage: post.image || '',
             text: req.body.text.substring(0, 50),
             read: false,
             createdAt: new Date()
@@ -190,7 +175,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
 });
 
 router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
-  console.log(`📡 [DEBUG/SUB] Comment Edit HIT: Post ${req.params.id}, Comment ${req.params.commentId}`);
+  console.log(`📡 [DEBUG] Comment Edit HIT: Post ${req.params.id}, Comment ${req.params.commentId}`);
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
@@ -251,35 +236,74 @@ router.get("/", async (req, res) => {
 });
 
 // CREATE POST
+// NOTE: Add a short-lived duplicate-submission guard to reduce accidental double-uploads
+const _recentCreates = new Map(); // key -> timestamp
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   try {
-    const { title, desc, description, visibility } = req.body;
+    const { title, desc, description, visibility, videoUrl } = req.body;
     const contentText = (title || "") + " " + (desc || description || "");
     const mod = moderateContent(contentText);
     if (!mod.success) return res.status(400).json(mod.error);
 
     console.log("Creating post. Body:", req.body, "User:", req.user?.username, "File:", req.file?.filename);
 
-    if (!req.file && !desc && !title) {
+    if (!req.file && !desc && !title && !videoUrl) {
       return res.status(400).json("Intel content required.");
     }
 
-    const isVideo = req.file?.mimetype?.includes("video") || req.file?.path?.match(/\.(mp4|mov|avi|webm)$|video\/upload/i);
+    // Determine media type: file upload or provided videoUrl
+    const isFileVideo = req.file?.mimetype?.includes("video") || (req.file?.path && req.file.path.match(/\.(mp4|mov|avi|webm)$/i));
+    const isYouTube = typeof videoUrl === 'string' && /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(videoUrl || '');
 
     const author = await User.findById(req.user.id || req.user.userId);
+
+    // Short-circuit duplicate submissions within a small time window (5 seconds)
+    const signature = `${req.user.id || req.user.userId}::${(desc||description||'').trim()}::${(videoUrl||'').trim()}::${req.file?.size || 0}`;
+    const now = Date.now();
+    const prev = _recentCreates.get(signature);
+    if (prev && (now - prev) < 5000) {
+      // attempt to find a recent matching post in DB to return instead of creating a duplicate
+      const recent = await Post.findOne({ author: req.user.id || req.user.userId, desc: (desc||description||'').trim() }).sort({ createdAt: -1 }).limit(1);
+      if (recent && (now - new Date(recent.createdAt).getTime()) < 10000) {
+        console.log("Duplicate submission detected - returning recent post", recent._id);
+        return res.status(200).json(recent);
+      }
+      return res.status(409).json({ message: "Duplicate submission ignored" });
+    }
+    _recentCreates.set(signature, now);
+    // garbage collect key after short time
+    setTimeout(() => _recentCreates.delete(signature), 15_000);
+
+    // SERVER-SIDE: If user uploaded a local video file, probe duration and reject >10s
+    try {
+      const isLocalUpload = req.file && req.file.path && String(req.file.path).startsWith('uploads');
+      if (isFileVideo && isLocalUpload && req.file.path) {
+        const durMeta = await new Promise((resolve, reject) => {
+          ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
+        });
+        const duration = durMeta?.format?.duration || 0;
+        if (duration > 10) {
+          // delete the uploaded file to avoid orphaned large assets
+          try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup large-upload', e && e.message); }
+          return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+        }
+      }
+    } catch (probeErr) {
+      console.warn('Video duration probe failed:', probeErr && probeErr.message);
+      // proceed but warn -- client-side validation should catch most cases
+    }
 
     const newPost = new Post({
       title: title || '',
       desc: desc || description || '',
-      image: !isVideo ? req.file?.path || "" : "",
-      videoUrl: isVideo ? req.file?.path || "" : "",
+      image: (!isFileVideo && req.file) ? req.file.path || "" : "",
+      videoUrl: isFileVideo ? (req.file?.path || "") : (isYouTube ? videoUrl.trim() : (videoUrl || "")),
+      thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl||'').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
       author: req.user.id || req.user.userId,
       username: req.user.username,
       profilePic: author?.profilePic || "",
       role: req.user.role,
-      visibility: visibility || 'public',
-      isStory: req.body.isStory === 'true' || req.body.isStory === true,
-      expiresAt: (req.body.isStory === 'true' || req.body.isStory === true) ? new Date(Date.now() + 24 * 60 * 60 * 1000) : null
+      visibility: visibility || 'public'
     });
 
     const savedPost = await newPost.save();
@@ -337,10 +361,40 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
     if (req.body.desc) post.desc = req.body.desc;
     if (req.body.visibility) post.visibility = req.body.visibility;
 
-    // Handle new media upload
+    // If body contains videoUrl (YouTube or external), apply it and clear file-based image
+    if (req.body.videoUrl) {
+      const maybe = String(req.body.videoUrl || '').trim();
+      const ytMatch = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(maybe);
+      if (ytMatch) {
+        post.videoUrl = maybe;
+        post.thumbnailUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+        post.image = "";
+      } else {
+        // treat as generic external video link
+        post.videoUrl = maybe;
+        post.image = "";
+      }
+    }
+
+    // Handle new media upload (file wins)
     if (req.file) {
       const isVideo = req.file.mimetype.includes("video");
       if (isVideo) {
+        // If local upload, probe duration and reject > 10s
+        try {
+          const isLocalUpload = req.file.path && String(req.file.path).startsWith('uploads');
+          if (isLocalUpload) {
+            const durMeta = await new Promise((resolve, reject) => {
+              ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
+            });
+            const duration = durMeta?.format?.duration || 0;
+            if (duration > 10) {
+              try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup long video', e && e.message); }
+              return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+            }
+          }
+        } catch (probeErr) { console.warn('Update-probe failed:', probeErr && probeErr.message); }
+
         post.videoUrl = req.file.path;
         post.image = "";
       } else {

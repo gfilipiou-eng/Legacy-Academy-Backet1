@@ -621,12 +621,43 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     </div>
 
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Interface Theme</div>
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2">
                             {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff'].map(c => (
                                 <button key={c} onClick={() => { document.documentElement.style.setProperty('--gold-primary', c); localStorage.setItem('themeColor', c); }} className="w-8 h-8 rounded-full border border-white/10 hover:scale-110 transition-transform" style={{ background: c }} />
                             ))}
                         </div>
+                    </div>
+
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('COGNITION')}</div>
+                        <div className="flex gap-4">
+                            {[
+                                { id: 'en', label: 'English', flag: '🇺🇸' },
+                                { id: 'el', label: 'Ελληνικά', flag: 'GR' },
+                                { id: 'de', label: 'Deutsch', flag: 'DE' },
+                                { id: 'cy', label: 'Kypriaka', flag: 'CY' }
+                            ].map(l => (
+                                <button key={l.id} onClick={() => { handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`flex-1 p-2 rounded-xl border transition-all ${lang === l.id ? 'border-yellow-500 bg-yellow-500/10' : 'border-white/5 bg-white/5'}`}>
+                                    <div className="text-lg">{l.flag}</div>
+                                    <div className="text-[10px] font-bold text-white mt-1">{l.label}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="p-4 bg-red-500/5 rounded-2xl border border-red-500/20 space-y-3">
+                        <div className="text-xs font-bold text-red-500 uppercase tracking-widest pl-1">{t('DANGER_ZONE')}</div>
+                        <button onClick={async () => {
+                            if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) {
+                                try {
+                                    await axios.delete(`/users/${user._id}`);
+                                    logout();
+                                } catch (e) { alert("Deletion failed."); }
+                            }
+                        }} className="w-full py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-500 font-bold text-[10px] tracking-widest hover:bg-red-500 hover:text-white transition-all">
+                            {t('DELETE_FOREVER')}
+                        </button>
                     </div>
 
                     <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-black text-sm border border-red-500/20 rounded-2xl transition-all hover:scale-[0.98]">
@@ -799,12 +830,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         >
                                             {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : displayUser?.followRequests?.includes(currentUser?._id) ? 'REQUESTED' : 'FOLLOW')}
                                         </button>
-                                        <button
-                                            onClick={() => { onClose(); onOpenChat(displayUser); }}
-                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-black hover:bg-white/10 transition-all active:scale-95"
-                                        >
-                                            <Icons.MessageCircle className="w-5 h-5" />
-                                        </button>
+                                        {currentUser?.role === 'Founder' && (
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        await axios.post(`/users/${displayUser._id}/ban`, { days: 3 });
+                                                        alert("Agent suspended for 3 days.");
+                                                    } catch (e) { alert("Ban failed."); }
+                                                }}
+                                                className="px-4 py-3 bg-red-600 rounded-2xl text-white font-black text-[10px] tracking-widest hover:bg-red-700 transition-all active:scale-95"
+                                            >
+                                                BAN 3D
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -1548,6 +1586,8 @@ const App = () => {
         const now = Date.now();
         return (now - createdAt) < 24 * 60 * 60 * 1000;
     });
+
+    const { t, lang } = useTranslation(user);
 
     return (
         <div className="app-container">

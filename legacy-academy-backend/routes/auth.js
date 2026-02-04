@@ -50,8 +50,7 @@ router.post("/register", safeUpload, async (req, res) => {
                 soundEnabled: true,
                 notifications: true,
                 notificationSound: req.body.notificationSound || 'pop'
-            },
-            bio: req.body.bio || ""
+            }
         });
 
         const savedUser = await newUser.save();

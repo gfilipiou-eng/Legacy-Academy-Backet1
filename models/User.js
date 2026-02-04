@@ -10,6 +10,9 @@ const UserSchema = new mongoose.Schema({
   lastUsernameChange: { type: Date },
   lastSeen: { type: Date, default: Date.now },
   lastActive: { type: Date, default: Date.now },
+  banExpires: { type: Date },
+  isBanned: { type: Boolean, default: false },
+  banReason: { type: String, default: "" },
 
   // Follow System
   followers: { type: Array, default: [] },  // User IDs who follow this user

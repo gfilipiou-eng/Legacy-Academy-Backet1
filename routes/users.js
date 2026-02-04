@@ -183,6 +183,25 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
     } catch (err) { res.status(500).json(err); }
 });
 
+// BAN User (Founder Only)
+router.post("/:id/ban", verifyToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'Founder') return res.status(403).json("Only Founder can issue bans.");
+        const days = req.body.days || 3;
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + days);
+
+        await User.findByIdAndUpdate(req.params.id, {
+            $set: {
+                isBanned: true,
+                banExpires: expiry,
+                banReason: req.body.reason || "Suspicious Activity"
+            }
+        });
+        res.status(200).json("Agent suspended.");
+    } catch (err) { res.status(500).json(err); }
+});
+
 // GET pending requests
 router.get("/requests/pending", verifyToken, async (req, res) => {
     try {

@@ -12,6 +12,9 @@ export const verifyToken = (req, res, next) => {
                 username: verified.username,
                 role: verified.role || 'User'
             };
+
+            // Non-blocking ban check if User model is available
+            // (We usually do this in a separate middleware or after req.user is set)
             return next();
         }
 
