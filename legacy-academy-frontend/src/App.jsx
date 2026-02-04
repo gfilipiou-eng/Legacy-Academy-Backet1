@@ -133,7 +133,9 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
 const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
+    const { t, lang } = useTranslation(user);
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
+    const isFounder = user?.role === 'Founder';
 
     return (
         <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-y-auto">
@@ -581,6 +583,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 };
 
 const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
+    const { t, lang } = useTranslation(user);
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [saving, setSaving] = useState(false);
@@ -597,7 +600,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         setSaving(true);
         try {
             const res = await axios.put('/users/settings', { [key]: val });
-            updateUserState(res.data);
+            onUpdateUser(res.data);
 
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
@@ -705,6 +708,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 };
 
 const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser }) => {
+    const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -1158,6 +1162,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
 
 const App = () => {
     const [user, setUser] = useState(null);
+    const { t, lang } = useTranslation(user);
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
@@ -1619,7 +1624,6 @@ const App = () => {
         return (now - createdAt) < 24 * 60 * 60 * 1000;
     });
 
-    const { t, lang } = useTranslation(user);
 
     return (
         <div className="app-container">
