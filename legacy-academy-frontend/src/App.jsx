@@ -29,7 +29,7 @@ const getYouTubeEmbedUrl = (url) => {
     return `https://www.youtube.com/embed/${m[1]}`;
 };
 
-const parseHashtags = (text) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
+const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
     // Rule: Only show online status if the user follows me (the current viewer)
@@ -305,7 +305,7 @@ const StoriesBar = ({ stories, onViewStory }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, loadingActions }) => {
+const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [showHeart, setShowHeart] = useState(false);
@@ -408,9 +408,9 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             {translatedDesc ? (
                                 <div className="space-y-1">
                                     <div className="text-yellow-500 text-[10px] font-bold uppercase tracking-widest">{t('SEE_TRANSLATION')}</div>
-                                    <div>{parseHashtags(translatedDesc)}</div>
+                                    <div>{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
-                            ) : parseHashtags(post.desc)}
+                            ) : parseHashtags(post.desc, onHashtagClick)}
                         </div>
 
                         {post.desc && post.desc.length > 5 && (
@@ -709,8 +709,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'en', label: 'English', flag: '🇺🇸' },
                                 { id: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
                                 { id: 'de', label: 'Deutsch', flag: '🇩🇪' },
-                                { id: 'cy', label: 'Kypriaka', flag: '🇨🇾' },
                                 { id: 'ru', label: 'Русский', flag: '🇷🇺' },
+                                { id: 'cy', label: 'Kypriaka', flag: '🇨🇾' },
                                 { id: 'es', label: 'Español', flag: '🇪🇸' },
                                 { id: 'tr', label: 'Türkçe', flag: '🇹🇷' },
                                 { id: 'fr', label: 'Français', flag: '🇫🇷' }
@@ -762,19 +762,24 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (currentUser) setBio(currentUser.bio || "");
     }, [currentUser]);
 
-    const userPosts = (posts || []).filter(p => {
+    const userStories = React.useMemo(() => (posts || []).filter(p => {
+        const pId = String(p.author?._id || p.author || '');
+        const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
+        return pId === uId && p.isStory;
+    }), [posts, profileUser]);
+
+    const userPosts = React.useMemo(() => (posts || []).filter(p => {
         const pId = String(p.author?._id || p.author || '');
         const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
         const uName = profileUser?.username || '';
         const matchesUser = (pId && uId && pId === uId) || (p.username && uName && p.username === uName);
 
-        if (!matchesUser) return false;
-        if (p.isStory) return false; // Hide stories from grid
+        if (!matchesUser || p.isStory) return false;
 
         if (activeTab === 'VIDEO') return isYouTubeUrl(p.videoUrl) || (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i)));
         if (activeTab === 'POSTS') return !p.videoUrl && !isYouTubeUrl(p.videoUrl) && !(p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         return true;
-    });
+    }), [posts, profileUser, activeTab]);
 
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
@@ -901,7 +906,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
                                 {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black tracking-widest hover:bg-white/10 transition-all uppercase">{t('EDIT')}</button>
+                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black tracking-widest hover:bg-white/10 transition-all uppercase">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex-1 flex gap-2">
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
@@ -924,13 +929,33 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 )}
                             </div>
 
-                            <div className="w-full h-px bg-white/10 mb-4" />
-
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl">
+                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
                                     <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
                                 ))}
                             </div>
+
+                            {userStories.length > 0 && (
+                                <div className="mb-6">
+                                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
+                                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                        {userStories.map(s => (
+                                            <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                <div className="w-16 h-16 rounded-full border-2 border-yellow-500 p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10 bg-black overflow-hidden">
+                                                    {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
+                                                            <Icons.Play className="w-6 h-6 text-yellow-500" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt)}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {userPosts.length === 0 ? (
                                 <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
@@ -991,8 +1016,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
-            if (dur && dur > 10) {
-                alert('Video must be 10 seconds or shorter. Please trim your clip.');
+            if (dur && dur > 600) {
+                alert('Video must be 10 minutes or shorter. Please trim your clip.');
                 e.target.value = '';
                 return;
             }
@@ -1121,8 +1146,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                 vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
-            if (dur && dur > 10) {
-                alert('Video must be 10 seconds or shorter. Please trim your clip.');
+            if (dur && dur > 600) {
+                alert('Video must be 10 minutes or shorter. Please trim your clip.');
                 e.target.value = '';
                 return;
             }
@@ -1390,6 +1415,13 @@ const App = () => {
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
+    };
+
+    const handleHashtagClick = (tag) => {
+        setSearchQuery(tag);
+        setActiveTab('search');
+        playSound('pop');
+        if (navigator.vibrate) navigator.vibrate(10);
     };
 
     const handleDislike = async (postId) => {
@@ -1670,21 +1702,26 @@ const App = () => {
         </div >
     );
 
-    // FIX: Safe search filtering to prevent crash on missing desc/author
-    const filteredPosts = posts.filter(p => {
-        if (p.isStory) return false;
-        const q = searchQuery.toLowerCase();
-        const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
-        const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : (p.username ? p.username.toLowerCase().includes(q) : false);
-        return descMatch || authorMatch;
-    });
+    // FIX: Optimized search filtering with useMemo
+    const filteredPosts = React.useMemo(() => {
+        return posts.filter(p => {
+            if (p.isStory) return false;
+            const q = searchQuery.toLowerCase();
+            if (!q) return true;
+            const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
+            const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : (p.username ? p.username.toLowerCase().includes(q) : false);
+            return descMatch || authorMatch;
+        });
+    }, [posts, searchQuery]);
 
-    const stories = posts.filter(p => {
-        if (!p.isStory) return false;
-        const createdAt = new Date(p.createdAt).getTime();
-        const now = Date.now();
-        return (now - createdAt) < 24 * 60 * 60 * 1000;
-    });
+    const stories = React.useMemo(() => {
+        return posts.filter(p => {
+            if (!p.isStory) return false;
+            const createdAt = new Date(p.createdAt).getTime();
+            const now = Date.now();
+            return (now - createdAt) < 24 * 60 * 60 * 1000;
+        });
+    }, [posts]);
 
 
     return (
@@ -1757,7 +1794,7 @@ const App = () => {
                                                 ))}
                                             </div>
                                         )}
-                                        {(activeTab === 'search' ? (posts.filter(p => !p.isStory && (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : filteredPosts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
+                                        {filteredPosts.map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />)}
                                         {posts.length === 0 && (
                                             <div className="h-96 flex flex-col items-center justify-center space-y-4">
                                                 <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>

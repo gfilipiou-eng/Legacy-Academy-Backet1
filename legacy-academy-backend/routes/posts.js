@@ -258,12 +258,12 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     const author = await User.findById(req.user.id || req.user.userId);
 
     // Short-circuit duplicate submissions within a small time window (5 seconds)
-    const signature = `${req.user.id || req.user.userId}::${(desc||description||'').trim()}::${(videoUrl||'').trim()}::${req.file?.size || 0}`;
+    const signature = `${req.user.id || req.user.userId}::${(desc || description || '').trim()}::${(videoUrl || '').trim()}::${req.file?.size || 0}`;
     const now = Date.now();
     const prev = _recentCreates.get(signature);
     if (prev && (now - prev) < 5000) {
       // attempt to find a recent matching post in DB to return instead of creating a duplicate
-      const recent = await Post.findOne({ author: req.user.id || req.user.userId, desc: (desc||description||'').trim() }).sort({ createdAt: -1 }).limit(1);
+      const recent = await Post.findOne({ author: req.user.id || req.user.userId, desc: (desc || description || '').trim() }).sort({ createdAt: -1 }).limit(1);
       if (recent && (now - new Date(recent.createdAt).getTime()) < 10000) {
         console.log("Duplicate submission detected - returning recent post", recent._id);
         return res.status(200).json(recent);
@@ -282,10 +282,10 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
           ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
         });
         const duration = durMeta?.format?.duration || 0;
-        if (duration > 10) {
+        if (duration > 600) {
           // delete the uploaded file to avoid orphaned large assets
           try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup large-upload', e && e.message); }
-          return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+          return res.status(400).json({ message: 'Video duration exceeds 10 minutes. Please upload a shorter clip.' });
         }
       }
     } catch (probeErr) {
@@ -298,12 +298,13 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       desc: desc || description || '',
       image: (!isFileVideo && req.file) ? req.file.path || "" : "",
       videoUrl: isFileVideo ? (req.file?.path || "") : (isYouTube ? videoUrl.trim() : (videoUrl || "")),
-      thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl||'').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
+      thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
       author: req.user.id || req.user.userId,
       username: req.user.username,
       profilePic: author?.profilePic || "",
       role: req.user.role,
-      visibility: visibility || 'public'
+      visibility: visibility || 'public',
+      isStory: req.body.isStory === 'true'
     });
 
     const savedPost = await newPost.save();
@@ -388,9 +389,9 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
               ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
             });
             const duration = durMeta?.format?.duration || 0;
-            if (duration > 10) {
+            if (duration > 600) {
               try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup long video', e && e.message); }
-              return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+              return res.status(400).json({ message: 'Video duration exceeds 10 minutes. Please upload a shorter clip.' });
             }
           }
         } catch (probeErr) { console.warn('Update-probe failed:', probeErr && probeErr.message); }
