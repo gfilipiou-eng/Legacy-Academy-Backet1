@@ -601,6 +601,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         </div>
                     </div>
 
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Interface Theme</div>
+                        <div className="flex gap-2">
+                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff'].map(c => (
+                                <button key={c} onClick={() => { document.documentElement.style.setProperty('--gold-primary', c); localStorage.setItem('themeColor', c); }} className="w-8 h-8 rounded-full border border-white/10 hover:scale-110 transition-transform" style={{ background: c }} />
+                            ))}
+                        </div>
+                    </div>
+
                     <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-black text-sm border border-red-500/20 rounded-2xl transition-all hover:scale-[0.98]">
                         <span className="tracking-[0.2em]">TERMINATE SESSION</span>
                         <Icons.Logout className="w-5 h-5" />
@@ -694,6 +703,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             <input type="file" ref={fileRef} hidden onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
+                                    // Immediate local update
+                                    const localUrl = URL.createObjectURL(file);
+                                    setUserData(prev => ({ ...prev, profilePic: localUrl })); // Optimistic update
+                                    if (currentUser._id === displayUser._id) {
+                                        onUpdateUser({ ...currentUser, profilePic: localUrl });
+                                    }
+
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/profile-pic', fd);
