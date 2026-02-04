@@ -76,7 +76,10 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
+
+console.log("-> Mounting Message Routes at /api/messages");
 app.use("/api/messages", messageRoutes);
+
 app.use("/reset-password", resetPasswordRoutes);
 
 // 404 - Should be at the end
