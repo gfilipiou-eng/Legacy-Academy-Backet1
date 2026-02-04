@@ -115,8 +115,8 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                         <div className="mt-1">
                             <input autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-xs text-white outline-none mb-2" />
                             <div className="flex gap-2">
-                                <button onClick={handleSave} className="text-[10px] uppercase font-bold text-green-500 hover:text-green-400">{t('SAVE_BTN')}</button>
-                                <button onClick={() => setIsEditing(false)} className="text-[10px] uppercase font-bold text-gray-400 hover:text-white">{t('CANCEL_BTN')}</button>
+                                <button onClick={handleSave} className="text-[10px] uppercase font-bold text-green-500 hover:text-green-400">{t('SAVE')}</button>
+                                <button onClick={() => setIsEditing(false)} className="text-[10px] uppercase font-bold text-gray-400 hover:text-white">{t('CANCEL')}</button>
                             </div>
                         </div>
                     ) : (
@@ -128,12 +128,12 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                 <div className="flex gap-2 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
                     {canEdit && !isEditing && (
                         <button onClick={() => setIsEditing(true)} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] text-gray-400 hover:text-blue-400 font-bold uppercase tracking-widest transition-colors border border-white/5">
-                            <Icons.Edit className="w-3 h-3" /> {t('EDIT_BTN')}
+                            <Icons.Edit className="w-3 h-3" /> {t('EDIT')}
                         </button>
                     )}
                     {canDelete && (
                         <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-red-500/20 rounded-lg text-[9px] text-gray-400 hover:text-red-400 font-bold uppercase tracking-widest transition-colors border border-white/5">
-                            <Icons.Trash className="w-3 h-3" /> {t('DELETE_BTN')}
+                            <Icons.Trash className="w-3 h-3" /> {t('DELETE')}
                         </button>
                     )}
                 </div>
@@ -220,7 +220,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-yellow-500/50 transition-all">
                             <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
-                            <button disabled={!commentText.trim()} className="text-yellow-500 font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST_BTN')}</button>
+                            <button disabled={!commentText.trim()} className="text-yellow-500 font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST')}</button>
                         </form>
                     </div>
                 </div>
@@ -385,11 +385,11 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="absolute right-0 top-8 bg-[#1a1a1a] border border-white/10 rounded-xl p-1 z-[50] w-36 shadow-2xl flex flex-col gap-1 overflow-hidden backdrop-blur-md">
                                                         {isOwner && (
                                                             <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/10 text-xs font-bold text-gray-300 w-full text-left transition-colors uppercase tracking-wider">
-                                                                <Icons.Edit className="w-4 h-4" /> {t('EDIT_BTN')}
+                                                                <Icons.Edit className="w-4 h-4" /> {t('EDIT')}
                                                             </button>
                                                         )}
                                                         <button onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/20 text-xs font-bold text-red-500 w-full text-left transition-colors uppercase tracking-wider">
-                                                            <Icons.Trash className="w-4 h-4" /> {t('DELETE_BTN')}
+                                                            <Icons.Trash className="w-4 h-4" /> {t('DELETE')}
                                                         </button>
                                                     </motion.div>
                                                 </>
@@ -491,14 +491,14 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
                         <div className="p-4 space-y-4">
                             {post.comments?.map((c, idx) => (
-                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
+                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
                             ))}
                             <form onSubmit={handleComment} className="flex gap-3 items-center mt-4">
                                 <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
                                     {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user?.username} />}
                                 </div>
-                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Post your reply..." className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
-                                <button disabled={!commentText.trim()} className="text-blue-500 font-bold text-sm disabled:opacity-50">Post</button>
+                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
+                                <button disabled={!commentText.trim()} className="text-blue-500 font-bold text-sm disabled:opacity-50">{t('POST')}</button>
                             </form>
                         </div>
                     </motion.div>
@@ -563,14 +563,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
-                    <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">CHATS</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
+                    <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">{t('CHAT')}</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
                         {allUsers.filter(u => u._id !== user?._id).map(u => {
                             const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                     <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}>{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? 'Active Now' : 'Offline'}</div></div>
+                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? 'Online' : 'Offline'}</div></div>
                                 </div>
                             )
                         })}
@@ -582,7 +582,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
                                 <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
-                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? 'Active Now' : 'Offline'}</div></div>
+                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? 'Online' : 'Offline'}</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => (
@@ -596,12 +596,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 <div ref={scrollRef} />
                             </div>
                             <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
-                                <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm outline-none focus:border-blue-500 shadow-inner" />
-                                <button onClick={handleSend} className="text-blue-500 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform">Send</button>
+                                <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder={t('ENTER_COMMAND')} className="flex-1 bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm outline-none focus:border-blue-500 shadow-inner" />
+                                <button onClick={handleSend} className="text-blue-500 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform">{t('POST')}</button>
                             </div>
                         </>
                     ) : (
-                        <div className="flex-1 flex items-center justify-center text-center"><div><Icons.MessageCircle className="w-16 h-16 text-gray-800 mx-auto mb-4" /><h3 className="font-black italic text-2xl tracking-tighter">YOUR MESSAGES</h3><p className="text-gray-500 text-sm mt-2">Send secret intel to other agents.</p></div></div>
+                        <div className="flex-1 flex items-center justify-center text-center"><div><Icons.MessageCircle className="w-16 h-16 text-gray-800 mx-auto mb-4" /><h3 className="font-black italic text-2xl tracking-tighter">{t('MESSAGES')}</h3><p className="text-gray-500 text-sm mt-2">{t('SECURE_COMMS')}</p></div></div>
                     )}
                 </div>
             </div>
@@ -652,7 +652,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
             <div className="relative w-full max-w-sm h-full sm:h-auto bg-[#0a0a0a] sm:border border-white/10 sm:rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
                 <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
-                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">Settings</h2>
+                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">{t('SETTINGS')}</h2>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
@@ -738,7 +738,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     </div>
 
                     <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-black text-sm border border-red-500/20 rounded-2xl transition-all hover:scale-[0.98]">
-                        <span className="tracking-[0.2em]">TERMINATE SESSION</span>
+                        <span className="tracking-[0.2em]">{t('LOGOUT')}</span>
                         <Icons.Logout className="w-5 h-5" />
                     </button>
 
@@ -794,6 +794,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
         return allUsers.filter(u => ids?.includes(u._id));
     };
+
+    const isFollowing = currentUser?.following?.includes(displayUser?._id);
+    const hasRequested = displayUser?.followRequests?.includes(currentUser?._id);
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
@@ -895,18 +898,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {displayUser?.username || "Unknown Agent"}
                                     {displayUser?.role === 'Founder' && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
                                 </div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || "Entrepreneur. Legacy Member."}</div>
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
                                 {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 uppercase tracking-widest hover:bg-white/10 transition-colors">{t('EDIT_PROFILE')}</button>
+                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black tracking-widest hover:bg-white/10 transition-all uppercase">{t('EDIT')}</button>
                                 ) : (
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => onFollow(displayUser?._id || displayUser)}
-                                            disabled={!!followLoading[displayUser?._id]}
-                                            className={`flex-1 py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) || displayUser?.followRequests?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'} ${followLoading[displayUser?._id] ? 'opacity-60 cursor-wait' : ''}`}
-                                        >
-                                            {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? t('STATUS_FOLLOWING') : displayUser?.followRequests?.includes(currentUser?._id) ? t('STATUS_REQUESTED') : t('FOLLOW'))}
+                                    <div className="flex-1 flex gap-2">
+                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
+                                            {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                         </button>
                                         {currentUser?.role === 'Founder' && (
                                             <button
@@ -918,7 +917,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 }}
                                                 className="px-4 py-3 bg-red-600 rounded-2xl text-white font-black text-[10px] tracking-widest hover:bg-red-700 transition-all active:scale-95"
                                             >
-                                                {t('BAN_BTN')}
+                                                {t('BAN')}
                                             </button>
                                         )}
                                     </div>
@@ -966,8 +965,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     )}
                 </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
 };
 
@@ -1058,7 +1057,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                     </div>
 
                     <div className="flex gap-4">
-                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL_BTN')}</button>
+                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
                         <button disabled={creating} onClick={async () => {
                             if (creating) return;
                             const desc = document.getElementById('c-desc').value;
@@ -1079,7 +1078,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 setPreview(null); fileRef.current.value = '';
                                 setIsStory(false);
                             } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST_BTN'))}</button>
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
                     </div>
                 </div>
             </motion.div>
@@ -1159,7 +1158,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
-                <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">EDIT POST</h2>
+                <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
                 <div className="flex flex-col gap-4">
                     <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update content..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
                     <div className="mb-3">
@@ -1193,8 +1192,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
                     </div>
 
                     <div className="flex gap-4">
-                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">CANCEL</button>
-                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{saving ? '...' : 'SAVE CHANGES'}</button>
+                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
+                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{saving ? '...' : t('SAVE_CHANGES')}</button>
                     </div>
                 </div>
             </motion.div>

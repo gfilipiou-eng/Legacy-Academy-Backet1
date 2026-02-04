@@ -30,12 +30,12 @@ export const TRANSLATIONS = {
         TITLE: 'TITLE', DESCRIPTION: 'DESCRIPTION', PUBLISH: 'PUBLISH', ACTIVITY: 'ACTIVITY',
         SEE_TRANSLATION: 'See Translation', SHOW_ORIGINAL: 'Show Original',
         FOUNDER_BADGE: 'FOUNDER', MEMBER_BADGE: 'MEMBER', TERMINATE_CONFIRM: 'Terminate intel packet?',
-        NO_COMMENTS: 'No strategic discussion yet.', ENGAGE: 'Engage...', POST_BTN: 'POST',
+        NO_COMMENTS: 'No strategic discussion yet.', ENGAGE: 'Engage...',
         NOTIF_FOLLOW: 'joined your network', NOTIF_LIKE: 'liked your post', NOTIF_COMMENT: 'commented on your post',
         NOTIF_MESSAGE: 'sent you a message', NOTIF_MENTION: 'mentioned you', NOTIF_REQUEST: 'requested entry',
         AUTHORIZE: 'AUTHORIZE', DENY: 'DENY',
-        SAVE_BTN: 'Save', CANCEL_BTN: 'Cancel',
-        FOLLOWING_LABEL: 'Following', EDIT_PROFILE: 'Edit Profile', BAN_BTN: 'BAN 3D',
+        SAVE: 'Save', CANCEL: 'Cancel',
+        FOLLOWING_LABEL: 'Following', EDIT_PROFILE: 'Edit Profile', BAN: 'BAN 3D',
         TAB_ALL: 'ALL', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'No Content Found',
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Decrypt your thoughts...', YOUTUBE_PH: 'YouTube URL (optional)',
         YOUTUBE_NOTE: 'Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.',
@@ -43,7 +43,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED',
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Commented!',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers',
-        EDIT_BTN: 'Edit', DELETE_BTN: 'Delete'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Post'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -76,12 +76,12 @@ export const TRANSLATIONS = {
         TITLE: 'ΤΙΤΛΟΣ', DESCRIPTION: 'ΠΕΡΙΓΡΑΦΗ', PUBLISH: 'ΔΗΜΟΣΙΕΥΣΗ', ACTIVITY: 'ΔΡΑΣΤΗΡΙΟΤΗΤΑ',
         SEE_TRANSLATION: 'Δείτε τη μετάφραση', SHOW_ORIGINAL: 'Πρωτότυπο κείμενο',
         FOUNDER_BADGE: 'ΙΔΡΥΤΗΣ', MEMBER_BADGE: 'ΜΕΛΟΣ', TERMINATE_CONFIRM: 'Διαγραφή πληροφοριών;',
-        NO_COMMENTS: 'Καμία συζήτηση ακόμα.', ENGAGE: 'Σχολιάστε...', POST_BTN: 'ΔΗΜΟΣΙΕΥΣΗ',
+        NO_COMMENTS: 'Καμία συζήτηση ακόμα.', ENGAGE: 'Σχολιάστε...',
         NOTIF_FOLLOW: 'σε ακολούθησε στο δίκτυο', NOTIF_LIKE: 'του άρεσε η δημοσίευση', NOTIF_COMMENT: 'σχολίασε στην δημοσίευση',
         NOTIF_MESSAGE: 'σου έστειλε μήνυμα', NOTIF_MENTION: 'σε ανέφερε', NOTIF_REQUEST: 'έκανε αίτημα',
         AUTHORIZE: 'ΕΓΚΡΙΣΗ', DENY: 'ΑΠΟΡΡΙΨΗ',
-        SAVE_BTN: 'Αποθήκευση', CANCEL_BTN: 'Ακύρωση',
-        FOLLOWING_LABEL: 'Akolouthei', EDIT_PROFILE: 'Επεξεργασία', BAN_BTN: 'BAN 3D',
+        SAVE: 'Αποθήκευση', CANCEL: 'Ακύρωση',
+        FOLLOWING_LABEL: 'Akolouthei', EDIT_PROFILE: 'Επεξεργασία', BAN: 'BAN 3D',
         TAB_ALL: 'ΟΛΑ', TAB_POSTS: 'POSTS', TAB_VIDEO: 'ΒΙΝΤΕΟ', NO_CONTENT: 'Δεν βρέθηκε περιεχόμενο',
         UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 δευτερόλεπτα.',
@@ -89,7 +89,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
-        EDIT_BTN: 'Edit', DELETE_BTN: 'Delete'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Δημοσίευση'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -124,12 +124,12 @@ export const TRANSLATIONS = {
         BAN_USER: 'BAN AGENT', BAN_3DAYS: 'BAN 3 DAYS', BAN_EXPIRED: 'BAN EXPIRED',
         DELETE_ACCOUNT_CONFIRM: 'TERMINATE ACCOUNT PERMANENTLY?',
         FOUNDER_BADGE: 'ARCHIGOS', MEMBER_BADGE: 'PEXTIS', TERMINATE_CONFIRM: 'Svise to intel?',
-        NO_COMMENTS: 'En eshi kouventa.', ENGAGE: 'Grapse...', POST_BTN: 'VALTO',
+        NO_COMMENTS: 'En eshi kouventa.', ENGAGE: 'Grapse...',
         NOTIF_FOLLOW: 'mpike sto pexnidi', NOTIF_LIKE: 'arese to intel', NOTIF_COMMENT: 'evale sxolio',
         NOTIF_MESSAGE: 'minima', NOTIF_MENTION: 'se anefere', NOTIF_REQUEST: 'thelei mpei',
         AUTHORIZE: 'OK', DENY: 'OXI',
-        SAVE_BTN: 'Fula', CANCEL_BTN: 'Akyro',
-        FOLLOWING_LABEL: 'Akolouthei', EDIT_PROFILE: 'Allaxe to', BAN_BTN: 'BAN 3D',
+        SAVE: 'FULA KATO', CANCEL: 'AKYRO',
+        FOLLOWING_LABEL: 'Akolouthei', EDIT_PROFILE: 'Allaxe to', BAN: 'BAN 3D',
         TAB_ALL: 'OULLA', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'Tipota en ivrika',
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Grapse kati...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'YouTube videos must be < 10s.',
@@ -137,7 +137,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES',
         ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Mono filoi thoroun ta pramata', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Minimata mono pou filous',
-        EDIT_BTN: 'Edit', DELETE_BTN: 'Delete'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Vale to'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -170,12 +170,12 @@ export const TRANSLATIONS = {
         TITLE: 'TITEL', DESCRIPTION: 'BESCHREIBUNG', PUBLISH: 'POSTEN', ACTIVITY: 'AKTIVITÄT',
         SEE_TRANSLATION: 'Übersetzung anzeigen', SHOW_ORIGINAL: 'Original anzeigen',
         FOUNDER_BADGE: 'GRÜNDER', MEMBER_BADGE: 'MITGLIED', TERMINATE_CONFIRM: 'Intel-Paket beenden?',
-        NO_COMMENTS: 'Keine strategische Diskussion.', ENGAGE: 'Interagieren...', POST_BTN: 'POSTEN',
+        NO_COMMENTS: 'Keine strategische Diskussion.', ENGAGE: 'Interagieren...',
         NOTIF_FOLLOW: 'trat deinem Netzwerk bei', NOTIF_LIKE: 'hat Intel bestätigt', NOTIF_COMMENT: 'kommentierte Beitrag',
         NOTIF_MESSAGE: 'Verschlüsselte Nachricht', NOTIF_MENTION: 'hat dich markiert', NOTIF_REQUEST: 'Freigabeanfrage',
         AUTHORIZE: 'GENEHMIGEN', DENY: 'ABLEHNEN',
-        SAVE_BTN: 'Speichern', CANCEL_BTN: 'Abbrechen',
-        FOLLOWING_LABEL: 'Folgt', EDIT_PROFILE: 'Profil bearbeiten', BAN_BTN: 'BAN 3D',
+        SAVE: 'Speichern', CANCEL: 'Abbrechen',
+        FOLLOWING_LABEL: 'Folgt', EDIT_PROFILE: 'Profil bearbeiten', BAN: 'BAN 3D',
         TAB_ALL: 'ALLE', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'Keine Inhalte',
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Gedanken entschlüsseln...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'YouTube Videos müssen < 10s sein.',
@@ -183,7 +183,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND',
         ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT',
         PRIVATE_TITLE: 'Privates Konto', PRIVATE_DESC: 'Nur Follower sehen Inhalt', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Nachrichten nur von Followern',
-        EDIT_BTN: 'Edit', DELETE_BTN: 'Delete'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Posten'
     },
     ru: {
         HOME: 'ГЛАВНАЯ', SEARCH: 'ПОИСК', ALERTS: 'УВЕДОМЛЕНИЯ', PROFILE: 'ПРОФИЛЬ', SETTINGS: 'НАСТРОЙКИ', CHAT: 'ЧАТ',
@@ -211,17 +211,16 @@ export const TRANSLATIONS = {
         INTEL_ACTIVITY: 'АКТИВНОСТЬ', CHECKING_TERMINAL: 'Проверка терминала...',
         LOADING_CORE: 'ЗАГРУЗКА ЯДРА...', AGENT: 'АГЕНТ',
         CLOSE: 'ЗАКРЫТЬ', INTEL_COMMS: 'КОММЕНТАРИИ', ADD_COMMENT: 'КОММЕНТИРОВАТЬ', PENDING_APPROVAL: 'ОЖИДАЕТ ПОДТВЕРЖДЕНИЯ',
-        AWAITING_AUTH: 'ОЖИДАНИЕ', NEURAL_LOGS: 'ЛОГИ', FOLLOWED_YOU: 'подписался на вас',
         COMMENTED: 'прокомментировал', MENTIONED_YOU: 'упомянул вас', NO_ACTIVITY: 'НЕТ АКТИВНОСТИ',
         TITLE: 'ЗАГОЛОВОК', DESCRIPTION: 'ОПИСАНИЕ', PUBLISH: 'ОПУБЛИКОВАТЬ', ACTIVITY: 'АКТИВНОСТЬ',
         SEE_TRANSLATION: 'Показать перевод', SHOW_ORIGINAL: 'Оригинал',
         FOUNDER_BADGE: 'ОСНОВАТЕЛЬ', MEMBER_BADGE: 'УЧАСТНИК', TERMINATE_CONFIRM: 'Уничтожить пакет данных?',
-        NO_COMMENTS: 'Нет стратегических обсуждений.', ENGAGE: 'Вступить в диалог...', POST_BTN: 'ОТПРАВИТЬ',
+        NO_COMMENTS: 'Нет стратегических обсуждений.', ENGAGE: 'Вступить в диалог...',
         NOTIF_FOLLOW: 'присоединился к сети', NOTIF_LIKE: 'одобрил данные', NOTIF_COMMENT: 'прокомментировал',
         NOTIF_MESSAGE: 'зашифрованное сообщение', NOTIF_MENTION: 'отметил вас', NOTIF_REQUEST: 'запрос доступа',
         AUTHORIZE: 'РАЗРЕШИТЬ', DENY: 'ОТКЛОНИТЬ',
-        SAVE_BTN: 'Сохранить', CANCEL_BTN: 'Отмена',
-        FOLLOWING_LABEL: 'Подписки', EDIT_PROFILE: 'Ред. профиль', BAN_BTN: 'БАН 3Д',
+        SAVE: 'Сохранить', CANCEL: 'Отмена',
+        FOLLOWING_LABEL: 'Подписки', EDIT_PROFILE: 'Ред. профиль', BAN: 'БАН 3Д',
         TAB_ALL: 'ВСЕ', TAB_POSTS: 'ПОСТЫ', TAB_VIDEO: 'ВИДЕО', NO_CONTENT: 'Нет контента',
         UPLOAD_TITLE: 'ЗАГРУЗКА', DECRYPT_PH: 'Расшифруйте мысли...', YOUTUBE_PH: 'YouTube ссылка (опция)',
         YOUTUBE_NOTE: 'YouTube видео должно быть < 10 сек.',
@@ -229,7 +228,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ПОДПИСАН', STATUS_REQUESTED: 'ЗАПРОШЕНО',
         ACTION_LIKED: 'ОДОБРЕНО', ACTION_DISLIKED: 'ОТКЛОНЕНО', ACTION_SHARED: 'ОТПРАВЛЕНО', ACTION_COMMENTED: 'ОТКОММЕНТИРОВАНО',
         PRIVATE_TITLE: 'Закрытый Аккаунт', PRIVATE_DESC: 'Только подписчики видят контент', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Сообщения только от подписчиков',
-        EDIT_BTN: 'ИЗМЕНИТЬ', DELETE_BTN: 'УДАЛИТЬ'
+        EDIT: 'ИЗМЕНИТЬ', DELETE: 'УДАЛИТЬ'
     },
     es: {
         HOME: 'INICIO', SEARCH: 'BUSCAR', ALERTS: 'ALERTAS', PROFILE: 'PERFIL', SETTINGS: 'AJUSTES', CHAT: 'CHAT',
@@ -262,18 +261,18 @@ export const TRANSLATIONS = {
         TITLE: 'TITULO', DESCRIPTION: 'DESCRIPCION', PUBLISH: 'PUBLICAR', ACTIVITY: 'ACTIVIDAD',
         SEE_TRANSLATION: 'Ver Traducción', SHOW_ORIGINAL: 'Original',
         FOUNDER_BADGE: 'FUNDADOR', MEMBER_BADGE: 'MIEMBRO', TERMINATE_CONFIRM: 'Borrar paquete intel?',
-        NO_COMMENTS: 'Sin discusión.', ENGAGE: 'Escribe algo...', POST_BTN: 'ENVIAR',
+        NO_COMMENTS: 'Sin discusión.', ENGAGE: 'Escribe algo...',
         NOTIF_FOLLOW: 'te siguió', NOTIF_LIKE: 'le gustó', NOTIF_COMMENT: 'comentó',
         NOTIF_MESSAGE: 'mensaje', NOTIF_MENTION: 'te mencionó', NOTIF_REQUEST: 'solicitud',
         AUTHORIZE: 'ACEPTAR', DENY: 'RECHAZAR',
-        SAVE_BTN: 'Guardar', CANCEL_BTN: 'Cancelar',
-        FOLLOWING_LABEL: 'Siguiendo', EDIT_PROFILE: 'Editar Perfil', BAN_BTN: 'BAN 3D',
+        SAVE: 'Guardar', CANCEL: 'Cancelar',
+        FOLLOWING_LABEL: 'Siguiendo', EDIT_PROFILE: 'Editar Perfil', BAN: 'BAN 3D',
         TAB_ALL: 'TODO', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'Sin contenido',
         UPLOAD_TITLE: 'SUBIR', DECRYPT_PH: 'Escribe algo...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video debe ser < 10s.',
         ADD_MEDIA: 'Media', ADD_STORY: 'A Story', POST_STORY: 'PUBLICAR',
         PRIVATE_TITLE: 'Cuenta Privada', PRIVATE_DESC: 'Solo seguidores ven contenido', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Mensajes solo de seguidores',
-        EDIT_BTN: 'EDITAR', DELETE_BTN: 'BORRAR'
+        EDIT: 'EDITAR', DELETE: 'BORRAR', POST: 'Enviar'
     },
     tr: {
         HOME: 'ANA SAYFA', SEARCH: 'ARA', ALERTS: 'BİLDİRİMLER', PROFILE: 'PROFİL', SETTINGS: 'AYARLAR', CHAT: 'SOHBET',
@@ -306,18 +305,18 @@ export const TRANSLATIONS = {
         TITLE: 'BAŞLIK', DESCRIPTION: 'AÇIKLAMA', PUBLISH: 'YAYINLA', ACTIVITY: 'AKTİVİTE',
         SEE_TRANSLATION: 'Çeviriyi Gör', SHOW_ORIGINAL: 'Orijinal',
         FOUNDER_BADGE: 'KURUCU', MEMBER_BADGE: 'ÜYE', TERMINATE_CONFIRM: 'Silinsin mi?',
-        NO_COMMENTS: 'Yorum yok.', ENGAGE: 'Yaz...', POST_BTN: 'GÖNDER',
+        NO_COMMENTS: 'Yorum yok.', ENGAGE: 'Yaz...',
         NOTIF_FOLLOW: 'katıldı', NOTIF_LIKE: 'beğendi', NOTIF_COMMENT: 'yorumladı',
         NOTIF_MESSAGE: 'mesaj', NOTIF_MENTION: 'bahsetti', NOTIF_REQUEST: 'istek',
         AUTHORIZE: 'ONAYLA', DENY: 'REDDET',
-        SAVE_BTN: 'Kaydet', CANCEL_BTN: 'İptal',
-        FOLLOWING_LABEL: 'Takip', EDIT_PROFILE: 'Profili Düzenle', BAN_BTN: 'BAN 3D',
+        SAVE: 'Kaydet', CANCEL: 'İptal',
+        FOLLOWING_LABEL: 'Takip', EDIT_PROFILE: 'Profili Düzenle', BAN: 'BAN 3D',
         TAB_ALL: 'HEPSİ', TAB_POSTS: 'POSTLAR', TAB_VIDEO: 'VİDEO', NO_CONTENT: 'İçerik Bulunamadı',
         UPLOAD_TITLE: 'YÜKLE', DECRYPT_PH: 'Düşüncelerin...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video < 10s olmalı.',
         ADD_MEDIA: 'Medya', ADD_STORY: 'Hikaye', POST_STORY: 'PAYLAŞ',
         PRIVATE_TITLE: 'Gizli Hesap', PRIVATE_DESC: 'Sadece takipçiler içerικ görebilir', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Sadece ταkipçilerden mesaj',
-        EDIT_BTN: 'DÜZENLE', DELETE_BTN: 'SİL'
+        EDIT: 'DÜZENLE', DELETE: 'SİL', POST: 'Gönder'
     },
     fr: {
         HOME: 'ACCUEIL', SEARCH: 'RECHERCHE', ALERTS: 'ALERTES', PROFILE: 'PROFIL', SETTINGS: 'REGLAGES', CHAT: 'DISCUSSION',
@@ -350,12 +349,12 @@ export const TRANSLATIONS = {
         TITLE: 'TITRE', DESCRIPTION: 'DESCRIPTION', PUBLISH: 'PUBLIER', ACTIVITY: 'ACTIVITÉ',
         SEE_TRANSLATION: 'Voir Traduction', SHOW_ORIGINAL: 'Original',
         FOUNDER_BADGE: 'FONDATEUR', MEMBER_BADGE: 'MEMBRE', TERMINATE_CONFIRM: 'Supprimer?',
-        NO_COMMENTS: 'Aucune discussion.', ENGAGE: 'Engager...', POST_BTN: 'ENVOYER',
+        NO_COMMENTS: 'Aucune discussion.', ENGAGE: 'Engager...',
         NOTIF_FOLLOW: 'a rejoint', NOTIF_LIKE: 'a aimé', NOTIF_COMMENT: 'a commenté',
         NOTIF_MESSAGE: 'message', NOTIF_MENTION: 'mentionné', NOTIF_REQUEST: 'demande',
         AUTHORIZE: 'ACCEPTER', DENY: 'REFUSER',
-        SAVE_BTN: 'Enregistrer', CANCEL_BTN: 'Annuler',
-        FOLLOWING_LABEL: 'Abonnements', EDIT_PROFILE: 'Editer Profil', BAN_BTN: 'BAN 3D',
+        SAVE: 'Enregistrer', CANCEL: 'Annuler',
+        FOLLOWING_LABEL: 'Abonnements', EDIT_PROFILE: 'Editer Profil', BAN: 'BAN 3D',
         TAB_ALL: 'TOUT', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'Rien ici',
         UPLOAD_TITLE: 'UPLOADER', DECRYPT_PH: 'Déchiffrer...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video < 10s.',
@@ -363,8 +362,8 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ABONNÉ', STATUS_REQUESTED: 'EN ATTENTE',
         ACTION_LIKED: 'AIMÉ', ACTION_DISLIKED: 'NON AIMÉ', ACTION_SHARED: 'PARTAGÉ', ACTION_COMMENTED: 'COMMENTÉ',
         PRIVATE_TITLE: 'Compte Privé', PRIVATE_DESC: 'Seulement les abonnés voient le contenu', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages seulement des abonnés',
-        EDIT_BTN: 'MODIFIER', DELETE_BTN: 'SUPPRIMER'
-    }
+        EDIT: 'MODIFIER', DELETE: 'SUPPRIMER', POST: 'Envoyer'
+    },
 };
 
 export const useTranslation = (user) => {
