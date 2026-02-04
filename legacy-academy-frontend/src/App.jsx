@@ -1530,7 +1530,8 @@ const App = () => {
 
     };
 
-    const handleFollow = async (targetId) => {
+    const handleFollow = async (input) => {
+        const targetId = input?._id || input;
         if (!targetId || !user) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
         try {
