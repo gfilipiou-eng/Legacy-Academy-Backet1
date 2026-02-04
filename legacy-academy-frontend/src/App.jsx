@@ -316,7 +316,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                         </div>
                     </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Your Story</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
             </div>
 
             {stories && stories.map((story, i) => (

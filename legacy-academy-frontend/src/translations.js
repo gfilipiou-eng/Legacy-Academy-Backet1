@@ -85,7 +85,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'ΟΛΑ', TAB_POSTS: 'POSTS', TAB_VIDEO: 'ΒΙΝΤΕΟ', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Δεν βρέθηκε περιεχόμενο',
         UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 λεπτά.',
-        ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Προσθήκη σε Ιστορία', POST_STORY: 'STORY',
+        ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Σε Ιστορία (24ω)', POST_STORY: 'STORY',
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
@@ -133,7 +133,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'OULLA', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Tipota en ivrika',
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Grapse kati...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'YouTube videos must be < 10m.',
-        ADD_MEDIA: 'Vale Foto', ADD_STORY: 'Vale Story', POST_STORY: 'VALE STORY',
+        ADD_MEDIA: 'Vale Foto', ADD_STORY: 'Vale Story (24h)', POST_STORY: 'VALE STORY',
         STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES',
         ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Mono filoi thoroun ta pramata', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Minimata mono pou filous',
@@ -179,7 +179,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'ALLE', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Keine Inhalte',
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Gedanken entschlüsseln...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'YouTube Videos müssen < 10m sein.',
-        ADD_MEDIA: 'Medien', ADD_STORY: 'Zur Story', POST_STORY: 'STORY POSTEN',
+        ADD_MEDIA: 'Medien', ADD_STORY: 'Zur Story (24h)', POST_STORY: 'STORY POSTEN',
         STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND',
         ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT',
         PRIVATE_TITLE: 'Privates Konto', PRIVATE_DESC: 'Nur Follower sehen Inhalt', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Nachrichten nur von Followern',
@@ -224,7 +224,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'ВСЕ', TAB_POSTS: 'ПОСТЫ', TAB_VIDEO: 'ВИДЕΟ', HIGHLIGHTS: 'ИЗБРАННОΕ', NO_CONTENT: 'Нет контента',
         UPLOAD_TITLE: 'ЗАΓΡУЗΚΑ', DECRYPT_PH: 'Расшиφруйте мысли...', YOUTUBE_PH: 'YouTube ссылка (опция)',
         YOUTUBE_NOTE: 'YouTube видео должно быть < 10 мин.',
-        ADD_MEDIA: 'Медиα', ADD_STORY: 'В Историю', POST_STORY: 'ОПУБЛИΚΟΒΑΤЬ',
+        ADD_MEDIA: 'Медиα', ADD_STORY: 'В Историю (24ч)', POST_STORY: 'ОПУБЛИΚΟΒΑΤЬ',
         STATUS_FOLLOWING: 'ПОДПИСАН', STATUS_REQUESTED: 'ЗАПРОШЕНО',
         ACTION_LIKED: 'ОДОБРЕНО', ACTION_DISLIKED: 'ОТКЛОНЕНО', ACTION_SHARED: 'ОТПРАВЛЕНО', ACTION_COMMENTED: 'ОТКОММЕНТИРОВАНО',
         PRIVATE_TITLE: 'Закрытый Аккаунт', PRIVATE_DESC: 'Только подписчики видят контент', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Сообщения только от подписчиков',
@@ -270,7 +270,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'TODO', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Sin contenido',
         UPLOAD_TITLE: 'SUBIR', DECRYPT_PH: 'Escribe algo...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video debe ser < 10m.',
-        ADD_MEDIA: 'Media', ADD_STORY: 'A Story', POST_STORY: 'PUBLICAR',
+        ADD_MEDIA: 'Media', ADD_STORY: 'A Story (24h)', POST_STORY: 'PUBLICAR',
         PRIVATE_TITLE: 'Cuenta Privada', PRIVATE_DESC: 'Solo seguidores ven contenido', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Mensajes solo de seguidores',
         EDIT: 'EDITAR', DELETE: 'BORRAR', POST: 'Enviar'
     },
@@ -314,7 +314,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'HEPSİ', TAB_POSTS: 'POSTLAR', TAB_VIDEO: 'VİDEO', HIGHLIGHTS: 'ÖNE ÇIKANLAR', NO_CONTENT: 'İçerik Bulunamadı',
         UPLOAD_TITLE: 'YÜKLE', DECRYPT_PH: 'Düşüncelerin...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video < 10dk olmalı.',
-        ADD_MEDIA: 'Medya', ADD_STORY: 'Hikaye', POST_STORY: 'PAYLAŞ',
+        ADD_MEDIA: 'Medya', ADD_STORY: 'Hikaye (24s)', POST_STORY: 'PAYLAŞ',
         PRIVATE_TITLE: 'Gizli Hesap', PRIVATE_DESC: 'Sadece takipçiler içerικ görebilir', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Sadece ταkipçilerden mesaj',
         EDIT: 'DÜZENLE', DELETE: 'SİL', POST: 'Gönder'
     },
@@ -358,7 +358,7 @@ export const TRANSLATIONS = {
         TAB_ALL: 'TOUT', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Rien ici',
         UPLOAD_TITLE: 'UPLOADER', DECRYPT_PH: 'Déchiffrer...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video < 10m.',
-        ADD_MEDIA: 'Media', ADD_STORY: 'Story', POST_STORY: 'PUBLIER',
+        ADD_MEDIA: 'Media', ADD_STORY: 'Story (24h)', POST_STORY: 'PUBLIER',
         STATUS_FOLLOWING: 'ABONNÉ', STATUS_REQUESTED: 'EN ATTENTE',
         ACTION_LIKED: 'AIMÉ', ACTION_DISLIKED: 'NON AIMÉ', ACTION_SHARED: 'PARTAGÉ', ACTION_COMMENTED: 'COMMENTÉ',
         PRIVATE_TITLE: 'Compte Privé', PRIVATE_DESC: 'Seulement les abonnés voient le contenu', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages seulement des abonnés',
@@ -371,7 +371,15 @@ export const useTranslation = (user) => {
     const browserLang = navigator.language?.split('-')[0];
     const defaultLang = TRANSLATIONS[browserLang] ? browserLang : 'en';
 
-    const lang = localStorage.getItem('language') || user?.settings?.language || defaultLang;
+    // FIX: Fallback for 'ru' and others if they were corrupted/missing in recent edits
+    const validLangs = ['en', 'el', 'de', 'ru', 'es', 'tr', 'fr', 'cy'];
+    let lang = localStorage.getItem('language') || user?.settings?.language;
+
+    if (!lang || !validLangs.includes(lang)) {
+        lang = defaultLang;
+    }
+
+    if (!TRANSLATIONS[lang]) lang = 'en'; // Ultima Ratio
 
     const t = (key, params = {}) => {
         let text = TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en'][key] || key;
