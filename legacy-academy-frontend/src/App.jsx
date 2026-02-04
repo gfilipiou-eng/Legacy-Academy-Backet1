@@ -75,7 +75,7 @@ const formatDate = (dateString) => {
 const DefaultAvatar = ({ name, size = "normal" }) => {
     const COLORS = [
         'from-red-500 to-orange-600', 'from-blue-500 to-cyan-600', 'from-emerald-500 to-green-600',
-        'from-violet-500 to-purple-600', 'from-amber-500 to-yellow-600', 'from-rose-500 to-pink-600',
+        'from-violet-500 to-purple-600', 'from-[var(--gold-primary)]/80 to-[var(--gold-secondary)]', 'from-rose-500 to-pink-600',
         'from-indigo-500 to-blue-600', 'from-teal-500 to-emerald-600'
     ];
     const hash = name ? name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
@@ -120,7 +120,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             <div className="flex-1">
                 <div className={`bg-white/10 rounded-2xl px-4 py-2 shadow-lg backdrop-blur-sm border border-white/5 transition-all ${isEditing ? 'bg-white/20' : ''}`}>
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-xs text-yellow-500 shadow-black drop-shadow-sm">{comment.user?.username || comment.authorName}</span>
+                        <span className="font-bold text-xs text-[var(--gold-primary)] shadow-black drop-shadow-sm">{comment.user?.username || comment.authorName}</span>
                         {isFounder && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('MEMBER_BADGE')}</span>}
                     </div>
                     {isEditing ? (
@@ -179,7 +179,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
-                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-yellow-500/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
+                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--gold-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
@@ -205,7 +205,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 md:max-h-full">
-                        <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
+                        <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
                         <div className="space-y-4 pb-4">
                             <AnimatePresence>
                                 {post.comments?.map((c, i) => (
@@ -224,15 +224,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className="text-xs font-black text-gray-500">{post.likes?.length || 0}</span>
                                 </button>
                                 <button onClick={() => onDislike(post._id)} className="flex items-center gap-2 group transition-all active:scale-125">
-                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-yellow-500' : 'text-gray-400 group-hover:text-white'}`} />
+                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-xs font-black text-gray-500">{post.dislikes?.length || 0}</span>
                                 </button>
                                 <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-colors active:rotate-45"><Icons.Send className="w-5 h-5" /></button>
                             </div>
                         </div>
-                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-yellow-500/50 transition-all">
+                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-[var(--gold-primary)]/50 transition-all">
                             <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
-                            <button disabled={!commentText.trim()} className="text-yellow-500 font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST')}</button>
+                            <button disabled={!commentText.trim()} className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST')}</button>
                         </form>
                     </div>
                 </div>
@@ -256,18 +256,18 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
             }}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all shadow-lg">
+                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
                     {note.fromProfilePic ? <img src={resolveMediaUrl(note.fromProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={note.fromUsername} />}
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
-                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-yellow-500 rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
+                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
                 {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm">
-                    <span className="font-black text-white group-hover:text-yellow-500 transition-colors uppercase tracking-tight">{note.fromUsername}</span>
+                    <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{note.fromUsername}</span>
                     <span className="text-gray-500 text-[10px] sm:text-[11px] ml-1 uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
                             note.type === 'like' ? t('NOTIF_LIKE') :
@@ -280,12 +280,12 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
                 <div className="flex items-center gap-3 mt-2">
                     <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt)}</div>
-                    {!note.read && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full shadow-glow-yellow" />}
+                    {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-glow-yellow" />}
                 </div>
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-yellow-500/20 uppercase tracking-widest">{t('AUTHORIZE')}</button>
+                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[var(--gold-primary)]/20 uppercase tracking-widest">{t('AUTHORIZE')}</button>
                         <button onClick={() => onRejectRequest(note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
                     </div>
                 )}
@@ -305,7 +305,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-full p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-yellow-500 to-red-600' : 'bg-white/10 group hover:bg-yellow-500'} transition-colors`}>
+                <div className={`w-16 h-16 rounded-full p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
                     <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 relative">
                         {user?.profilePic ? (
                             <img src={resolveMediaUrl(user.profilePic, 200)} className="w-full h-full object-cover opacity-80" />
@@ -320,14 +320,14 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
             </div>
 
-            {stories && stories.map((story, i) => (
-                <div key={i} onClick={() => onViewStory(story)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-yellow-500 to-red-600">
-                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900">
-                            {story.author?.profilePic ? <img src={resolveMediaUrl(story.author.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={story.author?.username} />}
+            {stories && stories.map((group, i) => (
+                <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
+                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90">
+                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl">
+                            {group.author?.profilePic ? <img src={resolveMediaUrl(group.author.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={group.author?.username} />}
                         </div>
                     </div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{story.author?.username}</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
                 </div>
             ))}
         </div>
@@ -436,7 +436,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         }} className={`mt-1 text-sm text-white/90 whitespace-pre-wrap break-words mb-2 font-normal ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
                             {translatedDesc ? (
                                 <div className="space-y-1">
-                                    <div className="text-yellow-500 text-[10px] font-bold uppercase tracking-widest">{t('SEE_TRANSLATION')}</div>
+                                    <div className="text-[var(--gold-primary)] text-[10px] font-bold uppercase tracking-widest">{t('SEE_TRANSLATION')}</div>
                                     <div>{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
                             ) : parseHashtags(post.desc, onHashtagClick)}
@@ -460,7 +460,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     } catch (e) { console.error(e); }
                                     finally { setIsTranslating(false); }
                                 }}
-                                className="text-[10px] font-bold text-gray-500 hover:text-yellow-500 transition-colors uppercase tracking-widest mb-2"
+                                className="text-[10px] font-bold text-gray-500 hover:text-[var(--gold-primary)] transition-colors uppercase tracking-widest mb-2"
                             >
                                 {isTranslating ? '...' : (translatedDesc ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
                             </button>
@@ -482,7 +482,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <AnimatePresence>
                                     {showHeart && (
                                         <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                            <Icons.Heart className="w-24 h-24 text-yellow-500 fill-yellow-500 drop-shadow-2xl" />
+                                            <Icons.Heart className="w-24 h-24 text-[var(--gold-primary)] fill-[var(--gold-primary)] drop-shadow-2xl" />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -501,8 +501,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500'}`}>
-                                <div className="p-1.5 rounded-full group-hover:bg-yellow-500/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
+                            <button onClick={(e) => { e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                <div className="p-1.5 rounded-full group-hover:bg-[var(--gold-primary)]/10"><Icons.ThumbsDown className="w-5 h-5" /></div>
                                 <span className="text-xs font-medium">{dislikeCount}</span>
                             </button>
 
@@ -526,7 +526,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
                                     {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user?.username} />}
                                 </div>
-                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleComment(e)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
+                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleComment(e)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-[var(--gold-primary)] placeholder-gray-600" />
                                 <button disabled={!commentText.trim()} className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors">{t('POST')}</button>
                             </form>
                         </div>
@@ -604,7 +604,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search friends..."
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-yellow-500 transition-colors"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                             />
                         </div>
                     </div>
@@ -626,7 +626,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                <div className="w-10 h-10 rounded-full border border-yellow-500/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
+                                <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
                                 <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? 'Online' : 'Offline'}</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
@@ -701,9 +701,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-yellow-500/30 group">
+                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-[var(--gold-primary)]/30 group">
                         <div>
-                            <div className="text-sm font-bold text-white group-hover:text-yellow-500 transition-colors">{t('PRIVATE_TITLE')}</div>
+                            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('PRIVATE_TITLE')}</div>
                             <div className="text-[10px] text-gray-500 uppercase tracking-tighter">{t('PRIVATE_DESC')}</div>
                         </div>
                         <div onClick={() => {
@@ -711,7 +711,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             const newVal = !isPrivate;
                             setIsPrivate(newVal);
                             handleSave('isPrivate', newVal);
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-yellow-500' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
+                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-[var(--gold-primary)]' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
                             <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
                         </div>
                     </div>
@@ -734,13 +734,34 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2">
-                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff'].map(c => {
+                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7'].map(c => {
                                 const isActive = (localStorage.getItem('themeColor') || '#ffd700') === c;
+                                const getSecondary = (hex) => {
+                                    if (hex === '#ffffff') return '#888888';
+                                    if (hex === '#ffd700') return '#b8860b';
+                                    return hex + 'aa';
+                                };
+                                const getHover = (hex) => {
+                                    if (hex === '#ffffff') return '#f0f0f0';
+                                    return hex + 'cc';
+                                };
                                 return (
                                     <button key={c} onClick={() => {
+                                        const secondary = getSecondary(c);
+                                        const hover = getHover(c);
+                                        const glow = `${c}44`;
+                                        const glowSoft = `${c}1a`;
                                         document.documentElement.style.setProperty('--gold-primary', c);
+                                        document.documentElement.style.setProperty('--gold-secondary', secondary);
+                                        document.documentElement.style.setProperty('--gold-hover', hover);
+                                        document.documentElement.style.setProperty('--gold-glow', glow);
+                                        document.documentElement.style.setProperty('--gold-glow-soft', glowSoft);
                                         localStorage.setItem('themeColor', c);
-                                        onUpdateUser({ ...user }); // Force re-render to update UI
+                                        localStorage.setItem('themeSecondary', secondary);
+                                        localStorage.setItem('themeHover', hover);
+                                        localStorage.setItem('themeGlow', glow);
+                                        localStorage.setItem('themeGlowSoft', glowSoft);
+                                        onUpdateUser({ ...user });
                                     }} className={`w-8 h-8 rounded-full border transition-all ${isActive ? 'scale-125 border-white ring-2 ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.5)]' : 'border-white/10 hover:scale-110'}`} style={{ background: c }} />
                                 );
                             })}
@@ -760,7 +781,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', label: 'Türkçe', flag: '🇹🇷' },
                                 { id: 'fr', label: 'Français', flag: '🇫🇷' }
                             ].map(l => (
-                                <button key={l.id} onClick={() => { handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-yellow-500 bg-yellow-500/10' : 'border-white/5 bg-white/5'}`}>
+                                <button key={l.id} onClick={() => { handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10' : 'border-white/5 bg-white/5'}`}>
                                     <div className="text-xl">{l.flag}</div>
                                     <div className="text-[8px] sm:text-[9px] font-bold text-white mt-1 uppercase tracking-tight">{l.label}</div>
                                 </button>
@@ -787,7 +808,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <Icons.Logout className="w-5 h-5" />
                     </button>
 
-                    {saving && <div className="text-[10px] text-yellow-500 text-center font-bold animate-pulse">SYNCING WITH NEURAL LINK...</div>}
+                    {saving && <div className="text-[10px] text-[var(--gold-primary)] text-center font-bold animate-pulse">SYNCING WITH NEURAL LINK...</div>}
                 </div>
             </div>
         </div >
@@ -877,7 +898,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
-                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-yellow-500 cursor-pointer relative group shadow-2xl shadow-yellow-500/10">
+                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[var(--gold-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--gold-primary)]/10">
                                 {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
@@ -908,7 +929,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Bio</label>
-                                <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-yellow-500 outline-none resize-none h-32" placeholder="Tell your story..." />
+                                <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32" placeholder="Tell your story..." />
                             </div>
 
                             <button onClick={async () => {
@@ -920,12 +941,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     }
                                     setIsEditing(false);
                                 } catch (e) { console.error(e); alert("Failed to update bio."); }
-                            }} className="w-full py-4 bg-yellow-500 rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform text-sm">Save Changes</button>
+                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform text-sm">Save Changes</button>
                         </div>
                     ) : (
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
-                                <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-yellow-500 shadow-yellow-500/20'}`}>
+                                <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
                                 <div className="flex-1 flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5">
@@ -934,7 +955,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('POSTS')}</div>
                                     </div>
                                     <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
-                                        <div className="font-black text-yellow-500 text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
+                                        <div className="font-black text-[var(--gold-primary)] text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWERS')}</div>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
@@ -955,7 +976,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black tracking-widest hover:bg-white/10 transition-all uppercase">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex-1 flex gap-2">
-                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
+                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
                                             {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                         </button>
                                         {currentUser?.role === 'Founder' && (
@@ -977,7 +998,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
                                 ))}
                             </div>
 
@@ -987,12 +1008,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                         {userStories.map(s => (
                                             <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                <div className="w-16 h-16 rounded-full border-2 border-yellow-500 p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10 bg-black overflow-hidden relative">
+                                                <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                     {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                                         <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                     ) : (
                                                         <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                            <Icons.Play className="w-6 h-6 text-yellow-500" />
+                                                            <Icons.Play className="w-6 h-6 text-[var(--gold-primary)]" />
                                                             {/* Ensure video doesn't autoplay in thumbnail view */}
                                                             <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
                                                         </div>
@@ -1121,11 +1142,14 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
-                        <div onClick={() => setIsStory(!isStory)} className="flex items-center gap-2 cursor-pointer bg-white/5 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors border border-white/5">
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isStory ? 'border-yellow-500 bg-yellow-500' : 'border-gray-500'}`}>
-                                {isStory && <Icons.Check className="w-3 h-3 text-black font-bold" />}
+                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
+                                {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
-                            <span className={`text-xs font-bold uppercase tracking-widest ${isStory ? 'text-yellow-500' : 'text-gray-500'}`}>{t('ADD_STORY')}</span>
+                            <div className="flex flex-col">
+                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>ADD TO STORY</span>
+                                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">VISIBLE FOR 24H 🕒</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1151,7 +1175,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 setPreview(null); fileRef.current.value = '';
                                 setIsStory(false);
                             } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
                     </div>
                 </div>
             </motion.div>
@@ -1267,7 +1291,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                     <div className="flex gap-4">
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{saving ? '...' : t('SAVE_CHANGES')}</button>
+                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{saving ? '...' : t('SAVE_CHANGES')}</button>
                     </div>
                 </div>
             </motion.div>
@@ -1340,9 +1364,15 @@ const App = () => {
         if (saved) setUser(JSON.parse(saved));
 
         const savedTheme = localStorage.getItem('themeColor');
-        if (savedTheme) {
-            document.documentElement.style.setProperty('--gold-primary', savedTheme);
-        }
+        const savedSecondary = localStorage.getItem('themeSecondary');
+        const savedHover = localStorage.getItem('themeHover');
+        const savedGlow = localStorage.getItem('themeGlow');
+        const savedGlowSoft = localStorage.getItem('themeGlowSoft');
+        if (savedTheme) document.documentElement.style.setProperty('--gold-primary', savedTheme);
+        if (savedSecondary) document.documentElement.style.setProperty('--gold-secondary', savedSecondary);
+        if (savedHover) document.documentElement.style.setProperty('--gold-hover', savedHover);
+        if (savedGlow) document.documentElement.style.setProperty('--gold-glow', savedGlow);
+        if (savedGlowSoft) document.documentElement.style.setProperty('--gold-glow-soft', savedGlowSoft);
     }, []);
 
     // Use a ref to track the last user ID we initialized for, to avoid loops
@@ -1371,7 +1401,8 @@ const App = () => {
     // FIX: Optimized search filtering with useMemo
     const filteredPosts = React.useMemo(() => {
         return posts.filter(p => {
-            if (p.isStory) return false;
+            // Robust check for stories - exclude them from feed
+            if (p.isStory === true || String(p.isStory) === 'true') return false;
             const q = searchQuery.toLowerCase();
             if (!q) return true;
             const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
@@ -1381,12 +1412,22 @@ const App = () => {
     }, [posts, searchQuery]);
 
     const stories = React.useMemo(() => {
-        return posts.filter(p => {
-            if (!p.isStory) return false;
-            const createdAt = new Date(p.createdAt).getTime();
-            const now = Date.now();
-            return (now - createdAt) < 24 * 60 * 60 * 1000;
+        const groups = {};
+        posts.filter(p => p.isStory === true || String(p.isStory) === 'true').forEach(p => {
+            const uid = String(p.author?._id || p.author);
+            // Filter only last 24h
+            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
+
+            if (!groups[uid]) {
+                groups[uid] = {
+                    author: p.author || { username: p.username, profilePic: p.profilePic, _id: p.author },
+                    latestStory: p,
+                    allStories: []
+                };
+            }
+            groups[uid].allStories.push(p);
         });
+        return Object.values(groups).sort((a, b) => new Date(b.latestStory.createdAt) - new Date(a.latestStory.createdAt));
     }, [posts]);
 
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
@@ -1672,7 +1713,7 @@ const App = () => {
             {!user ? (
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="liquid-bg" />
-                    <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
+                    <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-[var(--gold-primary)]/5">
                         <div className="flex flex-col items-center mb-8">
                             <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
                         </div>
@@ -1681,11 +1722,11 @@ const App = () => {
                                 <>
                                     <div className="relative">
                                         <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                        <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner" />
                                     </div>
                                     <div className="relative">
                                         <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                        <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner" />
                                         <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
                                             {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                         </button>
@@ -1713,8 +1754,8 @@ const App = () => {
                             )}
                             {authMode === 'register' && (
                                 <>
-                                    <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-yellow-500 mb-4 flex items-center justify-center">
-                                        {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-yellow-500" />}
+                                    <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-[var(--gold-primary)] mb-4 flex items-center justify-center">
+                                        {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-[var(--gold-primary)]" />}
                                         <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
                                             const file = e.target.files[0];
                                             if (file) setRegisterPreview(URL.createObjectURL(file));
@@ -1722,21 +1763,21 @@ const App = () => {
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
+                                        <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner text-sm" />
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
+                                        <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner text-sm" />
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
+                                        <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner text-sm" />
                                         <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
                                             {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                         </button>
                                     </div>
                                     <div className="relative mb-4">
-                                        <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-yellow-500 shadow-inner resize-none h-20" />
+                                        <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] shadow-inner resize-none h-20" />
                                     </div>
 
                                     <button disabled={authLoading} onClick={async () => {
@@ -1768,7 +1809,7 @@ const App = () => {
                                     <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
                                     <div className="relative">
                                         <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                        <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner" />
                                     </div>
                                     <button disabled={authLoading} onClick={async () => {
                                         setAuthLoading(true);
@@ -1834,7 +1875,7 @@ const App = () => {
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
                                                 <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
                                             </div>
                                         )}
@@ -1861,8 +1902,8 @@ const App = () => {
                                             {filteredPosts.map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />)}
                                             {posts.length === 0 && (
                                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                                    <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                                                    <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
+                                                    <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
                                                 </div>
                                             )}
                                         </div>
@@ -1894,15 +1935,15 @@ const App = () => {
                                 <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
 
                                 <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative ${activeTab === 'alerts' ? 'nav-item-active' : ''}`}>
-                                    <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : ''}`} />
+                                    <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse' : ''}`} />
                                     {user?.notifications?.some(n => !n.read) && <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
                                 </button>
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
                                     <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
-                                        {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic) + `?v=${imgKey}`} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
+                                        {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic) + `?v=${imgKey}`} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-[var(--gold-primary)]">{user?.username?.[0]}</div>}
                                     </div>
                                 </button>
                             </div>

@@ -7,8 +7,10 @@
 :root {
   --gold-primary: #ffd700;
   --gold-secondary: #b8860b;
+  --gold-hover: #ffecb3;
+  --gold-glow: rgba(255, 215, 0, 0.4);
+  --gold-glow-soft: rgba(255, 215, 0, 0.1);
   --glass-bg: rgba(20, 20, 20, 0.4);
-  /* Πιο διάφανο για να περνάνε τα χρώματα */
   --glass-border: rgba(255, 255, 255, 0.1);
 }
 
@@ -77,16 +79,16 @@ body {
 }
 
 .nav-item-active {
-  background: rgba(255, 215, 0, 0.1) !important;
-  color: #ffd700 !important;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  background: var(--gold-glow) !important;
+  color: var(--gold-primary) !important;
+  box-shadow: 0 0 20px var(--gold-glow);
+  border: 1px solid var(--gold-glow);
 }
 
 .nav-center-action {
   @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300;
-  background: linear-gradient(135deg, #ffd700, #ffb700);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+  box-shadow: 0 0 15px var(--gold-glow), inset 0 2px 4px rgba(255, 255, 255, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -168,6 +170,7 @@ body {
 
 .gold-text {
   background: linear-gradient(to bottom, #fff 0%, var(--gold-primary) 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 900;
@@ -211,7 +214,7 @@ body {
 }
 
 .cyber-input:focus {
-  border-color: #ffd700;
+  border-color: var(--gold-primary);
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
 }
