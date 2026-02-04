@@ -1790,8 +1790,8 @@ const App = () => {
                             <img src="/image/Logo.png?v=4" className="h-32 sm:h-52 w-auto object-contain transition-all" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
-                            <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors active:scale-95 transition-transform">
-                                <Icons.Plus className="w-5 h-5" />
+                            <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform">
+                                <Icons.Plus className="w-6 h-6" />
                             </button>
 
                             <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">

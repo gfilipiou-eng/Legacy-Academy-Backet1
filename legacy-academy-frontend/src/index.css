@@ -84,19 +84,18 @@ body {
 }
 
 .nav-center-action {
-  @apply w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300;
+  @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300;
   background: linear-gradient(135deg, #ffd700, #ffb700);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  transform: translateY(-4px);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .nav-center-action svg {
   color: #1a1a1a;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
-  width: 22px;
-  height: 22px;
-  stroke-width: 3px;
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
