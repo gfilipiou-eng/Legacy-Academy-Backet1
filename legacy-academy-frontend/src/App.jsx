@@ -564,10 +564,21 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         setSaving(true);
         try {
             const res = await axios.put('/users/settings', { [key]: val });
-            if (onUpdateUser) onUpdateUser(res.data);
-            localStorage.setItem('user', JSON.stringify(res.data));
+            const updatedUser = res.data;
+            if (onUpdateUser) onUpdateUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+
+            // Sync local checkbox states
+            if (key === 'isPrivate') setIsPrivate(val);
+            if (key === 'isFollowersOnly') setIsFollowersOnly(val);
+
             playSound('pop');
-        } catch (e) { console.error("Settings update failed", e); }
+        } catch (e) {
+            console.error("Settings update failed", e);
+            // Revert state on error?
+            if (key === 'isPrivate') setIsPrivate(!val);
+            if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
+        }
         finally { setSaving(false); }
     };
 
@@ -866,79 +877,81 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     return (
         <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
-                <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD</h2>
-                <div className="flex gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                        {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+                <div className="overflow-y-auto custom-scrollbar pr-1 flex-1">
+                    <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD</h2>
+                    <div className="flex gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
+                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
+                        </div>
+                        <textarea id="c-desc" placeholder="Decrypt your thoughts..." className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
                     </div>
-                    <textarea id="c-desc" placeholder="Decrypt your thoughts..." className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                </div>
 
-                {/* YouTube URL input */}
-                <div className="mb-3">
-                    <input id="c-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
-                        const v = e.target.value || '';
-                        if (isYouTubeUrl(v)) {
-                            const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
-                            const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
-                            setPreview(thumb);
-                            setIsVideo(true);
-                        } else if (!v) {
-                            setPreview(null);
-                            setIsVideo(false);
-                        }
-                    }} />
-                    <div className="text-[10px] text-gray-400 mt-1">Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.</div>
-                </div>
-
-                <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
-                    {preview ? (
-                        <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
-                            {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
-                            <button onClick={(e) => { e.stopPropagation(); setPreview(null); fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
-                        </div>
-                    ) : (
-                        <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
-                            <Icons.Image className="w-8 h-8 opacity-50" />
-                            <span className="text-xs font-bold uppercase tracking-widest">Add Media</span>
-                        </div>
-                    )}
-                    <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
-                </div>
-                <div className="flex gap-4 items-center mb-4">
-                    <div onClick={() => setIsStory(!isStory)} className="flex items-center gap-2 cursor-pointer bg-white/5 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors border border-white/5">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isStory ? 'border-yellow-500 bg-yellow-500' : 'border-gray-500'}`}>
-                            {isStory && <Icons.Check className="w-3 h-3 text-black font-bold" />}
-                        </div>
-                        <span className={`text-xs font-bold uppercase tracking-widest ${isStory ? 'text-yellow-500' : 'text-gray-500'}`}>Add to Story (24h)</span>
+                    {/* YouTube URL input */}
+                    <div className="mb-3">
+                        <input id="c-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
+                            const v = e.target.value || '';
+                            if (isYouTubeUrl(v)) {
+                                const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
+                                const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+                                setPreview(thumb);
+                                setIsVideo(true);
+                            } else if (!v) {
+                                setPreview(null);
+                                setIsVideo(false);
+                            }
+                        }} />
+                        <div className="text-[10px] text-gray-400 mt-1">Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.</div>
                     </div>
-                </div>
 
-                <div className="flex gap-4">
-                    <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">CANCEL</button>
-                    <button disabled={creating} onClick={async () => {
-                        if (creating) return;
-                        const desc = document.getElementById('c-desc').value;
-                        const youtube = document.getElementById('c-youtube').value;
-                        const file = fileRef.current.files[0];
-                        if (!desc && !file && !youtube) return;
-                        const fd = new FormData(); fd.append('desc', desc);
-                        if (youtube) fd.append('videoUrl', youtube.trim());
-                        else if (file) fd.append('image', file);
-                        fd.append('isStory', isStory);
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
+                        {preview ? (
+                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
+                                {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
+                            </div>
+                        ) : (
+                            <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
+                                <Icons.Image className="w-8 h-8 opacity-50" />
+                                <span className="text-xs font-bold uppercase tracking-widest">Add Media</span>
+                            </div>
+                        )}
+                        <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
+                    </div>
+                    <div className="flex gap-4 items-center mb-4">
+                        <div onClick={() => setIsStory(!isStory)} className="flex items-center gap-2 cursor-pointer bg-white/5 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors border border-white/5">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isStory ? 'border-yellow-500 bg-yellow-500' : 'border-gray-500'}`}>
+                                {isStory && <Icons.Check className="w-3 h-3 text-black font-bold" />}
+                            </div>
+                            <span className={`text-xs font-bold uppercase tracking-widest ${isStory ? 'text-yellow-500' : 'text-gray-500'}`}>Add to Story (24h)</span>
+                        </div>
+                    </div>
 
-                        try {
-                            setCreating(true);
-                            await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                            onSuccess(); playSound('pop');
-                            // clear inputs
-                            document.getElementById('c-desc').value = '';
-                            document.getElementById('c-youtube').value = '';
-                            setPreview(null); fileRef.current.value = '';
-                            setIsStory(false);
-                        } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                    }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? 'POST STORY' : 'POST')}</button>
+                    <div className="flex gap-4">
+                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">CANCEL</button>
+                        <button disabled={creating} onClick={async () => {
+                            if (creating) return;
+                            const desc = document.getElementById('c-desc').value;
+                            const youtube = document.getElementById('c-youtube').value;
+                            const file = fileRef.current.files[0];
+                            if (!desc && !file && !youtube) return;
+                            const fd = new FormData(); fd.append('desc', desc);
+                            if (youtube) fd.append('videoUrl', youtube.trim());
+                            else if (file) fd.append('image', file);
+                            fd.append('isStory', isStory);
+
+                            try {
+                                setCreating(true);
+                                await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                                onSuccess(); playSound('pop');
+                                // clear inputs
+                                document.getElementById('c-desc').value = '';
+                                document.getElementById('c-youtube').value = '';
+                                setPreview(null); fileRef.current.value = '';
+                                setIsStory(false);
+                            } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? 'POST STORY' : 'POST')}</button>
+                    </div>
                 </div>
             </motion.div>
         </div>
@@ -1092,7 +1105,15 @@ const App = () => {
     const [registerPreview, setRegisterPreview] = useState(null);
 
 
-    useEffect(() => { const saved = localStorage.getItem('user'); if (saved) setUser(JSON.parse(saved)); }, []);
+    useEffect(() => {
+        const saved = localStorage.getItem('user');
+        if (saved) setUser(JSON.parse(saved));
+
+        const savedTheme = localStorage.getItem('themeColor');
+        if (savedTheme) {
+            document.documentElement.style.setProperty('--gold-primary', savedTheme);
+        }
+    }, []);
 
     // Use a ref to track the last user ID we initialized for, to avoid loops
     const lastInitializedId = useRef(null);
@@ -1558,26 +1579,24 @@ const App = () => {
                     </div>
                 </main>
 
-                {(!isProfileOpen && !selectedPost && !isChatOpen && !isCreateOpen && !isEditOpen && !isSettingsOpen) && (
-                    <div className="fixed bottom-4 left-0 right-0 px-4 flex justify-center z-[200]">
-                        <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10">
-                            <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
-                            <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
+                <div className="fixed bottom-4 left-0 right-0 px-4 flex justify-center z-[200]">
+                    <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10">
+                        <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
+                        <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
 
-                            <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
-                                <Icons.Plus className="w-7 h-7 text-yellow-500" />
-                            </button>
+                        <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
+                            <Icons.Plus className="w-7 h-7 text-yellow-500" />
+                        </button>
 
-                            <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
+                        <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
 
-                            <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
-                                <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
-                                    {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
-                                </div>
-                            </button>
-                        </div>
+                        <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                            <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
+                                {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
+                            </div>
+                        </button>
                     </div>
-                )}
+                </div>
 
                 <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
                 <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />

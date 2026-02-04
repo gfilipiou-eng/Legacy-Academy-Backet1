@@ -70,9 +70,9 @@ body {
 }
 
 .nav-item-active {
-  background: rgba(255, 215, 0, 0.1) !important;
-  color: #ffd700 !important;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--gold-primary) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
 
 .nav-center-action {
@@ -132,13 +132,14 @@ body {
 
 /* --- TEXT & BRANDING --- */
 
+
+
 .gold-text {
-  background: linear-gradient(to bottom, #fff 0%, #ffd700 100%);
+  background: linear-gradient(to bottom, #fff 0%, var(--gold-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 900;
   letter-spacing: -1px;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
 .founder-glow {
@@ -149,7 +150,7 @@ body {
 
 .liquid-btn {
   position: relative;
-  background: linear-gradient(180deg, #FFD700, #b8860b);
+  background: linear-gradient(180deg, var(--gold-primary), var(--gold-secondary));
   color: black;
   font-weight: 800;
   overflow: hidden;
