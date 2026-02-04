@@ -545,7 +545,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
     const [inputText, setInputText] = useState('');
-    const [searchQuery, setSearchQuery] = useState(''); // New search state
+    const [searchQuery, setSearchQuery] = useState('');
     const scrollRef = useRef();
 
     const fetchMessages = async (otherUserId) => {
@@ -581,11 +581,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             playSound('pop');
         } catch (e) {
             console.error('Send failed', e);
-            setInputText(text); // Restore text on failure
+            setInputText(text);
         }
     };
 
-    // Filter users based on search
     const filteredUsers = allUsers.filter(u =>
         u._id !== user?._id &&
         u.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -599,7 +598,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex justify-between items-center"><h2 className="text-xl font-black italic">{t('CHAT')}</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
-                        {/* Search Input */}
                         <div className="relative">
                             <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                             <input
@@ -742,7 +740,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <button key={c} onClick={() => {
                                         document.documentElement.style.setProperty('--gold-primary', c);
                                         localStorage.setItem('themeColor', c);
-                                        setUser(prev => ({ ...prev })); // Force re-render to update UI
+                                        onUpdateUser({ ...user }); // Force re-render to update UI
                                     }} className={`w-8 h-8 rounded-full border transition-all ${isActive ? 'scale-125 border-white ring-2 ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.5)]' : 'border-white/10 hover:scale-110'}`} style={{ background: c }} />
                                 );
                             })}
@@ -1804,7 +1802,7 @@ const App = () => {
                 <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
                     <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-10 sm:h-12 w-auto object-contain transition-all" alt="Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform">
