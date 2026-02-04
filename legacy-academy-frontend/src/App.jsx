@@ -599,7 +599,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const handleSave = async (key, val) => {
         setSaving(true);
         try {
-            const res = await axios.put('/users/settings', { [key]: val });
+            // FIX: Nested settings support for language
+            let payload = { [key]: val };
+            if (key === 'language') payload = { settings: { language: val } };
+
+            const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
 
             if (key === 'isPrivate') setIsPrivate(val);
