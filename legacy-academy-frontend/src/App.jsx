@@ -9,11 +9,23 @@ import { playSound, explodeEffect } from './utils/sounds';
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
 
-const resolveMediaUrl = (path) => {
+const resolveMediaUrl = (path, width = null) => {
     if (!path) return '';
-    if (path.startsWith('http') || path.startsWith('blob:')) return path;
-    const sep = path.includes('?') ? '&' : '?';
-    return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+    let url = path;
+    if (!path.startsWith('http') && !path.startsWith('blob:')) {
+        url = `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+    }
+
+    // AUTO-OPTIMIZE CLOUDINARY
+    if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+        const parts = url.split('/upload/');
+        // Only inject if not already transformed
+        if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
+            const transform = width ? `w_${width},c_fill,g_face,q_auto,f_auto` : 'q_auto,f_auto';
+            url = `${parts[0]}/upload/${transform}/${parts[1]}`;
+        }
+    }
+    return url;
 };
 
 // Helpers for Youtube detection/embed
@@ -102,7 +114,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     return (
         <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 items-start group/comment relative">
             <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
-                {isCommentAuthor && user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : (comment.user?.profilePic || comment.authorProfilePic ? <img src={resolveMediaUrl(comment.user?.profilePic || comment.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={comment.user?.username || comment.authorName} />)}
+                {isCommentAuthor && user?.profilePic ? <img src={resolveMediaUrl(user.profilePic, 100)} className="w-full h-full object-cover" /> : (comment.user?.profilePic || comment.authorProfilePic ? <img src={resolveMediaUrl(comment.user?.profilePic || comment.authorProfilePic, 100)} className="w-full h-full object-cover" /> : <DefaultAvatar name={comment.user?.username || comment.authorName} />)}
             </div>
 
             <div className="flex-1">
@@ -287,15 +299,31 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
     );
 };
 
-const StoriesBar = ({ stories, onViewStory }) => {
-    if (!stories || stories.length === 0) return null;
+const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     return (
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
-            {stories.map((story, i) => (
+            {/* CURRENT USER ADD STORY */}
+            <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
+                <div className="w-16 h-16 rounded-full p-[2px] bg-white/10 group hover:bg-yellow-500 transition-colors">
+                    <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 relative">
+                        {user?.profilePic ? (
+                            <img src={resolveMediaUrl(user.profilePic, 200)} className="w-full h-full object-cover opacity-80" />
+                        ) : (
+                            <DefaultAvatar name={user?.username} />
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
+                        </div>
+                    </div>
+                </div>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Your Story</span>
+            </div>
+
+            {stories && stories.map((story, i) => (
                 <div key={i} onClick={() => onViewStory(story)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                     <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-yellow-500 to-red-600">
                         <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900">
-                            {story.author?.profilePic ? <img src={resolveMediaUrl(story.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={story.author?.username} />}
+                            {story.author?.profilePic ? <img src={resolveMediaUrl(story.author.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={story.author?.username} />}
                         </div>
                     </div>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{story.author?.username}</span>
@@ -358,7 +386,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 <div className="flex items-start gap-3">
                     <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
                         <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                            {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
+                            {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
                         </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -1766,7 +1794,7 @@ const App = () => {
                             </div>
                         ) : (
                             <>
-                                {activeTab !== 'search' && <StoriesBar stories={stories} onViewStory={(s) => setSelectedPost(s)} />}
+                                {activeTab !== 'search' && <StoriesBar stories={stories} user={user} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
                                 <div className="p-4 sm:p-8">
                                     {activeTab === 'search' && (
                                         <div className="mb-8 space-y-4 animate-fade-in">
@@ -1780,7 +1808,7 @@ const App = () => {
                                                 {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                     <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                                                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                                            {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
+                                                            {u.profilePic ? <img src={resolveMediaUrl(u.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
                                                         </div>
                                                         <div className="flex-1">
                                                             <div className="font-bold text-white text-sm flex items-center gap-2">
