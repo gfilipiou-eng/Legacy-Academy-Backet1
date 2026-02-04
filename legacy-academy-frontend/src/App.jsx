@@ -685,16 +685,20 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('COGNITION')}</div>
-                        <div className="flex gap-4">
+                        <div className="grid grid-cols-4 gap-2">
                             {[
                                 { id: 'en', label: 'English', flag: '🇺🇸' },
-                                { id: 'el', label: 'Ελληνικά', flag: 'GR' },
-                                { id: 'de', label: 'Deutsch', flag: 'DE' },
-                                { id: 'cy', label: 'Kypriaka', flag: 'CY' }
+                                { id: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
+                                { id: 'de', label: 'Deutsch', flag: '🇩🇪' },
+                                { id: 'cy', label: 'Kypriaka', flag: '🇨🇾' },
+                                { id: 'ru', label: 'Русский', flag: '🇷🇺' },
+                                { id: 'es', label: 'Español', flag: '🇪🇸' },
+                                { id: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+                                { id: 'fr', label: 'Français', flag: '🇫🇷' }
                             ].map(l => (
-                                <button key={l.id} onClick={() => { handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`flex-1 p-2 rounded-xl border transition-all ${lang === l.id ? 'border-yellow-500 bg-yellow-500/10' : 'border-white/5 bg-white/5'}`}>
-                                    <div className="text-lg">{l.flag}</div>
-                                    <div className="text-[10px] font-bold text-white mt-1">{l.label}</div>
+                                <button key={l.id} onClick={() => { handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-yellow-500 bg-yellow-500/10' : 'border-white/5 bg-white/5'}`}>
+                                    <div className="text-xl">{l.flag}</div>
+                                    <div className="text-[8px] sm:text-[9px] font-bold text-white mt-1 uppercase tracking-tight">{l.label}</div>
                                 </button>
                             ))}
                         </div>
