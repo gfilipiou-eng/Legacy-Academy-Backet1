@@ -305,7 +305,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-16 h-16 rounded-full p-[2px] bg-white/10 group hover:bg-yellow-500 transition-colors">
+                <div className={`w-16 h-16 rounded-full p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-yellow-500 to-red-600' : 'bg-white/10 group hover:bg-yellow-500'} transition-colors`}>
                     <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 relative">
                         {user?.profilePic ? (
                             <img src={resolveMediaUrl(user.profilePic, 200)} className="w-full h-full object-cover opacity-80" />
@@ -541,6 +541,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 // Re-inserting them to ensure full file integrity
 
 const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
+    const { t } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
     const [inputText, setInputText] = useState('');
@@ -931,6 +932,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="font-black text-white text-xl mb-1 flex items-center gap-2">
                                     {displayUser?.username || "Unknown Agent"}
                                     {displayUser?.role === 'Founder' && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
+                                    {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2 h-2 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-glow-green' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? 'Online' : 'Offline'} />}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
@@ -1142,7 +1144,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     );
 };
 
-const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
+const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
+    const { t } = useTranslation(user);
     const [desc, setDesc] = useState(post?.desc || '');
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
@@ -1881,7 +1884,7 @@ const App = () => {
                 <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
                 <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
                 <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-                <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
+                <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                 {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
 
             </div >
