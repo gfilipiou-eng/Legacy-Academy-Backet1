@@ -568,7 +568,22 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
 
-    // ... handleSend ...
+    const handleSend = async () => {
+        if (!inputText.trim() || !activeChat) return;
+        const text = inputText;
+        setInputText('');
+        try {
+            const res = await axios.post('/messages', { recipient: activeChat._id, text });
+            setMessages(prev => ({
+                ...prev,
+                [activeChat._id]: [...(prev[activeChat._id] || []), res.data]
+            }));
+            playSound('pop');
+        } catch (e) {
+            console.error('Send failed', e);
+            setInputText(text); // Restore text on failure
+        }
+    };
 
     // Filter users based on search
     const filteredUsers = allUsers.filter(u =>
@@ -1567,7 +1582,7 @@ const App = () => {
                 fetchUsers(); // Fallback
             }
 
-            if (message === 'Requested') alert("Verification requested from agent.");
+            if (message === 'Requested') addToast("ENCRYPTION REQUESTED", "success");
             playSound('pop');
         } catch (e) {
             console.error('Follow failed', e);
@@ -1789,18 +1804,18 @@ const App = () => {
                 <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
                     <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-32 sm:h-52 w-auto object-contain transition-all" alt="Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-10 sm:h-12 w-auto object-contain transition-all" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform">
                                 <Icons.Plus className="w-6 h-6" />
                             </button>
 
-                            <button onClick={() => setIsChatOpen(true)} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
+                            <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative">
                                 <Icons.MessageCircle className="w-5 h-5" />
-                                <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
+                                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
                             </button>
-                            <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
+                            <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn">
                                 <Icons.Settings className="w-5 h-5 text-gray-400" />
                             </button>
                         </div>
