@@ -126,8 +126,16 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
 
                 {/* ACTIONS */}
                 <div className="flex gap-2 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
-                    {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] text-gray-400 hover:text-blue-400 font-bold uppercase tracking-widest transition-colors border border-white/5">{t('EDIT_BTN')}</button>}
-                    {canDelete && <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="px-2 py-1 bg-white/5 hover:bg-red-500/20 rounded-lg text-[9px] text-gray-400 hover:text-red-400 font-bold uppercase tracking-widest transition-colors border border-white/5">{t('DELETE_BTN')}</button>}
+                    {canEdit && !isEditing && (
+                        <button onClick={() => setIsEditing(true)} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] text-gray-400 hover:text-blue-400 font-bold uppercase tracking-widest transition-colors border border-white/5">
+                            <Icons.Edit className="w-3 h-3" /> {t('EDIT_BTN')}
+                        </button>
+                    )}
+                    {canDelete && (
+                        <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-red-500/20 rounded-lg text-[9px] text-gray-400 hover:text-red-400 font-bold uppercase tracking-widest transition-colors border border-white/5">
+                            <Icons.Trash className="w-3 h-3" /> {t('DELETE_BTN')}
+                        </button>
+                    )}
                 </div>
             </div>
         </motion.div>
