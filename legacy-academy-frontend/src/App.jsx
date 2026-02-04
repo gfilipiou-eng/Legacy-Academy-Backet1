@@ -1318,23 +1318,23 @@ const App = () => {
 
     // Polling for notifications (simple fallback to websockets)
     let _notifInterval = null;
-    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 20000); };
+    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 30000); };
     const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
 
     // Heartbeat for presence
     // Heartbeat for presence (updates lastSeen in DB)
     let _hbInterval = null;
-    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 10000); };
+    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 30000); };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
     // User Presence Polling (refresh user list to see online status)
     let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 15000); };
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 60000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     // Post Polling for Real-Time feed
     let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 5000); };
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 15000); };
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
@@ -1713,8 +1713,8 @@ const App = () => {
                                 <div className="flex items-center justify-between mb-6 px-2">
                                     <h2 className="text-xl font-bold text-white/90">Notifications</h2>
                                     {alerts.length > 0 && (
-                                        <button onClick={deleteNotifications} className="p-2 bg-white/5 rounded-full hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-colors">
-                                            <Icons.Trash className="w-4 h-4" />
+                                        <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
+                                            <Icons.Trash className="w-5 h-5" />
                                         </button>
                                     )}
                                 </div>
