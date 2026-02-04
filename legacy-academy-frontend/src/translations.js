@@ -28,7 +28,13 @@ export const TRANSLATIONS = {
         AWAITING_AUTH: 'AWAITING AUTH', NEURAL_LOGS: 'NEURAL LOGS', FOLLOWED_YOU: 'followed you',
         COMMENTED: 'commented', MENTIONED_YOU: 'mentioned you', NO_ACTIVITY: 'NO ACTIVITY LOGGED',
         TITLE: 'TITLE', DESCRIPTION: 'DESCRIPTION', PUBLISH: 'PUBLISH', ACTIVITY: 'ACTIVITY',
-        SEE_TRANSLATION: 'See Translation', SHOW_ORIGINAL: 'Show Original'
+        SEE_TRANSLATION: 'See Translation', SHOW_ORIGINAL: 'Show Original',
+        FOUNDER_BADGE: 'FOUNDER', MEMBER_BADGE: 'MEMBER', TERMINATE_CONFIRM: 'Terminate intel packet?',
+        NO_COMMENTS: 'No strategic discussion yet.', ENGAGE: 'Engage...', POST_BTN: 'POST',
+        NOTIF_FOLLOW: 'joined your network', NOTIF_LIKE: 'endorsed intel', NOTIF_COMMENT: 'briefed post',
+        NOTIF_MESSAGE: 'encrypted message', NOTIF_MENTION: 'flagged you', NOTIF_REQUEST: 'clearance req',
+        AUTHORIZE: 'AUTHORIZE', DENY: 'DENY',
+        SAVE_BTN: 'Save', CANCEL_BTN: 'Cancel'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -59,7 +65,13 @@ export const TRANSLATIONS = {
         AWAITING_AUTH: 'ΑΝΑΜΟΝΗ ΕΓΚΡΙΣΗΣ', NEURAL_LOGS: 'ΑΡΧΕΙΑ ΣΥΣΤΗΜΑΤΟΣ', FOLLOWED_YOU: 'σας ακολούθησε',
         COMMENTED: 'σχολίασε', MENTIONED_YOU: 'σας ανέφερε', NO_ACTIVITY: 'ΚΑΜΙΑ ΔΡΑΣΤΗΡΙΟΤΗΤΑ',
         TITLE: 'ΤΙΤΛΟΣ', DESCRIPTION: 'ΠΕΡΙΓΡΑΦΗ', PUBLISH: 'ΔΗΜΟΣΙΕΥΣΗ', ACTIVITY: 'ΔΡΑΣΤΗΡΙΟΤΗΤΑ',
-        SEE_TRANSLATION: 'Δείτε τη μετάφραση', SHOW_ORIGINAL: 'Πρωτότυπο κείμενο'
+        SEE_TRANSLATION: 'Δείτε τη μετάφραση', SHOW_ORIGINAL: 'Πρωτότυπο κείμενο',
+        FOUNDER_BADGE: 'ΙΔΡΥΤΗΣ', MEMBER_BADGE: 'ΜΕΛΟΣ', TERMINATE_CONFIRM: 'Διαγραφή πληροφοριών;',
+        NO_COMMENTS: 'Καμία συζήτηση ακόμα.', ENGAGE: 'Σχολιάστε...', POST_BTN: 'ΔΗΜΟΣΙΕΥΣΗ',
+        NOTIF_FOLLOW: 'μπήκε στο δίκτυο', NOTIF_LIKE: 'ενέκρινε πληροφορίες', NOTIF_COMMENT: 'σχολίασε',
+        NOTIF_MESSAGE: 'νέο μήνυμα', NOTIF_MENTION: 'σας ανέφερε', NOTIF_REQUEST: 'αίτημα',
+        AUTHORIZE: 'ΕΓΚΡΙΣΗ', DENY: 'ΑΠΟΡΡΙΨΗ',
+        SAVE_BTN: 'Αποθήκευση', CANCEL_BTN: 'Ακύρωση'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -92,7 +104,13 @@ export const TRANSLATIONS = {
         TITLE: 'TITLOS', DESCRIPTION: 'PERIGRAPHI', PUBLISH: 'VALTO', ACTIVITY: 'ACTIVITY',
         SEE_TRANSLATION: 'Vlepw t metafrasi', SHOW_ORIGINAL: 'Prototipo',
         BAN_USER: 'BAN AGENT', BAN_3DAYS: 'BAN 3 DAYS', BAN_EXPIRED: 'BAN EXPIRED',
-        DELETE_ACCOUNT_CONFIRM: 'TERMINATE ACCOUNT PERMANENTLY?'
+        DELETE_ACCOUNT_CONFIRM: 'TERMINATE ACCOUNT PERMANENTLY?',
+        FOUNDER_BADGE: 'ARCHIGOS', MEMBER_BADGE: 'PEXTIS', TERMINATE_CONFIRM: 'Svise to intel?',
+        NO_COMMENTS: 'En eshi kouventa.', ENGAGE: 'Grapse...', POST_BTN: 'VALTO',
+        NOTIF_FOLLOW: 'mpike sto pexnidi', NOTIF_LIKE: 'arese to intel', NOTIF_COMMENT: 'evale sxolio',
+        NOTIF_MESSAGE: 'minima', NOTIF_MENTION: 'se anefere', NOTIF_REQUEST: 'thelei mpei',
+        AUTHORIZE: 'OK', DENY: 'OXI',
+        SAVE_BTN: 'Fula', CANCEL_BTN: 'Akyro'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -123,7 +141,13 @@ export const TRANSLATIONS = {
         AWAITING_AUTH: 'WARTET AUF AUTH', NEURAL_LOGS: 'PROTOKOLLE', FOLLOWED_YOU: 'ist dir gefolgt',
         COMMENTED: 'hat kommentiert', MENTIONED_YOU: 'hat dich erwähnt', NO_ACTIVITY: 'KEINE AKTIVITÄT',
         TITLE: 'TITEL', DESCRIPTION: 'BESCHREIBUNG', PUBLISH: 'POSTEN', ACTIVITY: 'AKTIVITÄT',
-        SEE_TRANSLATION: 'Übersetzung anzeigen', SHOW_ORIGINAL: 'Original anzeigen'
+        SEE_TRANSLATION: 'Übersetzung anzeigen', SHOW_ORIGINAL: 'Original anzeigen',
+        FOUNDER_BADGE: 'GRÜNDER', MEMBER_BADGE: 'MITGLIED', TERMINATE_CONFIRM: 'Intel-Paket beenden?',
+        NO_COMMENTS: 'Keine strategische Diskussion.', ENGAGE: 'Interagieren...', POST_BTN: 'POSTEN',
+        NOTIF_FOLLOW: 'trat deinem Netzwerk bei', NOTIF_LIKE: 'hat Intel bestätigt', NOTIF_COMMENT: 'kommentierte Beitrag',
+        NOTIF_MESSAGE: 'Verschlüsselte Nachricht', NOTIF_MENTION: 'hat dich markiert', NOTIF_REQUEST: 'Freigabeanfrage',
+        AUTHORIZE: 'GENEHMIGEN', DENY: 'ABLEHNEN',
+        SAVE_BTN: 'Speichern', CANCEL_BTN: 'Abbrechen'
     }
 };
 

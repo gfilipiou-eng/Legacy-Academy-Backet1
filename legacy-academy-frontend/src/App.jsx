@@ -77,7 +77,7 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
-const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
+const CommentItem = ({ comment, post, user, onEdit, onDelete, t }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
@@ -111,8 +111,8 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
                         <div className="mt-1">
                             <input autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-xs text-white outline-none mb-2" />
                             <div className="flex gap-2">
-                                <button onClick={handleSave} className="text-[10px] uppercase font-bold text-green-500 hover:text-green-400">Save</button>
-                                <button onClick={() => setIsEditing(false)} className="text-[10px] uppercase font-bold text-gray-400 hover:text-white">Cancel</button>
+                                <button onClick={handleSave} className="text-[10px] uppercase font-bold text-green-500 hover:text-green-400">{t('SAVE_BTN')}</button>
+                                <button onClick={() => setIsEditing(false)} className="text-[10px] uppercase font-bold text-gray-400 hover:text-white">{t('CANCEL_BTN')}</button>
                             </div>
                         </div>
                     ) : (
@@ -122,8 +122,8 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete }) => {
 
                 {/* ACTIONS */}
                 <div className="flex gap-3 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
-                    {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-bold uppercase tracking-widest">Edit</button>}
-                    {canDelete && <button onClick={() => onDelete(post._id, comment._id)} className="text-[10px] text-gray-500 hover:text-red-500 font-bold uppercase tracking-widest">Delete</button>}
+                    {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-bold uppercase tracking-widest">{t('EDIT_BTN')}</button>}
+                    {canDelete && <button onClick={() => onDelete(post._id, comment._id)} className="text-[10px] text-gray-500 hover:text-red-500 font-bold uppercase tracking-widest">{t('DELETE_BTN')}</button>}
                 </div>
             </div>
         </motion.div>
@@ -168,15 +168,15 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             <div className="flex flex-col">
                                 <span className="font-bold text-white leading-none">{post.author?.username}</span>
                                 {post.author?.role === 'Founder' ? (
-                                    <span className="text-[10px] text-red-600 mt-1 uppercase font-black tracking-widest drop-shadow-sm">FOUNDER</span>
+                                    <span className="text-[10px] text-red-600 mt-1 uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                 ) : (
-                                    <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">MEMBER</span>
+                                    <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
                                 )}
                             </div>
                         </div>
                         <div className="flex gap-1">
                             {isOwner && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
-                            {(isOwner || isFounder) && <button onClick={() => { if (confirm("Terminate intel packet?")) { onDelete(post._id); onClose(); } }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                            {(isOwner || isFounder) && <button onClick={() => { if (confirm(t('TERMINATE_CONFIRM'))) { onDelete(post._id); onClose(); } }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
 
@@ -185,9 +185,9 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                         <div className="space-y-4 pb-4">
                             <AnimatePresence>
                                 {post.comments?.map((c, i) => (
-                                    <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} />
+                                    <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
                                 ))}
-                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">No strategic discussion yet.</div>}
+                                {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">{t('NO_COMMENTS')}</div>}
                             </AnimatePresence>
                         </div>
                     </div>
@@ -207,8 +207,8 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             </div>
                         </div>
                         <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-yellow-500/50 transition-all">
-                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Engage..." className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
-                            <button disabled={!commentText.trim()} className="text-yellow-500 font-black text-xs uppercase tracking-widest disabled:opacity-20">Post</button>
+                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
+                            <button disabled={!commentText.trim()} className="text-yellow-500 font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST_BTN')}</button>
                         </form>
                     </div>
                 </div>
@@ -217,7 +217,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
     );
 };
 
-const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest }) => {
+const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t }) => {
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -245,12 +245,12 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                 <div className="text-sm">
                     <span className="font-black text-white group-hover:text-yellow-500 transition-colors uppercase tracking-tight">{note.fromUsername}</span>
                     <span className="text-gray-500 text-[10px] sm:text-[11px] ml-1 uppercase tracking-widest font-bold">
-                        {note.type === 'follow' ? 'joined your network' :
-                            note.type === 'like' ? 'endorsed intel' :
-                                note.type === 'comment' ? 'briefed post' :
-                                    note.type === 'message' ? 'encrypted message' :
-                                        note.type === 'mention' ? 'flagged you' :
-                                            note.type === 'follow_request' ? 'clearance req' : ''}
+                        {note.type === 'follow' ? t('NOTIF_FOLLOW') :
+                            note.type === 'like' ? t('NOTIF_LIKE') :
+                                note.type === 'comment' ? t('NOTIF_COMMENT') :
+                                    note.type === 'message' ? t('NOTIF_MESSAGE') :
+                                        note.type === 'mention' ? t('NOTIF_MENTION') :
+                                            note.type === 'follow_request' ? t('NOTIF_REQUEST') : ''}
                     </span>
                 </div>
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
@@ -261,8 +261,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-yellow-500/20 uppercase tracking-widest">Authorize</button>
-                        <button onClick={() => onRejectRequest(note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">Deny</button>
+                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-yellow-500/20 uppercase tracking-widest">{t('AUTHORIZE')}</button>
+                        <button onClick={() => onRejectRequest(note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
                     </div>
                 )}
             </div>
@@ -353,7 +353,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             <div className="flex flex-col">
                                 <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1">
                                     {post.author?.username}
-                                    {isPostAuthorFounder && <span className="bg-red-600/80 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider ml-1 border border-red-500/20">FOUNDER</span>}
+                                    {isPostAuthorFounder && <span className="bg-red-600/80 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider ml-1 border border-red-500/20">{t('FOUNDER_BADGE')}</span>}
                                 </span>
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-red-400 font-medium' : 'text-gray-500'}`}>
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt)}
@@ -366,7 +366,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     </button>
                                 )}
                                 {(isOwner || isFounder) && (
-                                    <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); if (confirm("Terminate intel packet?")) handleDelete(); }} className="text-gray-500 hover:text-red-500 p-5 -m-2 hover:bg-red-500/10 rounded-full transition-all group/trash z-[50]">
+                                    <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); if (confirm(t('TERMINATE_CONFIRM'))) handleDelete(); }} className="text-gray-500 hover:text-red-500 p-5 -m-2 hover:bg-red-500/10 rounded-full transition-all group/trash z-[50]">
                                         <Icons.Trash className="w-5 h-5 group-hover/trash:scale-125" />
                                     </button>
                                 )}
@@ -1667,7 +1667,7 @@ const App = () => {
                                         </button>
                                     )}
                                 </div>
-                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">No visible threats.</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} />)}
+                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
                             </div>
                         ) : (
                             <>
