@@ -1347,6 +1347,27 @@ const App = () => {
         return () => { }; // Cleanup handled by functions
     }, [user]);
 
+    // FIX: Optimized search filtering with useMemo
+    const filteredPosts = React.useMemo(() => {
+        return posts.filter(p => {
+            if (p.isStory) return false;
+            const q = searchQuery.toLowerCase();
+            if (!q) return true;
+            const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
+            const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : (p.username ? p.username.toLowerCase().includes(q) : false);
+            return descMatch || authorMatch;
+        });
+    }, [posts, searchQuery]);
+
+    const stories = React.useMemo(() => {
+        return posts.filter(p => {
+            if (!p.isStory) return false;
+            const createdAt = new Date(p.createdAt).getTime();
+            const now = Date.now();
+            return (now - createdAt) < 24 * 60 * 60 * 1000;
+        });
+    }, [posts]);
+
     const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
     const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
 
@@ -1730,26 +1751,7 @@ const App = () => {
         </div >
     );
 
-    // FIX: Optimized search filtering with useMemo
-    const filteredPosts = React.useMemo(() => {
-        return posts.filter(p => {
-            if (p.isStory) return false;
-            const q = searchQuery.toLowerCase();
-            if (!q) return true;
-            const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
-            const authorMatch = p.author?.username ? p.author.username.toLowerCase().includes(q) : (p.username ? p.username.toLowerCase().includes(q) : false);
-            return descMatch || authorMatch;
-        });
-    }, [posts, searchQuery]);
 
-    const stories = React.useMemo(() => {
-        return posts.filter(p => {
-            if (!p.isStory) return false;
-            const createdAt = new Date(p.createdAt).getTime();
-            const now = Date.now();
-            return (now - createdAt) < 24 * 60 * 60 * 1000;
-        });
-    }, [posts]);
 
 
     return (
