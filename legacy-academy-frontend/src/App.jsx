@@ -560,24 +560,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         }
     }, [user]);
 
+
     const handleSave = async (key, val) => {
         setSaving(true);
         try {
             const res = await axios.put('/users/settings', { [key]: val });
-            const updatedUser = res.data;
-            if (onUpdateUser) onUpdateUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+            updateUserState(res.data);
 
-            // Sync local checkbox states
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-
             playSound('pop');
         } catch (e) {
             console.error("Settings update failed", e);
             // Revert state on error?
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
+            alert("Connection to neural link failed. Try again.");
         }
         finally { setSaving(false); }
     };
@@ -598,10 +596,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Only accepted followers see content</div>
                         </div>
                         <div onClick={() => {
+                            if (saving) return;
                             const newVal = !isPrivate;
                             setIsPrivate(newVal);
                             handleSave('isPrivate', newVal);
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-yellow-500' : 'bg-gray-700'}`}>
+                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-yellow-500' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
                             <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
                         </div>
                     </div>
@@ -612,10 +611,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Messages only from your followers</div>
                         </div>
                         <div onClick={() => {
+                            if (saving) return;
                             const newVal = !isFollowersOnly;
                             setIsFollowersOnly(newVal);
                             handleSave('isFollowersOnly', newVal);
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'}`}>
+                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
                             <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isFollowersOnly ? 'translate-x-5' : ''}`} />
                         </div>
                     </div>
@@ -1117,6 +1117,25 @@ const App = () => {
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
 
+    const updateUserState = (newData) => {
+        if (!newData) {
+            setUser(null);
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            return;
+        }
+        setUser(prev => {
+            const current = prev || JSON.parse(localStorage.getItem('user') || '{}');
+            const merged = { ...current, ...newData };
+            // Preserve cache-breakers (?t=...) if base path is identical
+            if (current.profilePic && newData.profilePic && current.profilePic.split('?')[0] === newData.profilePic.split('?')[0]) {
+                merged.profilePic = current.profilePic;
+            }
+            localStorage.setItem('user', JSON.stringify(merged));
+            return merged;
+        });
+    };
+
 
     useEffect(() => {
         const saved = localStorage.getItem('user');
@@ -1300,9 +1319,7 @@ const App = () => {
             }
 
             if (following) {
-                const updatedUser = { ...user, following };
-                setUser(updatedUser);
-                localStorage.setItem('user', JSON.stringify(updatedUser));
+                updateUserState({ following });
             } else {
                 fetchUsers(); // Refresh for requests
             }
@@ -1619,8 +1636,8 @@ const App = () => {
                 )}
 
                 <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
-                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
-                <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={setUser} />
+                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={updateUserState} />
+                <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={updateUserState} />
                 <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                 <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
                 {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
