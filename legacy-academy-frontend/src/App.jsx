@@ -597,7 +597,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-sm font-bold text-white group-hover:text-yellow-500 transition-colors">Private Account</div>
                             <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Only accepted followers see content</div>
                         </div>
-                        <div onClick={() => { setIsPrivate(!isPrivate); handleSave('isPrivate', !isPrivate); }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-yellow-500' : 'bg-gray-700'}`}>
+                        <div onClick={() => {
+                            const newVal = !isPrivate;
+                            setIsPrivate(newVal);
+                            handleSave('isPrivate', newVal);
+                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-yellow-500' : 'bg-gray-700'}`}>
                             <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
                         </div>
                     </div>
@@ -607,7 +611,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">Guard Chat</div>
                             <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Messages only from your followers</div>
                         </div>
-                        <div onClick={() => { setIsFollowersOnly(!isFollowersOnly); handleSave('isFollowersOnly', !isFollowersOnly); }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'}`}>
+                        <div onClick={() => {
+                            const newVal = !isFollowersOnly;
+                            setIsFollowersOnly(newVal);
+                            handleSave('isFollowersOnly', newVal);
+                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'}`}>
                             <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isFollowersOnly ? 'translate-x-5' : ''}`} />
                         </div>
                     </div>
@@ -629,7 +637,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {saving && <div className="text-[10px] text-yellow-500 text-center font-bold animate-pulse">SYNCING WITH NEURAL LINK...</div>}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
@@ -717,7 +725,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     // Immediate local update
                                     const localUrl = URL.createObjectURL(file);
                                     setUserData(prev => ({ ...prev, profilePic: localUrl })); // Optimistic update
-                                    if (currentUser._id === displayUser._id) {
+                                    if (currentUser && displayUser && String(currentUser._id) === String(displayUser._id)) {
                                         onUpdateUser({ ...currentUser, profilePic: localUrl });
                                     }
 
@@ -725,6 +733,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     try {
                                         const res = await axios.post('/users/profile-pic', fd);
                                         const updatedUser = res.data;
+                                        // Cache-break the new image
+                                        if (updatedUser.profilePic) {
+                                            const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
+                                            updatedUser.profilePic += `${sep}t=${Date.now()}`;
+                                        }
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
                                     } catch (e) { alert("Failed to update."); }
@@ -1584,7 +1597,7 @@ const App = () => {
                     </div>
                 </main>
 
-                {(!isChatOpen && !isProfileOpen && !isSettingsOpen) && (
+                {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                     <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
                         <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10 pointer-events-auto">
                             <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
