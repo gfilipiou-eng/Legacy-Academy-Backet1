@@ -77,7 +77,7 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
-const CommentItem = ({ comment, post, user, onEdit, onDelete, t = (k) => k }) => {
+const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
@@ -85,8 +85,9 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete, t = (k) => k }) =>
     // 1. Comment Author -> Edit, Delete
     // 2. Post Author -> Delete Only
     // 3. Founder -> Delete, Edit (Everything)
-    const isFounder = user?.role === 'Founder';
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
+    const commentAuthor = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
+    const isFounder = commentAuthor?.role === 'Founder';
     const isCommentAuthor = String(currentCommentAuthorId) === String(user?._id);
     const isPostAuthor = String(post.author?._id || post.author) === String(user?._id);
 
@@ -106,7 +107,10 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete, t = (k) => k }) =>
 
             <div className="flex-1">
                 <div className={`bg-white/10 rounded-2xl px-4 py-2 shadow-lg backdrop-blur-sm border border-white/5 transition-all ${isEditing ? 'bg-white/20' : ''}`}>
-                    <span className="font-bold text-xs mr-2 text-yellow-500 shadow-black drop-shadow-sm">{comment.user?.username || comment.authorName}</span>
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-xs text-yellow-500 shadow-black drop-shadow-sm">{comment.user?.username || comment.authorName}</span>
+                        {isFounder && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('MEMBER_BADGE')}</span>}
+                    </div>
                     {isEditing ? (
                         <div className="mt-1">
                             <input autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-xs text-white outline-none mb-2" />
@@ -130,7 +134,7 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete, t = (k) => k }) =>
     );
 };
 
-const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
     if (!post) return null;
     const [commentText, setCommentText] = useState('');
     const { t, lang } = useTranslation(user);
@@ -1771,7 +1775,7 @@ const App = () => {
                 <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={updateUserState} />
                 <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                 <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
-                {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
+                {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
 
             </div >
         </div >
