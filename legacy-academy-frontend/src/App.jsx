@@ -300,6 +300,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 };
 
 const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
+    const { t } = useTranslation(user);
     return (
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
@@ -525,8 +526,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                 <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
                                     {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user?.username} />}
                                 </div>
-                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
-                                <button disabled={!commentText.trim()} className="text-blue-500 font-bold text-sm disabled:opacity-50">{t('POST')}</button>
+                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleComment(e)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-yellow-500 placeholder-gray-600" />
+                                <button disabled={!commentText.trim()} className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors">{t('POST')}</button>
                             </form>
                         </div>
                     </motion.div>
@@ -969,12 +970,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                         {userStories.map(s => (
                                             <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                <div className="w-16 h-16 rounded-full border-2 border-yellow-500 p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10 bg-black overflow-hidden">
+                                                <div className="w-16 h-16 rounded-full border-2 border-yellow-500 p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10 bg-black overflow-hidden relative">
                                                     {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                                         <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                     ) : (
                                                         <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
                                                             <Icons.Play className="w-6 h-6 text-yellow-500" />
+                                                            {/* Ensure video doesn't autoplay in thumbnail view */}
+                                                            <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
                                                         </div>
                                                     )}
                                                 </div>
