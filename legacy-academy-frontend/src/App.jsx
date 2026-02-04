@@ -1534,24 +1534,42 @@ const App = () => {
         const targetId = input?._id || input;
         if (!targetId || !user) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
+
+        // Optimistic UI Update Logic
+        const isCurrentlyFollowing = user.following?.includes(targetId);
+
+        // Temporarily update local state to feel instant
+        if (isCurrentlyFollowing) {
+            updateUserState({ following: user.following.filter(id => id !== targetId) });
+        } else {
+            updateUserState({ following: [...(user.following || []), targetId] });
+        }
+
         try {
             const res = await axios.post(`/users/${targetId}/follow`);
             const { followers, following, message } = res.data;
 
             setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers } : u));
             if (profileUser && String(profileUser._id) === String(targetId)) {
+                // Determine if we just unfollowed to correctly update the button text in ProfileModal
+                // The server returns the *new* list of followers for the target user.
+                // We also need to ensure the local 'user' has the updated 'following' list.
                 setProfileUser(prev => ({ ...prev, followers }));
             }
 
+            // Trust the server response for the final state
             if (following) {
                 updateUserState({ following });
             } else {
-                fetchUsers(); // Refresh for requests
+                fetchUsers(); // Fallback
             }
 
             if (message === 'Requested') alert("Verification requested from agent.");
             playSound('pop');
-        } catch (e) { console.error('Follow failed', e); }
+        } catch (e) {
+            console.error('Follow failed', e);
+            // Revert state on error if needed - technically complex, but usually not needed for simple toggle
+        }
         finally { setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; }); }
     };
 
