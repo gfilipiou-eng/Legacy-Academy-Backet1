@@ -173,8 +173,8 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                             </div>
                         </div>
                         <div className="flex gap-1">
-                            {isOwner && <button onClick={() => onEdit(post)} className="p-2 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
-                            {isOwner && <button onClick={() => { if (confirm("Delete post?")) { onDelete(post._id); onClose(); } }} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                            {isOwner && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
+                            {(isOwner || isFounder) && <button onClick={() => { if (confirm("Terminate intel packet?")) { onDelete(post._id); onClose(); } }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
 
@@ -233,11 +233,11 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                 <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all shadow-lg">
                     {note.fromProfilePic ? <img src={resolveMediaUrl(note.fromProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={note.fromUsername} />}
                 </div>
-                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black shadow-glow-red"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black shadow-glow-blue"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black shadow-glow-green"><Icons.Mail className="w-3 h-3 text-white" /></div>}
-                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-yellow-500 rounded-full p-1 border-2 border-black shadow-glow-yellow"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
-                {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black shadow-glow-purple"><Icons.Shield className="w-3 h-3 text-white" /></div>}
+                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
+                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-yellow-500 rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
+                {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm">
@@ -322,7 +322,18 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card mb-4 rounded-3xl overflow-hidden relative border transform transition-all bg-[#050505] border-white/5">
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{
+                rotateX: 5, rotateY: 5,
+                z: 20,
+                transition: { duration: 0.3 }
+            }}
+            viewport={{ once: true }}
+            className="glass-card mb-4 rounded-3xl overflow-hidden relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98]"
+        >
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
@@ -336,7 +347,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             <div className="flex flex-col">
                                 <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1">
                                     {post.author?.username}
-                                    {isPostAuthorFounder && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red ml-1">FOUNDER</span>}
+                                    {isPostAuthorFounder && <span className="bg-red-600/80 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider ml-1 border border-red-500/20">FOUNDER</span>}
                                 </span>
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-red-400 font-medium' : 'text-gray-500'}`}>
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt)}
@@ -349,8 +360,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     </button>
                                 )}
                                 {(isOwner || isFounder) && (
-                                    <button onClick={(e) => { e.stopPropagation(); handleDelete(); }} className="text-gray-500 hover:text-red-500 p-3 hover:bg-red-500/10 rounded-full transition-all">
-                                        <Icons.Trash className="w-5 h-5" />
+                                    <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); if (confirm("Terminate intel packet?")) handleDelete(); }} className="text-gray-500 hover:text-red-500 p-5 -m-2 hover:bg-red-500/10 rounded-full transition-all group/trash z-[50]">
+                                        <Icons.Trash className="w-5 h-5 group-hover/trash:scale-125" />
                                     </button>
                                 )}
                             </div>
@@ -1077,12 +1088,14 @@ const App = () => {
             fetchUsers();
             startHeartbeat();
             startUserPoll();
+            startPostPoll();
             fetchNotifications();
             startNotificationPoll();
         } else if (!user) {
             lastInitializedId.current = null;
             stopHeartbeat();
             stopUserPoll();
+            stopPostPoll();
             stopNotificationPoll();
         }
         return () => { }; // Cleanup handled by functions
@@ -1129,6 +1142,11 @@ const App = () => {
     let _userInterval = null;
     const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 15000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
+
+    // Post Polling for Real-Time feed
+    let _postInterval = null;
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 5000); };
+    const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
     // react to activeTab change to mark notifications read
