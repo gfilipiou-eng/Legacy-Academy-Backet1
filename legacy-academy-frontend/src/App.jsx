@@ -11,7 +11,7 @@ const BASE_URL = API_URL.replace('/api', '');
 
 const resolveMediaUrl = (path) => {
     if (!path) return '';
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('http') || path.startsWith('blob:')) return path;
     const sep = path.includes('?') ? '&' : '?';
     return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 };
@@ -1369,7 +1369,12 @@ const App = () => {
     const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
-    const logout = () => { localStorage.clear(); setUser(null); window.location.reload(); };
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+        window.location.reload();
+    };
     const handleOpenChat = (u) => { setChatTarget(u); setIsChatOpen(true); };
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); } catch (e) { } };
 
@@ -1579,7 +1584,7 @@ const App = () => {
                     </div>
                 </main>
 
-                {!isChatOpen && (
+                {(!isChatOpen && !isProfileOpen) && (
                     <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
                         <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10 pointer-events-auto">
                             <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
