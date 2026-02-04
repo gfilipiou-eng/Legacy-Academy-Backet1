@@ -646,8 +646,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                     <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-yellow-500/30 group">
                         <div>
-                            <div className="text-sm font-bold text-white group-hover:text-yellow-500 transition-colors">Private Account</div>
-                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Only accepted followers see content</div>
+                            <div className="text-sm font-bold text-white group-hover:text-yellow-500 transition-colors">{t('PRIVATE_TITLE')}</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">{t('PRIVATE_DESC')}</div>
                         </div>
                         <div onClick={() => {
                             if (saving) return;
@@ -661,8 +661,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
                     <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-blue-500/30 group">
                         <div>
-                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">Guard Chat</div>
-                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">Messages only from your followers</div>
+                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">{t('GUARD_TITLE')}</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">{t('GUARD_DESC')}</div>
                         </div>
                         <div onClick={() => {
                             if (saving) return;

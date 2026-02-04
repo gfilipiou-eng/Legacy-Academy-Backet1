@@ -41,7 +41,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.',
         ADD_MEDIA: 'Add Media', ADD_STORY: 'Add to Story (24h)', POST_STORY: 'POST STORY',
         STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED',
-        ACTION_LIKED: 'INTEL ENDORSED', ACTION_DISLIKED: 'INTEL DISAVOWED', ACTION_SHARED: 'INTEL DISTRIBUTED', ACTION_COMMENTED: 'BRIEFING ADDED'
+        ACTION_LIKED: 'INTEL ENDORSED', ACTION_DISLIKED: 'INTEL DISAVOWED', ACTION_SHARED: 'INTEL DISTRIBUTED', ACTION_COMMENTED: 'BRIEFING ADDED',
+        PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -85,7 +86,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 δευτερόλεπτα.',
         ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Προσθήκη σε Ιστορία', POST_STORY: 'STORY',
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
-        ACTION_LIKED: 'ΕΝΕΚΡΙΘΗ', ACTION_DISLIKED: 'ΑΠΟΡΡΙΦΘΗΚΕ', ACTION_SHARED: 'ΚΟΙΝΟΠΟΙΗΘΗΚΕ', ACTION_COMMENTED: 'ΣΧΟΛΙΑΣΤΗΚΕ'
+        ACTION_LIKED: 'ΕΝΕΚΡΙΘΗ', ACTION_DISLIKED: 'ΑΠΟΡΡΙΦΘΗΚΕ', ACTION_SHARED: 'ΚΟΙΝΟΠΟΙΗΘΗΚΕ', ACTION_COMMENTED: 'ΣΧΟΛΙΑΣΤΗΚΕ',
+        PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -131,7 +133,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'YouTube videos must be < 10s.',
         ADD_MEDIA: 'Vale Foto', ADD_STORY: 'Vale Story', POST_STORY: 'VALE STORY',
         STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES',
-        ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO'
+        ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO',
+        PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Mono filoi thoroun ta pramata', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Minimata mono pou filous'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -175,7 +178,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'YouTube Videos müssen < 10s sein.',
         ADD_MEDIA: 'Medien', ADD_STORY: 'Zur Story', POST_STORY: 'STORY POSTEN',
         STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND',
-        ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT'
+        ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT',
+        PRIVATE_TITLE: 'Privates Konto', PRIVATE_DESC: 'Nur Follower sehen Inhalt', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Nachrichten nur von Followern'
     },
     ru: {
         HOME: 'ГЛАВНАЯ', SEARCH: 'ПОИСК', ALERTS: 'УВЕДОМЛЕНИЯ', PROFILE: 'ПРОФИЛЬ', SETTINGS: 'НАСТРОЙКИ', CHAT: 'ЧАТ',
@@ -219,7 +223,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'YouTube видео должно быть < 10 сек.',
         ADD_MEDIA: 'Медиа', ADD_STORY: 'В Историю', POST_STORY: 'ОПУБЛИКОВАТЬ',
         STATUS_FOLLOWING: 'ПОДПИСАН', STATUS_REQUESTED: 'ЗАПРОШЕНО', EDIT_BTN: 'ИЗМЕНИТЬ', DELETE_BTN: 'УДАЛИТЬ',
-        ACTION_LIKED: 'ОДОБРЕНО', ACTION_DISLIKED: 'ОТКЛОНЕНО', ACTION_SHARED: 'ОТПРАВЛЕНО', ACTION_COMMENTED: 'ОТКОММЕНТИРОВАНО'
+        ACTION_LIKED: 'ОДОБРЕНО', ACTION_DISLIKED: 'ОТКЛОНЕНО', ACTION_SHARED: 'ОТПРАВЛЕНО', ACTION_COMMENTED: 'ОТКОММЕНТИРОВАНО',
+        PRIVATE_TITLE: 'Закрытый Аккаунт', PRIVATE_DESC: 'Только подписчики видят контент', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Сообщения только от подписчиков'
     },
     es: {
         HOME: 'INICIO', SEARCH: 'BUSCAR', ALERTS: 'ALERTAS', PROFILE: 'PERFIL', SETTINGS: 'AJUSTES', CHAT: 'CHAT',
@@ -263,7 +268,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Video debe ser < 10s.',
         ADD_MEDIA: 'Media', ADD_STORY: 'A Story', POST_STORY: 'PUBLICAR',
         STATUS_FOLLOWING: 'SIGUIENDO', STATUS_REQUESTED: 'PENDIENTE', EDIT_BTN: 'EDITAR', DELETE_BTN: 'BORRAR',
-        ACTION_LIKED: 'ME GUSTA', ACTION_DISLIKED: 'NO ME GUSTA', ACTION_SHARED: 'COMPARTIDO', ACTION_COMMENTED: 'COMENTADO'
+        ACTION_LIKED: 'ME GUSTA', ACTION_DISLIKED: 'NO ME GUSTA', ACTION_SHARED: 'COMPARTIDO', ACTION_COMMENTED: 'COMENTADO',
+        PRIVATE_TITLE: 'Cuenta Privada', PRIVATE_DESC: 'Solo seguidores ven contenido', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Mensajes solo de seguidores'
     },
     tr: {
         HOME: 'ANA SAYFA', SEARCH: 'ARA', ALERTS: 'BİLDİRİMLER', PROFILE: 'PROFİL', SETTINGS: 'AYARLAR', CHAT: 'SOHBET',
@@ -307,7 +313,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Video < 10s olmalı.',
         ADD_MEDIA: 'Medya', ADD_STORY: 'Hikaye', POST_STORY: 'PAYLAŞ',
         STATUS_FOLLOWING: 'TAKİP EDİLİYOR', STATUS_REQUESTED: 'BEKLİYOR', EDIT_BTN: 'DÜZENLE', DELETE_BTN: 'SİL',
-        ACTION_LIKED: 'BEĞENİLDİ', ACTION_DISLIKED: 'BEĞENİLMEDİ', ACTION_SHARED: 'PAYLAŞILDI', ACTION_COMMENTED: 'YORUMLANDI'
+        ACTION_LIKED: 'BEĞENİLDİ', ACTION_DISLIKED: 'BEĞENİLMEDİ', ACTION_SHARED: 'PAYLAŞILDI', ACTION_COMMENTED: 'YORUMLANDI',
+        PRIVATE_TITLE: 'Gizli Hesap', PRIVATE_DESC: 'Sadece takipçiler içerik görebilir', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Sadece takipçilerden mesaj'
     },
     fr: {
         HOME: 'ACCUEIL', SEARCH: 'RECHERCHE', ALERTS: 'ALERTES', PROFILE: 'PROFIL', SETTINGS: 'REGLAGES', CHAT: 'DISCUSSION',
@@ -351,7 +358,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Video < 10s.',
         ADD_MEDIA: 'Media', ADD_STORY: 'Story', POST_STORY: 'PUBLIER',
         STATUS_FOLLOWING: 'ABONNÉ', STATUS_REQUESTED: 'EN ATTENTE', EDIT_BTN: 'EDITER', DELETE_BTN: 'SUPPRIMER',
-        ACTION_LIKED: 'AIMÉ', ACTION_DISLIKED: 'NON AIMÉ', ACTION_SHARED: 'PARTAGÉ', ACTION_COMMENTED: 'COMMENTÉ'
+        ACTION_LIKED: 'AIMÉ', ACTION_DISLIKED: 'NON AIMÉ', ACTION_SHARED: 'PARTAGÉ', ACTION_COMMENTED: 'COMMENTÉ',
+        PRIVATE_TITLE: 'Compte Privé', PRIVATE_DESC: 'Seulement les abonnés voient le contenu', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages seulement des abonnés'
     }
 };
 
