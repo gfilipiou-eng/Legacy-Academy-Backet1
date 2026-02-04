@@ -1667,263 +1667,258 @@ const App = () => {
     const handleOpenChat = (u) => { setChatTarget(u); setIsChatOpen(true); };
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); } catch (e) { } };
 
-    if (!user) return (
-        <div className="app-container">
-            <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
-                <div className="liquid-bg" />
-                <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
-                    <div className="flex flex-col items-center mb-8">
-                        <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
-                    </div>
-                    <div className="space-y-4">
-                        {authMode === 'login' && (
-                            <>
-                                <div className="relative">
-                                    <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                                </div>
-                                <div className="relative">
-                                    <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                                        {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
-                                    </button>
-                                </div>
-                                <button disabled={authLoading} onClick={async () => {
-                                    setAuthLoading(true);
-                                    try {
-                                        const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
-                                        localStorage.setItem('token', res.data.token);
-                                        localStorage.setItem('user', JSON.stringify(res.data.user));
-                                        setUser(res.data.user);
-                                    } catch (e) {
-                                        alert(e.response?.data?.message || "Access Denied.");
-                                    } finally {
-                                        setAuthLoading(false);
-                                    }
-                                }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                    {authLoading ? "DECRYPTING..." : "INITIALIZE SESSION"}
-                                </button>
-                                <div className="flex justify-between text-xs text-gray-500 px-2">
-                                    <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Join Protocol</span>
-                                    <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Forgot Key?</span>
-                                </div>
-                            </>
-                        )}
-                        {authMode === 'register' && (
-                            <>
-                                <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-yellow-500 mb-4 flex items-center justify-center">
-                                    {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-yellow-500" />}
-                                    <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) setRegisterPreview(URL.createObjectURL(file));
-                                    }} />
-                                </div>
-                                <div className="relative mb-3">
-                                    <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
-                                </div>
-                                <div className="relative mb-3">
-                                    <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
-                                </div>
-                                <div className="relative mb-3">
-                                    <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
-                                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                                        {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
-                                    </button>
-                                </div>
-                                <div className="relative mb-4">
-                                    <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-yellow-500 shadow-inner resize-none h-20" />
-                                </div>
-
-                                <button disabled={authLoading} onClick={async () => {
-                                    setAuthLoading(true);
-                                    try {
-                                        const fd = new FormData();
-                                        fd.append('username', formData.username);
-                                        fd.append('email', formData.email);
-                                        fd.append('password', formData.password);
-                                        if (formData.bio) fd.append('bio', formData.bio);
-                                        if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
-
-                                        await axios.post('/auth/register', fd);
-                                        alert("Protocol Joined. Login now.");
-                                        setAuthMode('login');
-                                    } catch (e) {
-                                        alert(e.response?.data?.message || "Registration Failed.");
-                                    } finally {
-                                        setAuthLoading(false);
-                                    }
-                                }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                    {authLoading ? "ENCRYPTING..." : "JOIN PROTOCOL"}
-                                </button>
-                                <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-2" onClick={() => setAuthMode('login')}>Back to Login</div>
-                            </>
-                        )}
-                        {authMode === 'forgot' && (
-                            <>
-                                <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
-                                <div className="relative">
-                                    <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
-                                </div>
-                                <button disabled={authLoading} onClick={async () => {
-                                    setAuthLoading(true);
-                                    try {
-                                        await axios.post('/auth/forgot-password', { email: formData.email });
-                                        alert("If this email is in our database, a reset key has been sent.");
-                                        setAuthMode('login');
-                                    } catch (e) {
-                                        alert("Reset request failed.");
-                                    } finally {
-                                        setAuthLoading(false);
-                                    }
-                                }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                    {authLoading ? "TRANSMITTING..." : "SEND RESET KEY"}
-                                </button>
-                                <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
-                            </>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div >
-    );
-
-
-
-
     return (
         <div className="app-container">
-            <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
-                <div className="liquid-bg" />
-                <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
-                    <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all" alt="Logo" />
+            {!user ? (
+                <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
+                    <div className="liquid-bg" />
+                    <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
+                        <div className="flex flex-col items-center mb-8">
+                            <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
                         </div>
-                        <div className="flex items-center gap-4">
-                            <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform">
-                                <Icons.Plus className="w-6 h-6" />
-                            </button>
+                        <div className="space-y-4">
+                            {authMode === 'login' && (
+                                <>
+                                    <div className="relative">
+                                        <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input type="email" placeholder="Agent Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                    </div>
+                                    <div className="relative">
+                                        <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input type={showPassword ? "text" : "password"} placeholder="Security Key" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                        <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                            {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                        </button>
+                                    </div>
+                                    <button disabled={authLoading} onClick={async () => {
+                                        setAuthLoading(true);
+                                        try {
+                                            const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
+                                            localStorage.setItem('token', res.data.token);
+                                            localStorage.setItem('user', JSON.stringify(res.data.user));
+                                            setUser(res.data.user);
+                                        } catch (e) {
+                                            alert(e.response?.data?.message || "Access Denied.");
+                                        } finally {
+                                            setAuthLoading(false);
+                                        }
+                                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                        {authLoading ? "DECRYPTING..." : "INITIALIZE SESSION"}
+                                    </button>
+                                    <div className="flex justify-between text-xs text-gray-500 px-2">
+                                        <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Join Protocol</span>
+                                        <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white">Forgot Key?</span>
+                                    </div>
+                                </>
+                            )}
+                            {authMode === 'register' && (
+                                <>
+                                    <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-yellow-500 mb-4 flex items-center justify-center">
+                                        {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-yellow-500" />}
+                                        <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) setRegisterPreview(URL.createObjectURL(file));
+                                        }} />
+                                    </div>
+                                    <div className="relative mb-3">
+                                        <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
+                                    </div>
+                                    <div className="relative mb-3">
+                                        <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input type="email" placeholder="Agent Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
+                                    </div>
+                                    <div className="relative mb-3">
+                                        <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input type={showPassword ? "text" : "password"} placeholder="Create Key" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-yellow-500 shadow-inner text-sm" />
+                                        <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                            {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                        </button>
+                                    </div>
+                                    <div className="relative mb-4">
+                                        <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-yellow-500 shadow-inner resize-none h-20" />
+                                    </div>
 
-                            <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative">
-                                <Icons.MessageCircle className="w-5 h-5" />
-                                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
-                            </button>
-                            <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn">
-                                <Icons.Settings className="w-5 h-5 text-gray-400" />
-                            </button>
+                                    <button disabled={authLoading} onClick={async () => {
+                                        setAuthLoading(true);
+                                        try {
+                                            const fd = new FormData();
+                                            fd.append('username', formData.username);
+                                            fd.append('email', formData.email);
+                                            fd.append('password', formData.password);
+                                            if (formData.bio) fd.append('bio', formData.bio);
+                                            if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
+
+                                            await axios.post('/auth/register', fd);
+                                            alert("Protocol Joined. Login now.");
+                                            setAuthMode('login');
+                                        } catch (e) {
+                                            alert(e.response?.data?.message || "Registration Failed.");
+                                        } finally {
+                                            setAuthLoading(false);
+                                        }
+                                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                        {authLoading ? "ENCRYPTING..." : "JOIN PROTOCOL"}
+                                    </button>
+                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-2" onClick={() => setAuthMode('login')}>Back to Login</div>
+                                </>
+                            )}
+                            {authMode === 'forgot' && (
+                                <>
+                                    <p className="text-sm text-gray-400 mb-2">Enter your email to receive a reset key.</p>
+                                    <div className="relative">
+                                        <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input type="email" placeholder="Agent Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-yellow-500 shadow-inner" />
+                                    </div>
+                                    <button disabled={authLoading} onClick={async () => {
+                                        setAuthLoading(true);
+                                        try {
+                                            await axios.post('/auth/forgot-password', { email: formData.email });
+                                            alert("If this email is in our database, a reset key has been sent.");
+                                            setAuthMode('login');
+                                        } catch (e) {
+                                            alert("Reset request failed.");
+                                        } finally {
+                                            setAuthLoading(false);
+                                        }
+                                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                        {authLoading ? "TRANSMITTING..." : "SEND RESET KEY"}
+                                    </button>
+                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center" onClick={() => setAuthMode('login')}>Back to Login</div>
+                                </>
+                            )}
                         </div>
                     </div>
-                </header>
-
-                <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
-                    <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
-                        {activeTab === 'alerts' ? (
-                            <div className="animate-fade-in p-4 sm:p-8">
-                                <div className="flex items-center justify-between mb-6 px-2">
-                                    <h2 className="text-xl font-bold text-white/90">Notifications</h2>
-                                    {alerts.length > 0 && (
-                                        <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
-                                            <Icons.Trash className="w-5 h-5" />
-                                        </button>
-                                    )}
-                                </div>
-                                {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
+                </div>
+            ) : (
+                <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
+                    <div className="liquid-bg" />
+                    <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
+                        <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all" alt="Logo" />
                             </div>
-                        ) : (
-                            <>
-                                {activeTab !== 'search' && <StoriesBar stories={stories} user={user} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
-                                <div className="p-4 sm:p-8">
-                                    {activeTab === 'search' && (
-                                        <div className="mb-8 space-y-4 animate-fade-in">
-                                            <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
-                                            <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
-                                        </div>
-                                    )}
-                                    <div className="space-y-6">
-                                        {activeTab === 'search' && searchQuery && (
-                                            <div className="space-y-2">
-                                                {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
-                                                    <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
-                                                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                                            {u.profilePic ? <img src={resolveMediaUrl(u.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <div className="font-bold text-white text-sm flex items-center gap-2">
-                                                                {u.username}
-                                                                {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}
-                                                            </div>
-                                                            <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} Followers</div>
-                                                        </div>
-                                                        <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">View</button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {filteredPosts.map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />)}
-                                        {posts.length === 0 && (
-                                            <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                                <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-                                                <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
-                                            </div>
+                            <div className="flex items-center gap-4">
+                                <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform">
+                                    <Icons.Plus className="w-6 h-6" />
+                                </button>
+
+                                <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative">
+                                    <Icons.MessageCircle className="w-5 h-5" />
+                                    <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
+                                </button>
+                                <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn">
+                                    <Icons.Settings className="w-5 h-5 text-gray-400" />
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
+                        <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
+                            {activeTab === 'alerts' ? (
+                                <div className="animate-fade-in p-4 sm:p-8">
+                                    <div className="flex items-center justify-between mb-6 px-2">
+                                        <h2 className="text-xl font-bold text-white/90">Notifications</h2>
+                                        {alerts.length > 0 && (
+                                            <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
+                                                <Icons.Trash className="w-5 h-5" />
+                                            </button>
                                         )}
                                     </div>
+                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
                                 </div>
-                            </>
-                        )}
-                        <AnimatePresence>
-                            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
-                                {toasts.map(toast => (
-                                    <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
+                            ) : (
+                                <>
+                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
+                                    <div className="p-4 sm:p-8">
+                                        {activeTab === 'search' && (
+                                            <div className="mb-8 space-y-4 animate-fade-in">
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-yellow-500 transition-all shadow-inner" /></div>
+                                                <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
+                                            </div>
+                                        )}
+                                        <div className="space-y-6">
+                                            {activeTab === 'search' && searchQuery && (
+                                                <div className="space-y-2">
+                                                    {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
+                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
+                                                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                                                                {u.profilePic ? <img src={resolveMediaUrl(u.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="font-bold text-white text-sm flex items-center gap-2">
+                                                                    {u.username}
+                                                                    {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}
+                                                                </div>
+                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} Followers</div>
+                                                            </div>
+                                                            <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">View</button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {filteredPosts.map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />)}
+                                            {posts.length === 0 && (
+                                                <div className="h-96 flex flex-col items-center justify-center space-y-4">
+                                                    <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                                                    <div className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            <AnimatePresence>
+                                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
+                                    {toasts.map(toast => (
+                                        <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
                                         flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10
                                         ${toast.type === 'success' ? 'bg-green-500/20 text-green-400' : toast.type === 'neutral' ? 'bg-red-500/20 text-red-500' : 'bg-[#1a1a1a]/90 text-white'}
                                     `}>
-                                        <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
-                                            <Icons.Bell className="w-4 h-4" />
-                                        </div>
-                                        <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </AnimatePresence>
-                    </div >
-                </main >
-
-                {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                    <div className="fixed bottom-0 left-0 right-0 px-4 pb-4 flex justify-center z-[1000] pointer-events-none">
-                        <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between pointer-events-auto">
-                            <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
-                            <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
-
-                            <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative ${activeTab === 'alerts' ? 'nav-item-active' : ''}`}>
-                                <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : ''}`} />
-                                {user?.notifications?.some(n => !n.read) && <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
-                            </button>
-
-                            <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
-
-                            <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
-                                <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
-                                    {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic) + `?v=${imgKey}`} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
+                                            <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
+                                                <Icons.Bell className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
+                                        </motion.div>
+                                    ))}
                                 </div>
-                            </button>
+                            </AnimatePresence>
+                        </div >
+                    </main >
+
+                    {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
+                        <div className="fixed bottom-0 left-0 right-0 px-4 pb-4 flex justify-center z-[1000] pointer-events-none">
+                            <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between pointer-events-auto">
+                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
+                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
+
+                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative ${activeTab === 'alerts' ? 'nav-item-active' : ''}`}>
+                                    <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-yellow-500 fill-yellow-500 animate-pulse' : ''}`} />
+                                    {user?.notifications?.some(n => !n.read) && <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
+                                </button>
+
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
+
+                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                                    <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
+                                        {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic) + `?v=${imgKey}`} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
+                                    </div>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
-                <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
-                <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
-                <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-                <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
-                {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
+                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
+                    <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+                    <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
+                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
 
-            </div >
-        </div >
+                </div >
+            )}
+        </div>
     );
 };
 
