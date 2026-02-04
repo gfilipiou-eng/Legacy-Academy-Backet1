@@ -40,7 +40,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Decrypt your thoughts...', YOUTUBE_PH: 'YouTube URL (optional)',
         YOUTUBE_NOTE: 'Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.',
         ADD_MEDIA: 'Add Media', ADD_STORY: 'Add to Story (24h)', POST_STORY: 'POST STORY',
-        STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED'
+        STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED',
+        ACTION_LIKED: 'INTEL ENDORSED', ACTION_DISLIKED: 'INTEL DISAVOWED', ACTION_SHARED: 'INTEL DISTRIBUTED', ACTION_COMMENTED: 'BRIEFING ADDED'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -83,7 +84,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 δευτερόλεπτα.',
         ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Προσθήκη σε Ιστορία', POST_STORY: 'STORY',
-        STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ'
+        STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
+        ACTION_LIKED: 'ΕΝΕΚΡΙΘΗ', ACTION_DISLIKED: 'ΑΠΟΡΡΙΦΘΗΚΕ', ACTION_SHARED: 'ΚΟΙΝΟΠΟΙΗΘΗΚΕ', ACTION_COMMENTED: 'ΣΧΟΛΙΑΣΤΗΚΕ'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -128,7 +130,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Grapse kati...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'YouTube videos must be < 10s.',
         ADD_MEDIA: 'Vale Foto', ADD_STORY: 'Vale Story', POST_STORY: 'VALE STORY',
-        STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES'
+        STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES',
+        ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -171,7 +174,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Gedanken entschlüsseln...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'YouTube Videos müssen < 10s sein.',
         ADD_MEDIA: 'Medien', ADD_STORY: 'Zur Story', POST_STORY: 'STORY POSTEN',
-        STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND'
+        STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND',
+        ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT'
     },
     ru: {
         HOME: 'ГЛАВНАЯ', SEARCH: 'ПОИСК', ALERTS: 'УВЕДОМЛЕНИЯ', PROFILE: 'ПРОФИЛЬ', SETTINGS: 'НАСТРОЙКИ', CHAT: 'ЧАТ',
@@ -214,7 +218,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'ЗАГРУЗКА', DECRYPT_PH: 'Расшифруйте мысли...', YOUTUBE_PH: 'YouTube ссылка (опция)',
         YOUTUBE_NOTE: 'YouTube видео должно быть < 10 сек.',
         ADD_MEDIA: 'Медиа', ADD_STORY: 'В Историю', POST_STORY: 'ОПУБЛИКОВАТЬ',
-        STATUS_FOLLOWING: 'ПОДПИСАН', STATUS_REQUESTED: 'ЗАПРОШЕНО', EDIT_BTN: 'ИЗМЕНИТЬ', DELETE_BTN: 'УДАЛИТЬ'
+        STATUS_FOLLOWING: 'ПОДПИСАН', STATUS_REQUESTED: 'ЗАПРОШЕНО', EDIT_BTN: 'ИЗМЕНИТЬ', DELETE_BTN: 'УДАЛИТЬ',
+        ACTION_LIKED: 'ОДОБРЕНО', ACTION_DISLIKED: 'ОТКЛОНЕНО', ACTION_SHARED: 'ОТПРАВЛЕНО', ACTION_COMMENTED: 'ОТКОММЕНТИРОВАНО'
     },
     es: {
         HOME: 'INICIO', SEARCH: 'BUSCAR', ALERTS: 'ALERTAS', PROFILE: 'PERFIL', SETTINGS: 'AJUSTES', CHAT: 'CHAT',
@@ -257,7 +262,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'SUBIR', DECRYPT_PH: 'Escribe algo...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video debe ser < 10s.',
         ADD_MEDIA: 'Media', ADD_STORY: 'A Story', POST_STORY: 'PUBLICAR',
-        STATUS_FOLLOWING: 'SIGUIENDO', STATUS_REQUESTED: 'PENDIENTE', EDIT_BTN: 'EDITAR', DELETE_BTN: 'BORRAR'
+        STATUS_FOLLOWING: 'SIGUIENDO', STATUS_REQUESTED: 'PENDIENTE', EDIT_BTN: 'EDITAR', DELETE_BTN: 'BORRAR',
+        ACTION_LIKED: 'ME GUSTA', ACTION_DISLIKED: 'NO ME GUSTA', ACTION_SHARED: 'COMPARTIDO', ACTION_COMMENTED: 'COMENTADO'
     },
     tr: {
         HOME: 'ANA SAYFA', SEARCH: 'ARA', ALERTS: 'BİLDİRİMLER', PROFILE: 'PROFİL', SETTINGS: 'AYARLAR', CHAT: 'SOHBET',
@@ -300,7 +306,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'YÜKLE', DECRYPT_PH: 'Düşüncelerin...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video < 10s olmalı.',
         ADD_MEDIA: 'Medya', ADD_STORY: 'Hikaye', POST_STORY: 'PAYLAŞ',
-        STATUS_FOLLOWING: 'TAKİP EDİLİYOR', STATUS_REQUESTED: 'BEKLİYOR', EDIT_BTN: 'DÜZENLE', DELETE_BTN: 'SİL'
+        STATUS_FOLLOWING: 'TAKİP EDİLİYOR', STATUS_REQUESTED: 'BEKLİYOR', EDIT_BTN: 'DÜZENLE', DELETE_BTN: 'SİL',
+        ACTION_LIKED: 'BEĞENİLDİ', ACTION_DISLIKED: 'BEĞENİLMEDİ', ACTION_SHARED: 'PAYLAŞILDI', ACTION_COMMENTED: 'YORUMLANDI'
     },
     fr: {
         HOME: 'ACCUEIL', SEARCH: 'RECHERCHE', ALERTS: 'ALERTES', PROFILE: 'PROFIL', SETTINGS: 'REGLAGES', CHAT: 'DISCUSSION',
@@ -343,7 +350,8 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'UPLOADER', DECRYPT_PH: 'Déchiffrer...', YOUTUBE_PH: 'YouTube URL',
         YOUTUBE_NOTE: 'Video < 10s.',
         ADD_MEDIA: 'Media', ADD_STORY: 'Story', POST_STORY: 'PUBLIER',
-        STATUS_FOLLOWING: 'ABONNÉ', STATUS_REQUESTED: 'EN ATTENTE', EDIT_BTN: 'EDITER', DELETE_BTN: 'SUPPRIMER'
+        STATUS_FOLLOWING: 'ABONNÉ', STATUS_REQUESTED: 'EN ATTENTE', EDIT_BTN: 'EDITER', DELETE_BTN: 'SUPPRIMER',
+        ACTION_LIKED: 'AIMÉ', ACTION_DISLIKED: 'NON AIMÉ', ACTION_SHARED: 'PARTAGÉ', ACTION_COMMENTED: 'COMMENTÉ'
     }
 };
 

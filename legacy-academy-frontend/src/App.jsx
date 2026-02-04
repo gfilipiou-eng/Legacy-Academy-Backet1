@@ -1186,6 +1186,13 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post }) => {
 const App = () => {
     const [user, setUser] = useState(null);
     const { t, lang } = useTranslation(user);
+    const [toasts, setToasts] = useState([]);
+    const addToast = (text, type = 'info') => {
+        const id = Date.now();
+        setToasts(prev => [...prev, { id, text, type }]);
+        setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
+    };
+
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
@@ -1339,6 +1346,9 @@ const App = () => {
             return { ...p, likes: newLikes, dislikes };
         }));
 
+        const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
+        if (isLiking) addToast(t('ACTION_LIKED'), 'success');
+
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
         playSound('pop');
@@ -1374,6 +1384,9 @@ const App = () => {
             return { ...p, likes, dislikes: newDislikes };
         }));
 
+        const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
+        if (isDisliking) addToast(t('ACTION_DISLIKED'), 'neutral');
+
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
         playSound('pop');
@@ -1400,7 +1413,9 @@ const App = () => {
             const res = await axios.post(`/posts/${postId}/comment`, { text });
             const updatedComments = res.data;
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
+            addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');
         } catch (e) { }
 
 
@@ -1458,7 +1473,7 @@ const App = () => {
             try { await navigator.share(shareData); } catch (e) { }
         } else {
             navigator.clipboard.writeText(shareData.url);
-            alert("Link copied to clipboard.");
+            addToast(t('ACTION_SHARED'), 'info');
         }
     };
 
@@ -1712,8 +1727,23 @@ const App = () => {
                                 </div>
                             </>
                         )}
-                    </div>
-                </main>
+                        <AnimatePresence>
+                            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
+                                {toasts.map(toast => (
+                                    <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
+                                        flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10
+                                        ${toast.type === 'success' ? 'bg-green-500/20 text-green-400' : toast.type === 'neutral' ? 'bg-red-500/20 text-red-500' : 'bg-[#1a1a1a]/90 text-white'}
+                                    `}>
+                                        <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
+                                            <Icons.Bell className="w-4 h-4" />
+                                        </div>
+                                        <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </AnimatePresence>
+                    </div >
+                </main >
 
                 {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                     <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
@@ -1743,8 +1773,8 @@ const App = () => {
                 <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} />
                 {selectedPost && <PostDetailModal post={selectedPost} user={user} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
 
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
