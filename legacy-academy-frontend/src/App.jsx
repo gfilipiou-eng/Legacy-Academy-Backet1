@@ -102,7 +102,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     return (
         <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 items-start group/comment relative">
             <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
-                {comment.user?.profilePic || comment.authorProfilePic ? <img src={resolveMediaUrl(comment.user?.profilePic || comment.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={comment.user?.username || comment.authorName} />}
+                {isCommentAuthor && user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : (comment.user?.profilePic || comment.authorProfilePic ? <img src={resolveMediaUrl(comment.user?.profilePic || comment.authorProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={comment.user?.username || comment.authorName} />)}
             </div>
 
             <div className="flex-1">
@@ -125,9 +125,9 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                 </div>
 
                 {/* ACTIONS */}
-                <div className="flex gap-3 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
-                    {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-bold uppercase tracking-widest">{t('EDIT_BTN')}</button>}
-                    {canDelete && <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="text-[10px] text-gray-500 hover:text-red-500 font-bold uppercase tracking-widest">{t('DELETE_BTN')}</button>}
+                <div className="flex gap-2 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                    {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] text-gray-400 hover:text-blue-400 font-bold uppercase tracking-widest transition-colors border border-white/5">{t('EDIT_BTN')}</button>}
+                    {canDelete && <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="px-2 py-1 bg-white/5 hover:bg-red-500/20 rounded-lg text-[9px] text-gray-400 hover:text-red-400 font-bold uppercase tracking-widest transition-colors border border-white/5">{t('DELETE_BTN')}</button>}
                 </div>
             </div>
         </motion.div>

@@ -42,7 +42,8 @@ export const TRANSLATIONS = {
         ADD_MEDIA: 'Add Media', ADD_STORY: 'Add to Story (24h)', POST_STORY: 'POST STORY',
         STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED',
         ACTION_LIKED: 'INTEL ENDORSED', ACTION_DISLIKED: 'INTEL DISAVOWED', ACTION_SHARED: 'INTEL DISTRIBUTED', ACTION_COMMENTED: 'BRIEFING ADDED',
-        PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers'
+        PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers',
+        EDIT_BTN: 'Edit', DELETE_BTN: 'Delete'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -87,7 +88,8 @@ export const TRANSLATIONS = {
         ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Προσθήκη σε Ιστορία', POST_STORY: 'STORY',
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         ACTION_LIKED: 'ΕΝΕΚΡΙΘΗ', ACTION_DISLIKED: 'ΑΠΟΡΡΙΦΘΗΚΕ', ACTION_SHARED: 'ΚΟΙΝΟΠΟΙΗΘΗΚΕ', ACTION_COMMENTED: 'ΣΧΟΛΙΑΣΤΗΚΕ',
-        PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους'
+        PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
+        EDIT_BTN: 'Επεξεργασία', DELETE_BTN: 'Διαγραφή'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -134,7 +136,8 @@ export const TRANSLATIONS = {
         ADD_MEDIA: 'Vale Foto', ADD_STORY: 'Vale Story', POST_STORY: 'VALE STORY',
         STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES',
         ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO',
-        PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Mono filoi thoroun ta pramata', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Minimata mono pou filous'
+        PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Mono filoi thoroun ta pramata', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Minimata mono pou filous',
+        EDIT_BTN: 'Allaxe to', DELETE_BTN: 'Svisto'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -179,7 +182,8 @@ export const TRANSLATIONS = {
         ADD_MEDIA: 'Medien', ADD_STORY: 'Zur Story', POST_STORY: 'STORY POSTEN',
         STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND',
         ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT',
-        PRIVATE_TITLE: 'Privates Konto', PRIVATE_DESC: 'Nur Follower sehen Inhalt', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Nachrichten nur von Followern'
+        PRIVATE_TITLE: 'Privates Konto', PRIVATE_DESC: 'Nur Follower sehen Inhalt', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Nachrichten nur von Followern',
+        EDIT_BTN: 'Bearbeiten', DELETE_BTN: 'Löschen'
     },
     ru: {
         HOME: 'ГЛАВНАЯ', SEARCH: 'ПОИСК', ALERTS: 'УВЕДОМЛЕНИЯ', PROFILE: 'ПРОФИЛЬ', SETTINGS: 'НАСТРОЙКИ', CHAT: 'ЧАТ',
