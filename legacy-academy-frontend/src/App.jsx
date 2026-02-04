@@ -681,9 +681,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2">
-                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff'].map(c => (
-                                <button key={c} onClick={() => { document.documentElement.style.setProperty('--gold-primary', c); localStorage.setItem('themeColor', c); }} className="w-8 h-8 rounded-full border border-white/10 hover:scale-110 transition-transform" style={{ background: c }} />
-                            ))}
+                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff'].map(c => {
+                                const isActive = (localStorage.getItem('themeColor') || '#ffd700') === c;
+                                return (
+                                    <button key={c} onClick={() => {
+                                        document.documentElement.style.setProperty('--gold-primary', c);
+                                        localStorage.setItem('themeColor', c);
+                                        setUser(prev => ({ ...prev })); // Force re-render to update UI
+                                    }} className={`w-8 h-8 rounded-full border transition-all ${isActive ? 'scale-125 border-white ring-2 ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.5)]' : 'border-white/10 hover:scale-110'}`} style={{ background: c }} />
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -1721,6 +1728,25 @@ const App = () => {
                                         </div>
                                     )}
                                     <div className="space-y-6">
+                                        {activeTab === 'search' && searchQuery && (
+                                            <div className="space-y-2">
+                                                {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
+                                                    <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
+                                                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                                                            {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="font-bold text-white text-sm flex items-center gap-2">
+                                                                {u.username}
+                                                                {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}
+                                                            </div>
+                                                            <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} Followers</div>
+                                                        </div>
+                                                        <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">View</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                         {(activeTab === 'search' ? (posts.filter(p => !p.isStory && (p.desc + p.author?.username).toLowerCase().includes(searchQuery.toLowerCase()))) : filteredPosts).map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} loadingActions={loadingActions} />)}
                                         {posts.length === 0 && (
                                             <div className="h-96 flex flex-col items-center justify-center space-y-4">
