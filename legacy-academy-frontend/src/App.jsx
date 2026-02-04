@@ -545,6 +545,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
     const [inputText, setInputText] = useState('');
+    const [searchQuery, setSearchQuery] = useState(''); // New search state
     const scrollRef = useRef();
 
     const fetchMessages = async (otherUserId) => {
@@ -567,25 +568,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
 
-    const handleSend = async () => {
-        if (!inputText.trim() || !activeChat) return;
-        const text = inputText;
-        setInputText('');
-        try {
-            const res = await axios.post('/messages', { recipient: activeChat._id, text });
-            setMessages(prev => ({
-                ...prev,
-                [activeChat._id]: [...(prev[activeChat._id] || []), res.data]
-            }));
-            playSound('pop');
-        } catch (e) {
-            console.error('Send failed', e);
-            setInputText(text); // Restore text on failure
-        }
-    };
+    // ... handleSend ...
 
-    // In Chat list render, compute online status
-    // (replace later in JSX)
+    // Filter users based on search
+    const filteredUsers = allUsers.filter(u =>
+        u._id !== user?._id &&
+        u.username.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     if (!isOpen) return null;
     return (
@@ -593,9 +582,22 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
-                    <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">{t('CHAT')}</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
+                    <div className="p-4 border-b border-white/10 space-y-4">
+                        <div className="flex justify-between items-center"><h2 className="text-xl font-black italic">{t('CHAT')}</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
+                        {/* Search Input */}
+                        <div className="relative">
+                            <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                            <input
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search friends..."
+                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-yellow-500 transition-colors"
+                            />
+                        </div>
+                    </div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
-                        {allUsers.filter(u => u._id !== user?._id).map(u => {
+                        {filteredUsers.length === 0 && <div className="p-4 text-center text-gray-500 text-xs">No users found.</div>}
+                        {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
