@@ -17,8 +17,6 @@ body {
   color: #fff;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  /* Mobile app feel */
-  perspective: 2000px;
   min-height: 100vh;
   margin: 0;
 }
