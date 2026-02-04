@@ -77,7 +77,7 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
-const CommentItem = ({ comment, post, user, onEdit, onDelete, t }) => {
+const CommentItem = ({ comment, post, user, onEdit, onDelete, t = (k) => k }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
@@ -94,7 +94,7 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete, t }) => {
     const canDelete = isCommentAuthor || isPostAuthor || isFounder;
 
     const handleSave = () => {
-        onEdit(post._id, comment._id, editText);
+        if (typeof onEdit === 'function') onEdit(post._id, comment._id, editText);
         setIsEditing(false);
     };
 
@@ -123,7 +123,7 @@ const CommentItem = ({ comment, post, user, onEdit, onDelete, t }) => {
                 {/* ACTIONS */}
                 <div className="flex gap-3 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
                     {canEdit && !isEditing && <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-bold uppercase tracking-widest">{t('EDIT_BTN')}</button>}
-                    {canDelete && <button onClick={() => onDelete(post._id, comment._id)} className="text-[10px] text-gray-500 hover:text-red-500 font-bold uppercase tracking-widest">{t('DELETE_BTN')}</button>}
+                    {canDelete && <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="text-[10px] text-gray-500 hover:text-red-500 font-bold uppercase tracking-widest">{t('DELETE_BTN')}</button>}
                 </div>
             </div>
         </motion.div>
