@@ -54,13 +54,21 @@ body {
 }
 
 @keyframes liquid-glass-sweep {
-  0% { left: -150%; }
-  50% { left: 150%; }
-  100% { left: 150%; }
+  0% {
+    left: -150%;
+  }
+
+  50% {
+    left: 150%;
+  }
+
+  100% {
+    left: 150%;
+  }
 }
 
 .nav-item-btn {
-  @apply p-3 rounded-2xl transition-all duration-300;
+  @apply p-3.5 rounded-full transition-all duration-300 flex items-center justify-center;
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -71,25 +79,27 @@ body {
 .nav-item-active {
   background: rgba(255, 215, 0, 0.1) !important;
   color: #ffd700 !important;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
-  border: 1px solid rgba(255, 215, 0, 0.1);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
 .nav-center-action {
   @apply w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300;
   background: linear-gradient(135deg, #ffd700, #ffb700);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.5);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5), inset 0 2px 5px rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transform: translateY(-8px);
 }
 
 .nav-center-action svg {
-  color: black;
-  filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
-  width: 32px;
-  height: 32px;
-  stroke-width: 2.5px;
-}  /* Removed shadow-xl */
+  color: #1a1a1a;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  width: 26px;
+  height: 26px;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 .nav-center-action:active {
   transform: scale(0.9);
