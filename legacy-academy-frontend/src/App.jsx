@@ -180,7 +180,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <div className="flex gap-1">
                             {isOwner && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
-                            {(isOwner || isFounder) && <button onClick={() => { if (confirm(t('TERMINATE_CONFIRM'))) { onDelete(post._id); onClose(); } }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                            {(isOwner || isFounder) && <button onClick={() => { onDelete(post._id); onClose(); }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
 
@@ -380,7 +380,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                                 <Icons.Edit className="w-4 h-4" /> {t('EDIT_BTN')}
                                                             </button>
                                                         )}
-                                                        <button onClick={(e) => { e.stopPropagation(); if (confirm(t('TERMINATE_CONFIRM'))) handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/20 text-xs font-bold text-red-500 w-full text-left transition-colors uppercase tracking-wider">
+                                                        <button onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/20 text-xs font-bold text-red-500 w-full text-left transition-colors uppercase tracking-wider">
                                                             <Icons.Trash className="w-4 h-4" /> {t('DELETE_BTN')}
                                                         </button>
                                                     </motion.div>
@@ -1526,7 +1526,7 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { if (confirm("Permanently delete this intel?")) { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } } };
+    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     const logout = () => {
@@ -1687,7 +1687,7 @@ const App = () => {
                 <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
                     <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-12 sm:h-20 w-auto object-contain transition-all" alt="Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-20 sm:h-32 w-auto object-contain transition-all" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={(e) => { e.stopPropagation(); setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors active:scale-95 transition-transform">
