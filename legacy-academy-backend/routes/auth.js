@@ -100,6 +100,14 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({ message: "Wrong password ❌" });
         }
 
+        // Ban Check
+        if (user.isBanned && user.banExpires && new Date() < user.banExpires) {
+            const timeLeft = Math.ceil((new Date(user.banExpires) - new Date()) / (1000 * 60 * 60 * 24));
+            return res.status(403).json({
+                message: `Your access is suspended for ${timeLeft} more days. Reason: ${user.banReason || 'Suspicious Activity'}`
+            });
+        }
+
         // Include username and role in the JWT
         const token = jwt.sign(
             {
