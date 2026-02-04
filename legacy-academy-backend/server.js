@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "V14-STABLE-FINAL" });
+  res.status(200).json({ status: "healthy", deployed: "V15-CHAT-FIX" });
 });
 
 app.get("/api/messages/debug", (req, res) => {
