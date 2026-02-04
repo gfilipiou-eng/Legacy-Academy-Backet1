@@ -16,10 +16,10 @@ body {
   background-color: #000;
   color: #fff;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
   /* Mobile app feel */
   perspective: 2000px;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
 }
 
@@ -233,8 +233,8 @@ input[type="file"] {
 /* Ensure settings/modals have internal scroll on all devices */
 .modal-content-scroller {
   overflow-y: auto !important;
-  max-height: 75vh !important;
-  padding-right: 4px;
+  max-height: none !important;
+  padding-right: 2px;
 }
 
 .no-scrollbar::-webkit-scrollbar {

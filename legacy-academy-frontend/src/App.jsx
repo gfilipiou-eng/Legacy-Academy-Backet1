@@ -661,7 +661,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     return (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
                     <button onClick={() => {
                         if (activeList) setActiveList(null);
@@ -672,7 +672,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                     <div className="w-10" />
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar modal-content-scroller relative bg-[#050505] overscroll-y-contain">
+                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
                     {activeList ? (
                         <div className="p-2 space-y-2">
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">No users found.</div>}
@@ -722,22 +722,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     ) : (
                         <div className="p-4 sm:p-6 pb-20">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-yellow-500 shadow-yellow-500/20'}`}>
+                            <div className="flex items-center gap-4 sm:gap-8 mb-6">
+                                <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-yellow-500 shadow-yellow-500/20'}`}>
                                     {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
                                 </div>
-                                <div className="flex-1 flex justify-around items-center pl-8">
+                                <div className="flex-1 flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
-                                        <div className="font-black text-white text-2xl sm:text-4xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[12px] sm:text-sm text-gray-500 uppercase tracking-widest font-bold mt-2">Posts</div>
+                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Posts</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-2 rounded-2xl transition-all">
-                                        <div className="font-black text-yellow-500 text-2xl sm:text-4xl leading-none">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[12px] sm:text-sm text-gray-500 uppercase tracking-widest font-bold mt-2">Followers</div>
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
+                                        <div className="font-black text-yellow-500 text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Followers</div>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/5 p-2 rounded-2xl transition-all">
-                                        <div className="font-black text-white text-2xl sm:text-4xl leading-none">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[12px] sm:text-sm text-gray-500 uppercase tracking-widest font-bold mt-2">Following</div>
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
+                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{displayUser?.following?.length || 0}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Following</div>
                                     </div>
                                 </div>
                             </div>
