@@ -1402,6 +1402,8 @@ const App = () => {
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
         } catch (e) { }
+
+
     };
 
     const handleFollow = async (targetId) => {
