@@ -300,6 +300,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     const { t, lang } = useTranslation(user);
     const [translatedDesc, setTranslatedDesc] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
 
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = post.author?.role === 'Founder';
@@ -359,16 +360,30 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt)}
                                 </span>
                             </div>
-                            <div className="flex gap-2">
-                                {isOwner && (
-                                    <button onClick={(e) => { e.stopPropagation(); onEditPost(post); }} className="text-gray-500 hover:text-blue-500 p-3 hover:bg-blue-500/10 rounded-full transition-all">
-                                        <Icons.Settings className="w-5 h-5" />
-                                    </button>
-                                )}
+                            <div className="relative">
                                 {(isOwner || isFounder) && (
-                                    <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); if (confirm(t('TERMINATE_CONFIRM'))) handleDelete(); }} className="text-gray-500 hover:text-red-500 p-5 -m-2 hover:bg-red-500/10 rounded-full transition-all group/trash z-[50]">
-                                        <Icons.Trash className="w-5 h-5 group-hover/trash:scale-125" />
-                                    </button>
+                                    <>
+                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-95">
+                                            <Icons.MoreVertical className="w-5 h-5" />
+                                        </button>
+                                        <AnimatePresence>
+                                            {showMenu && (
+                                                <>
+                                                    <div className="fixed inset-0 z-[40]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="absolute right-0 top-8 bg-[#1a1a1a] border border-white/10 rounded-xl p-1 z-[50] w-36 shadow-2xl flex flex-col gap-1 overflow-hidden backdrop-blur-md">
+                                                        {isOwner && (
+                                                            <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/10 text-xs font-bold text-gray-300 w-full text-left transition-colors uppercase tracking-wider">
+                                                                <Icons.Edit className="w-4 h-4" /> {t('EDIT_BTN')}
+                                                            </button>
+                                                        )}
+                                                        <button onClick={(e) => { e.stopPropagation(); if (confirm(t('TERMINATE_CONFIRM'))) handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/20 text-xs font-bold text-red-500 w-full text-left transition-colors uppercase tracking-wider">
+                                                            <Icons.Trash className="w-4 h-4" /> {t('DELETE_BTN')}
+                                                        </button>
+                                                    </motion.div>
+                                                </>
+                                            )}
+                                        </AnimatePresence>
+                                    </>
                                 )}
                             </div>
                         </div>
