@@ -1296,9 +1296,12 @@ const App = () => {
         try {
             const res = await axios.get('/users/notifications');
             setAlerts(res.data);
-            const updatedUser = { ...user, notifications: res.data };
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setUser(prev => {
+                if (!prev) return prev;
+                const updated = { ...prev, notifications: res.data };
+                localStorage.setItem('user', JSON.stringify(updated));
+                return updated;
+            });
         } catch (e) { console.error('Fetch notifications failed', e); }
     };
 
