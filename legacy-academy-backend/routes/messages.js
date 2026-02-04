@@ -18,8 +18,11 @@ router.post("/", verifyToken, async (req, res) => {
 
         // Optional: Check if recipient allows messages (e.g. followers only)
         const targetUser = await User.findById(recipient);
-        if (targetUser?.isFollowersOnly && !targetUser.followers.includes(senderId)) {
-            return res.status(403).json("This agent only accepts messages from followers.");
+        if (targetUser?.isFollowersOnly) {
+            const isFollower = targetUser.followers.some(id => String(id) === String(senderId));
+            if (!isFollower) {
+                return res.status(403).json("This agent only accepts messages from followers.");
+            }
         }
 
         const newMessage = new Message({
