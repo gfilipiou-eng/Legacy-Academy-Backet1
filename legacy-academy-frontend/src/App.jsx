@@ -1147,8 +1147,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
                             <div className="flex flex-col">
-                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>ADD TO STORY</span>
-                                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">VISIBLE FOR 24H 🕒</span>
+                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
+                                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
                     </div>
