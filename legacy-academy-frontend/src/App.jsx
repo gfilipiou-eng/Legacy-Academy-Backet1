@@ -242,13 +242,13 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
             <div className="flex-1">
                 <div className="text-sm">
                     <span className="font-black text-white group-hover:text-yellow-500 transition-colors uppercase tracking-tight">{note.fromUsername}</span>
-                    <span className="text-gray-500 text-[11px] ml-1 uppercase tracking-widest font-bold">
+                    <span className="text-gray-500 text-[10px] sm:text-[11px] ml-1 uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? 'joined your network' :
-                            note.type === 'like' ? 'endorsed your intel' :
-                                note.type === 'comment' ? 'briefed your post' :
-                                    note.type === 'message' ? 'encrypted a message' :
+                            note.type === 'like' ? 'endorsed intel' :
+                                note.type === 'comment' ? 'briefed post' :
+                                    note.type === 'message' ? 'encrypted message' :
                                         note.type === 'mention' ? 'flagged you' :
-                                            note.type === 'follow_request' ? 'requests clearance' : ''}
+                                            note.type === 'follow_request' ? 'clearance req' : ''}
                     </span>
                 </div>
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
@@ -500,7 +500,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl shadow-yellow-500/10">
+            <div className="relative w-full max-w-5xl h-[100dvh] sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl shadow-yellow-500/10">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 flex justify-between items-center"><h2 className="text-xl font-black italic">CHATS</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -573,14 +573,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[250] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative w-full max-w-sm bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl">
-                <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5">
-                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">Security & Privacy</h2>
+            <div className="relative w-full max-w-sm h-full sm:h-auto bg-[#0a0a0a] sm:border border-white/10 sm:rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
+                <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
+                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">Settings</h2>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
-                <div className="modal-content-scroller custom-scrollbar p-3 space-y-2">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                     <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-yellow-500/30 group">
                         <div>
                             <div className="text-sm font-bold text-white group-hover:text-yellow-500 transition-colors">Private Account</div>
@@ -1481,10 +1481,10 @@ const App = () => {
         <div className="app-container">
             <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
                 <div className="liquid-bg" />
-                <header className="sticky top-0 z-[100] bg-black/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shrink-0">
-                    <div className="w-full px-6 py-4 flex items-center justify-between">
+                <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
+                    <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-20 w-auto object-contain" alt="Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-12 sm:h-20 w-auto object-contain transition-all" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={(e) => { e.stopPropagation(); setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors active:scale-95 transition-transform">
@@ -1542,8 +1542,8 @@ const App = () => {
                     </div>
                 </main>
 
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
-                    <div className="liquid-glass-nav h-[68px] rounded-[2rem] px-5 flex items-center justify-between shadow-2xl">
+                <div className="fixed bottom-4 left-0 right-0 px-4 flex justify-center z-[200]">
+                    <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10">
                         <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
                         <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
 
