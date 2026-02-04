@@ -24,14 +24,19 @@ body {
 /* --- SUPER LIQUID GLASS (PHOTO MATCH) --- */
 
 /* --- LIQUID GLASS NAV (REFINED) --- */
+/* --- LIQUID GLASS NAV (ULTRA REFINED) --- */
 .liquid-glass-nav {
-  background: rgba(10, 10, 10, 0.6);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 20, 20, 0.5);
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow:
-    0 -10px 40px rgba(0, 0, 0, 0.5),
-    inset 0 0 1px 1px rgba(255, 255, 255, 0.03);
+    0 -10px 50px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -43,24 +48,20 @@ body {
   left: -150%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   transform: skewX(-20deg);
-  animation: liquid-glass-sweep 4s infinite linear;
+  animation: liquid-glass-sweep 6s infinite ease-in-out;
 }
 
 @keyframes liquid-glass-sweep {
-  0% {
-    left: -150%;
-  }
-
-  100% {
-    left: 150%;
-  }
+  0% { left: -150%; }
+  50% { left: 150%; }
+  100% { left: 150%; }
 }
 
 .nav-item-btn {
-  @apply p-2.5 rounded-full transition-all duration-300;
-  color: rgba(255, 255, 255, 0.4);
+  @apply p-3 rounded-2xl transition-all duration-300;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .nav-item-btn:active {
@@ -68,15 +69,27 @@ body {
 }
 
 .nav-item-active {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: var(--gold-primary) !important;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  background: rgba(255, 215, 0, 0.1) !important;
+  color: #ffd700 !important;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.1);
 }
 
 .nav-center-action {
-  @apply w-12 h-12 bg-black/80 rounded-full flex items-center justify-center border border-yellow-500/40 transition-all;
-  /* Removed shadow-xl */
+  @apply w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300;
+  background: linear-gradient(135deg, #ffd700, #ffb700);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
 }
+
+.nav-center-action svg {
+  color: black;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+  width: 32px;
+  height: 32px;
+  stroke-width: 2.5px;
+}  /* Removed shadow-xl */
 
 .nav-center-action:active {
   transform: scale(0.9);
