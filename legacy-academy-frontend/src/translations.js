@@ -27,7 +27,8 @@ export const TRANSLATIONS = {
         CLOSE: 'CLOSE', INTEL_COMMS: 'INTEL COMMS', ADD_COMMENT: 'ADD COMMENT', PENDING_APPROVAL: 'PENDING APPROVAL',
         AWAITING_AUTH: 'AWAITING AUTH', NEURAL_LOGS: 'NEURAL LOGS', FOLLOWED_YOU: 'followed you',
         COMMENTED: 'commented', MENTIONED_YOU: 'mentioned you', NO_ACTIVITY: 'NO ACTIVITY LOGGED',
-        TITLE: 'TITLE', DESCRIPTION: 'DESCRIPTION', PUBLISH: 'PUBLISH', ACTIVITY: 'ACTIVITY'
+        TITLE: 'TITLE', DESCRIPTION: 'DESCRIPTION', PUBLISH: 'PUBLISH', ACTIVITY: 'ACTIVITY',
+        SEE_TRANSLATION: 'See Translation', SHOW_ORIGINAL: 'Show Original'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -57,7 +58,8 @@ export const TRANSLATIONS = {
         CLOSE: 'ΚΛΕΙΣΙΜΟ', INTEL_COMMS: 'ΣΧΟΛΙΑ', ADD_COMMENT: 'ΣΧΟΛΙΑΣΤΕ', PENDING_APPROVAL: 'ΕΚΚΡΕΜΕΙ ΕΓΚΡΙΣΗ',
         AWAITING_AUTH: 'ΑΝΑΜΟΝΗ ΕΓΚΡΙΣΗΣ', NEURAL_LOGS: 'ΑΡΧΕΙΑ ΣΥΣΤΗΜΑΤΟΣ', FOLLOWED_YOU: 'σας ακολούθησε',
         COMMENTED: 'σχολίασε', MENTIONED_YOU: 'σας ανέφερε', NO_ACTIVITY: 'ΚΑΜΙΑ ΔΡΑΣΤΗΡΙΟΤΗΤΑ',
-        TITLE: 'ΤΙΤΛΟΣ', DESCRIPTION: 'ΠΕΡΙΓΡΑΦΗ', PUBLISH: 'ΔΗΜΟΣΙΕΥΣΗ', ACTIVITY: 'ΔΡΑΣΤΗΡΙΟΤΗΤΑ'
+        TITLE: 'ΤΙΤΛΟΣ', DESCRIPTION: 'ΠΕΡΙΓΡΑΦΗ', PUBLISH: 'ΔΗΜΟΣΙΕΥΣΗ', ACTIVITY: 'ΔΡΑΣΤΗΡΙΟΤΗΤΑ',
+        SEE_TRANSLATION: 'Δείτε τη μετάφραση', SHOW_ORIGINAL: 'Πρωτότυπο κείμενο'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -88,6 +90,7 @@ export const TRANSLATIONS = {
         AWAITING_AUTH: 'PERIMENEI OK', NEURAL_LOGS: 'LOGS', FOLLOWED_YOU: 'akolutha se',
         COMMENTED: 'evale sxolio', MENTIONED_YOU: 'ipe to onoma su', NO_ACTIVITY: 'TIPOTA',
         TITLE: 'TITLOS', DESCRIPTION: 'PERIGRAPHI', PUBLISH: 'VALTO', ACTIVITY: 'ACTIVITY',
+        SEE_TRANSLATION: 'Vlepw t metafrasi', SHOW_ORIGINAL: 'Prototipo',
         BAN_USER: 'BAN AGENT', BAN_3DAYS: 'BAN 3 DAYS', BAN_EXPIRED: 'BAN EXPIRED',
         DELETE_ACCOUNT_CONFIRM: 'TERMINATE ACCOUNT PERMANENTLY?'
     },
@@ -120,8 +123,7 @@ export const TRANSLATIONS = {
         AWAITING_AUTH: 'WARTET AUF AUTH', NEURAL_LOGS: 'PROTOKOLLE', FOLLOWED_YOU: 'ist dir gefolgt',
         COMMENTED: 'hat kommentiert', MENTIONED_YOU: 'hat dich erwähnt', NO_ACTIVITY: 'KEINE AKTIVITÄT',
         TITLE: 'TITEL', DESCRIPTION: 'BESCHREIBUNG', PUBLISH: 'POSTEN', ACTIVITY: 'AKTIVITÄT',
-        BAN_USER: 'AGENT SPERREN', BAN_3DAYS: '3 TAGE SPERREN', BAN_EXPIRED: 'SPERRE ABGELAUFEN',
-        DELETE_ACCOUNT_CONFIRM: 'KONTO ENDGÜLTIG TERMINIEREN?'
+        SEE_TRANSLATION: 'Übersetzung anzeigen', SHOW_ORIGINAL: 'Original anzeigen'
     }
 };
 

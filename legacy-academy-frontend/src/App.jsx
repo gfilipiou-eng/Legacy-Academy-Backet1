@@ -295,6 +295,10 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [showHeart, setShowHeart] = useState(false);
+    const { t, lang } = useTranslation(user);
+    const [translatedDesc, setTranslatedDesc] = useState(null);
+    const [isTranslating, setIsTranslating] = useState(false);
+
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = post.author?.role === 'Founder';
     const isOwner = post.author?._id === user?._id || post.author === user?._id;
@@ -368,13 +372,41 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         </div>
 
                         {/* POST TEXT CONTENT */}
-                        {/* POST TEXT CONTENT */}
                         <div onClick={() => {
                             const isVid = (isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i)));
                             if (!isVid) onOpenDetail(post);
                         }} className={`mt-1 text-sm text-white/90 whitespace-pre-wrap break-words mb-2 font-normal ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
-                            {parseHashtags(post.desc)}
+                            {translatedDesc ? (
+                                <div className="space-y-1">
+                                    <div className="text-yellow-500 text-[10px] font-bold uppercase tracking-widest">{t('SEE_TRANSLATION')}</div>
+                                    <div>{parseHashtags(translatedDesc)}</div>
+                                </div>
+                            ) : parseHashtags(post.desc)}
                         </div>
+
+                        {post.desc && post.desc.length > 5 && (
+                            <button
+                                onClick={async (e) => {
+                                    e.stopPropagation();
+                                    if (translatedDesc) {
+                                        setTranslatedDesc(null);
+                                        return;
+                                    }
+                                    setIsTranslating(true);
+                                    try {
+                                        // Use lang from useTranslation (needs to be available)
+                                        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(post.desc)}`);
+                                        const data = await res.json();
+                                        const translated = data[0].map(item => item[0]).join('');
+                                        setTranslatedDesc(translated);
+                                    } catch (e) { console.error(e); }
+                                    finally { setIsTranslating(false); }
+                                }}
+                                className="text-[10px] font-bold text-gray-500 hover:text-yellow-500 transition-colors uppercase tracking-widest mb-2"
+                            >
+                                {isTranslating ? '...' : (translatedDesc ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                            </button>
+                        )}
 
                         {/* MEDIA CONTENT */}
                         {(post.image || post.videoUrl) && (
