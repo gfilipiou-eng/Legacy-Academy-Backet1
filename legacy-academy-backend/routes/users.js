@@ -71,8 +71,8 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         if (!userToFollow || !currentUser) return res.status(404).json("User not found");
 
-        const isFollowing = userToFollow.followers?.includes(currentUserId);
-        const hasRequested = userToFollow.followRequests?.includes(currentUserId);
+        const isFollowing = userToFollow.followers?.some(id => String(id) === String(currentUserId));
+        const hasRequested = userToFollow.followRequests?.some(id => String(id) === String(currentUserId));
 
         if (isFollowing) {
             // Unfollow

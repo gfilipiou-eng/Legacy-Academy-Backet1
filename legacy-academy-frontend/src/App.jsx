@@ -1536,11 +1536,12 @@ const App = () => {
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
 
         // Optimistic UI Update Logic
-        const isCurrentlyFollowing = user.following?.includes(targetId);
+        // Use robust string comparison to avoid type mismatch issues (ObjectId vs String)
+        const isCurrentlyFollowing = user.following?.some(id => String(id) === String(targetId));
 
         // Temporarily update local state to feel instant
         if (isCurrentlyFollowing) {
-            updateUserState({ following: user.following.filter(id => id !== targetId) });
+            updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
         } else {
             updateUserState({ following: [...(user.following || []), targetId] });
         }
