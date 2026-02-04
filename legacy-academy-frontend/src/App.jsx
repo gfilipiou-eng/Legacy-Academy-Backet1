@@ -138,7 +138,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
     return (
         <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-y-auto">
             <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
-            <div className="w-full max-w-5xl h-fit md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
+            <div className="w-full max-w-5xl h-auto md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
                 {/* Image Section - Responsive height */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[50vh] min-h-[30vh] md:max-h-full md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -178,7 +178,7 @@ const PostDetailModal = ({ post, user, onClose, onLike, onDislike, onShare, onCo
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 max-h-[60vh] md:max-h-full modal-content-scroller">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 md:max-h-full">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-yellow-500/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
                         <div className="space-y-4 pb-4">
                             <AnimatePresence>
@@ -1542,24 +1542,26 @@ const App = () => {
                     </div>
                 </main>
 
-                <div className="fixed bottom-4 left-0 right-0 px-4 flex justify-center z-[200]">
-                    <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10">
-                        <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
-                        <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
+                {(!isProfileOpen && !selectedPost && !isChatOpen && !isCreateOpen && !isEditOpen && !isSettingsOpen) && (
+                    <div className="fixed bottom-4 left-0 right-0 px-4 flex justify-center z-[200]">
+                        <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between shadow-2xl border border-white/10">
+                            <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
+                            <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
 
-                        <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
-                            <Icons.Plus className="w-7 h-7 text-yellow-500" />
-                        </button>
+                            <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action">
+                                <Icons.Plus className="w-7 h-7 text-yellow-500" />
+                            </button>
 
-                        <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
+                            <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
 
-                        <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
-                            <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
-                                {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
-                            </div>
-                        </button>
+                            <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-yellow-500' : 'border-transparent'}`}>
+                                <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
+                                    {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-yellow-500">{user?.username?.[0]}</div>}
+                                </div>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
                 <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={setUser} />
