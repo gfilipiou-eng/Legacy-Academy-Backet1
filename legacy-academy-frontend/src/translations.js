@@ -48,7 +48,7 @@ export const TRANSLATIONS = {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
         LOGOUT: 'ΑΠΟΣΥΝΔΕΣΗ', FOUNDER_PANEL: 'ΠΑΝΕΛ ΙΔΡΥΤΗ', LOGIN: 'ΕΙΣΟΔΟΣ', REGISTER: 'ΕΓΓΡΑΦΗ',
         USERNAME: 'ΟΝΟΜΑ ΧΡΗΣΤΗ', EMAIL: 'EMAIL', PASSWORD: 'ΚΩΔΙΚΟΣ', FORGOT: 'ΞΕΧΑΣΑΤΕ ΤΟΝ ΚΩΔΙΚΟ;',
-        POSTS: 'ΔΗΜΟΣΙΕΥΣΕΙΣ', FOLLOWERS: 'ΑΚΟΛΟΥΘΟΙ', FOLLOWING: 'ΑΚΟΛΟΥΘΕΙ', EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ',
+        POSTS: 'ΔΗΜΟΣΙΕΥΣΕΙΣ', FOLLOWERS: 'ΑΚΟΛΟΥΘΟΙ', FOLLOWING: 'FOLLOWING', EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ',
         FOLLOW: 'ΑΚΟΛΟΥΘΗΣΤΕ', UNFOLLOW: 'ΔΙΑΓΡΑΦΗ', REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         DELETE: 'ΔΙΑΓΡΑΦΗ', CANCEL: 'ΑΚΥΡΩΣΗ', SAVE: 'ΑΠΟΘΗΚΕΥΣΗ',
         THEME: 'ΘΕΜΑ', NO_NOTIFS: 'ΚΑΜΙΑ ΕΙΔΟΠΟΙΗΣΗ',
@@ -368,7 +368,7 @@ export const useTranslation = (user) => {
     const browserLang = navigator.language?.split('-')[0];
     const defaultLang = TRANSLATIONS[browserLang] ? browserLang : 'en';
 
-    const lang = user?.settings?.language || localStorage.getItem('language') || defaultLang;
+    const lang = localStorage.getItem('language') || user?.settings?.language || defaultLang;
 
     const t = (key, params = {}) => {
         let text = TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en'][key] || key;
