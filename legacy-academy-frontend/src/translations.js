@@ -34,7 +34,13 @@ export const TRANSLATIONS = {
         NOTIF_FOLLOW: 'joined your network', NOTIF_LIKE: 'endorsed intel', NOTIF_COMMENT: 'briefed post',
         NOTIF_MESSAGE: 'encrypted message', NOTIF_MENTION: 'flagged you', NOTIF_REQUEST: 'clearance req',
         AUTHORIZE: 'AUTHORIZE', DENY: 'DENY',
-        SAVE_BTN: 'Save', CANCEL_BTN: 'Cancel'
+        SAVE_BTN: 'Save', CANCEL_BTN: 'Cancel',
+        FOLLOWING_LABEL: 'Following', EDIT_PROFILE: 'Edit Profile', BAN_BTN: 'BAN 3D',
+        TAB_ALL: 'ALL', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'No Content Found',
+        UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Decrypt your thoughts...', YOUTUBE_PH: 'YouTube URL (optional)',
+        YOUTUBE_NOTE: 'Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.',
+        ADD_MEDIA: 'Add Media', ADD_STORY: 'Add to Story (24h)', POST_STORY: 'POST STORY',
+        STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -71,7 +77,13 @@ export const TRANSLATIONS = {
         NOTIF_FOLLOW: 'μπήκε στο δίκτυο', NOTIF_LIKE: 'ενέκρινε πληροφορίες', NOTIF_COMMENT: 'σχολίασε',
         NOTIF_MESSAGE: 'νέο μήνυμα', NOTIF_MENTION: 'σας ανέφερε', NOTIF_REQUEST: 'αίτημα',
         AUTHORIZE: 'ΕΓΚΡΙΣΗ', DENY: 'ΑΠΟΡΡΙΨΗ',
-        SAVE_BTN: 'Αποθήκευση', CANCEL_BTN: 'Ακύρωση'
+        SAVE_BTN: 'Αποθήκευση', CANCEL_BTN: 'Ακύρωση',
+        FOLLOWING_LABEL: 'Ακολουθεί', EDIT_PROFILE: 'Επεξεργασία', BAN_BTN: 'BAN 3D',
+        TAB_ALL: 'ΟΛΑ', TAB_POSTS: 'POSTS', TAB_VIDEO: 'ΒΙΝΤΕΟ', NO_CONTENT: 'Δεν βρέθηκε περιεχόμενο',
+        UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
+        YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 δευτερόλεπτα.',
+        ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Προσθήκη σε Ιστορία', POST_STORY: 'STORY',
+        STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
@@ -110,7 +122,13 @@ export const TRANSLATIONS = {
         NOTIF_FOLLOW: 'mpike sto pexnidi', NOTIF_LIKE: 'arese to intel', NOTIF_COMMENT: 'evale sxolio',
         NOTIF_MESSAGE: 'minima', NOTIF_MENTION: 'se anefere', NOTIF_REQUEST: 'thelei mpei',
         AUTHORIZE: 'OK', DENY: 'OXI',
-        SAVE_BTN: 'Fula', CANCEL_BTN: 'Akyro'
+        SAVE_BTN: 'Fula', CANCEL_BTN: 'Akyro',
+        FOLLOWING_LABEL: 'Akolouthei', EDIT_PROFILE: 'Allaxe to', BAN_BTN: 'BAN 3D',
+        TAB_ALL: 'OULLA', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'Tipota en ivrika',
+        UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Grapse kati...', YOUTUBE_PH: 'YouTube URL',
+        YOUTUBE_NOTE: 'YouTube videos must be < 10s.',
+        ADD_MEDIA: 'Vale Foto', ADD_STORY: 'Vale Story', POST_STORY: 'VALE STORY',
+        STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -147,7 +165,13 @@ export const TRANSLATIONS = {
         NOTIF_FOLLOW: 'trat deinem Netzwerk bei', NOTIF_LIKE: 'hat Intel bestätigt', NOTIF_COMMENT: 'kommentierte Beitrag',
         NOTIF_MESSAGE: 'Verschlüsselte Nachricht', NOTIF_MENTION: 'hat dich markiert', NOTIF_REQUEST: 'Freigabeanfrage',
         AUTHORIZE: 'GENEHMIGEN', DENY: 'ABLEHNEN',
-        SAVE_BTN: 'Speichern', CANCEL_BTN: 'Abbrechen'
+        SAVE_BTN: 'Speichern', CANCEL_BTN: 'Abbrechen',
+        FOLLOWING_LABEL: 'Folgt', EDIT_PROFILE: 'Profil bearbeiten', BAN_BTN: 'BAN 3D',
+        TAB_ALL: 'ALLE', TAB_POSTS: 'POSTS', TAB_VIDEO: 'VIDEO', NO_CONTENT: 'Keine Inhalte',
+        UPLOAD_TITLE: 'UPLOAD', DECRYPT_PH: 'Gedanken entschlüsseln...', YOUTUBE_PH: 'YouTube URL',
+        YOUTUBE_NOTE: 'YouTube Videos müssen < 10s sein.',
+        ADD_MEDIA: 'Medien', ADD_STORY: 'Zur Story', POST_STORY: 'STORY POSTEN',
+        STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND'
     }
 };
 

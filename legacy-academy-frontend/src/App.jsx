@@ -848,19 +848,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Following</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWING_LABEL')}</div>
                                     </div>
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
                                 <div className="font-black text-white text-xl mb-1 flex items-center gap-2">
                                     {displayUser?.username || "Unknown Agent"}
-                                    {displayUser?.role === 'Founder' && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}
+                                    {displayUser?.role === 'Founder' && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || "Entrepreneur. Legacy Member."}</div>
 
                                 {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 uppercase tracking-widest hover:bg-white/10 transition-colors">Edit Profile</button>
+                                    <button onClick={() => setIsEditing(true)} className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 uppercase tracking-widest hover:bg-white/10 transition-colors">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex gap-2">
                                         <button
@@ -868,7 +868,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             disabled={!!followLoading[displayUser?._id]}
                                             className={`flex-1 py-3 rounded-2xl font-black transition-all shadow-lg active:scale-95 ${displayUser?.followers?.includes(currentUser?._id) || displayUser?.followRequests?.includes(currentUser?._id) ? 'bg-white/5 text-white border border-white/10' : 'bg-yellow-500 text-black hover:bg-yellow-400'} ${followLoading[displayUser?._id] ? 'opacity-60 cursor-wait' : ''}`}
                                         >
-                                            {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? 'FOLLOWING' : displayUser?.followRequests?.includes(currentUser?._id) ? 'REQUESTED' : 'FOLLOW')}
+                                            {followLoading[displayUser?._id] ? '...' : (displayUser?.followers?.includes(currentUser?._id) ? t('STATUS_FOLLOWING') : displayUser?.followRequests?.includes(currentUser?._id) ? t('STATUS_REQUESTED') : t('FOLLOW'))}
                                         </button>
                                         {currentUser?.role === 'Founder' && (
                                             <button
@@ -880,7 +880,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 }}
                                                 className="px-4 py-3 bg-red-600 rounded-2xl text-white font-black text-[10px] tracking-widest hover:bg-red-700 transition-all active:scale-95"
                                             >
-                                                BAN 3D
+                                                {t('BAN_BTN')}
                                             </button>
                                         )}
                                     </div>
@@ -891,12 +891,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <div className="flex gap-2 p-1 bg-white/5 rounded-2xl">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'text-gray-500 hover:text-white'}`}>{tab}</button>
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
                                 ))}
                             </div>
 
                             {userPosts.length === 0 ? (
-                                <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">No Content Found</div>
+                                <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
                             ) : (
                                 <div className="grid grid-cols-3 gap-1 pb-20">
                                     {userPosts.map(p => (
@@ -939,6 +939,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [creating, setCreating] = useState(false);
     const [isStory, setIsStory] = useState(false);
     const fileRef = useRef(null);
+    const { t } = useTranslation(user);
     if (!isOpen) return null;
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -970,17 +971,17 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1">
-                    <h2 className="text-xl font-black italic mb-4 text-white">UPLOAD</h2>
+                    <h2 className="text-xl font-black italic mb-4 text-white">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
                             {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
                         </div>
-                        <textarea id="c-desc" placeholder="Decrypt your thoughts..." className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
+                        <textarea id="c-desc" placeholder={t('DECRYPT_PH')} className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
                     </div>
 
                     {/* YouTube URL input */}
                     <div className="mb-3">
-                        <input id="c-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
+                        <input id="c-youtube" placeholder={t('YOUTUBE_PH')} className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
                             const v = e.target.value || '';
                             if (isYouTubeUrl(v)) {
                                 const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
@@ -992,7 +993,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 setIsVideo(false);
                             }
                         }} />
-                        <div className="text-[10px] text-gray-400 mt-1">Note: YouTube links cannot be automatically verified for duration — please ensure the video is 10 seconds or shorter.</div>
+                        <div className="text-[10px] text-gray-400 mt-1">{t('YOUTUBE_NOTE')}</div>
                     </div>
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
@@ -1004,7 +1005,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         ) : (
                             <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
                                 <Icons.Image className="w-8 h-8 opacity-50" />
-                                <span className="text-xs font-bold uppercase tracking-widest">Add Media</span>
+                                <span className="text-xs font-bold uppercase tracking-widest">{t('ADD_MEDIA')}</span>
                             </div>
                         )}
                         <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
@@ -1014,12 +1015,12 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isStory ? 'border-yellow-500 bg-yellow-500' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-3 h-3 text-black font-bold" />}
                             </div>
-                            <span className={`text-xs font-bold uppercase tracking-widest ${isStory ? 'text-yellow-500' : 'text-gray-500'}`}>Add to Story (24h)</span>
+                            <span className={`text-xs font-bold uppercase tracking-widest ${isStory ? 'text-yellow-500' : 'text-gray-500'}`}>{t('ADD_STORY')}</span>
                         </div>
                     </div>
 
                     <div className="flex gap-4">
-                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">CANCEL</button>
+                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL_BTN')}</button>
                         <button disabled={creating} onClick={async () => {
                             if (creating) return;
                             const desc = document.getElementById('c-desc').value;
@@ -1035,13 +1036,12 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 setCreating(true);
                                 await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
                                 onSuccess(); playSound('pop');
-                                // clear inputs
                                 document.getElementById('c-desc').value = '';
                                 document.getElementById('c-youtube').value = '';
                                 setPreview(null); fileRef.current.value = '';
                                 setIsStory(false);
                             } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? 'POST STORY' : 'POST')}</button>
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-yellow-500 hover:bg-yellow-400'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST_BTN'))}</button>
                     </div>
                 </div>
             </motion.div>
