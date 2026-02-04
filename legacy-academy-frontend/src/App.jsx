@@ -797,7 +797,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         else if (isEditing) setIsEditing(false);
                         else onClose();
                     }} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
-                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? 'Followers' : 'Following') : (isEditing ? 'Edit Profile' : displayUser?.username)}</div>
+                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
                     <div className="w-10" />
                 </div>
 
@@ -870,15 +870,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="flex-1 flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Posts</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('POSTS')}</div>
                                     </div>
                                     <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
                                         <div className="font-black text-yellow-500 text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Followers</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWERS')}</div>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWING_LABEL')}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWING')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -1544,7 +1544,7 @@ const App = () => {
                 <div className="liquid-bg" />
                 <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-yellow-500/5">
                     <div className="flex flex-col items-center mb-8">
-                        <img src="/image/Logo.png?v=4" className="h-28 w-auto object-contain mb-2" alt="Legacy Logo" />
+                        <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
                     </div>
                     <div className="space-y-4">
                         {authMode === 'login' && (
@@ -1687,7 +1687,7 @@ const App = () => {
                 <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
                     <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <img src="/image/Logo.png?v=4" className="h-20 sm:h-32 w-auto object-contain transition-all" alt="Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-32 sm:h-52 w-auto object-contain transition-all" alt="Logo" />
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={(e) => { e.stopPropagation(); setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className="relative p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors active:scale-95 transition-transform">

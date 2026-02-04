@@ -49,7 +49,7 @@ export const TRANSLATIONS = {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
         LOGOUT: 'ΑΠΟΣΥΝΔΕΣΗ', FOUNDER_PANEL: 'ΠΑΝΕΛ ΙΔΡΥΤΗ', LOGIN: 'ΕΙΣΟΔΟΣ', REGISTER: 'ΕΓΓΡΑΦΗ',
         USERNAME: 'ΟΝΟΜΑ ΧΡΗΣΤΗ', EMAIL: 'EMAIL', PASSWORD: 'ΚΩΔΙΚΟΣ', FORGOT: 'ΞΕΧΑΣΑΤΕ ΤΟΝ ΚΩΔΙΚΟ;',
-        POSTS: 'POSTS', FOLLOWERS: 'FOLLOWERS', FOLLOWING: 'FOLLOWING', EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ',
+        POSTS: 'ΔΗΜΟΣΙΕΥΣΕΙΣ', FOLLOWERS: 'ΑΚΟΛΟΥΘΟΙ', FOLLOWING: 'FOLLOWING', EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ',
         FOLLOW: 'ΑΚΟΛΟΥΘΗΣΤΕ', UNFOLLOW: 'ΔΙΑΓΡΑΦΗ', REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         DELETE: 'ΔΙΑΓΡΑΦΗ', CANCEL: 'ΑΚΥΡΩΣΗ', SAVE: 'ΑΠΟΘΗΚΕΥΣΗ',
         THEME: 'ΘΕΜΑ', NO_NOTIFS: 'ΚΑΜΙΑ ΕΙΔΟΠΟΙΗΣΗ',
