@@ -49,7 +49,7 @@ export const TRANSLATIONS = {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
         LOGOUT: 'ΑΠΟΣΥΝΔΕΣΗ', FOUNDER_PANEL: 'ΠΑΝΕΛ ΙΔΡΥΤΗ', LOGIN: 'ΕΙΣΟΔΟΣ', REGISTER: 'ΕΓΓΡΑΦΗ',
         USERNAME: 'ΟΝΟΜΑ ΧΡΗΣΤΗ', EMAIL: 'EMAIL', PASSWORD: 'ΚΩΔΙΚΟΣ', FORGOT: 'ΞΕΧΑΣΑΤΕ ΤΟΝ ΚΩΔΙΚΟ;',
-        POSTS: 'ΔΗΜΟΣΙΕΥΣΕΙΣ', FOLLOWERS: 'ΑΚΟΛΟΥΘΟΙ', FOLLOWING: 'FOLLOWING', EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ',
+        POSTS: 'ΔΗΜΟΣΙΕΥΣΕΙΣ', FOLLOWERS: 'ΑΚΟΛΟΥΘΟΙ', FOLLOWING: 'ΑΚΟΛΟΥΘΩ', EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ',
         FOLLOW: 'ΑΚΟΛΟΥΘΗΣΤΕ', UNFOLLOW: 'ΔΙΑΓΡΑΦΗ', REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         DELETE: 'ΔΙΑΓΡΑΦΗ', CANCEL: 'ΑΚΥΡΩΣΗ', SAVE: 'ΑΠΟΘΗΚΕΥΣΗ',
         THEME: 'ΘΕΜΑ', NO_NOTIFS: 'ΚΑΜΙΑ ΕΙΔΟΠΟΙΗΣΗ',
@@ -86,7 +86,7 @@ export const TRANSLATIONS = {
         UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 λεπτά.',
         ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Σε Ιστορία (24ω) 🕒', POST_STORY: 'ΙΣΤΟΡΙΑ',
-        STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΕΙΤΕ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
+        STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΩ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
         EDIT: 'Edit', DELETE: 'Delete', POST: 'Δημοσίευση'
