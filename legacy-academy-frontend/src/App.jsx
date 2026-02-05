@@ -332,33 +332,37 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             <div className={`flex flex-1 items-center bg-white/[0.04] backdrop-blur-xl rounded-2xl px-3 py-1 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all relative ${commentAudio ? 'ring-1 ring-[var(--gold-primary)]/50 bg-[var(--gold-primary)]/5' : ''}`}>
                                 {!commentAudio ? (
                                     isRecordingComment ? (
-                                        <div className="flex-1 min-h-[44px] bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between px-3 animate-pulse pr-1 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] whitespace-nowrap">{t('TRANSMITTING')}</span>
+                                        <div className="flex-1 space-y-3 py-2">
+                                            <div className="min-h-[50px] bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-between px-4 animate-pulse shadow-[0_0_25px_rgba(239,68,68,0.15)]">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+                                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-[0.25em] whitespace-nowrap">{t('TRANSMITTING')}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2 ml-1">
-                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-4 py-2.5 rounded-lg text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-4 h-4" />
+                                            <div className="flex items-center justify-center gap-3">
+                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-8 py-3 rounded-xl text-white font-black text-[12px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
                                                 </button>
-                                                <button type="button" onClick={() => stopRecording(true)} className="p-2.5 rounded-lg bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center">
-                                                    <Icons.X className="w-5 h-5" />
+                                                <button type="button" onClick={() => stopRecording(true)} className="p-3 rounded-xl bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center">
+                                                    <Icons.X className="w-6 h-6" />
                                                 </button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex-1 flex items-center bg-white/[0.02] rounded-xl px-3 group">
-                                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-[14px] outline-none text-white py-3 placeholder-gray-600 font-medium" />
-                                            <div className="flex items-center gap-2 ml-2">
+                                        <div className="flex-1 flex flex-col gap-3 py-1">
+                                            <div className="bg-white/[0.02] border border-white/5 rounded-2xl px-4 focus-within:border-[var(--gold-primary)]/30 transition-all">
+                                                <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent text-[15px] outline-none text-white py-4 placeholder-gray-600 font-medium" />
+                                            </div>
+                                            <div className="flex items-center justify-center gap-4">
                                                 <button onClick={(e) => {
                                                     e.preventDefault();
                                                     if (!commentText.trim()) return;
                                                     onComment(post._id, commentText);
                                                     setCommentText('');
-                                                }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-white font-black text-[10px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-4 h-4" />
+                                                }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
                                                 </button>
-                                                <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-full bg-white/[0.05] hover:bg-white/10 transition-all text-gray-400 hover:text-white active:scale-125 border border-white/5"><Icons.Mic className="w-5 h-5" /></button>
+                                                <button type="button" onClick={startCommentRecording} className="p-3.5 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-white active:scale-125 border border-white/10 shadow-xl"><Icons.Mic className="w-6 h-6" /></button>
                                             </div>
                                         </div>
                                     )
@@ -757,48 +761,60 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     setCommentAudio(null);
                                     setCommentText('');
                                 }}
-                                className="flex gap-3 items-center mt-4"
+                                className="flex flex-col gap-4 mt-6"
                             >
-                                <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
-                                    <ProfileAvatar user={user} />
+                                <div className="flex gap-3 items-start">
+                                    <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 mt-1 shadow-lg ring-1 ring-white/10">
+                                        <ProfileAvatar user={user} />
+                                    </div>
+                                    {isRecordingComment ? (
+                                        <div className="flex-1 space-y-3">
+                                            <div className="h-14 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-center px-4 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+                                                    <span className="text-[12px] font-black text-red-500 uppercase tracking-[0.3em] font-mono">TRANSMITTING</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center justify-center gap-4">
+                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-10 py-3.5 rounded-xl text-white font-black text-[12px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                </button>
+                                                <button type="button" onClick={() => stopRecording(true)} className="p-3.5 rounded-xl bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center shadow-lg">
+                                                    <Icons.X className="w-6 h-6" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : commentAudio ? (
+                                        <div className="flex-1 space-y-3">
+                                            <div className="h-14 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex items-center justify-center px-4 ring-1 ring-blue-500/20">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] font-mono">{t('VOICE_PREPARED')}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center justify-center gap-4">
+                                                <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-xl text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                </button>
+                                                <button type="button" onClick={() => setCommentAudio(null)} className="p-3.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all active:scale-90 border border-white/10 shadow-lg">
+                                                    <Icons.Trash className="w-6 h-6" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex-1 space-y-4">
+                                            <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl px-5 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner ring-1 ring-black/20">
+                                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
+                                            </div>
+                                            <div className="flex items-center justify-center gap-5">
+                                                <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                </button>
+                                                <button type="button" onClick={startCommentRecording} className="p-4 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-white active:scale-125 border border-white/10 shadow-2xl ring-1 ring-white/5"><Icons.Mic className="w-6 h-6" /></button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                {isRecordingComment ? (
-                                    <div className="flex-1 h-11 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between px-3 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.15)]">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
-                                            <span className="text-[11px] font-black text-red-500 uppercase tracking-[0.25em]">TRANSMITTING...</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <button type="button" onClick={() => stopRecording(true)} className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/5"><Icons.X className="w-4.5 h-4.5" /></button>
-                                            <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 p-3 rounded-xl text-white font-black shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center justify-center">
-                                                <Icons.Send className="w-5 h-5 fill-white" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : commentAudio ? (
-                                    <div className="flex-1 h-11 bg-blue-500/5 border border-blue-500/20 rounded-xl flex items-center justify-between px-4 ring-1 ring-blue-500/20">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('VOICE_PREPARED')}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <button type="button" onClick={() => setCommentAudio(null)} className="p-2 rounded-lg hover:bg-red-500/10 transition-colors group active:scale-90"><Icons.Trash className="w-4.5 h-4.5 text-gray-500 group-hover:text-red-500" /></button>
-                                            <button type="submit" className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl text-white font-black shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center justify-center">
-                                                <Icons.Send className="w-5 h-5 fill-white" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="flex-1 flex gap-2.5 items-center bg-white/[0.04] backdrop-blur-xl rounded-xl px-3 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner">
-                                        <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent py-2.5 text-[12px] text-white outline-none placeholder-gray-500 font-medium" />
-                                        <div className="flex items-center gap-2 ml-1">
-                                            <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-lg text-white font-black text-[10px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
-                                                {t('POST')} <Icons.Send className="w-4 h-4" />
-                                            </button>
-                                            <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-full bg-white/[0.05] hover:bg-white/10 transition-all text-gray-400 hover:text-white active:scale-110"><Icons.Mic className="w-4.5 h-4.5" /></button>
-                                        </div>
-                                    </div>
-                                )}
                             </form>
                         </div>
                     </motion.div>
