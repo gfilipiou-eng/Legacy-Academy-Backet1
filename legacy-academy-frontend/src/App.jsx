@@ -367,13 +367,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
 
                         {commentAudio ? (
-                            <div className="flex items-center justify-between gap-3 min-h-[52px] px-2 bg-blue-500/10 border border-blue-500/20 rounded-[1.2rem] p-1.5 animate-pop-in">
+                            <div className="flex items-center justify-between gap-3 min-h-[52px] px-2 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 rounded-[1.2rem] p-1.5 animate-pop-in">
                                 <div className="flex items-center gap-2.5 pl-2">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
-                                    <span className="text-[11px] font-black text-blue-400 uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                    <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                    <span className="text-[11px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <button type="button" onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>
+                                    <button type="button" onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>
                                     <button onClick={(e) => {
                                         e.preventDefault();
                                         const fd = new FormData();
@@ -382,8 +382,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         onComment(post._id, fd);
                                         setCommentAudio(null);
                                         setCommentText('');
-                                    }} className="w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-xl text-white shadow-lg shadow-blue-900/40 active:scale-95 transition-all">
-                                        <Icons.Send className="w-5 h-5 fill-white" />
+                                    }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all">
+                                        <Icons.Send className="w-5 h-5 fill-black" />
                                     </button>
                                 </div>
                             </div>
@@ -822,7 +822,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                             </div>
                                             <div className="flex items-center justify-center gap-4">
                                                 <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-6 py-2.5 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-4 h-4" />
+                                                    {t('POST')} <Icons.Send className="w-4 h-4 fill-white" />
                                                 </button>
                                                 <button type="button" onClick={() => stopRecording(true)} className="p-3 rounded-xl bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center shadow-lg">
                                                     <Icons.X className="w-5 h-5" />
@@ -831,15 +831,15 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         </div>
                                     ) : commentAudio ? (
                                         <div className="flex-1 space-y-3">
-                                            <div className="h-14 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex items-center justify-center px-4 ring-1 ring-blue-500/20">
+                                            <div className="h-14 bg-[var(--gold-primary)]/5 border border-[var(--gold-primary)]/20 rounded-2xl flex items-center justify-center px-4 ring-1 ring-[var(--gold-primary)]/20">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] font-mono">{t('VOICE_PREPARED')}</span>
+                                                    <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                                    <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-[0.2em] font-mono">{t('VOICE_PREPARED')}</span>
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-center gap-4">
-                                                <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-4 h-4" />
+                                                <button type="submit" className="bg-[var(--gold-primary)] hover:opacity-90 px-6 py-2.5 rounded-xl text-black font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-4 h-4 fill-black" />
                                                 </button>
                                                 <button type="button" onClick={() => setCommentAudio(null)} className="p-3 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all active:scale-90 border border-white/10 shadow-lg">
                                                     <Icons.Trash className="w-5 h-5" />
@@ -847,30 +847,44 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex-1 space-y-4">
-                                            <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl px-5 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner ring-1 ring-black/20">
-                                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
-                                            </div>
-                                            <div className="flex items-center justify-center gap-2 mt-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={startCommentRecording}
-                                                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all"
-                                                >
-                                                    <Icons.Mic className="w-5 h-5" />
-                                                </button>
-                                                <button
-                                                    type="submit"
-                                                    disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-900/40 active:scale-95 transition-all disabled:opacity-20"
-                                                >
-                                                    {loadingActions?.[post._id] ? (
-                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                    ) : (
-                                                        <Icons.Send className="w-5 h-5" />
-                                                    )}
-                                                </button>
-                                            </div>
+                                        <div className="flex-1">
+                                            <form
+                                                onSubmit={(e) => {
+                                                    e.preventDefault();
+                                                    if (commentText.trim()) {
+                                                        onComment(post._id, commentText);
+                                                        setCommentText('');
+                                                    }
+                                                }}
+                                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group"
+                                            >
+                                                <input
+                                                    placeholder={t('ENGAGE')}
+                                                    value={commentText}
+                                                    onChange={(e) => setCommentText(e.target.value)}
+                                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
+                                                />
+                                                <div className="flex gap-1 pr-1">
+                                                    <button
+                                                        type="button"
+                                                        onClick={startCommentRecording}
+                                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn"
+                                                    >
+                                                        <Icons.Mic className="w-5 h-5" />
+                                                    </button>
+                                                    <button
+                                                        type="submit"
+                                                        disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn"
+                                                    >
+                                                        {loadingActions?.[post._id] ? (
+                                                            <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                                        ) : (
+                                                            <Icons.Send className="w-5 h-5" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
                                     )}
                                 </div>
