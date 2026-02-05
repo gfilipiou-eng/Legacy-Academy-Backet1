@@ -417,8 +417,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
         } catch (e) { alert("Mic denied"); }
     };
 
-    // Safety check: Do not render stories as posts
-    if (post.isStory) return null;
+
 
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
@@ -427,6 +426,9 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     const [translatedDesc, setTranslatedDesc] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+
+    // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
+    if (post.isStory) return null;
 
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = post.author?.role === 'Founder';
