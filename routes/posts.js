@@ -240,12 +240,13 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
 
     return res.status(200).json(updatedPost.comments);
   } catch (e) {
-    console.error(`🔥 [${reqId}] CRITICAL COMMENT ERROR ON POST ${req.params.id}:`);
-    console.error(e.stack || e);
+    const errorId = req.requestId || 'err-' + Date.now().toString(36);
+    console.error(`COMMENT ERROR [${errorId}] ON POST ${req.params.id}:`, e);
     return res.status(500).json({
       error: "Transmission Failed",
+      message: "An internal protocol error occurred while deploying the comment.",
       detail: e.message || "Unknown error",
-      requestId: reqId,
+      requestId: errorId,
       code: "COM_ERR_500"
     });
   }

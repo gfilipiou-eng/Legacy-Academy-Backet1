@@ -6,6 +6,7 @@ import { verifyToken } from "../middleware/auth.js";
 const router = express.Router();
 
 // Status check to verify connectivity
+router.get("/", (req, res) => res.status(200).json({ status: "Neural link active", protocol: "MESSAGES_V1" }));
 router.get("/status", (req, res) => res.status(200).json({ status: "Neural link active", timestamp: new Date() }));
 
 // Send a message
@@ -23,6 +24,9 @@ router.post("/", verifyToken, async (req, res) => {
         }
 
         // Optional: Check if recipient allows messages (e.g. followers only)
+        if (!mongoose.Types.ObjectId.isValid(recipient)) {
+            return res.status(400).json("Invalid recipient identifier format.");
+        }
         const targetUser = await User.findById(recipient);
         if (targetUser?.isFollowersOnly && !targetUser.followers.includes(senderId)) {
             return res.status(403).json("This agent only accepts messages from followers.");
@@ -52,7 +56,8 @@ router.post("/", verifyToken, async (req, res) => {
 
         res.status(201).json(savedMessage);
     } catch (err) {
-        res.status(500).json(err);
+        console.error("MESSAGE ERROR:", err);
+        res.status(500).json({ error: "Neural link transmission failed", detail: err.message });
     }
 });
 
