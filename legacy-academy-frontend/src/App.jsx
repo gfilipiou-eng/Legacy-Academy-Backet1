@@ -9,7 +9,7 @@ import { playSound, explodeEffect } from './utils/sounds';
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
 
-const resolveMediaUrl = (path, width = null) => {
+const resolveMediaUrl = (path, width = null, isAvatar = false) => {
     if (!path) return '';
     let url = path;
     if (!path.startsWith('http') && !path.startsWith('blob:')) {
@@ -22,9 +22,18 @@ const resolveMediaUrl = (path, width = null) => {
         // Only inject if not already transformed
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
             const isVideo = url.includes('/video/upload/');
-            const transform = width
-                ? `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`
-                : `c_limit,w_1080,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+            let transform = '';
+
+            if (isAvatar && isVideo) {
+                // FORCE TINY SIZE AND OPTIMIZED FORMAT FOR AVATARS
+                transform = `w_150,h_150,c_fill,g_face,q_auto:eco,vc_auto,f_auto,ac_none,so_0,eo_5`;
+            } else if (isAvatar) {
+                transform = `w_150,h_150,c_fill,g_face,q_auto:best,f_auto`;
+            } else if (width) {
+                transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+            } else {
+                transform = `c_limit,w_1080,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+            }
 
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
         }
@@ -108,8 +117,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     if (!user) return <DefaultAvatar size={size} />;
     const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
     const name = user.username || user.fromUsername;
-    // Optimization: Avatars only need ~150px width
-    const mediaUrl = url ? resolveMediaUrl(url, 150) : null;
+    // Optimization: Avatars only need ~150px width, and isAvatar flag for aggressive compression
+    const mediaUrl = url ? resolveMediaUrl(url, 150, true) : null;
     const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video') || mediaUrl.includes('/video/upload/') || mediaUrl.includes('vc_auto'));
 
     if (isVideo) {
@@ -161,17 +170,17 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border border-white/5 backdrop-blur-md ${isCommentAuthor ? 'bg-blue-600/20 border-blue-500/30 rounded-tr-none' : 'bg-white/[0.05] rounded-tl-none'}`}>
+                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/20 rounded-tr-none' : 'bg-white/[0.03] border-white/5 rounded-tl-none hover:bg-white/[0.06] hover:border-white/10'}`}>
                     <div className="flex items-center gap-2 mb-1 justify-between flex-wrap overflow-hidden min-w-[120px]">
-                        <span className="font-black text-[10px] text-gray-500 uppercase tracking-widest truncate">{comment.user?.username || comment.authorName}</span>
+                        <span className={`font-black text-[10px] uppercase tracking-widest truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{comment.user?.username || comment.authorName}</span>
                         {isFounder && <span className="text-[7px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90">{t('FOUNDER_BADGE')}</span>}
                     </div>
 
                     {isEditing ? (
                         <div className="mt-1 min-w-[200px]">
-                            <textarea autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-blue-500/50 min-h-[60px] resize-none" />
+                            <textarea autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-[var(--gold-primary)]/50 min-h-[60px] resize-none" />
                             <div className="flex gap-2">
-                                <button onClick={handleSave} className="bg-blue-600 px-3 py-1 rounded-lg text-[9px] font-black text-white hover:bg-blue-500 transition-colors uppercase">{t('SAVE')}</button>
+                                <button onClick={handleSave} className="bg-[var(--gold-primary)] px-3 py-1 rounded-lg text-[9px] font-black text-black hover:opacity-90 transition-colors uppercase">{t('SAVE')}</button>
                                 <button onClick={() => setIsEditing(false)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 hover:bg-white/10 transition-colors uppercase">{t('CANCEL')}</button>
                             </div>
                         </div>
@@ -180,8 +189,8 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                             {comment.text && <span className="text-[14px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere">{comment.text}</span>}
                             {comment.audioUrl && (
                                 <div className="flex flex-col gap-1.5 mt-1">
-                                    <div className="flex items-center gap-1.5 text-[8px] font-black text-blue-400 uppercase tracking-widest bg-blue-500/10 w-fit px-2 py-0.5 rounded border border-blue-500/20">
-                                        <div className="w-1 h-1 rounded-full bg-blue-500 animate-pulse" /> VOICE NOTE
+                                    <div className="flex items-center gap-1.5 text-[8px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 w-fit px-2 py-0.5 rounded border border-[var(--gold-primary)]/20">
+                                        <div className="w-1 h-1 rounded-full bg-[var(--gold-primary)] animate-pulse" /> VOICE NOTE
                                     </div>
                                     <audio controls src={resolveMediaUrl(comment.audioUrl)} className="w-full h-8 opacity-90 max-w-[220px]" />
                                 </div>
@@ -314,85 +323,75 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="p-4 pt-2 border-t border-white/5 bg-[#080808] z-[100] safe-area-bottom shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-                        <div className="flex items-center justify-between mb-3 px-1">
+                    <div className="p-4 pt-2 border-t border-white/5 bg-[#050505] z-[100] safe-area-bottom shadow-[0_-20px_50px_rgba(0,0,0,0.9)]">
+                        <div className="flex items-center justify-between mb-4 px-1">
                             <div className="flex items-center gap-7">
                                 <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-110 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                                    <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
-                                    <span className="text-[11px] font-black text-gray-500 uppercase">{post.likes?.length || 0}</span>
+                                    <Icons.Heart className={`w-6 h-6 transition-all ${post.likes?.includes(user?._id) ? 'text-red-500 fill-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'text-gray-400 group-hover:text-red-400'}`} />
+                                    <span className={`text-xs font-black tracking-tighter ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500'}`}>{post.likes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onDislike(post._id)} className="flex items-center gap-2 group transition-all active:scale-110">
-                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-400 group-hover:text-white'}`} />
-                                    <span className="text-[11px] font-black text-gray-500 uppercase">{post.dislikes?.length || 0}</span>
+                                <button disabled={loadingActions?.[post._id]} onClick={() => onDislike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-110 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${post.dislikes?.includes(user?._id) ? 'text-blue-500 fill-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'text-gray-400 group-hover:text-blue-400'}`} />
+                                    <span className={`text-xs font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-all active:scale-110"><Icons.Send className="w-5 h-5" /></button>
                             </div>
+                            <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-colors"><Icons.Share className="w-5 h-5" /></button>
                         </div>
 
-                        <div className="flex items-center gap-2.5 min-h-[50px]">
-                            <div className={`flex flex-1 items-center bg-white/[0.04] backdrop-blur-xl rounded-2xl px-3 py-1 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all relative ${commentAudio ? 'ring-1 ring-[var(--gold-primary)]/50 bg-[var(--gold-primary)]/5' : ''}`}>
-                                {!commentAudio ? (
-                                    isRecordingComment ? (
-                                        <div className="flex-1 space-y-3 py-2">
-                                            <div className="min-h-[50px] bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-between px-4 animate-pulse shadow-[0_0_25px_rgba(239,68,68,0.15)]">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
-                                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-[0.25em] whitespace-nowrap">{t('TRANSMITTING')}</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center justify-center gap-3">
-                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-8 py-3 rounded-xl text-white font-black text-[12px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
-                                                </button>
-                                                <button type="button" onClick={() => stopRecording(true)} className="p-3 rounded-xl bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center">
-                                                    <Icons.X className="w-6 h-6" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex-1 flex flex-col gap-3 py-1">
-                                            <div className="bg-white/[0.02] border border-white/5 rounded-2xl px-4 focus-within:border-[var(--gold-primary)]/30 transition-all">
-                                                <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent text-[15px] outline-none text-white py-4 placeholder-gray-600 font-medium" />
-                                            </div>
-                                            <div className="flex items-center justify-center gap-4">
-                                                <button onClick={(e) => {
-                                                    e.preventDefault();
-                                                    if (!commentText.trim()) return;
-                                                    onComment(post._id, commentText);
-                                                    setCommentText('');
-                                                }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
-                                                </button>
-                                                <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-white active:scale-125 border border-white/10 shadow-xl"><Icons.Mic className="w-5 h-5" /></button>
-                                            </div>
-                                        </div>
-                                    )
-                                ) : (
-                                    <div className="flex-1 flex items-center justify-between gap-3 min-h-[44px] px-1">
-                                        <div className="flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-2 rounded-xl">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <button type="button" onClick={() => setCommentAudio(null)} className="p-2.5 rounded-xl hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-colors active:scale-90"><Icons.Trash className="w-5 h-5" /></button>
-                                            <button onClick={(e) => {
-                                                e.preventDefault();
-                                                if (commentAudio) {
-                                                    const fd = new FormData();
-                                                    if (commentText.trim()) fd.append('text', commentText);
-                                                    fd.append('file', commentAudio, 'voice_comment.webm');
-                                                    onComment(post._id, fd);
-                                                    setCommentAudio(null);
-                                                    setCommentText('');
-                                                }
-                                            }} className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl text-white font-black shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center justify-center">
-                                                <Icons.Send className="w-5 h-5 fill-white" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
+                        {commentAudio ? (
+                            <div className="flex items-center justify-between gap-3 min-h-[44px] px-1 bg-blue-500/5 border border-blue-500/10 rounded-2xl p-2 animate-fade-in">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button type="button" onClick={() => setCommentAudio(null)} className="p-2.5 rounded-xl hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        const fd = new FormData();
+                                        if (commentText.trim()) fd.append('text', commentText);
+                                        fd.append('file', commentAudio, 'voice_comment.webm');
+                                        onComment(post._id, fd);
+                                        setCommentAudio(null);
+                                        setCommentText('');
+                                    }} className="bg-blue-600 hover:bg-blue-500 p-2.5 rounded-xl text-white shadow-lg shadow-blue-900/40 active:scale-95 transition-all">
+                                        <Icons.Send className="w-5 h-5 fill-white" />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        ) : isRecordingComment ? (
+                            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-4 flex items-center justify-between animate-pulse">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-lg text-white hover:bg-red-500/20"><Icons.X className="w-5 h-5" /></button>
+                                    <button onClick={() => stopRecording(false)} className="px-4 py-2 bg-red-500 rounded-lg text-white font-black text-[10px] uppercase">{t('STOP')}</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)]/40 hover:bg-white/[0.05] transition-all shadow-xl backdrop-blur-xl group">
+                                <input
+                                    placeholder={t('ENGAGE')}
+                                    value={commentText}
+                                    onChange={(e) => setCommentText(e.target.value)}
+                                    className="flex-1 bg-transparent py-2.5 px-3 text-sm text-white outline-none placeholder-gray-600 font-medium"
+                                />
+                                <div className="flex gap-1 pr-1">
+                                    <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-500 hover:text-[var(--gold-primary)] transition-all">
+                                        <Icons.Mic className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                        className="p-2.5 rounded-xl bg-[var(--gold-primary)] hover:scale-105 active:scale-95 transition-all text-black shadow-lg disabled:opacity-20"
+                                    >
+                                        <Icons.Send className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </form>
+                        )}
                     </div>
                 </div>
             </div>
