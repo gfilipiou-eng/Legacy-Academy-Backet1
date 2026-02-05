@@ -2,6 +2,7 @@ import express from "express";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import ffprobeStatic from "ffprobe-static";
+import mongoose from "mongoose";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import upload from "../middleware/upload.js";
@@ -109,21 +110,35 @@ router.put("/:id/dislike", verifyToken, handleDislike);
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
 // Update: Allow file upload for voice comments
 router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {
+  const reqId = req.requestId || 'no-id';
+  console.log(`📡 [${reqId}] POST COMMENT attempt for Post: ${req.params.id}`);
+
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json("Invalid Post ID format");
+    }
+
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
+    if (!post) {
+      console.warn(`[${reqId}] Post not found: ${req.params.id}`);
+      return res.status(404).json("Post not found");
+    }
 
     const currentUserId = req.user.id || req.user.userId || req.user._id;
-    if (!currentUserId) {
-      console.error("AUTH ERROR: No user ID found in token", req.user);
-      return res.status(401).json("Unauthorized: User ID missing");
+    if (!currentUserId || !mongoose.Types.ObjectId.isValid(currentUserId)) {
+      console.error(`[${reqId}] AUTH ERROR: Invalid or missing user ID`, req.user);
+      return res.status(401).json("Unauthorized: User ID missing or invalid");
     }
-    const currentUser = await User.findById(currentUserId);
+
+    const currentUser = await User.findById(currentUserId).lean();
+    if (!currentUser) {
+      return res.status(401).json("User profile not found");
+    }
 
     const newComment = {
       text: req.body.text || "",
       audioUrl: req.file ? req.file.path : "",
-      authorName: req.user.username,
+      authorName: req.user.username || currentUser.username || "Anonymous",
       authorId: currentUserId,
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()
@@ -138,14 +153,15 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
     // Send notifications in background to prevent request failure
     try {
-      if (post.author && post.author.toString() !== currentUserId.toString()) {
+      const authorIdStr = post.author ? post.author.toString() : '';
+      if (authorIdStr && authorIdStr !== currentUserId.toString()) {
         const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
         await User.findByIdAndUpdate(post.author, {
           $push: {
             notifications: {
               type: 'comment',
               from: currentUserId,
-              fromUsername: req.user.username,
+              fromUsername: req.user.username || currentUser.username,
               fromProfilePic: currentUser?.profilePic || '',
               post: post._id,
               text: notifText,
@@ -163,13 +179,13 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
       for (const username of mentions) {
         const mentionedUser = await User.findOne({ username });
-        if (mentionedUser && mentionedUser._id.toString() !== currentUserId.toString() && mentionedUser._id.toString() !== (post.author || '').toString()) {
+        if (mentionedUser && mentionedUser._id.toString() !== currentUserId.toString() && mentionedUser._id.toString() !== authorIdStr) {
           await mentionedUser.updateOne({
             $push: {
               notifications: {
                 type: 'mention',
                 from: currentUserId,
-                fromUsername: req.user.username,
+                fromUsername: req.user.username || currentUser.username,
                 fromProfilePic: currentUser?.profilePic || '',
                 post: post._id,
                 text: `Mentioned you: ${commentTextForMentions.substring(0, 30)}...`,
@@ -181,19 +197,19 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
         }
       }
     } catch (notifErr) {
-      console.warn("Non-fatal notification error:", notifErr.message);
+      console.warn(`[${reqId}] Non-fatal notification error:`, notifErr.message);
     }
 
     res.status(200).json(post.comments);
   } catch (e) {
-    console.error("Add comment error details:", {
+    console.error(`🔥 [${reqId}] Add comment ERROR:`, {
       message: e.message,
       stack: e.stack,
-      body: req.body,
+      params: req.params,
       user: req.user,
       file: req.file ? 'Present' : 'Missing'
     });
-    res.status(500).json({ error: e.message || "Internal Server Error" });
+    res.status(500).json({ error: e.message || "Internal Server Error", requestId: reqId });
   }
 });
 
