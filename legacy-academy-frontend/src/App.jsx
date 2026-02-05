@@ -155,31 +155,29 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className="flex gap-2.5 items-start relative mb-4">
-            <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/5 shadow-lg">
+        <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
                 <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
             </div>
 
-            <div className="flex-1 min-w-0">
-                <div className={`relative inline-block max-w-[98%] rounded-2xl px-3 py-2 shadow-2xl backdrop-blur-md border border-white/5 ${isCommentAuthor ? 'bg-blue-600/10 border-blue-500/20 text-right' : 'bg-white/5'}`}>
-                    <div className="flex items-center gap-2 mb-1 justify-between flex-wrap overflow-hidden">
-                        <div className="flex items-center gap-1.5 shrink-0">
-                            <span className="font-black text-[10px] text-gray-400 uppercase tracking-widest truncate max-w-[120px]">{comment.user?.username || comment.authorName}</span>
-                            {isFounder && <span className="text-[8px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90 origin-left">{t('FOUNDER_BADGE')}</span>}
-                        </div>
-                        <span className="text-[9px] text-gray-700 font-bold whitespace-nowrap">{formatDate(comment.createdAt)}</span>
+            <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
+                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border border-white/5 backdrop-blur-md ${isCommentAuthor ? 'bg-blue-600/20 border-blue-500/30 rounded-tr-none' : 'bg-white/[0.05] rounded-tl-none'}`}>
+                    <div className="flex items-center gap-2 mb-1 justify-between flex-wrap overflow-hidden min-w-[120px]">
+                        <span className="font-black text-[10px] text-gray-500 uppercase tracking-widest truncate">{comment.user?.username || comment.authorName}</span>
+                        {isFounder && <span className="text-[7px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90">{t('FOUNDER_BADGE')}</span>}
                     </div>
+
                     {isEditing ? (
-                        <div className="mt-1">
+                        <div className="mt-1 min-w-[200px]">
                             <textarea autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-blue-500/50 min-h-[60px] resize-none" />
-                            <div className="flex gap-3">
-                                <button onClick={handleSave} className="bg-blue-600 px-3 py-1 rounded-lg text-[9px] font-black text-white active:scale-95 transition-all uppercase">{t('SAVE')}</button>
-                                <button onClick={() => setIsEditing(false)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 active:scale-95 transition-all uppercase">{t('CANCEL')}</button>
+                            <div className="flex gap-2">
+                                <button onClick={handleSave} className="bg-blue-600 px-3 py-1 rounded-lg text-[9px] font-black text-white hover:bg-blue-500 transition-colors uppercase">{t('SAVE')}</button>
+                                <button onClick={() => setIsEditing(false)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 hover:bg-white/10 transition-colors uppercase">{t('CANCEL')}</button>
                             </div>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-2">
-                            {comment.text && <span className="text-[13px] text-white/90 leading-relaxed font-medium whitespace-pre-wrap break-words">{comment.text}</span>}
+                            {comment.text && <span className="text-[14px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere">{comment.text}</span>}
                             {comment.audioUrl && (
                                 <div className="flex flex-col gap-1.5 mt-1">
                                     <div className="flex items-center gap-1.5 text-[8px] font-black text-blue-400 uppercase tracking-widest bg-blue-500/10 w-fit px-2 py-0.5 rounded border border-blue-500/20">
@@ -192,12 +190,13 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                     )}
                 </div>
 
-                <div className="flex gap-5 mt-1 ml-1 px-1">
+                <div className="flex gap-4 mt-1.5 px-1 items-center">
+                    <span className="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">{formatDate(comment.createdAt)}</span>
                     {canEdit && !isEditing && (
-                        <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-black uppercase tracking-tighter opacity-70">ΕΠΕΞΕΡΓΑΣΙΑ</button>
+                        <button onClick={() => setIsEditing(true)} className="text-[9px] text-gray-500 hover:text-blue-400 font-black uppercase tracking-tighter opacity-70 transition-colors">ΕΠΕΞΕΡΓΑΣΙΑ</button>
                     )}
                     {canDelete && (
-                        <button onClick={() => onDelete?.(post._id, comment._id)} className="text-[10px] text-gray-500 hover:text-red-500 font-black uppercase tracking-tighter opacity-70">ΔΙΑΓΡΑΦΗ</button>
+                        <button onClick={() => onDelete?.(post._id, comment._id)} className="text-[9px] text-gray-500 hover:text-red-500 font-black uppercase tracking-tighter opacity-70 transition-colors">ΔΙΑΓΡΑΦΗ</button>
                     )}
                 </div>
             </div>
@@ -265,7 +264,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
             <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[1500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
             <div className="w-full max-w-5xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
                 {/* Image Section - Responsive height */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[50vh] min-h-[30vh] md:max-h-full md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[40vh] md:max-h-full md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -282,7 +281,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 h-fit md:h-full">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full overflow-hidden">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -303,10 +302,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-32">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
-                        <div className="space-y-4">
-                            <AnimatePresence>
+                        <div className="space-y-2">
+                            <AnimatePresence initial={false}>
                                 {post.comments?.map((c, i) => (
                                     <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
                                 ))}
@@ -315,7 +314,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="p-4 border-t border-white/5 bg-[#080808]/95 backdrop-blur-3xl sticky bottom-0 z-[100] safe-area-bottom pb-6">
+                    <div className="p-4 pt-2 border-t border-white/5 bg-[#080808] z-[100] safe-area-bottom shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
                         <div className="flex items-center justify-between mb-3 px-1">
                             <div className="flex items-center gap-7">
                                 <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-110 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
