@@ -25,9 +25,10 @@ const resolveMediaUrl = (path, width = null, isAvatar = false) => {
             let transform = '';
 
             if (isAvatar && isVideo) {
-                // AGGRESSIVE OPTIMIZATION FOR INSTANT LOADING AVATARS
-                // Minimal duration, no audio, low quality/bitrate for instant feel
-                transform = `w_120,h_120,c_fill,g_face,q_auto:low,fl_lossy,vc_auto,f_auto,ac_none,so_0,eo_3,br_100k`;
+                // CONVERT VIDEO TO GIF FOR AVATARS (Instant, no lag)
+                transform = `w_120,h_120,c_fill,g_face,f_gif,pg_15,so_0`;
+                // Change extension to .gif in the file path section
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm)$/i, '.gif');
             } else if (isAvatar) {
                 transform = `w_120,h_120,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {

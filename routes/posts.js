@@ -138,13 +138,22 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
     const body = req.body || {};
     const commentText = (body.text || "").trim();
 
-    console.log(`📡 [${reqId}] User ID: ${currentUserId}, Text: ${commentText.substring(0, 20)}...`);
+    console.log(`📡 [${reqId}] DATA CHECK: currentUserId=${currentUserId}, TextLen=${commentText.length}`);
+
+    // SAFE CASTING to ObjectId
+    let authorIdObj;
+    try {
+      authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
+    } catch (objErr) {
+      console.error(`🔥 [${reqId}] INVALID ID CAST: ${currentUserId}`);
+      return res.status(401).json("Session invalid. Please login again.");
+    }
 
     const newComment = {
       text: commentText,
       audioUrl: req.file ? req.file.path : "",
       authorName: req.user.username || currentUser.username || "Anonymous",
-      authorId: new mongoose.Types.ObjectId(currentUserId), // Force ObjectId
+      authorId: authorIdObj,
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()
     };
@@ -154,7 +163,7 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
       return res.status(400).json("Comment cannot be empty");
     }
 
-    console.log(`📡 [${reqId}] Pushing comment to DB for ${req.params.id} by ${newComment.authorName}`);
+    console.log(`📡 [${reqId}] DB UPDATE: Post=${req.params.id}, Author=${newComment.authorName}`);
 
     // Simplified and robust database update
     const updatedPost = await Post.findByIdAndUpdate(
