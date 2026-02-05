@@ -203,6 +203,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     // Audio Comment State
     const [commentText, setCommentText] = useState('');
     const [commentAudio, setCommentAudio] = useState(null);
+    const [isRecordingComment, setIsRecordingComment] = useState(false);
+    const commentRecorderRef = useRef(null);
+    const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
 
     const stopRecording = (shouldDiscard = false) => {
@@ -461,6 +464,9 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     // CHECK: PostCard definition at line 337. It's a functional component, I can add hooks!
 
     const [commentAudio, setCommentAudio] = useState(null);
+    const [isRecordingComment, setIsRecordingComment] = useState(false);
+    const commentRecorderRef = useRef(null);
+    const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
 
     const stopRecording = (shouldDiscard = false) => {
