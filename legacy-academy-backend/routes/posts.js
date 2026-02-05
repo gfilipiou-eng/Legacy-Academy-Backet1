@@ -153,7 +153,8 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
     // HANDLE MENTIONS IN COMMENTS
     const mentionRegex = /@([\w.]+)/g;
-    const mentions = [...new Set((req.body.text.match(mentionRegex) || []).map(m => m.slice(1)))];
+    const commentTextForMentions = req.body.text || "";
+    const mentions = [...new Set((commentTextForMentions.match(mentionRegex) || []).map(m => m.slice(1)))];
 
     for (const username of mentions) {
       const mentionedUser = await User.findOne({ username });
@@ -166,7 +167,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
               fromUsername: req.user.username,
               fromProfilePic: currentUser?.profilePic || '',
               post: post._id,
-              text: `Mentioned you in a comment: ${req.body.text.substring(0, 30)}...`,
+              text: `Mentioned you in a comment: ${commentTextForMentions.substring(0, 30)}...`,
               read: false,
               createdAt: new Date()
             }
