@@ -363,7 +363,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
-                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5.5 h-5.5" /></button>
+                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5 h-5" /></button>
                         </div>
 
                         {commentAudio ? (
@@ -403,7 +403,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     if (commentText.trim()) {
-                                        handleComment(post._id, commentText);
+                                        onComment(post._id, commentText);
                                         setCommentText('');
                                     }
                                 }}
@@ -758,7 +758,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         {/* ACTIONS BAR - BLUESKY STYLE */}
                         <div className="flex items-center justify-between mt-4 pr-4 max-w-md relative z-10">
                             <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-blue-400 transition-colors cursor-pointer">
-                                <div className="p-1.5 rounded-full group-hover:bg-blue-500/10"><Icons.MessageCircle className="w-5 h-5 pointer-events-none" /></div>
+                                <div className="p-1.5 rounded-full group-hover:bg-blue-500/10"><Icons.Send className="w-5 h-5 pointer-events-none" /></div>
                                 <span className="text-xs font-medium pointer-events-none">{post.comments?.length || 0}</span>
                             </button>
 

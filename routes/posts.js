@@ -130,8 +130,8 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
       return res.status(404).json("Post not found");
     }
 
-    const currentUserId = req.user.id || req.user.userId || req.user._id;
-    if (!currentUserId || !mongoose.Types.ObjectId.isValid(currentUserId)) {
+    const currentUserId = req.user?.id || req.user?.userId || req.user?._id;
+    if (!currentUserId || !mongoose.Types.ObjectId.isValid(String(currentUserId))) {
       console.error(`[${reqId}] AUTH ERROR: Invalid or missing user ID`, req.user);
       return res.status(401).json("Unauthorized: Session corrupted.");
     }
@@ -146,12 +146,17 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
     const commentText = (body.text || "").trim();
 
     // SAFE CASTING to ObjectId
-    const authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
+    let authorIdObj;
+    try {
+      authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
+    } catch (castErr) {
+      return res.status(401).json("Neural state mismatch. Re-log required.");
+    }
 
     const newComment = {
       text: commentText,
       audioUrl: req.file ? req.file.path : "",
-      authorName: req.user.username || currentUser.username || "Anonymous",
+      authorName: req.user?.username || currentUser?.username || "Anonymous",
       authorId: authorIdObj,
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()
