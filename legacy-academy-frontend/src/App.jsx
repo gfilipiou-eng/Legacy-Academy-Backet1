@@ -1195,10 +1195,12 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [isStory, setIsStory] = useState(false);
     const fileRef = useRef(null);
     const { t } = useTranslation(user);
-    if (!isOpen) return null;
     const [audioBlob, setAudioBlob] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
+
+    // Safety check: Moved after hooks to prevent React Invariant 310
+    if (!isOpen) return null;
 
     const startRecording = async () => {
         try {
