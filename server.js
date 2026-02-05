@@ -32,6 +32,7 @@ if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !pr
 import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
+import messageRoutes from "./routes/messages.js";
 import resetPasswordRoutes from "./routes/resetPassword.js";
 
 // Import email service AFTER dotenv.config() - non-critical
@@ -131,7 +132,7 @@ app.use((req, res, next) => {
 
   if (req.body) {
     try {
-      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0,2000);
+      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0, 2000);
       console.warn(`🔍 [${reqId}] Body Preview:`, preview);
     } catch (e) {
       console.warn(`🔍 [${reqId}] Body serialize failed:`, e && e.message);
@@ -147,7 +148,17 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/reset-password", resetPasswordRoutes);
+
+// 404 Handler for API
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api')) {
+    console.warn(`❌ 404 ERROR: ${req.method} ${req.originalUrl}`);
+    return res.status(404).json({ error: "Endpoint Not Found", path: req.originalUrl });
+  }
+  next();
+});
 
 // Static Uploads Serving (For Local Storage Fallback)
 const __filename = fileURLToPath(import.meta.url);
