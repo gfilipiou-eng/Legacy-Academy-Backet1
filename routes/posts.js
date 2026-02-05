@@ -135,7 +135,8 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       return res.status(401).json("User profile not found");
     }
 
-    const commentText = (req.body.text || "").trim();
+    const body = req.body || {};
+    const commentText = (body.text || "").trim();
     const newComment = {
       text: commentText,
       audioUrl: req.file ? req.file.path : "",
