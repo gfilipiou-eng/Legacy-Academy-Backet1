@@ -295,17 +295,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             <div className="w-full h-full flex items-center justify-center bg-black">
                                 <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{ width: '100%', height: '100%' }} frameBorder="0" allowFullScreen />
                             </div>
-                        ) : (post.videoUrl || (post.image && post.image.match(/(mp4|mov|webm|m4v)$/i))) ? (
-                            <div className="w-full h-full flex items-center justify-center bg-black">
-                                <video
-                                    src={resolveMediaUrl(post.videoUrl || post.image)}
-                                    controls
-                                    playsInline
-                                    preload="metadata"
-                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                    className="max-w-full max-h-full"
-                                />
-                            </div>
+                        ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                            <NeuralVideoPlayer
+                                src={resolveMediaUrl(post.videoUrl || post.image)}
+                                poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                className="w-full h-full"
+                            />
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
@@ -449,6 +444,100 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
                 </div>
             </div>
+        </div>
+    );
+};
+
+const NeuralVideoPlayer = ({ src, poster, className }) => {
+    const videoRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
+    const [progress, setProgress] = useState(0);
+    const [showControls, setShowControls] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const togglePlay = (e) => {
+        e.stopPropagation();
+        if (videoRef.current.paused) {
+            videoRef.current.play();
+            setIsPlaying(true);
+        } else {
+            videoRef.current.pause();
+            setIsPlaying(false);
+        }
+    };
+
+    const toggleMute = (e) => {
+        e.stopPropagation();
+        videoRef.current.muted = !videoRef.current.muted;
+        setIsMuted(videoRef.current.muted);
+    };
+
+    const handleTimeUpdate = () => {
+        const p = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+        setProgress(p);
+    };
+
+    return (
+        <div
+            className={`relative group/video overflow-hidden bg-black flex items-center justify-center ${className || ''}`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={togglePlay}
+        >
+            <video
+                ref={videoRef}
+                src={src}
+                poster={poster}
+                muted={isMuted}
+                playsInline
+                loop
+                onTimeUpdate={handleTimeUpdate}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                className="w-full h-full object-contain cursor-pointer"
+            />
+
+            {/* NEURAL OVERLAY */}
+            <AnimatePresence>
+                {(isHovered || !isPlaying) && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/20 flex flex-col justify-between p-4 pointer-events-none"
+                    >
+                        <div className="flex justify-end">
+                            <button
+                                onClick={toggleMute}
+                                className="p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-auto hover:bg-black/60 transition-all active:scale-90"
+                            >
+                                {isMuted ? <Icons.VolumeX className="w-5 h-5" /> : <Icons.Volume2 className="w-5 h-5" />}
+                            </button>
+                        </div>
+
+                        <div className="flex items-center justify-center">
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                            >
+                                {isPlaying ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
+                            </motion.div>
+                        </div>
+
+                        <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                            <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                                <motion.div
+                                    className="h-full bg-[var(--gold-primary)]"
+                                    style={{ width: `${progress}%` }}
+                                    transition={{ type: 'spring', bounce: 0, duration: 0.2 }}
+                                />
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
@@ -735,13 +824,10 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         <iframe title="youtube-feed" src={getYouTubeEmbedUrl(post.videoUrl)} className="w-full h-full" frameBorder="0" allowFullScreen />
                                     </div>
                                 ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                    <video
+                                    <NeuralVideoPlayer
                                         src={resolveMediaUrl(post.videoUrl || post.image)}
-                                        controls
-                                        playsInline
-                                        preload="metadata"
                                         poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                        className="w-full h-auto max-h-[600px] object-contain bg-gray-900"
+                                        className="w-full h-auto max-h-[600px] rounded-xl"
                                     />
                                 ) : post.image ? (
                                     <img
