@@ -25,10 +25,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false) => {
             let transform = '';
 
             if (isAvatar && isVideo) {
-                // CONVERT VIDEO TO GIF FOR AVATARS (Instant, no lag)
-                transform = `w_120,h_120,c_fill,g_face,f_gif,pg_15,so_0`;
-                // Change extension to .gif in the file path section
-                parts[1] = parts[1].replace(/\.(mp4|mov|webm)$/i, '.gif');
+                // USE ANIMATED WEBP FOR AVATARS (BETTER THAN GIF)
+                transform = `w_120,h_120,c_fill,so_0,eo_3,q_auto:low,f_webp,fl_animated`;
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm)$/i, '.webp');
             } else if (isAvatar) {
                 transform = `w_120,h_120,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
@@ -128,7 +127,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const name = user.username || user.fromUsername;
     // Optimization: Avatars only need ~150px width, and isAvatar flag for aggressive compression
     const mediaUrl = url ? resolveMediaUrl(url, 150, true) : null;
-    const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video') || mediaUrl.includes('/video/upload/') || mediaUrl.includes('vc_auto'));
+    const isAnimatedImage = mediaUrl && mediaUrl.match(/\.(gif|webp)($|\?)/i);
+    const isVideo = !isAnimatedImage && mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video') || mediaUrl.includes('/video/upload/') || mediaUrl.includes('vc_auto'));
 
     if (isVideo) {
         return (
