@@ -756,8 +756,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             <div className="relative shrink-0 ml-2">
                                 {(isOwner || isFounder) && (
                                     <>
-                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-[0.8] shrink-0">
-                                            <Icons.MoreVertical className="w-5 h-5" />
+                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-[0.85] shrink-0">
+                                            <Icons.MoreVertical className="w-5 h-5 pointer-events-none" />
                                         </button>
                                         <AnimatePresence>
                                             {showMenu && (
@@ -1326,6 +1326,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             const key = date.toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = [];
             groups[key].push(p);
+
+            // AUTO-EXPAND LOGIC: If post is within last 24h, ensure its folder starts open
+            if (Date.now() - date.getTime() < 24 * 60 * 60 * 1000) {
+                if (!expandedDates[key]) {
+                    setExpandedDates(prev => ({ ...prev, [key]: true }));
+                }
+            }
         });
         return groups;
     }, [userPosts, currentUser]);
@@ -2110,6 +2117,13 @@ const App = () => {
             const key = date.toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = [];
             groups[key].push(p);
+
+            // AUTO-EXPAND LOGIC: If post is within last 24h, ensure its folder starts open
+            if (Date.now() - date.getTime() < 24 * 60 * 60 * 1000) {
+                if (!expandedDates[key]) {
+                    setExpandedDates(prev => ({ ...prev, [key]: true }));
+                }
+            }
         });
         return groups;
     }, [filteredPosts, user]);
