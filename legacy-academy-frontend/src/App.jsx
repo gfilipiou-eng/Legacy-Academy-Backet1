@@ -2022,9 +2022,9 @@ const App = () => {
                     </div>
                 </div>
             ) : (
-                <div className="min-h-full bg-black text-white relative font-sans overflow-hidden flex flex-col">
+                <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="liquid-bg" />
-                    <header className="sticky top-0 z-[100] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0">
+                    <header className="sticky top-0 z-[500] bg-black/60 backdrop-blur-2xl border-b border-white/10 shrink-0 transform-gpu translate-z-0">
                         <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all" alt="Logo" />
