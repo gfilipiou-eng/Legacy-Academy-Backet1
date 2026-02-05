@@ -396,18 +396,18 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     placeholder={t('ENGAGE')}
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-500 font-medium"
+                                    className="flex-1 bg-transparent py-2.5 sm:py-3 px-3.5 sm:px-4 text-[13px] sm:text-[15px] text-white outline-none placeholder-gray-500 font-medium"
                                 />
                                 <div className="flex gap-1.5 pr-1.5">
-                                    <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90">
-                                        <Icons.Mic className="w-5 h-5" />
+                                    <button type="button" onClick={startCommentRecording} className="p-2 sm:p-2.5 rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90">
+                                        <Icons.Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="p-3 rounded-xl bg-[var(--gold-primary)] hover:scale-105 active:scale-90 transition-all text-black shadow-lg disabled:opacity-20 shadow-[var(--gold-primary)]/20"
+                                        className="p-2.5 sm:p-3 rounded-xl bg-[var(--gold-primary)] hover:scale-105 active:scale-90 transition-all text-black shadow-lg disabled:opacity-20 shadow-[var(--gold-primary)]/20"
                                     >
-                                        <Icons.Send className="w-5 h-5" />
+                                        <Icons.Send className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </button>
                                 </div>
                             </form>
@@ -1881,19 +1881,19 @@ const App = () => {
 
     // Polling Intervals - Optimized to reduce lag
     let _notifInterval = null;
-    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 45000); };
+    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 15000); };
     const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
 
     let _hbInterval = null;
-    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 60000); };
+    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 30000); };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
     let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 20000); };
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 10000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 30000); };
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 15000); };
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
@@ -2015,13 +2015,28 @@ const App = () => {
 
     const handleComment = async (postId, input) => {
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        const textValue = (input instanceof FormData) ? null : (typeof input === 'string' ? input : (input?.text || ""));
+        let tempId = 'temp-' + Date.now();
+
+        // 1. OPTIMISTIC UI UPDATE
+        if (textValue) {
+            const tempComment = {
+                _id: tempId,
+                text: textValue,
+                author: user,
+                createdAt: new Date().toISOString(),
+                isOptimistic: true
+            };
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [...(p.comments || []), tempComment] } : p));
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: [...(prev.comments || []), tempComment] }));
+        }
+
         try {
             let res;
             if (input instanceof FormData) {
                 if (!input.has('user')) input.append('user', JSON.stringify(user));
                 res = await axios.post(`/posts/${postId}/comment`, input);
             } else {
-                const textValue = typeof input === 'string' ? input : (input?.text || "");
                 res = await axios.post(`/posts/${postId}/comment`, { text: textValue, user });
             }
             const updatedComments = res.data;
@@ -2029,6 +2044,11 @@ const App = () => {
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
             addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');
         } catch (e) {
+            // ROLLBACK OPTIMISTIC UPDATE ON ERROR
+            if (textValue) {
+                setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: p.comments.filter(c => c._id !== tempId) } : p));
+                if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: prev.comments.filter(c => c._id !== tempId) }));
+            }
             console.error("Add comment error:", e);
             const errorMsg = e.response?.data?.message || e.response?.data?.error || "Transmission failed";
             addToast(`ERROR: ${errorMsg}`, 'neutral');
