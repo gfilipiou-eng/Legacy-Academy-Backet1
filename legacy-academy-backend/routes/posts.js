@@ -135,8 +135,9 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       return res.status(401).json("User profile not found");
     }
 
+    const commentText = (req.body.text || "").trim();
     const newComment = {
-      text: req.body.text || "",
+      text: commentText,
       audioUrl: req.file ? req.file.path : "",
       authorName: req.user.username || currentUser.username || "Anonymous",
       authorId: currentUserId,
@@ -145,11 +146,21 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     };
 
     if (!newComment.text && !newComment.audioUrl) {
+      console.warn(`[${reqId}] REJECTED: Empty comment attempt`);
       return res.status(400).json("Comment cannot be empty");
     }
 
-    post.comments.push(newComment);
-    await post.save();
+    console.log(`📡 [${reqId}] Pushing comment to DB for ${req.params.id} by ${newComment.authorName}`);
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $push: { comments: newComment } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedPost) {
+      throw new Error("Failed to update post with new comment");
+    }
 
     // Send notifications in background try/catch to ensure comment is not blocked
     try {
@@ -199,7 +210,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       console.warn("Notification non-fatal error:", notifError.message);
     }
 
-    res.status(200).json(post.comments);
+    res.status(200).json(updatedPost.comments);
   } catch (e) {
     console.error("Add comment error details:", {
       message: e.message,

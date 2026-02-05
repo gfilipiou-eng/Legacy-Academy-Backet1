@@ -150,9 +150,18 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       return res.status(400).json("Comment cannot be empty");
     }
 
-    console.log(`📡 [${reqId}] Saving comment for ${req.params.id} by ${newComment.authorName}`);
-    post.comments.push(newComment);
-    await post.save();
+    console.log(`📡 [${reqId}] Pushing comment to DB for ${req.params.id} by ${newComment.authorName}`);
+
+    // Using findByIdAndUpdate with $push to avoid full-document validation issues on .save()
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $push: { comments: newComment } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedPost) {
+      throw new Error("Failed to update post with new comment");
+    }
 
     // Send notifications in background to prevent request failure
     try {
@@ -203,7 +212,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       console.warn(`[${reqId}] Non-fatal notification error:`, notifErr.message);
     }
 
-    res.status(200).json(post.comments);
+    res.status(200).json(updatedPost.comments);
   } catch (e) {
     console.error(`🔥 [${reqId}] Add comment ERROR:`, {
       message: e.message,
