@@ -130,18 +130,13 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
-    // PERMISSIONS:
-    // 1. Comment Author -> Edit, Delete
-    // 2. Post Author -> Delete Only
-    // 3. Founder -> Delete, Edit (Everything)
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
-    const commentAuthor = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
-    const isFounder = commentAuthor?.role === 'Founder';
     const isCommentAuthor = String(currentCommentAuthorId) === String(user?._id);
     const isPostAuthor = String(post.author?._id || post.author) === String(user?._id);
+    const isFounder = (comment.user?.role === 'Founder' || allUsers?.find(u => String(u._id) === String(currentCommentAuthorId))?.role === 'Founder');
 
-    const canEdit = isCommentAuthor || isFounder;
-    const canDelete = isCommentAuthor || isPostAuthor || isFounder;
+    const canEdit = isCommentAuthor || user?.role === 'Founder';
+    const canDelete = isCommentAuthor || isPostAuthor || user?.role === 'Founder';
 
     const handleSave = () => {
         if (typeof onEdit === 'function') onEdit(post._id, comment._id, editText);
@@ -149,44 +144,49 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 items-start group/comment relative">
-            <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
+        <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex gap-2.5 items-start group/comment relative mb-4">
+            <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-lg flex items-center justify-center">
                 <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
             </div>
 
-            <div className="flex-1">
-                <div className={`bg-white/10 rounded-2xl px-4 py-2 shadow-lg backdrop-blur-sm border border-white/5 transition-all ${isEditing ? 'bg-white/20' : ''}`}>
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-xs text-[var(--gold-primary)] shadow-black drop-shadow-sm">{comment.user?.username || comment.authorName}</span>
-                        {isFounder && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('MEMBER_BADGE')}</span>}
+            <div className="flex-1 min-w-0">
+                <div className={`relative inline-block max-w-full rounded-2xl px-3.5 py-2.5 shadow-xl backdrop-blur-md border border-white/5 transition-all ${isEditing ? 'bg-white/20' : (isCommentAuthor ? 'bg-blue-600/10 border-blue-500/20' : 'bg-white/5')}`}>
+                    <div className="flex items-center gap-2 mb-1.5 justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className="font-black text-[10px] text-gray-400 uppercase tracking-wider">{comment.user?.username || comment.authorName}</span>
+                            {isFounder && <span className="text-[8px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-[0.1em] shadow-[0_0_10px_rgba(220,38,38,0.3)]">{t('FOUNDER_BADGE')}</span>}
+                        </div>
+                        <span className="text-[8px] text-gray-600 font-bold">{formatDate(comment.createdAt)}</span>
                     </div>
                     {isEditing ? (
                         <div className="mt-1">
-                            <input autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-xs text-white outline-none mb-2" />
-                            <div className="flex gap-2">
-                                <button onClick={handleSave} className="text-[10px] uppercase font-bold text-green-500 hover:text-green-400">{t('SAVE')}</button>
-                                <button onClick={() => setIsEditing(false)} className="text-[10px] uppercase font-bold text-gray-400 hover:text-white">{t('CANCEL')}</button>
+                            <textarea autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-blue-500/50 min-h-[60px] resize-none" />
+                            <div className="flex gap-3">
+                                <button onClick={handleSave} className="bg-blue-600 px-3 py-1 rounded-lg text-[9px] font-black text-white hover:bg-blue-500 active:scale-95 transition-all uppercase">{t('SAVE')}</button>
+                                <button onClick={() => setIsEditing(false)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 hover:text-white active:scale-95 transition-all uppercase">{t('CANCEL')}</button>
                             </div>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-2">
-                            {comment.text && <span className="text-xs text-gray-200">{comment.text}</span>}
-                            {comment.audioUrl && <audio controls src={resolveMediaUrl(comment.audioUrl)} className="w-[200px] h-8 mt-1" />}
+                            {comment.text && <span className="text-[13px] text-white/90 leading-relaxed font-medium whitespace-pre-wrap break-words">{comment.text}</span>}
+                            {comment.audioUrl && (
+                                <div className="flex flex-col gap-1.5">
+                                    <div className="flex items-center gap-2 text-[9px] font-black text-blue-400 uppercase tracking-widest bg-blue-500/10 w-fit px-2 py-1 rounded-md border border-blue-500/20">
+                                        <Icons.Mic className="w-3 h-3" /> VOICE
+                                    </div>
+                                    <audio controls src={resolveMediaUrl(comment.audioUrl)} className="w-full h-8 opacity-80" />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
 
-                {/* ACTIONS */}
-                <div className="flex gap-2 mt-1 ml-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                <div className="flex gap-3 mt-1.5 ml-1 opacity-0 group-hover/comment:opacity-100 transition-opacity">
                     {canEdit && !isEditing && (
-                        <button onClick={() => setIsEditing(true)} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] text-gray-400 hover:text-blue-400 font-bold uppercase tracking-widest transition-colors border border-white/5">
-                            <Icons.Edit className="w-3 h-3" /> {t('EDIT')}
-                        </button>
+                        <button onClick={() => setIsEditing(true)} className="text-[9px] text-gray-500 hover:text-blue-400 font-black uppercase tracking-widest transition-colors">{t('EDIT')}</button>
                     )}
                     {canDelete && (
-                        <button onClick={() => { if (typeof onDelete === 'function') onDelete(post._id, comment._id); }} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 hover:bg-red-500/20 rounded-lg text-[9px] text-gray-400 hover:text-red-400 font-bold uppercase tracking-widest transition-colors border border-white/5">
-                            <Icons.Trash className="w-3 h-3" /> {t('DELETE')}
-                        </button>
+                        <button onClick={() => onDelete?.(post._id, comment._id)} className="text-[9px] text-gray-500 hover:text-red-500 font-black uppercase tracking-widest transition-colors">{t('DELETE')}</button>
                     )}
                 </div>
             </div>
@@ -292,9 +292,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 md:max-h-full">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 md:max-h-full pb-24">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic">{parseHashtags(post.desc)}</div>
-                        <div className="space-y-4 pb-4">
+                        <div className="space-y-4">
                             <AnimatePresence>
                                 {post.comments?.map((c, i) => (
                                     <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
@@ -304,7 +304,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="p-4 border-t border-white/5 bg-black sticky bottom-0 z-10">
+                    <div className="p-4 border-t border-white/5 bg-black/80 backdrop-blur-xl sticky bottom-0 z-50">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-6">
                                 <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
@@ -321,12 +321,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         <div className={`flex flex-1 items-center bg-white/[0.04] backdrop-blur-xl rounded-xl px-3 py-0.5 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all relative ${commentAudio ? 'ring-1 ring-[var(--gold-primary)]/50 bg-[var(--gold-primary)]/5' : ''}`}>
                             {!commentAudio ? (
                                 isRecordingComment ? (
-                                    <div className="flex-1 h-8 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center justify-between px-3 animate-pulse my-1">
+                                    <div className="flex-1 h-9 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between px-3 animate-pulse my-1 pr-1 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                                            <span className="text-[9px] font-black text-red-500 uppercase tracking-[0.2em]">TRANSMITTING...</span>
+                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">{t('TRANSMITTING')}...</span>
                                         </div>
-                                        <button type="button" onClick={() => stopRecording(true)} className="p-1.5 rounded-md hover:bg-red-500/20 text-white transition-all active:scale-90"><Icons.X className="w-3.5 h-3.5" /></button>
+                                        <div className="flex items-center gap-1.5">
+                                            <button type="button" onClick={() => stopRecording(true)} className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/5"><Icons.X className="w-4 h-4" /></button>
+                                            <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all">{t('POST')}</button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="flex-1 flex items-center bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner px-3">
@@ -744,12 +747,15 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
-                                    <div className="flex-1 h-9 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between px-3 animate-pulse">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">TRANSMITTING...</span>
+                                    <div className="flex-1 h-11 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between px-3 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-[11px] font-black text-red-500 uppercase tracking-[0.25em]">TRANSMITTING...</span>
                                         </div>
-                                        <button type="button" onClick={() => stopRecording(true)} className="p-1.5 rounded-md hover:bg-red-500/20 text-white transition-all active:scale-95"><Icons.X className="w-4 h-4" /></button>
+                                        <div className="flex items-center gap-2">
+                                            <button type="button" onClick={() => stopRecording(true)} className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/5"><Icons.X className="w-4.5 h-4.5" /></button>
+                                            <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-6 py-2.5 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all">{t('POST')}</button>
+                                        </div>
                                     </div>
                                 ) : commentAudio ? (
                                     <div className="flex-1 h-11 bg-blue-500/5 border border-blue-500/20 rounded-xl flex items-center justify-between px-4 ring-1 ring-blue-500/20">

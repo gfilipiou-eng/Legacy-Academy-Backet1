@@ -136,48 +136,52 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     post.comments.push(newComment);
     await post.save();
 
-    // Send notification to post author if commenter is not the author
-    if (post.author.toString() !== currentUserId.toString()) {
-      const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
-      await User.findByIdAndUpdate(post.author, {
-        $push: {
-          notifications: {
-            type: 'comment',
-            from: currentUserId,
-            fromUsername: req.user.username,
-            fromProfilePic: currentUser?.profilePic || '',
-            post: post._id,
-            text: notifText,
-            read: false,
-            createdAt: new Date()
-          }
-        }
-      });
-    }
-
-    // HANDLE MENTIONS IN COMMENTS
-    const mentionRegex = /@([\w.]+)/g;
-    const commentTextForMentions = req.body.text || "";
-    const mentions = [...new Set((commentTextForMentions.match(mentionRegex) || []).map(m => m.slice(1)))];
-
-    for (const username of mentions) {
-      const mentionedUser = await User.findOne({ username });
-      if (mentionedUser && mentionedUser._id.toString() !== currentUserId.toString() && mentionedUser._id.toString() !== post.author.toString()) {
-        await mentionedUser.updateOne({
+    // Send notifications in background to prevent request failure
+    try {
+      if (post.author && post.author.toString() !== currentUserId.toString()) {
+        const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
+        await User.findByIdAndUpdate(post.author, {
           $push: {
             notifications: {
-              type: 'mention',
+              type: 'comment',
               from: currentUserId,
               fromUsername: req.user.username,
               fromProfilePic: currentUser?.profilePic || '',
               post: post._id,
-              text: `Mentioned you in a comment: ${commentTextForMentions.substring(0, 30)}...`,
+              text: notifText,
               read: false,
               createdAt: new Date()
             }
           }
         });
       }
+
+      // HANDLE MENTIONS
+      const mentionRegex = /@([\w.]+)/g;
+      const commentTextForMentions = req.body.text || "";
+      const mentions = [...new Set((commentTextForMentions.match(mentionRegex) || []).map(m => m.slice(1)))];
+
+      for (const username of mentions) {
+        const mentionedUser = await User.findOne({ username });
+        if (mentionedUser && mentionedUser._id.toString() !== currentUserId.toString() && mentionedUser._id.toString() !== (post.author || '').toString()) {
+          await mentionedUser.updateOne({
+            $push: {
+              notifications: {
+                type: 'mention',
+                from: currentUserId,
+                fromUsername: req.user.username,
+                fromProfilePic: currentUser?.profilePic || '',
+                post: post._id,
+                text: `Mentioned you: ${commentTextForMentions.substring(0, 30)}...`,
+                read: false,
+                createdAt: new Date()
+              }
+            }
+          });
+        }
+      }
+    } catch (notifErr) {
+      console.warn("Non-fatal notification error:", notifErr.message);
     }
 
     res.status(200).json(post.comments);
