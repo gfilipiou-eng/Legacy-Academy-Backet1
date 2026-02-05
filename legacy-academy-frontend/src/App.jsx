@@ -362,7 +362,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
                                                     {t('POST')} <Icons.Send className="w-5 h-5" />
                                                 </button>
-                                                <button type="button" onClick={startCommentRecording} className="p-3.5 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-white active:scale-125 border border-white/10 shadow-xl"><Icons.Mic className="w-6 h-6" /></button>
+                                                <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-white active:scale-125 border border-white/10 shadow-xl"><Icons.Mic className="w-5 h-5" /></button>
                                             </div>
                                         </div>
                                     )
@@ -816,7 +816,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                         </>
                                                     )}
                                                 </button>
-                                                <button type="button" disabled={loadingActions?.[post._id]} onClick={startCommentRecording} className="p-4 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5 disabled:opacity-20"><Icons.Mic className="w-6 h-6" /></button>
+                                                <button type="button" disabled={loadingActions?.[post._id]} onClick={startCommentRecording} className="p-3 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5 disabled:opacity-20"><Icons.Mic className="w-5 h-5" /></button>
                                             </div>
                                         </div>
                                     )}
