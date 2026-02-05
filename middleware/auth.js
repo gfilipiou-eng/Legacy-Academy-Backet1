@@ -1,20 +1,25 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     try {
         const authHeader = req.header("Authorization");
         if (authHeader && authHeader.startsWith("Bearer ")) {
             const token = authHeader.substring(7);
             const verified = jwt.verify(token, process.env.JWT_SECRET || 'legacysecret123');
+
+            // Check if user is banned (Real-time enforcement)
+            const user = await User.findById(verified.id).select('isBanned banExpires');
+            if (user?.isBanned && user.banExpires && new Date() < user.banExpires) {
+                return res.status(403).json({ message: "MISSION ABORTED: Your access is suspended." });
+            }
+
             req.user = {
                 id: verified.id,
                 userId: verified.id,
                 username: verified.username,
                 role: verified.role || 'User'
             };
-
-            // Non-blocking ban check if User model is available
-            // (We usually do this in a separate middleware or after req.user is set)
             return next();
         }
 

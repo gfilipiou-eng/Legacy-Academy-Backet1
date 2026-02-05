@@ -1002,15 +1002,24 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     };
 
     useEffect(() => {
-        if (isOpen && initialChatUser) setActiveChat(initialChatUser);
-    }, [isOpen, initialChatUser]);
+        if (isOpen && initialChatUser) {
+            // Robust check: if we got an ID string, find the actual user object
+            if (typeof initialChatUser === 'string') {
+                const found = allUsers.find(u => String(u._id) === String(initialChatUser));
+                if (found) setActiveChat(found);
+            } else if (initialChatUser._id || initialChatUser.id) {
+                setActiveChat(initialChatUser);
+            }
+        }
+    }, [isOpen, initialChatUser, allUsers]);
 
     useEffect(() => {
-        if (!isOpen || !activeChat) return;
-        fetchMessages(activeChat._id);
-        const interval = setInterval(() => fetchMessages(activeChat._id), 3000);
+        if (!isOpen || !activeChat?._id) return;
+        const targetId = activeChat._id;
+        fetchMessages(targetId);
+        const interval = setInterval(() => fetchMessages(targetId), 3000);
         return () => clearInterval(interval);
-    }, [isOpen, activeChat]);
+    }, [isOpen, activeChat?._id]);
 
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
 
@@ -1509,10 +1518,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                                         {currentUser?.role === 'Founder' && (
                                             <button
-                                                onClick={async () => {
-                                                    const targetId = displayUser?._id || profileUser?._id || profileUser;
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
+                                                    const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
                                                     if (!targetId) return;
-                                                    if (!confirm("Confirm 3-day suspension protocol for this agent?")) return;
+                                                    if (!window.confirm("Confirm 3-day suspension protocol for this agent?")) return;
                                                     try {
                                                         await axios.post(`/users/${targetId}/ban`, { days: 3 });
                                                         addToast("AGENT SUSPENDED: 3 DAYS", "success");
@@ -2504,7 +2514,12 @@ const App = () => {
         setUser(null);
         window.location.reload();
     };
-    const handleOpenChat = (u) => { setChatTarget(u); setIsChatOpen(true); };
+    const handleOpenChat = (u) => {
+        // Ensure we pass at least an ID or object
+        setChatTarget(u);
+        setIsChatOpen(true);
+        playSound('pop');
+    };
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); } catch (e) { } };
 
     return (
