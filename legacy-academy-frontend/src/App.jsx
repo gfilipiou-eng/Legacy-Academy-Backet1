@@ -205,21 +205,38 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
     const commentRecorderRef = useRef(null);
+    const commentStreamRef = useRef(null);
+
+    const stopRecording = () => {
+        if (commentRecorderRef.current && commentRecorderRef.current.state === 'recording') {
+            commentRecorderRef.current.stop();
+        }
+        if (commentStreamRef.current) {
+            commentStreamRef.current.getTracks().forEach(track => track.stop());
+            commentStreamRef.current = null;
+        }
+        setIsRecordingComment(false);
+    };
 
     const startCommentRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            commentStreamRef.current = stream;
             commentRecorderRef.current = new MediaRecorder(stream);
             const chunks = [];
             commentRecorderRef.current.ondataavailable = e => chunks.push(e.data);
             commentRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunks, { type: 'audio/webm' });
                 setCommentAudio(blob);
+                if (commentStreamRef.current) {
+                    commentStreamRef.current.getTracks().forEach(track => track.stop());
+                    commentStreamRef.current = null;
+                }
                 setIsRecordingComment(false);
             };
             commentRecorderRef.current.start();
             setIsRecordingComment(true);
-            setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') { commentRecorderRef.current.stop(); } }, 60000); // 1 min max
+            setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') { stopRecording(); } }, 60000); // 1 min max
         } catch (e) { alert("Mic denied"); }
     };
 
@@ -301,7 +318,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             <div className="w-1 h-1 rounded-full bg-red-500 animate-ping" />
                                             <span className="text-[8px] font-black text-red-500 uppercase tracking-widest">TRANSMITTING...</span>
                                         </div>
-                                        <button type="button" onClick={() => { if (commentRecorderRef.current) commentRecorderRef.current.stop(); }} className="p-1 rounded-md hover:bg-white/10 text-white transition-all"><Icons.X className="w-3 h-3" /></button>
+                                        <button type="button" onClick={stopRecording} className="p-1 rounded-md hover:bg-white/10 text-white transition-all"><Icons.X className="w-3 h-3" /></button>
                                     </div>
                                 ) : (
                                     <div className="flex-1 flex items-center relative gap-1">
@@ -441,21 +458,38 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
     const commentRecorderRef = useRef(null);
+    const commentStreamRef = useRef(null);
+
+    const stopRecording = () => {
+        if (commentRecorderRef.current && commentRecorderRef.current.state === 'recording') {
+            commentRecorderRef.current.stop();
+        }
+        if (commentStreamRef.current) {
+            commentStreamRef.current.getTracks().forEach(track => track.stop());
+            commentStreamRef.current = null;
+        }
+        setIsRecordingComment(false);
+    };
 
     const startCommentRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            commentStreamRef.current = stream;
             commentRecorderRef.current = new MediaRecorder(stream);
             const chunks = [];
             commentRecorderRef.current.ondataavailable = e => chunks.push(e.data);
             commentRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunks, { type: 'audio/webm' });
                 setCommentAudio(blob);
+                if (commentStreamRef.current) {
+                    commentStreamRef.current.getTracks().forEach(track => track.stop());
+                    commentStreamRef.current = null;
+                }
                 setIsRecordingComment(false);
             };
             commentRecorderRef.current.start();
             setIsRecordingComment(true);
-            setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') { commentRecorderRef.current.stop(); } }, 60000); // 1 min max
+            setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') { stopRecording(); } }, 60000); // 1 min max
         } catch (e) { alert("Mic denied"); }
     };
 
@@ -690,7 +724,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                             <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
                                             <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">TRANSMITTING...</span>
                                         </div>
-                                        <button type="button" onClick={() => { if (commentRecorderRef.current) commentRecorderRef.current.stop(); }} className="p-1 rounded-md hover:bg-white/10 text-white transition-all"><Icons.X className="w-3.5 h-3.5" /></button>
+                                        <button type="button" onClick={stopRecording} className="p-1 rounded-md hover:bg-white/10 text-white transition-all"><Icons.X className="w-3.5 h-3.5" /></button>
                                     </div>
                                 ) : commentAudio ? (
                                     <div className="flex-1 h-10 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-full flex items-center justify-between px-4">
