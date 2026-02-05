@@ -107,26 +107,38 @@ router.post("/:id/dislike", verifyToken, handleDislike);
 router.put("/:id/dislike", verifyToken, handleDislike);
 
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
-router.post("/:id/comment", verifyToken, async (req, res) => {
+// Update: Allow file upload for voice comments
+router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
 
-    const currentUserId = req.user.id || req.user.userId;
+    const currentUserId = req.user.id || req.user.userId || req.user._id;
+    if (!currentUserId) {
+      console.error("AUTH ERROR: No user ID found in token", req.user);
+      return res.status(401).json("Unauthorized: User ID missing");
+    }
     const currentUser = await User.findById(currentUserId);
 
     const newComment = {
-      text: req.body.text,
+      text: req.body.text || "",
+      audioUrl: req.file ? req.file.path : "",
       authorName: req.user.username,
       authorId: currentUserId,
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()
     };
+
+    if (!newComment.text && !newComment.audioUrl) {
+      return res.status(400).json("Comment cannot be empty");
+    }
+
     post.comments.push(newComment);
     await post.save();
 
     // Send notification to post author if commenter is not the author
-    if (post.author.toString() !== currentUserId) {
+    if (post.author.toString() !== currentUserId.toString()) {
+      const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
       await User.findByIdAndUpdate(post.author, {
         $push: {
           notifications: {
@@ -135,7 +147,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
             fromUsername: req.user.username,
             fromProfilePic: currentUser?.profilePic || '',
             post: post._id,
-            text: req.body.text.substring(0, 50),
+            text: notifText,
             read: false,
             createdAt: new Date()
           }
@@ -145,11 +157,12 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
 
     // HANDLE MENTIONS IN COMMENTS
     const mentionRegex = /@([\w.]+)/g;
-    const mentions = [...new Set((req.body.text.match(mentionRegex) || []).map(m => m.slice(1)))];
+    const commentTextForMentions = req.body.text || "";
+    const mentions = [...new Set((commentTextForMentions.match(mentionRegex) || []).map(m => m.slice(1)))];
 
     for (const username of mentions) {
       const mentionedUser = await User.findOne({ username });
-      if (mentionedUser && mentionedUser._id.toString() !== currentUserId && mentionedUser._id.toString() !== post.author.toString()) {
+      if (mentionedUser && mentionedUser._id.toString() !== currentUserId.toString() && mentionedUser._id.toString() !== post.author.toString()) {
         await mentionedUser.updateOne({
           $push: {
             notifications: {
@@ -158,7 +171,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
               fromUsername: req.user.username,
               fromProfilePic: currentUser?.profilePic || '',
               post: post._id,
-              text: `Mentioned you in a comment: ${req.body.text.substring(0, 30)}...`,
+              text: `Mentioned you in a comment: ${commentTextForMentions.substring(0, 30)}...`,
               read: false,
               createdAt: new Date()
             }
@@ -169,8 +182,14 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
 
     res.status(200).json(post.comments);
   } catch (e) {
-    console.error("Add comment error:", e);
-    res.status(500).json(e);
+    console.error("Add comment error details:", {
+      message: e.message,
+      stack: e.stack,
+      body: req.body,
+      user: req.user,
+      file: req.file ? 'Present' : 'Missing'
+    });
+    res.status(500).json({ error: e.message || "Internal Server Error" });
   }
 });
 
@@ -258,12 +277,12 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     const author = await User.findById(req.user.id || req.user.userId);
 
     // Short-circuit duplicate submissions within a small time window (5 seconds)
-    const signature = `${req.user.id || req.user.userId}::${(desc||description||'').trim()}::${(videoUrl||'').trim()}::${req.file?.size || 0}`;
+    const signature = `${req.user.id || req.user.userId}::${(desc || description || '').trim()}::${(videoUrl || '').trim()}::${req.file?.size || 0}`;
     const now = Date.now();
     const prev = _recentCreates.get(signature);
     if (prev && (now - prev) < 5000) {
       // attempt to find a recent matching post in DB to return instead of creating a duplicate
-      const recent = await Post.findOne({ author: req.user.id || req.user.userId, desc: (desc||description||'').trim() }).sort({ createdAt: -1 }).limit(1);
+      const recent = await Post.findOne({ author: req.user.id || req.user.userId, desc: (desc || description || '').trim() }).sort({ createdAt: -1 }).limit(1);
       if (recent && (now - new Date(recent.createdAt).getTime()) < 10000) {
         console.log("Duplicate submission detected - returning recent post", recent._id);
         return res.status(200).json(recent);
@@ -298,7 +317,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       desc: desc || description || '',
       image: (!isFileVideo && req.file) ? req.file.path || "" : "",
       videoUrl: isFileVideo ? (req.file?.path || "") : (isYouTube ? videoUrl.trim() : (videoUrl || "")),
-      thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl||'').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
+      thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
       author: req.user.id || req.user.userId,
       username: req.user.username,
       profilePic: author?.profilePic || "",
