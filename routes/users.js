@@ -344,49 +344,54 @@ router.post("/profile-pic", verifyToken, (req, res, next) => {
 
 // 3. Update User (Generic + Username Update Logic)
 router.put("/:id", verifyToken, async (req, res) => {
-    const currentUserId = req.user.id || req.user.userId;
-    if (req.params.id === currentUserId || req.user.role === 'Founder') {
-        try {
-            if (req.body.username) {
-                const user = await User.findById(req.params.id);
-                const existing = await User.findOne({ username: req.body.username });
-                if (existing && existing._id.toString() !== req.params.id) {
-                    return res.status(400).json("Username already taken.");
-                }
+    try {
+        const currentUserId = String(req.user.id || req.user.userId);
+        const targetId = String(req.params.id);
 
-                if (req.user.role !== 'Founder' && user.lastUsernameChange) {
-                    const diffTime = new Date() - new Date(user.lastUsernameChange);
-                    const diffHours = diffTime / (1000 * 60 * 60);
-                    if (diffHours < 72) {
-                        const remainingHours = Math.ceil(72 - diffHours);
-                        const remainingDays = Math.ceil(remainingHours / 24);
-                        return res.status(403).json(`Protocol Lock: You must wait ${remainingDays} more day(s) to re-assign handle.`);
-                    }
-                }
-                req.body.lastUsernameChange = new Date();
+        if (targetId !== currentUserId && req.user.role !== 'Founder') {
+            return res.status(403).json("Authorization Failed: Operational ID mismatch.");
+        }
 
-                // Propagate to posts owned by user
-                await Post.updateMany({ author: req.params.id }, { $set: { username: req.body.username } });
+        const user = await User.findById(targetId);
+        if (!user) return res.status(404).json("Agent not found.");
 
-                // Propagate to comments authored by user in ANY post
-                await Post.updateMany(
-                    { "comments.authorId": req.params.id },
-                    { $set: { "comments.$[elem].authorName": req.body.username } },
-                    { arrayFilters: [{ "elem.authorId": req.params.id }] }
-                );
+        // Only handle username logic if it's actually changing
+        if (req.body.username && req.body.username !== user.username) {
+            const existing = await User.findOne({ username: req.body.username });
+            if (existing && existing._id.toString() !== targetId) {
+                return res.status(400).json("Username already taken.");
             }
 
-            const updatedUser = await User.findByIdAndUpdate(
-                req.params.id,
-                { $set: req.body },
-                { new: true }
-            );
-            res.status(200).json(updatedUser);
-        } catch (err) {
-            res.status(500).json(err);
+            if (req.user.role !== 'Founder' && user.lastUsernameChange) {
+                const diffTime = new Date() - new Date(user.lastUsernameChange);
+                const diffHours = diffTime / (1000 * 60 * 60);
+                if (diffHours < 72) {
+                    const remainingHours = Math.ceil(72 - diffHours);
+                    const remainingDays = Math.ceil(remainingHours / 24);
+                    return res.status(403).json(`Protocol Lock: You must wait ${remainingDays} more day(s) to re-assign handle.`);
+                }
+            }
+            req.body.lastUsernameChange = new Date();
+
+            // Propagate name change to posts and comments
+            await Post.updateMany({ author: targetId }, { $set: { username: req.body.username } });
+            await Post.updateMany(
+                { "comments.authorId": targetId },
+                { $set: { "comments.$[elem].authorName": req.body.username } },
+                { arrayFilters: [{ "elem.authorId": targetId }] }
+            ).catch(e => console.warn("Comment name sync delay"));
         }
-    } else {
-        res.status(403).json("Authorization Failed.");
+
+        const updatedUser = await User.findByIdAndUpdate(
+            targetId,
+            { $set: req.body },
+            { new: true }
+        ).select('-password');
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("USER UPDATE ERROR:", err);
+        res.status(500).json({ error: "System error during update", detail: err.message });
     }
 });
 
