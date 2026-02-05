@@ -1196,11 +1196,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const fileRef = useRef(null);
 
     useEffect(() => {
-        if (currentUser) {
+        if (currentUser && !isEditing) {
             setBio(currentUser.bio || "");
             setEditUsername(currentUser.username || "");
         }
-    }, [currentUser]);
+    }, [currentUser, isEditing]);
 
     const userStories = React.useMemo(() => (posts || []).filter(p => {
         const pId = String(p.author?._id || p.author || '');
@@ -1308,7 +1308,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Identifer (Username)</label>
-                                <input type="text" value={editUsername} onChange={e => setEditUsername(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none" placeholder="Choose your operative handle..." />
+                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none" placeholder="Choose your operative handle..." />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -2307,7 +2307,7 @@ const App = () => {
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="text" placeholder="Codename" id="r-username" value={formData.username} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner text-sm" />
+                                        <input type="text" placeholder="Codename" id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] shadow-inner text-sm" />
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
