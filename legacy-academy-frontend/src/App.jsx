@@ -409,7 +409,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             setCommentText('');
                                         }
                                     }}
-                                    className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group"
+                                    className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group overflow-hidden max-w-full"
                                 >
                                     <input
                                         placeholder={t('ENGAGE')}
@@ -947,7 +947,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         setCommentText('');
                                                     }
                                                 }}
-                                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-0.5 py-0.5 group"
+                                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-0.5 py-0.5 group overflow-hidden max-w-full"
                                             >
                                                 <input
                                                     placeholder={t('ENGAGE')}
@@ -1211,7 +1211,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff'].map(c => {
+                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
                                 const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                 const isActive = currentTheme === c;
                                 return (
@@ -2415,9 +2415,11 @@ const App = () => {
                 if (!input.has('user')) input.append('user', JSON.stringify(user));
                 res = await axios.post(`/posts/${postId}/comment`, input);
             } else {
+                console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment with text length: ${textValue?.length}`);
                 res = await axios.post(`/posts/${postId}/comment`, { text: textValue, user });
             }
             const updatedComments = res.data;
+            playSound('pop');
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
             addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');

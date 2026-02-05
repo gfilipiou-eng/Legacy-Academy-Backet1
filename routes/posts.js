@@ -174,14 +174,16 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
     ).lean();
 
     if (!updatedPost) {
+      console.warn(`[${reqId}] Post disappeared during update: ${req.params.id}`);
       return res.status(404).json("Post disappeared during update.");
     }
 
-    // Send notifications in background (non-blocking)
-    const sendNotifications = async () => {
+    // Send notifications in background (fully sandboxed)
+    const runNotifications = async () => {
       try {
         const targetAuthorId = post.author;
         if (targetAuthorId && String(targetAuthorId) !== String(currentUserId)) {
+          console.log(`📡 [${reqId}] Sending comment notification to author: ${targetAuthorId}`);
           const notifText = newComment.audioUrl ? "Sent a voice note." : (commentText.substring(0, 50) || "Commented.");
           const fromName = req.user.username || currentUser.username || "Someone";
 
@@ -206,6 +208,7 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
         const matches = commentText.match(mentionRegex);
         if (matches) {
           const mentions = [...new Set(matches.map(m => m.slice(1)))];
+          console.log(`📡 [${reqId}] Processing ${mentions.length} mentions in comment`);
           for (const username of mentions) {
             const mentionedUser = await User.findOne({ username });
             if (mentionedUser && String(mentionedUser._id) !== String(currentUserId) && String(mentionedUser._id) !== String(post.author)) {
@@ -227,25 +230,22 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
           }
         }
       } catch (notifErr) {
-        console.warn(`[${reqId}] Notification Background Error (Non-Fatal):`, notifErr && notifErr.message);
+        console.warn(`⚠️ [${reqId}] Notification Background Error (Non-Fatal):`, notifErr && notifErr.message);
       }
     };
 
-    // Fire and forget, but handle sync errors
-    try {
-      sendNotifications().catch(e => console.error(`[${reqId}] sendNotifications Async Fail:`, e));
-    } catch (e) {
-      console.error(`[${reqId}] sendNotifications sync fail:`, e);
-    }
+    // Fire and forget
+    runNotifications().catch(e => console.error(`🚨 [${reqId}] runNotifications Critical Fail:`, e));
 
+    console.log(`✅ [${reqId}] Comment DEPLOYED to post ${req.params.id}`);
     return res.status(200).json(updatedPost.comments);
   } catch (e) {
     const errorId = req.requestId || 'err-' + Date.now().toString(36);
-    console.error(`COMMENT ERROR [${errorId}] ON POST ${req.params.id}:`, e);
+    console.error(`🚨 COMMENT ERROR [${errorId}] ON POST ${req.params.id}:`, e);
     return res.status(500).json({
       error: "Transmission Failed",
       message: "An internal protocol error occurred while deploying the comment.",
-      detail: e.message || "Unknown error",
+      detail: (e && e.message) || "Unknown error",
       requestId: errorId,
       code: "COM_ERR_500"
     });
