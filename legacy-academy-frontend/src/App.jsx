@@ -224,7 +224,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     };
 
     return (
-        <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-y-auto">
+
+        <div className="fixed inset-0 z-[1200] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-y-auto">
             <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
             <div className="w-full max-w-5xl h-auto md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
                 {/* Image Section - Responsive height */}
@@ -725,7 +726,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
@@ -826,7 +827,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
             <div className="relative w-full max-w-sm h-full sm:h-auto bg-[#0a0a0a] sm:border border-white/10 sm:rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
                 <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
@@ -1003,7 +1004,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const hasRequested = displayUser?.followRequests?.includes(currentUser?._id);
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+
+        <div className="fixed inset-0 z-[1200] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
@@ -1279,7 +1281,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
         }
     };
     return (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1">
@@ -1444,7 +1446,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
                 <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
