@@ -329,16 +329,18 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         <button type="button" onClick={() => stopRecording(true)} className="p-1.5 rounded-md hover:bg-red-500/20 text-white transition-all active:scale-90"><Icons.X className="w-3.5 h-3.5" /></button>
                                     </div>
                                 ) : (
-                                    <div className="flex-1 flex items-center relative gap-2">
-                                        <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-[12px] outline-none text-white py-2 pr-12 placeholder-gray-500 font-medium" />
-                                        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
-                                            <button type="button" onClick={startCommentRecording} className={`p-1.5 rounded-full hover:bg-white/5 transition-colors text-gray-500 hover:text-white`}><Icons.Mic className="w-3.5 h-3.5" /></button>
+                                    <div className="flex-1 flex items-center bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner px-3">
+                                        <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-[12px] outline-none text-white py-2.5 placeholder-gray-500 font-medium" />
+                                        <div className="flex items-center gap-1.5 ml-2">
+                                            <button type="button" onClick={startCommentRecording} className="p-1.5 rounded-full hover:bg-white/5 transition-colors text-gray-500 hover:text-white"><Icons.Mic className="w-4 h-4" /></button>
                                             <button onClick={(e) => {
                                                 e.preventDefault();
                                                 if (!commentText.trim()) return;
                                                 onComment(post._id, commentText);
                                                 setCommentText('');
-                                            }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-white font-black text-[9px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shrink-0">{t('POST')}</button>
+                                            }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-white font-black text-[10px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-1.5">
+                                                {t('POST')} <Icons.Send className="w-3 h-3 fill-white" />
+                                            </button>
                                         </div>
                                     </div>
                                 )
@@ -763,11 +765,13 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex-1 flex gap-2 relative bg-white/[0.04] backdrop-blur-xl rounded-xl px-3 items-center border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner">
-                                        <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent py-2.5 pr-16 text-[12px] text-white outline-none placeholder-gray-500 font-medium" />
-                                        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
-                                            <button type="button" onClick={startCommentRecording} className="p-1.5 rounded-full hover:bg-white/5 active:scale-95 transition-all text-gray-500 hover:text-white"><Icons.Mic className="w-3.5 h-3.5" /></button>
-                                            <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-white font-black text-[9px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shrink-0">{t('POST')}</button>
+                                    <div className="flex-1 flex gap-2 items-center bg-white/[0.04] backdrop-blur-xl rounded-xl px-3 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner">
+                                        <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent py-2.5 text-[12px] text-white outline-none placeholder-gray-500 font-medium" />
+                                        <div className="flex items-center gap-1.5">
+                                            <button type="button" onClick={startCommentRecording} className="p-1.5 rounded-full hover:bg-white/5 active:scale-95 transition-all text-gray-500 hover:text-white"><Icons.Mic className="w-4 h-4" /></button>
+                                            <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg text-white font-black text-[10px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
+                                                {t('POST')} <Icons.Send className="w-3.5 h-3.5 fill-white" />
+                                            </button>
                                         </div>
                                     </div>
                                 )}
