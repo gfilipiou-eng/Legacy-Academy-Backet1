@@ -9,7 +9,7 @@ import { playSound, explodeEffect } from './utils/sounds';
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
 
-const resolveMediaUrl = (path, width = null, isAvatar = false) => {
+const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false) => {
     if (!path) return '';
     let url = path;
     if (!path.startsWith('http') && !path.startsWith('blob:')) {
@@ -20,14 +20,18 @@ const resolveMediaUrl = (path, width = null, isAvatar = false) => {
     if (url.includes('cloudinary.com') && url.includes('/upload/')) {
         const parts = url.split('/upload/');
         // Only inject if not already transformed
-        if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
+        if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_') && !parts[1].startsWith('so_')) {
             const isVideo = url.includes('/video/upload/');
             let transform = '';
 
-            if (isAvatar && isVideo) {
+            if (isPoster && isVideo) {
+                // GENERATE POSTER IMAGE FROM VIDEO
+                transform = `so_0.5,f_jpg,q_auto:best,w_800,c_limit`;
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
+            } else if (isAvatar && isVideo) {
                 // USE ANIMATED WEBP FOR AVATARS (BETTER THAN GIF)
                 transform = `w_120,h_120,c_fill,so_0,eo_3,q_auto:low,f_webp,fl_animated`;
-                parts[1] = parts[1].replace(/\.(mp4|mov|webm)$/i, '.webp');
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
                 transform = `w_120,h_120,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
@@ -288,9 +292,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             <div className="w-full h-full flex items-center justify-center bg-black">
                                 <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{ width: '100%', height: '100%' }} frameBorder="0" allowFullScreen />
                             </div>
-                        ) : (post.videoUrl || (post.image && post.image.match(/(mp4|mov|webm)$/i))) ? (
+                        ) : (post.videoUrl || (post.image && post.image.match(/(mp4|mov|webm|m4v)$/i))) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
-                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
+                                <video
+                                    src={resolveMediaUrl(post.videoUrl || post.image)}
+                                    controls
+                                    playsInline
+                                    preload="metadata"
+                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                    className="max-w-full max-h-full"
+                                />
                             </div>
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
@@ -695,9 +706,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         controls
                                         playsInline
                                         preload="metadata"
-                                        poster={post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : ""}
+                                        poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
                                         className="w-full h-auto max-h-[600px] object-contain bg-gray-900"
-                                        onLoadedData={(e) => { e.target.currentTime = 0.5; }}
                                     />
                                 ) : post.image ? (
                                     <img
@@ -1354,8 +1364,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         playsInline
                                                         controls
                                                         preload="metadata"
+                                                        poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
                                                         className="w-full h-full object-cover bg-gray-900"
-                                                        onLoadedData={(e) => { e.target.currentTime = 0.5; }}
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
                                                         <Icons.Play className="w-6 h-6 text-white/80" />
