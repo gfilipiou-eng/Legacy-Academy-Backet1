@@ -320,7 +320,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
                         </div>
                         <div className="flex gap-1">
-                            {isOwner && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
+                            {(isOwner || isFounder) && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
                             {(isOwner || isFounder) && <button onClick={() => { onDelete(post._id); onClose(); }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
@@ -702,7 +702,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = post.author?.role === 'Founder';
-    const isOwner = post.author?._id === user?._id || post.author === user?._id;
+    const isOwner = String(post.author?._id || post.author) === String(user?._id);
     const dislikeCount = post.dislikes?.length || 0;
 
 
@@ -732,7 +732,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 transition: { duration: 0.3 }
             }}
             viewport={{ once: true }}
-            className="glass-card mb-4 rounded-3xl overflow-hidden relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98]"
+            className="glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98]"
         >
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
@@ -764,7 +764,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <>
                                                     <div className="fixed inset-0 z-[40]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="absolute right-0 top-8 bg-[#1a1a1a] border border-white/10 rounded-xl p-1 z-[50] w-36 shadow-2xl flex flex-col gap-1 overflow-hidden backdrop-blur-md">
-                                                        {isOwner && (
+                                                        {(isOwner || isFounder) && (
                                                             <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/10 text-xs font-bold text-gray-300 w-full text-left transition-colors uppercase tracking-wider">
                                                                 <Icons.Edit className="w-4 h-4" /> {t('EDIT')}
                                                             </button>
