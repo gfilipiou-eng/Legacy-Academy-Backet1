@@ -1319,6 +1319,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         return true;
     }), [posts, profileUser, activeTab]);
 
+    // AUTO-EXPAND ALL FOLDERS IN PROFILE BY DEFAULT
+    useEffect(() => {
+        if (isOpen && userPosts.length > 0) {
+            const groups = {};
+            userPosts.forEach(p => {
+                const date = new Date(p.createdAt);
+                const key = date.toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+                groups[key] = true;
+            });
+            setExpandedDates(groups);
+        }
+    }, [isOpen, userPosts.length]);
+
     const groupedUserPosts = React.useMemo(() => {
         const groups = {};
         userPosts.forEach(p => {
@@ -1326,13 +1339,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             const key = date.toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = [];
             groups[key].push(p);
-
-            // AUTO-EXPAND LOGIC: If post is within last 24h, ensure its folder starts open
-            if (Date.now() - date.getTime() < 24 * 60 * 60 * 1000) {
-                if (!expandedDates[key]) {
-                    setExpandedDates(prev => ({ ...prev, [key]: true }));
-                }
-            }
         });
         return groups;
     }, [userPosts, currentUser]);
@@ -1452,18 +1458,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                     <ProfileAvatar user={displayUser} size="large" />
                                 </div>
-                                <div className="flex-1 flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5">
+                                <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('POSTS')}</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
-                                        <div className="font-black text-[var(--gold-primary)] text-lg sm:text-2xl leading-none">{displayUser?.followers?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWERS')}</div>
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-2">
+                                        <span className="text-lg sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
+                                            {displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
+                                        </span>
+                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer hover:bg-white/10 p-1 rounded-lg transition-all">
-                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{displayUser?.following?.length || 0}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('FOLLOWING')}</div>
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-2">
+                                        <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
+                                            {displayUser?.following?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
+                                        </span>
+                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWING')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2117,16 +2127,18 @@ const App = () => {
             const key = date.toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = [];
             groups[key].push(p);
-
-            // AUTO-EXPAND LOGIC: If post is within last 24h, ensure its folder starts open
-            if (Date.now() - date.getTime() < 24 * 60 * 60 * 1000) {
-                if (!expandedDates[key]) {
-                    setExpandedDates(prev => ({ ...prev, [key]: true }));
-                }
-            }
         });
         return groups;
     }, [filteredPosts, user]);
+
+    // AUTO-EXPAND FEED FOLDERS (Last 24h)
+    useEffect(() => {
+        if (posts.length > 0) {
+            const todayKey = new Date().toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            // Only auto-expand if we haven't manually closed it in this session (optional, but here simple: auto-open today)
+            setExpandedDates(prev => ({ ...prev, [todayKey]: true }));
+        }
+    }, [posts.length, user?.settings?.language]);
 
     const stories = React.useMemo(() => {
         const groups = {};
