@@ -25,7 +25,7 @@ if (hasCloudinary) {
     cloudinary,
     params: {
       folder: "legacyacademy",
-      allowed_formats: ["jpg", "png", "jpeg", "mp4", "mov", "avi", "webm"],
+      allowed_formats: ["jpg", "png", "jpeg", "mp4", "mov", "avi", "webm", "mp3", "wav", "ogg"],
       resource_type: "auto",
     },
   });
