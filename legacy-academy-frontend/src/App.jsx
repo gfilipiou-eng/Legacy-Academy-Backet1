@@ -23,8 +23,8 @@ const resolveMediaUrl = (path, width = null) => {
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
             const isVideo = url.includes('/video/upload/');
             const transform = width
-                ? `w_${width},c_fill,g_face,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`
-                : `c_limit,w_1280,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                ? `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`
+                : `c_limit,w_1080,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
 
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
         }
@@ -108,7 +108,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     if (!user) return <DefaultAvatar size={size} />;
     const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
     const name = user.username || user.fromUsername;
-    const mediaUrl = url ? resolveMediaUrl(url) : null;
+    // Optimization: Avatars only need ~150px width
+    const mediaUrl = url ? resolveMediaUrl(url, 150) : null;
     const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video') || mediaUrl.includes('/video/upload/') || mediaUrl.includes('vc_auto'));
 
     if (isVideo) {
@@ -121,6 +122,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
                     muted
                     loop
                     playsInline
+                    preload="metadata"
                     disableRemotePlayback
                     onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                 />
@@ -685,7 +687,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         src={resolveMediaUrl(post.videoUrl || post.image)}
                                         controls
                                         playsInline
-                                        preload="metadata"
+                                        preload="none"
+                                        poster={post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : ""}
                                         className="w-full h-auto max-h-[600px] object-contain bg-gray-900"
                                         onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                                     />
