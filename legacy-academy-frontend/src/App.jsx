@@ -100,7 +100,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
     const name = user.username || user.fromUsername;
     const mediaUrl = url ? resolveMediaUrl(url) : null;
-    const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video'));
+    const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video') || mediaUrl.includes('/video/upload/') || mediaUrl.includes('vc_auto'));
 
     if (isVideo) {
         return (
@@ -250,7 +250,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
+                                <ProfileAvatar user={post.author} />
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-bold text-white leading-none">{post.author?.username}</span>
@@ -658,7 +658,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             ))}
                             <form onSubmit={(e) => { e.preventDefault(); if (commentAudio || commentText) handleComment(post._id, commentAudio ? (() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); if (commentText) fd.append('text', commentText); return fd; })() : commentText); setCommentAudio(null); setCommentText(''); }} className="flex gap-3 items-center mt-4">
                                 <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
-                                    {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user?.username} />}
+                                    <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
                                     <div className="flex-1 h-10 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-between px-4 animate-pulse">
@@ -778,7 +778,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
                                 <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden">{activeChat?.profilePic ? <img src={resolveMediaUrl(activeChat.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={activeChat?.username} />}</div>
+                                <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
                                 <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? 'Online' : 'Offline'}</div></div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
@@ -1284,7 +1284,6 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 return;
             }
             setPreview(URL.createObjectURL(file));
-            setPreview(URL.createObjectURL(file));
             setIsVideo(true);
             setIsAudio(false);
         } else if (file.type.startsWith('audio')) {
@@ -1306,7 +1305,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                     <h2 className="text-xl font-black italic mb-4 text-white">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                            {user.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user.username} />}
+                            <ProfileAvatar user={user} />
                         </div>
                         <textarea id="c-desc" placeholder={t('DECRYPT_PH')} className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
                     </div>
