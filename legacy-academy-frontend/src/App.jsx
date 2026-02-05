@@ -295,18 +295,28 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <div className={`flex flex-1 items-center bg-white/[0.03] backdrop-blur-md rounded-lg px-2.5 py-0 border border-white/10 focus-within:border-[var(--gold-primary)]/30 transition-all relative ${commentAudio ? 'ring-1 ring-[var(--gold-primary)]/50' : ''}`}>
                             {!commentAudio ? (
-                                <div className="flex-1 flex items-center relative gap-1">
-                                    <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-[11px] outline-none text-white py-1.5 pr-16 placeholder-gray-500 font-medium" />
-                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
-                                        <button type="button" onClick={startCommentRecording} className={`p-1.5 rounded-full hover:bg-white/5 transition-colors ${isRecordingComment ? 'text-red-500 animate-pulse' : 'text-gray-500 hover:text-white'}`}><Icons.Mic className="w-3.5 h-3.5" /></button>
-                                        <button onClick={(e) => {
-                                            e.preventDefault();
-                                            if (!commentText.trim()) return;
-                                            onComment(post._id, commentText);
-                                            setCommentText('');
-                                        }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-white font-black text-[9px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shrink-0">{t('POST')}</button>
+                                isRecordingComment ? (
+                                    <div className="flex-1 h-7 bg-red-500/10 border border-red-500/30 rounded-md flex items-center justify-between px-2 animate-pulse mb-0.5 mt-0.5">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-1 h-1 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-[8px] font-black text-red-500 uppercase tracking-widest">TRANSMITTING...</span>
+                                        </div>
+                                        <button type="button" onClick={() => { if (commentRecorderRef.current) commentRecorderRef.current.stop(); }} className="p-1 rounded-md hover:bg-white/10 text-white transition-all"><Icons.X className="w-3 h-3" /></button>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="flex-1 flex items-center relative gap-1">
+                                        <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-[11px] outline-none text-white py-1.5 pr-16 placeholder-gray-500 font-medium" />
+                                        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
+                                            <button type="button" onClick={startCommentRecording} className={`p-1.5 rounded-full hover:bg-white/5 transition-colors text-gray-500 hover:text-white`}><Icons.Mic className="w-3.5 h-3.5" /></button>
+                                            <button onClick={(e) => {
+                                                e.preventDefault();
+                                                if (!commentText.trim()) return;
+                                                onComment(post._id, commentText);
+                                                setCommentText('');
+                                            }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-white font-black text-[9px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shrink-0">{t('POST')}</button>
+                                        </div>
+                                    </div>
+                                )
                             ) : (
                                 <div className="flex-1 flex items-center gap-2">
                                     <audio controls src={URL.createObjectURL(commentAudio)} className="flex-1 h-8 scale-90 origin-left" />
@@ -675,12 +685,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
-                                    <div className="flex-1 h-10 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-between px-4 animate-pulse">
+                                    <div className="flex-1 h-9 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center justify-between px-3 animate-pulse">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">TRANSMITTING...</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">TRANSMITTING...</span>
                                         </div>
-                                        <button type="button" onClick={() => { if (commentRecorderRef.current) commentRecorderRef.current.stop(); }} className="text-[10px] font-black text-white hover:text-red-200 uppercase tracking-tight">OVER</button>
+                                        <button type="button" onClick={() => { if (commentRecorderRef.current) commentRecorderRef.current.stop(); }} className="p-1 rounded-md hover:bg-white/10 text-white transition-all"><Icons.X className="w-3.5 h-3.5" /></button>
                                     </div>
                                 ) : commentAudio ? (
                                     <div className="flex-1 h-10 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-full flex items-center justify-between px-4">
