@@ -159,13 +159,13 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             </div>
 
             <div className="flex-1 min-w-0">
-                <div className={`relative inline-block max-w-[95%] rounded-2xl px-3.5 py-2 shadow-2xl backdrop-blur-md border border-white/5 ${isCommentAuthor ? 'bg-blue-600/10 border-blue-500/20 text-right' : 'bg-white/5'}`}>
-                    <div className="flex items-center gap-2 mb-1 justify-between flex-wrap">
-                        <div className="flex items-center gap-2">
-                            <span className="font-black text-[10px] text-gray-500 uppercase tracking-widest">{comment.user?.username || comment.authorName}</span>
-                            {isFounder && <span className="text-[8px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
+                <div className={`relative inline-block max-w-[98%] rounded-2xl px-3 py-2 shadow-2xl backdrop-blur-md border border-white/5 ${isCommentAuthor ? 'bg-blue-600/10 border-blue-500/20 text-right' : 'bg-white/5'}`}>
+                    <div className="flex items-center gap-2 mb-1 justify-between flex-wrap overflow-hidden">
+                        <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="font-black text-[9px] text-gray-500 uppercase tracking-widest truncate max-w-[80px]">{comment.user?.username || comment.authorName}</span>
+                            {isFounder && <span className="text-[7px] bg-red-600 text-white px-1 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
                         </div>
-                        <span className="text-[8px] text-gray-700 font-bold">{formatDate(comment.createdAt)}</span>
+                        <span className="text-[7px] text-gray-700 font-bold whitespace-nowrap">{formatDate(comment.createdAt)}</span>
                     </div>
                     {isEditing ? (
                         <div className="mt-1">
@@ -316,15 +316,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     <div className="p-4 border-t border-white/5 bg-[#080808]/90 backdrop-blur-2xl sticky bottom-0 z-[100] safe-area-bottom">
                         <div className="flex items-center justify-between mb-3 px-1">
                             <div className="flex items-center gap-7">
-                                <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-150 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                                    <Icons.Heart className={`w-6.5 h-6.5 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
+                                <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-110 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                    <Icons.Heart className={`w-6 h-6 transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-[11px] font-black text-gray-500 uppercase">{post.likes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onDislike(post._id)} className="flex items-center gap-2 group transition-all active:scale-150">
-                                    <Icons.ThumbsDown className={`w-6.5 h-6.5 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-400 group-hover:text-white'}`} />
+                                <button onClick={() => onDislike(post._id)} className="flex items-center gap-2 group transition-all active:scale-110">
+                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-400 group-hover:text-white'}`} />
                                     <span className="text-[11px] font-black text-gray-500 uppercase">{post.dislikes?.length || 0}</span>
                                 </button>
-                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-all active:rotate-[15deg] active:scale-110"><Icons.Send className="w-5.5 h-5.5" /></button>
+                                <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-all active:scale-110"><Icons.Send className="w-5 h-5" /></button>
                             </div>
                         </div>
 
@@ -1978,7 +1978,8 @@ const App = () => {
             addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');
         } catch (e) {
             console.error("Add comment error:", e);
-            addToast("ERROR: Transmission failed", 'neutral');
+            const errorMsg = e.response?.data?.message || e.response?.data?.error || "Transmission failed";
+            addToast(`ERROR: ${errorMsg}`, 'neutral');
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
