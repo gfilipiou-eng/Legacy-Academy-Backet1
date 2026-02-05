@@ -806,11 +806,11 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                             <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl px-5 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner ring-1 ring-black/20">
                                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
                                             </div>
-                                            <div className="flex items-center justify-center gap-5">
-                                                <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
+                                            <div className="flex items-center justify-center gap-6 mt-2">
+                                                <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-2xl text-white font-black text-[13px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40 flex items-center gap-2">
                                                     {t('POST')} <Icons.Send className="w-5 h-5" />
                                                 </button>
-                                                <button type="button" onClick={startCommentRecording} className="p-4 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-white active:scale-125 border border-white/10 shadow-2xl ring-1 ring-white/5"><Icons.Mic className="w-6 h-6" /></button>
+                                                <button type="button" onClick={startCommentRecording} className="p-4 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5"><Icons.Mic className="w-6 h-6" /></button>
                                             </div>
                                         </div>
                                     )}
@@ -1950,18 +1950,20 @@ const App = () => {
     const handleComment = async (postId, input) => {
         try {
             let res;
-            if (typeof input === 'object' && (input instanceof FormData)) {
+            if (input instanceof FormData) {
                 res = await axios.post(`/posts/${postId}/comment`, input);
             } else {
-                // Legacy text-only fallback (or if just text string passed)
-                const text = typeof input === 'string' ? input : input.text;
-                res = await axios.post(`/posts/${postId}/comment`, { text });
+                const textValue = typeof input === 'string' ? input : (input?.text || "");
+                res = await axios.post(`/posts/${postId}/comment`, { text: textValue });
             }
             const updatedComments = res.data;
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
             addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error("Add comment error:", e);
+            addToast("ERROR: Transmission failed", 'neutral');
+        }
     };
 
     const handleFollow = async (input) => {

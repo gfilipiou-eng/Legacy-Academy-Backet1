@@ -167,7 +167,8 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     try {
       const authorIdStr = post.author ? post.author.toString() : '';
       if (authorIdStr && authorIdStr !== currentUserId.toString()) {
-        const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
+        const body = req.body || {};
+        const notifText = newComment.audioUrl ? "Sent a voice note." : (body.text ? String(body.text).substring(0, 50) : "Commented.");
         await User.findByIdAndUpdate(post.author, {
           $push: {
             notifications: {
@@ -185,8 +186,9 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       }
 
       // HANDLE MENTIONS
+      const body = req.body || {};
       const mentionRegex = /@([\w.]+)/g;
-      const commentTextForMentions = req.body.text || "";
+      const commentTextForMentions = body.text || "";
       const mentions = [...new Set((commentTextForMentions.match(mentionRegex) || []).map(m => m.slice(1)))];
 
       for (const username of mentions) {
