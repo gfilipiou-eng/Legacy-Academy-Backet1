@@ -363,7 +363,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
-                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Send className="w-5 h-5" /></button>
+                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5 h-5" /></button>
                         </div>
 
                         {commentAudio ? (
@@ -426,9 +426,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <button
                                         type="submit"
                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="bg-[var(--gold-primary)] px-6 py-2.5 rounded-xl text-black font-black text-[12px] uppercase flex items-center gap-2 shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn"
+                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn"
                                     >
-                                        {t('POST')} <Icons.Send className="w-4 h-4" />
+                                        {loadingActions?.[post._id] ? (
+                                            <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                        ) : (
+                                            <Icons.Send className="w-5 h-5" />
+                                        )}
                                     </button>
                                 </div>
                             </form>
@@ -773,7 +777,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             </button>
 
                             <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-green-400 transition-colors cursor-pointer">
-                                <div className="p-1.5 rounded-full group-hover:bg-green-500/10"><Icons.Send className="w-5 h-5 pointer-events-none" /></div>
+                                <div className="p-1.5 rounded-full group-hover:bg-green-500/10"><Icons.Share className="w-5 h-5 pointer-events-none" /></div>
                             </button>
                         </div>
                     </div>
@@ -847,17 +851,25 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                             <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl px-5 border border-white/10 focus-within:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner ring-1 ring-black/20">
                                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
                                             </div>
-                                            <div className="flex items-center justify-center gap-6 mt-2">
-                                                <button type="submit" disabled={!commentText.trim() || loadingActions?.[post._id]} className="bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-xl text-white font-black text-[12px] uppercase flex items-center gap-2 disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40">
+                                            <div className="flex items-center justify-center gap-2 mt-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={startCommentRecording}
+                                                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all"
+                                                >
+                                                    <Icons.Mic className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-900/40 active:scale-95 transition-all disabled:opacity-20"
+                                                >
                                                     {loadingActions?.[post._id] ? (
-                                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                     ) : (
-                                                        <>
-                                                            {t('POST')} <Icons.Send className="w-4 h-4" />
-                                                        </>
+                                                        <Icons.Send className="w-5 h-5" />
                                                     )}
                                                 </button>
-                                                <button type="button" disabled={loadingActions?.[post._id]} onClick={startCommentRecording} className="p-2.5 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5 disabled:opacity-20"><Icons.Mic className="w-4.5 h-4.5" /></button>
                                             </div>
                                         </div>
                                     )}
