@@ -817,11 +817,11 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-center gap-4">
-                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-10 py-3.5 rounded-xl text-white font-black text-[12px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-6 py-2.5 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-4 h-4" />
                                                 </button>
-                                                <button type="button" onClick={() => stopRecording(true)} className="p-3.5 rounded-xl bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center shadow-lg">
-                                                    <Icons.X className="w-6 h-6" />
+                                                <button type="button" onClick={() => stopRecording(true)} className="p-3 rounded-xl bg-white/10 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/20 flex items-center justify-center shadow-lg">
+                                                    <Icons.X className="w-5 h-5" />
                                                 </button>
                                             </div>
                                         </div>
@@ -834,11 +834,11 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-center gap-4">
-                                                <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-xl text-white font-black text-[12px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                                    {t('POST')} <Icons.Send className="w-4 h-4" />
                                                 </button>
-                                                <button type="button" onClick={() => setCommentAudio(null)} className="p-3.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all active:scale-90 border border-white/10 shadow-lg">
-                                                    <Icons.Trash className="w-6 h-6" />
+                                                <button type="button" onClick={() => setCommentAudio(null)} className="p-3 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all active:scale-90 border border-white/10 shadow-lg">
+                                                    <Icons.Trash className="w-5 h-5" />
                                                 </button>
                                             </div>
                                         </div>
@@ -848,16 +848,16 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
                                             </div>
                                             <div className="flex items-center justify-center gap-6 mt-2">
-                                                <button type="submit" disabled={!commentText.trim() || loadingActions?.[post._id]} className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-2xl text-white font-black text-[13px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40 flex items-center gap-2">
+                                                <button type="submit" disabled={!commentText.trim() || loadingActions?.[post._id]} className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-2xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40 flex items-center gap-2">
                                                     {loadingActions?.[post._id] ? (
-                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                     ) : (
                                                         <>
-                                                            {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                            {t('POST')} <Icons.Send className="w-4.5 h-4.5" />
                                                         </>
                                                     )}
                                                 </button>
-                                                <button type="button" disabled={loadingActions?.[post._id]} onClick={startCommentRecording} className="p-3 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5 disabled:opacity-20"><Icons.Mic className="w-5 h-5" /></button>
+                                                <button type="button" disabled={loadingActions?.[post._id]} onClick={startCommentRecording} className="p-2.5 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5 disabled:opacity-20"><Icons.Mic className="w-4.5 h-4.5" /></button>
                                             </div>
                                         </div>
                                     )}
@@ -974,9 +974,25 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-4 bg-black/50 border-t border-white/5 flex items-center gap-4">
-                                <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder={t('ENTER_COMMAND')} className="flex-1 bg-white/5 border border-white/10 rounded-full px-5 py-2.5 text-sm outline-none focus:border-blue-500 shadow-inner" />
-                                <button onClick={handleSend} className="text-blue-500 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform">{t('POST')}</button>
+                            <div className="p-3 bg-[#0a0a0a]/80 backdrop-blur-3xl border-t border-white/5 flex items-center gap-2 safe-area-bottom">
+                                <div className="flex-1 relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl px-4 focus-within:border-blue-500/50 focus-within:bg-white/[0.05] transition-all group">
+                                    <input
+                                        type="text"
+                                        value={inputText}
+                                        onChange={(e) => setInputText(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                        placeholder={t('ENTER_COMMAND')}
+                                        className="w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
+                                    />
+                                    <Icons.CommandLine className="w-4 h-4 text-gray-700 group-focus-within:text-blue-500/50 transition-colors" />
+                                </div>
+                                <button
+                                    onClick={handleSend}
+                                    disabled={!inputText.trim()}
+                                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-900/40 active:scale-90 disabled:opacity-20 transition-all shrink-0"
+                                >
+                                    <Icons.Send className="w-5 h-5 fill-white" />
+                                </button>
                             </div>
                         </>
                     ) : (

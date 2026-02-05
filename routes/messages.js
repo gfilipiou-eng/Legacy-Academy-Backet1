@@ -5,10 +5,16 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
+// Status check to verify connectivity
+router.get("/status", (req, res) => res.status(200).json({ status: "Neural link active", timestamp: new Date() }));
+
 // Send a message
 router.post("/", verifyToken, async (req, res) => {
+    const reqId = Math.random().toString(36).substring(7);
+    console.log(`[${reqId}] MESSAGE ATTEMPT - Body keys:`, Object.keys(req.body || {}));
+
     try {
-        if (!req.user) return res.status(401).json("Auth required");
+        if (!req.user) return res.status(401).json("Neural interface not recognized.");
         const senderId = req.user.id || req.user.userId;
         const { recipient, text } = req.body;
 
