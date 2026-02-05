@@ -492,7 +492,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         controls
                                         playsInline
                                         preload="metadata"
-                                        className="w-full h-auto max-h-[600px] object-contain bg-black"
+                                        className="w-full h-auto max-h-[600px] object-contain bg-gray-900"
+                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                                     />
                                 ) : post.image ? (
                                     <img onDoubleClick={handleDoubleTap} onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
