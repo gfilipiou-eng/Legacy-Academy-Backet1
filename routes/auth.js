@@ -25,7 +25,16 @@ const safeUpload = (req, res, next) => {
 
 router.post("/register", safeUpload, async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const { username, email, password } = req.body;
+
+        // Check for existing identity
+        const existingUsername = await User.findOne({ username });
+        if (existingUsername) return res.status(400).json("Username is already operational. Choose another identifier.");
+
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) return res.status(400).json("Email is already registered in the mission database.");
+
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Format profile pic path if uploaded
         let profilePicPath = "";
@@ -65,7 +74,7 @@ router.post("/register", safeUpload, async (req, res) => {
             process.env.JWT_SECRET || 'legacysecret123'
         );
 
-        const { password, ...userData } = savedUser._doc;
+        const { password: _, ...userData } = savedUser._doc;
 
         res.status(201).json({
             message: "User registered successfully ✅",

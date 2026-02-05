@@ -283,6 +283,9 @@ router.put("/settings", verifyToken, async (req, res) => {
         ).select('-password');
 
         if (req.body.username && req.body.username !== oldUser.username) {
+            const existing = await User.findOne({ username: req.body.username });
+            if (existing) return res.status(400).json("Identification identifier already reserved by another operative.");
+
             await Post.updateMany({ author: userId }, { $set: { username: req.body.username } });
         }
 

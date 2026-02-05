@@ -1183,11 +1183,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [activeList, setActiveList] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [bio, setBio] = useState(currentUser?.bio || "");
+    const [editUsername, setEditUsername] = useState(currentUser?.username || "");
     const [activeTab, setActiveTab] = useState('ALL'); // ALL, POSTS, VIDEO
     const fileRef = useRef(null);
 
     useEffect(() => {
-        if (currentUser) setBio(currentUser.bio || "");
+        if (currentUser) {
+            setBio(currentUser.bio || "");
+            setEditUsername(currentUser.username || "");
+        }
     }, [currentUser]);
 
     const userStories = React.useMemo(() => (posts || []).filter(p => {
@@ -1295,19 +1299,27 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             }} />
 
                             <div className="space-y-2 text-left">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Identifer (Username)</label>
+                                <input type="text" value={editUsername} onChange={e => setEditUsername(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none" placeholder="Choose your operative handle..." />
+                            </div>
+
+                            <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Bio</label>
                                 <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32" placeholder="Tell your story..." />
                             </div>
 
                             <button onClick={async () => {
                                 try {
-                                    const res = await axios.put(`/users/${displayUser?._id}`, { bio });
+                                    const res = await axios.put(`/users/${displayUser?._id}`, { bio, username: editUsername });
                                     if (res.data) {
                                         localStorage.setItem('user', JSON.stringify(res.data));
                                         if (onUpdateUser) onUpdateUser(res.data);
                                     }
                                     setIsEditing(false);
-                                } catch (e) { console.error(e); alert("Failed to update bio."); }
+                                } catch (e) {
+                                    console.error(e);
+                                    alert(e.response?.data?.message || e.response?.data || "Update failed. Identity might be reserved.");
+                                }
                             }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform text-sm">Save Changes</button>
                         </div>
                     ) : (
@@ -2343,7 +2355,7 @@ const App = () => {
                                             setUser(res.data.user);
                                             setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
                                         } catch (e) {
-                                            alert(e.response?.data?.message || "Registration Failed.");
+                                            alert(e.response?.data?.message || e.response?.data || "Registration Failed. Identity might be reserved.");
                                         } finally {
                                             setAuthLoading(false);
                                         }
