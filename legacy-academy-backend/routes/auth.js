@@ -45,8 +45,8 @@ router.post("/register", safeUpload, async (req, res) => {
             isPrivate: req.body.isPrivate === 'true' || req.body.isPrivate === true,
             isFollowersOnly: req.body.isFollowersOnly === 'true' || req.body.isFollowersOnly === true,
             settings: {
-                theme: 'gold',
-                language: 'en',
+                theme: req.body.theme || 'gold',
+                language: req.body.language || 'en',
                 soundEnabled: true,
                 notifications: true,
                 notificationSound: req.body.notificationSound || 'pop'

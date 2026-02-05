@@ -335,6 +335,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 };
 
 const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
+    // Safety check: Do not render stories as posts
+    if (post.isStory) return null;
+
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [showHeart, setShowHeart] = useState(false);
@@ -475,7 +478,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         <iframe title="youtube-feed" src={getYouTubeEmbedUrl(post.videoUrl)} className="w-full h-full" frameBorder="0" allowFullScreen />
                                     </div>
                                 ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} autoPlay muted loop playsInline controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
+                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
                                 ) : post.image ? (
                                     <img onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
                                 ) : null}
@@ -1735,8 +1738,9 @@ const App = () => {
                                         setAuthLoading(true);
                                         try {
                                             const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
-                                            localStorage.setItem('token', res.data.token);
                                             localStorage.setItem('user', JSON.stringify(res.data.user));
+                                            localStorage.setItem('language', res.data.user.settings?.language || 'en');
+                                            localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
                                             setUser(res.data.user);
                                         } catch (e) {
                                             alert(e.response?.data?.message || "Access Denied.");
@@ -1780,6 +1784,24 @@ const App = () => {
                                         <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] shadow-inner resize-none h-20" />
                                     </div>
 
+                                    <div className="flex gap-2 mb-4">
+                                        <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-white text-xs font-bold outline-none">
+                                            <option value="en">English</option>
+                                            <option value="el">Greek</option>
+                                            <option value="fr">French</option>
+                                            <option value="de">German</option>
+                                            <option value="ru">Russian</option>
+                                            <option value="es">Spanish</option>
+                                            <option value="tr">Turkish</option>
+                                            <option value="cy">Cypriot</option>
+                                        </select>
+                                        <div className="flex-1 flex gap-1 justify-center items-center bg-white/5 border border-white/10 rounded-xl px-2">
+                                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981'].map(c => (
+                                                <div key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-4 h-4 rounded-full cursor-pointer border ${formData.theme === c ? 'border-white scale-125' : 'border-transparent opacity-50'}`} style={{ background: c }} />
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     <button disabled={authLoading} onClick={async () => {
                                         setAuthLoading(true);
                                         try {
@@ -1788,11 +1810,18 @@ const App = () => {
                                             fd.append('email', formData.email);
                                             fd.append('password', formData.password);
                                             if (formData.bio) fd.append('bio', formData.bio);
+                                            fd.append('language', formData.language || 'en');
+                                            fd.append('theme', formData.theme || '#ffd700');
                                             if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
 
-                                            await axios.post('/auth/register', fd);
-                                            alert("Protocol Joined. Login now.");
-                                            setAuthMode('login');
+                                            const res = await axios.post('/auth/register', fd);
+                                            // Auto-login logic from register response
+                                            localStorage.setItem('token', res.data.token);
+                                            localStorage.setItem('user', JSON.stringify(res.data.user));
+                                            localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
+                                            localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
+                                            setUser(res.data.user);
+                                            setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
                                         } catch (e) {
                                             alert(e.response?.data?.message || "Registration Failed.");
                                         } finally {

@@ -33,7 +33,6 @@ import authRoutes from "./routes/auth.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 import resetPasswordRoutes from "./routes/resetPassword.js";
-import messageRoutes from "./routes/messages.js";
 
 // Import email service AFTER dotenv.config() - non-critical
 console.log("Loading email service...");
@@ -60,14 +59,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "V14-STABLE-FINAL" });
+  res.status(200).json({ status: "healthy", deployed: "v4-final-fix" });
 });
-
-app.get("/api/messages/debug", (req, res) => {
-  res.json({ message: "Messages endpoint is active and reachable", time: new Date() });
-});
-
-app.get("/api/ping", (req, res) => res.json({ status: "pong", time: new Date() }));
 
 // DIAGNOSTIC LOGGING - All requests logged for debugging
 app.use((req, res, next) => {
@@ -79,7 +72,7 @@ app.use((req, res, next) => {
     req.requestId = (Date.now()).toString(36);
   }
   res.set('X-Request-Id', req.requestId);
-  console.log(`📡 [${timestamp}] [${req.requestId}] ${req.method} ${req.originalUrl} - V13 SYNC FINAL`);
+  console.log(`📡 [${timestamp}] [${req.requestId}] ${req.method} ${req.originalUrl} - V4 DEPLOY`);
   if (req.method !== 'GET') {
     console.log(`   [${req.requestId}] Headers:`, {
       auth: req.headers.authorization ? 'Present' : 'Missing',
@@ -138,7 +131,7 @@ app.use((req, res, next) => {
 
   if (req.body) {
     try {
-      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0, 2000);
+      const preview = typeof req.body === 'object' ? JSON.stringify(req.body, null, 2).slice(0, 2000) : String(req.body).slice(0,2000);
       console.warn(`🔍 [${reqId}] Body Preview:`, preview);
     } catch (e) {
       console.warn(`🔍 [${reqId}] Body serialize failed:`, e && e.message);
@@ -154,17 +147,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/messages", messageRoutes);
 app.use("/reset-password", resetPasswordRoutes);
-
-// 404 handler at the end of routing chain
-app.use((req, res) => {
-  if (req.originalUrl.startsWith('/api')) {
-    console.log(`❌ API 404: ${req.method} ${req.originalUrl}`);
-    return res.status(404).json({ error: "Endpoint Not Found", path: req.originalUrl });
-  }
-  res.status(404).send("Not Found");
-});
 
 // Static Uploads Serving (For Local Storage Fallback)
 const __filename = fileURLToPath(import.meta.url);
