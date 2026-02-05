@@ -166,8 +166,12 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
 
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
     const isCommentAuthor = String(currentCommentAuthorId) === String(user?._id);
-    const isPostAuthor = String(post.author?._id || post.author) === String(user?._id);
-    const isFounder = (comment.user?.role === 'Founder' || allUsers?.find(u => String(u._id) === String(currentCommentAuthorId))?.role === 'Founder');
+    const postAuthorId = post.author?._id || post.author;
+    const isPostAuthor = String(postAuthorId) === String(user?._id);
+
+    // Improved role detection handling string vs object IDs and denormalized data
+    const foundUserInList = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
+    const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
     const canDelete = isCommentAuthor || isPostAuthor || user?.role === 'Founder';
@@ -636,7 +640,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     );
 };
 
-const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
+const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
     // Comment Recording State (Local to PostCard if possible, but PostCard is complex, simplified here or need dedicated component hook)
     // Doing quick dirty way: prop drilling or wrapper. Wait, PostCard IS the component. I will add state inside PostCard via refactor or just using the one provided.
     // Actually PostCard is defined above. I need to add state TO PostCard. 
@@ -890,7 +894,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
                         <div className="p-4 space-y-4">
                             {post.comments?.map((c, idx) => (
-                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
+                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
                             ))}
                             <div
                                 className="flex flex-col gap-4 mt-6"
@@ -1206,36 +1210,20 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
-                        <div className="flex gap-2">
-                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7'].map(c => {
-                                const isActive = (localStorage.getItem('themeColor') || '#ffd700') === c;
-                                const getSecondary = (hex) => {
-                                    if (hex === '#ffffff') return '#888888';
-                                    if (hex === '#ffd700') return '#b8860b';
-                                    return hex + 'aa';
-                                };
-                                const getHover = (hex) => {
-                                    if (hex === '#ffffff') return '#f0f0f0';
-                                    return hex + 'cc';
-                                };
+                        <div className="flex gap-2.5 flex-wrap justify-center pt-2">
+                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff'].map(c => {
+                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
+                                const isActive = currentTheme === c;
                                 return (
                                     <button key={c} onClick={() => {
-                                        const secondary = getSecondary(c);
-                                        const hover = getHover(c);
-                                        const glow = `${c}44`;
-                                        const glowSoft = `${c}1a`;
-                                        document.documentElement.style.setProperty('--gold-primary', c);
-                                        document.documentElement.style.setProperty('--gold-secondary', secondary);
-                                        document.documentElement.style.setProperty('--gold-hover', hover);
-                                        document.documentElement.style.setProperty('--gold-glow', glow);
-                                        document.documentElement.style.setProperty('--gold-glow-soft', glowSoft);
-                                        localStorage.setItem('themeColor', c);
-                                        localStorage.setItem('themeSecondary', secondary);
-                                        localStorage.setItem('themeHover', hover);
-                                        localStorage.setItem('themeGlow', glow);
-                                        localStorage.setItem('themeGlowSoft', glowSoft);
-                                        onUpdateUser({ ...user });
-                                    }} className={`w-8 h-8 rounded-full border transition-all ${isActive ? 'scale-125 border-white ring-2 ring-white/50 shadow-[0_0_15px_rgba(255,255,255,0.5)]' : 'border-white/10 hover:scale-110'}`} style={{ background: c }} />
+                                        applyTheme(c);
+                                        handleSave('settings', { theme: c });
+                                    }} className={`w-9 h-9 rounded-xl border-2 transition-all relative ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.5)] z-10' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c, borderColor: isActive ? 'white' : 'transparent' }}>
+                                        {isActive && (
+                                            <motion.div layoutId="theme-active" className="absolute -inset-1.5 border-2 border-white/20 rounded-[1rem] pointer-events-none" initial={false} animate={{ opacity: 1 }} />
+                                        )}
+                                        {isActive && <Icons.Check className="w-5 h-5 text-black mx-auto drop-shadow-md" />}
+                                    </button>
                                 );
                             })}
                         </div>
@@ -1284,7 +1272,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {saving && <div className="text-[10px] text-[var(--gold-primary)] text-center font-bold animate-pulse">SYNCING WITH NEURAL LINK...</div>}
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 
@@ -1325,7 +1313,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
         if (!matchesUser || p.isStory) return false;
 
-        if (activeTab === 'VIDEO') return isYouTubeUrl(p.videoUrl) || (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i)));
+        if (activeTab === 'VIDEO') return isYouTubeUrl(p.videoUrl) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         if (activeTab === 'POSTS') return !p.videoUrl && !isYouTubeUrl(p.videoUrl) && !(p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         return true;
     }), [posts, profileUser, activeTab]);
@@ -1942,28 +1930,52 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/40 backdrop-blur-3xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
                 <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                        <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update content..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
-                        <div className="text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
-                            <Icons.Info className="w-3 h-3 inline mr-1" /> {t('VIDEO_LIMIT_NOTE')}
+                    <div className="flex flex-col gap-3">
+                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
+                        </div>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+                            <textarea
+                                value={desc}
+                                onChange={e => setDesc(e.target.value)}
+                                placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
+                                className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none h-44 resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
+                            />
+                        </div>
+                        <div className="flex items-center gap-2 px-1">
+                            <div className="text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2.5 py-1.5 rounded-xl border border-[var(--gold-primary)]/20 w-fit animate-pulse flex items-center gap-2">
+                                <Icons.Info className="w-3.5 h-3.5" /> {t('VIDEO_LIMIT_NOTE')}
+                            </div>
                         </div>
                     </div>
-                    <div className="mb-3">
-                        <input id="edit-youtube" value={youtubeUrl} placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
-                            const v = e.target.value || '';
-                            setYoutubeUrl(v); // Update state
-                            if (isYouTubeUrl(v)) {
-                                const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
-                                const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
-                                setPreview(thumb ? thumb : null);
-                                setIsVideo(true);
-                            } else if (!v) {
-                                if (!fileRef.current?.files[0]) {
-                                    setPreview(null);
-                                    setIsVideo(false);
-                                }
-                            }
-                        }} />
+                    <div className="flex flex-col gap-3">
+                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">
+                            YouTube URL
+                        </div>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-white/5 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                            <input
+                                id="edit-youtube"
+                                value={youtubeUrl}
+                                placeholder="https://youtube.com/..."
+                                className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner"
+                                onChange={(e) => {
+                                    const v = e.target.value || '';
+                                    setYoutubeUrl(v);
+                                    if (isYouTubeUrl(v)) {
+                                        const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
+                                        const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+                                        setPreview(thumb ? thumb : null);
+                                        setIsVideo(true);
+                                    } else if (!v) {
+                                        if (!fileRef.current?.files[0]) {
+                                            setPreview(null);
+                                            setIsVideo(false);
+                                        }
+                                    }
+                                }} />
+                        </div>
                     </div>
 
                     {/* AUDIO RECORDER - Refactored check */}
@@ -2003,9 +2015,37 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{saving ? '...' : t('share')}</button>
                     </div>
                 </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
+};
+
+const applyTheme = (color) => {
+    const getSecondary = (hex) => {
+        if (hex === '#ffffff') return '#888888';
+        if (hex === '#ffd700') return '#b8860b';
+        return hex + 'aa';
+    };
+    const getHover = (hex) => {
+        if (hex === '#ffffff') return '#f0f0f0';
+        return hex + 'cc';
+    };
+    const secondary = getSecondary(color);
+    const hover = getHover(color);
+    const glow = `${color}44`;
+    const glowSoft = `${color}1a`;
+
+    document.documentElement.style.setProperty('--gold-primary', color);
+    document.documentElement.style.setProperty('--gold-secondary', secondary);
+    document.documentElement.style.setProperty('--gold-hover', hover);
+    document.documentElement.style.setProperty('--gold-glow', glow);
+    document.documentElement.style.setProperty('--gold-glow-soft', glowSoft);
+
+    localStorage.setItem('themeColor', color);
+    localStorage.setItem('themeSecondary', secondary);
+    localStorage.setItem('themeHover', hover);
+    localStorage.setItem('themeGlow', glow);
+    localStorage.setItem('themeGlowSoft', glowSoft);
 };
 
 const App = () => {
@@ -2062,7 +2102,7 @@ const App = () => {
             return;
         }
         setUser(prev => {
-            const current = prev || JSON.parse(localStorage.getItem('user') || '{}');
+            const current = prev || JSON.parse(localStorage.getItem('user') || '{ }');
             // Cache-break the new image if it's identical base path
             let nextPic = newData.profilePic;
             if (current.profilePic && nextPic && current.profilePic.split('?')[0] === nextPic.split('?')[0]) {
@@ -2086,17 +2126,16 @@ const App = () => {
             setUser(JSON.parse(saved));
         }
 
-        const savedTheme = localStorage.getItem('themeColor');
-        const savedSecondary = localStorage.getItem('themeSecondary');
-        const savedHover = localStorage.getItem('themeHover');
-        const savedGlow = localStorage.getItem('themeGlow');
-        const savedGlowSoft = localStorage.getItem('themeGlowSoft');
-        if (savedTheme) document.documentElement.style.setProperty('--gold-primary', savedTheme);
-        if (savedSecondary) document.documentElement.style.setProperty('--gold-secondary', savedSecondary);
-        if (savedHover) document.documentElement.style.setProperty('--gold-hover', savedHover);
-        if (savedGlow) document.documentElement.style.setProperty('--gold-glow', savedGlow);
-        if (savedGlowSoft) document.documentElement.style.setProperty('--gold-glow-soft', savedGlowSoft);
+        const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
+        if (savedTheme) applyTheme(savedTheme);
     }, []);
+
+    // Sync theme when user object updates (e.g. from backend)
+    useEffect(() => {
+        if (user?.settings?.theme) {
+            applyTheme(user.settings.theme);
+        }
+    }, [user?.settings?.theme]);
 
     // Use a ref to track the last user ID we initialized for, to avoid loops
     const lastInitializedId = useRef(null);
@@ -2359,7 +2398,10 @@ const App = () => {
             const tempComment = {
                 _id: tempId,
                 text: textValue,
-                author: user,
+                authorId: user?._id || user?.id,
+                authorName: user?.username,
+                authorProfilePic: user?.profilePic,
+                user: user, // Keep for backward/forward compatibility in CommentItem
                 createdAt: new Date().toISOString(),
                 isOptimistic: true
             };
@@ -2775,7 +2817,7 @@ const App = () => {
                                                                     >
                                                                         <div className="space-y-6 pt-4 pb-8 w-full max-w-full overflow-hidden">
                                                                             {groupedPosts[dateKey].map(p => (
-                                                                                <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                                <PostCard key={p._id} post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                             ))}
                                                                         </div>
                                                                     </motion.div>
