@@ -694,10 +694,10 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         src={resolveMediaUrl(post.videoUrl || post.image)}
                                         controls
                                         playsInline
-                                        preload="none"
+                                        preload="metadata"
                                         poster={post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : ""}
                                         className="w-full h-auto max-h-[600px] object-contain bg-gray-900"
-                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                        onLoadedData={(e) => { e.target.currentTime = 0.5; }}
                                     />
                                 ) : post.image ? (
                                     <img
@@ -1352,9 +1352,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         src={resolveMediaUrl(p.videoUrl || p.image)}
                                                         muted
                                                         playsInline
+                                                        controls
                                                         preload="metadata"
                                                         className="w-full h-full object-cover bg-gray-900"
-                                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                                        onLoadedData={(e) => { e.target.currentTime = 0.5; }}
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
                                                         <Icons.Play className="w-6 h-6 text-white/80" />
