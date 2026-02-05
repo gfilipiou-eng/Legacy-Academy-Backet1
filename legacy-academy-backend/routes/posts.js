@@ -113,7 +113,11 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
 
-    const currentUserId = req.user.id || req.user.userId;
+    const currentUserId = req.user.id || req.user.userId || req.user._id;
+    if (!currentUserId) {
+      console.error("AUTH ERROR: No user ID found in token", req.user);
+      return res.status(401).json("Unauthorized: User ID missing");
+    }
     const currentUser = await User.findById(currentUserId);
 
     const newComment = {
@@ -133,7 +137,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     await post.save();
 
     // Send notification to post author if commenter is not the author
-    if (post.author.toString() !== currentUserId) {
+    if (post.author.toString() !== currentUserId.toString()) {
       const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
       await User.findByIdAndUpdate(post.author, {
         $push: {
@@ -158,7 +162,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
     for (const username of mentions) {
       const mentionedUser = await User.findOne({ username });
-      if (mentionedUser && mentionedUser._id.toString() !== currentUserId && mentionedUser._id.toString() !== post.author.toString()) {
+      if (mentionedUser && mentionedUser._id.toString() !== currentUserId.toString() && mentionedUser._id.toString() !== post.author.toString()) {
         await mentionedUser.updateOne({
           $push: {
             notifications: {
@@ -178,8 +182,14 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
     res.status(200).json(post.comments);
   } catch (e) {
-    console.error("Add comment error:", e);
-    res.status(500).json(e);
+    console.error("Add comment error details:", {
+      message: e.message,
+      stack: e.stack,
+      body: req.body,
+      user: req.user,
+      file: req.file ? 'Present' : 'Missing'
+    });
+    res.status(500).json({ error: e.message || "Internal Server Error" });
   }
 });
 
