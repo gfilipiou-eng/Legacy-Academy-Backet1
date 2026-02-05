@@ -145,10 +145,24 @@ app.use((req, res, next) => {
 });
 
 
+app.get("/api/debug/routes", (req, res) => {
+  const routes = [];
+  app._router.stack.forEach(middleware => {
+    if (middleware.route) routes.push(`${Object.keys(middleware.route.methods).join(',').toUpperCase()} ${middleware.route.path}`);
+    else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach(handler => {
+        if (handler.route) routes.push(`${Object.keys(handler.route.methods).join(',').toUpperCase()} ${middleware.regexp.toString()} ${handler.route.path}`);
+      });
+    }
+  });
+  res.json({ status: "Diagnostic Active", count: routes.length, routes });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/reset-password", resetPasswordRoutes);
 app.use("/reset-password", resetPasswordRoutes);
 
 // 404 Handler for API

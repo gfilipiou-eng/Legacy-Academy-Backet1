@@ -136,7 +136,7 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
       return res.status(401).json("Unauthorized: Session corrupted.");
     }
 
-    const currentUser = await User.findById(currentUserId).lean();
+    const currentUser = await User.findById(currentUserId).select("username profilePic").lean();
     if (!currentUser) {
       console.error(`[${reqId}] USER NOT FOUND: ${currentUserId}`);
       return res.status(401).json("User profile no longer exists.");
@@ -227,11 +227,16 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
           }
         }
       } catch (notifErr) {
-        console.warn(`[${reqId}] Notification Background Error:`, notifErr.message);
+        console.warn(`[${reqId}] Notification Background Error (Non-Fatal):`, notifErr && notifErr.message);
       }
     };
 
-    sendNotifications();
+    // Fire and forget, but handle sync errors
+    try {
+      sendNotifications().catch(e => console.error(`[${reqId}] sendNotifications Async Fail:`, e));
+    } catch (e) {
+      console.error(`[${reqId}] sendNotifications sync fail:`, e);
+    }
 
     return res.status(200).json(updatedPost.comments);
   } catch (e) {
