@@ -2,6 +2,7 @@ import express from "express";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import ffprobeStatic from "ffprobe-static";
+import mongoose from "mongoose";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import upload from "../middleware/upload.js";
@@ -109,21 +110,35 @@ router.put("/:id/dislike", verifyToken, handleDislike);
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
 // Update: Allow file upload for voice comments
 router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {
+  const reqId = req.requestId || 'no-id';
+  console.log(`📡 [${reqId}] POST COMMENT attempt for Post: ${req.params.id}`);
+
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json("Invalid Post ID format");
+    }
+
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
+    if (!post) {
+      console.warn(`[${reqId}] Post not found: ${req.params.id}`);
+      return res.status(404).json("Post not found");
+    }
 
     const currentUserId = req.user.id || req.user.userId || req.user._id;
-    if (!currentUserId) {
-      console.error("AUTH ERROR: No user ID found in token", req.user);
-      return res.status(401).json("Unauthorized: User ID missing");
+    if (!currentUserId || !mongoose.Types.ObjectId.isValid(currentUserId)) {
+      console.error(`[${reqId}] AUTH ERROR: Invalid or missing user ID`, req.user);
+      return res.status(401).json("Unauthorized: User ID missing or invalid");
     }
-    const currentUser = await User.findById(currentUserId);
+
+    const currentUser = await User.findById(currentUserId).lean();
+    if (!currentUser) {
+      return res.status(401).json("User profile not found");
+    }
 
     const newComment = {
       text: req.body.text || "",
       audioUrl: req.file ? req.file.path : "",
-      authorName: req.user.username,
+      authorName: req.user.username || currentUser.username || "Anonymous",
       authorId: currentUserId,
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()

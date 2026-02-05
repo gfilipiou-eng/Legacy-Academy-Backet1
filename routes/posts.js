@@ -135,8 +135,9 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
       return res.status(401).json("User profile not found");
     }
 
+    const commentText = (req.body.text || "").trim();
     const newComment = {
-      text: req.body.text || "",
+      text: commentText,
       audioUrl: req.file ? req.file.path : "",
       authorName: req.user.username || currentUser.username || "Anonymous",
       authorId: currentUserId,
@@ -145,9 +146,11 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     };
 
     if (!newComment.text && !newComment.audioUrl) {
+      console.warn(`[${reqId}] REJECTED: Empty comment attempt`);
       return res.status(400).json("Comment cannot be empty");
     }
 
+    console.log(`📡 [${reqId}] Saving comment for ${req.params.id} by ${newComment.authorName}`);
     post.comments.push(newComment);
     await post.save();
 

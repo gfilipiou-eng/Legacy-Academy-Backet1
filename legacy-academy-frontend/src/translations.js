@@ -89,7 +89,8 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΩ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         ACTION_LIKED: 'Μου αρέσει!', ACTION_DISLIKED: 'Δεν μου αρέσει!', ACTION_SHARED: 'Κοινοποιήθηκε!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
-        EDIT: 'Επεξεργασία', DELETE: 'Διαγραφή', POST: 'Δημοσίευση'
+        EDIT: 'Επεξεργασία', DELETE: 'Διαγραφή', POST: 'Δημοσίευση',
+        VOICE_NOTE_READY: 'ΗΧΗΤΙΚΟ ΕΤΟΙΜΟ', VOICE_PREPARED: 'ΕΤΟΙΜΟ ΠΡΟΣ ΑΠΟΣΤΟΛΗ', TRANSMITTING: 'ΕΚΠΟΜΠΗ'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
