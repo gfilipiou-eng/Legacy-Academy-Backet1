@@ -330,7 +330,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             </div>
                                             <div className="flex items-center gap-1.5 ml-1">
                                                 <button type="button" onClick={() => stopRecording(true)} className="p-2.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-white transition-all active:scale-95 border border-white/5"><Icons.X className="w-4.5 h-4.5" /></button>
-                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-red-900/40 active:scale-95 transition-all">{t('POST')}</button>
+                                                <button type="button" onClick={() => stopRecording(false)} className="bg-red-500 hover:bg-red-600 p-3 rounded-lg text-white font-black shadow-xl shadow-red-900/40 active:scale-95 transition-all flex items-center justify-center">
+                                                    <Icons.Send className="w-5 h-5 fill-white" />
+                                                </button>
                                             </div>
                                         </div>
                                     ) : (
@@ -343,8 +345,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                     if (!commentText.trim()) return;
                                                     onComment(post._id, commentText);
                                                     setCommentText('');
-                                                }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-xl text-white font-black text-[11px] uppercase tracking-normal disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-3.5 h-3.5 fill-white" />
+                                                }} disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl text-white font-black disabled:opacity-20 active:scale-95 transition-all shadow-lg shadow-blue-900/40 flex items-center justify-center">
+                                                    <Icons.Send className="w-5 h-5 fill-white" />
                                                 </button>
                                             </div>
                                         </div>
@@ -367,8 +369,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                     setCommentAudio(null);
                                                     setCommentText('');
                                                 }
-                                            }} className="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-xl text-white font-black text-[11px] uppercase tracking-[0.1em] shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
-                                                {t('POST')} <Icons.Send className="w-4 h-4 fill-white" />
+                                            }} className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl text-white font-black shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center justify-center">
+                                                <Icons.Send className="w-5 h-5 fill-white" />
                                             </button>
                                         </div>
                                     </div>

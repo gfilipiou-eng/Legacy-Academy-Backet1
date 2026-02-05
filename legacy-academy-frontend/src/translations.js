@@ -81,15 +81,15 @@ export const TRANSLATIONS = {
         NOTIF_MESSAGE: 'σου έστειλε μήνυμα', NOTIF_MENTION: 'σε ανέφερε', NOTIF_REQUEST: 'έκανε αίτημα',
         AUTHORIZE: 'ΕΓΚΡΙΣΗ', DENY: 'ΑΠΟΡΡΙΨΗ',
         SAVE: 'Αποθήκευση', CANCEL: 'Ακύρωση',
-        FOLLOWING_LABEL: 'Akolouthei', EDIT_PROFILE: 'ΕΠΕΞΕΡΓΑΣΙΑ ΠΡΟΦΙΛ', BAN: 'BAN 3D',
+        FOLLOWING_LABEL: 'Ακολουθεί', EDIT_PROFILE: 'ΕΠΕΞΕΡΓΑΣΙΑ ΠΡΟΦΙΛ', BAN: 'BAN 3D',
         TAB_ALL: 'ΟΛΑ', TAB_POSTS: 'POSTS', TAB_VIDEO: 'ΒΙΝΤΕΟ', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Δεν βρέθηκε περιεχόμενο',
         UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 λεπτά.',
         ADD_MEDIA: 'Προσθήκη', ADD_STORY: 'Σε Ιστορία', STORY_DURATION: 'ΟΡΑΤΟ ΓΙΑ 24Ω 🕒', POST_STORY: 'ΙΣΤΟΡΙΑ',
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΩ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
-        ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Σχολιάστηκε!',
+        ACTION_LIKED: 'Μου αρέσει!', ACTION_DISLIKED: 'Δεν μου αρέσει!', ACTION_SHARED: 'Κοινοποιήθηκε!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
-        EDIT: 'Edit', DELETE: 'Delete', POST: 'Δημοσίευση'
+        EDIT: 'Επεξεργασία', DELETE: 'Διαγραφή', POST: 'Δημοσίευση'
     },
     cy: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΨΑΞΙΜΟ', ALERTS: 'MISHISHIA', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΚΟΥΒΕΝΤΑ',
