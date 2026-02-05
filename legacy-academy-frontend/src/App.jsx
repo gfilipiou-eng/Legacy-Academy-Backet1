@@ -196,10 +196,32 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
 
 const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
     if (!post) return null;
-    const [commentText, setCommentText] = useState('');
     const { t, lang } = useTranslation(user);
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
     const isFounder = user?.role === 'Founder';
+
+    // Audio Comment State
+    const [commentText, setCommentText] = useState('');
+    const [commentAudio, setCommentAudio] = useState(null);
+    const [isRecordingComment, setIsRecordingComment] = useState(false);
+    const commentRecorderRef = useRef(null);
+
+    const startCommentRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            commentRecorderRef.current = new MediaRecorder(stream);
+            const chunks = [];
+            commentRecorderRef.current.ondataavailable = e => chunks.push(e.data);
+            commentRecorderRef.current.onstop = () => {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                setCommentAudio(blob);
+                setIsRecordingComment(false);
+            };
+            commentRecorderRef.current.start();
+            setIsRecordingComment(true);
+            setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') { commentRecorderRef.current.stop(); } }, 60000); // 1 min max
+        } catch (e) { alert("Mic denied"); }
+    };
 
     return (
         <div className="fixed inset-0 z-[400] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-y-auto">
