@@ -131,10 +131,24 @@ router.get("/find/:id", async (req, res) => {
     }
 });
 
-// 2. Λήψη όλων των posts ενός χρήστη
-router.get("/posts/:userId", async (req, res) => {
+// 2. Λήψη όλων των posts ενός χρήστη (With Privacy Filter)
+router.get("/posts/:userId", verifyToken, async (req, res) => {
     try {
-        const posts = await Post.find({ author: req.params.userId }).sort({ createdAt: -1 });
+        const targetUserId = req.params.userId;
+        const currentUserId = req.user.id || req.user.userId;
+
+        const targetUser = await User.findById(targetUserId);
+        if (!targetUser) return res.status(404).json("Agent not found.");
+
+        const isOwner = String(targetUserId) === String(currentUserId);
+        const isFollower = targetUser.followers?.some(id => String(id) === String(currentUserId));
+        const isPrivate = targetUser.isPrivate || targetUser.isFollowersOnly;
+
+        if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
+            return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
+        }
+
+        const posts = await Post.find({ author: targetUserId }).sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json(err);
@@ -159,12 +173,13 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         const requesterId = req.params.requestId;
 
         const user = await User.findById(userId);
-        const requester = await User.findById(requesterId);
+        if (!user) return res.status(404).json("Agent not found.");
 
-        if (!user.followRequests.includes(requesterId)) return res.status(400).json("No request found");
+        const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
+        if (!hasRequest) return res.status(400).json("No request found in logs.");
 
-        await user.updateOne({ $pull: { followRequests: requesterId }, $push: { followers: requesterId } });
-        await requester.updateOne({ $push: { following: userId } });
+        await User.findByIdAndUpdate(userId, { $pull: { followRequests: requesterId }, $push: { followers: requesterId } });
+        await User.findByIdAndUpdate(requesterId, { $push: { following: userId } });
 
         res.status(200).json("Follower accepted");
     } catch (err) { res.status(500).json(err); }
@@ -174,8 +189,16 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        await User.findByIdAndUpdate(userId, { $pull: { followRequests: req.params.requestId } });
-        res.status(200).json("Request rejected");
+        const requesterId = req.params.requestId;
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
+
+        const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
+        if (!hasRequest) return res.status(400).json("No request found in logs.");
+
+        await User.findByIdAndUpdate(userId, { $pull: { followRequests: requesterId } });
+        res.status(200).json("Request neutralized.");
     } catch (err) { res.status(500).json(err); }
 });
 
@@ -433,18 +456,46 @@ router.post("/:id/ban", verifyToken, async (req, res) => {
     }
 });
 
-// 4. DELETE USER ACCOUNT
+// 4. DELETE USER ACCOUNT - Mission Scrub
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
+        const targetId = req.params.id;
         const currentUserId = req.user.id || req.user.userId;
-        if (req.params.id === currentUserId || req.user.role === 'Founder') {
-            await Post.deleteMany({ author: req.params.id });
-            await User.findByIdAndDelete(req.params.id);
-            return res.status(200).json("Deleted successfully.");
+
+        if (targetId !== currentUserId && req.user.role !== 'Founder') {
+            return res.status(403).json("Authorization Failed: Protocol mismatch.");
         }
-        return res.status(403).json("Μπορείτε να διαγράψετε μόνο τον δικό σας λογαριασμό!");
+
+        // 1. Scrub Followers/Following/Requests Mesh
+        await User.updateMany({}, {
+            $pull: {
+                followers: targetId,
+                following: targetId,
+                followRequests: targetId
+            }
+        });
+
+        // 2. Clear Intel Endorsements (Likes/Dislikes)
+        await Post.updateMany({}, {
+            $pull: {
+                likes: targetId,
+                dislikes: targetId,
+                likesUsers: targetId // If used
+            }
+        });
+
+        // 3. Purge Agent's Intel (Posts)
+        await Post.deleteMany({ author: targetId });
+
+        // 4. Decommission User record
+        const user = await User.findByIdAndDelete(targetId);
+
+        if (!user) return res.status(404).json("Agent already neutralized.");
+
+        res.status(200).json("Agent trace eliminated successfully.");
     } catch (err) {
-        res.status(500).json("Σφάλμα κατά τη διαγραφή.");
+        console.error("DELETION FAILURE:", err);
+        res.status(500).json({ error: "System failed to scrub agent record.", detail: err.message });
     }
 });
 

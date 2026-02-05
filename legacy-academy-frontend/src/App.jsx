@@ -26,18 +26,19 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
 
             if (isPoster && isVideo) {
                 // GENERATE POSTER IMAGE FROM VIDEO
-                transform = `so_0.5,f_jpg,q_auto:best,w_800,c_limit`;
+                transform = `so_0.5,f_jpg,q_auto:best,w_1080,c_limit`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
             } else if (isAvatar && isVideo) {
-                // USE ANIMATED WEBP FOR AVATARS (BETTER THAN GIF)
-                transform = `w_120,h_120,c_fill,so_0,eo_3,q_auto:low,f_webp,fl_animated`;
+                // USE ANIMATED WEBP FOR AVATARS (HIGH QUALITY)
+                transform = `w_250,h_250,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
-                transform = `w_120,h_120,c_fill,g_face,q_auto:best,f_auto`;
+                transform = `w_300,h_300,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                transform = `c_limit,w_1080,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                // CRYSTAL 8K / 4K TARGETING
+                transform = `c_limit,w_3840,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             }
 
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
@@ -1223,6 +1224,17 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         return true;
     }), [posts, profileUser, activeTab]);
 
+    const groupedUserPosts = React.useMemo(() => {
+        const groups = {};
+        userPosts.forEach(p => {
+            const date = new Date(p.createdAt);
+            const key = date.toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(p);
+        });
+        return groups;
+    }, [userPosts, currentUser]);
+
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
             setUserData(currentUser);
@@ -1362,21 +1374,39 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
                                 {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black tracking-widest hover:bg-white/10 transition-all uppercase">{t('EDIT_PROFILE')}</button>
+                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px]">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex-1 flex gap-2">
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
                                             {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                         </button>
+
+                                        {/* COMMS BUTTON (Protected by Guard Chat) */}
+                                        <button
+                                            onClick={() => {
+                                                if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
+                                                    addToast("ENCRYPTED: ONLY FOLLOWERS CAN INITIATE COMMS", "neutral");
+                                                    return;
+                                                }
+                                                onOpenChat(displayUser);
+                                            }}
+                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
+                                        >
+                                            <Icons.MessageCircle className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110'}`} />
+                                        </button>
+
                                         {currentUser?.role === 'Founder' && (
                                             <button
                                                 onClick={async () => {
+                                                    const targetId = displayUser?._id || profileUser?._id || profileUser;
+                                                    if (!targetId) return;
+                                                    if (!confirm("Confirm 3-day suspension protocol for this agent?")) return;
                                                     try {
-                                                        await axios.post(`/users/${displayUser._id}/ban`, { days: 3 });
-                                                        alert("Agent suspended for 3 days.");
-                                                    } catch (e) { alert("Ban failed."); }
+                                                        await axios.post(`/users/${targetId}/ban`, { days: 3 });
+                                                        addToast("AGENT SUSPENDED: 3 DAYS", "success");
+                                                    } catch (e) { addToast("MISSION FAILED: BAN PROTOCOL REJECTED", "error"); }
                                                 }}
-                                                className="px-4 py-3 bg-red-600 rounded-2xl text-white font-black text-[10px] tracking-widest hover:bg-red-700 transition-all active:scale-95"
+                                                className="px-3 py-3 bg-red-600/20 border border-red-500/40 rounded-2xl text-red-500 font-black text-[9px] tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[70px]"
                                             >
                                                 {t('BAN')}
                                             </button>
@@ -1394,13 +1424,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             {/* PRIVACY LOCK SCREEN */}
                             {displayUser?.isPrivate && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
-                                    <div className="w-20 h-20 mx-auto bg-white/5 rounded-full flex items-center justify-center border border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all">
-                                        <Icons.Shield className="w-10 h-10 text-gray-500 group-hover:text-[var(--gold-primary)] transition-all" />
+                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:border-[var(--gold-primary)]/40 transition-all relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/10 to-transparent animate-pulse" />
+                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-hover:text-[var(--gold-primary)] transition-all relative z-10" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <h3 className="font-black text-white text-base uppercase tracking-widest">{t('PRIVATE_TITLE')}</h3>
-                                        <p className="text-gray-500 text-[10px] uppercase tracking-tighter leading-relaxed mx-auto max-w-[200px]">{t('PRIVATE_DESC')}</p>
+                                    <div className="space-y-3">
+                                        <h3 className="font-black text-white text-xl uppercase tracking-[0.2em]">{t('PRIVATE_TITLE')}</h3>
+                                        <div className="h-0.5 w-12 bg-[var(--gold-primary)] mx-auto opacity-50" />
+                                        <p className="text-gray-500 text-[11px] uppercase tracking-widest leading-relaxed mx-auto max-w-[240px] font-bold">{t('PRIVATE_DESC')}</p>
                                     </div>
+                                    <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 transition-all uppercase shadow-lg shadow-[var(--gold-primary)]/20">
+                                        {hasRequested ? t('REQUESTED') : t('FOLLOW_TO_VIEW')}
+                                    </button>
                                 </div>
                             ) : (
                                 <>
@@ -1431,37 +1466,53 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {userPosts.length === 0 ? (
                                         <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
                                     ) : (
-                                        <div className="grid grid-cols-3 gap-1 pb-20">
-                                            {userPosts.map(p => (
-                                                <div
-                                                    key={p._id}
-                                                    onClick={() => onOpenDetail(p)}
-                                                    className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center"
-                                                >
-                                                    {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                        <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
-                                                    ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                        <div className="relative w-full h-full">
-                                                            <video
-                                                                src={resolveMediaUrl(p.videoUrl || p.image)}
-                                                                muted
-                                                                playsInline
-                                                                controls
-                                                                preload="metadata"
-                                                                poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
-                                                                className="w-full h-full object-cover bg-gray-900"
-                                                            />
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                <Icons.Play className="w-6 h-6 text-white/80" />
+                                        <div className="space-y-10 pb-20">
+                                            {Object.keys(groupedUserPosts).map(dateKey => (
+                                                <div key={dateKey} className="group animate-fade-in">
+                                                    <div className="flex items-center gap-3 mb-4 px-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                        <Icons.Shield className="w-2.5 h-2.5 text-[var(--gold-primary)]" />
+                                                        <span className="text-[9px] font-black text-white uppercase tracking-[0.2em] font-mono">{dateKey}</span>
+                                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+                                                    </div>
+                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5">
+                                                        {groupedUserPosts[dateKey].map(p => (
+                                                            <div
+                                                                key={p._id}
+                                                                onClick={() => onOpenDetail(p)}
+                                                                className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
+                                                            >
+                                                                {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                    <div className="relative w-full h-full">
+                                                                        <video
+                                                                            src={resolveMediaUrl(p.videoUrl || p.image)}
+                                                                            muted
+                                                                            playsInline
+                                                                            preload="metadata"
+                                                                            poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
+                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
+                                                                        />
+                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                            <Icons.Play className="w-6 h-6 text-white/80" />
+                                                                        </div>
+                                                                    </div>
+                                                                ) : p.image ? (
+                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                ) : (
+                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* STATS OVERLAY on hover */}
+                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
+                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    ) : p.image ? (
-                                                        <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
-                                                            <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                        </div>
-                                                    )}
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -1646,6 +1697,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [desc, setDesc] = useState(post?.desc || '');
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
+    const [youtubeUrl, setYoutubeUrl] = useState(''); // Tracking state to fix ReferenceError
     const [saving, setSaving] = useState(false);
     const fileRef = useRef(null);
 
@@ -1654,12 +1706,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             setDesc(post.desc || '');
             setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
             setIsVideo(post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
-            // initialize youtube field when editing
-            const isYT = isYouTubeUrl(post?.videoUrl);
-            setTimeout(() => {
-                const el = document.getElementById('edit-youtube');
-                if (el) el.value = isYT ? post.videoUrl : '';
-            }, 0);
+            // initialize youtube state
+            setYoutubeUrl(isYouTubeUrl(post?.videoUrl) ? post.videoUrl : '');
         }
     }, [post]);
 
@@ -1718,21 +1766,24 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                 <div className="flex flex-col gap-4">
                     <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update content..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
                     <div className="mb-3">
-                        <input id="edit-youtube" placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
+                        <input id="edit-youtube" value={youtubeUrl} placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
                             const v = e.target.value || '';
+                            setYoutubeUrl(v); // Update state
                             if (isYouTubeUrl(v)) {
                                 const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
                                 const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
                                 setPreview(thumb ? thumb : null);
                                 setIsVideo(true);
                             } else if (!v) {
-                                setPreview(null);
-                                setIsVideo(false);
+                                if (!fileRef.current?.files[0]) {
+                                    setPreview(null);
+                                    setIsVideo(false);
+                                }
                             }
                         }} />
                     </div>
 
-                    {/* AUDIO RECORDER */}
+                    {/* AUDIO RECORDER - Refactored check */}
                     {!preview && !youtubeUrl && (
                         <div className="mb-4">
                             {audioBlob ? (
@@ -1895,7 +1946,7 @@ const App = () => {
 
     // FIX: Optimized search filtering with useMemo
     const filteredPosts = React.useMemo(() => {
-        return posts.filter(p => {
+        return (posts || []).filter(p => {
             // Robust check for stories - exclude them from feed
             if (p.isStory === true || String(p.isStory) === 'true') return false;
             const q = searchQuery.toLowerCase();
@@ -1905,6 +1956,17 @@ const App = () => {
             return descMatch || authorMatch;
         });
     }, [posts, searchQuery]);
+
+    const groupedPosts = React.useMemo(() => {
+        const groups = {};
+        filteredPosts.forEach(p => {
+            const date = new Date(p.createdAt);
+            const key = date.toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(p);
+        });
+        return groups;
+    }, [filteredPosts, user]);
 
     const stories = React.useMemo(() => {
         const groups = {};
@@ -2150,9 +2212,12 @@ const App = () => {
         if (!targetId || !user) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
 
-        const targetUserObject = users.find(u => String(u._id) === String(targetId)) || profileUser;
+        // CRITICAL: Determine privacy status before optimistic update
+        const inputIsPrivate = typeof input === 'object' && input?.isPrivate;
+        const listUserIsPrivate = users.find(u => String(u._id) === String(targetId))?.isPrivate;
+        const isPrivate = inputIsPrivate || listUserIsPrivate;
+
         const isCurrentlyFollowing = user.following?.some(id => String(id) === String(targetId));
-        const isPrivate = targetUserObject?.isPrivate;
 
         // Optimistic UI Update Logic
         if (isCurrentlyFollowing) {
@@ -2165,13 +2230,22 @@ const App = () => {
             const res = await axios.post(`/users/${targetId}/follow`);
             const { followers, following, message, isRequested } = res.data;
 
-            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers, followRequests: res.data.followRequests || u.followRequests } : u));
+            // Update user list and profile view
+            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers, followRequests: res.data.followRequests || u.followRequests, isPrivate: res.data.isPrivate ?? u.isPrivate } : u));
             if (profileUser && String(profileUser._id) === String(targetId)) {
-                setProfileUser(prev => ({ ...prev, followers, followRequests: res.data.followRequests || prev.followRequests }));
+                setProfileUser(prev => ({ ...prev, followers, followRequests: res.data.followRequests || prev.followRequests, isPrivate: res.data.isPrivate ?? prev.isPrivate }));
             }
 
-            if (following) updateUserState({ following });
-            else fetchUsers();
+            // Sync following state - IF PRIVATE, backend won't return 'following' list updated
+            if (following) {
+                updateUserState({ following });
+            } else {
+                // If it was private/requested, ENSURE we are NOT following in local state (revert optimistic if it happened)
+                if (message === 'Requested' || message === 'Request Cancelled') {
+                    updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
+                }
+                fetchUsers();
+            }
 
             if (message === 'Requested') addToast("ENCRYPTION REQUESTED", "success");
             else if (message === 'Request Cancelled') addToast("REQUEST TERMINATED", "neutral");
@@ -2479,7 +2553,25 @@ const App = () => {
                                                     ))}
                                                 </div>
                                             )}
-                                            {filteredPosts.map(p => <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />)}
+                                            <div className="space-y-4">
+                                                {Object.keys(groupedPosts).map(dateKey => (
+                                                    <div key={dateKey} className="animate-fade-in group">
+                                                        <div className="flex items-center gap-4 py-6 px-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
+                                                            <div className="flex items-center gap-2">
+                                                                <Icons.Shield className="w-3 h-3 text-[var(--gold-primary)]" />
+                                                                <span className="text-[10px] font-black text-white uppercase tracking-[0.3em] font-mono">{dateKey}</span>
+                                                            </div>
+                                                            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10" />
+                                                        </div>
+                                                        <div className="space-y-6">
+                                                            {groupedPosts[dateKey].map(p => (
+                                                                <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
                                             {posts.length === 0 && (
                                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
                                                     <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>

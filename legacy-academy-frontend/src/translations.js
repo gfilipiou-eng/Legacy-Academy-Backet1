@@ -43,6 +43,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'FOLLOWING', STATUS_REQUESTED: 'REQUESTED',
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Commented!',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers',
+        FOLLOW_TO_VIEW: 'FOLLOW TO VIEW CONTENT',
         EDIT: 'Edit', DELETE: 'Delete', POST: 'Post'
     },
     el: {
@@ -81,7 +82,7 @@ export const TRANSLATIONS = {
         NOTIF_MESSAGE: 'σου έστειλε μήνυμα', NOTIF_MENTION: 'σε ανέφερε', NOTIF_REQUEST: 'έκανε αίτημα',
         AUTHORIZE: 'ΕΓΚΡΙΣΗ', DENY: 'ΑΠΟΡΡΙΨΗ',
         SAVE: 'Αποθήκευση', CANCEL: 'Ακύρωση',
-        FOLLOWING_LABEL: 'Ακολουθεί', EDIT_PROFILE: 'ΕΠΕΞΕΡΓΑΣΙΑ ΠΡΟΦΙΛ', BAN: 'BAN 3D',
+        FOLLOWING_LABEL: 'Ακολουθεί', EDIT_PROFILE: 'ΕΠΕΞΕΡΓΑΣΙΑ ΠΡΟΦΙΛ', BAN: 'BAN 3 ΗΜΕΡΕΣ',
         TAB_ALL: 'ΟΛΑ', TAB_POSTS: 'POSTS', TAB_VIDEO: 'ΒΙΝΤΕΟ', HIGHLIGHTS: 'HIGHLIGHTS', NO_CONTENT: 'Δεν βρέθηκε περιεχόμενο',
         UPLOAD_TITLE: 'ΜΕΤΑΦΟΡΤΩΣΗ', DECRYPT_PH: 'Αποκρυπτογράφηση σκέψεων...', YOUTUBE_PH: 'YouTube URL (προαιρετικό)',
         YOUTUBE_NOTE: 'Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 10 λεπτά.',
@@ -89,6 +90,7 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ΑΚΟΛΟΥΘΩ', STATUS_REQUESTED: 'ΣΤΑΛΘΗΚΕ',
         ACTION_LIKED: 'Μου αρέσει!', ACTION_DISLIKED: 'Δεν μου αρέσει!', ACTION_SHARED: 'Κοινοποιήθηκε!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
+        FOLLOW_TO_VIEW: 'ΑΚΟΛΟΥΘΗΣΤΕ ΓΙΑ ΠΡΟΒΟΛΗ',
         EDIT: 'Επεξεργασία', DELETE: 'Διαγραφή', POST: 'Δημοσίευση',
         VOICE_NOTE_READY: 'ΗΧΗΤΙΚΟ ΕΤΟΙΜΟ', VOICE_PREPARED: 'ΕΤΟΙΜΟ ΠΡΟΣ ΑΠΟΣΤΟΛΗ', TRANSMITTING: 'ΕΚΠΟΜΠΗ'
     },
