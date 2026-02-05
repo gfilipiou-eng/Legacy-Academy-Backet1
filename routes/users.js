@@ -326,6 +326,12 @@ router.post("/profile-pic", verifyToken, (req, res, next) => {
 
         try {
             await Post.updateMany({ author: userId }, { $set: { profilePic: imagePath } });
+            // Deep update for comments
+            await Post.updateMany(
+                { "comments.authorId": userId },
+                { $set: { "comments.$[elem].authorProfilePic": imagePath } },
+                { arrayFilters: [{ "elem.authorId": userId }] }
+            );
         } catch (syncErr) {
             console.warn("Minor sync delay detected.");
         }
@@ -349,14 +355,25 @@ router.put("/:id", verifyToken, async (req, res) => {
                 }
 
                 if (req.user.role !== 'Founder' && user.lastUsernameChange) {
-                    const diffTime = Math.abs(new Date() - new Date(user.lastUsernameChange));
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if (diffDays < 3) {
-                        return res.status(403).json(`You must wait ${3 - diffDays} more days to change username.`);
+                    const diffTime = new Date() - new Date(user.lastUsernameChange);
+                    const diffHours = diffTime / (1000 * 60 * 60);
+                    if (diffHours < 72) {
+                        const remainingHours = Math.ceil(72 - diffHours);
+                        const remainingDays = Math.ceil(remainingHours / 24);
+                        return res.status(403).json(`Protocol Lock: You must wait ${remainingDays} more day(s) to re-assign handle.`);
                     }
                 }
                 req.body.lastUsernameChange = new Date();
+
+                // Propagate to posts owned by user
                 await Post.updateMany({ author: req.params.id }, { $set: { username: req.body.username } });
+
+                // Propagate to comments authored by user in ANY post
+                await Post.updateMany(
+                    { "comments.authorId": req.params.id },
+                    { $set: { "comments.$[elem].authorName": req.body.username } },
+                    { arrayFilters: [{ "elem.authorId": req.params.id }] }
+                );
             }
 
             const updatedUser = await User.findByIdAndUpdate(
