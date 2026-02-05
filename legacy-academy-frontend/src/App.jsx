@@ -320,7 +320,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
                         </div>
                         <div className="flex gap-1">
-                            {(isOwner || isFounder) && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
+                            {isOwner && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
                             {(isOwner || isFounder) && <button onClick={() => { onDelete(post._id); onClose(); }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
                         </div>
                     </div>
@@ -764,7 +764,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <>
                                                     <div className="fixed inset-0 z-[40]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="absolute right-0 top-8 bg-[#1a1a1a] border border-white/10 rounded-xl p-1 z-[50] w-36 shadow-2xl flex flex-col gap-1 overflow-hidden backdrop-blur-md">
-                                                        {(isOwner || isFounder) && (
+                                                        {isOwner && (
                                                             <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/10 text-xs font-bold text-gray-300 w-full text-left transition-colors uppercase tracking-wider">
                                                                 <Icons.Edit className="w-4 h-4" /> {t('EDIT')}
                                                             </button>
@@ -1913,6 +1913,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         const yt = document.getElementById('edit-youtube')?.value;
         if (yt && yt.trim()) fd.append('videoUrl', yt.trim());
         if (file) fd.append('image', file);
+        if (audioBlob) fd.append('image', audioBlob, 'voice_note.webm');
 
         try {
             setSaving(true);
@@ -1984,19 +1985,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                     <div className="flex gap-4">
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button disabled={creating} onClick={() => {
-                            if (creating) return;
-                            setCreating(true);
-                            const fd = new FormData();
-                            fd.append('desc', desc);
-                            fd.append('visibility', visibility);
-                            fd.append('isStory', isStory);
-                            if (youtubeUrl) fd.append('videoUrl', youtubeUrl);
-                            if (fileRef.current?.files[0]) fd.append('image', fileRef.current.files[0]);
-                            if (audioBlob) fd.append('image', audioBlob, 'voice_note.webm'); // Re-use 'image' field or 'file' depending on backend. Backend uses upload.single('image') for posts.
-
-                            onSuccess(fd).finally(() => setCreating(false));
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : t('share')}</button>
+                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{saving ? '...' : t('share')}</button>
                     </div>
                 </div>
             </motion.div>
