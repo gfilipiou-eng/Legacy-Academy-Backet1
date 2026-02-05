@@ -1884,7 +1884,8 @@ const App = () => {
 
     // --- SCROLL LOCK FOR MODALS ---
     useEffect(() => {
-        if (selectedPost || showUserSearch || showStoryBuilder) {
+        const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
+        if (anyModalOpen) {
             document.body.style.overflow = 'hidden';
             document.body.style.height = '100vh';
         } else {
@@ -1895,7 +1896,7 @@ const App = () => {
             document.body.style.overflow = 'auto';
             document.body.style.height = 'auto';
         };
-    }, [selectedPost, showUserSearch, showStoryBuilder]);
+    }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
 
     const handleLike = async (postId) => {
         const userId = user?._id;
