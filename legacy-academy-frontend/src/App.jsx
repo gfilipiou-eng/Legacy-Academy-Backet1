@@ -174,7 +174,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
                         ) : (post.videoUrl || (post.image && post.image.match(/(mp4|mov|webm)$/i))) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
-                                <video src={resolveMediaUrl(post.videoUrl || post.image)} autoPlay muted loop playsInline controls className="max-w-full max-h-full" />
+                                <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="max-w-full max-h-full" />
                             </div>
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
