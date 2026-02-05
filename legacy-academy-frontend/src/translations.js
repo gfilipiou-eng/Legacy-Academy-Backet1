@@ -44,7 +44,8 @@ export const TRANSLATIONS = {
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Commented!',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers',
         FOLLOW_TO_VIEW: 'FOLLOW TO VIEW CONTENT',
-        EDIT: 'Edit', DELETE: 'Delete', POST: 'Post'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Post',
+        EXPAND_INTEL: 'EXPAND INTEL LOGS'
     },
     el: {
         HOME: 'ΑΡΧΙΚΗ', SEARCH: 'ΑΝΑΖΗΤΗΣΗ', ALERTS: 'ΕΙΔΟΠΟΙΗΣΕΙΣ', PROFILE: 'ΠΡΟΦΙΛ', SETTINGS: 'ΡΥΘΜΙΣΕΙΣ', CHAT: 'ΣΥΖΗΤΗΣΗ',
@@ -92,6 +93,7 @@ export const TRANSLATIONS = {
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
         FOLLOW_TO_VIEW: 'ΑΚΟΛΟΥΘΗΣΤΕ ΓΙΑ ΠΡΟΒΟΛΗ',
         EDIT: 'Επεξεργασία', DELETE: 'Διαγραφή', POST: 'Δημοσίευση',
+        EXPAND_INTEL: 'ΠΡΟΒΟΛΗ ΑΡΧΕΙΩΝ',
         VOICE_NOTE_READY: 'ΗΧΗΤΙΚΟ ΕΤΟΙΜΟ', VOICE_PREPARED: 'ΕΤΟΙΜΟ ΠΡΟΣ ΑΠΟΣΤΟΛΗ', TRANSMITTING: 'ΕΚΠΟΜΠΗ'
     },
     cy: {
@@ -140,7 +142,8 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'AKOLOUTHAS', STATUS_REQUESTED: 'ESTILES',
         ACTION_LIKED: 'ARESE MOU', ACTION_DISLIKED: 'EN M ARESE', ACTION_SHARED: 'ESHARES TO', ACTION_COMMENTED: 'EGRAMMES TO',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Mono filoi thoroun ta pramata', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Minimata mono pou filous',
-        EDIT: 'Edit', DELETE: 'Delete', POST: 'Vale to'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Vale to',
+        EXPAND_INTEL: 'DEIXXE TA OULLA'
     },
     de: {
         HOME: 'START', SEARCH: 'SUCHE', ALERTS: 'ALARME', PROFILE: 'PROFIL', SETTINGS: 'EINSTELLUNGEN', CHAT: 'CHAT',
@@ -186,7 +189,8 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'FOLGST', STATUS_REQUESTED: 'AUSSTEHEND',
         ACTION_LIKED: 'GEFÄLLT MIR', ACTION_DISLIKED: 'GEFÄLLT NICHT', ACTION_SHARED: 'GETEILT', ACTION_COMMENTED: 'KOMMENTIERT',
         PRIVATE_TITLE: 'Privates Konto', PRIVATE_DESC: 'Nur Follower sehen Inhalt', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Nachrichten nur von Followern',
-        EDIT: 'Edit', DELETE: 'Delete', POST: 'Posten'
+        EDIT: 'Edit', DELETE: 'Delete', POST: 'Posten',
+        EXPAND_INTEL: 'LOGS ANZEIGEN'
     },
     ru: {
         HOME: 'ГЛАВНАЯ', SEARCH: 'ПОИСК', ALERTS: 'УВЕДОМЛЕНИЯ', PROFILE: 'ПРОФИЛЬ', SETTINGS: 'НАСТРОЙКИ', CHAT: 'ЧАТ',
@@ -231,7 +235,8 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ПОДПИСАН', STATUS_REQUESTED: 'ЗАПРОШЕНО',
         ACTION_LIKED: 'ОДОБРЕНО', ACTION_DISLIKED: 'ОТКЛОНЕНО', ACTION_SHARED: 'ОТПРАВЛЕНО', ACTION_COMMENTED: 'ОТКОММЕНТИРОВАНО',
         PRIVATE_TITLE: 'Закрытый Аккаунт', PRIVATE_DESC: 'Только подписчики видят контент', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Сообщения только от подписчиков',
-        EDIT: 'ИЗМЕНИТЬ', DELETE: 'УДАЛИТЬ'
+        EDIT: 'ИЗМЕНИТЬ', DELETE: 'УДАЛИТЬ',
+        EXPAND_INTEL: 'ПОКАЗАТЬ ЛОГИ'
     },
     es: {
         HOME: 'INICIO', SEARCH: 'BUSCAR', ALERTS: 'ALERTAS', PROFILE: 'PERFIL', SETTINGS: 'AJUSTES', CHAT: 'CHAT',
@@ -275,7 +280,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Video debe ser < 10m.',
         ADD_MEDIA: 'Media', ADD_STORY: 'A Story', STORY_DURATION: 'VISIBLE POR 24H 🕒', POST_STORY: 'PUBLICAR',
         PRIVATE_TITLE: 'Cuenta Privada', PRIVATE_DESC: 'Solo seguidores ven contenido', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Mensajes solo de seguidores',
-        EDIT: 'EDITAR', DELETE: 'BORRAR', POST: 'Enviar'
+        EDIT: 'EDITAR', DELETE: 'BORRAR', POST: 'Enviar',
+        EXPAND_INTEL: 'VER REGISTROS'
     },
     tr: {
         HOME: 'ANA SAYFA', SEARCH: 'ARA', ALERTS: 'BİLDİRİMLER', PROFILE: 'PROFİL', SETTINGS: 'AYARLAR', CHAT: 'SOHBET',
@@ -319,7 +325,8 @@ export const TRANSLATIONS = {
         YOUTUBE_NOTE: 'Video < 10dk olmalı.',
         ADD_MEDIA: 'Medya', ADD_STORY: 'Hikaye', STORY_DURATION: '24 SAAT GÖRÜNÜR 🕒', POST_STORY: 'PAYLAŞ',
         PRIVATE_TITLE: 'Gizli Hesap', PRIVATE_DESC: 'Sadece takipçiler içerικ görebilir', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Sadece ταkipçilerden mesaj',
-        EDIT: 'DÜZENLE', DELETE: 'SİL', POST: 'Gönder'
+        EDIT: 'DÜZENLE', DELETE: 'SİL', POST: 'Gönder',
+        EXPAND_INTEL: 'KAYITLARI GÖSTER'
     },
     fr: {
         HOME: 'ACCUEIL', SEARCH: 'RECHERCHE', ALERTS: 'ALERTES', PROFILE: 'PROFIL', SETTINGS: 'REGLAGES', CHAT: 'DISCUSSION',
@@ -365,7 +372,8 @@ export const TRANSLATIONS = {
         STATUS_FOLLOWING: 'ABONNÉ', STATUS_REQUESTED: 'EN ATTENTE',
         ACTION_LIKED: 'AIMÉ', ACTION_DISLIKED: 'NON AIMÉ', ACTION_SHARED: 'PARTAGÉ', ACTION_COMMENTED: 'COMMENTÉ',
         PRIVATE_TITLE: 'Compte Privé', PRIVATE_DESC: 'Seulement les abonnés voient le contenu', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages seulement des abonnés',
-        EDIT: 'MODIFIER', DELETE: 'SUPPRIMER', POST: 'Envoyer'
+        EDIT: 'MODIFIER', DELETE: 'SUPPRIMER', POST: 'Envoyer',
+        EXPAND_INTEL: 'AFFICHER LES LOGS'
     },
 };
 

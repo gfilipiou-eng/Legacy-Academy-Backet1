@@ -296,11 +296,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{ width: '100%', height: '100%' }} frameBorder="0" allowFullScreen />
                             </div>
                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                            <NeuralVideoPlayer
-                                src={resolveMediaUrl(post.videoUrl || post.image)}
-                                poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                className="w-full h-full"
-                            />
+                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-full" />
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
@@ -448,12 +444,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     );
 };
 
-const NeuralVideoPlayer = ({ src, poster, className }) => {
+const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [progress, setProgress] = useState(0);
-    const [showControls, setShowControls] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
     const togglePlay = (e) => {
@@ -495,7 +490,7 @@ const NeuralVideoPlayer = ({ src, poster, className }) => {
                 onTimeUpdate={handleTimeUpdate}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
-                className="w-full h-full object-contain cursor-pointer"
+                className="w-full h-full object-contain cursor-pointer max-h-[75vh]"
             />
 
             {/* NEURAL OVERLAY */}
@@ -507,7 +502,15 @@ const NeuralVideoPlayer = ({ src, poster, className }) => {
                         exit={{ opacity: 0 }}
                         className="absolute inset-0 bg-black/20 flex flex-col justify-between p-4 pointer-events-none"
                     >
-                        <div className="flex justify-end">
+                        <div className="flex justify-between items-start">
+                            {onExpand ? (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onExpand(); }}
+                                    className="p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-auto hover:bg-black/60 transition-all active:scale-90"
+                                >
+                                    <Icons.Maximize className="w-5 h-5" />
+                                </button>
+                            ) : <div />}
                             <button
                                 onClick={toggleMute}
                                 className="p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-auto hover:bg-black/60 transition-all active:scale-90"
@@ -750,10 +753,10 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt)}
                                 </span>
                             </div>
-                            <div className="relative">
+                            <div className="relative shrink-0 ml-2">
                                 {(isOwner || isFounder) && (
                                     <>
-                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-95">
+                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-[0.8] shrink-0">
                                             <Icons.MoreVertical className="w-5 h-5" />
                                         </button>
                                         <AnimatePresence>
@@ -1282,7 +1285,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [bio, setBio] = useState(currentUser?.bio || "");
     const [editUsername, setEditUsername] = useState(currentUser?.username || "");
     const [activeTab, setActiveTab] = useState('ALL'); // ALL, POSTS, VIDEO
+    const [expandedDates, setExpandedDates] = useState({});
     const fileRef = useRef(null);
+
+    const toggleDate = (dateKey) => {
+        setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
+        playSound('pop');
+    };
 
     useEffect(() => {
         if (currentUser && !isEditing) {
@@ -1553,54 +1562,76 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
                                     ) : (
                                         <div className="space-y-10 pb-20">
-                                            {Object.keys(groupedUserPosts).map(dateKey => (
-                                                <div key={dateKey} className="group animate-fade-in">
-                                                    <div className="flex items-center gap-3 mb-4 px-1 opacity-40 group-hover:opacity-100 transition-opacity">
-                                                        <Icons.Shield className="w-2.5 h-2.5 text-[var(--gold-primary)]" />
-                                                        <span className="text-[9px] font-black text-white uppercase tracking-[0.2em] font-mono">{dateKey}</span>
-                                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
-                                                    </div>
-                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5">
-                                                        {groupedUserPosts[dateKey].map(p => (
-                                                            <div
-                                                                key={p._id}
-                                                                onClick={() => onOpenDetail(p)}
-                                                                className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                            >
-                                                                {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                    <div className="relative w-full h-full">
-                                                                        <video
-                                                                            src={resolveMediaUrl(p.videoUrl || p.image)}
-                                                                            muted
-                                                                            playsInline
-                                                                            preload="metadata"
-                                                                            poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
-                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
-                                                                        />
-                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                            <Icons.Play className="w-6 h-6 text-white/80" />
-                                                                        </div>
-                                                                    </div>
-                                                                ) : p.image ? (
-                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                ) : (
-                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                    </div>
-                                                                )}
-
-                                                                {/* STATS OVERLAY on hover */}
-                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
-                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
-                                                                </div>
+                                            {Object.keys(groupedUserPosts).map(dateKey => {
+                                                const isOpen = expandedDates[dateKey];
+                                                return (
+                                                    <div key={dateKey} className="group animate-fade-in">
+                                                        <div
+                                                            onClick={() => toggleDate(dateKey)}
+                                                            className="flex items-center gap-3 mb-4 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--gold-primary)]/30 transition-all cursor-pointer group/folder"
+                                                        >
+                                                            <div className="relative">
+                                                                <Icons.Folder className={`w-5 h-5 ${isOpen ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-colors`} />
+                                                                {!isOpen && <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-[var(--gold-primary)] text-black text-[8px] font-black shadow-lg shadow-[var(--gold-primary)]/20">{groupedUserPosts[dateKey].length}</div>}
                                                             </div>
-                                                        ))}
+                                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] font-mono flex-1 ${isOpen ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
+                                                            <Icons.ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
+                                                        </div>
+
+                                                        <AnimatePresence>
+                                                            {isOpen && (
+                                                                <motion.div
+                                                                    initial={{ height: 0, opacity: 0 }}
+                                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                                    exit={{ height: 0, opacity: 0 }}
+                                                                    transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                                                                    className="overflow-hidden"
+                                                                >
+                                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
+                                                                        {groupedUserPosts[dateKey].map(p => (
+                                                                            <div
+                                                                                key={p._id}
+                                                                                onClick={() => onOpenDetail(p)}
+                                                                                className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
+                                                                            >
+                                                                                {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                                    <div className="relative w-full h-full">
+                                                                                        <video
+                                                                                            src={resolveMediaUrl(p.videoUrl || p.image)}
+                                                                                            muted
+                                                                                            playsInline
+                                                                                            preload="metadata"
+                                                                                            poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
+                                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
+                                                                                        />
+                                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                                            <Icons.Play className="w-6 h-6 text-white/80" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ) : p.image ? (
+                                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                ) : (
+                                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {/* STATS OVERLAY on hover */}
+                                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
+                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </>
@@ -1785,7 +1816,30 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [isVideo, setIsVideo] = useState(false);
     const [youtubeUrl, setYoutubeUrl] = useState(''); // Tracking state to fix ReferenceError
     const [saving, setSaving] = useState(false);
+    const [audioBlob, setAudioBlob] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorderRef = useRef(null);
     const fileRef = useRef(null);
+
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            const chunks = [];
+            mediaRecorderRef.current.ondataavailable = e => chunks.push(e.data);
+            mediaRecorderRef.current.onstop = () => {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                setAudioBlob(blob);
+            };
+            mediaRecorderRef.current.start();
+            setIsRecording(true);
+        } catch (e) { alert("Microphone access denied."); }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+        setIsRecording(false);
+    };
 
     useEffect(() => {
         if (post) {
@@ -1962,6 +2016,12 @@ const App = () => {
     const [chatTarget, setChatTarget] = useState(null);
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
+    const [expandedDates, setExpandedDates] = useState({});
+
+    const toggleDate = (dateKey) => {
+        setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
+        playSound('pop');
+    };
 
     const updateUserState = (newData) => {
         if (!newData) {
@@ -2640,23 +2700,45 @@ const App = () => {
                                                 </div>
                                             )}
                                             <div className="space-y-4">
-                                                {Object.keys(groupedPosts).map(dateKey => (
-                                                    <div key={dateKey} className="animate-fade-in group">
-                                                        <div className="flex items-center gap-4 py-6 px-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
-                                                            <div className="flex items-center gap-2">
-                                                                <Icons.Shield className="w-3 h-3 text-[var(--gold-primary)]" />
-                                                                <span className="text-[10px] font-black text-white uppercase tracking-[0.3em] font-mono">{dateKey}</span>
+                                                {Object.keys(groupedPosts).map(dateKey => {
+                                                    const isOpen = expandedDates[dateKey];
+                                                    return (
+                                                        <div key={dateKey} className="animate-fade-in group">
+                                                            <div
+                                                                onClick={() => toggleDate(dateKey)}
+                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-[1.5rem] hover:bg-white/10 hover:border-[var(--gold-primary)]/40 transition-all cursor-pointer group/folder my-2"
+                                                            >
+                                                                <div className="relative">
+                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-all duration-300`} />
+                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{groupedPosts[dateKey].length}</div>}
+                                                                </div>
+                                                                <div className="flex-1 flex flex-col">
+                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
+                                                                    {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">{t('EXPAND_INTEL')}</span>}
+                                                                </div>
+                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
                                                             </div>
-                                                            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10" />
+
+                                                            <AnimatePresence>
+                                                                {isOpen && (
+                                                                    <motion.div
+                                                                        initial={{ height: 0, opacity: 0 }}
+                                                                        animate={{ height: 'auto', opacity: 1 }}
+                                                                        exit={{ height: 0, opacity: 0 }}
+                                                                        transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+                                                                        className="overflow-hidden"
+                                                                    >
+                                                                        <div className="space-y-6 pt-4 pb-8">
+                                                                            {groupedPosts[dateKey].map(p => (
+                                                                                <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                            ))}
+                                                                        </div>
+                                                                    </motion.div>
+                                                                )}
+                                                            </AnimatePresence>
                                                         </div>
-                                                        <div className="space-y-6">
-                                                            {groupedPosts[dateKey].map(p => (
-                                                                <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                             {posts.length === 0 && (
                                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
