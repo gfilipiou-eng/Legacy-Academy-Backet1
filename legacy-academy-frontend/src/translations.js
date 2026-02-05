@@ -44,7 +44,7 @@ export const TRANSLATIONS = {
         ACTION_LIKED: 'Liked!', ACTION_DISLIKED: 'Disliked!', ACTION_SHARED: 'Shared!', ACTION_COMMENTED: 'Commented!',
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers',
         FOLLOW_TO_VIEW: 'FOLLOW TO VIEW CONTENT',
-        EDIT: 'Edit', DELETE: 'Delete', POST: 'Post',
+        EDIT: 'EDIT', DELETE: 'Delete', POST: 'Post',
         EXPAND_INTEL: 'EXPAND INTEL LOGS'
     },
     el: {
@@ -92,7 +92,7 @@ export const TRANSLATIONS = {
         ACTION_LIKED: 'Μου αρέσει!', ACTION_DISLIKED: 'Δεν μου αρέσει!', ACTION_SHARED: 'Κοινοποιήθηκε!', ACTION_COMMENTED: 'Σχολιάστηκε!',
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
         FOLLOW_TO_VIEW: 'ΑΚΟΛΟΥΘΗΣΤΕ ΓΙΑ ΠΡΟΒΟΛΗ',
-        EDIT: 'Επεξεργασία', DELETE: 'Διαγραφή', POST: 'Δημοσίευση',
+        EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ', DELETE: 'Διαγραφή', POST: 'Δημοσίευση',
         EXPAND_INTEL: 'ΠΡΟΒΟΛΗ ΑΡΧΕΙΩΝ',
         VOICE_NOTE_READY: 'ΗΧΗΤΙΚΟ ΕΤΟΙΜΟ', VOICE_PREPARED: 'ΕΤΟΙΜΟ ΠΡΟΣ ΑΠΟΣΤΟΛΗ', TRANSMITTING: 'ΕΚΠΟΜΠΗ'
     },

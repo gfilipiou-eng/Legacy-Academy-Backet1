@@ -1912,8 +1912,11 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         const file = fileRef.current?.files[0];
         const yt = document.getElementById('edit-youtube')?.value;
         if (yt && yt.trim()) fd.append('videoUrl', yt.trim());
-        if (file) fd.append('image', file);
-        if (audioBlob) fd.append('image', audioBlob, 'voice_note.webm');
+        if (file) {
+            fd.append('image', file);
+        } else if (audioBlob) {
+            fd.append('image', audioBlob, 'voice_note.webm');
+        }
 
         try {
             setSaving(true);

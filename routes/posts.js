@@ -441,6 +441,9 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 // UPDATE POST
 router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Post ID format" });
+    }
     const post = await Post.findById(req.params.id);
     if (!post) {
       console.warn("UPDATE POST FAILED: Not found:", req.params.id);
@@ -502,7 +505,10 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
     res.status(200).json(updatedPost);
   } catch (e) {
     console.error("Update failed", e);
-    res.status(500).json(e);
+    res.status(500).json({
+      message: "Neural command failed: Intelligence update aborted.",
+      error: e.message || "Unknown error"
+    });
   }
 });
 
