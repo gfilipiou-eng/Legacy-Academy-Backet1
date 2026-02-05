@@ -21,7 +21,8 @@ const resolveMediaUrl = (path, width = null) => {
         const parts = url.split('/upload/');
         // Only inject if not already transformed
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
-            const transform = width ? `w_${width},c_fill,g_face,q_auto,f_auto` : 'q_auto,f_auto';
+            // Force 720p (approx 1280px width) limit for Bandwidth Saving if no specific width requested
+            const transform = width ? `w_${width},c_fill,g_face,q_auto,f_auto` : 'c_limit,w_1280,q_auto:eco,f_auto';
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
         }
     }
@@ -2132,7 +2133,7 @@ const App = () => {
 
                                 <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
                                     <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
-                                        {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic) + `?v=${imgKey}`} className="w-full h-full object-cover" /> : <div className="center w-full h-full text-[11px] font-bold text-[var(--gold-primary)]">{user?.username?.[0]}</div>}
+                                        <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
                             </div>
