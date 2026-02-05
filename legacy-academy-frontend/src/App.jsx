@@ -343,29 +343,37 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="p-4 pt-2 border-t border-white/5 bg-[#050505] z-[100] safe-area-bottom shadow-[0_-20px_50px_rgba(0,0,0,0.9)]">
-                        <div className="flex items-center justify-between mb-4 px-1">
-                            <div className="flex items-center gap-7">
-                                <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-110 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                                    <Icons.Heart className={`w-6 h-6 transition-all ${post.likes?.includes(user?._id) ? 'text-red-500 fill-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'text-gray-400 group-hover:text-red-400'}`} />
-                                    <span className={`text-xs font-black tracking-tighter ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500'}`}>{post.likes?.length || 0}</span>
+                    <div className="p-4 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-20px_80px_rgba(0,0,0,0.95)]">
+                        <div className="flex items-center justify-between mb-5 px-1.5">
+                            <div className="flex items-center gap-6">
+                                <button
+                                    disabled={loadingActions?.[post._id]}
+                                    onClick={() => onLike(post._id)}
+                                    className="flex items-center gap-2 group transition-all active:scale-125 hover:bg-white/5 p-1.5 rounded-xl mobile-os-action-btn"
+                                >
+                                    <Icons.Heart className={`w-6 h-6 transition-all ${post.likes?.includes(user?._id) ? 'text-red-500 fill-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]' : 'text-gray-400 group-hover:text-red-400'}`} />
+                                    <span className={`text-[13px] font-black tracking-tighter ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500'}`}>{post.likes?.length || 0}</span>
                                 </button>
-                                <button disabled={loadingActions?.[post._id]} onClick={() => onDislike(post._id)} className={`flex items-center gap-2 group transition-all active:scale-110 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${post.dislikes?.includes(user?._id) ? 'text-blue-500 fill-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'text-gray-400 group-hover:text-blue-400'}`} />
-                                    <span className={`text-xs font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
+                                <button
+                                    disabled={loadingActions?.[post._id]}
+                                    onClick={() => onDislike(post._id)}
+                                    className="flex items-center gap-2 group transition-all active:scale-125 hover:bg-white/5 p-1.5 rounded-xl mobile-os-action-btn"
+                                >
+                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${post.dislikes?.includes(user?._id) ? 'text-blue-500 fill-blue-500 drop-shadow-[0_0_12px_rgba(59,130,246,0.6)]' : 'text-gray-400 group-hover:text-blue-400'}`} />
+                                    <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
-                            <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-colors"><Icons.Share className="w-5 h-5" /></button>
+                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5.5 h-5.5" /></button>
                         </div>
 
                         {commentAudio ? (
-                            <div className="flex items-center justify-between gap-3 min-h-[44px] px-1 bg-blue-500/5 border border-blue-500/10 rounded-2xl p-2 animate-fade-in">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                            <div className="flex items-center justify-between gap-3 min-h-[52px] px-2 bg-blue-500/10 border border-blue-500/20 rounded-[1.2rem] p-1.5 animate-pop-in">
+                                <div className="flex items-center gap-2.5 pl-2">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                                    <span className="text-[11px] font-black text-blue-400 uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button type="button" onClick={() => setCommentAudio(null)} className="p-2.5 rounded-xl hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>
+                                <div className="flex items-center gap-1.5">
+                                    <button type="button" onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>
                                     <button onClick={(e) => {
                                         e.preventDefault();
                                         const fd = new FormData();
@@ -374,20 +382,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         onComment(post._id, fd);
                                         setCommentAudio(null);
                                         setCommentText('');
-                                    }} className="bg-blue-600 hover:bg-blue-500 p-2.5 rounded-xl text-white shadow-lg shadow-blue-900/40 active:scale-95 transition-all">
+                                    }} className="w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-xl text-white shadow-lg shadow-blue-900/40 active:scale-95 transition-all">
                                         <Icons.Send className="w-5 h-5 fill-white" />
                                     </button>
                                 </div>
                             </div>
                         ) : isRecordingComment ? (
-                            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-4 flex items-center justify-between animate-pulse">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
+                            <div className="bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-3 flex items-center justify-between animate-pop-in">
+                                <div className="flex items-center gap-3 pl-2">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-lg text-white hover:bg-red-500/20"><Icons.X className="w-5 h-5" /></button>
-                                    <button onClick={() => stopRecording(false)} className="px-4 py-2 bg-red-500 rounded-lg text-white font-black text-[10px] uppercase">{t('STOP')}</button>
+                                    <button onClick={() => stopRecording(true)} className="p-2.5 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all"><Icons.X className="w-5 h-5" /></button>
+                                    <button onClick={() => stopRecording(false)} className="px-5 py-2.5 bg-red-500 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all">{t('STOP')}</button>
                                 </div>
                             </div>
                         ) : (
@@ -399,28 +407,28 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         setCommentText('');
                                     }
                                 }}
-                                className="relative flex items-center bg-white/[0.04] border border-white/10 rounded-full px-1 py-1 focus-within:border-[var(--gold-primary)]/40 hover:bg-white/[0.06] transition-all shadow-xl backdrop-blur-2xl group"
+                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group"
                             >
                                 <input
                                     placeholder={t('ENGAGE')}
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    className="flex-1 bg-transparent py-2.5 sm:py-3 px-4 text-[14px] sm:text-[15px] text-white outline-none placeholder-gray-500 font-medium"
+                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
                                 />
                                 <div className="flex gap-1 pr-1">
                                     <button
                                         type="button"
                                         onClick={startCommentRecording}
-                                        className="p-2 sm:p-2.5 rounded-full bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90"
+                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn"
                                     >
-                                        <Icons.Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        <Icons.Mic className="w-5 h-5" />
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="p-2.5 sm:p-3 rounded-full bg-[var(--gold-primary)] hover:scale-105 active:scale-90 transition-all text-black shadow-lg disabled:opacity-20 shadow-[var(--gold-primary)]/20"
+                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 transition-all mobile-os-action-btn"
                                     >
-                                        <Icons.Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        <Icons.Send className="w-5 h-5" />
                                     </button>
                                 </div>
                             </form>
