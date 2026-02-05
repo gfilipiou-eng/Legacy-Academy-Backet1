@@ -94,6 +94,24 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
     const name = user.username || user.fromUsername;
     const mediaUrl = url ? resolveMediaUrl(url) : null;
+    const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video'));
+
+    if (isVideo) {
+        return (
+            <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick}>
+                <video
+                    src={mediaUrl}
+                    className="w-full h-full object-cover pointer-events-none"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    disableRemotePlayback
+                    onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                />
+            </div>
+        );
+    }
 
     return mediaUrl ? (
         <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" />
@@ -921,11 +939,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <ProfileAvatar user={displayUser} size="large" />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
-                            <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
+                            <input type="file" ref={fileRef} hidden accept="image/*,video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
-                                    if (file.type.startsWith('video/')) {
-                                        alert("Video profile pictures are not allowed. Please use an image or GIF.");
+                                    if (file.type.startsWith('video/') && file.size > 10 * 1024 * 1024) {
+                                        alert("Video profile/GIF must be under 10MB to prevent lag.");
                                         return;
                                     }
                                     // Immediate local update
