@@ -391,21 +391,34 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 </div>
                             </div>
                         ) : (
-                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)]/40 hover:bg-white/[0.05] transition-all shadow-xl backdrop-blur-xl group">
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    if (commentText.trim()) {
+                                        handleComment(post._id, commentText);
+                                        setCommentText('');
+                                    }
+                                }}
+                                className="relative flex items-center bg-white/[0.04] border border-white/10 rounded-full px-1 py-1 focus-within:border-[var(--gold-primary)]/40 hover:bg-white/[0.06] transition-all shadow-xl backdrop-blur-2xl group"
+                            >
                                 <input
                                     placeholder={t('ENGAGE')}
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    className="flex-1 bg-transparent py-2.5 sm:py-3 px-3.5 sm:px-4 text-[13px] sm:text-[15px] text-white outline-none placeholder-gray-500 font-medium"
+                                    className="flex-1 bg-transparent py-2.5 sm:py-3 px-4 text-[14px] sm:text-[15px] text-white outline-none placeholder-gray-500 font-medium"
                                 />
-                                <div className="flex gap-1.5 pr-1.5">
-                                    <button type="button" onClick={startCommentRecording} className="p-2 sm:p-2.5 rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90">
+                                <div className="flex gap-1 pr-1">
+                                    <button
+                                        type="button"
+                                        onClick={startCommentRecording}
+                                        className="p-2 sm:p-2.5 rounded-full bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90"
+                                    >
                                         <Icons.Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="p-2.5 sm:p-3 rounded-xl bg-[var(--gold-primary)] hover:scale-105 active:scale-90 transition-all text-black shadow-lg disabled:opacity-20 shadow-[var(--gold-primary)]/20"
+                                        className="p-2.5 sm:p-3 rounded-full bg-[var(--gold-primary)] hover:scale-105 active:scale-90 transition-all text-black shadow-lg disabled:opacity-20 shadow-[var(--gold-primary)]/20"
                                     >
                                         <Icons.Send className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </button>
@@ -1749,11 +1762,13 @@ const App = () => {
         }
         setUser(prev => {
             const current = prev || JSON.parse(localStorage.getItem('user') || '{}');
-            const merged = { ...current, ...newData };
-            // Preserve cache-breakers (?t=...) if base path is identical
-            if (current.profilePic && newData.profilePic && current.profilePic.split('?')[0] === newData.profilePic.split('?')[0]) {
-                merged.profilePic = current.profilePic;
+            // Cache-break the new image if it's identical base path
+            let nextPic = newData.profilePic;
+            if (current.profilePic && nextPic && current.profilePic.split('?')[0] === nextPic.split('?')[0]) {
+                const sep = nextPic.includes('?') ? '&' : '?';
+                nextPic = `${nextPic.split('?')[0]}${sep}t=${Date.now()}`;
             }
+            const merged = { ...current, ...newData, profilePic: nextPic || current.profilePic };
             localStorage.setItem('user', JSON.stringify(merged));
             return merged;
         });

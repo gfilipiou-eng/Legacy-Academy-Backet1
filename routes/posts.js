@@ -113,6 +113,12 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
   const reqId = req.requestId || 'no-id';
   console.log(`📡 [${reqId}] POST COMMENT attempt for Post: ${req.params.id}`);
 
+  // CRITICAL: Ensure req.user exists (set by verifyToken)
+  if (!req || !req.user) {
+    console.error(`[${reqId}] AUTH MISSING: req.user is undefined`);
+    return res.status(401).json("Authentication required. Please refresh.");
+  }
+
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json("Invalid Post ID format");
@@ -127,27 +133,20 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
     const currentUserId = req.user.id || req.user.userId || req.user._id;
     if (!currentUserId || !mongoose.Types.ObjectId.isValid(currentUserId)) {
       console.error(`[${reqId}] AUTH ERROR: Invalid or missing user ID`, req.user);
-      return res.status(401).json("Unauthorized: User ID missing or invalid");
+      return res.status(401).json("Unauthorized: Session corrupted.");
     }
 
     const currentUser = await User.findById(currentUserId).lean();
     if (!currentUser) {
-      return res.status(401).json("User profile not found");
+      console.error(`[${reqId}] USER NOT FOUND: ${currentUserId}`);
+      return res.status(401).json("User profile no longer exists.");
     }
 
     const body = req.body || {};
     const commentText = (body.text || "").trim();
 
-    console.log(`📡 [${reqId}] DATA CHECK: currentUserId=${currentUserId}, TextLen=${commentText.length}`);
-
     // SAFE CASTING to ObjectId
-    let authorIdObj;
-    try {
-      authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
-    } catch (objErr) {
-      console.error(`🔥 [${reqId}] INVALID ID CAST: ${currentUserId}`);
-      return res.status(401).json("Session invalid. Please login again.");
-    }
+    const authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
 
     const newComment = {
       text: commentText,
@@ -159,22 +158,18 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
     };
 
     if (!newComment.text && !newComment.audioUrl) {
-      console.warn(`[${reqId}] REJECTED: Empty comment attempt`);
       return res.status(400).json("Comment cannot be empty");
     }
-
-    console.log(`📡 [${reqId}] DB UPDATE: Post=${req.params.id}, Author=${newComment.authorName}`);
 
     // Simplified and robust database update
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.id,
       { $push: { comments: newComment } },
-      { new: true, runValidators: false } // Disabled validators temporarily to ensure success with various data states
+      { new: true, runValidators: false }
     ).lean();
 
     if (!updatedPost) {
-      console.error(`[${reqId}] POST NOT FOUND for update: ${req.params.id}`);
-      return res.status(404).json("Post not found during update");
+      return res.status(404).json("Post disappeared during update.");
     }
 
     // Send notifications in background (non-blocking)
@@ -182,14 +177,15 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
       try {
         const targetAuthorId = post.author;
         if (targetAuthorId && String(targetAuthorId) !== String(currentUserId)) {
-          console.log(`[${reqId}] Notifying author: ${targetAuthorId}`);
           const notifText = newComment.audioUrl ? "Sent a voice note." : (commentText.substring(0, 50) || "Commented.");
+          const fromName = req.user.username || currentUser.username || "Someone";
+
           await User.findByIdAndUpdate(targetAuthorId, {
             $push: {
               notifications: {
                 type: 'comment',
-                from: currentUserId,
-                fromUsername: req.user.username || currentUser.username,
+                from: authorIdObj,
+                fromUsername: fromName,
                 fromProfilePic: currentUser?.profilePic || '',
                 post: post._id,
                 text: notifText,
@@ -202,24 +198,27 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
 
         // HANDLE MENTIONS
         const mentionRegex = /@([\w.]+)/g;
-        const mentions = [...new Set((commentText.match(mentionRegex) || []).map(m => m.slice(1)))];
-        for (const username of mentions) {
-          const mentionedUser = await User.findOne({ username });
-          if (mentionedUser && String(mentionedUser._id) !== String(currentUserId) && String(mentionedUser._id) !== String(post.author)) {
-            await mentionedUser.updateOne({
-              $push: {
-                notifications: {
-                  type: 'mention',
-                  from: currentUserId,
-                  fromUsername: req.user.username || currentUser.username,
-                  fromProfilePic: currentUser?.profilePic || '',
-                  post: post._id,
-                  text: `Mentioned you: ${commentText.substring(0, 30)}...`,
-                  read: false,
-                  createdAt: new Date()
+        const matches = commentText.match(mentionRegex);
+        if (matches) {
+          const mentions = [...new Set(matches.map(m => m.slice(1)))];
+          for (const username of mentions) {
+            const mentionedUser = await User.findOne({ username });
+            if (mentionedUser && String(mentionedUser._id) !== String(currentUserId) && String(mentionedUser._id) !== String(post.author)) {
+              await User.findByIdAndUpdate(mentionedUser._id, {
+                $push: {
+                  notifications: {
+                    type: 'mention',
+                    from: authorIdObj,
+                    fromUsername: req.user.username || currentUser.username || "Someone",
+                    fromProfilePic: currentUser?.profilePic || '',
+                    post: post._id,
+                    text: `Mentioned you: ${commentText.substring(0, 30)}...`,
+                    read: false,
+                    createdAt: new Date()
+                  }
                 }
-              }
-            });
+              });
+            }
           }
         }
       } catch (notifErr) {
@@ -227,18 +226,15 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
       }
     };
 
-    // Trigger notifications in background
     sendNotifications();
 
-    // 🚀 SUCCESS RESPONSE
-    console.log(`[${reqId}] Comment added successfully`);
     return res.status(200).json(updatedPost.comments);
   } catch (e) {
     console.error(`🔥 [${reqId}] CRITICAL COMMENT ERROR:`, e);
     return res.status(500).json({
-      error: e.message || "Internal Server Error",
-      requestId: reqId,
-      detail: "Database or server logic failed during comment processing"
+      error: "Transmission Failed",
+      detail: e.message || "Unknown error",
+      requestId: reqId
     });
   }
 });
