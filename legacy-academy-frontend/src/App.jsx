@@ -1170,6 +1170,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
+    const [isAudio, setIsAudio] = useState(false);
+    const [audioName, setAudioName] = useState('');
     const [creating, setCreating] = useState(false);
     const [isStory, setIsStory] = useState(false);
     const fileRef = useRef(null);
@@ -1219,13 +1221,18 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 return;
             }
             setPreview(URL.createObjectURL(file));
+            setPreview(URL.createObjectURL(file));
             setIsVideo(true);
+            setIsAudio(false);
         } else if (file.type.startsWith('audio')) {
-            setPreview(null); // No visual preview for audio file upload yet, or maybe generic icon
+            setPreview(URL.createObjectURL(file));
             setIsVideo(false);
+            setIsAudio(true);
+            setAudioName(file.name);
         } else {
             setPreview(URL.createObjectURL(file));
             setIsVideo(false);
+            setIsAudio(false);
         }
     };
     return (
@@ -1260,17 +1267,27 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
                         {preview ? (
-                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
-                                {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
+                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner flex items-center justify-center">
+                                {isVideo ? (
+                                    <video src={preview} className="w-full h-full object-contain" controls />
+                                ) : isAudio ? (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 gap-2 p-4">
+                                        <Icons.Music className="w-12 h-12 text-[var(--gold-primary)] animate-pulse" />
+                                        <span className="text-xs text-gray-400 font-bold truncate max-w-[200px]">{audioName}</span>
+                                        <audio src={preview} controls className="w-full mt-2" />
+                                    </div>
+                                ) : (
+                                    <img src={preview} className="w-full h-full object-cover" />
+                                )}
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
                             </div>
                         ) : (
                             <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
                                 <Icons.Image className="w-8 h-8 opacity-50" />
-                                <span className="text-xs font-bold uppercase tracking-widest">{t('ADD_MEDIA')}</span>
+                                <span className="text-xs font-bold uppercase tracking-widest">UPLOAD VIDEO / MEDIA / AUDIO</span>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
                         <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
