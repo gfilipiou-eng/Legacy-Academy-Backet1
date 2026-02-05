@@ -1743,7 +1743,13 @@ const App = () => {
 
     useEffect(() => {
         const saved = localStorage.getItem('user');
-        if (saved) setUser(JSON.parse(saved));
+        const token = localStorage.getItem('token');
+        if (saved && !token) {
+            localStorage.removeItem('user');
+            setUser(null);
+        } else if (saved) {
+            setUser(JSON.parse(saved));
+        }
 
         const savedTheme = localStorage.getItem('themeColor');
         const savedSecondary = localStorage.getItem('themeSecondary');
@@ -1993,10 +1999,11 @@ const App = () => {
         try {
             let res;
             if (input instanceof FormData) {
+                if (!input.has('user')) input.append('user', JSON.stringify(user));
                 res = await axios.post(`/posts/${postId}/comment`, input);
             } else {
                 const textValue = typeof input === 'string' ? input : (input?.text || "");
-                res = await axios.post(`/posts/${postId}/comment`, { text: textValue });
+                res = await axios.post(`/posts/${postId}/comment`, { text: textValue, user });
             }
             const updatedComments = res.data;
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
@@ -2160,6 +2167,7 @@ const App = () => {
                                         setAuthLoading(true);
                                         try {
                                             const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
+                                            localStorage.setItem('token', res.data.token); // CRITICAL FIX: Save token
                                             localStorage.setItem('user', JSON.stringify(res.data.user));
                                             localStorage.setItem('language', res.data.user.settings?.language || 'en');
                                             localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');

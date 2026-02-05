@@ -109,7 +109,7 @@ router.put("/:id/dislike", verifyToken, handleDislike);
 
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
 // Update: Allow file upload for voice comments
-router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {
+router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res) => {
   const reqId = req.requestId || 'no-id';
   console.log(`📡 [${reqId}] POST COMMENT attempt for Post: ${req.params.id}`);
 
@@ -223,8 +223,8 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
     return res.status(200).json(updatedPost.comments);
   } catch (e) {
     console.error(`🔥 [${reqId}] CRITICAL COMMENT ERROR:`, e);
-    return res.status(500).json({ 
-      error: e.message || "Internal Server Error", 
+    return res.status(500).json({
+      error: e.message || "Internal Server Error",
       requestId: reqId,
       detail: "Database or server logic failed during comment processing"
     });
@@ -548,7 +548,7 @@ router.get("/:id", async (req, res) => {
 router.use((req, res) => {
   const timestamp = new Date().toLocaleTimeString();
   console.warn(`❌ [ROUTER 404] No match for: ${req.method} ${req.originalUrl} [${timestamp}]`);
-  
+
   // Return consistent 404 for unmatched API routes
   res.status(404).json({
     message: `Endpoint ${req.method} ${req.url} not found in Intel Router.`,
