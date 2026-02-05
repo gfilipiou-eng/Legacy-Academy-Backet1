@@ -807,10 +807,16 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
                                             </div>
                                             <div className="flex items-center justify-center gap-6 mt-2">
-                                                <button type="submit" disabled={!commentText.trim()} className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-2xl text-white font-black text-[13px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40 flex items-center gap-2">
-                                                    {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                <button type="submit" disabled={!commentText.trim() || loadingActions?.[post._id]} className="bg-blue-600 hover:bg-blue-500 px-10 py-3.5 rounded-2xl text-white font-black text-[13px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40 flex items-center gap-2">
+                                                    {loadingActions?.[post._id] ? (
+                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                    ) : (
+                                                        <>
+                                                            {t('POST')} <Icons.Send className="w-5 h-5" />
+                                                        </>
+                                                    )}
                                                 </button>
-                                                <button type="button" onClick={startCommentRecording} className="p-4 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5"><Icons.Mic className="w-6 h-6" /></button>
+                                                <button type="button" disabled={loadingActions?.[post._id]} onClick={startCommentRecording} className="p-4 rounded-full bg-white/[0.08] hover:bg-white/15 transition-all text-[var(--gold-primary)] active:scale-125 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(255,215,0,0.1)] ring-1 ring-white/5 disabled:opacity-20"><Icons.Mic className="w-6 h-6" /></button>
                                             </div>
                                         </div>
                                     )}
@@ -1804,8 +1810,21 @@ const App = () => {
         return Object.values(groups).sort((a, b) => new Date(b.latestStory.createdAt) - new Date(a.latestStory.createdAt));
     }, [posts]);
 
-    const fetchPosts = async () => { try { const res = await axios.get('/posts?limit=20'); setPosts(res.data); } catch (e) { } };
-    const fetchUsers = async () => { try { const res = await axios.get('/users'); setUsers(res.data); } catch (e) { } };
+    const fetchPosts = async () => {
+        try {
+            const res = await axios.get('/posts?limit=20');
+            // Simple check to avoid redundant re-renders if nothing changed
+            if (posts.length > 0 && res.data.length === posts.length && res.data[0]?._id === posts[0]?._id) return;
+            setPosts(res.data);
+        } catch (e) { }
+    };
+    const fetchUsers = async () => {
+        try {
+            const res = await axios.get('/users');
+            if (users.length > 0 && res.data.length === users.length) return;
+            setUsers(res.data);
+        } catch (e) { }
+    };
 
     // Notifications
     const fetchNotifications = async () => {
@@ -1833,25 +1852,21 @@ const App = () => {
         } catch (e) { console.error('Mark read failed', e); }
     };
 
-    // Polling for notifications (simple fallback to websockets)
+    // Polling Intervals - Optimized to reduce lag
     let _notifInterval = null;
-    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 30000); };
+    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 45000); };
     const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
 
-    // Heartbeat for presence
-    // Heartbeat for presence (updates lastSeen in DB)
     let _hbInterval = null;
-    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 30000); };
+    const startHeartbeat = () => { stopHeartbeat(); axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 60000); };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
-    // User Presence Polling (refresh user list to see online status)
     let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 10000); };
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 20000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
-    // Post Polling for Real-Time feed
     let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 15000); };
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 30000); };
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
@@ -1948,6 +1963,7 @@ const App = () => {
     };
 
     const handleComment = async (postId, input) => {
+        setLoadingActions(prev => ({ ...prev, [postId]: true }));
         try {
             let res;
             if (input instanceof FormData) {
@@ -1963,6 +1979,8 @@ const App = () => {
         } catch (e) {
             console.error("Add comment error:", e);
             addToast("ERROR: Transmission failed", 'neutral');
+        } finally {
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
     };
 
