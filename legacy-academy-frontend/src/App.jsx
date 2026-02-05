@@ -656,12 +656,30 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             {post.comments?.map((c, idx) => (
                                 <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
                             ))}
-                            <form onSubmit={handleComment} className="flex gap-3 items-center mt-4">
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentAudio || commentText) handleComment(post._id, commentAudio ? (() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); if (commentText) fd.append('text', commentText); return fd; })() : commentText); setCommentAudio(null); setCommentText(''); }} className="flex gap-3 items-center mt-4">
                                 <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0">
                                     {user?.profilePic ? <img src={resolveMediaUrl(user.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={user?.username} />}
                                 </div>
-                                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleComment(e)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-[var(--gold-primary)] placeholder-gray-600" />
-                                <button disabled={!commentText.trim()} className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors">{t('POST')}</button>
+                                {isRecordingComment ? (
+                                    <div className="flex-1 h-10 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-between px-4 animate-pulse">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">TRANSMITTING...</span>
+                                        </div>
+                                        <button type="button" onClick={() => { if (commentRecorderRef.current) commentRecorderRef.current.stop(); }} className="text-[10px] font-black text-white hover:text-red-200 uppercase tracking-tight">OVER</button>
+                                    </div>
+                                ) : commentAudio ? (
+                                    <div className="flex-1 h-10 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-full flex items-center justify-between px-4">
+                                        <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-widest">AUDIO RECORDED</span>
+                                        <button type="button" onClick={() => setCommentAudio(null)} className="p-1 rounded-full"><Icons.Trash className="w-4 h-4 text-gray-400 hover:text-white" /></button>
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 flex gap-2 relative">
+                                        <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent border-b border-gray-700 py-2 text-sm text-white outline-none focus:border-[var(--gold-primary)] placeholder-gray-600" />
+                                        <button type="button" onClick={startCommentRecording} className="p-2 border border-white/5 rounded-full hover:bg-white/10 active:scale-95 transition-all text-gray-400 hover:text-white"><Icons.Mic className="w-4 h-4" /></button>
+                                    </div>
+                                )}
+                                <button disabled={(!commentText.trim() && !commentAudio)} className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors">{t('POST')}</button>
                             </form>
                         </div>
                     </motion.div>
@@ -1282,7 +1300,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     };
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1">
                     <h2 className="text-xl font-black italic mb-4 text-white">{t('UPLOAD_TITLE')}</h2>
