@@ -497,16 +497,22 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 
                         {/* MEDIA CONTENT */}
                         {(post.image || post.videoUrl) && (
-                            <div onDoubleClick={handleDoubleTap} className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm bg-black/50" style={{ maxHeight: '500px' }}>
+                            <div className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm bg-black/50" style={{ maxHeight: '500px' }}>
                                 {/* DETECT VIDEO VS IMAGE - DO NOT ZOOM VIDEOS TO PREVENT GLITCHES */}
                                 {isYouTubeUrl(post.videoUrl) ? (
                                     <div className="w-full aspect-video bg-black">
                                         <iframe title="youtube-feed" src={getYouTubeEmbedUrl(post.videoUrl)} className="w-full h-full" frameBorder="0" allowFullScreen />
                                     </div>
                                 ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                    <video src={resolveMediaUrl(post.videoUrl || post.image)} controls className="w-full h-auto max-h-[600px] object-contain bg-black" />
+                                    <video
+                                        src={resolveMediaUrl(post.videoUrl || post.image)}
+                                        controls
+                                        playsInline
+                                        preload="metadata"
+                                        className="w-full h-auto max-h-[600px] object-contain bg-black"
+                                    />
                                 ) : post.image ? (
-                                    <img onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
+                                    <img onDoubleClick={handleDoubleTap} onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
                                 ) : null}
                                 <AnimatePresence>
                                     {showHeart && (
@@ -1501,7 +1507,7 @@ const App = () => {
 
     // User Presence Polling (refresh user list to see online status)
     let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 60000); };
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 10000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     // Post Polling for Real-Time feed
