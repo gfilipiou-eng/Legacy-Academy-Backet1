@@ -164,10 +164,10 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                 <div className={`relative inline-block max-w-[98%] rounded-2xl px-3 py-2 shadow-2xl backdrop-blur-md border border-white/5 ${isCommentAuthor ? 'bg-blue-600/10 border-blue-500/20 text-right' : 'bg-white/5'}`}>
                     <div className="flex items-center gap-2 mb-1 justify-between flex-wrap overflow-hidden">
                         <div className="flex items-center gap-1.5 shrink-0">
-                            <span className="font-black text-[9px] text-gray-500 uppercase tracking-widest truncate max-w-[80px]">{comment.user?.username || comment.authorName}</span>
-                            {isFounder && <span className="text-[7px] bg-red-600 text-white px-1 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
+                            <span className="font-black text-[10px] text-gray-400 uppercase tracking-widest truncate max-w-[120px]">{comment.user?.username || comment.authorName}</span>
+                            {isFounder && <span className="text-[8px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90 origin-left">{t('FOUNDER_BADGE')}</span>}
                         </div>
-                        <span className="text-[7px] text-gray-700 font-bold whitespace-nowrap">{formatDate(comment.createdAt)}</span>
+                        <span className="text-[9px] text-gray-700 font-bold whitespace-nowrap">{formatDate(comment.createdAt)}</span>
                     </div>
                     {isEditing ? (
                         <div className="mt-1">
@@ -192,12 +192,12 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                     )}
                 </div>
 
-                <div className="flex gap-4 mt-1 ml-1">
+                <div className="flex gap-5 mt-1 ml-1 px-1">
                     {canEdit && !isEditing && (
-                        <button onClick={() => setIsEditing(true)} className="text-[9px] text-gray-600 hover:text-blue-400 font-black uppercase tracking-widest transition-colors">{t('EDIT')}</button>
+                        <button onClick={() => setIsEditing(true)} className="text-[10px] text-gray-500 hover:text-blue-400 font-black uppercase tracking-tighter opacity-70">ΕΠΕΞΕΡΓΑΣΙΑ</button>
                     )}
                     {canDelete && (
-                        <button onClick={() => onDelete?.(post._id, comment._id)} className="text-[9px] text-gray-600 hover:text-red-500 font-black uppercase tracking-widest transition-colors">{t('DELETE')}</button>
+                        <button onClick={() => onDelete?.(post._id, comment._id)} className="text-[10px] text-gray-500 hover:text-red-500 font-black uppercase tracking-tighter opacity-70">ΔΙΑΓΡΑΦΗ</button>
                     )}
                 </div>
             </div>
@@ -1882,19 +1882,38 @@ const App = () => {
 
 
 
+    // --- SCROLL LOCK FOR MODALS ---
+    useEffect(() => {
+        if (selectedPost || showUserSearch || showStoryBuilder) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
+        } else {
+            document.body.style.overflow = 'auto';
+            document.body.style.height = 'auto';
+        }
+        return () => {
+            document.body.style.overflow = 'auto';
+            document.body.style.height = 'auto';
+        };
+    }, [selectedPost, showUserSearch, showStoryBuilder]);
+
     const handleLike = async (postId) => {
         const userId = user?._id;
         if (!userId) return;
 
         // 1. OPTIMISTIC UPDATE (Instant Feedback)
-        setPosts(prev => prev.map(p => {
+        const updateFn = (p) => {
             if (String(p._id) !== String(postId)) return p;
             const likes = Array.isArray(p.likes) ? [...p.likes] : [];
             const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => String(id) !== String(userId)) : [];
             const hasLiked = likes.some(id => String(id) === String(userId));
             const newLikes = hasLiked ? likes.filter(id => String(id) !== String(userId)) : [...likes, userId];
             return { ...p, likes: newLikes, dislikes };
-        }));
+        };
+        setPosts(prev => prev.map(updateFn));
+        if (selectedPost && String(selectedPost._id) === String(postId)) {
+            setSelectedPost(prev => updateFn(prev));
+        }
 
         const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
         if (isLiking) addToast(t('ACTION_LIKED'), 'success');
@@ -1932,14 +1951,18 @@ const App = () => {
         if (!userId) return;
 
         // 1. OPTIMISTIC UPDATE
-        setPosts(prev => prev.map(p => {
+        const updateFn = (p) => {
             if (String(p._id) !== String(postId)) return p;
             const dislikes = Array.isArray(p.dislikes) ? [...p.dislikes] : [];
             const likes = Array.isArray(p.likes) ? p.likes.filter(id => String(id) !== String(userId)) : [];
             const hasDisliked = dislikes.some(id => String(id) === String(userId));
             const newDislikes = hasDisliked ? dislikes.filter(id => String(id) !== String(userId)) : [...dislikes, userId];
             return { ...p, likes, dislikes: newDislikes };
-        }));
+        };
+        setPosts(prev => prev.map(updateFn));
+        if (selectedPost && String(selectedPost._id) === String(postId)) {
+            setSelectedPost(prev => updateFn(prev));
+        }
 
         const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
         if (isDisliking) addToast(t('ACTION_DISLIKED'), 'neutral');
