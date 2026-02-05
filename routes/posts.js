@@ -137,11 +137,14 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
 
     const body = req.body || {};
     const commentText = (body.text || "").trim();
+
+    console.log(`📡 [${reqId}] User ID: ${currentUserId}, Text: ${commentText.substring(0, 20)}...`);
+
     const newComment = {
       text: commentText,
       audioUrl: req.file ? req.file.path : "",
       authorName: req.user.username || currentUser.username || "Anonymous",
-      authorId: currentUserId,
+      authorId: new mongoose.Types.ObjectId(currentUserId), // Force ObjectId
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()
     };

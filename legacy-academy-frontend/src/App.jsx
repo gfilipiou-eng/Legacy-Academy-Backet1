@@ -25,10 +25,11 @@ const resolveMediaUrl = (path, width = null, isAvatar = false) => {
             let transform = '';
 
             if (isAvatar && isVideo) {
-                // FORCE TINY SIZE AND OPTIMIZED FORMAT FOR AVATARS
-                transform = `w_150,h_150,c_fill,g_face,q_auto:eco,vc_auto,f_auto,ac_none,so_0,eo_5`;
+                // AGGRESSIVE OPTIMIZATION FOR INSTANT LOADING AVATARS
+                // Minimal duration, no audio, low quality/bitrate for instant feel
+                transform = `w_120,h_120,c_fill,g_face,q_auto:low,fl_lossy,vc_auto,f_auto,ac_none,so_0,eo_3,br_100k`;
             } else if (isAvatar) {
-                transform = `w_150,h_150,c_fill,g_face,q_auto:best,f_auto`;
+                transform = `w_120,h_120,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
@@ -47,6 +48,13 @@ if (typeof document !== 'undefined') {
     style.innerHTML = `
         .safe-area-bottom {
             padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+        }
+        .liquid-glass-nav {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 40px rgba(var(--gold-primary-rgb), 0.05);
         }
     `;
     document.head.appendChild(style);
@@ -170,9 +178,9 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/20 rounded-tr-none' : 'bg-white/[0.03] border-white/5 rounded-tl-none hover:bg-white/[0.06] hover:border-white/10'}`}>
-                    <div className="flex items-center gap-2 mb-1 justify-between flex-wrap overflow-hidden min-w-[120px]">
-                        <span className={`font-black text-[10px] uppercase tracking-widest truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{comment.user?.username || comment.authorName}</span>
+                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
+                    <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
+                        <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{comment.user?.username || comment.authorName}</span>
                         {isFounder && <span className="text-[7px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90">{t('FOUNDER_BADGE')}</span>}
                     </div>
 
@@ -376,16 +384,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     placeholder={t('ENGAGE')}
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    className="flex-1 bg-transparent py-2.5 px-3 text-sm text-white outline-none placeholder-gray-600 font-medium"
+                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-500 font-medium"
                                 />
-                                <div className="flex gap-1 pr-1">
-                                    <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-500 hover:text-[var(--gold-primary)] transition-all">
+                                <div className="flex gap-1.5 pr-1.5">
+                                    <button type="button" onClick={startCommentRecording} className="p-2.5 rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/20 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90">
                                         <Icons.Mic className="w-5 h-5" />
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="p-2.5 rounded-xl bg-[var(--gold-primary)] hover:scale-105 active:scale-95 transition-all text-black shadow-lg disabled:opacity-20"
+                                        className="p-3 rounded-xl bg-[var(--gold-primary)] hover:scale-105 active:scale-90 transition-all text-black shadow-lg disabled:opacity-20 shadow-[var(--gold-primary)]/20"
                                     >
                                         <Icons.Send className="w-5 h-5" />
                                     </button>
@@ -2387,20 +2395,20 @@ const App = () => {
                     </main >
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 px-4 pb-4 flex justify-center z-[1000] pointer-events-none">
-                            <div className="liquid-glass-nav h-[65px] w-full max-w-lg rounded-[2rem] px-5 flex items-center justify-between pointer-events-auto">
-                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'home' ? 'nav-item-active' : ''}`}><Icons.Home className="w-5 h-5" /></button>
-                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn ${activeTab === 'search' ? 'nav-item-active' : ''}`}><Icons.Search className="w-5 h-5" /></button>
+                        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
+                            <div className="liquid-glass-nav h-[72px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-black/40 backdrop-blur-2xl">
+                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}><Icons.Home className="w-6 h-6" /></button>
+                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}><Icons.Search className="w-6 h-6" /></button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative ${activeTab === 'alerts' ? 'nav-item-active' : ''}`}>
-                                    <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse' : ''}`} />
-                                    {user?.notifications?.some(n => !n.read) && <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />}
+                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
+                                    <Icons.Bell className={`w-6 h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse' : ''}`} />
+                                    {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-black shadow-glow-red" />}
                                 </button>
 
-                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn"><Icons.Logout className="w-5 h-5" /></button>
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-gray-500 hover:text-red-500 transition-all"><Icons.Logout className="w-6 h-6" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
-                                    <div className="w-9 h-9 rounded-full overflow-hidden bg-white/5">
+                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all duration-300 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
