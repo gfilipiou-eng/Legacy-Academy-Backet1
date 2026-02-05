@@ -456,9 +456,11 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
         if (videoRef.current.paused) {
             videoRef.current.play();
             setIsPlaying(true);
+            playSound('pop');
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
+            playSound('sword');
         }
     };
 
@@ -490,7 +492,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                 onTimeUpdate={handleTimeUpdate}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
-                className="w-full h-full object-contain cursor-pointer max-h-[75vh]"
+                className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]"
             />
 
             {/* NEURAL OVERLAY */}
@@ -505,17 +507,17 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                         <div className="flex justify-between items-start">
                             {onExpand ? (
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); onExpand(); }}
-                                    className="p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-auto hover:bg-black/60 transition-all active:scale-90"
+                                    onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
+                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                                 >
-                                    <Icons.Maximize className="w-5 h-5" />
+                                    <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                 </button>
                             ) : <div />}
                             <button
-                                onClick={toggleMute}
-                                className="p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-auto hover:bg-black/60 transition-all active:scale-90"
+                                onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
+                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                             >
-                                {isMuted ? <Icons.VolumeX className="w-5 h-5" /> : <Icons.Volume2 className="w-5 h-5" />}
+                                {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
                             </button>
                         </div>
 
@@ -820,7 +822,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
 
                         {/* MEDIA CONTENT */}
                         {(post.image || post.videoUrl) && (
-                            <div className="mt-2 rounded-xl overflow-hidden border border-white/10 relative shadow-sm bg-black/50" style={{ maxHeight: '500px' }}>
+                            <div className="mt-2 rounded-[1.5rem] overflow-hidden border border-white/10 relative shadow-2xl bg-black/60 aspect-auto" style={{ maxHeight: '600px' }}>
                                 {/* DETECT VIDEO VS IMAGE - DO NOT ZOOM VIDEOS TO PREVENT GLITCHES */}
                                 {isYouTubeUrl(post.videoUrl) ? (
                                     <div className="w-full aspect-video bg-black">
@@ -1742,15 +1744,20 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     };
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose} />
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1">
                     <h2 className="text-xl font-black italic mb-4 text-white">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
                             <ProfileAvatar user={user} />
                         </div>
-                        <textarea id="c-desc" placeholder={t('DECRYPT_PH')} className="flex-1 bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
+                        <div className="flex-1 flex flex-col gap-1">
+                            <textarea id="c-desc" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
+                            <div className="text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
+                                <Icons.Info className="w-3 h-3 inline mr-1" /> {t('VIDEO_LIMIT_NOTE')}
+                            </div>
+                        </div>
                     </div>
 
                     {/* YouTube URL input */}
@@ -1931,11 +1938,16 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel p-6 rounded-[2rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={onClose} />
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/40 backdrop-blur-3xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
                 <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
                 <div className="flex flex-col gap-4">
-                    <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update content..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
+                    <div className="flex flex-col gap-2">
+                        <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Update content..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none h-32 resize-none placeholder-gray-600" />
+                        <div className="text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
+                            <Icons.Info className="w-3 h-3 inline mr-1" /> {t('VIDEO_LIMIT_NOTE')}
+                        </div>
+                    </div>
                     <div className="mb-3">
                         <input id="edit-youtube" value={youtubeUrl} placeholder="YouTube URL (optional)" className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
                             const v = e.target.value || '';
@@ -2761,7 +2773,7 @@ const App = () => {
                                                                         transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
                                                                         className="overflow-hidden"
                                                                     >
-                                                                        <div className="space-y-6 pt-4 pb-8">
+                                                                        <div className="space-y-6 pt-4 pb-8 w-full max-w-full overflow-hidden">
                                                                             {groupedPosts[dateKey].map(p => (
                                                                                 <PostCard key={p._id} post={p} user={user} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                             ))}
@@ -2803,7 +2815,7 @@ const App = () => {
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                            <div className="liquid-glass-nav h-[72px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-black/40 backdrop-blur-2xl">
+                            <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl">
                                 <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}><Icons.Home className="w-6 h-6" /></button>
                                 <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}><Icons.Search className="w-6 h-6" /></button>
 

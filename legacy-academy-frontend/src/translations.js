@@ -45,6 +45,7 @@ export const TRANSLATIONS = {
         PRIVATE_TITLE: 'Private Account', PRIVATE_DESC: 'Only accepted followers see content', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Messages only from your followers',
         FOLLOW_TO_VIEW: 'FOLLOW TO VIEW CONTENT',
         EDIT: 'EDIT', DELETE: 'Delete', POST: 'Post',
+        VIDEO_LIMIT_NOTE: 'ONLY VIDEOS UP TO 5 MINUTES ALLOWED',
         EXPAND_INTEL: 'EXPAND INTEL LOGS'
     },
     el: {
@@ -93,6 +94,7 @@ export const TRANSLATIONS = {
         PRIVATE_TITLE: 'Ιδιωτικός Λογαριασμός', PRIVATE_DESC: 'Μόνο ακόλουθοι βλέπουν περιεχόμενο', GUARD_TITLE: 'Guard Chat', GUARD_DESC: 'Μηνύματα μόνο από ακόλουθους',
         FOLLOW_TO_VIEW: 'ΑΚΟΛΟΥΘΗΣΤΕ ΓΙΑ ΠΡΟΒΟΛΗ',
         EDIT: 'ΕΠΕΞΕΡΓΑΣΙΑ', DELETE: 'Διαγραφή', POST: 'Δημοσίευση',
+        VIDEO_LIMIT_NOTE: 'ΕΠΙΤΡΕΠΟΝΤΑΙ ΜΟΝΟ ΒΙΝΤΕΟ ΕΩΣ 5 ΛΕΠΤΑ',
         EXPAND_INTEL: 'ΠΡΟΒΟΛΗ ΑΡΧΕΙΩΝ',
         VOICE_NOTE_READY: 'ΗΧΗΤΙΚΟ ΕΤΟΙΜΟ', VOICE_PREPARED: 'ΕΤΟΙΜΟ ΠΡΟΣ ΑΠΟΣΤΟΛΗ', TRANSMITTING: 'ΕΚΠΟΜΠΗ'
     },
