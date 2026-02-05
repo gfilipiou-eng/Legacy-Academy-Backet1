@@ -343,20 +343,27 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     </div>
                                 )
                             ) : (
-                                <div className="flex-1 flex items-center gap-2">
-                                    <audio controls src={URL.createObjectURL(commentAudio)} className="flex-1 h-8 scale-90 origin-left" />
-                                    <button type="button" onClick={() => setCommentAudio(null)} className="p-2 text-red-500"><Icons.Trash className="w-4 h-4" /></button>
-                                    <button onClick={(e) => {
-                                        e.preventDefault();
-                                        if (commentAudio) {
-                                            const fd = new FormData();
-                                            if (commentText.trim()) fd.append('text', commentText);
-                                            fd.append('file', commentAudio, 'voice_comment.webm');
-                                            onComment(post._id, fd);
-                                            setCommentAudio(null);
-                                            setCommentText('');
-                                        }
-                                    }} className="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-full text-white font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all shrink-0">{t('POST')}</button>
+                                <div className="flex-1 flex items-center justify-between gap-3 h-10 px-1">
+                                    <div className="flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg">
+                                        <Icons.Mic className="w-3.5 h-3.5 text-blue-400" />
+                                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">VOICE NOTE READY</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button type="button" onClick={() => setCommentAudio(null)} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-colors active:scale-90"><Icons.Trash className="w-4.5 h-4.5" /></button>
+                                        <button onClick={(e) => {
+                                            e.preventDefault();
+                                            if (commentAudio) {
+                                                const fd = new FormData();
+                                                if (commentText.trim()) fd.append('text', commentText);
+                                                fd.append('file', commentAudio, 'voice_comment.webm');
+                                                onComment(post._id, fd);
+                                                setCommentAudio(null);
+                                                setCommentText('');
+                                            }
+                                        }} className="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-xl text-white font-black text-[10px] uppercase tracking-[0.1em] shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                            {t('POST')} <Icons.Send className="w-3.5 h-3.5 fill-white" />
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -743,11 +750,16 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         <button type="button" onClick={() => stopRecording(true)} className="p-1.5 rounded-md hover:bg-red-500/20 text-white transition-all active:scale-95"><Icons.X className="w-4 h-4" /></button>
                                     </div>
                                 ) : commentAudio ? (
-                                    <div className="flex-1 h-10 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-xl flex items-center justify-between px-4 ring-1 ring-[var(--gold-primary)]/20">
-                                        <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">AUDIO PREPARED</span>
+                                    <div className="flex-1 h-11 bg-blue-500/5 border border-blue-500/20 rounded-xl flex items-center justify-between px-4 ring-1 ring-blue-500/20">
                                         <div className="flex items-center gap-2">
-                                            <button type="button" onClick={() => setCommentAudio(null)} className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors group"><Icons.Trash className="w-4.5 h-4.5 text-gray-500 group-hover:text-red-500" /></button>
-                                            <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95 transition-all shrink-0">{t('POST')}</button>
+                                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">VOICE PREPARED</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <button type="button" onClick={() => setCommentAudio(null)} className="p-2 rounded-lg hover:bg-red-500/10 transition-colors group active:scale-90"><Icons.Trash className="w-4.5 h-4.5 text-gray-500 group-hover:text-red-500" /></button>
+                                            <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2">
+                                                {t('POST')} <Icons.Send className="w-4 h-4 fill-white" />
+                                            </button>
                                         </div>
                                     </div>
                                 ) : (
