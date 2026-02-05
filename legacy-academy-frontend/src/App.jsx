@@ -1143,7 +1143,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
                                             ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                                 <div className="relative w-full h-full">
-                                                    <video src={resolveMediaUrl(p.videoUrl || p.image)} muted className="w-full h-full object-cover" />
+                                                    <video
+                                                        src={resolveMediaUrl(p.videoUrl || p.image)}
+                                                        muted
+                                                        playsInline
+                                                        preload="metadata"
+                                                        className="w-full h-full object-cover bg-gray-900"
+                                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                                    />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
                                                         <Icons.Play className="w-6 h-6 text-white/80" />
                                                     </div>
