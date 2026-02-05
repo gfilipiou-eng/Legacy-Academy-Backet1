@@ -89,6 +89,36 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
+const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
+    if (!user) return <DefaultAvatar size={size} />;
+    const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
+    const name = user.username || user.fromUsername;
+    const mediaUrl = url ? resolveMediaUrl(url) : null;
+    const isVideo = mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video'));
+
+    if (isVideo) {
+        return (
+            <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick}>
+                <video
+                    src={mediaUrl}
+                    className="w-full h-full object-cover"
+                    muted
+                    loop
+                    playsInline
+                    onMouseOver={e => e.target.play()}
+                    onMouseOut={e => e.target.pause()}
+                />
+            </div>
+        );
+    }
+
+    return mediaUrl ? (
+        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" />
+    ) : (
+        <DefaultAvatar name={name} size={size} />
+    );
+};
+
 const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
@@ -114,7 +144,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     return (
         <motion.div layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 items-start group/comment relative">
             <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10 shadow-sm flex items-center justify-center text-xs font-bold text-white">
-                {isCommentAuthor && user?.profilePic ? <img src={resolveMediaUrl(user.profilePic, 100)} className="w-full h-full object-cover" /> : (comment.user?.profilePic || comment.authorProfilePic ? <img src={resolveMediaUrl(comment.user?.profilePic || comment.authorProfilePic, 100)} className="w-full h-full object-cover" /> : <DefaultAvatar name={comment.user?.username || comment.authorName} />)}
+                <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
             </div>
 
             <div className="flex-1">
@@ -257,7 +287,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
         >
             <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
-                    {note.fromProfilePic ? <img src={resolveMediaUrl(note.fromProfilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={note.fromUsername} />}
+                    <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
@@ -307,11 +337,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className={`w-16 h-16 rounded-full p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
                     <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 relative">
-                        {user?.profilePic ? (
-                            <img src={resolveMediaUrl(user.profilePic, 200)} className="w-full h-full object-cover opacity-80" />
-                        ) : (
-                            <DefaultAvatar name={user?.username} />
-                        )}
+                        <ProfileAvatar user={user} className="opacity-80" />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
                         </div>
@@ -324,7 +350,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                 <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                     <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90">
                         <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl">
-                            {group.author?.profilePic ? <img src={resolveMediaUrl(group.author.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={group.author?.username} />}
+                            <ProfileAvatar user={group.author} />
                         </div>
                     </div>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
@@ -390,7 +416,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                 <div className="flex items-start gap-3">
                     <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
                         <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                            {post.author?.profilePic ? <img src={resolveMediaUrl(post.author.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={post.author?.username} />}
+                            <ProfileAvatar user={post.author} />
                         </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -617,7 +643,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                             const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}>{u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}</div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? 'Online' : 'Offline'}</div></div>
                                 </div>
                             )
@@ -893,7 +919,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             {getListUsers().map(u => (
                                 <div key={u._id} onClick={() => { onViewProfile(u); setActiveList(null); }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer">
                                     <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                        {u.profilePic ? <img src={resolveMediaUrl(u.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
+                                        <ProfileAvatar user={u} />
                                     </div>
                                     <div className="font-bold text-white text-sm">{u?.username}</div>
                                 </div>
@@ -902,7 +928,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
                             <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[var(--gold-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--gold-primary)]/10">
-                                {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
+                                <ProfileAvatar user={displayUser} size="large" />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
                             <input type="file" ref={fileRef} hidden onChange={async (e) => {
@@ -950,7 +976,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
-                                    {displayUser?.profilePic ? <img src={resolveMediaUrl(displayUser.profilePic)} className="w-full h-full object-cover" /> : <DefaultAvatar size="large" name={displayUser?.username} />}
+                                    <ProfileAvatar user={displayUser} size="large" />
                                 </div>
                                 <div className="flex-1 flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
@@ -1914,7 +1940,7 @@ const App = () => {
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                                                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                                                {u.profilePic ? <img src={resolveMediaUrl(u.profilePic, 200)} className="w-full h-full object-cover" /> : <DefaultAvatar name={u.username} />}
+                                                                <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="font-bold text-white text-sm flex items-center gap-2">
