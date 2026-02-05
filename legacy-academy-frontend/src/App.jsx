@@ -366,77 +366,83 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5 h-5" /></button>
                         </div>
 
-                        {commentAudio ? (
-                            <div className="flex items-center justify-between gap-3 min-h-[52px] px-2 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 rounded-[1.2rem] p-1.5 animate-pop-in">
-                                <div className="flex items-center gap-2.5 pl-2">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
-                                    <span className="text-[11px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                        <div className="relative">
+                            {commentAudio ? (
+                                <div className="flex items-center justify-between gap-3 min-h-[52px] px-2 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 rounded-[1.2rem] p-1.5 animate-pop-in">
+                                    <div className="flex items-center gap-2.5 pl-2">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                        <span className="text-[11px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-5 h-5" /></button>
+                                        <button type="button" onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            const fd = new FormData();
+                                            if (commentText.trim()) fd.append('text', commentText);
+                                            fd.append('file', commentAudio, 'voice_comment.webm');
+                                            onComment(post._id, fd);
+                                            setCommentAudio(null);
+                                            setCommentText('');
+                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
+                                            <Icons.Send className="w-5 h-5 fill-black" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1.5">
-                                    <button type="button" onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>
-                                    <button onClick={(e) => {
+                            ) : isRecordingComment ? (
+                                <div className="bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-3 flex items-center justify-between animate-pop-in">
+                                    <div className="flex items-center gap-3 pl-2">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                                        <span className="text-[11px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2.5 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-5 h-5" /></button>
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-5 py-2.5 bg-red-500 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <form
+                                    key={`detail-form-${post._id}`}
+                                    onSubmit={(e) => {
                                         e.preventDefault();
-                                        const fd = new FormData();
-                                        if (commentText.trim()) fd.append('text', commentText);
-                                        fd.append('file', commentAudio, 'voice_comment.webm');
-                                        onComment(post._id, fd);
-                                        setCommentAudio(null);
-                                        setCommentText('');
-                                    }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all">
-                                        <Icons.Send className="w-5 h-5 fill-black" />
-                                    </button>
-                                </div>
-                            </div>
-                        ) : isRecordingComment ? (
-                            <div className="bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-3 flex items-center justify-between animate-pop-in">
-                                <div className="flex items-center gap-3 pl-2">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
-                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button onClick={() => stopRecording(true)} className="p-2.5 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all"><Icons.X className="w-5 h-5" /></button>
-                                    <button onClick={() => stopRecording(false)} className="px-5 py-2.5 bg-red-500 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all">{t('STOP')}</button>
-                                </div>
-                            </div>
-                        ) : (
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    if (commentText.trim()) {
-                                        onComment(post._id, commentText);
-                                        setCommentText('');
-                                    }
-                                }}
-                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group"
-                            >
-                                <input
-                                    placeholder={t('ENGAGE')}
-                                    value={commentText}
-                                    onChange={(e) => setCommentText(e.target.value)}
-                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
-                                />
-                                <div className="flex gap-1 pr-1 shrink-0">
-                                    <button
-                                        type="button"
-                                        onClick={startCommentRecording}
-                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
-                                    >
-                                        <Icons.Mic className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
-                                    >
-                                        {loadingActions?.[post._id] ? (
-                                            <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                        ) : (
-                                            <Icons.Send className="w-4 h-4" />
-                                        )}
-                                    </button>
-                                </div>
-                            </form>
-                        )}
+                                        e.stopPropagation();
+                                        if (commentText.trim()) {
+                                            onComment(post._id, commentText);
+                                            setCommentText('');
+                                        }
+                                    }}
+                                    className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group"
+                                >
+                                    <input
+                                        placeholder={t('ENGAGE')}
+                                        value={commentText}
+                                        onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
+                                        className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
+                                    />
+                                    <div className="flex gap-1 pr-1 shrink-0">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
+                                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
+                                        >
+                                            <Icons.Mic className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
+                                        >
+                                            {loadingActions?.[post._id] ? (
+                                                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                            ) : (
+                                                <Icons.Send className="w-4 h-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -792,20 +798,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                             {post.comments?.map((c, idx) => (
                                 <CommentItem key={c._id || idx} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
                             ))}
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    if (!commentText.trim() && !commentAudio) return;
-                                    const input = commentAudio ? (() => {
-                                        const fd = new FormData();
-                                        fd.append('file', commentAudio, 'voice.webm');
-                                        if (commentText.trim()) fd.append('text', commentText.trim());
-                                        return fd;
-                                    })() : commentText.trim();
-                                    onComment(post._id, input);
-                                    setCommentAudio(null);
-                                    setCommentText('');
-                                }}
+                            <div
                                 className="flex flex-col gap-4 mt-6"
                             >
                                 <div className="flex gap-3 items-start">
@@ -819,8 +812,8 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <span className="text-[10px] font-black text-red-500 uppercase tracking-tight">{t('TRANSMITTING')}</span>
                                             </div>
                                             <div className="flex gap-1 shrink-0">
-                                                <button type="button" onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-4 h-4" /></button>
-                                                <button type="button" onClick={() => stopRecording(false)} className="px-3 sm:px-5 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-4 h-4" /></button>
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-3 sm:px-5 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
                                             </div>
                                         </div>
                                     ) : commentAudio ? (
@@ -830,8 +823,17 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
                                             </div>
                                             <div className="flex items-center gap-1 shrink-0">
-                                                <button type="button" onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
-                                                <button type="submit" className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
+                                                <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
+                                                <button type="button" onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    const fd = new FormData();
+                                                    fd.append('file', commentAudio, 'voice.webm');
+                                                    if (commentText.trim()) fd.append('text', commentText.trim());
+                                                    onComment(post._id, fd);
+                                                    setCommentAudio(null);
+                                                    setCommentText('');
+                                                }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
                                                     <Icons.Send className="w-4 h-4 fill-black" />
                                                 </button>
                                             </div>
@@ -841,6 +843,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                             <form
                                                 onSubmit={(e) => {
                                                     e.preventDefault();
+                                                    e.stopPropagation();
                                                     if (commentText.trim()) {
                                                         onComment(post._id, commentText);
                                                         setCommentText('');
@@ -851,13 +854,13 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <input
                                                     placeholder={t('ENGAGE')}
                                                     value={commentText}
-                                                    onChange={(e) => setCommentText(e.target.value)}
+                                                    onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
                                                     className="flex-1 min-w-0 bg-transparent py-2.5 px-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
                                                 />
                                                 <div className="flex gap-1 pr-1 shrink-0">
                                                     <button
                                                         type="button"
-                                                        onClick={startCommentRecording}
+                                                        onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
                                                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
                                                     >
                                                         <Icons.Mic className="w-4 h-4" />
@@ -865,6 +868,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                     <button
                                                         type="submit"
                                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                                        onClick={(e) => e.stopPropagation()}
                                                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
                                                     >
                                                         {loadingActions?.[post._id] ? (
@@ -878,7 +882,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         </div>
                                     )}
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </motion.div>
                 )}
