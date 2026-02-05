@@ -373,6 +373,28 @@ router.put("/:id", verifyToken, async (req, res) => {
     }
 });
 
+// BAN USER
+router.post("/:id/ban", verifyToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'Founder') {
+            return res.status(403).json("Only Founder can authorize suspension protocols.");
+        }
+        const { days } = req.body;
+        const banExpires = new Date();
+        banExpires.setDate(banExpires.getDate() + (days || 3));
+
+        await User.findByIdAndUpdate(req.params.id, {
+            isBanned: true,
+            banExpires: banExpires,
+            banReason: "Suspended by Protocol Commander"
+        });
+
+        res.status(200).json("Agent suspended successfully.");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // 4. DELETE USER ACCOUNT
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
