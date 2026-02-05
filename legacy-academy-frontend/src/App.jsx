@@ -21,8 +21,13 @@ const resolveMediaUrl = (path, width = null) => {
         const parts = url.split('/upload/');
         // Only inject if not already transformed
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
-            // Force 720p (approx 1280px width) limit for Bandwidth Saving if no specific width requested
-            const transform = width ? `w_${width},c_fill,g_face,q_auto,f_auto` : 'c_limit,w_1280,q_auto:eco,f_auto';
+            const isVideo = url.includes('/video/upload/');
+            // For videos: avoid f_auto to prevent 416 range errors. Use vc_auto (video codec) instead.
+            // For images: f_auto is perfectly fine and recommended.
+            const transform = width
+                ? `w_${width},c_fill,g_face,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`
+                : `c_limit,w_1280,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
         }
     }
