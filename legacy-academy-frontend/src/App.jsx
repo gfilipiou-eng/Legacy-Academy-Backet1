@@ -282,9 +282,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
     return (
 
-        <div className="fixed inset-0 z-[1200] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden">
-            <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[1500] shadow-xl"><Icons.X className="w-6 h-6 text-white" /></button>
-            <div className="w-full max-w-5xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto">
+        <div className="fixed inset-0 z-[1200] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
+            <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[1500] shadow-xl active:scale-90 transition-transform"><Icons.X className="w-6 h-6 text-white" /></button>
+            <div className="w-full max-w-5xl h-[100dvh] md:h-[85vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto transform-gpu">
                 {/* Image Section - Responsive height */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[40vh] md:max-h-full md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -363,7 +363,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
-                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5 h-5" /></button>
+                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Send className="w-5 h-5" /></button>
                         </div>
 
                         {commentAudio ? (
@@ -426,9 +426,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <button
                                         type="submit"
                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 transition-all mobile-os-action-btn"
+                                        className="bg-[var(--gold-primary)] px-6 py-2.5 rounded-xl text-black font-black text-[12px] uppercase flex items-center gap-2 shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn"
                                     >
-                                        <Icons.Send className="w-5 h-5" />
+                                        {t('POST')} <Icons.Send className="w-4 h-4" />
                                     </button>
                                 </div>
                             </form>
@@ -758,7 +758,7 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                         {/* ACTIONS BAR - BLUESKY STYLE */}
                         <div className="flex items-center justify-between mt-4 pr-4 max-w-md relative z-10">
                             <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-blue-400 transition-colors cursor-pointer">
-                                <div className="p-1.5 rounded-full group-hover:bg-blue-500/10"><Icons.Send className="w-5 h-5 pointer-events-none" /></div>
+                                <div className="p-1.5 rounded-full group-hover:bg-blue-500/10"><Icons.MessageCircle className="w-5 h-5 pointer-events-none" /></div>
                                 <span className="text-xs font-medium pointer-events-none">{post.comments?.length || 0}</span>
                             </button>
 
@@ -848,12 +848,12 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                                 <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="w-full bg-transparent py-4 text-[14px] text-white outline-none placeholder-gray-500 font-medium" />
                                             </div>
                                             <div className="flex items-center justify-center gap-6 mt-2">
-                                                <button type="submit" disabled={!commentText.trim() || loadingActions?.[post._id]} className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-2xl text-white font-black text-[12px] uppercase tracking-widest disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40 flex items-center gap-2">
+                                                <button type="submit" disabled={!commentText.trim() || loadingActions?.[post._id]} className="bg-blue-600 hover:bg-blue-500 px-6 py-2.5 rounded-xl text-white font-black text-[12px] uppercase flex items-center gap-2 disabled:opacity-20 active:scale-95 transition-all shadow-xl shadow-blue-900/40">
                                                     {loadingActions?.[post._id] ? (
                                                         <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                     ) : (
                                                         <>
-                                                            {t('POST')} <Icons.Send className="w-4.5 h-4.5" />
+                                                            {t('POST')} <Icons.Send className="w-4 h-4" />
                                                         </>
                                                     )}
                                                 </button>
