@@ -60,7 +60,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "healthy", deployed: "v4-final-fix" });
+  res.status(200).json({
+    status: "healthy",
+    deployed: "v4-robust-telemetry",
+    timestamp: new Date(),
+    uptime: process.uptime()
+  });
 });
 
 // DIAGNOSTIC LOGGING - All requests logged for debugging
@@ -224,26 +229,16 @@ const PORT = process.env.PORT || 5000;
 console.log("🟡 Starting Express server on port", PORT);
 
 try {
-  const server = app.listen(PORT, () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`✅ Server running on port ${PORT} 🚀`);
-    console.log(`📍 Backend URL: https://legacy-academy-backet1.onrender.com`);
-    console.log(`🌐 Server started - accepting connections`);
-    console.log(`📌 Test: curl http://localhost:${PORT}/api/health`);
+    console.log(`📡 Deployment Version: v4-robust-telemetry`);
+    console.log(`🔍 Registered API Bases: /api/auth, /api/posts, /api/users, /api/messages`);
 
-    // KEEP-ALIVE: Self-ping every 10 minutes to prevent Render from sleeping
-    // Delayed by 5 seconds to avoid early startup issues
-    setTimeout(() => {
-      setInterval(() => {
-        try {
-          const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
-          axios.get(baseUrl, { timeout: 5000 })
-            .then(() => console.log("⚡ Keep-Alive: Server is awake"))
-            .catch(() => { }); // Silently fail if server is down
-        } catch (err) {
-          // Silently fail
-        }
-      }, 600000); // 600,000ms = 10 minutes
-    }, 5000);
+    // Keep-alive ping mechanism (for Render free tier)
+    setInterval(() => {
+      const selfUrl = `https://legacy-academy-backet1.onrender.com/api/health`;
+      axios.get(selfUrl).then(() => console.log("💓 Keep-alive pulse sent.")).catch(() => { });
+    }, 14 * 60 * 1000); // 14 minutes
   });
 
   // Handle server errors
@@ -251,17 +246,15 @@ try {
     console.error("🔥 Server error:", (err && (err.stack || err)) || err);
     process.exit(1);
   });
-
-  // Process-level handlers to capture unexpected failures
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('🔥 UNHANDLED REJECTION:', reason && (reason.stack || reason));
-  });
-  process.on('uncaughtException', (err) => {
-    console.error('🔥 UNCAUGHT EXCEPTION:', err && (err.stack || err));
-    // Note: consider exiting process to allow a restart in production
-  });
 } catch (err) {
   console.error("🔴 Failed to start server:", err.message);
-  console.error(err.stack);
   process.exit(1);
 }
+
+// Global exception catch
+process.on('unhandledRejection', (reason) => {
+  console.error('🔥 UNHANDLED REJECTION:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('🔥 UNCAUGHT EXCEPTION:', err);
+});

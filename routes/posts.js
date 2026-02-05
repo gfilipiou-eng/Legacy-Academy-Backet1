@@ -240,11 +240,13 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
 
     return res.status(200).json(updatedPost.comments);
   } catch (e) {
-    console.error(`🔥 [${reqId}] CRITICAL COMMENT ERROR:`, e);
+    console.error(`🔥 [${reqId}] CRITICAL COMMENT ERROR ON POST ${req.params.id}:`);
+    console.error(e.stack || e);
     return res.status(500).json({
       error: "Transmission Failed",
       detail: e.message || "Unknown error",
-      requestId: reqId
+      requestId: reqId,
+      code: "COM_ERR_500"
     });
   }
 });
