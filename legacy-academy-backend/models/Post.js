@@ -7,6 +7,9 @@ const PostSchema = new mongoose.Schema({
   image: String,
   gif: String,
 
+  // AUDIO SUPPORT
+  audioUrl: String,
+
   // VIDEO SUPPORT
   videoUrl: String,        // Cloudinary video URL
   thumbnailUrl: String,    // Video thumbnail/poster
@@ -22,7 +25,8 @@ const PostSchema = new mongoose.Schema({
   dislikes: { type: Array, default: [] },   // IDs of users who disliked
   likesUsers: { type: Array, default: [] },
   comments: [{
-    text: { type: String, required: true },
+    text: { type: String, required: false }, // Text optional if audio present
+    audioUrl: String, // Audio comment support
     authorName: String,
     authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     authorProfilePic: String,

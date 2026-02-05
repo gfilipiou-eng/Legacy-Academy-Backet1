@@ -107,7 +107,8 @@ router.post("/:id/dislike", verifyToken, handleDislike);
 router.put("/:id/dislike", verifyToken, handleDislike);
 
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
-router.post("/:id/comment", verifyToken, async (req, res) => {
+// Update: Allow file upload for voice comments
+router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json("Post not found");
@@ -116,17 +117,24 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
     const currentUser = await User.findById(currentUserId);
 
     const newComment = {
-      text: req.body.text,
+      text: req.body.text || "",
+      audioUrl: req.file ? req.file.path : "",
       authorName: req.user.username,
       authorId: currentUserId,
       authorProfilePic: currentUser?.profilePic || '',
       createdAt: new Date()
     };
+
+    if (!newComment.text && !newComment.audioUrl) {
+      return res.status(400).json("Comment cannot be empty");
+    }
+
     post.comments.push(newComment);
     await post.save();
 
     // Send notification to post author if commenter is not the author
     if (post.author.toString() !== currentUserId) {
+      const notifText = newComment.audioUrl ? "Sent a voice note." : (req.body.text ? req.body.text.substring(0, 50) : "Commented.");
       await User.findByIdAndUpdate(post.author, {
         $push: {
           notifications: {
@@ -135,7 +143,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
             fromUsername: req.user.username,
             fromProfilePic: currentUser?.profilePic || '',
             post: post._id,
-            text: req.body.text.substring(0, 50),
+            text: notifText,
             read: false,
             createdAt: new Date()
           }
@@ -253,6 +261,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 
     // Determine media type: file upload or provided videoUrl
     const isFileVideo = req.file?.mimetype?.includes("video") || (req.file?.path && req.file.path.match(/\.(mp4|mov|avi|webm)$/i));
+    const isFileAudio = req.file?.mimetype?.includes("audio") || (req.file?.path && req.file.path.match(/\.(mp3|wav|ogg|m4a)$/i));
     const isYouTube = typeof videoUrl === 'string' && /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(videoUrl || '');
 
     const author = await User.findById(req.user.id || req.user.userId);
@@ -282,10 +291,10 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
           ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
         });
         const duration = durMeta?.format?.duration || 0;
-        if (duration > 600) {
+        if (duration > 300) {
           // delete the uploaded file to avoid orphaned large assets
           try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup large-upload', e && e.message); }
-          return res.status(400).json({ message: 'Video duration exceeds 10 minutes. Please upload a shorter clip.' });
+          return res.status(400).json({ message: 'Video duration exceeds 5 minutes. Please upload a shorter clip.' });
         }
       }
     } catch (probeErr) {
@@ -296,8 +305,9 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     const newPost = new Post({
       title: title || '',
       desc: desc || description || '',
-      image: (!isFileVideo && req.file) ? req.file.path || "" : "",
+      image: (!isFileVideo && !isFileAudio && req.file) ? req.file.path || "" : "",
       videoUrl: isFileVideo ? (req.file?.path || "") : (isYouTube ? videoUrl.trim() : (videoUrl || "")),
+      audioUrl: isFileAudio ? (req.file?.path || "") : "",
       thumbnailUrl: isYouTube ? `https://img.youtube.com/vi/${(videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg` : undefined,
       author: req.user.id || req.user.userId,
       username: req.user.username,

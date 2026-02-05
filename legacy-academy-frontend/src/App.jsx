@@ -163,7 +163,10 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                             </div>
                         </div>
                     ) : (
-                        <span className="text-xs text-gray-200">{comment.text}</span>
+                        <div className="flex flex-col gap-2">
+                            {comment.text && <span className="text-xs text-gray-200">{comment.text}</span>}
+                            {comment.audioUrl && <audio controls src={resolveMediaUrl(comment.audioUrl)} className="w-[200px] h-8 mt-1" />}
+                        </div>
                     )}
                 </div>
 
@@ -261,10 +264,34 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <button onClick={() => onShare(post)} className="text-gray-400 hover:text-white transition-colors active:rotate-45"><Icons.Send className="w-5 h-5" /></button>
                             </div>
                         </div>
-                        <form onSubmit={(e) => { e.preventDefault(); if (!commentText.trim()) return; onComment(post._id, commentText); setCommentText(''); }} className="flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-[var(--gold-primary)]/50 transition-all">
-                            <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
-                            <button disabled={!commentText.trim()} className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST')}</button>
-                        </form>
+                        <div className={`flex gap-2 items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/5 focus-within:border-[var(--gold-primary)]/50 transition-all ${commentAudio ? 'ring-1 ring-[var(--gold-primary)]' : ''}`}>
+                            {!commentAudio ? (
+                                <>
+                                    <input value={commentText} onChange={e => setCommentText(e.target.value)} placeholder={t('ENGAGE')} className="flex-1 bg-transparent text-sm outline-none text-white py-2 placeholder-gray-600" />
+                                    <button type="button" onClick={startCommentRecording} className={`p-2 rounded-full hover:bg-white/10 ${isRecordingComment ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}><Icons.Mic className="w-4 h-4" /></button>
+                                </>
+                            ) : (
+                                <div className="flex-1 flex items-center gap-2">
+                                    <audio controls src={URL.createObjectURL(commentAudio)} className="flex-1 h-8" />
+                                    <button type="button" onClick={() => setCommentAudio(null)} className="p-2 text-red-500"><Icons.Trash className="w-4 h-4" /></button>
+                                </div>
+                            )}
+                            <button onClick={(e) => {
+                                e.preventDefault();
+                                if (!commentText.trim() && !commentAudio) return;
+
+                                if (commentAudio) {
+                                    const fd = new FormData();
+                                    if (commentText.trim()) fd.append('text', commentText);
+                                    fd.append('file', commentAudio, 'voice_comment.webm');
+                                    onComment(post._id, fd);
+                                    setCommentAudio(null);
+                                } else {
+                                    onComment(post._id, commentText);
+                                }
+                                setCommentText('');
+                            }} disabled={!commentText.trim() && !commentAudio} className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-widest disabled:opacity-20">{t('POST')}</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -362,6 +389,33 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 };
 
 const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
+    // Comment Recording State (Local to PostCard if possible, but PostCard is complex, simplified here or need dedicated component hook)
+    // Doing quick dirty way: prop drilling or wrapper. Wait, PostCard IS the component. I will add state inside PostCard via refactor or just using the one provided.
+    // Actually PostCard is defined above. I need to add state TO PostCard. 
+    // To avoid rewriting the entire PostCard, I will use a ref or internal state if I can't change signature easily.
+    // CHECK: PostCard definition at line 337. It's a functional component, I can add hooks!
+
+    const [commentAudio, setCommentAudio] = useState(null);
+    const [isRecordingComment, setIsRecordingComment] = useState(false);
+    const commentRecorderRef = useRef(null);
+
+    const startCommentRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            commentRecorderRef.current = new MediaRecorder(stream);
+            const chunks = [];
+            commentRecorderRef.current.ondataavailable = e => chunks.push(e.data);
+            commentRecorderRef.current.onstop = () => {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                setCommentAudio(blob);
+                setIsRecordingComment(false);
+            };
+            commentRecorderRef.current.start();
+            setIsRecordingComment(true);
+            setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') { commentRecorderRef.current.stop(); } }, 60000); // 1 min max
+        } catch (e) { alert("Mic denied"); }
+    };
+
     // Safety check: Do not render stories as posts
     if (post.isStory) return null;
 
@@ -514,8 +568,15 @@ const PostCard = ({ post, user, onLike, onDislike, onComment, onDelete, onViewPr
                                         onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                                     />
                                 ) : post.image ? (
-                                    <img onDoubleClick={handleDoubleTap} onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
+                                ): post.image ? (
+                                <img onDoubleClick={handleDoubleTap} onClick={() => onOpenDetail(post)} src={resolveMediaUrl(post.image)} className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer" loading="lazy" />
                                 ) : null}
+
+                                {post.audioUrl && (
+                                    <div className="p-4 bg-gray-900 border-t border-white/10">
+                                        <audio controls src={resolveMediaUrl(post.audioUrl)} className="w-full h-8" />
+                                    </div>
+                                )}
                                 <AnimatePresence>
                                     {showHeart && (
                                         <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
@@ -1113,10 +1174,35 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const fileRef = useRef(null);
     const { t } = useTranslation(user);
     if (!isOpen) return null;
+    const [audioBlob, setAudioBlob] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorderRef = useRef(null);
+
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            const chunks = [];
+            mediaRecorderRef.current.ondataavailable = e => chunks.push(e.data);
+            mediaRecorderRef.current.onstop = () => {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                setAudioBlob(blob);
+            };
+            mediaRecorderRef.current.start();
+            setIsRecording(true);
+        } catch (e) { alert("Microphone access denied."); }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+        setIsRecording(false);
+    };
+
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        // Quick client-side duration check for video files (<= 10s)
+
+        // Video duration check (5 minutes = 300s)
         if (file.type.startsWith('video')) {
             const url = URL.createObjectURL(file);
             const vid = document.createElement('video');
@@ -1126,13 +1212,16 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
-            if (dur && dur > 600) {
-                alert('Video must be 10 minutes or shorter. Please trim your clip.');
+            if (dur && dur > 300) {
+                alert('Video must be 5 minutes or shorter.');
                 e.target.value = '';
                 return;
             }
             setPreview(URL.createObjectURL(file));
             setIsVideo(true);
+        } else if (file.type.startsWith('audio')) {
+            setPreview(null); // No visual preview for audio file upload yet, or maybe generic icon
+            setIsVideo(false);
         } else {
             setPreview(URL.createObjectURL(file));
             setIsVideo(false);
@@ -1315,6 +1404,23 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         }} />
                     </div>
 
+                    {/* AUDIO RECORDER */}
+                    {!preview && !youtubeUrl && (
+                        <div className="mb-4">
+                            {audioBlob ? (
+                                <div className="flex items-center gap-2 bg-white/5 p-3 rounded-xl border border-white/10">
+                                    <audio controls src={URL.createObjectURL(audioBlob)} className="w-full h-8" />
+                                    <button onClick={() => setAudioBlob(null)} className="p-1 hover:bg-red-500/20 rounded-full text-red-500"><Icons.Trash className="w-4 h-4" /></button>
+                                </div>
+                            ) : (
+                                <button onClick={isRecording ? stopRecording : startRecording} className={`w-full py-4 rounded-xl border border-dashed flex items-center justify-center gap-2 transition-all ${isRecording ? 'border-red-500 bg-red-500/10 text-red-500 animate-pulse' : 'border-gray-600 hover:border-[var(--gold-primary)] text-gray-400 hover:text-white'}`}>
+                                    <Icons.Mic className="w-5 h-5" />
+                                    <span className="text-xs font-bold uppercase tracking-widest">{isRecording ? "Stop Recording..." : "Record Voice Note"}</span>
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
                         {preview ? (
                             <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
@@ -1327,12 +1433,24 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 <span className="text-xs font-bold uppercase tracking-widest">Update Media</span>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="image/*,video/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                     </div>
 
                     <div className="flex gap-4">
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{saving ? '...' : t('SAVE_CHANGES')}</button>
+                        <button disabled={creating} onClick={() => {
+                            if (creating) return;
+                            setCreating(true);
+                            const fd = new FormData();
+                            fd.append('desc', desc);
+                            fd.append('visibility', visibility);
+                            fd.append('isStory', isStory);
+                            if (youtubeUrl) fd.append('videoUrl', youtubeUrl);
+                            if (fileRef.current?.files[0]) fd.append('image', fileRef.current.files[0]);
+                            if (audioBlob) fd.append('image', audioBlob, 'voice_note.webm'); // Re-use 'image' field or 'file' depending on backend. Backend uses upload.single('image') for posts.
+
+                            onSuccess(fd).finally(() => setCreating(false));
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : t('share')}</button>
                     </div>
                 </div>
             </motion.div>
@@ -1614,17 +1732,21 @@ const App = () => {
         }
     };
 
-    const handleComment = async (postId, text) => {
+    const handleComment = async (postId, input) => {
         try {
-            const res = await axios.post(`/posts/${postId}/comment`, { text });
+            let res;
+            if (typeof input === 'object' && (input instanceof FormData)) {
+                res = await axios.post(`/posts/${postId}/comment`, input);
+            } else {
+                // Legacy text-only fallback (or if just text string passed)
+                const text = typeof input === 'string' ? input : input.text;
+                res = await axios.post(`/posts/${postId}/comment`, { text });
+            }
             const updatedComments = res.data;
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
             addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');
-        } catch (e) { }
-
-
+        } catch (e) { console.error(e); }
     };
 
     const handleFollow = async (input) => {
