@@ -297,18 +297,33 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
-// GET ALL POSTS (Public API)
-router.get("/", async (req, res) => {
+// GET ALL POSTS (With Privacy Filter)
+router.get("/", verifyToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 100;
-    const posts = await Post.find()
-      .populate('author', 'username profilePic role isPrivate')
-      .sort({ createdAt: -1 })
-      .limit(limit);
+    const currentUserId = req.user.id || req.user.userId;
 
-    // Allow simpler mobile clients to view JSON directly
-    return res.status(200).json(posts);
+    const posts = await Post.find()
+      .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const filtered = posts.filter(p => {
+      // Own posts
+      if (String(p.author?._id || p.author) === String(currentUserId)) return true;
+
+      // Private/Followers only
+      if (p.isPrivate || p.isFollowersOnly || p.author?.isPrivate || p.author?.isFollowersOnly) {
+        const followers = p.author?.followers || [];
+        return followers.some(id => String(id) === String(currentUserId));
+      }
+
+      return true;
+    }).slice(0, limit);
+
+    return res.status(200).json(filtered);
   } catch (err) {
+    console.error("Fetch posts error:", err);
     return res.status(500).json(err);
   }
 });
@@ -381,7 +396,9 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       username: req.user.username,
       profilePic: author?.profilePic || "",
       role: req.user.role,
-      visibility: visibility || 'public'
+      visibility: visibility || 'public',
+      isPrivate: author?.isPrivate || false,
+      isFollowersOnly: author?.isFollowersOnly || false
     });
 
     const savedPost = await newPost.save();
@@ -556,13 +573,28 @@ router.get("/feed", verifyToken, async (req, res) => {
   }
 });
 
-// GET SINGLE POST - MUST BE AFTER SPECIFIC ROUTES LIKE /feed
-router.get("/:id", async (req, res) => {
+// GET SINGLE POST (With Privacy Filter)
+router.get("/:id", verifyToken, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate('author', 'username profilePic role');
+    const post = await Post.findById(req.params.id).populate('author', 'username profilePic role isPrivate isFollowersOnly followers');
     if (!post) return res.status(404).json("Post not found");
+
+    const currentUserId = req.user.id || req.user.userId;
+
+    // Check privacy
+    const isOwner = String(post.author?._id || post.author) === String(currentUserId);
+    const isPrivate = post.isPrivate || post.isFollowersOnly || post.author?.isPrivate || post.author?.isFollowersOnly;
+    const isFollower = post.author?.followers?.some(id => String(id) === String(currentUserId));
+
+    if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
+      return res.status(403).json("This intel is encrypted. Access restricted to authorized followers.");
+    }
+
     res.status(200).json(post);
-  } catch (e) { res.status(500).json(e); }
+  } catch (e) {
+    console.error("Fetch single post error:", e);
+    res.status(500).json(e);
+  }
 });
 
 // CATCH-ALL FOR DEBUGGING (404 for API, but identifying the cause)

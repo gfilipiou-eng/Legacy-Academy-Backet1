@@ -28,7 +28,7 @@ router.post("/", verifyToken, async (req, res) => {
             return res.status(400).json("Invalid recipient identifier format.");
         }
         const targetUser = await User.findById(recipient);
-        if (targetUser?.isFollowersOnly && !targetUser.followers.includes(senderId)) {
+        if (targetUser?.isFollowersOnly && !targetUser.followers.some(id => String(id) === String(senderId))) {
             return res.status(403).json("This agent only accepts messages from followers.");
         }
 

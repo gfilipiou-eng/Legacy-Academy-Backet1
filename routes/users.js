@@ -58,30 +58,48 @@ router.get('/heartbeat', heartbeatHandler);
 
 
 // 2. Follow - Absolute Priority
+// 2. Follow / Request Logic - Absolute Priority
 router.post("/:id/follow", verifyToken, async (req, res) => {
     try {
-        const currentUserId = req.user?.id || req.user?.userId;
+        const currentUserId = String(req.user?.id || req.user?.userId);
         const targetId = req.params.id;
 
-        console.log(`📡 FOLLOW REQ: ${currentUserId} -> ${targetId}`);
-
-        if (!currentUserId || !targetId) return res.status(401).json("Auth error");
-        if (targetId === currentUserId) return res.status(400).json("Cannot follow self");
+        if (!currentUserId || !targetId) return res.status(401).json("Encryption failed: Auth missing");
+        if (targetId === currentUserId) return res.status(400).json("Self-follow protocol denied.");
 
         const userToFollow = await User.findById(targetId);
         const currentUser = await User.findById(currentUserId);
 
-        if (!userToFollow || !currentUser) return res.status(404).json("User not found");
+        if (!userToFollow || !currentUser) return res.status(404).json("Agent not found.");
 
-        if (userToFollow.followers?.includes(currentUserId)) {
-            // Unfollow: remove follower from target and remove following from current user
+        // 1. UNFOLLOW if already following
+        if (userToFollow.followers?.some(id => String(id) === currentUserId)) {
             const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
             await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetId } });
-            const refreshedCurrent = await User.findById(currentUserId).select('following');
-            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers, following: refreshedCurrent.following });
+            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
         }
 
-        // Follow: add follower and a notification
+        // 2. CANCEL REQUEST if already requested
+        if (userToFollow.followRequests?.some(id => String(id) === currentUserId)) {
+            await User.findByIdAndUpdate(targetId, { $pull: { followRequests: currentUserId } });
+            return res.status(200).json({ message: "Request Cancelled", isRequested: false });
+        }
+
+        // 3. HANDLE PRIVATE ACCOUNT (REQUEST)
+        if (userToFollow.isPrivate) {
+            const updatedUser = await User.findByIdAndUpdate(targetId, {
+                $push: {
+                    followRequests: currentUserId,
+                    notifications: {
+                        type: 'follow_request', from: currentUserId, fromUsername: currentUser.username,
+                        fromProfilePic: currentUser.profilePic || '', read: false, createdAt: new Date()
+                    }
+                }
+            }, { new: true });
+            return res.status(200).json({ message: "Requested", isRequested: true, followRequests: updatedUser.followRequests });
+        }
+
+        // 4. PUBLIC FOLLOW (INSTANT)
         const updatedUser = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,
@@ -93,11 +111,10 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         }, { new: true });
 
         await User.findByIdAndUpdate(currentUserId, { $push: { following: targetId } });
-        const refreshedCurrent = await User.findById(currentUserId).select('following');
-        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers, following: refreshedCurrent.following });
+        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
     } catch (err) {
-        console.error("🔥 Follow Error:", err.message);
-        res.status(500).json({ message: "Follow error", error: err.message });
+        console.error("🔥 Follow Protocol Error:", err.message);
+        res.status(500).json({ message: "System failure", error: err.message });
     }
 });
 
@@ -355,31 +372,30 @@ router.put("/:id", verifyToken, async (req, res) => {
         const user = await User.findById(targetId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        // Only handle username logic if it's actually changing
-        if (req.body.username && req.body.username !== user.username) {
-            const existing = await User.findOne({ username: req.body.username });
-            if (existing && existing._id.toString() !== targetId) {
-                return res.status(400).json("Username already taken.");
-            }
-
-            if (req.user.role !== 'Founder' && user.lastUsernameChange) {
-                const diffTime = new Date() - new Date(user.lastUsernameChange);
-                const diffHours = diffTime / (1000 * 60 * 60);
-                if (diffHours < 72) {
-                    const remainingHours = Math.ceil(72 - diffHours);
-                    const remainingDays = Math.ceil(remainingHours / 24);
-                    return res.status(403).json(`Protocol Lock: You must wait ${remainingDays} more day(s) to re-assign handle.`);
+        // Only handle username logic if it's changing
+        if (req.body.username) {
+            const newUsername = String(req.body.username).trim();
+            if (newUsername !== user.username) {
+                const existing = await User.findOne({ username: newUsername });
+                if (existing && existing._id.toString() !== targetId) {
+                    return res.status(400).json("Username already taken.");
                 }
-            }
-            req.body.lastUsernameChange = new Date();
 
-            // Propagate name change to posts and comments
-            await Post.updateMany({ author: targetId }, { $set: { username: req.body.username } });
-            await Post.updateMany(
-                { "comments.authorId": targetId },
-                { $set: { "comments.$[elem].authorName": req.body.username } },
-                { arrayFilters: [{ "elem.authorId": targetId }] }
-            ).catch(e => console.warn("Comment name sync delay"));
+                // LOCKOUT REMOVED per user request
+                req.body.username = newUsername;
+                req.body.lastUsernameChange = new Date();
+
+                // Propagate name change to posts and comments
+                await Post.updateMany({ author: targetId }, { $set: { username: req.body.username } });
+                await Post.updateMany(
+                    { "comments.authorId": targetId },
+                    { $set: { "comments.$[elem].authorName": req.body.username } },
+                    { arrayFilters: [{ "elem.authorId": targetId }] }
+                ).catch(e => console.warn("Comment name sync delay"));
+            } else {
+                // If username is same, remove it from req.body to prevent unnecessary cycles
+                delete req.body.username;
+            }
         }
 
         const updatedUser = await User.findByIdAndUpdate(

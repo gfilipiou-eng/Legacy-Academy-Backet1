@@ -1242,8 +1242,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         return allUsers.filter(u => ids?.includes(u._id));
     };
 
-    const isFollowing = currentUser?.following?.includes(displayUser?._id);
-    const hasRequested = displayUser?.followRequests?.includes(currentUser?._id);
+    const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
+    const hasRequested = displayUser?.followRequests?.some(id => String(id) === String(currentUser?._id));
 
     return (
 
@@ -1391,67 +1391,82 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ))}
                             </div>
 
-                            {userStories.length > 0 && (
-                                <div className="mb-6">
-                                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                        {userStories.map(s => (
-                                            <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
-                                                    {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                            {/* PRIVACY LOCK SCREEN */}
+                            {displayUser?.isPrivate && !isMe && !isFollowing ? (
+                                <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
+                                    <div className="w-20 h-20 mx-auto bg-white/5 rounded-full flex items-center justify-center border border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all">
+                                        <Icons.Shield className="w-10 h-10 text-gray-500 group-hover:text-[var(--gold-primary)] transition-all" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="font-black text-white text-base uppercase tracking-widest">{t('PRIVATE_TITLE')}</h3>
+                                        <p className="text-gray-500 text-[10px] uppercase tracking-tighter leading-relaxed mx-auto max-w-[200px]">{t('PRIVATE_DESC')}</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {userStories.length > 0 && (
+                                        <div className="mb-6">
+                                            <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
+                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                                {userStories.map(s => (
+                                                    <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                        <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                            {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                                                <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                            ) : (
+                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
+                                                                    <Icons.Play className="w-6 h-6 text-[var(--gold-primary)]" />
+                                                                    {/* Ensure video doesn't autoplay in thumbnail view */}
+                                                                    <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt)}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {userPosts.length === 0 ? (
+                                        <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
+                                    ) : (
+                                        <div className="grid grid-cols-3 gap-1 pb-20">
+                                            {userPosts.map(p => (
+                                                <div
+                                                    key={p._id}
+                                                    onClick={() => onOpenDetail(p)}
+                                                    className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center"
+                                                >
+                                                    {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                        <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
+                                                    ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                        <div className="relative w-full h-full">
+                                                            <video
+                                                                src={resolveMediaUrl(p.videoUrl || p.image)}
+                                                                muted
+                                                                playsInline
+                                                                controls
+                                                                preload="metadata"
+                                                                poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
+                                                                className="w-full h-full object-cover bg-gray-900"
+                                                            />
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                <Icons.Play className="w-6 h-6 text-white/80" />
+                                                            </div>
+                                                        </div>
+                                                    ) : p.image ? (
+                                                        <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
                                                     ) : (
-                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                            <Icons.Play className="w-6 h-6 text-[var(--gold-primary)]" />
-                                                            {/* Ensure video doesn't autoplay in thumbnail view */}
-                                                            <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
+                                                        <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
+                                                            <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
                                                         </div>
                                                     )}
                                                 </div>
-                                                <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt)}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {userPosts.length === 0 ? (
-                                <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
-                            ) : (
-                                <div className="grid grid-cols-3 gap-1 pb-20">
-                                    {userPosts.map(p => (
-                                        <div
-                                            key={p._id}
-                                            onClick={() => onOpenDetail(p)}
-                                            className="aspect-square bg-gray-900 border border-white/5 rounded-md overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center"
-                                        >
-                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover" />
-                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                <div className="relative w-full h-full">
-                                                    <video
-                                                        src={resolveMediaUrl(p.videoUrl || p.image)}
-                                                        muted
-                                                        playsInline
-                                                        controls
-                                                        preload="metadata"
-                                                        poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
-                                                        className="w-full h-full object-cover bg-gray-900"
-                                                    />
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                        <Icons.Play className="w-6 h-6 text-white/80" />
-                                                    </div>
-                                                </div>
-                                            ) : p.image ? (
-                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
-                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                </div>
-                                            )}
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}
@@ -2135,41 +2150,35 @@ const App = () => {
         if (!targetId || !user) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
 
-        // Optimistic UI Update Logic
-        // Use robust string comparison to avoid type mismatch issues (ObjectId vs String)
+        const targetUserObject = users.find(u => String(u._id) === String(targetId)) || profileUser;
         const isCurrentlyFollowing = user.following?.some(id => String(id) === String(targetId));
+        const isPrivate = targetUserObject?.isPrivate;
 
-        // Temporarily update local state to feel instant
+        // Optimistic UI Update Logic
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
-        } else {
+        } else if (!isPrivate) {
             updateUserState({ following: [...(user.following || []), targetId] });
         }
 
         try {
             const res = await axios.post(`/users/${targetId}/follow`);
-            const { followers, following, message } = res.data;
+            const { followers, following, message, isRequested } = res.data;
 
-            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers } : u));
+            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers, followRequests: res.data.followRequests || u.followRequests } : u));
             if (profileUser && String(profileUser._id) === String(targetId)) {
-                // Determine if we just unfollowed to correctly update the button text in ProfileModal
-                // The server returns the *new* list of followers for the target user.
-                // We also need to ensure the local 'user' has the updated 'following' list.
-                setProfileUser(prev => ({ ...prev, followers }));
+                setProfileUser(prev => ({ ...prev, followers, followRequests: res.data.followRequests || prev.followRequests }));
             }
 
-            // Trust the server response for the final state
-            if (following) {
-                updateUserState({ following });
-            } else {
-                fetchUsers(); // Fallback
-            }
+            if (following) updateUserState({ following });
+            else fetchUsers();
 
             if (message === 'Requested') addToast("ENCRYPTION REQUESTED", "success");
+            else if (message === 'Request Cancelled') addToast("REQUEST TERMINATED", "neutral");
             playSound('pop');
         } catch (e) {
             console.error('Follow failed', e);
-            // Revert state on error if needed - technically complex, but usually not needed for simple toggle
+            fetchUsers();
         }
         finally { setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; }); }
     };
