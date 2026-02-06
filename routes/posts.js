@@ -375,10 +375,10 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
           ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
         });
         const duration = durMeta?.format?.duration || 0;
-        if (duration > 10) {
+        if (duration > 600) { // Standardized to 10 minutes
           // delete the uploaded file to avoid orphaned large assets
           try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup large-upload', e && e.message); }
-          return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+          return res.status(400).json({ message: 'Intelligence packets exceed 10 minutes. Truncate required.' });
         }
       }
     } catch (probeErr) {
@@ -440,59 +440,84 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 
 // UPDATE POST
 router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
+  const reqId = req.requestId || 'put-' + Date.now().toString(36);
+  console.log(`📡 [${reqId}] UPDATE POST attempt for: ${req.params.id}`);
+
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      console.warn(`[${reqId}] Invalid Post ID format: ${req.params.id}`);
       return res.status(400).json({ message: "Invalid Post ID format" });
     }
+
     const post = await Post.findById(req.params.id);
     if (!post) {
-      console.warn("UPDATE POST FAILED: Not found:", req.params.id);
-      return res.status(404).json("Not found");
+      console.warn(`[${reqId}] Intelligence node not found: ${req.params.id}`);
+      return res.status(404).json("Intelligence node not found in sector.");
     }
+
     const currentUserId = req.user.id || req.user.userId;
-    if (String(post.author) !== String(currentUserId) && req.user.role !== "Founder") {
-      return res.status(403).json("Forbidden");
+    const isFounder = req.user.role === "Founder";
+    const isAuthor = String(post.author) === String(currentUserId);
+
+    if (!isAuthor && !isFounder) {
+      console.warn(`[${reqId}] Unauthorized edit attempt by ${currentUserId} on post by ${post.author}`);
+      return res.status(403).json("Mission Denied: Insufficient clearance level.");
     }
 
-    // Update fields
-    if (req.body.title) post.title = req.body.title;
-    if (req.body.desc) post.desc = req.body.desc;
-    if (req.body.visibility) post.visibility = req.body.visibility;
+    // Update basic fields
+    if (req.body.title !== undefined) post.title = req.body.title;
+    if (req.body.desc !== undefined) post.desc = req.body.desc;
 
-    // If body contains videoUrl (YouTube or external), apply it and clear file-based image
-    if (req.body.videoUrl) {
-      const maybe = String(req.body.videoUrl || '').trim();
-      const ytMatch = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(maybe);
-      if (ytMatch) {
-        post.videoUrl = maybe;
-        post.thumbnailUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
-        post.image = "";
-      } else {
-        // treat as generic external video link
-        post.videoUrl = maybe;
-        post.image = "";
+    // Explicitly handle visibility with fallback
+    if (req.body.visibility) {
+      const allowedVisibility = ['public', 'followers', 'private'];
+      if (allowedVisibility.includes(req.body.visibility)) {
+        post.visibility = req.body.visibility;
       }
     }
 
-    // Handle new media upload (file wins)
+    // Handle YouTube/External Links
+    if (req.body.videoUrl !== undefined) {
+      const maybe = String(req.body.videoUrl || '').trim();
+      if (maybe === "") {
+        // Only clear if explicitly sent as empty
+        post.videoUrl = "";
+      } else {
+        const ytMatch = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(maybe);
+        if (ytMatch) {
+          post.videoUrl = maybe;
+          post.thumbnailUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+          post.image = "";
+          console.log(`[${reqId}] YouTube link updated: ${ytMatch[1]}`);
+        } else {
+          post.videoUrl = maybe;
+          post.image = "";
+          console.log(`[${reqId}] External video link updated`);
+        }
+      }
+    }
+
+    // Handle new media upload (file wins over text-based URLs)
     if (req.file) {
+      console.log(`[${reqId}] New media detected: ${req.file.mimetype}`);
       const isVideo = req.file.mimetype.includes("video");
       if (isVideo) {
         // If local upload, probe duration and reject > 10s
-        try {
-          const isLocalUpload = req.file.path && String(req.file.path).startsWith('uploads');
-          if (isLocalUpload) {
+        const isLocalUpload = req.file.path && String(req.file.path).startsWith('uploads');
+        if (isLocalUpload) {
+          try {
             const durMeta = await new Promise((resolve, reject) => {
               ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
             });
             const duration = durMeta?.format?.duration || 0;
-            if (duration > 10) {
-              try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup long video', e && e.message); }
-              return res.status(400).json({ message: 'Video duration exceeds 10 seconds. Please upload a shorter clip.' });
+            if (duration > 600) { // Keep consistent with 10min limit in frontend
+              try { fs.unlinkSync(req.file.path); } catch (e) { }
+              return res.status(400).json({ message: 'Intelligence packets exceed 10 minutes. Truncate required.' });
             }
+          } catch (probeErr) {
+            console.warn(`[${reqId}] Probe failed, proceeding with caution:`, probeErr.message);
           }
-        } catch (probeErr) { console.warn('Update-probe failed:', probeErr && probeErr.message); }
-
+        }
         post.videoUrl = req.file.path;
         post.image = "";
       } else {
@@ -501,13 +526,19 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
       }
     }
 
+    console.log(`[${reqId}] Target locked. Saving intelligence...`);
     const updatedPost = await post.save();
+    console.log(`✅ [${reqId}] Intelligence SYNCHRONIZED: ${post._id}`);
     res.status(200).json(updatedPost);
+
   } catch (e) {
-    console.error("Update failed", e);
+    console.error(`🚨 [${reqId}] CRITICAL INTELLIGENCE CORRUPTION:`, e);
     res.status(500).json({
-      message: "Neural command failed: Intelligence update aborted.",
-      error: e.message || "Unknown error"
+      error: "Neural Link Severed",
+      message: "An internal protocol error occurred during intelligence update.",
+      detail: e.message || "Unknown anomaly",
+      requestId: reqId,
+      code: "POST_EDIT_500"
     });
   }
 });

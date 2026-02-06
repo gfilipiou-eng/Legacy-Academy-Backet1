@@ -1982,7 +1982,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             playSound('pop');
         } catch (e) {
             console.error("Edit failed", e);
-            alert('Update failed');
+            const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
+            alert(`Neural link failure: ${detail}`);
         } finally { setSaving(false); }
     };
 
