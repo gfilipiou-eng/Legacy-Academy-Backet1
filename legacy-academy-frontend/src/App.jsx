@@ -234,7 +234,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     );
 };
 
-const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
     if (!post) return null;
     const { t, lang } = useTranslation(user);
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
@@ -245,8 +245,23 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
     const commentRecorderRef = useRef(null);
-    const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
+
+    const handleClearComments = async () => {
+        if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
+        try {
+            await axios.delete(`/posts/${post._id}/comments`);
+            // Optimistically clear
+            post.comments = [];
+            // Force redraw/reload if needed, or rely on parent refetch
+            // But since 'post' prop is from parent, modifying it directly is anti-pattern in React without state update.
+            // Ideally call a parent handler 'onClearComments'
+            if (onClearComments) onClearComments(post._id);
+        } catch (e) {
+            console.error("Failed to clear comments", e);
+            alert("Failed to clear comments.");
+        }
+    };
 
     const stopRecording = (shouldDiscard = false) => {
         discardRef.current = shouldDiscard;
@@ -329,7 +344,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <div className="flex gap-1">
                             {isOwner && <button onClick={() => { playSound('pop'); onEdit(post); }} className="p-3 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90 group"><Icons.Edit className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
-                            {(isOwner || isFounder) && <button onClick={() => { playSound('sword'); onDelete(post._id); onClose(); }} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group"><Icons.Trash className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
+                            {(isOwner || isFounder) && (
+                                <>
+                                    <button onClick={handleClearComments} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group" title="Clear All Comments">
+                                        <Icons.Broom className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                                    </button>
+                                    <button onClick={() => { playSound('sword'); onDelete(post._id); onClose(); }} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group"><Icons.Trash className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -1110,6 +1132,16 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
 
+    const handleClearChat = async () => {
+        if (!activeChat) return;
+        if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || "NEUTRALIZE ALL INTEL IN THIS CONVERSATION?")) return;
+        try {
+            await axios.delete(`/messages/conversation/${activeChat._id}`);
+            setMessages(prev => ({ ...prev, [activeChat._id]: [] }));
+            playSound('sword');
+        } catch (e) { console.error('Clear failed', e); }
+    };
+
     const handleSend = async () => {
         if (!inputText.trim() || !activeChat) return;
         const text = inputText;
@@ -1166,10 +1198,19 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                 <div className={`flex-1 flex flex-col bg-[#050505] ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     {activeChat ? (
                         <>
-                            <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/50 backdrop-blur-xl">
-                                <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
-                                <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
+                            <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
+                                    <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
+                                    <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                </div>
+                                <button
+                                    onClick={handleClearChat}
+                                    className="p-3 text-gray-500 hover:text-red-500 transition-all active:scale-90 group"
+                                    title={t('CLEAR_CHAT') || "Clear Chat"}
+                                >
+                                    <Icons.Broom className="w-5 h-5 group-hover:rotate-[-20deg] transition-transform" />
+                                </button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => (
@@ -3046,7 +3087,10 @@ const App = () => {
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} addToast={addToast} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
-                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
+                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
+                        setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
+                        setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
+                    }} />}
 
                 </div >
             )}

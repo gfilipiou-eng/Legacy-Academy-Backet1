@@ -313,7 +313,21 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
-// GET POSTS BY USER ID
+// CLEAR ALL COMMENTS ON A POST
+router.delete("/:id/comments", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json("Post not found");
+    const userId = req.user.id || req.user.userId;
+    if (post.author.toString() !== userId && req.user.role !== "Founder") {
+      return res.status(403).json("Insufficient clearance to clear intelligence logs.");
+    }
+    post.comments = [];
+    await post.save();
+    res.status(200).json([]);
+  } catch (e) { res.status(500).json(e); }
+});
+
 // GET ALL POSTS (With Privacy Filter)
 // GET ALL POSTS (With Privacy Filter)
 router.get("/", verifyToken, async (req, res) => {
