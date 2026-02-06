@@ -151,9 +151,9 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full sm:max-w-lg bg-[#111] border-t sm:border border-white/10 rounded-t-[2rem] sm:rounded-3xl p-6 shadow-2xl animate-slide-up sm:animate-pop-in safe-area-bottom pb-10 sm:pb-6">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative w-full sm:max-w-lg bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl p-6 shadow-2xl animate-pop-in safe-area-bottom">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-black italic text-white flex items-center gap-2">
                         {t('ENGAGE')} <span className="text-[var(--gold-primary)]">///</span>
