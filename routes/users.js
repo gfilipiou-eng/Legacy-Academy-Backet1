@@ -81,7 +81,12 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         // 2. CANCEL REQUEST if already requested
         if (userToFollow.followRequests?.some(id => String(id) === currentUserId)) {
-            await User.findByIdAndUpdate(targetId, { $pull: { followRequests: currentUserId } });
+            await User.findByIdAndUpdate(targetId, {
+                $pull: {
+                    followRequests: currentUserId,
+                    notifications: { from: new mongoose.Types.ObjectId(String(currentUserId)), type: 'follow_request' }
+                }
+            });
             return res.status(200).json({ message: "Request Cancelled", isRequested: false });
         }
 
@@ -177,15 +182,26 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 
         const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
         if (!hasRequest) {
-            console.warn(`[ACCEPT REQ] 400 Error: Request ${requesterId} not found in ${userId}'s list:`, user.followRequests);
+            console.warn(`[ACCEPT REQ] Request ${requesterId} not found in ${userId}'s list. Cleaning up stale notification.`);
+            // CLEANUP STALE NOTIFICATION
+            await User.findByIdAndUpdate(userId, {
+                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
+            });
+
             // Fallback: If it's already a follower, just say OK to clear UI
             if (user.followers?.some(id => String(id) === String(requesterId))) {
                 return res.status(200).json("Already a follower.");
             }
-            return res.status(400).json("No request found in logs.");
+            return res.status(200).json("Request expired or canceled."); // Return 200 to clear UI error
         }
 
-        await User.findByIdAndUpdate(userId, { $pull: { followRequests: requesterId }, $push: { followers: requesterId } });
+        await User.findByIdAndUpdate(userId, {
+            $pull: {
+                followRequests: requesterId,
+                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+            },
+            $push: { followers: requesterId }
+        });
         await User.findByIdAndUpdate(requesterId, {
             $push: {
                 following: userId,
@@ -215,9 +231,20 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
         if (!user) return res.status(404).json("Agent not found.");
 
         const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
-        if (!hasRequest) return res.status(400).json("No request found in logs.");
+        if (!hasRequest) {
+            // CLEANUP STALE NOTIFICATION
+            await User.findByIdAndUpdate(userId, {
+                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
+            });
+            return res.status(200).json("Request already removed.");
+        }
 
-        await User.findByIdAndUpdate(userId, { $pull: { followRequests: requesterId } });
+        await User.findByIdAndUpdate(userId, {
+            $pull: {
+                followRequests: requesterId,
+                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+            }
+        });
         res.status(200).json("Request neutralized.");
     } catch (err) { res.status(500).json(err); }
 });
