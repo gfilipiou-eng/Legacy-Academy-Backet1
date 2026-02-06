@@ -11,7 +11,7 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate followers following createdAt lastSeen');
+        const users = await User.find().select('username role profilePic isPrivate isFollowersOnly followers following createdAt lastSeen');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);
@@ -126,11 +126,9 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 // 1. Λήψη στοιχείων χρήστη
 router.get("/find/:id", async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json("Χρήστης δεν βρέθηκε.");
-
-        const { password, ...others } = user._doc;
-        res.status(200).json(others);
+        const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following createdAt lastSeen');
+        if (!foundUser) return res.status(404).json("Χρήστης δεν βρέθηκε.");
+        res.status(200).json(foundUser);
     } catch (err) {
         res.status(500).json("Σφάλμα κατά την αναζήτηση χρήστη.");
     }

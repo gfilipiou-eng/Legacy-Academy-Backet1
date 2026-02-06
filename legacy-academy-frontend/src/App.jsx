@@ -1213,10 +1213,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         if (!activeChat) return;
         if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || "NEUTRALIZE ALL INTEL IN THIS CONVERSATION?")) return;
         try {
-            const url = `/messages/conversation/clear/${activeChat._id}`;
+            const targetId = activeChat._id || activeChat.id || activeChat.otherId;
+            if (!targetId) {
+                console.error("📡 [DEBUG] Clear failed: No valid target ID found in activeChat", activeChat);
+                return alert("Mission Aborted: Target identifier missing.");
+            }
+            const url = `/messages/conversation/clear/${targetId}`;
             console.log(`📡 [DEBUG] Clearing chat: ${url}`);
             await axios.post(url);
-            setMessages(prev => ({ ...prev, [activeChat._id]: [] }));
+            setMessages(prev => ({ ...prev, [targetId]: [] }));
             playSound('sword');
         } catch (e) { console.error('Clear failed', e); }
     };

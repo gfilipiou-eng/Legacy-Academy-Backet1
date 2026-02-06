@@ -19,6 +19,7 @@ router.post("/", verifyToken, async (req, res) => {
         if (!req.user) return res.status(401).json("Neural interface not recognized.");
         const senderId = req.user.id || req.user.userId;
         const { recipient, text } = req.body;
+        console.log(`[${reqId}] Message from ${senderId} to ${recipient}. Text preview: ${text?.substring(0, 20)}`);
 
         if (!recipient || !text) {
             return res.status(400).json("Recipient and text are required");
@@ -29,8 +30,19 @@ router.post("/", verifyToken, async (req, res) => {
             return res.status(400).json("Invalid recipient identifier format.");
         }
         const targetUser = await User.findById(recipient);
-        if (targetUser?.isFollowersOnly && !targetUser.followers.some(id => String(id) === String(senderId))) {
-            return res.status(403).json("This agent only accepts messages from followers.");
+        if (!targetUser) {
+            console.warn(`[${reqId}] Recipient not found: ${recipient}`);
+            return res.status(404).json("Recipient not found in neural database.");
+        }
+
+        console.log(`[${reqId}] Target User Settings: isPrivate=${targetUser.isPrivate}, isFollowersOnly=${targetUser.isFollowersOnly}. Followers count: ${targetUser.followers?.length || 0}`);
+
+        if (targetUser.isFollowersOnly) {
+            const isFollower = targetUser.followers.some(id => String(id) === String(senderId));
+            console.log(`[${reqId}] Guard Chat Active. Is Sender Follower? ${isFollower}`);
+            if (!isFollower) {
+                return res.status(403).json("This agent only accepts messages from followers.");
+            }
         }
 
         const newMessage = new Message({
@@ -142,16 +154,23 @@ router.post("/conversation/clear/:otherUserId", verifyToken, async (req, res) =>
         const currentUserId = req.user.id || req.user.userId;
         const otherUserId = req.params.otherUserId;
 
+        if (!otherUserId || otherUserId === 'undefined' || otherUserId === 'null') {
+            console.error("CLEAR CHAT FAILED: Invalid otherUserId param", otherUserId);
+            return res.status(400).json("Identification protocol failed: ID missing.");
+        }
+
         // Delete where (sender=me AND recipient=them) OR (sender=them AND recipient=me)
-        await Message.deleteMany({
+        const result = await Message.deleteMany({
             $or: [
                 { sender: currentUserId, recipient: otherUserId },
                 { sender: otherUserId, recipient: currentUserId }
             ]
         });
 
+        console.log(`[CLEAR] Conversation between ${currentUserId} and ${otherUserId} neutralized. Deleted: ${result.deletedCount}`);
         res.status(200).json("Conversation neutralized.");
     } catch (err) {
+        console.error("CLEAR CHAT ERROR:", err);
         res.status(500).json(err);
     }
 });
