@@ -108,8 +108,21 @@ router.post("/:id/dislike", verifyToken, handleDislike);
 router.put("/:id/dislike", verifyToken, handleDislike);
 
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
-// Update: Allow file upload for voice comments
-router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res) => {
+// Update: Allow file upload for voice comments w/ Safe Wrapper
+const safeCommentUpload = (req, res, next) => {
+  upload.single("file")(req, res, (err) => {
+    if (err) {
+      console.error("Comment Upload Middleware Error:", err.message);
+      // If upload fails, we can either reject or continue without file. 
+      // For comments, if it was voice note, it's critical. If text, maybe optional.
+      // But usually this means "File too large" or "Unexpected field".
+      return res.status(400).json({ message: "Upload failed: " + err.message });
+    }
+    next();
+  });
+};
+
+router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => {
   const reqId = req.requestId || 'no-id';
   console.log(`📡 [${reqId}] POST COMMENT attempt for Post: ${req.params.id}`);
 
