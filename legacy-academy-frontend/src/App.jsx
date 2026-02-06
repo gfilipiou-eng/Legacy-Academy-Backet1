@@ -367,7 +367,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="p-4 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-20px_80px_rgba(0,0,0,0.95)]">
+
+                    <div className="p-4 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-20px_80px_rgba(0,0,0,0.95)] pb-safe-or-nav">
                         <div className="flex items-center justify-between mb-5 px-1.5">
                             <div className="flex items-center gap-6">
                                 <button
@@ -443,7 +444,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         placeholder={t('ENGAGE')}
                                         value={commentText}
                                         onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
-                                        className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
+                                        className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
                                     />
                                     <div className="flex gap-1 pr-1 shrink-0">
                                         <button
@@ -639,7 +640,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 };
 
@@ -2569,6 +2570,7 @@ const App = () => {
         try {
             // ALWAYS use FormData to satisfy backend 'upload.single' middleware
             let formData;
+            let res;
             if (input instanceof FormData) {
                 formData = input;
             } else {
