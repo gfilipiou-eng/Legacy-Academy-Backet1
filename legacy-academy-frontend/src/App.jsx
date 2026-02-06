@@ -290,10 +290,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     return (
 
         <div className="fixed inset-0 z-[1200] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
-            <button onClick={onClose} className="fixed top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 z-[1500] shadow-xl active:scale-90 transition-transform"><Icons.X className="w-6 h-6 text-white" /></button>
-            <div className="w-full max-w-5xl h-[100dvh] md:h-[85vh] bg-[#0a0a0a] rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-2xl shrink-0 my-auto transform-gpu">
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl active:scale-90 transition-all group">
+                <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
+            </button>
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu">
                 {/* Image Section - Responsive height */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden max-h-[40vh] md:max-h-full md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[45vh] md:min-h-0 md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -450,10 +452,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
 const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
     const videoRef = useRef(null);
+    const seekRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [progress, setProgress] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     const togglePlay = (e) => {
         e.stopPropagation();
@@ -475,8 +479,51 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
     };
 
     const handleTimeUpdate = () => {
+        if (!videoRef.current || isDragging) return;
         const p = (videoRef.current.currentTime / videoRef.current.duration) * 100;
         setProgress(p);
+    };
+
+    const handleSeek = (e) => {
+        if (!videoRef.current || !seekRef.current) return;
+        const rect = seekRef.current.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        videoRef.current.currentTime = pos * videoRef.current.duration;
+        setProgress(pos * 100);
+    };
+
+    useEffect(() => {
+        const handleMove = (e) => {
+            if (isDragging) handleSeek(e);
+        };
+        const handleEnd = () => setIsDragging(false);
+
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', handleEnd);
+            window.addEventListener('touchmove', handleMove);
+            window.addEventListener('touchend', handleEnd);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleMove);
+            window.removeEventListener('mouseup', handleEnd);
+            window.removeEventListener('touchmove', handleMove);
+            window.removeEventListener('touchend', handleEnd);
+        };
+    }, [isDragging]);
+
+    const formatTime = (time) => {
+        if (isNaN(time)) return '0:00';
+        const mins = Math.floor(time / 60);
+        const secs = Math.floor(time % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const handleMouseDown = (e) => {
+        e.stopPropagation();
+        setIsDragging(true);
+        handleSeek(e);
     };
 
     return (
@@ -501,14 +548,20 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
 
             {/* NEURAL OVERLAY */}
             <AnimatePresence>
-                {(isHovered || !isPlaying) && (
+                {(isHovered || !isPlaying || isDragging) && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-black/20 flex flex-col justify-between p-4 pointer-events-none"
+                        className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none"
                     >
                         <div className="flex justify-between items-start">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
+                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                            >
+                                {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
+                            </button>
                             {onExpand ? (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
@@ -517,12 +570,6 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                                     <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                 </button>
                             ) : <div />}
-                            <button
-                                onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
-                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
-                            >
-                                {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
-                            </button>
                         </div>
 
                         <div className="flex items-center justify-center">
@@ -536,11 +583,25 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                         </div>
 
                         <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
-                            <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div className="flex justify-between text-[10px] font-black text-white/70 uppercase tracking-widest px-1">
+                                <span>{videoRef.current ? formatTime(videoRef.current.currentTime) : '0:00'}</span>
+                                <span>{videoRef.current ? formatTime(videoRef.current.duration) : '0:00'}</span>
+                            </div>
+                            <div
+                                ref={seekRef}
+                                className="w-full h-2 bg-white/10 rounded-full cursor-pointer relative group/seek"
+                                onMouseDown={handleMouseDown}
+                                onTouchStart={handleMouseDown}
+                            >
+                                <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
                                 <motion.div
-                                    className="h-full bg-[var(--gold-primary)]"
+                                    className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
                                     style={{ width: `${progress}%` }}
-                                    transition={{ type: 'spring', bounce: 0, duration: 0.2 }}
+                                    transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
+                                />
+                                <motion.div
+                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
+                                    style={{ left: `${progress}%`, marginLeft: '-8px' }}
                                 />
                             </div>
                         </div>
@@ -837,6 +898,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                         src={resolveMediaUrl(post.videoUrl || post.image)}
                                         poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
                                         className="w-full h-auto max-h-[600px] rounded-xl"
+                                        onExpand={() => onOpenDetail(post)}
                                     />
                                 ) : post.image ? (
                                     <img
@@ -2128,6 +2190,15 @@ const App = () => {
 
         const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
+
+        // SYNC THEME LIVE ACROSS TABS
+        const handleStorageChange = (e) => {
+            if (e.key === 'themeColor' && e.newValue) {
+                applyTheme(e.newValue);
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     // Sync theme when user object updates (e.g. from backend)
