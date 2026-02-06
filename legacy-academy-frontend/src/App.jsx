@@ -311,7 +311,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
                 {/* Image Section - Responsive height */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[40vh] md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[60vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -368,7 +368,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="p-4 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-20px_80px_rgba(0,0,0,0.95)] pb-safe-or-nav">
+                    <div className="p-4 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-20px_80px_rgba(0,0,0,0.95)] pb-24 md:pb-safe-or-nav">
                         <div className="flex items-center justify-between mb-5 px-1.5">
                             <div className="flex items-center gap-6">
                                 <button
