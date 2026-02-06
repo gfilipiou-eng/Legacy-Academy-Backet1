@@ -157,12 +157,13 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
 
     const body = req.body || {};
     const commentText = (body.text || "").trim();
+    console.log(`[${reqId}] Body received:`, { text: commentText, hasFile: !!req.file });
 
     // SAFE CASTING to ObjectId
     let authorIdObj;
     try {
       if (!mongoose.Types.ObjectId.isValid(String(currentUserId))) {
-        throw new Error("Invalid User ID format");
+        throw new Error(`Invalid User ID format: ${currentUserId}`);
       }
       authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
     } catch (castErr) {
@@ -180,8 +181,11 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
     };
 
     if (!newComment.text && !newComment.audioUrl) {
+      console.warn(`[${reqId}] Empty comment attempted`);
       return res.status(400).json("Comment cannot be empty");
     }
+
+    console.log(`[${reqId}] Persisting comment...`, { authorId: authorIdObj });
 
     // Simplified and robust database update
     const updatedPost = await Post.findByIdAndUpdate(
@@ -199,8 +203,8 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
     const runNotifications = async () => {
       try {
         const targetAuthorId = post.author;
+        console.log(`📡 [${reqId}] Starting notifications. Author: ${targetAuthorId}`);
         if (targetAuthorId && String(targetAuthorId) !== String(currentUserId)) {
-          console.log(`📡 [${reqId}] Sending comment notification to author: ${targetAuthorId}`);
           const notifText = newComment.audioUrl ? "Sent a voice note." : (commentText.substring(0, 50) || "Commented.");
           const fromName = req.user.username || currentUser.username || "Someone";
 
@@ -218,6 +222,7 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
               }
             }
           });
+          console.log(`📡 [${reqId}] Notification sent to author`);
         }
 
         // HANDLE MENTIONS
@@ -225,7 +230,7 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
         const matches = commentText.match(mentionRegex);
         if (matches) {
           const mentions = [...new Set(matches.map(m => m.slice(1)))];
-          console.log(`📡 [${reqId}] Processing ${mentions.length} mentions in comment`);
+          console.log(`📡 [${reqId}] Processing ${mentions.length} mentions`);
           for (const username of mentions) {
             const mentionedUser = await User.findOne({ username });
             if (mentionedUser && String(mentionedUser._id) !== String(currentUserId) && String(mentionedUser._id) !== String(post.author)) {
@@ -254,9 +259,8 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
     // Fire and forget
     runNotifications().catch(e => console.error(`🚨 [${reqId}] runNotifications Critical Fail:`, e));
 
-    console.log(`✅ [${reqId}] Comment DEPLOYED to post ${req.params.id}`);
+    console.log(`✅ [${reqId}] Comment DEPLOYED. Returning comments. Count: ${updatedPost?.comments?.length || 0}`);
 
-    // Ensure we return data even if something small failed
     const finalData = (updatedPost && updatedPost.comments) ? updatedPost.comments : [];
     return res.status(200).json(finalData);
   } catch (e) {
