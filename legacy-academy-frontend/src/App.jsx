@@ -555,21 +555,21 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                         exit={{ opacity: 0 }}
                         className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none"
                     >
-                        <div className="flex justify-between items-start">
+                        <div className="flex justify-start items-start gap-2.5">
                             <button
                                 onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
                                 className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                             >
                                 {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
                             </button>
-                            {onExpand ? (
+                            {onExpand && (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
                                     className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                                 >
                                     <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                 </button>
-                            ) : <div />}
+                            )}
                         </div>
 
                         <div className="flex items-center justify-center">
