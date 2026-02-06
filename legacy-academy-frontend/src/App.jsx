@@ -657,9 +657,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                                 )}
                             </div>
                             <div className="flex flex-col pointer-events-none">
-                                <h1 className="text-sm sm:text-lg font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
-                                    Legacy <span className="font-black text-[var(--gold-primary)]">Intel</span>
-                                </h1>
+                                <img src="/image/Applogo.png" alt="Legacy Academy" className="h-12 sm:h-16 w-auto object-contain drop-shadow-2xl opacity-90" />
                             </div>
                         </div>
 
