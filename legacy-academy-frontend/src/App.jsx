@@ -2526,13 +2526,19 @@ const App = () => {
         }
 
         try {
-            let res;
+            // ALWAYS use FormData to satisfy backend 'upload.single' middleware
+            let formData;
             if (input instanceof FormData) {
-                res = await axios.post(`/posts/${postId}/comment`, input);
+                formData = input;
             } else {
-                console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment`);
-                res = await axios.post(`/posts/${postId}/comment`, { text: textValue });
+                formData = new FormData();
+                formData.append('text', textValue);
             }
+            // Append explicit user ID for redundancy if needed, though token is primary
+            // Remove 'user' object to prevent JSON parsing issues, rely on token
+
+            console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment with FormData`);
+            res = await axios.post(`/posts/${postId}/comment`, formData);
             const updatedComments = res.data;
             playSound('pop');
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
@@ -2608,18 +2614,26 @@ const App = () => {
     const handleAcceptRequest = async (requesterId) => {
         try {
             await axios.post(`/users/requests/${requesterId}/accept`);
+            playSound('pop');
+        } catch (e) {
+            console.error('Accept request failed', e);
+            // If it failed (e.g. 400), it might be stale. Refreshing notifications will clear it if my backend fix is live.
+            // If backend fix NOT live, we still want to refresh to see if it disappears.
+        } finally {
             fetchNotifications();
             fetchUsers();
-            playSound('pop');
-        } catch (e) { console.error('Accept request failed', e); }
+        }
     };
 
     const handleRejectRequest = async (requesterId) => {
         try {
             await axios.post(`/users/requests/${requesterId}/reject`);
-            fetchNotifications();
             playSound('pop');
-        } catch (e) { console.error('Reject request failed', e); }
+        } catch (e) {
+            console.error('Reject request failed', e);
+        } finally {
+            fetchNotifications();
+        }
     };
 
     // FIX: Real Share Functionality
