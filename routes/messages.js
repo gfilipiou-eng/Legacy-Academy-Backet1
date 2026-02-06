@@ -114,4 +114,25 @@ router.get("/conversations", verifyToken, async (req, res) => {
     }
 });
 
+// Clear conversation
+router.delete("/conversation/:otherUserId", verifyToken, async (req, res) => {
+    try {
+        if (!req.user) return res.status(401).json("Auth required");
+        const currentUserId = req.user.id || req.user.userId;
+        const otherUserId = req.params.otherUserId;
+
+        // Delete where (sender=me AND recipient=them) OR (sender=them AND recipient=me)
+        await Message.deleteMany({
+            $or: [
+                { sender: currentUserId, recipient: otherUserId },
+                { sender: otherUserId, recipient: currentUserId }
+            ]
+        });
+
+        res.status(200).json("Conversation neutralized.");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 export default router;
