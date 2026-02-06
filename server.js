@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import axios from "axios";
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
@@ -40,6 +41,13 @@ console.log("Loading email service...");
 import "./config/email.js";
 
 const app = express();
+
+// Ensure uploads directory exists for persistent assets
+const uploadsPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'uploads');
+if (!fs.existsSync(uploadsPath)) {
+  console.log("📂 Creating uploads directory...");
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
 
 // Middleware
 app.use(cors());

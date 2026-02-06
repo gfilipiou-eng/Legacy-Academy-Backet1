@@ -138,8 +138,8 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
 
     const currentUser = await User.findById(currentUserId).select("username profilePic").lean();
     if (!currentUser) {
-      console.error(`[${reqId}] USER NOT FOUND: ${currentUserId}`);
-      return res.status(401).json("User profile no longer exists.");
+      console.error(`🚨 [${reqId}] USER NOT FOUND: ${currentUserId}`);
+      return res.status(401).json("User profile no longer exists. Access denied.");
     }
 
     const body = req.body || {};
@@ -238,7 +238,10 @@ router.post("/:id/comment", upload.single("file"), verifyToken, async (req, res)
     runNotifications().catch(e => console.error(`🚨 [${reqId}] runNotifications Critical Fail:`, e));
 
     console.log(`✅ [${reqId}] Comment DEPLOYED to post ${req.params.id}`);
-    return res.status(200).json(updatedPost.comments);
+
+    // Ensure we return data even if something small failed
+    const finalData = (updatedPost && updatedPost.comments) ? updatedPost.comments : [];
+    return res.status(200).json(finalData);
   } catch (e) {
     const errorId = req.requestId || 'err-' + Date.now().toString(36);
     console.error(`🚨 COMMENT ERROR [${errorId}] ON POST ${req.params.id}:`, e);

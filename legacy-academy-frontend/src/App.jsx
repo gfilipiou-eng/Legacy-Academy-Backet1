@@ -295,10 +295,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
-                {/* Mobile Close Button (More visible) */}
-                <button onClick={onClose} className="md:hidden absolute top-6 right-6 p-4 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full z-[2000] active:scale-90 shadow-2xl">
-                    <Icons.X className="w-6 h-6 text-white" />
-                </button>
                 {/* Image Section - Responsive height */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[40vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -365,8 +361,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     onClick={() => onDislike(post._id)}
                                     className="flex items-center gap-2 group transition-all active:scale-125 hover:bg-white/5 p-1.5 rounded-xl mobile-os-action-btn"
                                 >
-                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-400 group-hover:text-blue-400'}`} />
-                                    <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
+                                    <Icons.ThumbsDown className={`w-6 h-6 transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-400 group-hover:text-[var(--gold-primary)]'}`} />
+                                    <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
                             <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-xl transition-all active:scale-90 group">
@@ -923,13 +919,15 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     />
                                 ) : null}
 
-                                {/* ZOOM BUTTON OVERLAY */}
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
-                                    className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--gold-primary)] hover:text-black transition-all active:scale-90 group z-20 shadow-2xl"
-                                >
-                                    <Icons.Maximize className="w-5 h-5" />
-                                </button>
+                                {/* ZOOM BUTTON OVERLAY - Only for images, Video has its own */}
+                                {(!post.videoUrl && !(post.image && post.image.match(/\.(mp4|mov|webm)$/i)) && !isYouTubeUrl(post.videoUrl)) && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
+                                        className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--gold-primary)] hover:text-black transition-all active:scale-90 group z-20 shadow-2xl"
+                                    >
+                                        <Icons.Maximize className="w-5 h-5" />
+                                    </button>
+                                )}
 
                                 {post.audioUrl && (
                                     <div className="p-4 bg-gray-900 border-t border-white/10">
@@ -1411,8 +1409,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         if (p.isStory) return false;
-        if (activeTab === 'VIDEO') return isYouTubeUrl(p.videoUrl) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
-        if (activeTab === 'POSTS') return !p.videoUrl && !isYouTubeUrl(p.videoUrl) && !(p.image && p.image.match(/\.(mp4|mov|webm)$/i));
+        const isVideo = isYouTubeUrl(p.videoUrl) || (p.videoUrl && p.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
+        if (activeTab === 'VIDEO') return isVideo;
+        if (activeTab === 'POSTS') return !isVideo;
         return true;
     }), [userSpecificPosts, activeTab]);
 
