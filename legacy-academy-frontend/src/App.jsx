@@ -925,7 +925,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 {/* ZOOM BUTTON OVERLAY */}
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
-                                    className="absolute top-4 right-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--gold-primary)] hover:text-black transition-all active:scale-90 group z-20 shadow-2xl"
+                                    className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--gold-primary)] hover:text-black transition-all active:scale-90 group z-20 shadow-2xl"
                                 >
                                     <Icons.Maximize className="w-5 h-5" />
                                 </button>
