@@ -114,7 +114,7 @@ router.get("/conversations", verifyToken, async (req, res) => {
     }
 });
 
-// Clear conversation
+// Clear conversation (User requested fix for 404)
 router.delete("/conversation/:otherUserId", verifyToken, async (req, res) => {
     try {
         if (!req.user) return res.status(401).json("Auth required");

@@ -623,7 +623,9 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                                     </button>
                                 )}
                             </div>
-                            <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all pointer-events-none opacity-90 shadow-2xl drop-shadow-lg" alt="Legacy Academy" />
+                            <div className="flex flex-col">
+                                <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tighter uppercase drop-shadow-2xl opacity-90">Legacy Academy<br /><span className="text-[var(--gold-primary)]">Intel</span></h1>
+                            </div>
                         </div>
 
                         <div className="flex items-center justify-center">
@@ -1246,7 +1248,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-3 bg-[#0a0a0a]/80 backdrop-blur-3xl border-t border-white/5 flex items-center gap-2 safe-area-bottom">
+                            <div className="p-3 pb-8 md:pb-3 bg-[#0a0a0a]/80 backdrop-blur-3xl border-t border-white/5 flex items-center gap-2 safe-area-bottom z-[100]">
                                 <div className="flex-1 relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl px-4 focus-within:border-blue-500/50 focus-within:bg-white/[0.05] transition-all group">
                                     <input
                                         type="text"
