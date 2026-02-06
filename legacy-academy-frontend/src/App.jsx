@@ -151,9 +151,9 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[5000] flex items-center justify-center pointer-events-none p-4">
+        <div className="fixed inset-0 z-[5000] flex items-start justify-center pointer-events-none p-4 pt-10 sm:pt-20">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm pointer-events-auto" onClick={onClose} />
-            <div className="relative w-full max-w-[320px] bg-black/90 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-pop-in pointer-events-auto flex flex-col justify-center">
+            <div className="relative w-full max-w-[320px] bg-black/90 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-pop-in pointer-events-auto flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-base font-black italic text-white flex items-center gap-2">
                         {t('ENGAGE')} <span className="text-[var(--gold-primary)] opacity-50">///</span>
@@ -1929,7 +1929,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
-            if (dur && dur > 300) {
+            if (dur && dur > 600) {
                 alert(t('VIDEO_ERROR'));
                 e.target.value = '';
                 return;
@@ -2106,7 +2106,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
             if (dur && dur > 600) {
-                alert('Video must be 10 minutes or shorter. Please trim your clip.');
+                alert(t('VIDEO_ERROR'));
                 e.target.value = '';
                 return;
             }
