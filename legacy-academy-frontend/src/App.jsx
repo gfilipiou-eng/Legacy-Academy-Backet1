@@ -1214,9 +1214,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
 const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const { t, i18n, lang } = useTranslation(user);
+    const [saving, setSaving] = useState(false);
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
-    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -3012,9 +3012,9 @@ const App = () => {
                                 <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}><Icons.Home className="w-6 h-6" /></button>
                                 <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}><Icons.Search className="w-6 h-6" /></button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Bell className={`w-6 h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse' : ''}`} />
-                                    {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-black shadow-glow-red" />}
+                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                    <Icons.Bell className={`w-6 h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                                    {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                 </button>
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-gray-500 hover:text-red-500 transition-all"><Icons.Logout className="w-6 h-6" /></button>
