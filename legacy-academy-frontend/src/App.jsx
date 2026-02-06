@@ -2154,7 +2154,7 @@ const applyTheme = (color) => {
 const App = () => {
     const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
-    const { t, lang } = useTranslation(user);
+    const { t, i18n, lang } = useTranslation(user);
     const [toasts, setToasts] = useState([]);
     const addToast = (text, type = 'info') => {
         const id = Date.now();
