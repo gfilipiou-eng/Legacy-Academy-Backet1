@@ -326,8 +326,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
                         </div>
                         <div className="flex gap-1">
-                            {isOwner && <button onClick={() => onEdit(post)} className="p-3 text-gray-500 hover:text-blue-500 transition-colors"><Icons.Settings className="w-5 h-5" /></button>}
-                            {(isOwner || isFounder) && <button onClick={() => { onDelete(post._id); onClose(); }} className="p-3 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-5 h-5" /></button>}
+                            {isOwner && <button onClick={() => { playSound('pop'); onEdit(post); }} className="p-3 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90 group"><Icons.Edit className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
+                            {(isOwner || isFounder) && <button onClick={() => { playSound('sword'); onDelete(post._id); onClose(); }} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group"><Icons.Trash className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
                         </div>
                     </div>
 
@@ -2955,7 +2955,7 @@ const App = () => {
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
-                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
+                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
 
                 </div >
             )}
