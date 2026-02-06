@@ -2764,7 +2764,7 @@ const App = () => {
                                     </div>
 
                                     <div className="flex gap-2 mb-6">
-                                        <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="flex-1 bg-black border border-white/20 rounded-xl py-2 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none text-center">
+                                        <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none text-center h-[52px]">
                                             <option value="en" className="bg-black text-white">English</option>
                                             <option value="el" className="bg-black text-white">Ελληνικά</option>
                                             <option value="fr" className="bg-black text-white">Français</option>
@@ -2774,10 +2774,23 @@ const App = () => {
                                             <option value="tr" className="bg-black text-white">Türkçe</option>
                                             <option value="cy" className="bg-black text-white">Cypriot</option>
                                         </select>
-                                        <div className="flex-1 flex gap-2 justify-center items-center bg-white/5 border border-white/10 rounded-xl px-2">
-                                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981'].map(c => (
-                                                <div key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-5 h-5 rounded-full cursor-pointer border-2 transition-transform hover:scale-110 ${formData.theme === c ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'}`} style={{ background: c }} />
-                                            ))}
+
+                                        <div className="flex-1 p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+                                            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">THEME</div>
+                                            <div className="flex gap-2 flex-wrap justify-center">
+                                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
+                                                    <button
+                                                        key={c}
+                                                        onClick={() => { playSound('pop'); setFormData(prev => ({ ...prev, theme: c })); }}
+                                                        className={`w-7 h-7 rounded-lg border-2 transition-all relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/20'}`}
+                                                        style={{ backgroundColor: c }}
+                                                    >
+                                                        {formData.theme === c && (
+                                                            <Icons.Check className={`w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ffffff' ? 'text-black' : 'text-white'} drop-shadow-md`} />
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
 
