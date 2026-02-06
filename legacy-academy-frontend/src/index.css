@@ -94,10 +94,25 @@ img {
 }
 
 .nav-center-action {
-  @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300;
+  @apply w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300;
   background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
-  box-shadow: 0 0 15px var(--gold-glow), inset 0 2px 4px rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 15px var(--gold-glow), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: black;
+}
+
+.nav-center-action:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+.header-icon-btn {
+  @apply p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 transition-all active:scale-95 shadow-xl group flex items-center justify-center;
+}
+
+.header-icon-btn:hover {
+  background: white/10;
+  transform: translateY(-2px);
 }
 
 .glass-panel {
