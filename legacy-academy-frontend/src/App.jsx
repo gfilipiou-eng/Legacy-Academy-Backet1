@@ -2716,12 +2716,7 @@ const App = () => {
         setUser(null);
         window.location.reload();
     };
-    const handleOpenChat = (u) => {
-        // Ensure we pass at least an ID or object
-        setChatTarget(u);
-        setIsChatOpen(true);
-        playSound('pop');
-    };
+
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); } catch (e) { } };
 
     return (
