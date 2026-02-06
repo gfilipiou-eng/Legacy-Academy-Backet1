@@ -151,18 +151,18 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-sm bg-[#1a1a1a] border border-white/10 rounded-2xl p-5 shadow-2xl animate-pop-in mb-[15vh]">
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto" onClick={onClose} />
+            <div className="relative w-full max-w-[340px] bg-black/40 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-2xl animate-pop-in pointer-events-auto">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-black italic text-white flex items-center gap-2">
-                        {t('ENGAGE')} <span className="text-[var(--gold-primary)]">///</span>
+                    <h3 className="text-base font-black italic text-white flex items-center gap-2">
+                        {t('ENGAGE')} <span className="text-[var(--gold-primary)] opacity-50">///</span>
                     </h3>
                     <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5 text-gray-400" /></button>
                 </div>
 
                 {audioBlob ? (
-                    <div className="flex items-center justify-between p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-xl mb-4 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                    <div className="flex items-center justify-between p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl mb-4">
                         <div className="flex items-center gap-2">
                             <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
                             <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
@@ -170,7 +170,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button onClick={() => setAudioBlob(null)} className="p-1.5 hover:bg-white/5 rounded-full"><Icons.Trash className="w-4 h-4 text-red-500" /></button>
                     </div>
                 ) : isRecording ? (
-                    <div className="flex items-center justify-between p-4 bg-red-500/10 border border-red-500/30 rounded-xl mb-4 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+                    <div className="flex items-center justify-between p-4 bg-red-500/10 border border-red-500/30 rounded-2xl mb-4 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
                             <span className="text-xs font-black text-red-500 uppercase tracking-widest">{t('RECORDING')}...</span>
@@ -183,7 +183,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
                         placeholder={t('WRITE_COMMENT')}
-                        className="w-full h-28 bg-black/40 border border-white/10 rounded-xl p-3 text-sm sm:text-base text-white font-medium resize-none focus:border-[var(--gold-primary)] outline-none mb-4 placeholder-gray-500 shadow-inner"
+                        className="w-full h-24 bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-4 text-sm text-white font-medium resize-none focus:border-[var(--gold-primary)] outline-none mb-4 placeholder-gray-600 shadow-inner"
                     />
                 )}
 
@@ -192,7 +192,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button
                             type="button"
                             onClick={startRecording}
-                            className="p-3 bg-white/5 border border-white/10 rounded-xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/30 transition-all hover:bg-white/10 active:scale-95 shadow-lg"
+                            className="p-3.5 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/30 transition-all hover:bg-white/10 active:scale-95 shadow-lg"
                         >
                             <Icons.Mic className="w-5 h-5" />
                         </button>
@@ -200,7 +200,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                     <button
                         onClick={handleSubmit}
                         disabled={(audioBlob ? false : !value.trim()) || loading}
-                        className="flex-1 py-3 bg-[var(--gold-primary)] text-black font-black text-xs sm:text-sm uppercase tracking-widest rounded-xl shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 hover:brightness-110"
+                        className="flex-1 py-3.5 bg-[var(--gold-primary)] text-black font-black text-[11px] uppercase tracking-[0.1em] rounded-2xl shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 hover:brightness-110"
                     >
                         {loading ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Icons.Send className="w-4 h-4" />}
                         {t('SEND_COMMENT')}
