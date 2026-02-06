@@ -1244,9 +1244,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                 console.error("📡 [DEBUG] Clear failed: No valid target ID found in activeChat", activeChat);
                 return alert("Mission Aborted: Target identifier missing.");
             }
-            const url = `/messages/conversation/clear/${targetId}`;
+            const url = `/messages/conversation/${targetId}`;
             console.log(`📡 [DEBUG] Clearing chat: ${url}`);
-            await axios.post(url);
+            await axios.delete(url);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
             playSound('sword');
         } catch (e) { console.error('Clear failed', e); }
@@ -2883,7 +2883,6 @@ const App = () => {
         <div className="app-container">
             {!user ? (
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
-                    <div className="liquid-bg" />
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
                         <div className="flex flex-col items-center mb-8">
                             <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
