@@ -603,6 +603,9 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                                 </button>
                             )}
                         </div>
+                        <div className="absolute top-4 right-4 pointer-events-none opacity-80 mix-blend-screen hidden sm:block">
+                            <img src="/image/Logo.png?v=4" className="h-10 w-auto object-contain" alt="Legacy Academy" />
+                        </div>
 
                         <div className="flex items-center justify-center">
                             <motion.div
