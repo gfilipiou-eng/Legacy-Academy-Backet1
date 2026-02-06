@@ -2528,11 +2528,10 @@ const App = () => {
         try {
             let res;
             if (input instanceof FormData) {
-                if (!input.has('user')) input.append('user', JSON.stringify(user));
                 res = await axios.post(`/posts/${postId}/comment`, input);
             } else {
-                console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment with text length: ${textValue?.length}`);
-                res = await axios.post(`/posts/${postId}/comment`, { text: textValue, user });
+                console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment`);
+                res = await axios.post(`/posts/${postId}/comment`, { text: textValue });
             }
             const updatedComments = res.data;
             playSound('pop');
