@@ -297,6 +297,8 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
+// GET POSTS BY USER ID
+// GET ALL POSTS (With Privacy Filter)
 // GET ALL POSTS (With Privacy Filter)
 router.get("/", verifyToken, async (req, res) => {
   try {
@@ -311,13 +313,13 @@ router.get("/", verifyToken, async (req, res) => {
     const filtered = posts.filter(p => {
       // Own posts
       if (String(p.author?._id || p.author) === String(currentUserId)) return true;
+      if (req.user.role === 'Founder') return true;
 
-      // Private/Followers only
+      // Privacy check
       if (p.isPrivate || p.isFollowersOnly || p.author?.isPrivate || p.author?.isFollowersOnly) {
         const followers = p.author?.followers || [];
         return followers.some(id => String(id) === String(currentUserId));
       }
-
       return true;
     }).slice(0, limit);
 
@@ -325,6 +327,34 @@ router.get("/", verifyToken, async (req, res) => {
   } catch (err) {
     console.error("Fetch posts error:", err);
     return res.status(500).json(err);
+  }
+});
+
+// GET POSTS BY USER ID
+router.get("/user/:userId", verifyToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.user.id || req.user.userId;
+
+    const posts = await Post.find({ author: userId })
+      .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const filtered = posts.filter(p => {
+      if (String(p.author?._id || p.author) === String(currentUserId)) return true;
+      if (req.user.role === 'Founder') return true;
+      if (p.isPrivate || p.isFollowersOnly || p.author?.isPrivate || p.author?.isFollowersOnly) {
+        const followers = p.author?.followers || [];
+        return followers.some(id => String(id) === String(currentUserId));
+      }
+      return true;
+    });
+
+    res.status(200).json(filtered);
+  } catch (err) {
+    console.error("Fetch user posts error:", err);
+    res.status(500).json(err);
   }
 });
 

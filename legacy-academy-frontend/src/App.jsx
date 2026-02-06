@@ -289,13 +289,17 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
     return (
 
-        <div className="fixed inset-0 z-[1200] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
+        <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl active:scale-90 transition-all group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu">
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
+                {/* Mobile Close Button (More visible) */}
+                <button onClick={onClose} className="md:hidden absolute top-6 right-6 p-4 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full z-[2000] active:scale-90 shadow-2xl">
+                    <Icons.X className="w-6 h-6 text-white" />
+                </button>
                 {/* Image Section - Responsive height */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[45vh] md:min-h-0 md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[50vh] md:min-h-0 md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -310,7 +314,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full overflow-hidden">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 h-[50vh] md:h-full overflow-hidden shrink-0 relative">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -531,7 +535,12 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
             className={`relative group/video overflow-hidden bg-black flex items-center justify-center ${className || ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={togglePlay}
+            onClick={(e) => {
+                const selection = window.getSelection();
+                if (selection.toString().length > 0) return;
+                if (onExpand) onExpand();
+                else togglePlay(e);
+            }}
         >
             <video
                 ref={videoRef}
@@ -1346,6 +1355,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [bio, setBio] = useState(currentUser?.bio || "");
     const [editUsername, setEditUsername] = useState(currentUser?.username || "");
     const [activeTab, setActiveTab] = useState('ALL'); // ALL, POSTS, VIDEO
+    const [userSpecificPosts, setUserSpecificPosts] = useState([]);
+    const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
     const fileRef = useRef(null);
 
@@ -1367,18 +1378,31 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         return pId === uId && p.isStory;
     }), [posts, profileUser]);
 
-    const userPosts = React.useMemo(() => (posts || []).filter(p => {
-        const pId = String(p.author?._id || p.author || '');
-        const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
-        const uName = profileUser?.username || '';
-        const matchesUser = (pId && uId && pId === uId) || (p.username && uName && p.username === uName);
+    const fetchUserPosts = async () => {
+        if (!profileUser?._id) return;
+        setLoadingPosts(true);
+        try {
+            const res = await axios.get(`/posts/user/${profileUser._id}`);
+            setUserSpecificPosts(res.data);
+        } catch (e) {
+            console.error("Profile posts fetch error:", e);
+        } finally {
+            setLoadingPosts(false);
+        }
+    };
 
-        if (!matchesUser || p.isStory) return false;
+    useEffect(() => {
+        if (isOpen) {
+            fetchUserPosts();
+        }
+    }, [isOpen, profileUser?._id]);
 
+    const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
+        if (p.isStory) return false;
         if (activeTab === 'VIDEO') return isYouTubeUrl(p.videoUrl) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         if (activeTab === 'POSTS') return !p.videoUrl && !isYouTubeUrl(p.videoUrl) && !(p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         return true;
-    }), [posts, profileUser, activeTab]);
+    }), [userSpecificPosts, activeTab]);
 
     // AUTO-EXPAND ALL FOLDERS IN PROFILE BY DEFAULT
     useEffect(() => {
@@ -1637,12 +1661,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
 
-                                    {userPosts.length === 0 ? (
-                                        <div className="text-center py-10 text-gray-500 text-xs uppercase tracking-widest font-bold">{t('NO_CONTENT')}</div>
-                                    ) : (
-                                        <div className="space-y-10 pb-20">
-                                            {Object.keys(groupedUserPosts).map(dateKey => {
-                                                const isOpen = expandedDates[dateKey];
+                                    <div className="space-y-6 pb-20">
+                                        {loadingPosts ? (
+                                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                                <div className="w-8 h-8 border-2 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin" />
+                                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest animate-pulse">Scanning Intel...</div>
+                                            </div>
+                                        ) : userPosts.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+                                                <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-2">
+                                                    <Icons.Folder className="w-6 h-6 text-gray-600" />
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
+                                            </div>
+                                        ) : (
+                                            Object.keys(groupedUserPosts).map(dateKey => {
+                                                const isExposed = expandedDates[dateKey];
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
                                                         <div
@@ -1650,22 +1684,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                             className="flex items-center gap-3 mb-4 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--gold-primary)]/30 transition-all cursor-pointer group/folder"
                                                         >
                                                             <div className="relative">
-                                                                <Icons.Folder className={`w-5 h-5 ${isOpen ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-colors`} />
-                                                                {!isOpen && <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-[var(--gold-primary)] text-black text-[8px] font-black shadow-lg shadow-[var(--gold-primary)]/20">{groupedUserPosts[dateKey].length}</div>}
+                                                                <Icons.Folder className={`w-5 h-5 ${isExposed ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-colors`} />
+                                                                {!isExposed && <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-[var(--gold-primary)] text-black text-[8px] font-black shadow-lg shadow-[var(--gold-primary)]/20">{groupedUserPosts[dateKey].length}</div>}
                                                             </div>
-                                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] font-mono flex-1 ${isOpen ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
-                                                            <Icons.ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
+                                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
+                                                            <Icons.ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
                                                         </div>
-
                                                         <AnimatePresence>
-                                                            {isOpen && (
-                                                                <motion.div
-                                                                    initial={{ height: 0, opacity: 0 }}
-                                                                    animate={{ height: 'auto', opacity: 1 }}
-                                                                    exit={{ height: 0, opacity: 0 }}
-                                                                    transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                                                                    className="overflow-hidden"
-                                                                >
+                                                            {isExposed && (
+                                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
                                                                     <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
                                                                         {groupedUserPosts[dateKey].map(p => (
                                                                             <div
@@ -1710,9 +1737,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         </AnimatePresence>
                                                     </div>
                                                 );
-                                            })}
-                                        </div>
-                                    )}
+                                            })
+                                        )}
+                                    </div>
                                 </>
                             )}
                         </div>
