@@ -333,19 +333,6 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     );
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
     if (!post) return null;
     const { t, lang } = useTranslation(user);
