@@ -100,7 +100,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter line-clamp-1">{post.authorName || 'Target Intel'}</p>
                     </div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
                     <Icons.MessageSquare className="w-5 h-5 text-[var(--gold-primary)]" />
                 </div>
             </header>
@@ -136,7 +136,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                     <div className="bg-white/[0.05] rounded-2xl rounded-tl-none p-3 border border-white/5 shadow-sm group-hover:border-white/10 transition-all">
                                         {c.text && <p className="text-white text-sm leading-snug">{c.text}</p>}
                                         {c.audioUrl && (
-                                            <div className="mt-2 flex items-center gap-3 bg-[var(--gold-primary)]/5 p-2 rounded-xl border border-[var(--gold-primary)]/10">
+                                            <div className="mt-2 flex items-center gap-3 bg-white/5 p-2 rounded-xl border border-white/10">
                                                 <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
                                                 <audio src={resolveMediaUrl(c.audioUrl)} controls className="h-8 max-w-full" />
                                             </div>
@@ -169,7 +169,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                     <button
                         type="submit"
                         disabled={!commentText.trim() || isSubmitting}
-                        className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all"
+                        className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg shadow-glow-gold/40 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all"
                     >
                         {isSubmitting ? (
                             <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />

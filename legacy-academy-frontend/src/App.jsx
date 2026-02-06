@@ -165,7 +165,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 
                 <div className="flex flex-col gap-4">
                     {audioBlob ? (
-                        <div className="flex items-center justify-between p-4 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl animate-pulse">
+                        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl animate-pulse">
                             <div className="flex items-center gap-3">
                                 <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)]" />
                                 <span className="text-xs font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
@@ -198,7 +198,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <button
                                 type="button"
                                 onClick={startRecording}
-                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 transition-all active:scale-95 shadow-xl group"
+                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)] transition-all active:scale-95 shadow-xl group"
                             >
                                 <Icons.Mic className="w-6 h-6 group-hover:scale-110 transition-transform" />
                             </button>
@@ -221,7 +221,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 const DefaultAvatar = ({ name, size = "normal" }) => {
     const COLORS = [
         'from-red-500 to-orange-600', 'from-blue-500 to-cyan-600', 'from-emerald-500 to-green-600',
-        'from-violet-500 to-purple-600', 'from-[var(--gold-primary)]/80 to-[var(--gold-secondary)]', 'from-rose-500 to-pink-600',
+        'from-violet-500 to-purple-600', 'from-[var(--gold-primary)] to-[var(--gold-secondary)]', 'from-rose-500 to-pink-600',
         'from-indigo-500 to-blue-600', 'from-teal-500 to-emerald-600'
     ];
     const hash = name ? name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
@@ -755,7 +755,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[var(--gold-primary)]/20 uppercase tracking-widest">{t('AUTHORIZE')}</button>
+                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('AUTHORIZE')}</button>
                         <button onClick={() => onRejectRequest(note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
                     </div>
                 )}
@@ -1104,7 +1104,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                             </div>
                                         </div>
                                     ) : commentAudio ? (
-                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 rounded-[1.2rem] p-1 animate-pop-in">
+                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--gold-glow)] rounded-[1.2rem] p-1 animate-pop-in">
                                             <div className="flex items-center gap-2 pl-1 shrink-0">
                                                 <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
                                                 <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
@@ -1148,7 +1148,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
+                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
                                                     >
                                                         <Icons.Mic className="w-4 h-4" />
                                                     </button>
@@ -1457,7 +1457,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', label: 'Türkçe', flag: '🇹🇷' },
                                 { id: 'fr', label: 'Français', flag: '🇫🇷' }
                             ].map(l => (
-                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10' : 'border-white/5 bg-white/5'}`}>
+                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-[var(--gold-primary)] bg-white/10' : 'border-white/5 bg-white/5'}`}>
                                     <div className="text-xl">{l.flag}</div>
                                     <div className="text-[8px] sm:text-[9px] font-bold text-white mt-1 uppercase tracking-tight">{l.label}</div>
                                 </button>
@@ -2249,7 +2249,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                     <div className="flex gap-4">
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
+                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
                     </div>
                 </div>
             </motion.div >
@@ -2866,7 +2866,7 @@ const App = () => {
             {!user ? (
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="liquid-bg" />
-                    <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl shadow-[var(--gold-primary)]/5">
+                    <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
                         <div className="flex flex-col items-center mb-8">
                             <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
                         </div>
@@ -3099,10 +3099,10 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group">
                                                             <div
                                                                 onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-[1.5rem] hover:bg-white/10 hover:border-[var(--gold-primary)]/40 transition-all cursor-pointer group/folder my-2"
+                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-[1.5rem] hover:bg-white/10 hover:border-[var(--gold-primary)] transition-all cursor-pointer group/folder my-2"
                                                             >
                                                                 <div className="relative">
-                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-all duration-300`} />
+                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--gold-primary)]' : 'text-gray-500'} transition-all duration-300`} />
                                                                     {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{groupedPosts[dateKey].length}</div>}
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
