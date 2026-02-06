@@ -107,11 +107,20 @@ img {
 }
 
 .header-icon-btn {
-  @apply p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-400 transition-all active:scale-95 shadow-xl flex items-center justify-center;
+  padding: 0.75rem;
+  background-color: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem;
+  color: rgb(156 163 175);
+  transition: all 0.15s;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-icon-btn:hover {
-  @apply text-[var(--gold-primary)];
+  color: var(--gold-primary);
   border-color: var(--gold-glow);
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
