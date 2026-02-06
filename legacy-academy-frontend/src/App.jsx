@@ -242,6 +242,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
     // Audio Comment State
     const [commentText, setCommentText] = useState('');
+    const [isWritingComment, setIsWritingComment] = useState(false);
+    const audioRef = useRef(null);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
     const commentRecorderRef = useRef(null);
@@ -425,46 +427,67 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     </div>
                                 </div>
                             ) : (
-                                <form
-                                    key={`detail-form-${post._id}`}
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        if (commentText.trim()) {
-                                            onComment(post._id, commentText);
-                                            setCommentText('');
-                                        }
-                                    }}
-                                    className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group overflow-hidden max-w-full"
-                                >
-                                    <input
-                                        placeholder={t('ENGAGE')}
-                                        value={commentText}
-                                        onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
-                                        className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-600 font-bold"
-                                    />
-                                    <div className="flex gap-1 pr-1 shrink-0">
-                                        <button
-                                            type="button"
-                                            onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
-                                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
-                                        >
-                                            <Icons.Mic className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
-                                        >
-                                            {loadingActions?.[post._id] ? (
-                                                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                            ) : (
+                                isWritingComment ? (
+                                    <form
+                                        key={`detail-form-${post._id}`}
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            if (commentText.trim()) {
+                                                onComment(post._id, commentText);
+                                                setCommentText('');
+                                                setIsWritingComment(false);
+                                            }
+                                        }}
+                                        className="relative flex items-center glass-input-premium rounded-[1.3rem] px-1 py-1 group overflow-hidden max-w-full animate-pop-in border border-[var(--gold-primary)]/40 shadow-[0_0_20px_rgba(255,215,0,0.1)]"
+                                    >
+                                        <button type="button" onClick={() => setIsWritingComment(false)} className="pl-3 pr-2 text-gray-400 hover:text-white transition-colors"><Icons.X className="w-5 h-5" /></button>
+                                        <input
+                                            autoFocus
+                                            placeholder={t('ENGAGE')}
+                                            value={commentText}
+                                            onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
+                                            className="flex-1 min-w-0 bg-transparent py-3 px-2 text-[15px] text-white outline-none placeholder-gray-500 font-bold"
+                                            onBlur={() => { if (!commentText && !isRecordingComment) setIsWritingComment(false); }}
+                                        />
+                                        <div className="flex gap-1 pr-1 shrink-0">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-[var(--gold-primary)]/15 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
+                                            >
+                                                <Icons.Mic className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
+                                            >
+                                                {loadingActions?.[post._id] ? (
+                                                    <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                                ) : (
+                                                    <Icons.Send className="w-4 h-4" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <button
+                                        onClick={() => setIsWritingComment(true)}
+                                        className="w-full flex items-center justify-between glass-input-premium rounded-[1.3rem] px-4 py-3 group hover:bg-white/5 transition-all active:scale-[0.98] border border-white/5 hover:border-white/20 shadow-lg"
+                                    >
+                                        <span className="text-gray-400 font-bold text-sm tracking-wide group-hover:text-gray-300 transition-colors">{t('ENGAGE')}...</span>
+                                        <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <div className="p-1.5 rounded-lg bg-white/5 text-gray-400">
+                                                <Icons.Mic className="w-4 h-4" />
+                                            </div>
+                                            <div className="p-1.5 rounded-lg bg-[var(--gold-primary)]/10 text-[var(--gold-primary)]">
                                                 <Icons.Send className="w-4 h-4" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </form>
+                                            </div>
+                                        </div>
+                                    </button>
+                                )
                             )}
                         </div>
                     </div>
