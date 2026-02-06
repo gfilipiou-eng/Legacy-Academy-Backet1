@@ -521,87 +521,42 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                     <Icons.ThumbsDown className={`w-6 h-6 transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-400 group-hover:text-[var(--gold-primary)]'}`} />
                                                     <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                                 </button>
+                                                <button
+                                                    onClick={() => setIsWritingComment(true)}
+                                                    className="flex items-center gap-2 group transition-all active:scale-125 hover:bg-white/5 p-1.5 rounded-xl mobile-os-action-btn"
+                                                >
+                                                    <Icons.MessageCircle className="w-6 h-6 text-gray-400 group-hover:text-[var(--gold-primary)] transition-colors" />
+                                                </button>
                                             </div>
                                             <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-xl transition-all active:scale-90 group">
                                                 <Icons.Share className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                             </button>
                                         </div>
 
-                                        <div className="relative">
-                                            {commentAudio ? (
-                                                <div className="flex items-center justify-between gap-3 min-h-[52px] px-2 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 rounded-[1.2rem] p-1.5 animate-pop-in">
-                                                    <div className="flex items-center gap-2.5 pl-2">
-                                                        <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
-                                                        <span className="text-[11px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-5 h-5" /></button>
-                                                        <button type="button" onClick={(e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            const fd = new FormData();
-                                                            if (commentText.trim()) fd.append('text', commentText);
-                                                            fd.append('file', commentAudio, 'voice_comment.webm');
-                                                            onComment(post._id, fd);
-                                                            setCommentAudio(null);
-                                                            setCommentText('');
-                                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
-                                                            <Icons.Send className="w-5 h-5 fill-black" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ) : isRecordingComment ? (
-                                                <div className="bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-3 flex items-center justify-between animate-pop-in">
-                                                    <div className="flex items-center gap-3 pl-2">
-                                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
-                                                        <span className="text-[11px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
-                                                    </div>
-                                                    <div className="flex gap-2">
-                                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2.5 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-5 h-5" /></button>
-                                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-5 py-2.5 bg-red-500 rounded-xl text-white font-black text-[11px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                isWritingComment ? (
-                                                    <CommentComposeModal
-                                                        isOpen={isWritingComment}
-                                                        onClose={() => setIsWritingComment(false)}
-                                                        onSubmit={(text) => {
-                                                            if (text.trim()) {
-                                                                onComment(post._id, text);
-                                                                setCommentText('');
-                                                                setIsWritingComment(false);
-                                                            }
-                                                        }}
-                                                        value={commentText}
-                                                        onChange={setCommentText}
-                                                        onAudioSubmit={(blob) => {
-                                                            const fd = new FormData();
-                                                            fd.append('file', blob, 'voice_comment.webm');
-                                                            onComment(post._id, fd);
-                                                            setIsWritingComment(false);
-                                                        }}
-                                                        t={t}
-                                                        loading={loadingActions?.[post._id]}
-                                                    />
-                                                ) : (
-                                                    <button
-                                                        onClick={() => setIsWritingComment(true)}
-                                                        className="w-full flex items-center justify-between glass-input-premium rounded-[1.3rem] px-4 py-3 group hover:bg-white/5 transition-all active:scale-[0.98] border border-white/5 hover:border-white/20 shadow-lg"
-                                                    >
-                                                        <span className="text-gray-400 font-bold text-sm tracking-wide group-hover:text-gray-300 transition-colors">{t('ENGAGE')}...</span>
-                                                        <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                                            <div className="p-1.5 rounded-lg bg-white/5 text-gray-400">
-                                                                <Icons.Mic className="w-4 h-4" />
-                                                            </div>
-                                                            <div className="p-1.5 rounded-lg bg-[var(--gold-primary)]/10 text-[var(--gold-primary)]">
-                                                                <Icons.Send className="w-4 h-4" />
-                                                            </div>
-                                                        </div>
-                                                    </button>
-                                                )
-                                            )}
-                                        </div>
+                                        {/* Modal Triggered Logic - Invisible but functional */}
+                                        {isWritingComment && (
+                                            <CommentComposeModal
+                                                isOpen={isWritingComment}
+                                                onClose={() => setIsWritingComment(false)}
+                                                onSubmit={(text) => {
+                                                    if (text.trim()) {
+                                                        onComment(post._id, text);
+                                                        setCommentText('');
+                                                        setIsWritingComment(false);
+                                                    }
+                                                }}
+                                                value={commentText}
+                                                onChange={setCommentText}
+                                                onAudioSubmit={(blob) => {
+                                                    const fd = new FormData();
+                                                    fd.append('file', blob, 'voice_comment.webm');
+                                                    onComment(post._id, fd);
+                                                    setIsWritingComment(false);
+                                                }}
+                                                t={t}
+                                                loading={loadingActions?.[post._id]}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div >
