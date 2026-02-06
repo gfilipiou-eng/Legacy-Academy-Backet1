@@ -1031,25 +1031,35 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                             </div>
                         )}
 
-                        {/* ACTIONS BAR - BLUESKY STYLE */}
-                        <div className="flex items-center justify-between mt-4 pr-4 max-w-md relative z-10">
-                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-blue-400 transition-colors cursor-pointer">
-                                <div className="p-1.5 rounded-full group-hover:bg-blue-500/10"><Icons.MessageCircle className="w-5 h-5 pointer-events-none" /></div>
-                                <span className="text-xs font-medium pointer-events-none">{post.comments?.length || 0}</span>
-                            </button>
+                        {/* ACTIONS BAR - VIVID NEURAL STYLE */}
+                        <div className="flex items-center justify-between mt-6 pr-4 relative z-10 py-1">
+                            <div className="flex items-center gap-4 sm:gap-8">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className="flex items-center gap-2 group text-gray-500 hover:text-blue-400 transition-all cursor-pointer active:scale-125">
+                                    <div className="p-2 rounded-xl group-hover:bg-blue-500/10 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all">
+                                        <Icons.MessageCircle className="w-5 h-5 pointer-events-none" />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.comments?.length || 0}</span>
+                                </button>
 
-                            <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-1.5 group transition-colors cursor-pointer ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-                                <div className="p-1.5 rounded-full group-hover:bg-red-500/10"><Icons.Heart className={`w-5 h-5 pointer-events-none`} /></div>
-                                <span className="text-xs font-medium pointer-events-none">{post.likes?.length || 0}</span>
-                            </button>
+                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
+                                    <div className="p-2 rounded-xl group-hover:bg-red-500/10 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all">
+                                        <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.likes?.length || 0}</span>
+                                </button>
 
-                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-1.5 group transition-colors cursor-pointer ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                <div className="p-1.5 rounded-full group-hover:bg-[var(--gold-primary)]/10"><Icons.ThumbsDown className="w-5 h-5 pointer-events-none" /></div>
-                                <span className="text-xs font-medium pointer-events-none">{dislikeCount}</span>
-                            </button>
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                    <div className="p-2 rounded-xl group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all">
+                                        <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{dislikeCount}</span>
+                                </button>
+                            </div>
 
-                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-[var(--gold-primary)] transition-colors cursor-pointer">
-                                <div className="p-1.5 rounded-full group-hover:bg-[var(--gold-primary)]/10"><Icons.Share className="w-5 h-5 pointer-events-none" /></div>
+                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-2 group text-gray-500 hover:text-[var(--gold-primary)] transition-all cursor-pointer active:scale-125">
+                                <div className="p-2 rounded-xl group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all">
+                                    <Icons.Share className="w-5 h-5 pointer-events-none" />
+                                </div>
                             </button>
                         </div>
                     </div>
