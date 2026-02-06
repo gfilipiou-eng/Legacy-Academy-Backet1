@@ -161,8 +161,12 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
     // SAFE CASTING to ObjectId
     let authorIdObj;
     try {
+      if (!mongoose.Types.ObjectId.isValid(String(currentUserId))) {
+        throw new Error("Invalid User ID format");
+      }
       authorIdObj = new mongoose.Types.ObjectId(String(currentUserId));
     } catch (castErr) {
+      console.error(`[${reqId}] ObjectId Cast Failed for user ${currentUserId}:`, castErr.message);
       return res.status(401).json("Neural state mismatch. Re-log required.");
     }
 
