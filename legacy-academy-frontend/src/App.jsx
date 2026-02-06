@@ -88,22 +88,23 @@ const isUserOnline = (u, currentUser) => {
     try { return (Date.now() - new Date(u.lastSeen).getTime()) < 60000; } catch (e) { return false; }
 };
 
-const formatDate = (dateString) => {
+const formatDate = (dateString, t, lang) => {
     if (!dateString) return '';
     try {
         const date = new Date(dateString);
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
 
-        if (diffInSeconds < 60) return 'Just now';
+        if (diffInSeconds < 60) return t('JUST_NOW');
         const diffInMinutes = Math.floor(diffInSeconds / 60);
-        if (diffInMinutes < 60) return `${diffInMinutes}m`;
+        if (diffInMinutes < 60) return `${diffInMinutes}${t('UNIT_M')}`;
         const diffInHours = Math.floor(diffInMinutes / 60);
-        if (diffInHours < 24) return `${diffInHours}h`;
+        if (diffInHours < 24) return `${diffInHours}${t('UNIT_H')}`;
         const diffInDays = Math.floor(diffInHours / 24);
-        if (diffInDays < 7) return `${diffInDays}d`;
+        if (diffInDays < 7) return `${diffInDays}${t('UNIT_D')}`;
 
-        return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        const locale = (lang === 'el') ? 'el-GR' : (lang === 'de') ? 'de-DE' : 'en-US';
+        return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
     } catch (e) { return ''; }
 };
 
@@ -220,7 +221,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                 </div>
 
                 <div className="flex gap-4 mt-1.5 px-1 items-center">
-                    <span className="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">{formatDate(comment.createdAt)}</span>
+                    <span className="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">{formatDate(comment.createdAt, t, lang)}</span>
                     {canEdit && !isEditing && (
                         <button onClick={() => setIsEditing(true)} className="text-[9px] text-gray-500 hover:text-blue-400 font-black uppercase tracking-tighter opacity-70 transition-colors">{t('EDIT')}</button>
                     )}
@@ -829,7 +830,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     {isPostAuthorFounder && <span className="bg-red-600/80 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider ml-1 border border-red-500/20">{t('FOUNDER_BADGE')}</span>}
                                 </span>
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-red-400 font-medium' : 'text-gray-500'}`}>
-                                    @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt)}
+                                    @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
                                 </span>
                             </div>
                             <div className="relative shrink-0 ml-2">
@@ -1177,7 +1178,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                     <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
                                         <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
                                             {m.text}
-                                            <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt)}</div>
+                                            <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
                                         </div>
                                     </div>
                                 ))}
@@ -1421,23 +1422,25 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             const groups = {};
             userPosts.forEach(p => {
                 const date = new Date(p.createdAt);
-                const key = date.toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+                const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
+                const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
                 groups[key] = true;
             });
             setExpandedDates(groups);
         }
-    }, [isOpen, userPosts.length]);
+    }, [isOpen, userPosts.length, lang]);
 
     const groupedUserPosts = React.useMemo(() => {
         const groups = {};
         userPosts.forEach(p => {
             const date = new Date(p.createdAt);
-            const key = date.toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
+            const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = [];
             groups[key].push(p);
         });
         return groups;
-    }, [userPosts, currentUser]);
+    }, [userPosts, currentUser, lang]);
 
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
@@ -1665,7 +1668,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt)}</span>
+                                                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -2285,9 +2288,11 @@ const App = () => {
 
     const groupedPosts = React.useMemo(() => {
         const groups = {};
+        const lang = user?.settings?.language || 'en';
+        const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
         filteredPosts.forEach(p => {
             const date = new Date(p.createdAt);
-            const key = date.toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = [];
             groups[key].push(p);
         });
@@ -2297,7 +2302,9 @@ const App = () => {
     // AUTO-EXPAND FEED FOLDERS (Last 24h)
     useEffect(() => {
         if (posts.length > 0) {
-            const todayKey = new Date().toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            const lang = user?.settings?.language || 'en';
+            const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
+            const todayKey = new Date().toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
             // Only auto-expand if we haven't manually closed it in this session (optional, but here simple: auto-open today)
             setExpandedDates(prev => ({ ...prev, [todayKey]: true }));
         }

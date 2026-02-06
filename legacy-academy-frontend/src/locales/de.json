@@ -149,5 +149,9 @@
     "UPLOAD_MEDIA": "VIDEO / MEDIEN / AUDIO HOCHLADEN",
     "UPDATE_MEDIA": "Medien aktualisieren",
     "DELETE_ACCOUNT_CONFIRM": "Sind Sie sicher, dass Sie Ihr Konto für immer löschen möchten?",
-    "SYNCING": "SYNCHRONISIERUNG MIT DEM NETZWERK..."
+    "SYNCING": "SYNCHRONISIERUNG MIT DEM NETZWERK...",
+    "JUST_NOW": "Gerade eben",
+    "UNIT_M": "Min.",
+    "UNIT_H": "Std.",
+    "UNIT_D": "T."
 }

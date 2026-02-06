@@ -149,5 +149,9 @@
     "UPLOAD_MEDIA": "UPLOAD VIDEO / MEDIA / AUDIO",
     "UPDATE_MEDIA": "Update Media",
     "DELETE_ACCOUNT_CONFIRM": "Are you sure you want to terminate your account forever?",
-    "SYNCING": "SYNCING WITH NEURAL LINK..."
+    "SYNCING": "SYNCING WITH NEURAL LINK...",
+    "JUST_NOW": "Just now",
+    "UNIT_M": "m",
+    "UNIT_H": "h",
+    "UNIT_D": "d"
 }
