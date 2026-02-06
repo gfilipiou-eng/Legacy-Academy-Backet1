@@ -179,7 +179,20 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         if (!hasRequest) return res.status(400).json("No request found in logs.");
 
         await User.findByIdAndUpdate(userId, { $pull: { followRequests: requesterId }, $push: { followers: requesterId } });
-        await User.findByIdAndUpdate(requesterId, { $push: { following: userId } });
+        await User.findByIdAndUpdate(requesterId, {
+            $push: {
+                following: userId,
+                notifications: {
+                    type: 'message', // Generic enough as 'follow_request_accepted' isn't in Enum (unless added)
+                    from: userId,
+                    fromUsername: user.username,
+                    fromProfilePic: user.profilePic || '',
+                    text: `Accepted your follow request.`,
+                    read: false,
+                    createdAt: new Date()
+                }
+            }
+        });
 
         res.status(200).json("Follower accepted");
     } catch (err) { res.status(500).json(err); }
