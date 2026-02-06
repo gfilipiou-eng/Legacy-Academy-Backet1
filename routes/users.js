@@ -176,7 +176,14 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         if (!user) return res.status(404).json("Agent not found.");
 
         const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
-        if (!hasRequest) return res.status(400).json("No request found in logs.");
+        if (!hasRequest) {
+            console.warn(`[ACCEPT REQ] 400 Error: Request ${requesterId} not found in ${userId}'s list:`, user.followRequests);
+            // Fallback: If it's already a follower, just say OK to clear UI
+            if (user.followers?.some(id => String(id) === String(requesterId))) {
+                return res.status(200).json("Already a follower.");
+            }
+            return res.status(400).json("No request found in logs.");
+        }
 
         await User.findByIdAndUpdate(userId, { $pull: { followRequests: requesterId }, $push: { followers: requesterId } });
         await User.findByIdAndUpdate(requesterId, {

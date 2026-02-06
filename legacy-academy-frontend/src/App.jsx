@@ -1074,7 +1074,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
 // Re-inserting them to ensure full file integrity
 
 const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
-    const { t } = useTranslation(user);
+    const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
     const [inputText, setInputText] = useState('');
@@ -1357,7 +1357,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -2675,6 +2675,23 @@ const App = () => {
     const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
+    // AUTO-LANGUAGE DETECTION
+    useEffect(() => {
+        if (user?.settings?.language) {
+            if (i18n.language !== user.settings.language) {
+                console.log(`Setting language to user preference: ${user.settings.language}`);
+                i18n.changeLanguage(user.settings.language);
+            }
+        } else {
+            // Detect browser language if no user setting
+            const browserLang = navigator.language.split('-')[0];
+            const supported = ['en', 'el', 'de', 'fr', 'ru', 'es', 'tr'];
+            if (supported.includes(browserLang) && i18n.language !== browserLang) {
+                i18n.changeLanguage(browserLang);
+            }
+        }
+    }, [user?.settings?.language]);
+
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -3013,7 +3030,7 @@ const App = () => {
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} addToast={addToast} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} />}
