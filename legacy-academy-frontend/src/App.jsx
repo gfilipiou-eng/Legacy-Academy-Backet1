@@ -583,24 +583,24 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                         exit={{ opacity: 0 }}
                         className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none"
                     >
-                        <div className="flex justify-start items-start gap-2.5">
-                            <button
-                                onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
-                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
-                            >
-                                {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
-                            </button>
-                            {onExpand && (
+                        <div className="flex flex-col items-start gap-4">
+                            <div className="flex justify-start items-start gap-2.5">
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
+                                    onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
                                     className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                                 >
-                                    <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                                    {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
                                 </button>
-                            )}
-                        </div>
-                        <div className="absolute top-4 right-4 pointer-events-none opacity-80 mix-blend-screen hidden sm:block">
-                            <img src="/image/Logo.png?v=4" className="h-10 w-auto object-contain" alt="Legacy Academy" />
+                                {onExpand && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
+                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                    >
+                                        <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                                    </button>
+                                )}
+                            </div>
+                            <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all pointer-events-none opacity-90 shadow-2xl drop-shadow-lg" alt="Legacy Academy" />
                         </div>
 
                         <div className="flex items-center justify-center">
