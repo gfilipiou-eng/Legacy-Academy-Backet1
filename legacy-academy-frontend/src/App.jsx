@@ -1317,24 +1317,24 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     ))}
                                     <div ref={scrollRef} />
                                 </div>
-                                <div className="p-3 pb-8 md:pb-3 bg-[#0a0a0a]/80 backdrop-blur-3xl border-t border-white/5 flex items-center gap-2 safe-area-bottom z-[100]">
-                                    <div className="flex-1 relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl px-4 focus-within:border-blue-500/50 focus-within:bg-white/[0.05] transition-all group">
+                                <div className="p-3 pb-8 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                                    <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                         <input
                                             type="text"
                                             value={inputText}
                                             onChange={(e) => setInputText(e.target.value)}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                             placeholder={t('ENTER_COMMAND')}
-                                            className="w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
+                                            className="w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold"
                                         />
-                                        <Icons.CommandLine className="w-4 h-4 text-gray-700 group-focus-within:text-blue-500/50 transition-colors" />
+                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors shrink-0" />
                                     </div>
                                     <button
                                         onClick={handleSend}
                                         disabled={!inputText.trim()}
-                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-900/40 active:scale-90 disabled:opacity-20 transition-all shrink-0"
+                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                     >
-                                        <Icons.Send className="w-5 h-5 fill-white" />
+                                        <Icons.Send className="w-5 h-5" />
                                     </button>
                                 </div>
                             </>
