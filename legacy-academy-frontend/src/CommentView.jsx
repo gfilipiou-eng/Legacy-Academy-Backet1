@@ -148,8 +148,8 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                 </div>
             </div>
 
-            {/* Sticky Input Field - ELEVATED FOR MOBILE STABILITY AND TRANSPARENT BACKGROUND */}
-            <div className="shrink-0 p-4 pb-28 sm:pb-12 bg-transparent safe-area-bottom">
+            {/* Sticky Input Field - higher on mobile so it sits above navbar */}
+            <div className="shrink-0 p-4 pb-[max(8rem,calc(env(safe-area-inset-bottom,20px)+90px))] sm:pb-12 bg-transparent">
                 <form onSubmit={handleSubmit} className="relative flex items-center bg-black/80 backdrop-blur-3xl border border-white/20 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)] transition-all group shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
                     <textarea
                         rows="1"

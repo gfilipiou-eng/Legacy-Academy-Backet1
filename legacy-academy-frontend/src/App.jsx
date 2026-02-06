@@ -464,7 +464,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4 flex flex-col items-center justify-center text-center space-y-4">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic w-full text-left">{parseHashtags(post.desc)}</div>
 
-                        <div className="py-12 px-6 bg-white/[0.03] rounded-[2rem] border border-white/5 flex flex-col items-center gap-4 animate-pop-in">
+                        <div className="py-12 px-6 bg-white/[0.03] rounded-[2rem] border border-white/5 flex flex-col items-center gap-4 animate-pop-in w-full max-w-md">
                             <div className="w-16 h-16 rounded-2xl bg-[var(--gold-primary)]/10 flex items-center justify-center border border-[var(--gold-primary)]/20 shadow-glow-gold/20">
                                 <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]" />
                             </div>
@@ -472,6 +472,22 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             <p className="text-gray-500 text-[10px] uppercase font-bold tracking-tighter max-w-[200px] leading-relaxed">
                                 {t('COMMENT_MODE_HINT') || "Comments are now managed via a dedicated full-screen interface for maximum performance."}
                             </p>
+                            {/* Live comments preview */}
+                            <div className="w-full mt-2 space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                                <div className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest text-center">
+                                    {post.comments?.length ? `${post.comments.length} ${t('COMMENTS') || 'COMMENTS'}` : t('NO_COMMENTS') || 'NO COMMENTS YET'}
+                                </div>
+                                {post.comments?.length > 0 && post.comments.slice(-5).reverse().map((c, idx) => (
+                                    <div key={c._id || idx} className="text-left p-2 rounded-xl bg-white/[0.04] border border-white/5">
+                                        <div className="text-[10px] font-bold text-[var(--gold-primary)] truncate">
+                                            {c.user?.username || c.authorName || t('ANONYMOUS') || 'Agent'}
+                                        </div>
+                                        <div className="text-xs text-gray-300 truncate leading-tight">
+                                            {c.text || (c.voiceNote ? `🎤 ${t('VOICE_NOTE') || 'Voice'}` : '—')}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();
