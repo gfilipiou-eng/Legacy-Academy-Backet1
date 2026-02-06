@@ -421,7 +421,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{ width: '100%', height: '100%' }} frameBorder="0" allowFullScreen />
                             </div>
                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-full" />
+                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-full" forcePause={isWritingComment} />
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
@@ -530,7 +530,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     );
 };
 
-const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
+const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => {
     const videoRef = useRef(null);
     const seekRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -538,6 +538,13 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
     const [progress, setProgress] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        if (forcePause && videoRef.current && !videoRef.current.paused) {
+            videoRef.current.pause();
+            setIsPlaying(false);
+        }
+    }, [forcePause]);
 
     const togglePlay = (e) => {
         e.stopPropagation();
