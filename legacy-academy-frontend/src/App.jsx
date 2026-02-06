@@ -2408,10 +2408,6 @@ const App = () => {
         return () => { }; // Cleanup handled by functions
     }, [user]);
 
-    // IF DIRECT LINK TO COMMENT VIEW
-    if (viewPostId) {
-        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} />;
-    }
 
     // FIX: Optimized search filtering with useMemo
     const filteredPosts = React.useMemo(() => {
@@ -2860,6 +2856,11 @@ const App = () => {
     };
 
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); } catch (e) { } };
+
+    // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
+    if (viewPostId) {
+        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} />;
+    }
 
     return (
         <div className="app-container">

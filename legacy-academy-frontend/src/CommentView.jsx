@@ -25,7 +25,7 @@ const ProfileAvatar = ({ user }) => {
 };
 
 const CommentView = ({ postId, user: currentUser, onClose }) => {
-    const { t, lang } = useTranslation(currentUser);
+    const { t, lang } = useTranslation();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [commentText, setCommentText] = useState('');
@@ -34,7 +34,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
     const fetchPost = async () => {
         try {
-            const res = await axios.get(`/posts/find/${postId}`);
+            const res = await axios.get(`/posts/${postId}`);
             setPost(res.data);
             setLoading(false);
         } catch (e) {
