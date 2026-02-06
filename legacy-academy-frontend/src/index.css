@@ -107,11 +107,13 @@ img {
 }
 
 .header-icon-btn {
-  @apply p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 transition-all active:scale-95 shadow-xl group flex items-center justify-center;
+  @apply p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-400 transition-all active:scale-95 shadow-xl group flex items-center justify-center;
 }
 
 .header-icon-btn:hover {
-  background: white/10;
+  @apply text-[var(--gold-primary)];
+  border-color: var(--gold-glow);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
