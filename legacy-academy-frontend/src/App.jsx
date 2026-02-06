@@ -161,7 +161,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     );
 };
 
-const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k }) => {
+const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
@@ -338,7 +338,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         <div className="space-y-2">
                             <AnimatePresence initial={false}>
                                 {post.comments?.map((c, i) => (
-                                    <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
+                                    <CommentItem key={c._id || i} comment={c} post={post} user={user} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
                                 ))}
                                 {post.comments?.length === 0 && <div className="text-center py-10 text-gray-600 text-[10px] uppercase font-bold tracking-widest">{t('NO_COMMENTS')}</div>}
                             </AnimatePresence>
@@ -975,7 +975,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
                         <div className="p-4 space-y-4">
                             {post.comments?.map((c, idx) => (
-                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} />
+                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
                             ))}
                             <div
                                 className="flex flex-col gap-4 mt-6"
