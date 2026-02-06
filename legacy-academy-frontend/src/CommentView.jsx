@@ -1,0 +1,186 @@
+import React, { useState, useEffect, useRef } from 'react';
+import axios from './api';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from './components/Icons';
+import { useTranslation } from './translations';
+import { playSound } from './utils/sounds';
+
+const BASE_URL = axios.defaults.baseURL.replace('/api', '');
+
+const resolveMediaUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http') || path.startsWith('blob:')) return path;
+    return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
+const ProfileAvatar = ({ user }) => {
+    if (!user) return <div className="w-full h-full bg-gray-800" />;
+    return (
+        <img
+            src={resolveMediaUrl(user.profilePic) || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`}
+            className="w-full h-full object-cover"
+            alt={user.username}
+        />
+    );
+};
+
+const CommentView = ({ postId, user: currentUser, onClose }) => {
+    const { t, lang } = useTranslation(currentUser);
+    const [post, setPost] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [commentText, setCommentText] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const scrollRef = useRef(null);
+
+    const fetchPost = async () => {
+        try {
+            const res = await axios.get(`/posts/find/${postId}`);
+            setPost(res.data);
+            setLoading(false);
+        } catch (e) {
+            console.error("Failed to fetch post for comments", e);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPost();
+        const interval = setInterval(fetchPost, 5000);
+        return () => clearInterval(interval);
+    }, [postId]);
+
+    const handleSubmit = async (e) => {
+        e?.preventDefault();
+        if (!commentText.trim() || isSubmitting) return;
+
+        setIsSubmitting(true);
+        try {
+            await axios.post(`/posts/${postId}/comment`, { text: commentText });
+            setCommentText('');
+            fetchPost();
+            playSound('pop');
+            setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+        } catch (e) {
+            alert(t('ERROR_POSTING') || "Connectivity failure.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="fixed inset-0 bg-black flex flex-col items-center justify-center space-y-4 z-[9999]">
+                <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin" />
+                <div className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.3em] animate-pulse">Establishing Secure Link...</div>
+            </div>
+        );
+    }
+
+    if (!post) {
+        return (
+            <div className="fixed inset-0 bg-black flex flex-col items-center justify-center p-6 text-center z-[9999]">
+                <Icons.XCircle className="w-16 h-16 text-red-500 mb-4" />
+                <h2 className="text-white font-black text-xl mb-2 italic">INTEL NODE DISCONNECTED</h2>
+                <p className="text-gray-500 text-sm">{t('POST_NOT_FOUND') || "The target intelligence packet has been purged or is inaccessible."}</p>
+                <button onClick={onClose} className="mt-8 gold-btn">{t('BACK_TO_HQ') || "BACK TO HQ"}</button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="fixed inset-0 bg-[#050505] z-[9999] flex flex-col font-sans overflow-hidden">
+            {/* Header */}
+            <header className="shrink-0 h-16 border-b border-white/10 bg-black/80 backdrop-blur-3xl flex items-center justify-between px-4 z-50">
+                <div className="flex items-center gap-3">
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-all active:scale-90">
+                        <Icons.Back className="w-6 h-6 text-white" />
+                    </button>
+                    <div>
+                        <h1 className="text-sm font-black italic text-white uppercase tracking-widest">{t('COMMENTS')}</h1>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter line-clamp-1">{post.authorName || 'Target Intel'}</p>
+                    </div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 flex items-center justify-center">
+                    <Icons.MessageSquare className="w-5 h-5 text-[var(--gold-primary)]" />
+                </div>
+            </header>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32 custom-scrollbar">
+                {/* Post Summary */}
+                <div className="p-4 bg-white/[0.03] rounded-3xl border border-white/5 shadow-inner">
+                    <p className="text-white text-sm font-medium leading-relaxed italic">
+                        {post.desc || post.text || 'No description provided.'}
+                    </p>
+                </div>
+
+                <div className="space-y-4">
+                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] pl-1">{post.comments?.length || 0} {t('INTEL_LOGS') || "INTEL LOGS"}</h3>
+
+                    {post.comments?.length === 0 ? (
+                        <div className="py-20 text-center">
+                            <Icons.MessageCircle className="w-12 h-12 text-gray-800 mx-auto mb-4 opacity-50" />
+                            <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">{t('ZERO_COMMENTS') || "No intel reported yet."}</p>
+                        </div>
+                    ) : (
+                        post.comments.map((c, i) => (
+                            <div key={i} className="flex gap-3 group animate-slide-down">
+                                <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden border border-white/10 shadow-lg">
+                                    <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-[11px] font-black text-white hover:text-[var(--gold-primary)] transition-colors cursor-pointer uppercase tracking-tight">{c.authorName}</span>
+                                        <span className="text-[9px] text-gray-600 font-bold uppercase">{new Date(c.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="bg-white/[0.05] rounded-2xl rounded-tl-none p-3 border border-white/5 shadow-sm group-hover:border-white/10 transition-all">
+                                        {c.text && <p className="text-white text-sm leading-snug">{c.text}</p>}
+                                        {c.audioUrl && (
+                                            <div className="mt-2 flex items-center gap-3 bg-[var(--gold-primary)]/5 p-2 rounded-xl border border-[var(--gold-primary)]/10">
+                                                <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
+                                                <audio src={resolveMediaUrl(c.audioUrl)} controls className="h-8 max-w-full" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                    <div ref={scrollRef} />
+                </div>
+            </div>
+
+            {/* Sticky Input Field - NO MODALS, EXTREMELY MOBILE FRIENDLY */}
+            <div className="shrink-0 p-4 border-t border-white/10 bg-black/90 backdrop-blur-3xl safe-area-bottom shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+                <form onSubmit={handleSubmit} className="relative flex items-center bg-white/[0.05] border border-white/10 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)] transition-all group">
+                    <textarea
+                        rows="1"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        placeholder={t('ENGAGE') || "Add Intel..."}
+                        className="flex-1 bg-transparent py-3 px-4 text-sm text-white outline-none resize-none placeholder-gray-600 h-12 flex items-center"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSubmit();
+                            }
+                        }}
+                    />
+                    <button
+                        type="submit"
+                        disabled={!commentText.trim() || isSubmitting}
+                        className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all"
+                    >
+                        {isSubmitting ? (
+                            <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                        ) : (
+                            <Icons.Send className="w-5 h-5 fill-black" />
+                        )}
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default CommentView;

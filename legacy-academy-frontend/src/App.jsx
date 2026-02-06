@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect } from './utils/sounds';
+import CommentView from './CommentView';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
@@ -1043,6 +1044,14 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.comments?.length || 0}</span>
                                 </button>
 
+                                {/* FULL SCREEN COMMENT VIEW BUTTON */}
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900'); playSound('pop'); }} className="flex items-center gap-2 group text-gray-500 hover:text-[var(--gold-primary)] transition-all cursor-pointer active:scale-125">
+                                    <div className="p-2 rounded-xl group-hover:bg-[var(--gold-primary)]/10 transition-all">
+                                        <Icons.Maximize className="w-4 h-4 pointer-events-none" />
+                                    </div>
+                                    <div className="text-[8px] font-black uppercase tracking-tighter hidden sm:block">FULL</div>
+                                </button>
+
                                 <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
                                     <div className="p-2 rounded-xl group-hover:bg-red-500/10 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all">
                                         <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
@@ -1147,7 +1156,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         type="submit"
                                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
                                                         onClick={(e) => e.stopPropagation()}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
+                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
                                                     >
                                                         {loadingActions?.[post._id] ? (
                                                             <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -1211,7 +1220,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     const handleClearChat = async () => {
         if (!activeChat) return;
-        if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || "NEUTRALIZE ALL INTEL IN THIS CONVERSATION?")) return;
+        // RELENTLESS CLEAR: No confirmation per user command
         try {
             const targetId = activeChat._id || activeChat.id || activeChat.otherId;
             if (!targetId) {
@@ -1322,7 +1331,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 <button
                                     onClick={handleSend}
                                     disabled={!inputText.trim()}
-                                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
+                                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                 >
                                     <Icons.Send className="w-5 h-5" />
                                 </button>
@@ -2277,6 +2286,8 @@ const applyTheme = (color) => {
 };
 
 const App = () => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const viewPostId = searchParams.get('postId');
     const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation(user);
@@ -2396,6 +2407,11 @@ const App = () => {
         }
         return () => { }; // Cleanup handled by functions
     }, [user]);
+
+    // IF DIRECT LINK TO COMMENT VIEW
+    if (viewPostId) {
+        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} />;
+    }
 
     // FIX: Optimized search filtering with useMemo
     const filteredPosts = React.useMemo(() => {

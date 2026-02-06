@@ -113,7 +113,13 @@ img {
 }
 
 .gold-btn {
-  @apply bg-gradient-to-r from-[var(--gold-primary)] to-[var(--gold-secondary)] text-black font-black uppercase tracking-widest px-6 py-3 rounded-2xl transition-all active:scale-95 shadow-lg shadow-[var(--gold-primary)]/20 hover:shadow-[var(--gold-primary)]/40 hover:brightness-110;
+  @apply bg-gradient-to-r from-[var(--gold-primary)] to-[var(--gold-secondary)] text-black font-black uppercase tracking-widest px-6 py-3 rounded-2xl transition-all active:scale-95;
+  box-shadow: 0 10px 15px -3px rgba(255, 215, 0, 0.2), 0 4px 6px -4px rgba(255, 215, 0, 0.1);
+}
+
+.gold-btn:hover {
+  box-shadow: 0 20px 25px -5px rgba(255, 215, 0, 0.4), 0 8px 10px -6px rgba(255, 215, 0, 0.2);
+  filter: brightness(110%);
 }
 
 .gold-btn-outline {
