@@ -299,7 +299,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     <Icons.X className="w-6 h-6 text-white" />
                 </button>
                 {/* Image Section - Responsive height */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden min-h-[40vh] md:min-h-0 md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[40vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -312,15 +312,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         )
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--gold-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
 
-                    {/* Mobile Scroll Indicator */}
-                    <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-bounce opacity-50">
-                        <span className="text-[8px] font-black text-white uppercase tracking-[0.2em]">{t('INTEL_COMMS')}</span>
-                        <Icons.ChevronDown className="w-4 h-4 text-white" />
-                    </div>
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 h-[60vh] md:h-full overflow-hidden shrink-0 relative">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full overflow-hidden relative">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
@@ -373,7 +368,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className={`text-[13px] font-black tracking-tighter ${post.dislikes?.includes(user?._id) ? 'text-blue-500' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
-                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"><Icons.Share className="w-5 h-5" /></button>
+                            <button onClick={() => onShare(post)} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-xl transition-all active:scale-90 group">
+                                <Icons.Share className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            </button>
                         </div>
 
                         <div className="relative">
@@ -965,8 +962,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <span className="text-xs font-medium pointer-events-none">{dislikeCount}</span>
                             </button>
 
-                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-green-400 transition-colors cursor-pointer">
-                                <div className="p-1.5 rounded-full group-hover:bg-green-500/10"><Icons.Share className="w-5 h-5 pointer-events-none" /></div>
+                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-1.5 group text-gray-500 hover:text-[var(--gold-primary)] transition-colors cursor-pointer">
+                                <div className="p-1.5 rounded-full group-hover:bg-[var(--gold-primary)]/10"><Icons.Share className="w-5 h-5 pointer-events-none" /></div>
                             </button>
                         </div>
                     </div>
