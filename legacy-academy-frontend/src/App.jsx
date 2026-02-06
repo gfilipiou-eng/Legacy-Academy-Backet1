@@ -239,10 +239,11 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     if (!user) return <DefaultAvatar size={size} />;
     const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
     const name = user.username || user.fromUsername;
-    // Optimization: Avatars only need ~150px width, and isAvatar flag for aggressive compression
-    const mediaUrl = url ? resolveMediaUrl(url, 150, true) : null;
-    const isAnimatedImage = mediaUrl && mediaUrl.match(/\.(gif|webp)($|\?)/i);
-    const isVideo = !isAnimatedImage && mediaUrl && (mediaUrl.match(/\.(mp4|mov|webm)$/i) || mediaUrl.includes('f_auto:video') || mediaUrl.includes('/video/upload/') || mediaUrl.includes('vc_auto'));
+    // Detect video from ORIGINAL url so we don't convert to webp (avatar transform breaks video on desktop)
+    const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
+    const mediaUrl = url ? (rawIsVideo ? resolveMediaUrl(url, 250, false) : resolveMediaUrl(url, 150, true)) : null;
+    const isAnimatedImage = mediaUrl && !rawIsVideo && mediaUrl.match(/\.(gif|webp)($|\?)/i);
+    const isVideo = rawIsVideo && mediaUrl;
 
     if (isVideo) {
         return (
@@ -263,7 +264,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     }
 
     return mediaUrl ? (
-        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" />
+        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" alt="" />
     ) : (
         <DefaultAvatar name={name} size={size} />
     );
@@ -283,7 +284,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
-    const canDelete = isCommentAuthor || isPostAuthor || user?.role === 'Founder';
+    const canDelete = isCommentAuthor || user?.role === 'Founder'; // Only own or Founder can delete
 
     const handleSave = () => {
         if (typeof onEdit === 'function') onEdit(post._id, comment._id, editText);
@@ -328,13 +329,13 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                     )}
                 </div>
 
-                <div className="flex gap-4 mt-1.5 px-1 items-center">
-                    <span className="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">{formatDate(comment.createdAt, t, lang)}</span>
+                <div className="flex flex-wrap gap-2 mt-2 px-1 items-center">
+                    <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">{formatDate(comment.createdAt, t, lang)}</span>
                     {canEdit && !isEditing && (
-                        <button onClick={() => setIsEditing(true)} className="text-[9px] text-gray-500 hover:text-blue-400 font-black uppercase tracking-tighter opacity-70 transition-colors">{t('EDIT')}</button>
+                        <button type="button" onClick={() => setIsEditing(true)} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-black uppercase hover:bg-blue-500/20 transition-colors" title={t('EDIT')}>{t('EDIT')}</button>
                     )}
                     {canDelete && (
-                        <button onClick={() => onDelete?.(post._id, comment._id)} className="text-[9px] text-gray-500 hover:text-red-500 font-black uppercase tracking-tighter opacity-70 transition-colors">{t('DELETE')}</button>
+                        <button type="button" onClick={() => onDelete?.(post._id, comment._id)} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[9px] font-black uppercase hover:bg-red-500/20 transition-colors" title={t('DELETE')}>{t('DELETE')}</button>
                     )}
                 </div>
             </div>
@@ -464,42 +465,42 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4 flex flex-col items-center justify-center text-center space-y-4">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic w-full text-left">{parseHashtags(post.desc)}</div>
 
-                        <div className="py-12 px-6 bg-white/[0.03] rounded-[2rem] border border-white/5 flex flex-col items-center gap-4 animate-pop-in w-full max-w-md">
-                            <div className="w-16 h-16 rounded-2xl bg-[var(--gold-primary)]/10 flex items-center justify-center border border-[var(--gold-primary)]/20 shadow-glow-gold/20">
-                                <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]" />
+                        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-4 animate-pop-in">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-white font-black italic uppercase tracking-widest text-xs">{t('LIVE_COMMENTS') || "LIVE COMMENTS"}</h3>
+                                <span className="text-[10px] font-bold text-[var(--gold-primary)]">{post.comments?.length || 0}</span>
                             </div>
-                            <h3 className="text-white font-black italic uppercase tracking-widest text-sm">{t('ENGAGE_INTEL') || "ENGAGE INTEL"}</h3>
-                            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-tighter max-w-[200px] leading-relaxed">
-                                {t('COMMENT_MODE_HINT') || "Comments are now managed via a dedicated full-screen interface for maximum performance."}
-                            </p>
-                            {/* Live comments preview */}
-                            <div className="w-full mt-2 space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
-                                <div className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest text-center">
-                                    {post.comments?.length ? `${post.comments.length} ${t('COMMENTS') || 'COMMENTS'}` : t('NO_COMMENTS') || 'NO COMMENTS YET'}
-                                </div>
-                                {post.comments?.length > 0 && post.comments.slice(-5).reverse().map((c, idx) => (
-                                    <div key={c._id || idx} className="text-left p-2 rounded-xl bg-white/[0.04] border border-white/5">
-                                        <div className="text-[10px] font-bold text-[var(--gold-primary)] truncate">
-                                            {c.user?.username || c.authorName || t('ANONYMOUS') || 'Agent'}
+                            <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
+                                {!post.comments?.length ? (
+                                    <p className="text-gray-500 text-[10px] uppercase font-bold py-4 text-center">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
+                                ) : (
+                                    post.comments.slice(-6).reverse().map((c, idx) => (
+                                        <div key={c._id || idx} className="flex gap-2 p-2.5 rounded-xl bg-white/[0.06] border border-white/10 hover:border-white/20 transition-colors">
+                                            <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10">
+                                                <ProfileAvatar user={c.user || { username: c.authorName, profilePic: c.authorProfilePic }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-[10px] font-bold text-[var(--gold-primary)] truncate">{c.user?.username || c.authorName || t('ANONYMOUS')}</div>
+                                                <div className="text-xs text-gray-300 break-words leading-tight">{c.text || (c.audioUrl ? `🎤 ${t('VOICE_NOTE')}` : '—')}</div>
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-gray-300 truncate leading-tight">
-                                            {c.text || (c.voiceNote ? `🎤 ${t('VOICE_NOTE') || 'Voice'}` : '—')}
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
-                            <button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
-                                    playSound('pop');
-                                }}
-                                className="mt-2 gold-btn flex items-center gap-3 px-8 group"
-                            >
-                                <Icons.Maximize className="w-4 h-4 group-hover:scale-125 transition-transform" />
-                                <span>{t('VIEW_COMMENTS') || "OPEN COMMENTS"}</span>
-                            </button>
+                            <div className="flex gap-2 mt-3">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
+                                        playSound('pop');
+                                    }}
+                                    className="flex-1 gold-btn py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2"
+                                >
+                                    <Icons.Maximize className="w-4 h-4" />
+                                    {t('VIEW_COMMENTS') || "OPEN COMMENTS"}
+                                </button>
+                            </div>
                         </div>
                     </div>
 

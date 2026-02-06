@@ -159,5 +159,11 @@
     "JUST_NOW": "Gerade eben",
     "UNIT_M": "Min.",
     "UNIT_H": "Std.",
-    "UNIT_D": "T."
+    "UNIT_D": "T.",
+    "LIVE_COMMENTS": "LIVE-KOMMENTARE",
+    "COMMENTS": "KOMMENTARE",
+    "ENGAGE_INTEL": "KOMMENTARE",
+    "COMMENT_MODE_HINT": "Vollbild öffnen zum Lesen, Bearbeiten oder Löschen von Kommentaren.",
+    "VIEW_COMMENTS": "KOMMENTARE ÖFFNEN",
+    "ANONYMOUS": "Agent"
 }

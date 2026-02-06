@@ -15,11 +15,27 @@ const resolveMediaUrl = (path) => {
 
 const ProfileAvatar = ({ user }) => {
     if (!user) return <div className="w-full h-full bg-gray-800" />;
+    const url = user.profilePic;
+    const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
+    const mediaUrl = url ? resolveMediaUrl(url) : null;
+    if (rawIsVideo && mediaUrl) {
+        return (
+            <video
+                src={mediaUrl}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+            />
+        );
+    }
     return (
         <img
             src={resolveMediaUrl(user.profilePic) || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`}
             className="w-full h-full object-cover"
-            alt={user.username}
+            alt={user.username || ''}
         />
     );
 };

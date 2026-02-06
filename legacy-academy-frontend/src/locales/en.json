@@ -159,5 +159,11 @@
     "JUST_NOW": "Just now",
     "UNIT_M": "m",
     "UNIT_H": "h",
-    "UNIT_D": "d"
+    "UNIT_D": "d",
+    "LIVE_COMMENTS": "LIVE COMMENTS",
+    "COMMENTS": "COMMENTS",
+    "ENGAGE_INTEL": "ENGAGE INTEL",
+    "COMMENT_MODE_HINT": "Open full-screen view to read, edit or delete comments.",
+    "VIEW_COMMENTS": "OPEN COMMENTS",
+    "ANONYMOUS": "Agent"
 }
