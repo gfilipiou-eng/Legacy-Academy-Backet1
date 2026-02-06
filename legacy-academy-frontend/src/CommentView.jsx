@@ -100,9 +100,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter line-clamp-1">{post.authorName || 'Target Intel'}</p>
                     </div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Icons.MessageSquare className="w-5 h-5 text-[var(--gold-primary)]" />
-                </div>
+                <div className="w-10" />
             </header>
 
             {/* Scrollable Content */}
@@ -150,9 +148,9 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                 </div>
             </div>
 
-            {/* Sticky Input Field - NO MODALS, EXTREMELY MOBILE FRIENDLY */}
-            <div className="shrink-0 p-4 border-t border-white/10 bg-black/90 backdrop-blur-3xl safe-area-bottom shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
-                <form onSubmit={handleSubmit} className="relative flex items-center bg-white/[0.05] border border-white/10 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)] transition-all group">
+            {/* Sticky Input Field - ELEVATED FOR MOBILE STABILITY AND TRANSPARENT BACKGROUND */}
+            <div className="shrink-0 p-4 pb-28 sm:pb-12 bg-transparent safe-area-bottom">
+                <form onSubmit={handleSubmit} className="relative flex items-center bg-black/80 backdrop-blur-3xl border border-white/20 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)] transition-all group shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
                     <textarea
                         rows="1"
                         value={commentText}
