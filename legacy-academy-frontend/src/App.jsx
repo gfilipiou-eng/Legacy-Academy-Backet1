@@ -2636,6 +2636,11 @@ const App = () => {
         }
     };
 
+    const handleOpenChat = (targetUser) => {
+        setChatTarget(targetUser);
+        setIsChatOpen(true);
+    };
+
     // FIX: Real Share Functionality
     const handleShare = async (post) => {
         const shareData = {
