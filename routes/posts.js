@@ -171,9 +171,17 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
       return res.status(401).json("Neural state mismatch. Re-log required.");
     }
 
+    let audioPath = "";
+    if (req.file && req.file.path) {
+      audioPath = req.file.path;
+      if (audioPath.startsWith('uploads')) {
+        audioPath = '/' + audioPath.replace(/\\/g, '/');
+      }
+    }
+
     const newComment = {
       text: commentText,
-      audioUrl: req.file ? req.file.path : "",
+      audioUrl: audioPath,
       authorName: req.user?.username || currentUser?.username || "Anonymous",
       authorId: authorIdObj,
       authorProfilePic: currentUser?.profilePic || '',
