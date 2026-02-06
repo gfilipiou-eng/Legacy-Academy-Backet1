@@ -346,9 +346,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             {isOwner && <button onClick={() => { playSound('pop'); onEdit(post); }} className="p-3 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90 group"><Icons.Edit className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
                             {(isOwner || isFounder) && (
                                 <>
-                                    <button onClick={handleClearComments} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group" title="Clear All Comments">
-                                        <Icons.Broom className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                                    </button>
                                     <button onClick={() => { playSound('sword'); onDelete(post._id); onClose(); }} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group"><Icons.Trash className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>
                                 </>
                             )}
@@ -561,8 +558,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
             onClick={(e) => {
                 const selection = window.getSelection();
                 if (selection.toString().length > 0) return;
-                if (onExpand) onExpand();
-                else togglePlay(e);
+                togglePlay(e);
             }}
         >
             <video
