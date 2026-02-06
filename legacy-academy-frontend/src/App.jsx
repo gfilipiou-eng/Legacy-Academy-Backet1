@@ -1260,9 +1260,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                 console.error("📡 [DEBUG] Clear failed: No valid target ID found in activeChat", activeChat);
                 return alert("Mission Aborted: Target identifier missing.");
             }
-            const url = `/messages/conversation/${targetId}`;
+            const url = `/messages/conversation/clear/${targetId}`;
             console.log(`📡 [DEBUG] Clearing chat: ${url}`);
-            await axios.delete(url);
+            await axios.post(url);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
             playSound('sword');
         } catch (e) { console.error('Clear failed', e); }
