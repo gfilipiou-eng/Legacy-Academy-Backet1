@@ -156,7 +156,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
                         placeholder={t('ENGAGE') || "Add Intel..."}
-                        className="flex-1 bg-transparent py-3 px-4 text-sm text-white outline-none resize-none placeholder-gray-600 h-12 flex items-center"
+                        className="flex-1 min-w-0 bg-transparent py-4 px-4 text-sm text-white outline-none resize-none placeholder-gray-600 min-h-14 h-14 sm:h-12 sm:min-h-12 sm:py-3 flex items-center"
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
