@@ -700,8 +700,8 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand }) => {
                                 )}
                             </div>
                             <div className="flex flex-col pointer-events-none">
-                                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-widest uppercase drop-shadow-xl bg-black/30 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-2xl">
-                                    Legacy <span className="font-black">Academy</span> <span className="text-[var(--gold-primary)] font-black">Intel</span>
+                                <h1 className="text-sm sm:text-lg font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
+                                    Legacy <span className="font-black text-[var(--gold-primary)]">Intel</span>
                                 </h1>
                             </div>
                         </div>
