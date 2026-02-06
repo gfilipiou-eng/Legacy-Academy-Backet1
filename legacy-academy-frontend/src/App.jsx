@@ -353,12 +353,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     const handleClearComments = async () => {
         if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
         try {
-            await axios.delete(`/posts/${post._id}/comments`);
+            const url = `/posts/${post._id}/comments`;
+            console.log(`📡 [DEBUG] Clearing comments: ${url}`);
+            await axios.delete(url);
             // Optimistically clear
             post.comments = [];
-            // Force redraw/reload if needed, or rely on parent refetch
-            // But since 'post' prop is from parent, modifying it directly is anti-pattern in React without state update.
-            // Ideally call a parent handler 'onClearComments'
             if (onClearComments) onClearComments(post._id);
         } catch (e) {
             console.error("Failed to clear comments", e);
@@ -662,9 +661,6 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                                         <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                     </button>
                                 )}
-                            </div>
-                            <div className="flex flex-col pointer-events-none">
-                                <img src="/image/Applogo.png" alt="Legacy Academy" className="h-12 sm:h-16 w-auto object-contain drop-shadow-2xl opacity-90" />
                             </div>
                         </div>
 
@@ -1211,7 +1207,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         if (!activeChat) return;
         if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || "NEUTRALIZE ALL INTEL IN THIS CONVERSATION?")) return;
         try {
-            await axios.post(`/messages/conversation/clear/${activeChat._id}`);
+            const url = `/messages/conversation/clear/${activeChat._id}`;
+            console.log(`📡 [DEBUG] Clearing chat: ${url}`);
+            await axios.post(url);
             setMessages(prev => ({ ...prev, [activeChat._id]: [] }));
             playSound('sword');
         } catch (e) { console.error('Clear failed', e); }
