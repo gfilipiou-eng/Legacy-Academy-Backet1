@@ -1320,6 +1320,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const [inputText, setInputText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [isPhonetic, setIsPhonetic] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorder = useRef(null);
+    const audioChunks = useRef([]);
     const scrollRef = useRef();
 
     const fetchMessages = async (otherUserId) => {
@@ -1331,7 +1334,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     useEffect(() => {
         if (isOpen && initialChatUser) {
-            // Robust check: if we got an ID string, find the actual user object
             if (typeof initialChatUser === 'string') {
                 const found = allUsers.find(u => String(u._id) === String(initialChatUser));
                 if (found) setActiveChat(found);
@@ -1353,7 +1355,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     const handleClearChat = async () => {
         if (!activeChat) return;
-        if (!window.confirm('Clear this entire conversation?')) return;
+        if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || 'Clear this entire conversation?')) return;
         const targetId = activeChat._id || activeChat.id;
         if (!targetId) return;
 
@@ -1364,26 +1366,58 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             playSound('sword');
         } catch (e) {
             console.error('Clear failed', e);
-            // Fallback: clear locally anyway
             setMessages(prev => ({ ...prev, [targetId]: [] }));
             playSound('sword');
         }
     };
 
-    const handleSend = async () => {
-        if (!inputText.trim() || !activeChat) return;
-        const text = inputText;
+    const handleSend = async (audioBlob = null) => {
+        if (!activeChat) return;
+        if (!inputText.trim() && !audioBlob) return;
+
+        const targetId = activeChat._id || activeChat.id;
+        const fd = new FormData();
+        fd.append('recipient', targetId);
+        if (inputText.trim()) fd.append('text', inputText.trim());
+        if (audioBlob) fd.append('file', audioBlob, 'voice.webm');
+
+        const tempText = inputText;
         setInputText('');
+
         try {
-            const res = await axios.post('/messages', { recipient: activeChat._id, text });
+            const res = await axios.post('/messages', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
             setMessages(prev => ({
                 ...prev,
-                [activeChat._id]: [...(prev[activeChat._id] || []), res.data]
+                [targetId]: [...(prev[targetId] || []), res.data]
             }));
             playSound('pop');
         } catch (e) {
             console.error('Send failed', e);
-            setInputText(text);
+            setInputText(tempText);
+        }
+    };
+
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder.current = new MediaRecorder(stream);
+            audioChunks.current = [];
+            mediaRecorder.current.ondataavailable = e => audioChunks.current.push(e.data);
+            mediaRecorder.current.onstop = () => {
+                const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
+                handleSend(blob);
+            };
+            mediaRecorder.current.start();
+            setIsRecording(true);
+            playSound('sweep');
+        } catch (e) { alert("Mic required for walkie-talkie mode"); }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorder.current && isRecording) {
+            mediaRecorder.current.stop();
+            setIsRecording(false);
+            mediaRecorder.current.stream.getTracks().forEach(t => t.stop());
         }
     };
 
@@ -1444,14 +1478,25 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 {(messages[activeChat._id] || []).map((m, i) => (
                                     <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
                                         <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
-                                            {m.text}
+                                            {m.audioUrl ? (
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
+                                                    </div>
+                                                    <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
+                                                    {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
+                                                </div>
+                                            ) : (
+                                                m.text
+                                            )}
                                             <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
                                         </div>
                                     </div>
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-3 pb-36 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-44 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
                                         type="text"
@@ -1459,16 +1504,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                         onChange={(e) => {
                                             let val = e.target.value;
                                             if (isPhonetic) {
-                                                const lastChar = val.slice(-1);
-                                                if (GREEK_PHONETIC[lastChar]) {
-                                                    val = val.slice(0, -1) + GREEK_PHONETIC[lastChar];
+                                                const pos = e.target.selectionStart;
+                                                const char = val.slice(pos - 1, pos);
+                                                if (GREEK_PHONETIC[char]) {
+                                                    val = val.slice(0, pos - 1) + GREEK_PHONETIC[char] + val.slice(pos);
                                                 }
                                             }
                                             setInputText(val);
                                         }}
                                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                        placeholder={t('ENTER_COMMAND')}
-                                        className="w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold"
+                                        placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
+                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
@@ -1485,13 +1531,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => playSound('pop')}
-                                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-gray-400 hover:text-[var(--gold-primary)] hover:bg-white/10 active:scale-90 transition-all shrink-0"
+                                    onMouseDown={startRecording}
+                                    onMouseUp={stopRecording}
+                                    onMouseLeave={stopRecording}
+                                    onTouchStart={startRecording}
+                                    onTouchEnd={stopRecording}
+                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-[var(--gold-primary)]'}`}
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                                    <Icons.Mic className="w-6 h-6" />
                                 </button>
                                 <button
-                                    onClick={handleSend}
+                                    onClick={() => handleSend()}
                                     disabled={!inputText.trim()}
                                     className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                 >

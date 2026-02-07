@@ -4,14 +4,16 @@ import Message from "../models/Message.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
 
+import upload from "../middleware/upload.js";
+
 const router = express.Router();
 
 // Status check to verify connectivity
 router.get("/", (req, res) => res.status(200).json({ status: "Neural link active", protocol: "MESSAGES_V1" }));
 router.get("/status", (req, res) => res.status(200).json({ status: "Neural link active", timestamp: new Date() }));
 
-// Send a message
-router.post("/", verifyToken, async (req, res) => {
+// Send a message (Updated for Audio Support)
+router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
     console.log(`[${reqId}] MESSAGE ATTEMPT - Body keys:`, Object.keys(req.body || {}));
 
@@ -21,34 +23,33 @@ router.post("/", verifyToken, async (req, res) => {
         const { recipient, text } = req.body;
         console.log(`[${reqId}] Message from ${senderId} to ${recipient}. Text preview: ${text?.substring(0, 20)}`);
 
-        if (!recipient || !text) {
-            return res.status(400).json("Recipient and text are required");
+        if (!recipient) {
+            return res.status(400).json("Recipient is required");
         }
 
-        // Optional: Check if recipient allows messages (e.g. followers only)
-        if (!mongoose.Types.ObjectId.isValid(recipient)) {
-            return res.status(400).json("Invalid recipient identifier format.");
+        if (!text && !req.file) {
+            return res.status(400).json("Intelligence required (text or audio)");
         }
+
         const targetUser = await User.findById(recipient);
         if (!targetUser) {
             console.warn(`[${reqId}] Recipient not found: ${recipient}`);
             return res.status(404).json("Recipient not found in neural database.");
         }
 
-        console.log(`[${reqId}] Target User Settings: isPrivate=${targetUser.isPrivate}, isFollowersOnly=${targetUser.isFollowersOnly}. Followers count: ${targetUser.followers?.length || 0}`);
-
-        if (targetUser.isFollowersOnly) {
-            const isFollower = targetUser.followers.some(id => String(id) === String(senderId));
-            console.log(`[${reqId}] Guard Chat Active. Is Sender Follower? ${isFollower}`);
-            if (!isFollower) {
-                return res.status(403).json("This agent only accepts messages from followers.");
+        let audioUrl = "";
+        if (req.file) {
+            audioUrl = req.file.path || "";
+            if (audioUrl.startsWith('uploads')) {
+                audioUrl = '/' + audioUrl.replace(/\\/g, '/');
             }
         }
 
         const newMessage = new Message({
             sender: senderId,
             recipient,
-            text
+            text: text || "",
+            audioUrl
         });
 
         const savedMessage = await newMessage.save();
@@ -60,7 +61,7 @@ router.post("/", verifyToken, async (req, res) => {
                     type: 'message',
                     from: senderId,
                     fromUsername: req.user.username,
-                    text: text.length > 50 ? text.substring(0, 50) + '...' : text,
+                    text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
                     read: false,
                     createdAt: new Date()
                 }
