@@ -402,3 +402,29 @@ select {
 .shadow-glow-gold {
   box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
 }
+
+@keyframes heart-beat {
+  0% {
+    transform: scale(1);
+  }
+
+  15% {
+    transform: scale(1.15);
+  }
+
+  30% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heart-beat {
+  animation: heart-beat 0.8s ease-in-out;
+}

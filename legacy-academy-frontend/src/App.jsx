@@ -466,10 +466,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4 flex flex-col items-center justify-center text-center space-y-4">
-                        <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic w-full text-left">{parseHashtags(post.desc)}</div>
+                    <div className="px-5 py-4 bg-black/60 border-b border-white/5 backdrop-blur-xl shrink-0">
+                        <div className="text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic w-full text-left">{parseHashtags(post.desc)}</div>
+                    </div>
 
-                        <div className="w-full max-w-md mt-6 animate-fade-in space-y-4 text-left">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4 flex flex-col items-center space-y-4">
+                        <div className="w-full max-w-md mt-2 animate-fade-in space-y-4 text-left">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                             ) : (
@@ -492,24 +494,32 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
 
                     <div className="p-5 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-25px_100px_rgba(0,0,0,1)] pb-32 md:pb-safe-or-nav">
-                        <div className="flex items-center justify-between mb-6 px-2">
-                            <div className="flex items-center gap-8">
+                        <div className="flex items-center justify-between mb-6 px-4">
+                            <div className="flex items-center gap-6 sm:gap-10">
                                 <button
+                                    type="button"
                                     disabled={loadingActions?.[post._id]}
                                     onClick={() => onLike(post._id)}
-                                    className="flex items-center gap-2.5 group transition-all active:scale-125 hover:bg-white/5 p-2 rounded-2xl mobile-os-action-btn"
+                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${post.likes?.includes(user?._id) ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-400'}`}
                                 >
-                                    <Icons.Heart className={`w-7 h-7 transition-all duration-300 ${post.likes?.includes(user?._id) ? 'text-red-500 fill-red-500/20 filter drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'text-gray-400 group-hover:text-red-400'}`} />
-                                    <span className={`text-sm font-black tracking-tight ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500'}`}>{post.likes?.length || 0}</span>
+                                    <div className={`p-2 rounded-xl transition-all ${post.likes?.includes(user?._id) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'group-hover:bg-white/5'}`}>
+                                        <Icons.Heart className={`w-5 h-5 pointer-events-none ${post.likes?.includes(user?._id) ? 'fill-current animate-heart-beat' : ''}`} />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.likes?.length || 0}</span>
                                 </button>
+
                                 <button
+                                    type="button"
                                     disabled={loadingActions?.[post._id]}
                                     onClick={() => onDislike(post._id)}
-                                    className="flex items-center gap-2.5 group transition-all active:scale-125 hover:bg-white/5 p-2 rounded-2xl mobile-os-action-btn"
+                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-400'}`}
                                 >
-                                    <Icons.ThumbsDown className={`w-7 h-7 transition-all duration-300 ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20 filter drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-400 group-hover:text-[var(--gold-primary)]'}`} />
-                                    <span className={`text-sm font-black tracking-tight ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
+                                    <div className={`p-2 rounded-xl transition-all ${post.dislikes?.includes(user?._id) ? 'bg-[var(--gold-primary)]/10 shadow-[0_0_15px_var(--gold-glow-soft)]' : 'group-hover:bg-white/5'}`}>
+                                        <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.dislikes?.length || 0}</span>
                                 </button>
+
                                 <button
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -517,13 +527,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
                                         playSound('pop');
                                     }}
-                                    className="flex items-center gap-2.5 group transition-all active:scale-125 hover:bg-white/5 p-2 rounded-2xl mobile-os-action-btn"
+                                    className="flex items-center gap-2 group transition-all active:scale-125 p-2 rounded-xl hover:bg-white/5"
                                 >
-                                    <Icons.MessageCircle className="w-7 h-7 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
+                                    <Icons.MessageCircle className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
                                 </button>
-
                             </div>
-                            <button onClick={() => onShare(post)} className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-2xl transition-all active:scale-90 group shadow-xl border border-transparent hover:border-white/10">
+
+                            <button onClick={() => onShare(post)} className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-2xl transition-all active:scale-90 group shadow-xl border border-transparent hover:border-white/10 ml-4">
                                 <Icons.Share className="w-6 h-6 group-hover:scale-110 transition-transform" />
                             </button>
                         </div>
