@@ -479,7 +479,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     {showMenu && (
                                         <>
                                             <div className="fixed inset-0 z-[9998] bg-black/50" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                            <motion.div initial={{ opacity: 0, scale: 0.95, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -10 }} className="fixed right-4 top-20 md:right-auto md:top-auto md:absolute md:right-0 md:top-12 bg-black border border-white/20 rounded-2xl p-1.5 z-[9999] w-44 shadow-2xl backdrop-blur-3xl ring-1 ring-white/30">
+                                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:left-auto md:top-auto md:translate-x-0 md:translate-y-0 md:absolute md:right-0 md:top-full md:mt-2 bg-black border border-white/20 rounded-2xl p-2 z-[9999] w-48 shadow-[0_0_60px_rgba(0,0,0,0.9)] ring-1 ring-white/30">
                                                 <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-xs font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
                                                     <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
                                                 </button>
