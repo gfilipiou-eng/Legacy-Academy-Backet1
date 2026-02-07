@@ -2502,6 +2502,7 @@ const applyTheme = (color) => {
 
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
+    // Profile Sync Logic
     const viewPostId = searchParams.get('postId');
     const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
