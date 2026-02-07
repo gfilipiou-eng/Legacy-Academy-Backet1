@@ -500,8 +500,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         <div className="text-sm text-gray-100 border-l-4 border-[var(--gold-primary)]/50 pl-4 py-2 font-medium leading-relaxed w-full text-left shadow-lg">{parseHashtags(post.desc)}</div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-4 pb-2 custom-scrollbar bg-gradient-to-b from-black/20 to-black/40 flex flex-col space-y-3">
-                        <div className="w-full max-w-2xl pt-2 animate-fade-in space-y-3 text-left">
+                    <div className="flex-1 overflow-y-auto p-4 pb-4 custom-scrollbar bg-gradient-to-b from-black/20 to-black/40">
+                        <div className="w-full animate-fade-in space-y-4">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                             ) : (
@@ -523,8 +523,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="px-3 py-2.5 border-t border-white/10 bg-gradient-to-t from-[#050505] to-black/90 backdrop-blur-3xl z-[100] shadow-[0_-15px_60px_rgba(0,0,0,0.9)] pb-[calc(env(safe-area-inset-bottom,0px)+85px)] md:pb-4">
-                        <div className="flex items-center justify-between mb-3 px-0">
+                    <div className="px-3 py-2 border-t border-white/10 bg-gradient-to-t from-[#050505] to-black/90 backdrop-blur-3xl z-[100] shadow-[0_-10px_40px_rgba(0,0,0,0.8)] pb-[80px] md:pb-3">
+                        <div className="flex items-center justify-between mb-2 px-0">
                             <div className="flex items-center gap-2 sm:gap-4">
                                 <button
                                     type="button"
