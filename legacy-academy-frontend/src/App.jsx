@@ -68,6 +68,30 @@ if (typeof document !== 'undefined') {
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 40px rgba(var(--gold-primary-rgb), 0.05);
         }
+        @keyframes gradient-shift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        @keyframes gradient-shift-reverse {
+            0%, 100% {
+                background-position: 100% 50%;
+            }
+            50% {
+                background-position: 0% 50%;
+            }
+        }
+        .animate-gradient-shift {
+            background-size: 200% 200%;
+            animation: gradient-shift 15s ease infinite;
+        }
+        .animate-gradient-shift-reverse {
+            background-size: 200% 200%;
+            animation: gradient-shift-reverse 20s ease infinite;
+        }
     `;
     document.head.appendChild(style);
 }
@@ -206,7 +230,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                                 onClick={startRecording}
                                 className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)] transition-all active:scale-95 shadow-xl group"
                             >
-                                <Icons.Mic className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                <Icons.WalkieTalkie className="w-6 h-6 group-hover:scale-110 transition-transform" />
                             </button>
                         )}
                         <button
@@ -484,8 +508,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <div className="flex gap-1 relative">
                             <div className="relative">
-                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-3 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                                    <Icons.MoreVertical className="w-5 h-5" strokeWidth={2.5} />
+                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                        <circle cx="12" cy="12" r="1" />
+                                        <circle cx="12" cy="5" r="1" />
+                                        <circle cx="12" cy="19" r="1" />
+                                    </svg>
                                 </button>
                                 <AnimatePresence>
                                     {showMenu && (
@@ -1520,7 +1548,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-3 pb-44 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-6 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
                                         type="text"
@@ -1610,7 +1638,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             // Revert state on error?
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
-            alert("Connection to neural link failed. Try again.");
+            alert(t('SYNC_ERROR'));
         }
         finally { setSaving(false); }
     };
@@ -1847,7 +1875,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
                     {activeList ? (
                         <div className="p-2 space-y-2">
-                            {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">No users found.</div>}
+                            {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                             {getListUsers().map(u => (
                                 <div key={u._id} onClick={() => { onViewProfile(u); setActiveList(null); }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer">
                                     <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
@@ -1942,13 +1970,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 </div>
                             </div>
                             <div className="mb-6 px-1">
-                                <div className="font-black text-white text-xl mb-1 flex items-center gap-2">
-                                    {displayUser?.username || "Unknown Agent"}
-                                    <svg viewBox="0 0 22 22" className="w-5 h-5 shrink-0 drop-shadow-[0_0_6px_rgba(29,155,240,0.7)]">
-                                        <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
-                                    </svg>
-                                    {displayUser?.role === 'Founder' && <span className="bg-gradient-to-r from-red-600 to-red-500 text-white text-[10px] px-2.5 py-1 rounded-lg font-black tracking-wider shadow-lg shadow-red-500/40">FOUNDER</span>}
-                                    {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? 'Online' : 'Offline'} />}
+                                <div className="flex flex-col gap-1">
+                                    <div className="font-black text-white text-xl flex items-center gap-2">
+                                        {displayUser?.username || "Unknown Agent"}
+                                        <svg viewBox="0 0 22 22" className="w-5 h-5 shrink-0 drop-shadow-[0_0_6px_rgba(29,155,240,0.7)]">
+                                            <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
+                                        </svg>
+                                        {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />}
+                                    </div>
+                                    {displayUser?.role === 'Founder' && <span className="text-red-600 text-[10px] font-black tracking-wider uppercase">Founder</span>}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
@@ -1964,7 +1994,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <button
                                             onClick={() => {
                                                 if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
-                                                    addToast("ENCRYPTED: ONLY FOLLOWERS CAN INITIATE COMMS", "neutral");
+                                                    addToast(t('ENCRYPTED_COMMS_ONLY'), "neutral");
                                                     return;
                                                 }
                                                 onOpenChat(displayUser);
@@ -3199,21 +3229,21 @@ const App = () => {
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="text" placeholder="Username" id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                        <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder="Email" id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                        <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
                                     </div>
                                     <div className="relative mb-3">
                                         <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                        <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
                                         <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
                                             {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                         </button>
                                     </div>
                                     <div className="relative mb-4">
-                                        <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-20" />
+                                        <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-20" />
                                     </div>
 
                                     <div className="flex gap-2 mb-6">
@@ -3268,19 +3298,19 @@ const App = () => {
                                             setUser(res.data.user);
                                             setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
                                         } catch (e) {
-                                            alert(e.response?.data?.message || e.response?.data || "Registration Failed.");
+                                            alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
                                         } finally {
                                             setAuthLoading(false);
                                         }
                                     }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                        {authLoading ? "CREATING ACCOUNT..." : "REGISTER"}
+                                        {authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}
                                     </button>
-                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>Back to Login</div>
+                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
                                 </>
                             )}
                             {authMode === 'forgot' && (
                                 <>
-                                    <p className="text-sm text-gray-400 mb-4 px-2 text-center">Enter your email to receive a password reset link.</p>
+                                    <p className="text-sm text-gray-400 mb-4 px-2 text-center">{t('RESET_LINK_DESC')}</p>
                                     <div className="relative mb-6">
                                         <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                         <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
@@ -3289,17 +3319,17 @@ const App = () => {
                                         setAuthLoading(true);
                                         try {
                                             await axios.post('/auth/forgot-password', { email: formData.email });
-                                            alert("If this email is in our database, a reset link has been sent.");
+                                            alert(t('RESET_LINK_SENT'));
                                             setAuthMode('login');
                                         } catch (e) {
-                                            alert("Request failed.");
+                                            alert(t('REQUEST_FAILED'));
                                         } finally {
                                             setAuthLoading(false);
                                         }
                                     }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                        {authLoading ? "SENDING..." : "SEND RESET LINK"}
+                                        {authLoading ? t('SENDING') : t('SEND_RESET_LINK')}
                                     </button>
-                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>Back to Login</div>
+                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
                                 </>
                             )}
                         </div>
@@ -3308,6 +3338,10 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="liquid-bg" />
+                    <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
+                        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-purple-900/20 to-blue-900/20 animate-gradient-shift" />
+                        <div className="absolute inset-0 bg-gradient-to-tl from-yellow-900/10 via-pink-900/10 to-cyan-900/10 animate-gradient-shift-reverse" />
+                    </div>
                     <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
@@ -3333,7 +3367,7 @@ const App = () => {
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
-                                        <h2 className="text-xl font-bold text-white/90">Notifications</h2>
+                                        <h2 className="text-xl font-bold text-white/90">{t('NOTIFICATIONS_TITLE')}</h2>
                                         {alerts.length > 0 && (
                                             <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
                                                 <Icons.Trash className="w-5 h-5" />
@@ -3348,7 +3382,7 @@ const App = () => {
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search usernames or #hashtags..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
                                                 <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
                                             </div>
                                         )}
@@ -3365,9 +3399,9 @@ const App = () => {
                                                                     {u.username}
                                                                     {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">FOUNDER</span>}
                                                                 </div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} Followers</div>
+                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
-                                                            <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">View</button>
+                                                            <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -3416,7 +3450,7 @@ const App = () => {
                                             {posts.length === 0 && (
                                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
                                                     <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">Decrypting Feed...</div>
+                                                    <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             )}
                                         </div>
@@ -3459,7 +3493,7 @@ const App = () => {
                                     </div>
                                 </button>
 
-                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-gray-500 hover:text-red-500 transition-all z-10"><Icons.Logout className="w-6 h-6" /></button>
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-6 h-6 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
                                 <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">

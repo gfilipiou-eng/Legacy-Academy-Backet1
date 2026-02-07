@@ -165,5 +165,19 @@
     "ENGAGE_INTEL": "ENGAGE INTEL",
     "COMMENT_MODE_HINT": "Open full-screen view to read, edit or delete comments.",
     "VIEW_COMMENTS": "OPEN COMMENTS",
-    "ANONYMOUS": "Agent"
+    "ANONYMOUS": "Agent",
+    "CREATING_ACCOUNT": "CREATING ACCOUNT...",
+    "BACK_TO_LOGIN": "Back to Login",
+    "RESET_LINK_DESC": "Enter your email to receive a password reset link.",
+    "RESET_LINK_SENT": "If this email is in our database, a reset link has been sent.",
+    "REQUEST_FAILED": "Request failed.",
+    "SENDING": "SENDING...",
+    "SEND_RESET_LINK": "SEND RESET LINK",
+    "NOTIFICATIONS_TITLE": "NOTIFICATIONS",
+    "DECRYPTING_FEED": "DECRYPTING FEED...",
+    "VIEW": "VIEW",
+    "FOLLOWERS_COUNT": "FOLLOWERS",
+    "ENCRYPTED_COMMS_ONLY": "ENCRYPTED: ONLY FOLLOWERS CAN INITIATE COMMS",
+    "SYNC_ERROR": "Connection to neural link failed. Try again.",
+    "NO_AGENTS_FOUND": "Zero Agents Found."
 }
