@@ -293,7 +293,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
 
     return (
         <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
                 <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
             </div>
 
@@ -444,9 +444,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
                 {/* Info Section - Fixed height or scrolling */}
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full overflow-hidden relative">
-                    <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
+                    <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                            <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
                                 <ProfileAvatar user={post.author} />
                             </div>
                             <div className="flex flex-col">
@@ -486,11 +486,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="px-5 py-4 bg-black/60 border-b border-white/5 backdrop-blur-xl shrink-0">
-                        <div className="text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic w-full text-left">{parseHashtags(post.desc)}</div>
+                    <div className="px-4 sm:px-6 py-5 bg-gradient-to-br from-black/80 via-black/60 to-black/40 border-b border-white/5 backdrop-blur-2xl shrink-0">
+                        <div className="text-sm text-gray-100 border-l-4 border-[var(--gold-primary)]/50 pl-4 py-2 font-medium leading-relaxed w-full text-left shadow-lg">{parseHashtags(post.desc)}</div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4 flex flex-col items-center space-y-4">
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar bg-gradient-to-b from-black/20 to-black/40 pb-6 flex flex-col items-center space-y-4">
                         <div className="w-full max-w-md mt-2 animate-fade-in space-y-4 text-left">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
@@ -513,8 +513,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="p-5 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-25px_100px_rgba(0,0,0,1)] pb-24 md:pb-8">
-                        <div className="flex items-center justify-between mb-5 px-1">
+                    <div className="p-4 sm:p-6 pt-5 border-t border-white/10 bg-gradient-to-t from-[#050505]/98 to-black/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-30px_120px_rgba(0,0,0,1)] pb-24 md:pb-8">
+                        <div className="flex items-center justify-between mb-6 px-1">
                             <div className="flex items-center gap-4 sm:gap-7">
                                 <button
                                     type="button"
@@ -566,8 +566,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             )}
                         </div>
 
-                        <div className="flex items-center gap-4">
-                            <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden shrink-0 shadow-lg ring-1 ring-white/10 group active:scale-90 transition-all cursor-pointer">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 shadow-2xl ring-2 ring-white/10 group active:scale-90 transition-all cursor-pointer">
                                 <ProfileAvatar user={user} />
                             </div>
                             {isRecordingComment ? (
@@ -845,7 +845,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
             }}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
+                <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
@@ -894,8 +894,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-full p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
-                    <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 relative">
+                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
+                    <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
                         <ProfileAvatar user={user} className="opacity-80" />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
@@ -1023,7 +1023,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             <div className="p-4" >
                 <div className="flex items-start gap-3">
                     <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                        <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
                             <ProfileAvatar user={post.author} />
                         </div>
                     </div>
@@ -1400,7 +1400,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                             const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
@@ -1413,7 +1413,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                    <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
+                                    <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
                                     <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                                 <button
@@ -1737,7 +1737,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">No users found.</div>}
                             {getListUsers().map(u => (
                                 <div key={u._id} onClick={() => { onViewProfile(u); setActiveList(null); }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer">
-                                    <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                                    <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
                                         <ProfileAvatar user={u} />
                                     </div>
                                     <div className="font-bold text-white text-sm">{u?.username}</div>
@@ -1746,7 +1746,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
-                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[var(--gold-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--gold-primary)]/10">
+                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-[2.5rem] bg-gray-800 overflow-hidden border-4 border-[var(--gold-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--gold-primary)]/10">
                                 <ProfileAvatar user={displayUser} size="large" />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
@@ -1806,7 +1806,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                     ) : (
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
-                                <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
+                                <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-[2.5rem] bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                     <ProfileAvatar user={displayUser} size="large" />
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
@@ -3299,8 +3299,8 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-gray-500 hover:text-red-500 transition-all z-10"><Icons.Logout className="w-6 h-6" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-full border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 relative">
+                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
