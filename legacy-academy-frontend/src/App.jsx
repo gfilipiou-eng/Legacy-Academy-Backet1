@@ -478,8 +478,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <AnimatePresence>
                                     {showMenu && (
                                         <>
-                                            <div className="fixed inset-0 z-[9998] bg-black/50" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:left-auto md:top-auto md:translate-x-0 md:translate-y-0 md:absolute md:right-0 md:top-full md:mt-2 bg-black border border-white/20 rounded-2xl p-2 z-[9999] w-48 shadow-[0_0_60px_rgba(0,0,0,0.9)] ring-1 ring-white/30">
+                                            <div style={{ position: 'fixed', inset: 0, zIndex: 99998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '40%', transform: 'translate(-50%, -50%)', zIndex: 99999 }} className="bg-black border-2 border-white/30 rounded-2xl p-3 w-52 shadow-[0_0_80px_rgba(0,0,0,1)]">
                                                 <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-xs font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
                                                     <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
                                                 </button>
@@ -1331,11 +1331,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     const handleClearChat = () => {
         if (!activeChat) return;
-        if (!window.confirm('Clear all messages?')) return;
-        const targetId = activeChat._id || activeChat.id || activeChat.otherId;
+        const targetId = activeChat._id || activeChat.id;
         if (!targetId) return;
+        console.log('Clearing chat for:', targetId);
         setMessages(prev => ({ ...prev, [targetId]: [] }));
         playSound('sword');
+        alert('Chat cleared!');
     };
 
     const handleSend = async () => {
@@ -1419,7 +1420,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-3 pb-28 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-32 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
                                         type="text"
