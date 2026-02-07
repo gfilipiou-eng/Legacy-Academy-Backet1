@@ -540,12 +540,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.dislikes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" className="flex items-center gap-2 group text-blue-400 transition-all cursor-pointer active:scale-125">
-                                    <div className="p-2.5 rounded-2xl bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.35)] border border-blue-500/40 relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-blue-400/10 animate-pulse" />
-                                        <Icons.MessageCircle className="w-5 h-5 pointer-events-none relative z-10" />
-                                    </div>
-                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.comments?.length || 0}</span>
+                                <button type="button" className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
+                                    </svg>
+                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none text-gray-400 group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
                             </div>
 
@@ -3134,7 +3133,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/image/Logo.png?v=4" className="h-24 sm:h-36 w-auto object-contain transition-all" alt="Logo" />
+                                    <img src="/image/Logo.png" className="h-[120px] sm:h-[180px] w-auto object-contain transition-all hover:scale-105 duration-500" alt="Logo" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
@@ -3266,18 +3265,12 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
                             <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-6 h-6 relative z-10" />
-                                    {activeTab === 'home' && (
-                                        <motion.div layoutId="nav-bg" className="absolute -inset-3 bg-white/10 rounded-full blur-md -z-0" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
-                                    )}
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Search className="w-6 h-6 relative z-10" />
-                                    {activeTab === 'search' && (
-                                        <motion.div layoutId="nav-bg" className="absolute -inset-3 bg-white/10 rounded-full blur-md -z-0" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
-                                    )}
                                 </button>
 
                                 <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
@@ -3285,9 +3278,6 @@ const App = () => {
                                         <Icons.Bell className={`w-6 h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                     </div>
-                                    {activeTab === 'alerts' && (
-                                        <motion.div layoutId="nav-bg" className="absolute -inset-3 bg-white/10 rounded-full blur-md -z-0" transition={{ type: "spring", bounce: 0.2, duration: 0.6 }} />
-                                    )}
                                 </button>
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-gray-500 hover:text-red-500 transition-all z-10"><Icons.Logout className="w-6 h-6" /></button>
