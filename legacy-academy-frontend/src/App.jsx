@@ -11,6 +11,11 @@ import CommentView from './CommentView';
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
 
+const GREEK_PHONETIC = {
+    'a': 'α', 'b': 'β', 'c': 'ψ', 'd': 'δ', 'e': 'ε', 'f': 'φ', 'g': 'γ', 'h': 'η', 'i': 'ι', 'j': 'ξ', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'o': 'ο', 'p': 'π', 'q': 'θ', 'r': 'ρ', 's': 'σ', 't': 'τ', 'u': 'υ', 'v': 'ω', 'w': 'ς', 'x': 'χ', 'y': 'υ', 'z': 'ζ',
+    'A': 'Α', 'B': 'Β', 'C': 'Ψ', 'D': 'Δ', 'E': 'Ε', 'F': 'Φ', 'G': 'Γ', 'H': 'Η', 'I': 'Ι', 'J': 'Ξ', 'K': 'Κ', 'L': 'Λ', 'M': 'Μ', 'N': 'Ν', 'O': 'Ο', 'P': 'Π', 'Q': 'Θ', 'R': 'Ρ', 'S': 'Σ', 'T': 'Τ', 'U': 'Υ', 'V': 'Ω', 'W': 'Σ', 'X': 'Χ', 'Y': 'Υ', 'Z': 'Ζ'
+};
+
 const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false) => {
     if (!path) return '';
     let url = path;
@@ -470,8 +475,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
                         </div>
                         <div className="flex gap-1 relative">
-                            {isOwner && <button onClick={() => { playSound('pop'); onEdit(post); }} className="p-3 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90 group"><Icons.Edit className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
-
                             <div className="relative">
                                 <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-3 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
                                     <Icons.MoreVertical className="w-5 h-5" strokeWidth={2.5} />
@@ -482,15 +485,25 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             {createPortal(
                                                 <>
                                                     <div style={{ position: 'fixed', inset: 0, zIndex: 999998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '45%', transform: 'translate(-50%, -50%)', zIndex: 999999 }} className="bg-black border-2 border-white/30 rounded-2xl p-4 w-60 shadow-[0_0_100px_rgba(0,0,0,1)] ring-2 ring-white/10">
-                                                        <div className="flex flex-col gap-2">
-                                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-4 rounded-xl hover:bg-white/10 text-sm font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
-                                                                <div className="p-2 bg-white/5 rounded-lg border border-white/10"><Icons.Share className="w-5 h-5" /></div> {t('SHARE')}
+                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '45%', transform: 'translate(-50%, -50%)', zIndex: 999999 }} className="bg-[#121212]/95 border border-white/10 rounded-[1.2rem] p-1.5 w-44 shadow-2xl flex flex-col gap-1 backdrop-blur-2xl ring-1 ring-white/10">
+                                                        <div className="flex flex-col gap-1">
+                                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
+                                                                <div className="p-1.5 bg-white/5 rounded-lg border border-white/10"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
                                                             </button>
-                                                            {(isOwner || isFounder) && (
-                                                                <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-4 rounded-xl hover:bg-red-500/20 text-sm font-bold text-red-500 transition-all uppercase tracking-[0.1em]">
-                                                                    <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/20"><Icons.Trash className="w-5 h-5" /></div> {t('DELETE')}
+                                                            {isOwner && (
+                                                                <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/20 text-[10px] font-black text-blue-400 w-full text-left transition-all uppercase tracking-widest">
+                                                                    <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20"><Icons.Edit className="w-4 h-4" /></div> {t('EDIT')}
                                                                 </button>
+                                                            )}
+                                                            {(isOwner || isFounder) && (
+                                                                <>
+                                                                    <button onClick={(e) => { e.stopPropagation(); handleClearComments(); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
+                                                                        <div className="p-1.5 bg-white/5 rounded-lg border border-white/10"><Icons.Broom className="w-4 h-4" /></div> {t('CLEAR_COMMENTS') || "CLEAR COMMENTS"}
+                                                                    </button>
+                                                                    <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-[10px] font-black text-red-500 w-full text-left transition-all uppercase tracking-widest">
+                                                                        <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
+                                                                    </button>
+                                                                </>
                                                             )}
                                                         </div>
                                                     </motion.div>
@@ -504,8 +517,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="px-4 sm:px-6 py-5 bg-gradient-to-br from-black/80 via-black/60 to-black/40 border-b border-white/5 backdrop-blur-2xl shrink-0">
-                        <div className="text-sm text-gray-100 border-l-4 border-[var(--gold-primary)]/50 pl-4 py-2 font-medium leading-relaxed w-full text-left shadow-lg">{parseHashtags(post.desc)}</div>
+                    <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
+                        <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">{parseHashtags(post.desc)}</div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
@@ -1051,25 +1064,28 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <Icons.MoreVertical className="w-5 h-5 pointer-events-none" />
                                 </button>
                                 <AnimatePresence>
-                                    {showMenu && (
+                                    {showMenu && createPortal(
                                         <>
-                                            <div className="fixed inset-0 z-[40]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                            <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }} className="absolute right-0 top-10 bg-[#121212]/95 border border-white/10 rounded-[1.2rem] p-1.5 z-[50] w-44 shadow-2xl flex flex-col gap-1 backdrop-blur-2xl ring-1 ring-white/10">
-                                                <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
-                                                    <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
-                                                </button>
-                                                {isOwner && (
-                                                    <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/20 text-[10px] font-black text-blue-400 w-full text-left transition-all uppercase tracking-widest">
-                                                        <div className="p-1.5 bg-blue-500/10 rounded-lg"><Icons.Edit className="w-4 h-4" /></div> {t('EDIT')}
+                                            <div style={{ position: 'fixed', inset: 0, zIndex: 999998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '45%', transform: 'translate(-50%, -50%)', zIndex: 999999 }} className="bg-[#121212]/95 border border-white/10 rounded-[1.2rem] p-1.5 w-44 shadow-2xl flex flex-col gap-1 backdrop-blur-2xl ring-1 ring-white/10">
+                                                <div className="flex flex-col gap-1">
+                                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
+                                                        <div className="p-1.5 bg-white/5 rounded-lg border border-white/10"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
                                                     </button>
-                                                )}
-                                                {(isOwner || isFounder) && (
-                                                    <button onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-[10px] font-black text-red-500 w-full text-left transition-all uppercase tracking-widest">
-                                                        <div className="p-1.5 bg-red-500/10 rounded-lg"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
-                                                    </button>
-                                                )}
+                                                    {isOwner && (
+                                                        <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/20 text-[10px] font-black text-blue-400 w-full text-left transition-all uppercase tracking-widest">
+                                                            <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20"><Icons.Edit className="w-4 h-4" /></div> {t('EDIT')}
+                                                        </button>
+                                                    )}
+                                                    {(isOwner || isFounder) && (
+                                                        <button onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-[10px] font-black text-red-500 w-full text-left transition-all uppercase tracking-widest">
+                                                            <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </motion.div>
-                                        </>
+                                        </>,
+                                        document.body
                                     )}
                                 </AnimatePresence>
                             </div>
@@ -1079,11 +1095,11 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         <div onClick={() => {
                             const isVid = (isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i)));
                             if (!isVid) onOpenDetail(post);
-                        }} className={`mt-1 text-sm text-white/90 whitespace-pre-wrap break-words mb-2 font-normal ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
+                        }} className={`mt-2 text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
                             {translatedDesc ? (
                                 <div className="space-y-1">
-                                    <div className="text-[var(--gold-primary)] text-[10px] font-bold uppercase tracking-widest">{t('SEE_TRANSLATION')}</div>
-                                    <div>{parseHashtags(translatedDesc, onHashtagClick)}</div>
+                                    <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
+                                    <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
                             ) : parseHashtags(post.desc, onHashtagClick)}
                         </div>
@@ -1306,6 +1322,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const [messages, setMessages] = useState({});
     const [inputText, setInputText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [isPhonetic, setIsPhonetic] = useState(false);
     const scrollRef = useRef();
 
     const fetchMessages = async (otherUserId) => {
@@ -1442,13 +1459,33 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                     <input
                                         type="text"
                                         value={inputText}
-                                        onChange={(e) => setInputText(e.target.value)}
+                                        onChange={(e) => {
+                                            let val = e.target.value;
+                                            if (isPhonetic) {
+                                                const lastChar = val.slice(-1);
+                                                if (GREEK_PHONETIC[lastChar]) {
+                                                    val = val.slice(0, -1) + GREEK_PHONETIC[lastChar];
+                                                }
+                                            }
+                                            setInputText(val);
+                                        }}
                                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder={t('ENTER_COMMAND')}
                                         className="w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold"
                                     />
-                                    <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors shrink-0" />
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
+                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                                    </div>
                                 </div>
+                                <button
+                                    type="button"
+                                    onClick={() => { setIsPhonetic(!isPhonetic); playSound('pop'); }}
+                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
+                                    title="Phonetic Greek Keyboard"
+                                >
+                                    <Icons.Translate className="w-5 h-5" />
+                                </button>
                                 <button
                                     type="button"
                                     onClick={() => playSound('pop')}
@@ -2999,7 +3036,7 @@ const App = () => {
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
                         <div className="flex flex-col items-center mb-8">
-                            <img src="/image/Logo.png?v=4" className="h-44 w-auto object-contain mb-2" alt="Legacy Logo" />
+                            <img src="/image/Logo.png?v=4" className="h-64 w-auto object-contain mb-4" alt="Legacy Logo" />
                         </div>
                         <div className="space-y-4">
                             {authMode === 'login' && (
@@ -3162,7 +3199,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/image/Logo.png" className="h-[150px] sm:h-[220px] w-auto object-contain transition-all hover:scale-105 duration-500" alt="Logo" />
+                                    <img src="/image/Logo.png" className="h-[220px] sm:h-[320px] w-auto object-contain transition-all hover:scale-110 duration-500" alt="Logo" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
