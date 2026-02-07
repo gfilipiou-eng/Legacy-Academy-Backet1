@@ -497,9 +497,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                             )}
                                                             {(isOwner || isFounder) && (
                                                                 <>
-                                                                    <button onClick={(e) => { e.stopPropagation(); handleClearComments(); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
-                                                                        <div className="p-1.5 bg-white/5 rounded-lg border border-white/10"><Icons.Broom className="w-4 h-4" /></div> {t('CLEAR_COMMENTS') || "CLEAR COMMENTS"}
-                                                                    </button>
                                                                     <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-[10px] font-black text-red-500 w-full text-left transition-all uppercase tracking-widest">
                                                                         <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
                                                                     </button>
