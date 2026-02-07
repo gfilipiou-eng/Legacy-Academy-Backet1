@@ -527,9 +527,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
                                         playSound('pop');
                                     }}
-                                    className="flex items-center gap-2 group transition-all active:scale-125 p-2 rounded-xl hover:bg-white/5"
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-blue-400"
                                 >
-                                    <Icons.MessageCircle className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
+                                    <div className="p-2 rounded-xl group-hover:bg-blue-500/10 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all">
+                                        <Icons.MessageCircle className="w-5 h-5 pointer-events-none transition-colors filter drop-shadow-[0_0_8px_rgba(96,165,250,0.3)]" />
+                                    </div>
                                 </button>
                             </div>
 
