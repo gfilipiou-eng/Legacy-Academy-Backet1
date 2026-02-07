@@ -63,17 +63,24 @@ img {
   animation: liquid-glass-sweep 6s infinite ease-in-out;
 }
 
+@media (max-width: 640px) {
+  .liquid-glass-nav {
+    max-width: 90% !important;
+    bottom: 20px !important;
+  }
+}
+
 @keyframes liquid-glass-sweep {
   0% {
     left: -150%;
   }
 
   50% {
-    left: 150%;
+    left: 200%;
   }
 
   100% {
-    left: 150%;
+    left: 200%;
   }
 }
 
