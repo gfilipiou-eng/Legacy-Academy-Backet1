@@ -2569,6 +2569,57 @@ const App = () => {
         });
     };
 
+    const handleUpdateUser = (updatedUser) => {
+        // 1. Update primary user state
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setImgKey(Date.now());
+
+        // 2. Synchronize across all local state arrays for immediate UI update
+        const userId = String(updatedUser._id || updatedUser.id);
+
+        // Update 'users' array
+        setUsers(prev => prev.map(u => String(u._id) === userId ? { ...u, ...updatedUser } : u));
+
+        // Update 'posts' array (authors, direct profilePic, and comments authors)
+        setPosts(prev => prev.map(p => {
+            let updatedPost = p;
+            if (String(p.author?._id || p.author) === userId) {
+                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : p.author;
+                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
+            }
+
+            // Deep sync comments
+            if (p.comments?.some(c => String(c.authorId) === userId)) {
+                updatedPost = {
+                    ...updatedPost,
+                    comments: p.comments.map(c => String(c.authorId) === userId ? { ...c, authorProfilePic: updatedUser.profilePic } : c)
+                };
+            }
+            return updatedPost;
+        }));
+
+        // Update 'stories' array
+        setStories(prev => prev.map(group => {
+            if (String(group.author?._id || group.author) === userId) {
+                return { ...group, author: { ...group.author, ...updatedUser } };
+            }
+            return group;
+        }));
+
+        // Update selectedPost if open
+        if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === userId) {
+            setSelectedPost(prev => {
+                const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...updatedUser } : prev.author;
+                return { ...prev, author: updatedAuthor, profilePic: updatedUser.profilePic };
+            });
+        }
+
+        // 3. Background background sync
+        fetchPosts();
+        fetchUsers();
+    };
+
 
     useEffect(() => {
         const saved = localStorage.getItem('user');
@@ -3278,7 +3329,7 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
-                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
+                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
@@ -3405,9 +3456,9 @@ const App = () => {
                     )}
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
-                    <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={(u) => { setUser(u); setImgKey(Date.now()); localStorage.setItem('user', JSON.stringify(u)); fetchPosts(); fetchUsers(); }} addToast={addToast} />
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+                    <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); fetchStories(); }} user={user} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
                         setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
