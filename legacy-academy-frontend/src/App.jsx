@@ -479,7 +479,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     {showMenu && (
                                         <>
                                             <div className="fixed inset-0 z-[1400]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                            <motion.div initial={{ opacity: 0, scale: 0.95, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -10 }} className="absolute right-0 top-12 bg-black/90 border border-white/10 rounded-2xl p-1.5 z-[1500] w-44 shadow-2xl backdrop-blur-3xl ring-1 ring-white/20">
+                                            <motion.div initial={{ opacity: 0, scale: 0.95, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -10 }} className="absolute right-0 top-12 bg-black/95 border border-white/10 rounded-2xl p-1.5 z-[2000] w-44 shadow-2xl backdrop-blur-3xl ring-1 ring-white/20">
                                                 <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-xs font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
                                                     <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
                                                 </button>
@@ -561,19 +561,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none text-gray-400 group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
                             </div>
-
-                            {(isOwner || isFounder) && (
-                                <button
-                                    type="button"
-                                    onClick={handleClearComments}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-red-500"
-                                >
-                                    <div className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition-all border border-red-500/20">
-                                        <Icons.Trash className="w-4 h-4 pointer-events-none" />
-                                    </div>
-                                    <span className="text-[11px] font-black tracking-tighter uppercase hidden sm:inline-block">{t('CLEAR')}</span>
-                                </button>
-                            )}
                         </div>
 
                         <div className="flex items-center gap-2">
