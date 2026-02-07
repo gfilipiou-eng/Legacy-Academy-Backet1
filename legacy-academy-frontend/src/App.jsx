@@ -540,7 +540,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.dislikes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5">
+                                <button
+                                    type="button"
+                                    onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
+                                >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
                                     </svg>
@@ -613,6 +617,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl px-1 py-1 group focus-within:border-[var(--gold-primary)]/40 focus-within:bg-white/10 transition-all duration-300"
                                     >
                                         <input
+                                            id={`comment-input-${post._id}`}
                                             placeholder={t('ENGAGE')}
                                             value={commentText}
                                             onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
@@ -1152,11 +1157,23 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         {/* ACTIONS BAR - VIVID NEURAL STYLE */}
                         <div className="flex items-center justify-between mt-6 pr-4 relative z-10 py-1">
                             <div className="flex items-center gap-4 sm:gap-8">
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${showComments ? 'text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'text-gray-500 hover:text-blue-400'}`}>
-                                    <div className={`p-2 rounded-xl transition-all ${showComments ? 'bg-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.2)] border border-blue-500/20' : 'group-hover:bg-blue-500/10'}`}>
-                                        <Icons.MessageCircle className="w-5 h-5 pointer-events-none" />
-                                    </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.comments?.length || 0}</span>
+                                <button
+                                    type="button"
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
+                                    </svg>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }}
+                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl ${showComments ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_var(--gold-glow-soft)] border border-[var(--gold-primary)]/20' : 'text-gray-400 hover:text-[var(--gold-primary)] hover:bg-white/5'}`}
+                                >
+                                    <Icons.Mic className="w-5 h-5" />
                                 </button>
 
                                 <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
