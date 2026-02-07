@@ -1168,14 +1168,6 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
 
-                                <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }}
-                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl ${showComments ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_var(--gold-glow-soft)] border border-[var(--gold-primary)]/20' : 'text-gray-400 hover:text-[var(--gold-primary)] hover:bg-white/5'}`}
-                                >
-                                    <Icons.Mic className="w-5 h-5" />
-                                </button>
-
                                 <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
                                     <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)] border border-red-500/20' : 'group-hover:bg-red-500/10'}`}>
                                         <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
