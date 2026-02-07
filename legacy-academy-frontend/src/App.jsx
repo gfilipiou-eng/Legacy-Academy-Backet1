@@ -430,6 +430,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
         } catch (e) { alert("Mic denied"); }
     };
 
+    const toggleCommentRecording = () => {
+        if (isRecordingComment) {
+            stopRecording();
+        } else {
+            startCommentRecording();
+        }
+    };
+
     return (
 
         <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
@@ -641,8 +649,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         <div className="flex gap-1.5 pr-1.5 shrink-0">
                                             <button
                                                 type="button"
-                                                onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
-                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] transition-all active:scale-90"
+                                                onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                             >
                                                 <Icons.WalkieTalkie className="w-5 h-5" />
                                             </button>
@@ -987,6 +995,14 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
         } catch (e) { alert("Mic denied"); }
     };
 
+    const toggleCommentRecording = () => {
+        if (isRecordingComment) {
+            stopRecording();
+        } else {
+            startCommentRecording();
+        }
+    };
+
 
 
     const [showComments, setShowComments] = useState(false);
@@ -1279,8 +1295,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                 <div className="flex gap-1 pr-1 shrink-0">
                                                     <button
                                                         type="button"
-                                                        onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
+                                                        onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
+                                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                                     >
                                                         <Icons.WalkieTalkie className="w-4 h-4" />
                                                     </button>
@@ -1421,6 +1437,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         }
     };
 
+    const toggleRecording = () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    };
+
     const filteredUsers = allUsers.filter(u =>
         u._id !== user?._id &&
         u.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -1531,11 +1555,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 </button>
                                 <button
                                     type="button"
-                                    onMouseDown={startRecording}
-                                    onMouseUp={stopRecording}
-                                    onMouseLeave={stopRecording}
-                                    onTouchStart={startRecording}
-                                    onTouchEnd={stopRecording}
+                                    onClick={(e) => { e.preventDefault(); toggleRecording(); }}
                                     className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-[var(--gold-primary)]'}`}
                                 >
                                     <Icons.WalkieTalkie className="w-6 h-6" />

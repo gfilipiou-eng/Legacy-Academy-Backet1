@@ -16,24 +16,32 @@ router.get("/status", (req, res) => res.status(200).json({ status: "Neural link 
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
     console.log(`[${reqId}] MESSAGE ATTEMPT - Body keys:`, Object.keys(req.body || {}));
+    console.log(`[${reqId}] Received Payload:`, { recipient: req.body.recipient, text: req.body.text, hasFile: !!req.file });
 
     try {
         if (!req.user) return res.status(401).json("Neural interface not recognized.");
-        const senderId = req.user.id || req.user.userId;
+        const senderId = req.user.id || req.user.userId || req.user._id;
         const { recipient, text } = req.body;
-        console.log(`[${reqId}] Message from ${senderId} to ${recipient}. Text preview: ${text?.substring(0, 20)}`);
 
         if (!recipient) {
-            return res.status(400).json("Recipient is required");
+            console.error(`[${reqId}] FAILED: No recipient provided`);
+            return res.status(400).json("Recipient identifier required.");
+        }
+
+        // Validate recipient ID
+        if (!mongoose.Types.ObjectId.isValid(recipient)) {
+            console.error(`[${reqId}] FAILED: Invalid recipient ID format: ${recipient}`);
+            return res.status(400).json("Invalid recipient identifier format.");
         }
 
         if (!text && !req.file) {
-            return res.status(400).json("Intelligence required (text or audio)");
+            console.error(`[${reqId}] FAILED: No content (text or audio) provided`);
+            return res.status(400).json("Intelligence packet must contain text or audio.");
         }
 
         const targetUser = await User.findById(recipient);
         if (!targetUser) {
-            console.warn(`[${reqId}] Recipient not found: ${recipient}`);
+            console.warn(`[${reqId}] FAILED: Recipient not found: ${recipient}`);
             return res.status(404).json("Recipient not found in neural database.");
         }
 
@@ -45,33 +53,47 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             }
         }
 
+        // Explicitly cast strings to ObjectIds to prevent Mongoose cast errors
+        const senderOid = new mongoose.Types.ObjectId(String(senderId));
+        const recipientOid = new mongoose.Types.ObjectId(String(recipient));
+
         const newMessage = new Message({
-            sender: senderId,
-            recipient,
-            text: text || "",
+            sender: senderOid,
+            recipient: recipientOid,
+            text: (text || "").trim(),
             audioUrl
         });
 
         const savedMessage = await newMessage.save();
+        console.log(`[${reqId}] Message SAVED. ID: ${savedMessage._id}`);
 
         // Send Notification
-        await User.findByIdAndUpdate(recipient, {
-            $push: {
-                notifications: {
-                    type: 'message',
-                    from: senderId,
-                    fromUsername: req.user.username,
-                    text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
-                    read: false,
-                    createdAt: new Date()
+        try {
+            await User.findByIdAndUpdate(recipientOid, {
+                $push: {
+                    notifications: {
+                        type: 'message',
+                        from: senderOid,
+                        fromUsername: req.user.username,
+                        text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
+                        read: false,
+                        createdAt: new Date()
+                    }
                 }
-            }
-        });
+            });
+            console.log(`[${reqId}] Notification DEPLOYED to ${recipientOid}`);
+        } catch (notifErr) {
+            console.warn(`[${reqId}] Notification Background Error (Non-Fatal):`, notifErr.message);
+        }
 
         res.status(201).json(savedMessage);
     } catch (err) {
-        console.error("MESSAGE ERROR:", err);
-        res.status(500).json({ error: "Neural link transmission failed", detail: err.message });
+        console.error(`🚨 [${reqId}] MESSAGE ERROR:`, err);
+        res.status(500).json({
+            error: "Neural link transmission failed",
+            detail: err.message,
+            requestId: reqId
+        });
     }
 });
 
