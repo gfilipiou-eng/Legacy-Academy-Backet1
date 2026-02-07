@@ -360,7 +360,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
     const commentRecorderRef = useRef(null);
+    const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
+    const [showMenu, setShowMenu] = useState(false);
 
     const handleClearComments = async () => {
         if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
@@ -456,13 +458,31 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 )}
                             </div>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 relative">
                             {isOwner && <button onClick={() => { playSound('pop'); onEdit(post); }} className="p-3 text-gray-400 hover:text-[var(--gold-primary)] transition-all active:scale-90 group"><Icons.Edit className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>}
-                            {(isOwner || isFounder) && (
-                                <>
-                                    <button onClick={() => { playSound('sword'); onDelete(post._id); onClose(); }} className="p-3 text-gray-400 hover:text-red-500 transition-all active:scale-90 group"><Icons.Trash className="w-5 h-5 group-hover:scale-110 transition-transform" /></button>
-                                </>
-                            )}
+
+                            <div className="relative">
+                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-3 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                                    <Icons.MoreVertical className="w-5 h-5" strokeWidth={2.5} />
+                                </button>
+                                <AnimatePresence>
+                                    {showMenu && (
+                                        <>
+                                            <div className="fixed inset-0 z-[1400]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                            <motion.div initial={{ opacity: 0, scale: 0.95, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -10 }} className="absolute right-0 top-12 bg-black/90 border border-white/10 rounded-2xl p-1.5 z-[1500] w-44 shadow-2xl backdrop-blur-3xl ring-1 ring-white/20">
+                                                <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-xs font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
+                                                    <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
+                                                </button>
+                                                {(isOwner || isFounder) && (
+                                                    <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-xs font-bold text-red-500 transition-all uppercase tracking-[0.1em]">
+                                                        <div className="p-1.5 bg-red-500/10 rounded-lg"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
+                                                    </button>
+                                                )}
+                                            </motion.div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </div>
                     </div>
 
@@ -493,79 +513,141 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="p-5 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-25px_100px_rgba(0,0,0,1)] pb-32 md:pb-safe-or-nav">
-                        <div className="flex items-center justify-between mb-6 px-4">
-                            <div className="flex items-center gap-6 sm:gap-10">
+                    <div className="p-5 pt-4 border-t border-white/10 bg-[#050505]/95 backdrop-blur-3xl z-[100] safe-area-bottom shadow-[0_-25px_100px_rgba(0,0,0,1)] pb-24 md:pb-8">
+                        <div className="flex items-center justify-between mb-5 px-1">
+                            <div className="flex items-center gap-4 sm:gap-7">
                                 <button
                                     type="button"
                                     disabled={loadingActions?.[post._id]}
                                     onClick={() => onLike(post._id)}
-                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${post.likes?.includes(user?._id) ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-400'}`}
+                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.5)]' : 'text-gray-400 hover:text-red-400'}`}
                                 >
-                                    <div className={`p-2 rounded-xl transition-all ${post.likes?.includes(user?._id) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'group-hover:bg-white/5'}`}>
-                                        <Icons.Heart className={`w-5 h-5 pointer-events-none ${post.likes?.includes(user?._id) ? 'fill-current animate-heart-beat' : ''}`} />
+                                    <div className={`p-2.5 rounded-2xl transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'bg-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.25)] border border-red-500/30' : 'bg-white/5 border border-transparent group-hover:border-white/10'}`}>
+                                        <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current animate-heart-beat' : ''}`} />
                                     </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.likes?.length || 0}</span>
+                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
                                 </button>
 
                                 <button
                                     type="button"
                                     disabled={loadingActions?.[post._id]}
                                     onClick={() => onDislike(post._id)}
-                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-400'}`}
+                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_12px_var(--gold-glow)]' : 'text-gray-400 hover:text-[var(--gold-primary)]'}`}
                                 >
-                                    <div className={`p-2 rounded-xl transition-all ${post.dislikes?.includes(user?._id) ? 'bg-[var(--gold-primary)]/10 shadow-[0_0_15px_var(--gold-glow-soft)]' : 'group-hover:bg-white/5'}`}>
-                                        <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''}`} />
+                                    <div className={`p-2.5 rounded-2xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'bg-[var(--gold-primary)]/20 shadow-[0_0_20px_var(--gold-glow-soft)] border border-[var(--gold-primary)]/30' : 'bg-white/5 border border-transparent group-hover:border-white/10'}`}>
+                                        <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.dislikes?.length || 0}</span>
+                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.dislikes?.length || 0}</span>
                                 </button>
 
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
-                                        playSound('pop');
-                                    }}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-blue-400"
-                                >
-                                    <div className="p-2 rounded-xl group-hover:bg-blue-500/10 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all">
-                                        <Icons.MessageCircle className="w-5 h-5 pointer-events-none transition-colors filter drop-shadow-[0_0_8px_rgba(96,165,250,0.3)]" />
+                                <button type="button" className="flex items-center gap-2 group text-blue-400 transition-all cursor-pointer active:scale-125">
+                                    <div className="p-2.5 rounded-2xl bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.35)] border border-blue-500/40 relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-blue-400/10 animate-pulse" />
+                                        <Icons.MessageCircle className="w-5 h-5 pointer-events-none relative z-10" />
                                     </div>
+                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.comments?.length || 0}</span>
                                 </button>
                             </div>
 
-                            <button onClick={() => onShare(post)} className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-2xl transition-all active:scale-90 group shadow-xl border border-transparent hover:border-white/10 ml-4">
-                                <Icons.Share className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                            </button>
+                            {(isOwner || isFounder) && (
+                                <button
+                                    type="button"
+                                    onClick={handleClearComments}
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-red-500"
+                                >
+                                    <div className="p-2.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 transition-all border border-red-500/20">
+                                        <Icons.Trash className="w-5 h-5 pointer-events-none" />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter uppercase hidden sm:inline-block">{t('CLEAR')}</span>
+                                </button>
+                            )}
                         </div>
 
-                        {/* Modal Triggered Logic - Invisible but functional */}
-                        {isWritingComment && (
-                            <CommentComposeModal
-                                isOpen={isWritingComment}
-                                onClose={() => setIsWritingComment(false)}
-                                onSubmit={(text) => {
-                                    if (text.trim()) {
-                                        onComment(post._id, text);
-                                        setCommentText('');
-                                        setIsWritingComment(false);
-                                    }
-                                }}
-                                value={commentText}
-                                onChange={setCommentText}
-                                onAudioSubmit={(blob) => {
-                                    const fd = new FormData();
-                                    fd.append('file', blob, 'voice_comment.webm');
-                                    onComment(post._id, fd);
-                                    setIsWritingComment(false);
-                                }}
-                                t={t}
-                                loading={loadingActions?.[post._id]}
-                            />
-                        )}
+                        <div className="flex items-center gap-4">
+                            <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden shrink-0 shadow-lg ring-1 ring-white/10 group active:scale-90 transition-all cursor-pointer">
+                                <ProfileAvatar user={user} />
+                            </div>
+                            {isRecordingComment ? (
+                                <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 sm:p-3 flex items-center justify-between animate-pop-in">
+                                    <div className="flex items-center gap-2 pl-1 shrink-0">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
+                                    </div>
+                                    <div className="flex gap-2 shrink-0">
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-white/10 transition-all"><Icons.X className="w-4 h-4" /></button>
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-4 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all">{t('STOP')}</button>
+                                    </div>
+                                </div>
+                            ) : commentAudio ? (
+                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[52px] px-2 bg-black/60 border border-[var(--gold-primary)]/40 rounded-2xl p-1 animate-pulse-subtle">
+                                    <div className="flex items-center gap-3 pl-2 shrink-0">
+                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                        <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-4 h-4" /></button>
+                                        <button type="button" onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            const fd = new FormData();
+                                            fd.append('file', commentAudio, 'voice.webm');
+                                            if (commentText.trim()) fd.append('text', commentText.trim());
+                                            onComment(post._id, fd);
+                                            setCommentAudio(null);
+                                            setCommentText('');
+                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all">
+                                            <Icons.Send className="w-4 h-4 fill-black" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex-1 min-w-0">
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            if (commentText.trim()) {
+                                                onComment(post._id, commentText);
+                                                setCommentText('');
+                                            }
+                                        }}
+                                        className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl px-1 py-1 group focus-within:border-[var(--gold-primary)]/40 focus-within:bg-white/10 transition-all duration-300"
+                                    >
+                                        <input
+                                            placeholder={t('ENGAGE')}
+                                            value={commentText}
+                                            onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
+                                            className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
+                                        />
+                                        <div className="flex gap-1.5 pr-1.5 shrink-0">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] transition-all active:scale-90"
+                                            >
+                                                <Icons.Mic className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 disabled:opacity-20 active:scale-95 transition-all"
+                                            >
+                                                {loadingActions?.[post._id] ? (
+                                                    <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                                ) : (
+                                                    <Icons.Send className="w-5 h-5" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div></div></div>
+                </div>
+            </div>
+        </div>
     );
 };
 
@@ -836,7 +918,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
     // Comment Recording State (Local to PostCard if possible, but PostCard is complex, simplified here or need dedicated component hook)
     // Doing quick dirty way: prop drilling or wrapper. Wait, PostCard IS the component. I will add state inside PostCard via refactor or just using the one provided.
-    // Actually PostCard is defined above. I need to add state TO PostCard. 
+    // Actually PostCard is defined above. I need to add state TO PostCard.
     // To avoid rewriting the entire PostCard, I will use a ref or internal state if I can't change signature easily.
     // CHECK: PostCard definition at line 337. It's a functional component, I can add hooks!
 
@@ -953,30 +1035,31 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 </span>
                             </div>
                             <div className="relative shrink-0 ml-2">
-                                {(isOwner || isFounder) && (
-                                    <>
-                                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-[0.85] shrink-0">
-                                            <Icons.MoreVertical className="w-5 h-5 pointer-events-none" />
-                                        </button>
-                                        <AnimatePresence>
-                                            {showMenu && (
-                                                <>
-                                                    <div className="fixed inset-0 z-[40]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="absolute right-0 top-8 bg-[#1a1a1a] border border-white/10 rounded-xl p-1 z-[50] w-36 shadow-2xl flex flex-col gap-1 overflow-hidden backdrop-blur-md">
-                                                        {isOwner && (
-                                                            <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/10 text-xs font-bold text-gray-300 w-full text-left transition-colors uppercase tracking-wider">
-                                                                <Icons.Edit className="w-4 h-4" /> {t('EDIT')}
-                                                            </button>
-                                                        )}
-                                                        <button onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-red-500/20 text-xs font-bold text-red-500 w-full text-left transition-colors uppercase tracking-wider">
-                                                            <Icons.Trash className="w-4 h-4" /> {t('DELETE')}
-                                                        </button>
-                                                    </motion.div>
-                                                </>
-                                            )}
-                                        </AnimatePresence>
-                                    </>
-                                )}
+                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-[0.85] shrink-0">
+                                    <Icons.MoreVertical className="w-5 h-5 pointer-events-none" />
+                                </button>
+                                <AnimatePresence>
+                                    {showMenu && (
+                                        <>
+                                            <div className="fixed inset-0 z-[40]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                            <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }} className="absolute right-0 top-10 bg-[#121212]/95 border border-white/10 rounded-[1.2rem] p-1.5 z-[50] w-44 shadow-2xl flex flex-col gap-1 backdrop-blur-2xl ring-1 ring-white/10">
+                                                <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
+                                                    <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
+                                                </button>
+                                                {isOwner && (
+                                                    <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/20 text-[10px] font-black text-blue-400 w-full text-left transition-all uppercase tracking-widest">
+                                                        <div className="p-1.5 bg-blue-500/10 rounded-lg"><Icons.Edit className="w-4 h-4" /></div> {t('EDIT')}
+                                                    </button>
+                                                )}
+                                                {(isOwner || isFounder) && (
+                                                    <button onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-[10px] font-black text-red-500 w-full text-left transition-all uppercase tracking-widest">
+                                                        <div className="p-1.5 bg-red-500/10 rounded-lg"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
+                                                    </button>
+                                                )}
+                                            </motion.div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         </div>
 
@@ -1070,35 +1153,28 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         {/* ACTIONS BAR - VIVID NEURAL STYLE */}
                         <div className="flex items-center justify-between mt-6 pr-4 relative z-10 py-1">
                             <div className="flex items-center gap-4 sm:gap-8">
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className="flex items-center gap-2 group text-gray-500 hover:text-blue-400 transition-all cursor-pointer active:scale-125">
-                                    <div className="p-2 rounded-xl group-hover:bg-blue-500/10 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowComments(!showComments); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${showComments ? 'text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'text-gray-500 hover:text-blue-400'}`}>
+                                    <div className={`p-2 rounded-xl transition-all ${showComments ? 'bg-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.2)] border border-blue-500/20' : 'group-hover:bg-blue-500/10'}`}>
                                         <Icons.MessageCircle className="w-5 h-5 pointer-events-none" />
                                     </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.comments?.length || 0}</span>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.comments?.length || 0}</span>
                                 </button>
 
-
-
-                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
-                                    <div className="p-2 rounded-xl group-hover:bg-red-500/10 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all">
+                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
+                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)] border border-red-500/20' : 'group-hover:bg-red-500/10'}`}>
                                         <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
                                     </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.likes?.length || 0}</span>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                    <div className="p-2 rounded-xl group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_var(--gold-glow)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'bg-[var(--gold-primary)]/10 shadow-[0_0_15px_var(--gold-glow-soft)] border border-[var(--gold-primary)]/20' : 'group-hover:bg-[var(--gold-primary)]/10'}`}>
                                         <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
                                     </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{dislikeCount}</span>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{dislikeCount}</span>
                                 </button>
                             </div>
 
-                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-2 group text-gray-500 hover:text-[var(--gold-primary)] transition-all cursor-pointer active:scale-125">
-                                <div className="p-2 rounded-xl group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all">
-                                    <Icons.Share className="w-5 h-5 pointer-events-none" />
-                                </div>
-                            </button>
                         </div>
                     </div>
                 </div>
