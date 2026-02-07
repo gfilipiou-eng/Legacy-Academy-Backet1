@@ -431,8 +431,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
-                {/* Image Section - Responsive height */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[60vh] md:h-full shrink-0">
+                {/* Image Section - Smaller on mobile for more comment space */}
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
                             <div className="w-full h-full flex items-center justify-center bg-black">
@@ -500,7 +500,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         <div className="text-sm text-gray-100 border-l-4 border-[var(--gold-primary)]/50 pl-4 py-2 font-medium leading-relaxed w-full text-left shadow-lg">{parseHashtags(post.desc)}</div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 pb-4 custom-scrollbar bg-gradient-to-b from-black/20 to-black/40">
+                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
                         <div className="w-full animate-fade-in space-y-4">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
@@ -523,7 +523,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="px-3 py-2 border-t border-white/10 bg-gradient-to-t from-[#050505] to-black/90 backdrop-blur-3xl z-[100] shadow-[0_-10px_40px_rgba(0,0,0,0.8)] pb-[80px] md:pb-3">
+                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2">
                         <div className="flex items-center justify-between mb-2 px-0">
                             <div className="flex items-center gap-2 sm:gap-4">
                                 <button
@@ -532,8 +532,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     onClick={() => onLike(post._id)}
                                     className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.5)]' : 'text-gray-400 hover:text-red-400'}`}
                                 >
-                                    <div className={`p-2.5 rounded-2xl transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'bg-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.25)] border border-red-500/30' : 'bg-white/5 border border-transparent group-hover:border-white/10'}`}>
-                                        <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current animate-heart-beat' : ''}`} />
+                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'bg-red-500/20 border border-red-500/30' : 'bg-white/5'}`}>
+                                        <Icons.Heart className={`w-4 h-4 pointer-events-none ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
                                 </button>
@@ -544,8 +544,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     onClick={() => onDislike(post._id)}
                                     className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_12px_var(--gold-glow)]' : 'text-gray-400 hover:text-[var(--gold-primary)]'}`}
                                 >
-                                    <div className={`p-2.5 rounded-2xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'bg-[var(--gold-primary)]/20 shadow-[0_0_20px_var(--gold-glow-soft)] border border-[var(--gold-primary)]/30' : 'bg-white/5 border border-transparent group-hover:border-white/10'}`}>
-                                        <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current' : ''}`} />
+                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'bg-[var(--gold-primary)]/20 border border-[var(--gold-primary)]/30' : 'bg-white/5'}`}>
+                                        <Icons.ThumbsDown className={`w-4 h-4 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.dislikes?.length || 0}</span>
                                 </button>
@@ -568,16 +568,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     onClick={handleClearComments}
                                     className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-red-500"
                                 >
-                                    <div className="p-2.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 transition-all border border-red-500/20">
-                                        <Icons.Trash className="w-5 h-5 pointer-events-none" />
+                                    <div className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition-all border border-red-500/20">
+                                        <Icons.Trash className="w-4 h-4 pointer-events-none" />
                                     </div>
                                     <span className="text-[11px] font-black tracking-tighter uppercase hidden sm:inline-block">{t('CLEAR')}</span>
                                 </button>
                             )}
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 shadow-2xl ring-2 ring-white/10 group active:scale-90 transition-all cursor-pointer">
+                        <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
                                 <ProfileAvatar user={user} />
                             </div>
                             {isRecordingComment ? (
