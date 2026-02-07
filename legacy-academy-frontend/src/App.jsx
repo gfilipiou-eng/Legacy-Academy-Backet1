@@ -300,9 +300,14 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
                 <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
                     <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
-                        <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
-                            {isCommentAuthor ? user?.username : (comment.user?.username || comment.authorName)}
-                        </span>
+                        <div className="flex items-center gap-1">
+                            <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
+                                {isCommentAuthor ? user?.username : (comment.user?.username || comment.authorName)}
+                            </span>
+                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-blue-500 shrink-0">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
                         {isFounder && <span className="text-[7px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90">{t('FOUNDER_BADGE')}</span>}
                     </div>
 
@@ -450,7 +455,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <ProfileAvatar user={post.author} />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-bold text-white leading-none">{post.author?.username}</span>
+                                <div className="flex items-center gap-1.5">
+                                    <span className="font-bold text-white leading-none">{post.author?.username}</span>
+                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-blue-500">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
                                 {post.author?.role === 'Founder' ? (
                                     <span className="text-[10px] text-red-600 mt-1 uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                 ) : (
@@ -490,7 +500,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         <div className="text-sm text-gray-100 border-l-4 border-[var(--gold-primary)]/50 pl-4 py-2 font-medium leading-relaxed w-full text-left shadow-lg">{parseHashtags(post.desc)}</div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar bg-gradient-to-b from-black/20 to-black/40 pb-2 flex flex-col items-center space-y-4">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-gradient-to-b from-black/20 to-black/40 flex flex-col items-center space-y-4">
                         <div className="w-full max-w-md mt-2 animate-fade-in space-y-4 text-left">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
@@ -513,7 +523,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="p-3 sm:p-4 pt-3 border-t border-white/10 bg-gradient-to-t from-[#050505]/98 to-black/95 backdrop-blur-3xl z-[100] shadow-[0_-20px_80px_rgba(0,0,0,0.95)] pb-[calc(env(safe-area-inset-bottom,20px)+100px)] md:pb-6">
+                    <div className="p-3 sm:p-4 pt-3 border-t border-white/10 bg-gradient-to-t from-[#050505] to-black/95 backdrop-blur-3xl z-[100] shadow-[0_-20px_80px_rgba(0,0,0,0.95)] pb-[calc(env(safe-area-inset-bottom,0px)+90px)] md:pb-6">
                         <div className="flex items-center justify-between mb-4 px-0">
                             <div className="flex items-center gap-3 sm:gap-5">
                                 <button
