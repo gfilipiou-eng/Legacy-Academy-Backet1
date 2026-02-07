@@ -495,20 +495,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
 
                             {/* Inline Input Form */}
-                            <div className="flex gap-2 mt-3">
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
-                                        playSound('pop');
-                                    }}
-                                    className="flex-1 gold-btn py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2"
-                                >
-                                    <Icons.Maximize className="w-4 h-4" />
-                                    {t('VIEW_COMMENTS') || "OPEN COMMENTS"}
-                                </button>
-                            </div>
+
                         </div>
                     </div>
 
@@ -531,6 +518,17 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 >
                                     <Icons.ThumbsDown className={`w-7 h-7 transition-all duration-300 ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20 filter drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-400 group-hover:text-[var(--gold-primary)]'}`} />
                                     <span className={`text-sm font-black tracking-tight ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
+                                        playSound('pop');
+                                    }}
+                                    className="flex items-center gap-2.5 group transition-all active:scale-125 hover:bg-white/5 p-2 rounded-2xl mobile-os-action-btn"
+                                >
+                                    <Icons.MessageCircle className="w-7 h-7 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
                                 </button>
 
                             </div>
