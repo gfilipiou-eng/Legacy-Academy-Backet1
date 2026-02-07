@@ -644,7 +644,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
                                                 className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] transition-all active:scale-90"
                                             >
-                                                <Icons.Mic className="w-5 h-5" />
+                                                <Icons.WalkieTalkie className="w-5 h-5" />
                                             </button>
                                             <button
                                                 type="submit"
@@ -1282,7 +1282,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         onClick={(e) => { e.stopPropagation(); startCommentRecording(); }}
                                                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] transition-all mobile-os-action-btn shrink-0"
                                                     >
-                                                        <Icons.Mic className="w-4 h-4" />
+                                                        <Icons.WalkieTalkie className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         type="submit"
@@ -1538,7 +1538,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                     onTouchEnd={stopRecording}
                                     className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-[var(--gold-primary)]'}`}
                                 >
-                                    <Icons.Mic className="w-6 h-6" />
+                                    <Icons.WalkieTalkie className="w-6 h-6" />
                                 </button>
                                 <button
                                     onClick={() => handleSend()}
@@ -1909,7 +1909,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                     <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-2">
                                         <span className="text-lg sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
-                                            {displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
+                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
                                     </div>
