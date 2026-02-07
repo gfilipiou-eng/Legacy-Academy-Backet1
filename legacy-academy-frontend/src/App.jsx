@@ -304,11 +304,11 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                             <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
                                 {isCommentAuthor ? user?.username : (comment.user?.username || comment.authorName)}
                             </span>
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-blue-500 shrink-0">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0 drop-shadow-[0_0_3px_rgba(29,155,240,0.5)]">
+                                <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                             </svg>
                         </div>
-                        {isFounder && <span className="text-[7px] bg-red-600 text-white px-1.5 py-0.5 rounded-sm font-black tracking-widest shadow-glow-red scale-90">{t('FOUNDER_BADGE')}</span>}
+                        {isFounder && <span className="text-[7px] bg-gradient-to-r from-red-600 to-red-500 text-white px-1.5 py-0.5 rounded font-black tracking-widest shadow-lg shadow-red-500/30">FOUNDER</span>}
                     </div>
 
                     {isEditing ? (
@@ -457,8 +457,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1.5">
                                     <span className="font-bold text-white leading-none">{post.author?.username}</span>
-                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-blue-500">
-                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]">
+                                        <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                                     </svg>
                                 </div>
                                 {post.author?.role === 'Founder' ? (
@@ -1042,10 +1042,10 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                             <div className="flex flex-col">
                                 <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
                                     {post.author?.username}
-                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-blue-500 shrink-0">
-                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]">
+                                        <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                                     </svg>
-                                    {isPostAuthorFounder && <span className="bg-red-600/80 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider ml-1 border border-red-500/20">{t('FOUNDER_BADGE')}</span>}
+                                    {isPostAuthorFounder && <span className="bg-gradient-to-r from-red-600 to-red-500 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider ml-1 shadow-lg shadow-red-500/30">FOUNDER</span>}
                                 </span>
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-red-400 font-medium' : 'text-gray-500'}`}>
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
@@ -1836,8 +1836,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             <div className="mb-6 px-1">
                                 <div className="font-black text-white text-xl mb-1 flex items-center gap-2">
                                     {displayUser?.username || "Unknown Agent"}
-                                    {displayUser?.role === 'Founder' && <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded font-black tracking-wider shadow-glow-red">{t('FOUNDER_BADGE')}</span>}
-                                    {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2 h-2 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-glow-green' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? 'Online' : 'Offline'} />}
+                                    <svg viewBox="0 0 22 22" className="w-5 h-5 shrink-0 drop-shadow-[0_0_6px_rgba(29,155,240,0.7)]">
+                                        <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
+                                    </svg>
+                                    {displayUser?.role === 'Founder' && <span className="bg-gradient-to-r from-red-600 to-red-500 text-white text-[10px] px-2.5 py-1 rounded-lg font-black tracking-wider shadow-lg shadow-red-500/40">FOUNDER</span>}
+                                    {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? 'Online' : 'Offline'} />}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
