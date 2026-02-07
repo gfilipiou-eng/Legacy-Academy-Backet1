@@ -515,15 +515,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <Icons.ThumbsDown className={`w-7 h-7 transition-all duration-300 ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20 filter drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-400 group-hover:text-[var(--gold-primary)]'}`} />
                                 <span className={`text-sm font-black tracking-tight ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{post.dislikes?.length || 0}</span>
                             </button>
-                            <button
-                                onClick={(e) => {
-                                    window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
-                                    playSound('pop');
-                                }}
-                                className="flex items-center gap-2.5 group transition-all active:scale-125 hover:bg-white/5 p-2 rounded-2xl mobile-os-action-btn"
-                            >
-                                <Icons.MessageCircle className="w-7 h-7 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
-                            </button>
+
                         </div>
                         <button onClick={() => onShare(post)} className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10 rounded-2xl transition-all active:scale-90 group shadow-xl border border-transparent hover:border-white/10">
                             <Icons.Share className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -1067,13 +1059,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:scale-110 transition-transform">{post.comments?.length || 0}</span>
                                     </button>
 
-                                    {/* FULL SCREEN COMMENT VIEW BUTTON */}
-                                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900'); playSound('pop'); }} className="flex items-center gap-2 group text-gray-500 hover:text-[var(--gold-primary)] transition-all cursor-pointer active:scale-125">
-                                        <div className="p-2 rounded-xl group-hover:bg-[var(--gold-primary)]/10 transition-all">
-                                            <Icons.Maximize className="w-4 h-4 pointer-events-none" />
-                                        </div>
-                                        <div className="text-[8px] font-black uppercase tracking-tighter hidden sm:block">FULL</div>
-                                    </button>
+
 
                                     <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
                                         <div className="p-2 rounded-xl group-hover:bg-red-500/10 group-hover:shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all">
