@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
@@ -478,17 +479,24 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <AnimatePresence>
                                     {showMenu && (
                                         <>
-                                            <div style={{ position: 'fixed', inset: 0, zIndex: 99998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '40%', transform: 'translate(-50%, -50%)', zIndex: 99999 }} className="bg-black border-2 border-white/30 rounded-2xl p-3 w-52 shadow-[0_0_80px_rgba(0,0,0,1)]">
-                                                <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-xs font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
-                                                    <div className="p-1.5 bg-white/5 rounded-lg"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
-                                                </button>
-                                                {(isOwner || isFounder) && (
-                                                    <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-xs font-bold text-red-500 transition-all uppercase tracking-[0.1em]">
-                                                        <div className="p-1.5 bg-red-500/10 rounded-lg"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
-                                                    </button>
-                                                )}
-                                            </motion.div>
+                                            {createPortal(
+                                                <>
+                                                    <div style={{ position: 'fixed', inset: 0, zIndex: 999998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '45%', transform: 'translate(-50%, -50%)', zIndex: 999999 }} className="bg-black border-2 border-white/30 rounded-2xl p-4 w-60 shadow-[0_0_100px_rgba(0,0,0,1)] ring-2 ring-white/10">
+                                                        <div className="flex flex-col gap-2">
+                                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-4 rounded-xl hover:bg-white/10 text-sm font-bold text-gray-200 transition-all uppercase tracking-[0.1em]">
+                                                                <div className="p-2 bg-white/5 rounded-lg border border-white/10"><Icons.Share className="w-5 h-5" /></div> {t('SHARE')}
+                                                            </button>
+                                                            {(isOwner || isFounder) && (
+                                                                <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-4 rounded-xl hover:bg-red-500/20 text-sm font-bold text-red-500 transition-all uppercase tracking-[0.1em]">
+                                                                    <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/20"><Icons.Trash className="w-5 h-5" /></div> {t('DELETE')}
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </motion.div>
+                                                </>,
+                                                document.body
+                                            )}
                                         </>
                                     )}
                                 </AnimatePresence>
@@ -1329,14 +1337,23 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
 
-    const handleClearChat = () => {
+    const handleClearChat = async () => {
         if (!activeChat) return;
+        if (!window.confirm('Clear this entire conversation?')) return;
         const targetId = activeChat._id || activeChat.id;
         if (!targetId) return;
-        console.log('Clearing chat for:', targetId);
-        setMessages(prev => ({ ...prev, [targetId]: [] }));
-        playSound('sword');
-        alert('Chat cleared!');
+
+        try {
+            console.log('📡 [DEBUG] Attempting to clear conversation:', targetId);
+            await axios.post(`/messages/conversation/clear/${targetId}`);
+            setMessages(prev => ({ ...prev, [targetId]: [] }));
+            playSound('sword');
+        } catch (e) {
+            console.error('Clear failed', e);
+            // Fallback: clear locally anyway
+            setMessages(prev => ({ ...prev, [targetId]: [] }));
+            playSound('sword');
+        }
     };
 
     const handleSend = async () => {
@@ -1420,7 +1437,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-3 pb-32 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-36 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
                                         type="text"
@@ -1434,9 +1451,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 </div>
                                 <button
                                     type="button"
+                                    onClick={() => playSound('pop')}
                                     className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-gray-400 hover:text-[var(--gold-primary)] hover:bg-white/10 active:scale-90 transition-all shrink-0"
                                 >
-                                    <Icons.Mic className="w-5 h-5" />
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                                 </button>
                                 <button
                                     onClick={handleSend}
