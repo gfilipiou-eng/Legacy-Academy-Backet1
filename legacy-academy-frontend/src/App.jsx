@@ -469,33 +469,24 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/20 pb-4 flex flex-col items-center justify-center text-center space-y-4">
                         <div className="mb-6 text-sm text-gray-200 border-l-2 border-[var(--gold-primary)]/30 pl-3 py-1 font-medium leading-relaxed italic w-full text-left">{parseHashtags(post.desc)}</div>
 
-                        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-4 animate-pop-in mt-4">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-white font-black italic uppercase tracking-widest text-xs">{t('LIVE_COMMENTS') || "LIVE COMMENTS"}</h3>
-                                <span className="text-[10px] font-bold text-[var(--gold-primary)]">{post.comments?.length || 0}</span>
-                            </div>
-                            <div className="space-y-2 max-h-60 sm:max-h-40 overflow-y-auto custom-scrollbar scroll-smooth" ref={(el) => { if (el) el.scrollTop = el.scrollHeight; }}>
-                                {!post.comments?.length ? (
-                                    <p className="text-gray-500 text-[10px] uppercase font-bold py-4 text-center">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
-                                ) : (
-                                    post.comments.slice().reverse().slice(0, 50).reverse().map((c, idx) => (
-                                        <CommentItem
-                                            key={c._id || idx}
-                                            comment={c}
-                                            post={post}
-                                            user={user}
-                                            allUsers={allUsers}
-                                            onEdit={onEditComment}
-                                            onDelete={onDeleteComment}
-                                            t={t}
-                                            lang={lang}
-                                        />
-                                    ))
-                                )}
-                            </div>
-
-                            {/* Inline Input Form */}
-
+                        <div className="w-full max-w-md mt-6 animate-fade-in space-y-4 text-left">
+                            {!post.comments?.length ? (
+                                <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
+                            ) : (
+                                post.comments.slice().reverse().slice(0, 50).reverse().map((c, idx) => (
+                                    <CommentItem
+                                        key={c._id || idx}
+                                        comment={c}
+                                        post={post}
+                                        user={user}
+                                        allUsers={allUsers}
+                                        onEdit={onEditComment}
+                                        onDelete={onDeleteComment}
+                                        t={t}
+                                        lang={lang}
+                                    />
+                                ))
+                            )}
                         </div>
                     </div>
 

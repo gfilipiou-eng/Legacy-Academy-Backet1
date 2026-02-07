@@ -87,7 +87,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
     const handleEdit = async (commentId, newText) => {
         try {
-            await axios.put(`/posts/${postId}/comments/${commentId}`, { text: newText });
+            await axios.put(`/posts/${postId}/comment/${commentId}`, { text: newText });
             setEditingCommentId(null);
             fetchPost();
             playSound('pop');
@@ -99,7 +99,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
     const handleDelete = async (commentId) => {
         if (!window.confirm(t('CONFIRM_DELETE') || "Delete this intel?")) return;
         try {
-            await axios.delete(`/posts/${postId}/comments/${commentId}`);
+            await axios.delete(`/posts/${postId}/comment/${commentId}`);
             fetchPost();
             playSound('trash');
         } catch (e) {
