@@ -1331,19 +1331,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
 
     const handleClearChat = async () => {
         if (!activeChat) return;
-        // RELENTLESS CLEAR: No confirmation per user command
-        try {
-            const targetId = activeChat._id || activeChat.id || activeChat.otherId;
-            if (!targetId) {
-                console.error("📡 [DEBUG] Clear failed: No valid target ID found in activeChat", activeChat);
-                return alert("Mission Aborted: Target identifier missing.");
-            }
-            const url = `/messages/conversation/clear/${targetId}`;
-            console.log(`📡 [DEBUG] Clearing chat: ${url}`);
-            await axios.post(url);
-            setMessages(prev => ({ ...prev, [targetId]: [] }));
-            playSound('sword');
-        } catch (e) { console.error('Clear failed', e); }
+        // Clear locally only (backend endpoint not available)
+        const targetId = activeChat._id || activeChat.id || activeChat.otherId;
+        if (!targetId) return;
+        setMessages(prev => ({ ...prev, [targetId]: [] }));
+        playSound('sword');
     };
 
     const handleSend = async () => {
