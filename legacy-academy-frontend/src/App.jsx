@@ -1427,7 +1427,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-3 pb-8 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-24 md:pb-3 bg-[#050505] border-t border-white/10 flex items-center gap-2 safe-area-bottom z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
                                         type="text"
