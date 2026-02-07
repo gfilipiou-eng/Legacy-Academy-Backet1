@@ -495,27 +495,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
 
                             {/* Inline Input Form */}
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    if (commentText.trim()) {
-                                        onComment(post._id, commentText);
-                                        setCommentText('');
-                                    }
-                                }}
-                                className="mt-3 flex gap-2 relative"
-                            >
-                                <input
-                                    type="text"
-                                    value={commentText}
-                                    onChange={(e) => setCommentText(e.target.value)}
-                                    placeholder={t('WRITE_COMMENT') || "Write a comment..."}
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:border-[var(--gold-primary)] focus:bg-white/10 outline-none transition-all"
-                                />
-                                <button type="submit" disabled={!commentText.trim()} className="bg-[var(--gold-primary)] text-black rounded-xl px-3 py-2 font-black text-[10px] uppercase tracking-wider hover:opacity-90 disabled:opacity-50 transition-all shadow-glow-gold">
-                                    <Icons.Send className="w-4 h-4" />
+                            <div className="flex gap-2 mt-3">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        window.open(`?postId=${post._id}`, '_blank', 'width=500,height=900');
+                                        playSound('pop');
+                                    }}
+                                    className="flex-1 gold-btn py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2"
+                                >
+                                    <Icons.Maximize className="w-4 h-4" />
+                                    {t('VIEW_COMMENTS') || "OPEN COMMENTS"}
                                 </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
 
