@@ -3061,28 +3061,27 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="liquid-bg" />
-                    <header className="absolute top-0 w-full z-[500] bg-transparent backdrop-blur-2xl border-b border-white/5 shrink-0 transition-all duration-500">
-                        <div className="w-full px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <img src="/image/Logo.png?v=4" className="h-32 sm:h-48 w-auto object-contain transition-all" alt="Logo" />
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
-                                    <Icons.Plus className="w-6 h-6" />
-                                </button>
-
-                                <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full">
-                                    <Icons.MessageCircle className="w-5 h-5" />
-                                    <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
-                                </button>
-                                <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
-                                    <Icons.Settings className="w-5 h-5 text-gray-400" />
-                                </button>
-                            </div>
-                        </div>
-                    </header>
-
                     <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
+                        <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
+                            <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <img src="/image/Logo.png?v=4" className="h-24 sm:h-36 w-auto object-contain transition-all" alt="Logo" />
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
+                                        <Icons.Plus className="w-6 h-6" />
+                                    </button>
+
+                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full">
+                                        <Icons.MessageCircle className="w-5 h-5" />
+                                        <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
+                                    </button>
+                                    <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
+                                        <Icons.Settings className="w-5 h-5 text-gray-400" />
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
                         <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
