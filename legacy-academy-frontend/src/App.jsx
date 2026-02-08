@@ -1072,6 +1072,54 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             viewport={{ once: true }}
             className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
+            {/* ABSOLUTE MENU TOP RIGHT */}
+            <div className="absolute top-4 right-4 z-50">
+                <div className="relative">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                        className="p-2 text-gray-400 hover:text-white transition-all rounded-full bg-black/40 hover:bg-white/10 active:scale-95 shadow-lg border border-white/5 backdrop-blur-md"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                        </svg>
+                    </button>
+                    {showMenu && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
+                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                >
+                                    <Icons.Share className="w-4 h-4 text-gray-400" />
+                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                </button>
+                                {isOwner && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
+                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                    >
+                                        <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                        <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
+                                    </button>
+                                )}
+                                {(isOwner || isFounder) && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
+                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                    >
+                                        <Icons.Trash className="w-4 h-4 text-red-500" />
+                                        <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
+                                    </button>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
@@ -1080,52 +1128,6 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                             <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
                                 <ProfileAvatar user={post.author} />
                             </div>
-                        </div>
-                        <div className="relative mt-3 z-50">
-                            <button
-                                onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                                className="p-2.5 text-gray-400 hover:text-white transition-all rounded-full bg-white/5 hover:bg-white/10 active:scale-95 shadow-sm border border-white/5"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                    <circle cx="12" cy="12" r="1" />
-                                    <circle cx="12" cy="5" r="1" />
-                                    <circle cx="12" cy="19" r="1" />
-                                </svg>
-                            </button>
-                            {showMenu && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                    <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                            className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                        >
-                                            <Icons.Share className="w-4 h-4 text-gray-400" />
-                                            <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
-                                        </button>
-
-                                        {isOwner && (
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                            >
-                                                <Icons.Edit className="w-4 h-4 text-blue-400" />
-                                                <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
-                                            </button>
-                                        )}
-
-                                        {(isOwner || isFounder) && (
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                            >
-                                                <Icons.Trash className="w-4 h-4 text-red-500" />
-                                                <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
-                                            </button>
-                                        )}
-                                    </div>
-                                </>
-                            )}
                         </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -1365,7 +1367,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                     </motion.div>
                 )}
             </AnimatePresence>
-        </motion.div>
+        </motion.div >
     );
 };
 
@@ -2813,14 +2815,17 @@ const App = () => {
         return groups;
     }, [filteredPosts, user]);
 
-    // AUTO-EXPAND FEED FOLDERS (Last 24h)
+    // AUTO-EXPAND FEED FOLDERS (Last 24h) - Only on initial load
+    const hasAutoExpanded = useRef(false);
     useEffect(() => {
-        if (posts.length > 0) {
+        if (posts.length > 0 && !hasAutoExpanded.current) {
             const lang = user?.settings?.language || 'en';
             const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
             const todayKey = new Date().toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
-            // Only auto-expand if we haven't manually closed it in this session (optional, but here simple: auto-open today)
-            setExpandedDates(prev => ({ ...prev, [todayKey]: true }));
+
+            // Reset and open ONLY today
+            setExpandedDates({ [todayKey]: true });
+            hasAutoExpanded.current = true;
         }
     }, [posts.length, user?.settings?.language]);
 
