@@ -2809,23 +2809,21 @@ const App = () => {
         filteredPosts.forEach(p => {
             const date = new Date(p.createdAt);
             const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
-            if (!groups[key]) groups[key] = [];
-            groups[key].push(p);
+            if (!groups[key]) groups[key] = { key, posts: [], dateVal: date.setHours(0, 0, 0, 0) };
+            groups[key].posts.push(p);
         });
-        return groups;
+        // Convert to array and sort DESCENDING (Newest first)
+        return Object.values(groups).sort((a, b) => b.dateVal - a.dateVal);
     }, [filteredPosts, user]);
 
-    // AUTO-EXPAND FEED FOLDERS
+    // AUTO-EXPAND FEED FOLDERS (Open Latest Folder)
     useEffect(() => {
-        if (posts.length > 0) {
-            const lang = user?.settings?.language || 'en';
-            const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
-            const todayKey = new Date().toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
-
-            // Force open today's folder continuously
-            setExpandedDates(prev => ({ ...prev, [todayKey]: true }));
+        if (groupedPosts.length > 0) {
+            // Always open the most recent folder (first in list)
+            const latestKey = groupedPosts[0].key;
+            setExpandedDates(prev => ({ ...prev, [latestKey]: true }));
         }
-    }, [posts.length, user?.settings?.language]);
+    }, [groupedPosts.length, groupedPosts[0]?.key]);
 
     const stories = React.useMemo(() => {
         const groups = {};
@@ -3481,7 +3479,9 @@ const App = () => {
                                                 </div>
                                             )}
                                             <div className="space-y-4">
-                                                {Object.keys(groupedPosts).map(dateKey => {
+
+                                                {groupedPosts.map(group => {
+                                                    const dateKey = group.key;
                                                     const isOpen = expandedDates[dateKey];
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group">
@@ -3491,10 +3491,10 @@ const App = () => {
                                                             >
                                                                 <div className="relative">
                                                                     <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--gold-primary)]' : 'text-gray-500'} transition-all duration-300`} />
-                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{groupedPosts[dateKey].length}</div>}
+                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{group.posts.length}</div>}
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
-                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
+                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-400'}`}>{dateKey}</span>
                                                                     {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">{t('EXPAND_INTEL')}</span>}
                                                                 </div>
                                                                 <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
@@ -3510,7 +3510,7 @@ const App = () => {
                                                                         className="overflow-hidden"
                                                                     >
                                                                         <div className="space-y-6 pt-4 pb-8 w-full max-w-full overflow-hidden">
-                                                                            {groupedPosts[dateKey].map(p => (
+                                                                            {group.posts.map(p => (
                                                                                 <PostCard key={p._id} post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                             ))}
                                                                         </div>
