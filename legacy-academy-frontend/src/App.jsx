@@ -3422,7 +3422,7 @@ const App = () => {
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150"></div>
                         <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent blur-[100px] opacity-30 animate-pulse-slow"></div>
                     </div>
-                    <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth">
+                    <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -3458,7 +3458,7 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
-                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
+                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
@@ -3502,7 +3502,7 @@ const App = () => {
                                                                     {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{group.posts.length}</div>}
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
-                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-400'}`}>{dateKey}</span>
+                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-300'}`}>{dateKey}</span>
                                                                     {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">{t('EXPAND_INTEL')}</span>}
                                                                 </div>
                                                                 <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
