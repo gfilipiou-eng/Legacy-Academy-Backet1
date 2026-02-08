@@ -2663,6 +2663,12 @@ const App = () => {
     const [registerPreview, setRegisterPreview] = useState(null);
     const [expandedDates, setExpandedDates] = useState({});
     const mainScrollRef = useRef(null);
+    const selectedPostRef = useRef(selectedPost);
+    const postsRef = useRef(posts);
+
+    // Keep refs correctly updated
+    useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
+    useEffect(() => { postsRef.current = posts; }, [posts]);
 
     // SCROLL TO TOP ON LOGIN / TAB CHANGE
     useEffect(() => {
@@ -2853,11 +2859,12 @@ const App = () => {
     }, [posts]);
 
     const fetchPosts = async () => {
-        if (selectedPost) return; // Prevent scroll jumps while viewing a post
+        if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
         try {
             const res = await axios.get('/posts?limit=20');
             // Simple check to avoid redundant re-renders if nothing changed
-            if (posts.length > 0 && res.data.length === posts.length && res.data[0]?._id === posts[0]?._id) return;
+            const currentPosts = postsRef.current;
+            if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
             setPosts(res.data);
         } catch (e) { }
     };
