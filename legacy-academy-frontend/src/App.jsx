@@ -2669,7 +2669,7 @@ const App = () => {
         if (mainScrollRef.current) {
             mainScrollRef.current.scrollTo(0, 0);
         }
-    }, [user, activeTab]);
+    }, [user?._id, activeTab]);
 
     const toggleDate = (dateKey) => {
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
