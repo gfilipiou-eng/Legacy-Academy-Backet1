@@ -3288,7 +3288,7 @@ const App = () => {
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
                         <div className="flex flex-col items-center mb-8">
-                            <img src="/image/Logo.png?v=4" className="h-64 w-auto object-contain mb-4" alt="Legacy Logo" />
+                            <img src="/image/Applogo.png?v=4" className="h-64 w-auto object-contain mb-4" alt="Legacy Logo" />
                         </div>
                         <div className="space-y-4">
                             {authMode === 'login' && (
