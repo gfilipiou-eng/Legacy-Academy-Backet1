@@ -1966,7 +1966,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-red-600 shadow-red-600/30' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
+                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
                                     {!isMe && (
@@ -2912,12 +2912,12 @@ const App = () => {
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
-    // react to activeTab change to mark notifications read
+    // Scroll to top when closing post detail
     useEffect(() => {
-        if (activeTab === 'alerts' && user?.notifications?.some(n => !n.read)) {
-            markAllNotificationsRead();
+        if (!selectedPost && mainScrollRef.current) {
+            mainScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }, [activeTab, user]);
+    }, [selectedPost]);
 
 
 
@@ -3440,19 +3440,7 @@ const App = () => {
                             </div>
                         </header>
                         <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
-                            {activeTab === 'alerts' ? (
-                                <div className="animate-fade-in p-4 sm:p-8">
-                                    <div className="flex items-center justify-between mb-6 px-2">
-                                        <h2 className="text-xl font-bold text-white/90">{t('NOTIFICATIONS_TITLE')}</h2>
-                                        {alerts.length > 0 && (
-                                            <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
-                                                <Icons.Trash className="w-5 h-5" />
-                                            </button>
-                                        )}
-                                    </div>
-                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
-                                </div>
-                            ) : (
+                            {activeTab !== 'alerts' && (
                                 <>
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="p-4 sm:p-8">
@@ -3564,12 +3552,7 @@ const App = () => {
                                     <Icons.Search className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <div className="relative z-10">
-                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
-                                    </div>
-                                </button>
+
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
