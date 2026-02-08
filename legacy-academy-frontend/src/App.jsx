@@ -3412,8 +3412,9 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black">
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 animate-pulse-slow"></div>
-                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--gold-primary),_transparent_70%)] animate-pulse"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#1a1a1a_0%,_#000000_100%)]"></div>
+                        <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: 'linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+                        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[var(--gold-primary)]/10 to-transparent pointer-events-none"></div>
                     </div>
                     <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
