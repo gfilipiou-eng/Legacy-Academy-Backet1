@@ -672,9 +672,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                             >
-                                                <Icons.WalkieTalkie className="w-5 h-5" />
+                                                <Icons.Mic className="w-5 h-5" />
                                             </button>
                                             <button
                                                 type="submit"
@@ -3417,11 +3417,7 @@ const App = () => {
                 </div>
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0 bg-[#050505]">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,_#1a1a1a,transparent)]"></div>
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150"></div>
-                        <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent blur-[100px] opacity-30 animate-pulse-slow"></div>
-                    </div>
+                    <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
