@@ -1081,9 +1081,73 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
-                    <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer shrink-0">
-                        <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
-                            <ProfileAvatar user={post.author} />
+                    <div className="flex flex-col items-center gap-1 shrink-0">
+                        <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer">
+                            <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
+                                <ProfileAvatar user={post.author} />
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                    <circle cx="12" cy="12" r="1" />
+                                    <circle cx="12" cy="5" r="1" />
+                                    <circle cx="12" cy="19" r="1" />
+                                </svg>
+                            </button>
+                            {showMenu && createPortal(
+                                <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
+                                    <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                    <div
+                                        className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <div className="flex flex-col gap-1.5">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
+                                                className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
+                                            >
+                                                <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
+                                                    <Icons.Share className="w-5 h-5 text-gray-200" />
+                                                </div>
+                                                <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                            </button>
+
+                                            {isOwner && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
+                                                    className="flex items-center gap-4 p-4 rounded-3xl hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                >
+                                                    <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-lg">
+                                                        <Icons.Edit className="w-5 h-5 text-blue-400" />
+                                                    </div>
+                                                    <div className="text-sm font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
+                                                </button>
+                                            )}
+
+                                            {(isOwner || isFounder) && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
+                                                    className="flex items-center gap-4 p-4 rounded-3xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                >
+                                                    <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
+                                                        <Icons.Trash className="w-5 h-5 text-red-500" />
+                                                    </div>
+                                                    <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
+                                                </button>
+                                            )}
+
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
+                                                className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
+                                            >
+                                                {t('CANCEL')}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>,
+                                document.body
+                            )}
                         </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -1102,77 +1166,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
                                 </span>
                             </div>
-                            <div className="relative shrink-0 ml-2">
-                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="relative z-[50] p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                        <circle cx="12" cy="12" r="1" />
-                                        <circle cx="12" cy="5" r="1" />
-                                        <circle cx="12" cy="19" r="1" />
-                                    </svg>
-                                </button>
-                                {showMenu && createPortal(
-                                    <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
-                                        <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                        <div
-                                            className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <div className="flex flex-col gap-1.5">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                                    className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
-                                                >
-                                                    <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
-                                                        <Icons.Share className="w-5 h-5 text-gray-200" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
-                                                        <div className="text-[10px] text-gray-400 font-medium">{t('SHARE_POST_DESC') || 'Share this post'}</div>
-                                                    </div>
-                                                </button>
 
-                                                {isOwner && (
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                                        className="flex items-center gap-4 p-4 rounded-3xl hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left"
-                                                    >
-                                                        <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-lg">
-                                                            <Icons.Edit className="w-5 h-5 text-blue-400" />
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <div className="text-sm font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
-                                                            <div className="text-[10px] text-blue-400/60 font-medium">{t('EDIT_POST_DESC') || 'Edit content'}</div>
-                                                        </div>
-                                                    </button>
-                                                )}
-
-                                                {(isOwner || isFounder) && (
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                                        className="flex items-center gap-4 p-4 rounded-3xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
-                                                    >
-                                                        <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
-                                                            <Icons.Trash className="w-5 h-5 text-red-500" />
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
-                                                            <div className="text-[10px] text-red-500/60 font-medium">{t('DELETE_POST_DESC') || 'Remove permanently'}</div>
-                                                        </div>
-                                                    </button>
-                                                )}
-
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
-                                                    className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
-                                                >
-                                                    {t('CANCEL')}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>,
-                                    document.body
-                                )}
-                            </div>
                         </div>
 
                         {/* POST TEXT CONTENT */}
@@ -2024,10 +2018,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
                                                             <Icons.Share className="w-5 h-5 text-gray-200" />
                                                         </div>
-                                                        <div className="flex-1">
-                                                            <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
-                                                            <div className="text-[10px] text-gray-400 font-medium">{t('SHARE_PROFILE_DESC') || 'Share Profile Link'}</div>
-                                                        </div>
+                                                        <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
                                                     </button>
 
                                                     {currentUser?.role === 'Founder' && (
@@ -2048,10 +2039,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                             <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
                                                                 <Icons.Shield className="w-5 h-5 text-red-500" />
                                                             </div>
-                                                            <div className="flex-1">
-                                                                <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
-                                                                <div className="text-[10px] text-red-500/60 font-medium">{t('BAN_DESC') || 'Restrict access'}</div>
-                                                            </div>
+                                                            <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
                                                         </button>
                                                     )}
 
