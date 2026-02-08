@@ -3247,161 +3247,162 @@ const App = () => {
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
-                                <img src="/Logo.png" alt="Legacy Academy" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,215,0,0.2)]" />
-                                <span className="text-xl font-black italic tracking-tighter text-white">LEGACY <span className="text-[var(--gold-primary)]">ACADEMY</span></span>
+                                <div className="flex flex-col items-center mb-8">
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain drop-shadow-[0_0_25px_rgba(255,215,0,0.4)] animate-pulse-slow mb-4" />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-4">
-                            {authMode === 'login' && (
-                                <>
-                                    <div className="relative">
-                                        <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder="Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
-                                    </div>
-                                    <div className="relative">
-                                        <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
-                                        <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                                            {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                            <div className="space-y-4">
+                                {authMode === 'login' && (
+                                    <>
+                                        <div className="relative">
+                                            <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                            <input type="email" placeholder="Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
+                                        </div>
+                                        <div className="relative">
+                                            <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                            <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
+                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                                {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                            </button>
+                                        </div>
+                                        <button disabled={authLoading} onClick={async () => {
+                                            setAuthLoading(true);
+                                            try {
+                                                const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
+                                                localStorage.setItem('token', res.data.token); // CRITICAL FIX: Save token
+                                                localStorage.setItem('user', JSON.stringify(res.data.user));
+                                                localStorage.setItem('language', res.data.user.settings?.language || 'en');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
+                                                setUser(res.data.user);
+                                            } catch (e) {
+                                                alert(e.response?.data?.message || "Invalid Credentials.");
+                                            } finally {
+                                                setAuthLoading(false);
+                                            }
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                            {authLoading ? "AUTHENTICATING..." : "LOGIN"}
                                         </button>
-                                    </div>
-                                    <button disabled={authLoading} onClick={async () => {
-                                        setAuthLoading(true);
-                                        try {
-                                            const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
-                                            localStorage.setItem('token', res.data.token); // CRITICAL FIX: Save token
-                                            localStorage.setItem('user', JSON.stringify(res.data.user));
-                                            localStorage.setItem('language', res.data.user.settings?.language || 'en');
-                                            localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
-                                            setUser(res.data.user);
-                                        } catch (e) {
-                                            alert(e.response?.data?.message || "Invalid Credentials.");
-                                        } finally {
-                                            setAuthLoading(false);
-                                        }
-                                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                        {authLoading ? "AUTHENTICATING..." : "LOGIN"}
-                                    </button>
-                                    <div className="flex justify-between text-xs text-gray-500 px-2 mt-4 font-bold tracking-wide">
-                                        <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Create Account</span>
-                                        <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Forgot Password?</span>
-                                    </div>
-                                </>
-                            )}
-                            {authMode === 'register' && (
-                                <>
-                                    <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-[var(--gold-primary)] mb-6 flex items-center justify-center transition-all">
-                                        {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-[var(--gold-primary)]" />}
-                                        <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
-                                            const file = e.target.files[0];
-                                            if (file) setRegisterPreview(URL.createObjectURL(file));
-                                        }} />
-                                    </div>
-                                    <div className="relative mb-3">
-                                        <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                    </div>
-                                    <div className="relative mb-3">
-                                        <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                    </div>
-                                    <div className="relative mb-3">
-                                        <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                        <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-                                            {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
-                                        </button>
-                                    </div>
-                                    <div className="relative mb-4">
-                                        <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-20" />
-                                    </div>
+                                        <div className="flex justify-between text-xs text-gray-500 px-2 mt-4 font-bold tracking-wide">
+                                            <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Create Account</span>
+                                            <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Forgot Password?</span>
+                                        </div>
+                                    </>
+                                )}
+                                {authMode === 'register' && (
+                                    <>
+                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-[var(--gold-primary)] mb-6 flex items-center justify-center transition-all">
+                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-[var(--gold-primary)]" />}
+                                            <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                if (file) setRegisterPreview(URL.createObjectURL(file));
+                                            }} />
+                                        </div>
+                                        <div className="relative mb-3">
+                                            <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                            <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                        </div>
+                                        <div className="relative mb-3">
+                                            <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                            <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                        </div>
+                                        <div className="relative mb-3">
+                                            <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                            <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                                {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
+                                            </button>
+                                        </div>
+                                        <div className="relative mb-4">
+                                            <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-20" />
+                                        </div>
 
-                                    <div className="flex gap-2 mb-6">
-                                        <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none text-center h-[52px]">
-                                            <option value="en" className="bg-black text-white">English</option>
-                                            <option value="el" className="bg-black text-white">Ελληνικά</option>
-                                            <option value="fr" className="bg-black text-white">Français</option>
-                                            <option value="de" className="bg-black text-white">Deutsch</option>
-                                            <option value="ru" className="bg-black text-white">Русский</option>
-                                            <option value="es" className="bg-black text-white">Español</option>
-                                            <option value="tr" className="bg-black text-white">Türkçe</option>
-                                            <option value="cy" className="bg-black text-white">Cypriot</option>
-                                        </select>
+                                        <div className="flex gap-2 mb-6">
+                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none text-center h-[52px]">
+                                                <option value="en" className="bg-black text-white">English</option>
+                                                <option value="el" className="bg-black text-white">Ελληνικά</option>
+                                                <option value="fr" className="bg-black text-white">Français</option>
+                                                <option value="de" className="bg-black text-white">Deutsch</option>
+                                                <option value="ru" className="bg-black text-white">Русский</option>
+                                                <option value="es" className="bg-black text-white">Español</option>
+                                                <option value="tr" className="bg-black text-white">Türkçe</option>
+                                                <option value="cy" className="bg-black text-white">Cypriot</option>
+                                            </select>
 
-                                        <div className="flex-1 p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2">
-                                            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">THEME</div>
-                                            <div className="flex gap-2 flex-wrap justify-center">
-                                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
-                                                    <button
-                                                        key={c}
-                                                        onClick={() => { playSound('pop'); setFormData(prev => ({ ...prev, theme: c })); }}
-                                                        className={`w-7 h-7 rounded-lg border-2 transition-all relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/20'}`}
-                                                        style={{ backgroundColor: c }}
-                                                    >
-                                                        {formData.theme === c && (
-                                                            <Icons.Check className={`w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ffffff' ? 'text-black' : 'text-white'} drop-shadow-md`} />
-                                                        )}
-                                                    </button>
-                                                ))}
+                                            <div className="flex-1 p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+                                                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">THEME</div>
+                                                <div className="flex gap-2 flex-wrap justify-center">
+                                                    {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
+                                                        <button
+                                                            key={c}
+                                                            onClick={() => { playSound('pop'); setFormData(prev => ({ ...prev, theme: c })); }}
+                                                            className={`w-7 h-7 rounded-lg border-2 transition-all relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/20'}`}
+                                                            style={{ backgroundColor: c }}
+                                                        >
+                                                            {formData.theme === c && (
+                                                                <Icons.Check className={`w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ffffff' ? 'text-black' : 'text-white'} drop-shadow-md`} />
+                                                            )}
+                                                        </button>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <button disabled={authLoading} onClick={async () => {
-                                        setAuthLoading(true);
-                                        try {
-                                            const fd = new FormData();
-                                            fd.append('username', formData.username);
-                                            fd.append('email', formData.email);
-                                            fd.append('password', formData.password);
-                                            if (formData.bio) fd.append('bio', formData.bio);
-                                            fd.append('language', formData.language || 'en');
-                                            fd.append('theme', formData.theme || '#ffd700');
-                                            if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
+                                        <button disabled={authLoading} onClick={async () => {
+                                            setAuthLoading(true);
+                                            try {
+                                                const fd = new FormData();
+                                                fd.append('username', formData.username);
+                                                fd.append('email', formData.email);
+                                                fd.append('password', formData.password);
+                                                if (formData.bio) fd.append('bio', formData.bio);
+                                                fd.append('language', formData.language || 'en');
+                                                fd.append('theme', formData.theme || '#ffd700');
+                                                if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
 
-                                            const res = await axios.post('/auth/register', fd);
-                                            // Auto-login logic from register response
-                                            localStorage.setItem('token', res.data.token);
-                                            localStorage.setItem('user', JSON.stringify(res.data.user));
-                                            localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
-                                            localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
-                                            setUser(res.data.user);
-                                            setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
-                                        } catch (e) {
-                                            alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
-                                        } finally {
-                                            setAuthLoading(false);
-                                        }
-                                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                        {authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}
-                                    </button>
-                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
-                                </>
-                            )}
-                            {authMode === 'forgot' && (
-                                <>
-                                    <p className="text-sm text-gray-400 mb-4 px-2 text-center">{t('RESET_LINK_DESC')}</p>
-                                    <div className="relative mb-6">
-                                        <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                        <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
-                                    </div>
-                                    <button disabled={authLoading} onClick={async () => {
-                                        setAuthLoading(true);
-                                        try {
-                                            await axios.post('/auth/forgot-password', { email: formData.email });
-                                            alert(t('RESET_LINK_SENT'));
-                                            setAuthMode('login');
-                                        } catch (e) {
-                                            alert(t('REQUEST_FAILED'));
-                                        } finally {
-                                            setAuthLoading(false);
-                                        }
-                                    }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                        {authLoading ? t('SENDING') : t('SEND_RESET_LINK')}
-                                    </button>
-                                    <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
-                                </>
-                            )}
+                                                const res = await axios.post('/auth/register', fd);
+                                                // Auto-login logic from register response
+                                                localStorage.setItem('token', res.data.token);
+                                                localStorage.setItem('user', JSON.stringify(res.data.user));
+                                                localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
+                                                setUser(res.data.user);
+                                                setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
+                                            } catch (e) {
+                                                alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
+                                            } finally {
+                                                setAuthLoading(false);
+                                            }
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                            {authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}
+                                        </button>
+                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
+                                    </>
+                                )}
+                                {authMode === 'forgot' && (
+                                    <>
+                                        <p className="text-sm text-gray-400 mb-4 px-2 text-center">{t('RESET_LINK_DESC')}</p>
+                                        <div className="relative mb-6">
+                                            <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                            <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
+                                        </div>
+                                        <button disabled={authLoading} onClick={async () => {
+                                            setAuthLoading(true);
+                                            try {
+                                                await axios.post('/auth/forgot-password', { email: formData.email });
+                                                alert(t('RESET_LINK_SENT'));
+                                                setAuthMode('login');
+                                            } catch (e) {
+                                                alert(t('REQUEST_FAILED'));
+                                            } finally {
+                                                setAuthLoading(false);
+                                            }
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                            {authLoading ? t('SENDING') : t('SEND_RESET_LINK')}
+                                        </button>
+                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3416,7 +3417,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="w-16 h-16 drop-shadow-[0_0_15px_rgba(255,215,0,0.3)] animate-pulse-slow object-contain" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-24 w-auto drop-shadow-[0_0_15px_rgba(255,215,0,0.3)] animate-pulse-slow object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
@@ -3572,22 +3573,24 @@ const App = () => {
                                 </button>
                             </div>
                         </div>
-                    )}
-
-                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
-                    <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
-                    <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
-                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
-                        setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
-                        setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
-                    }} />}
-
-                </div >
+                        </div>
             )}
+
+            <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
+            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
+            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
+            <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+            <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
+            {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
+                setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
+                setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
+            }} />}
+
         </div>
-    );
-};
+    )
+}
+            </div >
+        );
+    };
 
 export default App;
