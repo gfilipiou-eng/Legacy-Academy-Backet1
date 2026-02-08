@@ -502,7 +502,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     </svg>
                                 </div>
                                 {post.author?.role === 'Founder' ? (
-                                    <span className="text-[10px] text-red-600 mt-1 uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
+                                    <span className="text-[10px] text-[var(--gold-primary)] mt-1 uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                 ) : (
                                     <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
                                 )}
@@ -1141,8 +1141,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                         </svg>
                                     </span>
                                 </div>
-                                {isPostAuthorFounder && <span className="text-red-600 text-[9px] font-black tracking-wider uppercase mt-0.5">Founder</span>}
-                                <span className={`text-xs ${isPostAuthorFounder ? 'text-red-400 font-medium' : 'text-gray-500'}`}>
+                                {isPostAuthorFounder && <span className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase mt-0.5">Founder</span>}
+                                <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--gold-primary)] font-medium' : 'text-gray-500'}`}>
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
                                 </span>
                             </div>
@@ -2853,6 +2853,7 @@ const App = () => {
     }, [posts]);
 
     const fetchPosts = async () => {
+        if (selectedPost) return; // Prevent scroll jumps while viewing a post
         try {
             const res = await axios.get('/posts?limit=20');
             // Simple check to avoid redundant re-renders if nothing changed
@@ -3440,7 +3441,19 @@ const App = () => {
                             </div>
                         </header>
                         <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
-                            {activeTab !== 'alerts' && (
+                            {activeTab === 'alerts' ? (
+                                <div className="animate-fade-in p-4 sm:p-8">
+                                    <div className="flex items-center justify-between mb-6 px-2">
+                                        <h2 className="text-xl font-bold text-white/90">{t('NOTIFICATIONS_TITLE')}</h2>
+                                        {alerts.length > 0 && (
+                                            <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
+                                                <Icons.Trash className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
+                                </div>
+                            ) : (
                                 <>
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="p-4 sm:p-8">
@@ -3550,6 +3563,13 @@ const App = () => {
 
                                 <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Search className="w-5 h-5 relative z-10" />
+                                </button>
+
+                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                    <div className="relative z-10">
+                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
+                                    </div>
                                 </button>
 
 
