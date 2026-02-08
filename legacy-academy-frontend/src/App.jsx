@@ -1112,13 +1112,13 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 </button>
                                 <AnimatePresence>
                                     {showMenu && createPortal(
-                                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-                                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                        <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
+                                            <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                             <motion.div
                                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                                className="relative bg-[#121212] border border-white/10 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl ring-1 ring-white/10 overflow-hidden"
+                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl ring-1 ring-white/10 overflow-hidden"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex flex-col gap-1.5">
@@ -1166,8 +1166,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                     )}
 
                                                     <button
-                                                        onClick={() => setShowMenu(false)}
-                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
+                                                        onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
+                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
                                                     >
                                                         {t('CANCEL')}
                                                     </button>
@@ -2015,13 +2015,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
                                     {showProfileMenu && createPortal(
-                                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-                                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
+                                        <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
+                                            <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
                                             <motion.div
                                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                                className="relative bg-[#121212] border border-white/10 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl ring-1 ring-white/10 overflow-hidden"
+                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl ring-1 ring-white/10 overflow-hidden"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex flex-col gap-1.5">
@@ -2030,11 +2030,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
                                                     >
                                                         <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
-                                                            <Icons.Share className="w-5 h-5 text-blue-400" />
+                                                            <Icons.Share className="w-5 h-5 text-gray-200" />
                                                         </div>
                                                         <div className="flex-1">
                                                             <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
-                                                            <div className="text-[10px] text-gray-400 font-medium">Share Profile Link</div>
+                                                            <div className="text-[10px] text-gray-400 font-medium">{t('SHARE_PROFILE_DESC') || 'Share Profile Link'}</div>
                                                         </div>
                                                     </button>
 
@@ -2058,14 +2058,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
-                                                                <div className="text-[10px] text-red-500/60 font-medium">Restrict access</div>
+                                                                <div className="text-[10px] text-red-500/60 font-medium">{t('BAN_DESC') || 'Restrict access'}</div>
                                                             </div>
                                                         </button>
                                                     )}
 
                                                     <button
-                                                        onClick={() => setShowProfileMenu(false)}
-                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
+                                                        onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }}
+                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
                                                     >
                                                         {t('CANCEL')}
                                                     </button>
