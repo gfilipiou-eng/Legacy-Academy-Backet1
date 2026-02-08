@@ -2934,10 +2934,10 @@ const App = () => {
         const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
         if (anyModalOpen) {
             document.body.style.overflow = 'hidden';
-            document.body.style.height = '100vh';
+            // document.body.style.height = '100vh'; // CAUSES SCROLL JUMP
         } else {
             document.body.style.overflow = 'auto';
-            document.body.style.height = 'auto';
+            // document.body.style.height = 'auto';
         }
         return () => {
             document.body.style.overflow = 'auto';
