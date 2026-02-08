@@ -1625,14 +1625,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                     onClick={(e) => { e.preventDefault(); toggleRecording(); }}
                                     className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] active:scale-90'}`}
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                        <path d="M10 7V2h2v5" />
-                                        <rect x="7" y="7" width="10" height="14" rx="2" />
-                                        <path d="M10 11h4" />
-                                        <path d="M10 14h4" />
-                                        <circle cx="12" cy="18" r="1" />
-                                        <path d="M7 10v4" strokeWidth="3" />
-                                    </svg>
+                                    <Icons.Mic className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => handleSend()}
@@ -1999,7 +1992,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
                                     {!isMe && (
-                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
+                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-50">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setShowProfileMenu(!showProfileMenu); }}
                                                 className="p-2 bg-[#0a0a0a] border border-white/20 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90 shadow-lg"
@@ -2010,61 +2003,59 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                     <circle cx="12" cy="19" r="1" />
                                                 </svg>
                                             </button>
-                                            <AnimatePresence>
-                                                {showProfileMenu && createPortal(
-                                                    <>
-                                                        <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
-                                                        <motion.div
-                                                            initial={{ opacity: 0, scale: 0.9, y: -10 }}
-                                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                            exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                                                            style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}
-                                                            className="bg-[#121212]/98 border border-white/20 rounded-3xl p-2 w-64 shadow-2xl backdrop-blur-2xl"
-                                                        >
-                                                            <div className="flex flex-col gap-1.5">
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
-                                                                    className="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 text-white w-full text-left transition-all group"
-                                                                >
-                                                                    <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
-                                                                        <Icons.Share className="w-5 h-5 text-blue-400" />
-                                                                    </div>
-                                                                    <div className="flex-1">
-                                                                        <div className="text-sm font-black uppercase tracking-wider">{t('SHARE')}</div>
-                                                                        <div className="text-[10px] text-gray-500 uppercase tracking-widest">Share Profile</div>
-                                                                    </div>
-                                                                </button>
-                                                                {currentUser?.role === 'Founder' && (
-                                                                    <button
-                                                                        onClick={async (e) => {
-                                                                            e.stopPropagation();
-                                                                            const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
-                                                                            if (!targetId) return;
-                                                                            if (!window.confirm(t('CONFIRM_BAN'))) return;
-                                                                            try {
-                                                                                await axios.post(`/users/${targetId}/ban`, { days: 3 });
-                                                                                addToast(t('BAN_SUCCESS'), "success");
-                                                                                setShowProfileMenu(false);
-                                                                            } catch (e) { addToast(t('BAN_ERROR'), "error"); }
-                                                                        }}
-                                                                        className="flex items-center gap-3 p-4 rounded-2xl hover:bg-red-500/20 text-white w-full text-left transition-all group"
-                                                                    >
-                                                                        <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:bg-red-500/20 transition-colors">
-                                                                            <Icons.Shield className="w-5 h-5 text-red-500" />
-                                                                        </div>
-                                                                        <div className="flex-1">
-                                                                            <div className="text-sm font-black uppercase tracking-wider text-red-500">{t('BAN')}</div>
-                                                                            <div className="text-[10px] text-gray-500 uppercase tracking-widest">Ban User</div>
-                                                                        </div>
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        </motion.div>
-                                                    </>,
-                                                    document.body
-                                                )}
-                                            </AnimatePresence>
                                         </div>
+                                    )}
+                                    {showProfileMenu && createPortal(
+                                        <>
+                                            <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                                exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                                                style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}
+                                                className="bg-[#121212]/98 border border-white/20 rounded-3xl p-2 w-64 shadow-2xl backdrop-blur-2xl"
+                                            >
+                                                <div className="flex flex-col gap-1.5">
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
+                                                        className="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 text-white w-full text-left transition-all group"
+                                                    >
+                                                        <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                                                            <Icons.Share className="w-5 h-5 text-blue-400" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="text-sm font-black uppercase tracking-wider">{t('SHARE')}</div>
+                                                            <div className="text-[10px] text-gray-500 uppercase tracking-widest">Share Profile</div>
+                                                        </div>
+                                                    </button>
+                                                    {currentUser?.role === 'Founder' && (
+                                                        <button
+                                                            onClick={async (e) => {
+                                                                e.stopPropagation();
+                                                                const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
+                                                                if (!targetId) return;
+                                                                if (!window.confirm(t('CONFIRM_BAN'))) return;
+                                                                try {
+                                                                    await axios.post(`/users/${targetId}/ban`, { days: 3 });
+                                                                    addToast(t('BAN_SUCCESS'), "success");
+                                                                    setShowProfileMenu(false);
+                                                                } catch (e) { addToast(t('BAN_ERROR'), "error"); }
+                                                            }}
+                                                            className="flex items-center gap-3 p-4 rounded-2xl hover:bg-red-500/20 text-white w-full text-left transition-all group"
+                                                        >
+                                                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:bg-red-500/20 transition-colors">
+                                                                <Icons.Shield className="w-5 h-5 text-red-500" />
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="text-sm font-black uppercase tracking-wider text-red-500">{t('BAN')}</div>
+                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Ban User</div>
+                                                            </div>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        </>,
+                                        document.body
                                     )}
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
