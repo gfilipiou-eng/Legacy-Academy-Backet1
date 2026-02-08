@@ -2815,17 +2815,15 @@ const App = () => {
         return groups;
     }, [filteredPosts, user]);
 
-    // AUTO-EXPAND FEED FOLDERS (Last 24h) - Only on initial load
-    const hasAutoExpanded = useRef(false);
+    // AUTO-EXPAND FEED FOLDERS
     useEffect(() => {
-        if (posts.length > 0 && !hasAutoExpanded.current) {
+        if (posts.length > 0) {
             const lang = user?.settings?.language || 'en';
             const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
             const todayKey = new Date().toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 
-            // Reset and open ONLY today
-            setExpandedDates({ [todayKey]: true });
-            hasAutoExpanded.current = true;
+            // Force open today's folder continuously
+            setExpandedDates(prev => ({ ...prev, [todayKey]: true }));
         }
     }, [posts.length, user?.settings?.language]);
 
