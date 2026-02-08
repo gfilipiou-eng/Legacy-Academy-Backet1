@@ -278,17 +278,19 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     if (isVideo) {
         return (
             <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick}>
-                <video
-                    src={mediaUrl}
-                    className="w-full h-full object-cover pointer-events-none"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    disableRemotePlayback
-                    onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                />
+                <div className="w-full h-full relative overflow-hidden rounded-xl bg-black">
+                    <video
+                        src={mediaUrl}
+                        className="w-full h-full object-cover pointer-events-none"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        disableRemotePlayback
+                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                    />
+                </div>
             </div>
         );
     }
@@ -1102,47 +1104,58 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
                                     <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                     <div
-                                        className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-3xl p-1.5 w-full max-w-[200px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+                                        className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2.5rem] p-6 w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <div className="flex flex-col gap-1">
+                                        <div className="flex flex-col gap-3">
+                                            <h3 className="text-center text-lg font-black text-white mb-2 uppercase tracking-widest">{t('OPTIONS')}</h3>
+
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
+                                                className="flex items-center gap-5 p-5 rounded-3xl bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all group w-full text-left border border-white/5"
                                             >
-                                                <div className="p-2 bg-white/5 rounded-xl border border-white/10 group-hover:border-white/30 transition-colors shadow-sm">
-                                                    <Icons.Share className="w-4 h-4 text-gray-200" />
+                                                <div className="p-3 bg-white/10 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
+                                                    <Icons.Share className="w-6 h-6 text-gray-200" />
                                                 </div>
-                                                <div className="text-xs font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                <div className="flex-1">
+                                                    <div className="text-base font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                    <div className="text-xs text-gray-400 font-medium mt-0.5 opacity-60">Share this post</div>
+                                                </div>
                                             </button>
 
                                             {isOwner && (
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                    className="flex items-center gap-5 p-5 rounded-3xl bg-blue-500/5 hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left border border-blue-500/10"
                                                 >
-                                                    <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-sm">
-                                                        <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                                    <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-lg">
+                                                        <Icons.Edit className="w-6 h-6 text-blue-400" />
                                                     </div>
-                                                    <div className="text-xs font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
+                                                    <div className="flex-1">
+                                                        <div className="text-base font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
+                                                        <div className="text-xs text-blue-400/60 font-medium mt-0.5 opacity-60">Edit content</div>
+                                                    </div>
                                                 </button>
                                             )}
 
                                             {(isOwner || isFounder) && (
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                    className="flex items-center gap-5 p-5 rounded-3xl bg-red-500/5 hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left border border-red-500/10"
                                                 >
-                                                    <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-sm">
-                                                        <Icons.Trash className="w-4 h-4 text-red-500" />
+                                                    <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
+                                                        <Icons.Trash className="w-6 h-6 text-red-500" />
                                                     </div>
-                                                    <div className="text-xs font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
+                                                    <div className="flex-1">
+                                                        <div className="text-base font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
+                                                        <div className="text-xs text-red-500/60 font-medium mt-0.5 opacity-60">Remove permanently</div>
+                                                    </div>
                                                 </button>
                                             )}
 
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
-                                                className="mt-1 p-2 text-center text-[10px] font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
+                                                className="mt-4 p-4 text-center text-sm font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full border-t border-white/5 pt-6"
                                             >
                                                 {t('CANCEL')}
                                             </button>
@@ -1251,7 +1264,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 )}
                                 <AnimatePresence>
                                     {showHeart && (
-                                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ opacity: 0, scale: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                                             <Icons.Heart className="w-24 h-24 text-[var(--gold-primary)] fill-[var(--gold-primary)] drop-shadow-2xl" />
                                         </motion.div>
                                     )}
@@ -1818,7 +1831,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     }, [currentUser, isEditing]);
 
     const userStories = React.useMemo(() => (posts || []).filter(p => {
-        const pId = String(p.author?._id || p.author || '');
+        const pId = String(p.author?._id || p.author);
         const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
         return pId === uId && p.isStory;
     }), [posts, profileUser]);
@@ -2010,18 +2023,23 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
                                             <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
                                             <div
-                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-3xl p-1.5 w-full max-w-[200px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2.5rem] p-6 w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
-                                                <div className="flex flex-col gap-1">
+                                                <div className="flex flex-col gap-3">
+                                                    <h3 className="text-center text-lg font-black text-white mb-2 uppercase tracking-widest">{t('OPTIONS')}</h3>
+
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
-                                                        className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
+                                                        className="flex items-center gap-5 p-5 rounded-3xl bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all group w-full text-left border border-white/5"
                                                     >
-                                                        <div className="p-2 bg-white/5 rounded-xl border border-white/10 group-hover:border-white/30 transition-colors shadow-sm">
-                                                            <Icons.Share className="w-4 h-4 text-gray-200" />
+                                                        <div className="p-3 bg-white/10 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
+                                                            <Icons.Share className="w-6 h-6 text-gray-200" />
                                                         </div>
-                                                        <div className="text-xs font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                        <div className="flex-1">
+                                                            <div className="text-base font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                            <div className="text-xs text-gray-400 font-medium mt-0.5 opacity-60">Share Profile Link</div>
+                                                        </div>
                                                     </button>
 
                                                     {currentUser?.role === 'Founder' && (
@@ -2037,18 +2055,21 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                     setShowProfileMenu(false);
                                                                 } catch (e) { addToast(t('BAN_ERROR'), "error"); }
                                                             }}
-                                                            className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                            className="flex items-center gap-5 p-5 rounded-3xl bg-red-500/5 hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left border border-red-500/10"
                                                         >
-                                                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-sm">
-                                                                <Icons.Shield className="w-4 h-4 text-red-500" />
+                                                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
+                                                                <Icons.Shield className="w-6 h-6 text-red-500" />
                                                             </div>
-                                                            <div className="text-xs font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
+                                                            <div className="flex-1">
+                                                                <div className="text-base font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
+                                                                <div className="text-xs text-red-500/60 font-medium mt-0.5 opacity-60">Restrict access</div>
+                                                            </div>
                                                         </button>
                                                     )}
 
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }}
-                                                        className="mt-1 p-2 text-center text-[10px] font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
+                                                        className="mt-4 p-4 text-center text-sm font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full border-t border-white/5 pt-6"
                                                     >
                                                         {t('CANCEL')}
                                                     </button>
@@ -2641,8 +2662,6 @@ const applyTheme = (color) => {
         if (hex === '#ffffff') return '#f0f0f0';
         return hex + 'cc';
     };
-    const secondary = getSecondary(color);
-    const hover = getHover(color);
     const glow = `${color}44`;
     const glowSoft = `${color}1a`;
 
@@ -3287,8 +3306,11 @@ const App = () => {
             {!user ? (
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
-                        <div className="flex flex-col items-center mb-8">
-                            <img src="/image/Applogo.png?v=4" className="h-64 w-auto object-contain mb-4" alt="Legacy Logo" />
+                        <div className="flex flex-col items-center">
+                            <div className="flex items-center gap-3 mb-8 px-2">
+                                <img src="/Logo.png" alt="Legacy Academy" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,215,0,0.2)]" />
+                                <span className="text-xl font-black italic tracking-tighter text-white">LEGACY <span className="text-[var(--gold-primary)]">ACADEMY</span></span>
+                            </div>
                         </div>
                         <div className="space-y-4">
                             {authMode === 'login' && (
@@ -3455,7 +3477,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/image/Logo.png" className="h-[220px] sm:h-[320px] w-auto object-contain transition-all hover:scale-110 duration-500" alt="Logo" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="w-16 h-16 drop-shadow-[0_0_15px_rgba(255,215,0,0.3)] animate-pulse-slow object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
