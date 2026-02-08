@@ -1078,7 +1078,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                 transition: { duration: 0.3 }
             }}
             viewport={{ once: true }}
-            className="glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98]"
+            className="glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible"
         >
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
@@ -1100,69 +1100,39 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <circle cx="12" cy="19" r="1" />
                                 </svg>
                             </button>
-                            {showMenu && createPortal(
-                                <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
-                                    <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                    <div
-                                        className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2.5rem] p-6 w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <div className="flex flex-col gap-3">
-                                            <h3 className="text-center text-lg font-black text-white mb-2 uppercase tracking-widest">{t('OPTIONS')}</h3>
+                            {showMenu && (
+                                <>
+                                    <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                    <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
+                                            className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                        >
+                                            <Icons.Share className="w-4 h-4 text-gray-400" />
+                                            <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                        </button>
 
+                                        {isOwner && (
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                                className="flex items-center gap-5 p-5 rounded-3xl bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all group w-full text-left border border-white/5"
+                                                onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
+                                                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
                                             >
-                                                <div className="p-3 bg-white/10 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
-                                                    <Icons.Share className="w-6 h-6 text-gray-200" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="text-base font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
-                                                    <div className="text-xs text-gray-400 font-medium mt-0.5 opacity-60">Share this post</div>
-                                                </div>
+                                                <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                                <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
                                             </button>
+                                        )}
 
-                                            {isOwner && (
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                                    className="flex items-center gap-5 p-5 rounded-3xl bg-blue-500/5 hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left border border-blue-500/10"
-                                                >
-                                                    <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-lg">
-                                                        <Icons.Edit className="w-6 h-6 text-blue-400" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="text-base font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
-                                                        <div className="text-xs text-blue-400/60 font-medium mt-0.5 opacity-60">Edit content</div>
-                                                    </div>
-                                                </button>
-                                            )}
-
-                                            {(isOwner || isFounder) && (
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                                    className="flex items-center gap-5 p-5 rounded-3xl bg-red-500/5 hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left border border-red-500/10"
-                                                >
-                                                    <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
-                                                        <Icons.Trash className="w-6 h-6 text-red-500" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="text-base font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
-                                                        <div className="text-xs text-red-500/60 font-medium mt-0.5 opacity-60">Remove permanently</div>
-                                                    </div>
-                                                </button>
-                                            )}
-
+                                        {(isOwner || isFounder) && (
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
-                                                className="mt-4 p-4 text-center text-sm font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full border-t border-white/5 pt-6"
+                                                onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
+                                                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
                                             >
-                                                {t('CANCEL')}
+                                                <Icons.Trash className="w-4 h-4 text-red-500" />
+                                                <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
                                             </button>
-                                        </div>
+                                        )}
                                     </div>
-                                </div>,
-                                document.body
+                                </>
                             )}
                         </div>
                     </div>
@@ -2019,64 +1989,39 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             </button>
                                         </div>
                                     )}
-                                    {showProfileMenu && createPortal(
-                                        <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
-                                            <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
-                                            <div
-                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2.5rem] p-6 w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <div className="flex flex-col gap-3">
-                                                    <h3 className="text-center text-lg font-black text-white mb-2 uppercase tracking-widest">{t('OPTIONS')}</h3>
+                                    {showProfileMenu && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
+                                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                                >
+                                                    <Icons.Share className="w-4 h-4 text-gray-400" />
+                                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                                </button>
 
+                                                {currentUser?.role === 'Founder' && (
                                                     <button
-                                                        onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
-                                                        className="flex items-center gap-5 p-5 rounded-3xl bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all group w-full text-left border border-white/5"
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
+                                                            if (!targetId) return;
+                                                            if (!window.confirm(t('CONFIRM_BAN'))) return;
+                                                            try {
+                                                                await axios.post(`/users/${targetId}/ban`, { days: 3 });
+                                                                addToast(t('BAN_SUCCESS'), "success");
+                                                                setShowProfileMenu(false);
+                                                            } catch (e) { addToast(t('BAN_ERROR'), "error"); }
+                                                        }}
+                                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
                                                     >
-                                                        <div className="p-3 bg-white/10 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
-                                                            <Icons.Share className="w-6 h-6 text-gray-200" />
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <div className="text-base font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
-                                                            <div className="text-xs text-gray-400 font-medium mt-0.5 opacity-60">Share Profile Link</div>
-                                                        </div>
+                                                        <Icons.Shield className="w-4 h-4 text-red-500" />
+                                                        <span className="text-xs font-bold text-red-500">{t('BAN')}</span>
                                                     </button>
-
-                                                    {currentUser?.role === 'Founder' && (
-                                                        <button
-                                                            onClick={async (e) => {
-                                                                e.stopPropagation();
-                                                                const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
-                                                                if (!targetId) return;
-                                                                if (!window.confirm(t('CONFIRM_BAN'))) return;
-                                                                try {
-                                                                    await axios.post(`/users/${targetId}/ban`, { days: 3 });
-                                                                    addToast(t('BAN_SUCCESS'), "success");
-                                                                    setShowProfileMenu(false);
-                                                                } catch (e) { addToast(t('BAN_ERROR'), "error"); }
-                                                            }}
-                                                            className="flex items-center gap-5 p-5 rounded-3xl bg-red-500/5 hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left border border-red-500/10"
-                                                        >
-                                                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
-                                                                <Icons.Shield className="w-6 h-6 text-red-500" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                <div className="text-base font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
-                                                                <div className="text-xs text-red-500/60 font-medium mt-0.5 opacity-60">Restrict access</div>
-                                                            </div>
-                                                        </button>
-                                                    )}
-
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }}
-                                                        className="mt-4 p-4 text-center text-sm font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full border-t border-white/5 pt-6"
-                                                    >
-                                                        {t('CANCEL')}
-                                                    </button>
-                                                </div>
+                                                )}
                                             </div>
-                                        </div>,
-                                        document.body
+                                        </>
                                     )}
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
@@ -2662,6 +2607,8 @@ const applyTheme = (color) => {
         if (hex === '#ffffff') return '#f0f0f0';
         return hex + 'cc';
     };
+    const secondary = getSecondary(color);
+    const hover = getHover(color);
     const glow = `${color}44`;
     const glowSoft = `${color}1a`;
 
