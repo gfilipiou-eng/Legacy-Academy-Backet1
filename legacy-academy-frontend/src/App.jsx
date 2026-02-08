@@ -489,7 +489,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
                 {/* Info Section - Fixed height or scrolling */}
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full !overflow-visible relative">
-                    <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0">
+                    <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
                                 <ProfileAvatar user={post.author} />
@@ -1081,7 +1081,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <ProfileAvatar user={post.author} />
                             </div>
                         </div>
-                        <div className="relative mt-3">
+                        <div className="relative mt-3 z-50">
                             <button
                                 onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
                                 className="p-2.5 text-gray-400 hover:text-white transition-all rounded-full bg-white/5 hover:bg-white/10 active:scale-95 shadow-sm border border-white/5"
