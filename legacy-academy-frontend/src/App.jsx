@@ -2920,16 +2920,13 @@ const App = () => {
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
-    // Scroll to top when closing post detail
-    useEffect(() => {
-        if (!selectedPost && mainScrollRef.current) {
-            mainScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    }, [selectedPost]);
+    // Scroll behavior removed as requested (keep position)
 
 
 
-    // --- SCROLL LOCK FOR MODALS ---
+
+    // Scroll lock removed to prevent jumps
+    /*
     useEffect(() => {
         const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
         if (anyModalOpen) {
@@ -2944,6 +2941,7 @@ const App = () => {
             document.body.style.height = 'auto';
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
+    */
 
     const handleLike = async (postId) => {
         const userId = user?._id;
