@@ -1087,8 +1087,11 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <ProfileAvatar user={post.author} />
                             </div>
                         </div>
-                        <div className="relative">
-                            <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90">
+                        <div className="relative mt-3">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                                className="p-2.5 text-gray-400 hover:text-white transition-all rounded-full bg-white/5 hover:bg-white/10 active:scale-95 shadow-sm border border-white/5"
+                            >
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                                     <circle cx="12" cy="12" r="1" />
                                     <circle cx="12" cy="5" r="1" />
