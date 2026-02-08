@@ -230,7 +230,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                                 onClick={startRecording}
                                 className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)] transition-all active:scale-95 shadow-xl group"
                             >
-                                <Icons.WalkieTalkie className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                <Icons.Mic className="w-6 h-6 group-hover:scale-110 transition-transform" />
                             </button>
                         )}
                         <button
