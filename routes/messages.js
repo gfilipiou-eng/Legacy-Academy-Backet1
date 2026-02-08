@@ -74,7 +74,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
                     notifications: {
                         type: 'message',
                         from: senderOid,
-                        fromUsername: req.user.username,
+                        fromUsername: req.user.username || 'User',
                         text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
                         read: false,
                         createdAt: new Date()
