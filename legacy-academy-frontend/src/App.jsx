@@ -1070,7 +1070,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                 transition: { duration: 0.3 }
             }}
             viewport={{ once: true }}
-            className="glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible"
+            className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
