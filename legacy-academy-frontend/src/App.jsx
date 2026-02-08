@@ -1102,47 +1102,47 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
                                     <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                     <div
-                                        className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+                                        className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-3xl p-1.5 w-full max-w-[200px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <div className="flex flex-col gap-1.5">
+                                        <div className="flex flex-col gap-1">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                                className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
+                                                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
                                             >
-                                                <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
-                                                    <Icons.Share className="w-5 h-5 text-gray-200" />
+                                                <div className="p-2 bg-white/5 rounded-xl border border-white/10 group-hover:border-white/30 transition-colors shadow-sm">
+                                                    <Icons.Share className="w-4 h-4 text-gray-200" />
                                                 </div>
-                                                <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                <div className="text-xs font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
                                             </button>
 
                                             {isOwner && (
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                                    className="flex items-center gap-4 p-4 rounded-3xl hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left"
                                                 >
-                                                    <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-lg">
-                                                        <Icons.Edit className="w-5 h-5 text-blue-400" />
+                                                    <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-sm">
+                                                        <Icons.Edit className="w-4 h-4 text-blue-400" />
                                                     </div>
-                                                    <div className="text-sm font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
+                                                    <div className="text-xs font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
                                                 </button>
                                             )}
 
                                             {(isOwner || isFounder) && (
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                                    className="flex items-center gap-4 p-4 rounded-3xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
                                                 >
-                                                    <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
-                                                        <Icons.Trash className="w-5 h-5 text-red-500" />
+                                                    <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-sm">
+                                                        <Icons.Trash className="w-4 h-4 text-red-500" />
                                                     </div>
-                                                    <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
+                                                    <div className="text-xs font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
                                                 </button>
                                             )}
 
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
-                                                className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
+                                                className="mt-1 p-2 text-center text-[10px] font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
                                             >
                                                 {t('CANCEL')}
                                             </button>
@@ -2010,18 +2010,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4">
                                             <div className="fixed inset-0 bg-black/80 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
                                             <div
-                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+                                                className="relative z-[10000000] bg-[#121212] border border-white/20 rounded-3xl p-1.5 w-full max-w-[200px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
-                                                <div className="flex flex-col gap-1.5">
+                                                <div className="flex flex-col gap-1">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
-                                                        className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
+                                                        className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
                                                     >
-                                                        <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
-                                                            <Icons.Share className="w-5 h-5 text-gray-200" />
+                                                        <div className="p-2 bg-white/5 rounded-xl border border-white/10 group-hover:border-white/30 transition-colors shadow-sm">
+                                                            <Icons.Share className="w-4 h-4 text-gray-200" />
                                                         </div>
-                                                        <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                        <div className="text-xs font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
                                                     </button>
 
                                                     {currentUser?.role === 'Founder' && (
@@ -2037,18 +2037,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                     setShowProfileMenu(false);
                                                                 } catch (e) { addToast(t('BAN_ERROR'), "error"); }
                                                             }}
-                                                            className="flex items-center gap-4 p-4 rounded-3xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
+                                                            className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
                                                         >
-                                                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
-                                                                <Icons.Shield className="w-5 h-5 text-red-500" />
+                                                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-sm">
+                                                                <Icons.Shield className="w-4 h-4 text-red-500" />
                                                             </div>
-                                                            <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
+                                                            <div className="text-xs font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
                                                         </button>
                                                     )}
 
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }}
-                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
+                                                        className="mt-1 p-2 text-center text-[10px] font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors w-full"
                                                     >
                                                         {t('CANCEL')}
                                                     </button>
