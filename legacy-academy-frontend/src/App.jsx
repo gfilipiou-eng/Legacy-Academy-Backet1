@@ -2662,6 +2662,14 @@ const App = () => {
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
     const [expandedDates, setExpandedDates] = useState({});
+    const mainScrollRef = useRef(null);
+
+    // SCROLL TO TOP ON LOGIN / TAB CHANGE
+    useEffect(() => {
+        if (mainScrollRef.current) {
+            mainScrollRef.current.scrollTo(0, 0);
+        }
+    }, [user, activeTab]);
 
     const toggleDate = (dateKey) => {
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
@@ -3409,12 +3417,12 @@ const App = () => {
                 </div>
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0 bg-black">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#1a1a1a_0%,_#000000_100%)]"></div>
-                        <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: 'linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-                        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[var(--gold-primary)]/10 to-transparent pointer-events-none"></div>
+                    <div className="fixed inset-0 z-0 bg-[#050505]">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,_#1a1a1a,transparent)]"></div>
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150"></div>
+                        <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent blur-[100px] opacity-30 animate-pulse-slow"></div>
                     </div>
-                    <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
+                    <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
