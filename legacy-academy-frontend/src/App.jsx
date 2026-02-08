@@ -488,7 +488,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full overflow-hidden relative">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full !overflow-visible relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
@@ -517,37 +517,29 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                         <circle cx="12" cy="19" r="1" />
                                     </svg>
                                 </button>
-                                <AnimatePresence>
-                                    {showMenu && (
-                                        <>
-                                            {createPortal(
-                                                <>
-                                                    <div style={{ position: 'fixed', inset: 0, zIndex: 999998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} style={{ position: 'fixed', left: '50%', top: '45%', transform: 'translate(-50%, -50%)', zIndex: 999999 }} className="bg-[#121212]/95 border border-white/10 rounded-[1.2rem] p-1.5 w-44 shadow-2xl flex flex-col gap-1 backdrop-blur-2xl ring-1 ring-white/10">
-                                                        <div className="flex flex-col gap-1">
-                                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-[10px] font-black text-gray-200 w-full text-left transition-all uppercase tracking-widest">
-                                                                <div className="p-1.5 bg-white/5 rounded-lg border border-white/10"><Icons.Share className="w-4 h-4" /></div> {t('SHARE')}
-                                                            </button>
-                                                            {isOwner && (
-                                                                <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/20 text-[10px] font-black text-blue-400 w-full text-left transition-all uppercase tracking-widest">
-                                                                    <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20"><Icons.Edit className="w-4 h-4" /></div> {t('EDIT')}
-                                                                </button>
-                                                            )}
-                                                            {(isOwner || isFounder) && (
-                                                                <>
-                                                                    <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-[10px] font-black text-red-500 w-full text-left transition-all uppercase tracking-widest">
-                                                                        <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20"><Icons.Trash className="w-4 h-4" /></div> {t('DELETE')}
-                                                                    </button>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                </>,
-                                                document.body
+                                {showMenu && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <Icons.Share className="w-4 h-4 text-gray-400" />
+                                                <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                            </button>
+                                            {isOwner && (
+                                                <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                    <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                                    <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
+                                                </button>
                                             )}
-                                        </>
-                                    )}
-                                </AnimatePresence>
+                                            {(isOwner || isFounder) && (
+                                                <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                    <Icons.Trash className="w-4 h-4 text-red-500" />
+                                                    <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
+                                                </button>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
