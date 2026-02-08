@@ -1112,59 +1112,68 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 </button>
                                 <AnimatePresence>
                                     {showMenu && createPortal(
-                                        <>
-                                            <div style={{ position: 'fixed', inset: 0, zIndex: 999998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                             <motion.div
-                                                initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                                                style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 999999 }}
-                                                className="bg-[#121212]/98 border border-white/20 rounded-3xl p-2 w-64 shadow-2xl backdrop-blur-2xl"
+                                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                                className="relative bg-[#121212] border border-white/10 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl ring-1 ring-white/10 overflow-hidden"
+                                                onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex flex-col gap-1.5">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                                        className="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 text-white w-full text-left transition-all group"
+                                                        className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
                                                     >
-                                                        <div className="p-2 bg-white/5 rounded-xl border border-white/10 group-hover:bg-white/20 transition-colors">
-                                                            <Icons.Share className="w-5 h-5" />
+                                                        <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
+                                                            <Icons.Share className="w-5 h-5 text-gray-200" />
                                                         </div>
                                                         <div className="flex-1">
-                                                            <div className="text-sm font-black uppercase tracking-wider">{t('SHARE')}</div>
-                                                            <div className="text-[10px] text-gray-500 uppercase tracking-widest">Share Post</div>
+                                                            <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                            <div className="text-[10px] text-gray-400 font-medium">{t('SHARE_POST_DESC') || 'Share this post'}</div>
                                                         </div>
                                                     </button>
+
                                                     {isOwner && (
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                                            className="flex items-center gap-3 p-4 rounded-2xl hover:bg-blue-500/20 text-white w-full text-left transition-all group"
+                                                            className="flex items-center gap-4 p-4 rounded-3xl hover:bg-blue-500/10 active:scale-[0.98] transition-all group w-full text-left"
                                                         >
-                                                            <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                                                            <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:border-blue-500/40 transition-colors shadow-lg">
                                                                 <Icons.Edit className="w-5 h-5 text-blue-400" />
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="text-sm font-black uppercase tracking-wider text-blue-400">{t('EDIT')}</div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Edit Post</div>
+                                                                <div className="text-sm font-black text-blue-400 uppercase tracking-wider">{t('EDIT')}</div>
+                                                                <div className="text-[10px] text-blue-400/60 font-medium">{t('EDIT_POST_DESC') || 'Edit content'}</div>
                                                             </div>
                                                         </button>
                                                     )}
+
                                                     {(isOwner || isFounder) && (
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                                            className="flex items-center gap-3 p-4 rounded-2xl hover:bg-red-500/20 text-white w-full text-left transition-all group"
+                                                            className="flex items-center gap-4 p-4 rounded-3xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
                                                         >
-                                                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:bg-red-500/20 transition-colors">
+                                                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
                                                                 <Icons.Trash className="w-5 h-5 text-red-500" />
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="text-sm font-black uppercase tracking-wider text-red-500">{t('DELETE')}</div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Delete Post</div>
+                                                                <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('DELETE')}</div>
+                                                                <div className="text-[10px] text-red-500/60 font-medium">{t('DELETE_POST_DESC') || 'Remove permanently'}</div>
                                                             </div>
                                                         </button>
                                                     )}
+
+                                                    <button
+                                                        onClick={() => setShowMenu(false)}
+                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
+                                                    >
+                                                        {t('CANCEL')}
+                                                    </button>
                                                 </div>
                                             </motion.div>
-                                        </>,
+                                        </div>,
                                         document.body
                                     )}
                                 </AnimatePresence>
@@ -2006,28 +2015,29 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
                                     {showProfileMenu && createPortal(
-                                        <>
-                                            <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)' }} onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
+                                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); setShowProfileMenu(false); }} />
                                             <motion.div
-                                                initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                                                style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}
-                                                className="bg-[#121212]/98 border border-white/20 rounded-3xl p-2 w-64 shadow-2xl backdrop-blur-2xl"
+                                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                                className="relative bg-[#121212] border border-white/10 rounded-[2rem] p-2 w-full max-w-xs shadow-2xl ring-1 ring-white/10 overflow-hidden"
+                                                onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex flex-col gap-1.5">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
-                                                        className="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 text-white w-full text-left transition-all group"
+                                                        className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 active:scale-[0.98] transition-all group w-full text-left"
                                                     >
-                                                        <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                                                        <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-white/30 transition-colors shadow-lg">
                                                             <Icons.Share className="w-5 h-5 text-blue-400" />
                                                         </div>
                                                         <div className="flex-1">
-                                                            <div className="text-sm font-black uppercase tracking-wider">{t('SHARE')}</div>
-                                                            <div className="text-[10px] text-gray-500 uppercase tracking-widest">Share Profile</div>
+                                                            <div className="text-sm font-black text-white uppercase tracking-wider">{t('SHARE')}</div>
+                                                            <div className="text-[10px] text-gray-400 font-medium">Share Profile Link</div>
                                                         </div>
                                                     </button>
+
                                                     {currentUser?.role === 'Founder' && (
                                                         <button
                                                             onClick={async (e) => {
@@ -2041,20 +2051,27 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                     setShowProfileMenu(false);
                                                                 } catch (e) { addToast(t('BAN_ERROR'), "error"); }
                                                             }}
-                                                            className="flex items-center gap-3 p-4 rounded-2xl hover:bg-red-500/20 text-white w-full text-left transition-all group"
+                                                            className="flex items-center gap-4 p-4 rounded-3xl hover:bg-red-500/10 active:scale-[0.98] transition-all group w-full text-left"
                                                         >
-                                                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 group-hover:bg-red-500/20 transition-colors">
+                                                            <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 group-hover:border-red-500/40 transition-colors shadow-lg">
                                                                 <Icons.Shield className="w-5 h-5 text-red-500" />
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="text-sm font-black uppercase tracking-wider text-red-500">{t('BAN')}</div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Ban User</div>
+                                                                <div className="text-sm font-black text-red-500 uppercase tracking-wider">{t('BAN')}</div>
+                                                                <div className="text-[10px] text-red-500/60 font-medium">Restrict access</div>
                                                             </div>
                                                         </button>
                                                     )}
+
+                                                    <button
+                                                        onClick={() => setShowProfileMenu(false)}
+                                                        className="mt-2 p-4 text-center text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
+                                                    >
+                                                        {t('CANCEL')}
+                                                    </button>
                                                 </div>
                                             </motion.div>
-                                        </>,
+                                        </div>,
                                         document.body
                                     )}
                                 </div>
