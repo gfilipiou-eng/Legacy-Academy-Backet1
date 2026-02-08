@@ -3253,7 +3253,7 @@ const App = () => {
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain drop-shadow-[0_0_25px_rgba(255,215,0,0.4)] animate-pulse-slow mb-4" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
                                 </div>
                             </div>
                             <div className="space-y-4">
@@ -3413,16 +3413,15 @@ const App = () => {
                 </div>
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
-                    <div className="liquid-bg" />
-                    <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
-                        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-purple-900/20 to-blue-900/20 animate-gradient-shift" />
-                        <div className="absolute inset-0 bg-gradient-to-tl from-yellow-900/10 via-pink-900/10 to-cyan-900/10 animate-gradient-shift-reverse" />
+                    <div className="fixed inset-0 z-0 bg-black">
+                        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 animate-pulse-slow"></div>
+                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--gold-primary),_transparent_70%)] animate-pulse"></div>
                     </div>
                     <main className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-24 w-auto drop-shadow-[0_0_15px_rgba(255,215,0,0.3)] animate-pulse-slow object-contain" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
