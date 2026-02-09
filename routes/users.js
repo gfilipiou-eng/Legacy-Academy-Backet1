@@ -175,6 +175,12 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requestId;
 
+        // Validate requesterId format
+        if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
+            console.warn(`[ACCEPT REQ] Invalid requesterId format: ${requesterId}`);
+            return res.status(400).json("Invalid request ID format");
+        }
+
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
