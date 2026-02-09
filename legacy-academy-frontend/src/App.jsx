@@ -40,12 +40,14 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
                 transform = `w_250,h_250,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
-                transform = `w_300,h_300,c_fill,g_face,q_auto:best,f_auto`;
+                // FORCE 8K / SUPER HIGH QUALITY FOR AVATARS
+                // Use 'q_100' (max quality), 'f_auto' (best format), and large dimensions to prevent upscale blur
+                transform = `w_2048,h_2048,c_fill,g_face,q_100,f_auto,dpr_2.0`;
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                // CRYSTAL 8K / 4K TARGETING
-                transform = `c_limit,w_3840,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                // CRYSTAL 8K / 4K TARGETING FOR POSTS
+                transform = `c_limit,w_7680,q_100,${isVideo ? 'vc_auto' : 'f_auto'}`;
             }
 
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
