@@ -509,6 +509,38 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             </div>
                         </div>
                         <div className="flex gap-1 relative">
+                            <div className="relative">
+                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                        <circle cx="12" cy="12" r="1" />
+                                        <circle cx="12" cy="5" r="1" />
+                                        <circle cx="12" cy="19" r="1" />
+                                    </svg>
+                                </button>
+                                {showMenu && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+                                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <Icons.Share className="w-4 h-4 text-gray-400" />
+                                                <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                            </button>
+                                            {isOwner && (
+                                                <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                    <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                                    <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
+                                                </button>
+                                            )}
+                                            {(isOwner || isFounder) && (
+                                                <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                    <Icons.Trash className="w-4 h-4 text-red-500" />
+                                                    <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
+                                                </button>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -1044,6 +1076,53 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
             {/* ABSOLUTE MENU TOP RIGHT */}
+            <div className="absolute top-4 right-4 z-50">
+                <div className="relative">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                        className="p-2 text-gray-400 hover:text-white transition-all rounded-full bg-black/40 hover:bg-white/10 active:scale-95 shadow-lg border border-white/5 backdrop-blur-md"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                        </svg>
+                    </button>
+                    {showMenu && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
+                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                >
+                                    <Icons.Share className="w-4 h-4 text-gray-400" />
+                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                </button>
+                                {isOwner && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
+                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                    >
+                                        <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                        <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
+                                    </button>
+                                )}
+                                {(isOwner || isFounder) && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
+                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                    >
+                                        <Icons.Trash className="w-4 h-4 text-red-500" />
+                                        <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
+                                    </button>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+
             {/* WRAPPER LINK FOR DETAILS */}
             <div className="p-4" >
                 <div className="flex items-start gap-3">
@@ -1903,6 +1982,53 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
+                                    {!isMe && (
+                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-50">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setShowProfileMenu(!showProfileMenu); }}
+                                                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                                    <circle cx="12" cy="12" r="1" />
+                                                    <circle cx="12" cy="5" r="1" />
+                                                    <circle cx="12" cy="19" r="1" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    )}
+                                    {showProfileMenu && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
+                                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                                >
+                                                    <Icons.Share className="w-4 h-4 text-gray-400" />
+                                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                                </button>
+                                                {currentUser?.role === 'Founder' && (
+                                                    <button
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
+                                                            if (!targetId) return;
+                                                            if (!window.confirm(t('CONFIRM_BAN'))) return;
+                                                            try {
+                                                                await axios.post(`/users/${targetId}/ban`, { days: 3 });
+                                                                addToast(t('BAN_SUCCESS'), "success");
+                                                                setShowProfileMenu(false);
+                                                            } catch (e) { addToast(t('BAN_ERROR'), "error"); }
+                                                        }}
+                                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                                    >
+                                                        <Icons.Shield className="w-4 h-4 text-red-500" />
+                                                        <span className="text-xs font-bold text-red-500">{t('BAN')}</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
