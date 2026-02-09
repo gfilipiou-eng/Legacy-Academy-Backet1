@@ -54,6 +54,10 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        requests: {
+            type: Array,
+            default: []
+        },
         notifications: [
             {
                 type: { type: String, enum: ['like', 'comment', 'follow', 'system'] }, // Added system for consistency
