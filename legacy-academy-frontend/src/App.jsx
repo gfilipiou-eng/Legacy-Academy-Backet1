@@ -519,7 +519,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 </button>
                                 {showMenu && (
                                     <>
-                                        <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                                         <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
                                             <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
                                                 <Icons.Share className="w-4 h-4 text-gray-400" />
@@ -1090,7 +1090,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                     </button>
                     {showMenu && (
                         <>
-                            <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                            <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                             <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
