@@ -69,12 +69,18 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
         // Send Notification
         try {
+            // Get sender info for notification
+            const senderUser = await User.findById(senderOid).select('username profilePic');
+            const senderUsername = senderUser?.username || req.user?.username || 'User';
+            const senderProfilePic = senderUser?.profilePic || req.user?.profilePic || '';
+
             await User.findByIdAndUpdate(recipientOid, {
                 $push: {
                     notifications: {
                         type: 'message',
                         from: senderOid,
-                        fromUsername: req.user.username || 'User',
+                        fromUsername: senderUsername,
+                        fromProfilePic: senderProfilePic,
                         text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
                         read: false,
                         createdAt: new Date()
@@ -89,6 +95,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         res.status(201).json(savedMessage);
     } catch (err) {
         console.error(`🚨 [${reqId}] MESSAGE ERROR:`, err);
+        console.error(`🚨 [${reqId}] Stack:`, err.stack);
         res.status(500).json({
             error: "Neural link transmission failed",
             detail: err.message,
