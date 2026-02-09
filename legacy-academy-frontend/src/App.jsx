@@ -3413,7 +3413,10 @@ const App = () => {
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[40] bg-white backdrop-blur-md border-b border-gray-200 shrink-0 transition-all duration-500 text-black">
+                        <header className="relative w-full z-[40] bg-[#1a1a1a] backdrop-blur-md border-b border-white/10 shrink-0 transition-all duration-500 text-white" style={{
+                            backgroundImage: `radial-gradient(circle at 10px 10px, rgba(255, 255, 255, 0.05) 2px, transparent 2.5px), radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.05) 2px, transparent 2.5px)`,
+                            backgroundSize: '30px 30px'
+                        }}>
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
