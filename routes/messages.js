@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", (req, res) => res.status(200).json({ status: "Neural link active", protocol: "WHISPERS_V1" }));
 router.get("/status", (req, res) => res.status(200).json({ status: "Neural link active", timestamp: new Date() }));
 
-// 🔥 WHISPERS AUTO-DELETE: Mark message as read (starts 5-minute countdown)
+// 🔥 WHISPERS AUTO-DELETE: Mark message as read (starts 5-second countdown)
 router.patch("/:messageId/read", verifyToken, async (req, res) => {
     try {
         const { messageId } = req.params;
@@ -31,7 +31,7 @@ router.patch("/:messageId/read", verifyToken, async (req, res) => {
         message.readAt = new Date();
         await message.save();
 
-        console.log(`[WHISPER] Message ${messageId} marked as read. Will self-destruct in 5 minutes.`);
+        console.log(`[WHISPER] Message ${messageId} marked as read. Will self-destruct in 5 seconds.`);
         res.status(200).json({ success: true, readAt: message.readAt });
     } catch (err) {
         console.error("Mark-as-read error:", err);
@@ -42,9 +42,9 @@ router.patch("/:messageId/read", verifyToken, async (req, res) => {
 // 🔥 WHISPERS AUTO-DELETE CLEANUP: Run every minute to delete expired messages
 const cleanupExpiredWhispers = async () => {
     try {
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const fiveSecondsAgo = new Date(Date.now() - 5 * 1000);
         const result = await Message.deleteMany({
-            readAt: { $ne: null, $lt: fiveMinutesAgo }
+            readAt: { $ne: null, $lt: fiveSecondsAgo }
         });
         if (result.deletedCount > 0) {
             console.log(`[WHISPERS CLEANUP] 🔥 Auto-deleted ${result.deletedCount} expired whispers`);
@@ -54,9 +54,9 @@ const cleanupExpiredWhispers = async () => {
     }
 };
 
-// Run cleanup every 60 seconds
-setInterval(cleanupExpiredWhispers, 60 * 1000);
-console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 minutes after reading.");
+// Run cleanup every 5 seconds
+setInterval(cleanupExpiredWhispers, 5 * 1000);
+console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 seconds after reading.");
 
 
 // Send a message (Updated for Audio Support)
