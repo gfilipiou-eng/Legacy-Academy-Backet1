@@ -9,7 +9,7 @@ import upload from "../middleware/upload.js";
 const router = express.Router();
 
 // Status check to verify connectivity
-router.get("/", (req, res) => res.status(200).json({ status: "Neural link active", protocol: "MESSAGES_V1" }));
+router.get("/", (req, res) => res.status(200).json({ status: "Neural link active", protocol: "WHISPERS_V1" }));
 router.get("/status", (req, res) => res.status(200).json({ status: "Neural link active", timestamp: new Date() }));
 
 // 🔥 WHISPERS AUTO-DELETE: Mark message as read (starts 5-minute countdown)

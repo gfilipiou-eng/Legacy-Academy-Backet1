@@ -875,6 +875,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     );
 };
 
+// Notification item component for Alerts tab
 const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t }) => {
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
