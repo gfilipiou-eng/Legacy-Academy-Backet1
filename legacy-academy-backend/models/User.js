@@ -58,7 +58,7 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
-        requests: {
+        followRequests: {
             type: Array, // Array of User IDs
             default: []
         },
