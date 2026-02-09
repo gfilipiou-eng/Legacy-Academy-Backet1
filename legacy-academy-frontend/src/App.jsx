@@ -1271,111 +1271,63 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* INLINE COMMENTS EXPANSION */}
-            <AnimatePresence>
-                {showComments && (
-                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
-                        <div className="p-4 space-y-4">
-                            {post.comments?.map((c, idx) => (
-                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
-                            ))}
-                            <div
-                                className="flex flex-col gap-4 mt-6"
-                            >
-                                <div className="flex gap-3 items-start">
-                                    <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 mt-1 shadow-lg ring-1 ring-white/10">
-                                        <ProfileAvatar user={user} />
-                                    </div>
-                                    {isRecordingComment ? (
-                                        <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-2 sm:p-3 flex items-center justify-between animate-pop-in">
-                                            <div className="flex items-center gap-2 pl-1 shrink-0">
-                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-tight">{t('TRANSMITTING')}</span>
-                                            </div>
-                                            <div className="flex gap-1 shrink-0">
-                                                <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-4 h-4" /></button>
-                                                <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-3 sm:px-5 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
-                                            </div>
-                                        </div>
-                                    ) : commentAudio ? (
-                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--gold-glow)] rounded-[1.2rem] p-1 animate-pop-in">
-                                            <div className="flex items-center gap-2 pl-1 shrink-0">
-                                                <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
-                                                <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1 shrink-0">
-                                                <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
-                                                <button type="button" onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    const fd = new FormData();
-                                                    fd.append('file', commentAudio, 'voice.webm');
-                                                    if (commentText.trim()) fd.append('text', commentText.trim());
-                                                    onComment(post._id, fd);
-                                                    setCommentAudio(null);
-                                                    setCommentText('');
-                                                }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
-                                                    <Icons.Send className="w-4 h-4 fill-black" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex-1 min-w-0">
-                                            <form
-                                                onSubmit={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    if (commentText.trim()) {
-                                                        onComment(post._id, commentText);
-                                                        setCommentText('');
-                                                    }
-                                                }}
-                                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-0.5 py-0.5 group overflow-hidden max-w-full"
-                                            >
-                                                <input
-                                                    placeholder={t('ENGAGE')}
-                                                    value={commentText}
-                                                    onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
-                                                    className="flex-1 min-w-0 bg-transparent py-2.5 px-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
-                                                />
-                                                <div className="flex gap-1 pr-1 shrink-0">
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
-                                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
-                                                    >
-                                                        <Icons.WalkieTalkie className="w-4 h-4" />
-                                                    </button>
-                                                    <button
-                                                        type="submit"
-                                                        disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
-                                                    >
-                                                        {loadingActions?.[post._id] ? (
-                                                            <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                                        ) : (
-                                                            <Icons.Send className="w-4 h-4" />
-                                                        )}
-                                                    </button>
+                {/* INLINE COMMENTS EXPANSION */}
+                <AnimatePresence>
+                    {showComments && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
+                            <div className="p-4 space-y-4">
+                                {post.comments?.map((c, idx) => (
+                                    <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                                ))}
+                                <div className="flex flex-col gap-4 mt-6">
+                                    <div className="flex gap-3 items-start">
+                                        {isRecordingComment ? (
+                                            <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-2 sm:p-3 flex items-center justify-between animate-pop-in">
+                                                <div className="flex items-center gap-2 pl-1 shrink-0">
+                                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-tight">{t('TRANSMITTING')}</span>
                                                 </div>
+                                                <div className="flex gap-1 shrink-0">
+                                                    <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-4 h-4" /></button>
+                                                    <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-3 sm:px-5 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
+                                                </div>
+                                            </div>
+                                        ) : commentAudio ? (
+                                            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--gold-glow)] rounded-[1.2rem] p-1 animate-pop-in">
+                                                <div className="flex items-center gap-2 pl-1 shrink-0">
+                                                    <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                                    <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1 shrink-0">
+                                                    <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
+                                                    <button type="button" onClick={(e) => {
+                                                        e.preventDefault(); e.stopPropagation();
+                                                        const fd = new FormData();
+                                                        fd.append('file', commentAudio, 'voice.webm');
+                                                        if (commentText.trim()) fd.append('text', commentText.trim());
+                                                        onComment(post._id, fd);
+                                                        setCommentAudio(null); setCommentText('');
+                                                    }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0"><Icons.Send className="w-4 h-4" /></button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="relative flex-1 flex items-center bg-white/5 rounded-2xl p-1 gap-1">
+                                                <input placeholder={t('ENGAGE')} value={commentText} onChange={e => setCommentText(e.target.value)} className="flex-1 bg-transparent px-3 py-2 text-sm text-white outline-none placeholder-gray-600 font-bold" />
+                                                <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-xl ${isRecordingComment ? 'bg-red-500' : 'bg-white/5'}`}><Icons.WalkieTalkie className="w-4 h-4" /></button>
+                                                <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black disabled:opacity-20"><Icons.Send className="w-4 h-4" /></button>
                                             </form>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </motion.div >
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </motion.div>
     );
 };
-
-// ... ChatModal, SettingsModal, ProfileModal, CreateModal same logic ...
-// Re-inserting them to ensure full file integrity
 
 const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const { t, lang } = useTranslation(user);
@@ -1393,23 +1345,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
             setMessages(prev => ({ ...prev, [otherUserId]: res.data }));
-
-            // 🔥 WHISPERS: Auto-mark incoming messages as read (TEMPORARILY DISABLED - waiting for backend deploy)
-            /*
-            const unreadIncoming = res.data.filter(m =>
-                String(m.recipient) === String(user?._id) &&
-                String(m.sender) === String(otherUserId) &&
-                !m.read
-            );
-
-            for (const msg of unreadIncoming) {
-                try {
-                    await axios.patch(`/messages/${msg._id}/read`);
-                } catch (e) {
-                    console.warn('Failed to mark message as read:', e);
-                }
-            }
-            */
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
@@ -1438,10 +1373,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         if (!activeChat) return;
         if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || 'Clear this entire conversation?')) return;
         const targetId = activeChat._id || activeChat.id;
-        if (!targetId) return;
-
         try {
-            console.log('📡 [DEBUG] Attempting to clear conversation:', targetId);
             await axios.post(`/messages/conversation/clear/${targetId}`);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
             playSound('sword');
@@ -1455,30 +1387,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
     const handleSend = async (audioBlob = null) => {
         if (!activeChat) return;
         if (!inputText.trim() && !audioBlob) return;
-
         const targetId = activeChat._id || activeChat.id;
         const fd = new FormData();
-        fd.append('recipient', targetId);
+        if (audioBlob) fd.append('file', audioBlob, 'voice_note.webm');
         if (inputText.trim()) fd.append('text', inputText.trim());
-        if (audioBlob) fd.append('file', audioBlob, 'voice.webm');
-
-        const tempText = inputText;
-        setInputText('');
-
+        fd.append('recipient', targetId);
         try {
-            const res = await axios.post('/messages', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-            setMessages(prev => ({
-                ...prev,
-                [targetId]: [...(prev[targetId] || []), res.data]
-            }));
+            const res = await axios.post('/messages', fd);
+            setMessages(prev => ({ ...prev, [targetId]: [...(prev[targetId] || []), res.data] }));
+            setInputText('');
             playSound('pop');
-        } catch (e) {
-            const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
-            const fullOutput = e.response?.data ? JSON.stringify(e.response.data) : 'No response body';
-            console.error('Send failed:', detail, fullOutput);
-            setInputText(tempText);
-            addToast(t('REQUEST_FAILED') + ': ' + (e.response?.data?.error || 'System error'), 'neutral');
-        }
+        } catch (e) { alert("Comm failed."); }
     };
 
     const startRecording = async () => {
@@ -1486,158 +1405,109 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder.current = new MediaRecorder(stream);
             audioChunks.current = [];
-            mediaRecorder.current.ondataavailable = e => audioChunks.current.push(e.data);
+            mediaRecorder.current.ondataavailable = (e) => audioChunks.current.push(e.data);
             mediaRecorder.current.onstop = () => {
                 const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
                 handleSend(blob);
             };
             mediaRecorder.current.start();
             setIsRecording(true);
-            playSound('sweep');
-        } catch (e) { alert("Mic required for walkie-talkie mode"); }
+        } catch (e) { alert("Mic denied."); }
     };
 
     const stopRecording = () => {
-        if (mediaRecorder.current && isRecording) {
+        if (mediaRecorder.current) {
             mediaRecorder.current.stop();
             setIsRecording(false);
             mediaRecorder.current.stream.getTracks().forEach(t => t.stop());
         }
     };
 
-    const toggleRecording = () => {
-        if (isRecording) {
-            stopRecording();
-        } else {
-            startRecording();
-        }
-    };
-
-    const filteredUsers = allUsers.filter(u =>
-        u._id !== user?._id &&
-        u.username.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     if (!isOpen) return null;
+
+    const currentMessages = messages[activeChat?._id] || [];
+    const filteredUsers = allUsers.filter(u => u.username?.toLowerCase().includes(searchQuery.toLowerCase()) && String(u._id) !== String(user?._id));
+
     return (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
-                <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
-                    <div className="p-4 border-b border-white/10 space-y-4">
-                        <div className="flex justify-between items-center"><h2 className="text-xl font-black italic">{t('CHAT')}</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
-                        <div className="relative">
-                            <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                            <input
-                                id="chat-search"
-                                name="chat-search"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder={t('SEARCH_PH')}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar">
-                        {filteredUsers.length === 0 && <div className="p-4 text-center text-gray-500 text-xs">{t('ZERO_AGENTS')}</div>}
-                        {filteredUsers.map(u => {
-                            const online = isUserOnline(u, user);
-                            return (
-                                <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                    <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-[var(--gold-primary)] text-black text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider">{t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
-                <div className={`flex-1 flex flex-col bg-[#050505] ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
-                    {activeChat ? (
-                        <>
-                            <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
-                                <div className="flex items-center gap-3">
-                                    <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                    <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
-                                    <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
-                                </div>
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4 animate-pop-in">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
+            <div className="relative w-full max-w-sm h-full sm:h-[600px] bg-[#0a0a0a] sm:border border-white/10 sm:rounded-[2rem] overflow-hidden flex flex-col shadow-2xl">
+                {activeChat ? (
+                    <>
+                        <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-white/5">
+                            <button onClick={() => setActiveChat(null)} className="p-2 hover:bg-white/10 rounded-full"><Icons.ChevronLeft className="w-5 h-5" /></button>
+                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-800 border border-white/10">
+                                <ProfileAvatar user={activeChat} />
                             </div>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                {(messages[activeChat._id] || []).map((m, i) => (
-                                    <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
-                                            {m.audioUrl ? (
-                                                <div className="flex flex-col gap-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
-                                                    </div>
-                                                    <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                    {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
-                                                </div>
-                                            ) : (
-                                                m.text
-                                            )}
-                                            <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
+                            <div className="flex-1 min-w-0">
+                                <div className="text-sm font-black text-white flex items-center gap-1.5 uppercase tracking-tighter">
+                                    {activeChat.username}
+                                    {activeChat.role === 'Founder' && <Icons.Shield className="w-3.5 h-3.5 text-[var(--gold-primary)]" />}
+                                </div>
+                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">{activeChat.role || 'Member'}</div>
+                            </div>
+                            <button onClick={handleClearChat} className="p-2 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-4 h-4" /></button>
+                            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full"><Icons.X className="w-5 h-5" /></button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-neural-grid">
+                            {currentMessages.map((m, i) => {
+                                const isMe = String(m.sender?._id || m.sender) === String(user?._id || user?.id);
+                                return (
+                                    <div key={m._id || i} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-slide-up`}>
+                                        <div className={`max-w-[80%] rounded-2xl p-3 ${isMe ? 'bg-[var(--gold-primary)] text-black font-bold shadow-lg shadow-[var(--gold-primary)]/20' : 'bg-white/5 text-white border border-white/10'}`}>
+                                            {m.text && <p className="text-sm leading-relaxed">{m.text}</p>}
+                                            {m.audioUrl && <audio src={resolveMediaUrl(m.audioUrl)} controls className="mt-2 w-full max-w-[200px] h-8 hue-rotate-180" />}
+                                            <div className={`text-[9px] mt-1 ${isMe ? 'text-black/50' : 'text-gray-500'} font-bold uppercase tracking-tighter`}>{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                                         </div>
                                     </div>
-                                ))}
-                                <div ref={scrollRef} />
+                                );
+                            })}
+                            <div ref={scrollRef} />
+                        </div>
+                        <div className="p-4 bg-white/5 border-t border-white/5 pb-20 sm:pb-4">
+                            <div className="flex items-center gap-2 bg-black/40 rounded-2xl p-1 border border-white/10 shadow-inner">
+                                <input placeholder={t('ENCRYPT_MESSAGE') || 'DECRYPT MESSAGE...'} value={inputText} onChange={e => setInputText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} className="flex-1 bg-transparent px-4 py-3 text-sm text-white outline-none placeholder-gray-600 font-bold" />
+                                <button onMouseDown={startRecording} onMouseUp={stopRecording} onTouchStart={startRecording} onTouchEnd={stopRecording} className={`w-11 h-11 flex items-center justify-center rounded-xl transition-all ${isRecording ? 'bg-red-500 animate-pulse scale-110 shadow-lg shadow-red-500/50' : 'bg-white/5 hover:bg-white/10 text-gray-400'}`}><Icons.WalkieTalkie className="w-5 h-5" /></button>
+                                <button onClick={() => handleSend()} disabled={!inputText.trim()} className="w-11 h-11 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all disabled:opacity-30"><Icons.Send className="w-5 h-5" /></button>
                             </div>
-                            <div className="p-2 bg-[#050505] border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
-                                <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
-                                    <input
-                                        id="chat-input"
-                                        name="chat-message"
-                                        type="text"
-                                        value={inputText}
-                                        onChange={(e) => {
-                                            let val = e.target.value;
-                                            if (isPhonetic) {
-                                                const pos = e.target.selectionStart;
-                                                const char = val.slice(pos - 1, pos);
-                                                if (GREEK_PHONETIC[char]) {
-                                                    val = val.slice(0, pos - 1) + GREEK_PHONETIC[char] + val.slice(pos);
-                                                }
-                                            }
-                                            setInputText(val);
-                                        }}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                        placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
-                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
-                                    />
-                                    <div className="flex items-center gap-2 shrink-0">
-                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
-                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/5">
+                            <h2 className="font-black italic text-lg text-white uppercase tracking-tighter">COMMS</h2>
+                            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full"><Icons.X className="w-5 h-5 text-gray-500" /></button>
+                        </div>
+                        <div className="p-4">
+                            <div className="relative group">
+                                <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                                <input placeholder={t('SCAN_NETWORK') || 'SCAN NETWORK...'} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/50 transition-all font-bold placeholder-gray-600" />
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto px-4 space-y-1 custom-scrollbar pb-20">
+                            {filteredUsers.length > 0 ? filteredUsers.map(u => (
+                                <button key={u._id} onClick={() => setActiveChat(u)} className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group active:scale-[0.98]">
+                                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-800 shrink-0 border border-white/10 group-hover:border-[var(--gold-primary)]/30 transition-all">
+                                        <ProfileAvatar user={u} />
                                     </div>
+                                    <div className="flex-1 text-left min-w-0">
+                                        <div className="text-sm font-black text-white uppercase tracking-tighter flex items-center gap-1.5 group-hover:text-[var(--gold-primary)] transition-colors">
+                                            {u.username}
+                                            {u.role === 'Founder' && <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)] shadow-[0_0_8px_var(--gold-glow)]" />}
+                                        </div>
+                                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">{u.role || 'Member'}</div>
+                                    </div>
+                                    <Icons.ChevronRight className="w-4 h-4 text-gray-700 group-hover:text-[var(--gold-primary)] group-hover:translate-x-1 transition-all" />
+                                </button>
+                            )) : (
+                                <div className="py-20 flex flex-col items-center justify-center text-gray-600 gap-3">
+                                    <Icons.Satellite className="w-10 h-10 opacity-20" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40">No Signal Found</p>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={() => { setIsPhonetic(!isPhonetic); playSound('pop'); }}
-                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
-                                    title="Phonetic Greek Keyboard"
-                                >
-                                    <Icons.Translate className="w-5 h-5" />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] active:scale-90'}`}
-                                >
-                                    <Icons.Mic className="w-5 h-5" />
-                                </button>
-                                <button
-                                    onClick={() => handleSend()}
-                                    disabled={!inputText.trim()}
-                                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
-                                >
-                                    <Icons.Send className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="flex-1 flex items-center justify-center text-center"><div><Icons.MessageCircle className="w-16 h-16 text-gray-800 mx-auto mb-4" /><h3 className="font-black italic text-2xl tracking-tighter">{t('MESSAGES')}</h3><p className="text-gray-500 text-sm mt-2">{t('SECURE_COMMS')}</p></div></div>
-                    )}
-                </div>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
@@ -1796,8 +1666,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [bio, setBio] = useState(currentUser?.bio || "");
     const [editUsername, setEditUsername] = useState(currentUser?.username || "");
     const [activeTab, setActiveTab] = useState('ALL'); // ALL, POSTS, VIDEO
-    const [userSpecificPosts, setUserSpecificPosts] = useState([]);
-    const [loadingPosts, setLoadingPosts] = useState(false);
+    const [userSpecificPosts, setLoadingPosts] = useState([]);
+    const [loadingPosts, setLoadingPostsState] = useState(false); // Renamed to avoid conflict
     const [expandedDates, setExpandedDates] = useState({});
     const fileRef = useRef(null);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -1822,14 +1692,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     const fetchUserPosts = async () => {
         if (!profileUser?._id) return;
-        setLoadingPosts(true);
+        setLoadingPostsState(true); // Use renamed state setter
         try {
             const res = await axios.get(`/posts/user/${profileUser._id}`);
-            setUserSpecificPosts(res.data);
+            setLoadingPosts(res.data); // Use renamed state setter
         } catch (e) {
             console.error("Profile posts fetch error:", e);
         } finally {
-            setLoadingPosts(false);
+            setLoadingPostsState(false); // Use renamed state setter
         }
     };
 
@@ -1864,6 +1734,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const groupedUserPosts = React.useMemo(() => {
         const groups = {};
         userPosts.forEach(p => {
+            // SECOND LAYER PRIVACY FILTER - (Backup for backend filtering)
+            const postAuthor = p.author?._id ? p.author : allUsers.find(u => String(u._id) === String(p.author));
+            const isPrivate = postAuthor?.isPrivate || postAuthor?.isFollowersOnly;
+            const isOwner = currentUser && String(currentUser._id || currentUser.id) === String(postAuthor?._id);
+            const isFollower = postAuthor?.followers?.some(fid => String(fid) === String(currentUser?._id || currentUser?.id));
+
+            // Only Founder or Owner or Follower can see private content
+            if (isPrivate && !isOwner && !isFollower && currentUser?.role !== 'Founder') return;
+
             const date = new Date(p.createdAt);
             const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
             const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
@@ -1871,7 +1750,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             groups[key].push(p);
         });
         return groups;
-    }, [userPosts, currentUser, lang]);
+    }, [userPosts, currentUser, lang, allUsers]);
 
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
@@ -2066,7 +1945,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
                                 {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px]">{t('EDIT_PROFILE')}</button>
+                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px] rounded-2xl">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex-1 flex gap-2">
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
@@ -2327,11 +2206,14 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
                             <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
-                                <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
-                            </div>
-                        </div>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 bg-[var(--gold-primary)]/10 px-3 py-2 rounded-2xl border border-[var(--gold-primary)]/20 w-full animate-pulse">
+                                <div className="flex items-center gap-1.5">
+                                    <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold-primary)]" />
+                                    <span className="text-[10px] sm:text-[12px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VIDEO_LIMIT_NOTE')}</span>
+                                </div>
+                            </div>                </div>
                     </div>
+
 
                     {/* YouTube URL input */}
                     <div className="mb-3">
@@ -2479,7 +2361,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             playSound('pop');
         } catch (e) {
             console.error("Edit failed", e);
-            const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
+            const detail = e.response?.data?.message || e.response?.data?.error || e.message;
             alert(`Neural link failure: ${detail}`);
         } finally { setSaving(false); }
     };
@@ -2561,7 +2443,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         </div>
                     </div>
                 </div>
-            </motion.div >
+            </motion.div>
         </div>
     );
 };
@@ -2796,14 +2678,20 @@ const App = () => {
         const lang = user?.settings?.language || 'en';
         const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
         filteredPosts.forEach(p => {
+            // SECOND LAYER PRIVACY FILTER
+            const postAuthor = p.author?._id ? p.author : users.find(u => String(u._id) === String(p.author));
+            const isPrivate = postAuthor?.isPrivate || postAuthor?.isFollowersOnly;
+            const isMe = user && String(user._id || user.id) === String(postAuthor?._id);
+            const isFollower = postAuthor?.followers?.some(fid => String(fid) === String(user?._id || user?.id));
+            if (isPrivate && !isMe && !isFollower && user?.role !== 'Founder') return;
+
             const date = new Date(p.createdAt);
             const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = { key, posts: [], dateVal: date.setHours(0, 0, 0, 0) };
             groups[key].posts.push(p);
         });
-        // Convert to array and sort DESCENDING (Newest first)
         return Object.values(groups).sort((a, b) => b.dateVal - a.dateVal);
-    }, [filteredPosts, user]);
+    }, [filteredPosts, user, users, t]);
 
     // AUTO-EXPAND FEED FOLDERS (Open Latest Folder)
     useEffect(() => {
@@ -2836,26 +2724,30 @@ const App = () => {
     const fetchPosts = async () => {
         if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
         try {
-            const res = await axios.get('/posts?limit=20');
+            const res = await axios.get(`/posts/feed?t=${Date.now()}`);
             // Simple check to avoid redundant re-renders if nothing changed
             const currentPosts = postsRef.current;
             if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
             setPosts(res.data);
-        } catch (e) { }
+        } catch (e) {
+            console.error('Fetch feed failed', e);
+        }
     };
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('/users');
+            const res = await axios.get(`/users?t=${Date.now()}`);
             if (users.length > 0 && res.data.length === users.length) return;
             setUsers(res.data);
-        } catch (e) { }
+        } catch (e) {
+            console.error('Fetch users failed', e);
+        }
     };
 
     // Notifications
     const fetchNotifications = async () => {
         if (!user) return;
         try {
-            const res = await axios.get('/users/notifications');
+            const res = await axios.get(`/users/notifications?t=${Date.now()}`);
             setAlerts(res.data);
             setUser(prev => {
                 if (!prev) return prev;
@@ -2863,7 +2755,9 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-        } catch (e) { console.error('Fetch notifications failed', e); }
+        } catch (e) {
+            console.error('Fetch notifications failed', e);
+        }
     };
 
     const markAllNotificationsRead = async () => {
@@ -2904,19 +2798,19 @@ const App = () => {
     /*
     useEffect(() => {
         const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
-        if (anyModalOpen) {
-            document.body.style.overflow = 'hidden';
+                                    if (anyModalOpen) {
+                                        document.body.style.overflow = 'hidden';
             // document.body.style.height = '100vh'; // CAUSES SCROLL JUMP
         } else {
-            document.body.style.overflow = 'auto';
+                                        document.body.style.overflow = 'auto';
             // document.body.style.height = 'auto';
         }
         return () => {
-            document.body.style.overflow = 'auto';
-            document.body.style.height = 'auto';
+                                        document.body.style.overflow = 'auto';
+                                    document.body.style.height = 'auto';
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
-    */
+                                    */
 
     const handleLike = async (postId) => {
         const userId = user?._id;
@@ -3118,20 +3012,30 @@ const App = () => {
     };
 
     const handleAcceptRequest = async (requesterId) => {
-        if (!requesterId) {
-            console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
+        if (!requesterId || requesterId === 'undefined' || requesterId === 'null') {
+            console.error('[HANDSHAKE] REJECTED: Invalid Requester ID', { requesterId });
+            addToast("Authorization protocol failed: Invalid operative ID.", "neutral");
             return;
         }
+
         try {
-            console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
+            console.log(`📡 [HANDSHAKE] Authorizing operative: ${requesterId}`);
+            setNotifications(prev => prev.filter(n => n.from !== requesterId));
             await axios.post(`/users/requests/${requesterId}/accept`, {});
-            playSound('pop');
-        } catch (e) {
-            const detail = e.response?.data?.error || e.response?.data || e.message;
-            console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
-        } finally {
+
+            // Success - refresh state with cache-busting
             fetchNotifications();
             fetchUsers();
+            if (activeChat && (activeChat._id === requesterId || activeChat.id === requesterId)) {
+                fetchMessages(requesterId);
+            }
+            addToast("AGENT AUTHORIZED. CLEARANCE GRANTED.", "success");
+            playSound('unlock');
+        } catch (e) {
+            const detail = e.response?.data?.error || e.response?.data?.message || e.response?.data || e.message;
+            console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
+            addToast(`HANDSHAKE ERROR: ${detail}`, "neutral");
+            fetchNotifications(); // Refresh list to see if it was already handled
         }
     };
 
@@ -3222,6 +3126,9 @@ const App = () => {
             }
         }
     }, [user?.settings?.language]);
+
+    // Nav States
+    const [navMenuOpen, setNavMenuOpen] = useState(false);
 
     const logout = () => {
         localStorage.removeItem('token');
@@ -3561,13 +3468,49 @@ const App = () => {
 
 
 
-                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
+                                <div className="relative">
+                                    <button onClick={() => { setNavMenuOpen(!navMenuOpen); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${navMenuOpen || activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
+                                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
+                                            <ProfileAvatar user={user} key={imgKey} />
+                                        </div>
+                                    </button>
 
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
-                                        <ProfileAvatar user={user} key={imgKey} />
-                                    </div>
-                                </button>
+                                    <AnimatePresence>
+                                        {navMenuOpen && (
+                                            <>
+                                                <div className="fixed inset-0 z-40" onClick={() => setNavMenuOpen(false)} />
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.8, y: 20, x: 20 }}
+                                                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.8, y: 20, x: 20 }}
+                                                    className="absolute bottom-16 right-0 w-56 bg-black/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.9)] z-50 overflow-hidden p-2 flex flex-col gap-1.5"
+                                                >
+                                                    <div className="px-4 py-3 border-b border-white/5 mb-1">
+                                                        <div className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{user?.role || 'AGENT'}</div>
+                                                        <div className="text-sm font-bold text-white truncate">{user?.username}</div>
+                                                    </div>
+
+                                                    <button onClick={() => { setNavMenuOpen(false); viewProfile(user); }} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 text-gray-400 hover:text-white transition-all group">
+                                                        <Icons.User className="w-4 h-4 group-hover:text-[var(--gold-primary)]" />
+                                                        <span className="text-xs font-bold uppercase tracking-widest">{t('PROFILE')}</span>
+                                                    </button>
+
+                                                    <button onClick={() => { setNavMenuOpen(false); setIsSettingsOpen(true); }} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 text-gray-400 hover:text-white transition-all group">
+                                                        <Icons.Settings className="w-4 h-4 group-hover:text-blue-400" />
+                                                        <span className="text-xs font-bold uppercase tracking-widest">{t('SETTINGS')}</span>
+                                                    </button>
+
+                                                    <div className="h-px bg-white/5 mx-2 my-1" />
+
+                                                    <button onClick={() => { setNavMenuOpen(false); logout(); playSound('sword'); }} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/10 text-red-500 transition-all group">
+                                                        <Icons.Logout className="w-4 h-4" />
+                                                        <span className="text-xs font-bold uppercase tracking-widest">{t('LOGOUT')}</span>
+                                                    </button>
+                                                </motion.div>
+                                            </>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </div>
                         </div>
                     )}
