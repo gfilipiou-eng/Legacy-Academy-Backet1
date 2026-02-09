@@ -2340,7 +2340,6 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 setIsVideo(false);
                             }
                         }} />
-                        <div className="text-[10px] text-gray-400 mt-1">{t('YOUTUBE_NOTE')}</div>
                     </div>
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
