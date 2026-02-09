@@ -1922,13 +1922,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <ProfileAvatar user={displayUser} size="large" />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
-                            <input type="file" ref={fileRef} hidden accept="image/*,video/*" onChange={async (e) => {
+                            <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
-                                    if (file.type.startsWith('video/') && file.size > 10 * 1024 * 1024) {
-                                        alert("Video profile/GIF must be under 10MB to prevent lag.");
-                                        return;
-                                    }
                                     // Immediate local update
                                     const localUrl = URL.createObjectURL(file);
                                     setUserData(prev => ({ ...prev, profilePic: localUrl })); // Optimistic update
@@ -2420,30 +2416,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [isVideo, setIsVideo] = useState(false);
     const [youtubeUrl, setYoutubeUrl] = useState(''); // Tracking state to fix ReferenceError
     const [saving, setSaving] = useState(false);
-    const [audioBlob, setAudioBlob] = useState(null);
-    const [isRecording, setIsRecording] = useState(false);
-    const mediaRecorderRef = useRef(null);
     const fileRef = useRef(null);
-
-    const startRecording = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderRef.current = new MediaRecorder(stream);
-            const chunks = [];
-            mediaRecorderRef.current.ondataavailable = e => chunks.push(e.data);
-            mediaRecorderRef.current.onstop = () => {
-                const blob = new Blob(chunks, { type: 'audio/webm' });
-                setAudioBlob(blob);
-            };
-            mediaRecorderRef.current.start();
-            setIsRecording(true);
-        } catch (e) { alert("Microphone access denied."); }
-    };
-
-    const stopRecording = () => {
-        if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
-        setIsRecording(false);
-    };
 
     useEffect(() => {
         if (post) {
@@ -2491,8 +2464,6 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         if (yt && yt.trim()) fd.append('videoUrl', yt.trim());
         if (file) {
             fd.append('image', file);
-        } else if (audioBlob) {
-            fd.append('image', audioBlob, 'voice_note.webm');
         }
 
         try {
@@ -2561,22 +2532,6 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         </div>
                     </div>
 
-                    {/* AUDIO RECORDER - Refactored check */}
-                    {!preview && !youtubeUrl && (
-                        <div className="mb-4">
-                            {audioBlob ? (
-                                <div className="flex items-center gap-2 bg-white/5 p-3 rounded-xl border border-white/10">
-                                    <audio controls src={URL.createObjectURL(audioBlob)} className="w-full h-8" />
-                                    <button onClick={() => setAudioBlob(null)} className="p-1 hover:bg-red-500/20 rounded-full text-red-500"><Icons.Trash className="w-4 h-4" /></button>
-                                </div>
-                            ) : (
-                                <button onClick={isRecording ? stopRecording : startRecording} className={`w-full py-4 rounded-xl border border-dashed flex items-center justify-center gap-2 transition-all ${isRecording ? 'border-red-500 bg-red-500/10 text-red-500 animate-pulse' : 'border-gray-600 hover:border-[var(--gold-primary)] text-gray-400 hover:text-white'}`}>
-                                    <Icons.Mic className="w-5 h-5" />
-                                    <span className="text-xs font-bold uppercase tracking-widest">{isRecording ? "Stop Recording..." : t('VOICE_NOTE')}</span>
-                                </button>
-                            )}
-                        </div>
-                    )}
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
                         {preview ? (
