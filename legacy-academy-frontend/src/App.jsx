@@ -2311,9 +2311,9 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
-                <div className="overflow-y-auto custom-scrollbar pr-1 flex-1">
-                    <h2 className="text-xl font-black italic mb-4 text-white">{t('UPLOAD_TITLE')}</h2>
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
+                <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-4">
+                    <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
                             <ProfileAvatar user={user} />
@@ -2480,80 +2480,82 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/40 backdrop-blur-3xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl modal-content-scroller custom-scrollbar">
-                <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
-                <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-3">
-                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
-                        </div>
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
-                            <textarea
-                                value={desc}
-                                onChange={e => setDesc(e.target.value)}
-                                placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none h-44 resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
-                            />
-                        </div>
-                        <div className="flex items-center gap-2 px-1">
-                            <div className="text-[7px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1 rounded-xl border border-[var(--gold-primary)]/20 w-fit animate-pulse flex items-center gap-2">
-                                <Icons.Info className="w-3 h-3" /> {t('VIDEO_LIMIT_NOTE')}
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
+                <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-6">
+                    <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-3">
+                            <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
+                            </div>
+                            <div className="relative group">
+                                <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+                                <textarea
+                                    value={desc}
+                                    onChange={e => setDesc(e.target.value)}
+                                    placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none h-32 sm:h-44 resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2 px-1">
+                                <div className="text-[7px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1 rounded-xl border border-[var(--gold-primary)]/20 w-fit animate-pulse flex items-center gap-2">
+                                    <Icons.Info className="w-3 h-3" /> {t('VIDEO_LIMIT_NOTE')}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">
-                            YouTube URL
-                        </div>
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-white/5 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                            <input
-                                id="edit-youtube"
-                                value={youtubeUrl}
-                                placeholder="https://youtube.com/..."
-                                className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner"
-                                onChange={(e) => {
-                                    const v = e.target.value || '';
-                                    setYoutubeUrl(v);
-                                    if (isYouTubeUrl(v)) {
-                                        const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
-                                        const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
-                                        setPreview(thumb ? thumb : null);
-                                        setIsVideo(true);
-                                    } else if (!v) {
-                                        if (!fileRef.current?.files[0]) {
-                                            setPreview(null);
-                                            setIsVideo(false);
+                        <div className="flex flex-col gap-3">
+                            <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">
+                                YouTube URL
+                            </div>
+                            <div className="relative group">
+                                <div className="absolute -inset-0.5 bg-white/5 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                                <input
+                                    id="edit-youtube"
+                                    value={youtubeUrl}
+                                    placeholder="https://youtube.com/..."
+                                    className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner"
+                                    onChange={(e) => {
+                                        const v = e.target.value || '';
+                                        setYoutubeUrl(v);
+                                        if (isYouTubeUrl(v)) {
+                                            const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
+                                            const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+                                            setPreview(thumb ? thumb : null);
+                                            setIsVideo(true);
+                                        } else if (!v) {
+                                            if (!fileRef.current?.files[0]) {
+                                                setPreview(null);
+                                                setIsVideo(false);
+                                            }
                                         }
-                                    }
-                                }} />
+                                    }} />
+                            </div>
                         </div>
-                    </div>
 
 
-                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
-                        {preview ? (
-                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
-                                {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
-                            </div>
-                        ) : (
-                            <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
-                                <Icons.Image className="w-8 h-8 opacity-50" />
-                                <span className="text-xs font-bold uppercase tracking-widest">{t('UPDATE_MEDIA')}</span>
-                            </div>
-                        )}
-                        <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
-                    </div>
+                        <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
+                            {preview ? (
+                                <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
+                                    {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
+                                    <button onClick={(e) => { e.stopPropagation(); setPreview(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
+                                </div>
+                            ) : (
+                                <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
+                                    <Icons.Image className="w-8 h-8 opacity-50" />
+                                    <span className="text-xs font-bold uppercase tracking-widest">{t('UPDATE_MEDIA')}</span>
+                                </div>
+                            )}
+                            <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
+                        </div>
 
-                    <div className="flex gap-4">
-                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
+                        <div className="flex gap-4">
+                            <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
+                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
+                        </div>
                     </div>
                 </div>
             </motion.div >
-        </div >
+        </div>
     );
 };
 
