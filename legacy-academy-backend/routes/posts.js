@@ -50,7 +50,7 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
 
         // Privacy Check
         const isOwner = currentUserId === targetUserId;
-        const isFollower = user.followers.includes(currentUserId);
+        const isFollower = user.followers.map(id => id.toString()).includes(currentUserId);
 
         if (user.isPrivate && !isOwner && !isFollower) {
             console.log(`[PRIVACY] Blocked access to posts of ${user.username} for ${currentUserId}`);

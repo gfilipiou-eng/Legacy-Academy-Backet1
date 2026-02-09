@@ -42,14 +42,14 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         const currentId = req.user.id;
 
         // CHECK IF ALREADY FOLLOWING -> UNFOLLOW
-        if (targetUser.followers.includes(currentId)) {
+        if (targetUser.followers.map(id => id.toString()).includes(req.user.id)) {
             await targetUser.updateOne({ $pull: { followers: currentId } });
             await currentUser.updateOne({ $pull: { following: targetId } });
             return res.status(200).json({ message: "Unfollowed" });
         }
 
         // CHECK IF REQUEST PENDING -> CANCEL REQUEST
-        if (targetUser.requests && targetUser.requests.includes(currentId)) {
+        if (targetUser.requests && targetUser.requests.map(id => id.toString()).includes(req.user.id)) {
             await targetUser.updateOne({ $pull: { requests: currentId } });
             // Optionally remove the notification? Hard to find exact one without ID. 
             // Ideally we'd pull from notifications where type='follow_request' and from=currentId
@@ -106,12 +106,12 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
         if (!currentUser) return res.status(404).json("User not found");
 
         // Idempotency: If already following, return success
-        if (currentUser.followers.includes(requesterId)) {
+        if (currentUser.followers.map(id => id.toString()).includes(requesterId)) {
             return res.status(200).json("Request already accepted");
         }
 
         // If not in requests, return success anyway (to clear UI) instead of 403
-        if (!currentUser.requests.includes(requesterId)) {
+        if (!currentUser.requests.map(id => id.toString()).includes(requesterId)) {
             // return res.status(403).json("Authorization failed: No request found in logs.");
             return res.status(200).json("Request no longer active");
         }
