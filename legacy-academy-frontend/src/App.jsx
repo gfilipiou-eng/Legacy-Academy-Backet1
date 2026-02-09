@@ -1503,25 +1503,43 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder.current = new MediaRecorder(stream);
-            audioChunks.current = [];
-            mediaRecorder.current.ondataavailable = e => audioChunks.current.push(e.data);
-            mediaRecorder.current.onstop = () => {
-                const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
-                handleSend(blob);
+            const pickMime = () => {
+                const candidates = [
+                    'audio/webm;codecs=opus',
+                    'audio/webm',
+                    'audio/ogg;codecs=opus',
+                    'audio/ogg',
+                    'audio/mp4'
+                ];
+                for (const t of candidates) {
+                    try { if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t; } catch {}
+                }
+                return '';
             };
-            mediaRecorder.current.start();
+            const mimeType = pickMime();
+            mediaRecorder.current = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+            audioChunks.current = [];
+            mediaRecorder.current.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.current.push(e.data); };
+            mediaRecorder.current.onstop = () => {
+                const safeType = mimeType || 'audio/webm';
+                const blob = new Blob(audioChunks.current, { type: safeType });
+                if (!blob || blob.size < 1024) { addToast(t('MIC_DENIED'), 'neutral'); return; }
+                const ext = safeType.includes('ogg') ? 'ogg' : safeType.includes('mp4') ? 'mp4' : 'webm';
+                // pass through to sender
+                handleSend(new File([blob], `voice.${ext}`, { type: safeType }));
+            };
+            // use timeslice to ensure dataavailable gets fired periodically on some browsers
+            mediaRecorder.current.start(1000);
             setIsRecording(true);
             playSound('sweep');
         } catch (e) { alert("Mic required for walkie-talkie mode"); }
     };
 
     const stopRecording = () => {
-        if (mediaRecorder.current && isRecording) {
-            mediaRecorder.current.stop();
-            setIsRecording(false);
-            mediaRecorder.current.stream.getTracks().forEach(t => t.stop());
-        }
+        if (!mediaRecorder.current) return;
+        try { if (mediaRecorder.current.state === 'recording') mediaRecorder.current.stop(); } catch {}
+        try { mediaRecorder.current.stream?.getTracks()?.forEach(t => { try { t.stop(); } catch {} }); } catch {}
+        setIsRecording(false);
     };
 
     const toggleRecording = () => {
@@ -1807,7 +1825,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -3134,7 +3152,8 @@ const App = () => {
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
             const isStale = /No request found/i.test(msg) || /Endpoint Not Found/i.test(msg);
-            if (isStale) {
+            const status400 = e.response?.status === 400;
+            if (isStale || status400) {
                 try { await axios.post(`/users/requests/${requesterId}/reject`, {}); } catch {}
                 playSound('pop');
             } else {
