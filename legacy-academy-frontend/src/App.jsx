@@ -1995,16 +1995,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                     {!isMe && (
                                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-50">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); setShowProfileMenu(!showProfileMenu); }}
-                                                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90"
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                                    <circle cx="12" cy="12" r="1" />
-                                                    <circle cx="12" cy="5" r="1" />
-                                                    <circle cx="12" cy="19" r="1" />
-                                                </svg>
-                                            </button>
+                                            {/* Three dots menu removed as requested */}
                                         </div>
                                     )}
                                     {showProfileMenu && (
