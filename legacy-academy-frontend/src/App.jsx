@@ -1394,7 +1394,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
             setMessages(prev => ({ ...prev, [otherUserId]: res.data }));
 
-            // 🔥 WHISPERS: Auto-mark incoming messages as read (starts 5-min countdown)
+            // 🔥 WHISPERS: Auto-mark incoming messages as read (TEMPORARILY DISABLED - waiting for backend deploy)
+            /*
             const unreadIncoming = res.data.filter(m =>
                 String(m.recipient) === String(user?._id) &&
                 String(m.sender) === String(otherUserId) &&
@@ -1408,6 +1409,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                     console.warn('Failed to mark message as read:', e);
                 }
             }
+            */
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
