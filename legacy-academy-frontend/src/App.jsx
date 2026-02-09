@@ -876,18 +876,20 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 };
 
 const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t }) => {
+    const handleClick = () => {
+        if (note.type === 'message') onOpenChat(note.sender);
+        else if (note.type === 'follow_request') onViewProfile(note.sender);
+        else if (note.post || note.postId) onOpenPost(note.post || note.postId);
+        else onViewProfile(note.sender);
+        playSound('pop');
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-pointer border-b border-white/5 group"
-            onClick={() => {
-                if (note.type === 'message') onOpenChat(note.sender);
-                else if (note.type === 'follow_request') onViewProfile(note.sender);
-                else if (note.post || note.postId) onOpenPost(note.post || note.postId);
-                else onViewProfile(note.sender);
-                playSound('pop');
-            }}
+            onClick={handleClick}
         >
             <div className="relative">
                 <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
