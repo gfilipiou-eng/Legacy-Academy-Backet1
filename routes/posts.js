@@ -660,7 +660,7 @@ router.get("/feed", verifyToken, async (req, res) => {
       // HIDDEN mode (isPrivate = true)
       if (postAuthor.isPrivate) {
         // Only show if currentUser is a follower
-        if (postAuthor.followers?.some(id => String(id) === String(currentUserId))) {
+        if (postAuthor.followers?.includes(currentUserId)) {
           filteredPosts.push(post);
         }
         continue;
@@ -669,7 +669,7 @@ router.get("/feed", verifyToken, async (req, res) => {
       // ELITE mode (isFollowersOnly = true)
       if (postAuthor.isFollowersOnly) {
         // Only show if currentUser is a follower
-        if (postAuthor.followers?.some(id => String(id) === String(currentUserId))) {
+        if (postAuthor.followers?.includes(currentUserId)) {
           filteredPosts.push(post);
         }
         continue;
