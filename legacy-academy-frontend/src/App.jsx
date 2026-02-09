@@ -3132,8 +3132,14 @@ const App = () => {
             await axios.post(`/users/requests/${requesterId}/accept`, {});
             playSound('pop');
         } catch (e) {
-            const detail = e.response?.data?.error || e.response?.data || e.message;
-            console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
+            const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
+            const isStale = /No request found/i.test(msg) || /Endpoint Not Found/i.test(msg);
+            if (isStale) {
+                try { await axios.post(`/users/requests/${requesterId}/reject`, {}); } catch {}
+                playSound('pop');
+            } else {
+                console.error(`[HANDSHAKE] Authorization failed: ${msg}`, { requesterId });
+            }
         } finally {
             fetchNotifications();
             fetchUsers();
