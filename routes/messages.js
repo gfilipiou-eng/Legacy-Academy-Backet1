@@ -60,7 +60,7 @@ console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 minut
 
 
 // Send a message (Updated for Audio Support)
-router.post("/", verifyToken, upload.single("file"), async (req, res) => {
+router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
     const logPrefix = `[${reqId}] [WHISPER_SEND]`;
     console.log(`${logPrefix} Start. Body keys:`, Object.keys(req.body || {}));
@@ -123,13 +123,14 @@ router.post("/", verifyToken, upload.single("file"), async (req, res) => {
         const savedMessage = await newMessage.save();
         console.log(`${logPrefix} Message SAVED. ID: ${savedMessage._id}`);
 
-        // Send notification using req.user data (no additional DB query needed)
+        // Send notification using DB user data to avoid token-sync issues
         try {
+            const sender = await User.findById(senderOid);
             const notifPayload = {
                 type: 'message',
                 from: senderOid,
-                fromUsername: req.user.username || 'User',
-                fromProfilePic: req.user.profilePic || '',
+                fromUsername: sender?.username || 'User',
+                fromProfilePic: sender?.profilePic || '',
                 text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
                 read: false,
                 createdAt: new Date()
@@ -149,9 +150,10 @@ router.post("/", verifyToken, upload.single("file"), async (req, res) => {
         console.error(`${logPrefix} CRITICAL ERROR:`, (err && (err.stack || err.message)) || err);
         res.status(500).json({
             error: "Neural link transmission failed",
-            detail: err && err.message,
+            detail: err && (err.message || err),
+            path: req.originalUrl,
             requestId: reqId,
-            version: "v4.1-robust"
+            version: "v4.2-diagnostic"
         });
     }
 });
