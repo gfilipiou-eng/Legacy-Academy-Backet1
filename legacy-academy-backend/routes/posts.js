@@ -10,30 +10,40 @@ const router = express.Router();
 // GET ALL POSTS (Feed)
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const currentUser = await User.findById(req.user.id);
-        const followingList = currentUser.following || [];
+        const limit = parseInt(req.query.limit) || 20;
+        const currentUserId = req.user.id || req.user.userId;
 
         const posts = await Post.find()
-            .populate("author", "username profilePic role isPrivate") // Populate isPrivate to filter in frontend if needed?
+            .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 })
-            .limit(parseInt(req.query.limit) || 20);
+            .lean();
 
-        // Filter out private posts from non-followed authors
-        const filteredPosts = posts.filter(post => {
-            if (!post.author) return false;
-            // 1. My own posts -> Always visible
-            if (post.author._id.toString() === req.user.id) return true;
-            // 2. Public Account -> Visible
-            if (!post.author.isPrivate) return true;
-            // 3. Private Account -> Visible ONLY if following
-            if (followingList.includes(post.author._id.toString())) return true;
+        // Robust Privacy Filtering
+        const filteredPosts = posts.filter(p => {
+            if (!p.author) return false;
+            const authorId = String(p.author?._id || p.author);
 
-            return false; // Hide otherwise
-        });
+            // 1. Own posts always visible
+            if (authorId === String(currentUserId)) return true;
+
+            // 2. Founder/Admin bypass (Real-time check)
+            if (req.user.role === 'Founder' || req.user.role === 'Admin') return true;
+
+            const author = typeof p.author === 'object' ? p.author : null;
+            const authorIsPrivate = !!(author?.isPrivate || author?.isFollowersOnly || p.isPrivate || p.isFollowersOnly);
+
+            if (authorIsPrivate) {
+                const followers = author?.followers || [];
+                // Check if current user is in followers list
+                return followers.some(id => String(id) === String(currentUserId));
+            }
+            return true;
+        }).slice(0, limit);
 
         res.status(200).json(filteredPosts);
     } catch (err) {
+        console.error("FEED ERROR:", err);
         res.status(500).json(err);
     }
 });
@@ -49,12 +59,14 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
         if (!user) return res.status(404).json("User not found");
 
         // Privacy Check
-        const isOwner = currentUserId === targetUserId;
-        const isFollower = user.followers.map(id => id.toString()).includes(currentUserId);
+        const isOwner = String(currentUserId) === String(targetUserId);
+        const isFollower = user.followers.some(id => String(id) === String(currentUserId));
+        const isPrivate = user.isPrivate || user.isFollowersOnly;
+        const isAdmin = req.user.role === 'Founder' || req.user.role === 'Admin';
 
-        if (user.isPrivate && !isOwner && !isFollower) {
+        if (isPrivate && !isOwner && !isFollower && !isAdmin) {
             console.log(`[PRIVACY] Blocked access to posts of ${user.username} for ${currentUserId}`);
-            return res.status(200).json([]); // Return empty array so UI shows "No posts" or handles it
+            return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
         }
 
         const posts = await Post.find({ author: targetUserId })

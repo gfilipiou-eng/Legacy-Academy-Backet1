@@ -1468,16 +1468,24 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
         if (!inputText.trim() && !audioBlob) return;
 
         const targetId = activeChat._id || activeChat.id;
-        const fd = new FormData();
-        fd.append('recipient', targetId);
-        if (inputText.trim()) fd.append('text', inputText.trim());
-        if (audioBlob) fd.append('file', audioBlob, 'voice.webm');
+        let payload, config;
+        if (audioBlob) {
+            const fd = new FormData();
+            fd.append('recipient', targetId);
+            if (inputText.trim()) fd.append('text', inputText.trim());
+            fd.append('file', audioBlob, 'voice.webm');
+            payload = fd;
+            config = undefined; // let axios set proper multipart boundary
+        } else {
+            payload = { recipient: targetId, text: inputText.trim() };
+            config = { headers: { 'Content-Type': 'application/json' } };
+        }
 
         const tempText = inputText;
         setInputText('');
 
         try {
-            const res = await axios.post('/messages', fd);
+            const res = await axios.post('/messages', payload, config);
             setMessages(prev => ({
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]

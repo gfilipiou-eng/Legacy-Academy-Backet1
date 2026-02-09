@@ -415,6 +415,16 @@ router.put("/settings", verifyToken, async (req, res) => {
             await Post.updateMany({ author: userId }, { $set: { username: req.body.username } });
         }
 
+        // Sync privacy settings to existing posts
+        if (req.body.isPrivate !== undefined || req.body.isFollowersOnly !== undefined) {
+            const privacyUpdate = {};
+            if (req.body.isPrivate !== undefined) privacyUpdate.isPrivate = req.body.isPrivate;
+            if (req.body.isFollowersOnly !== undefined) privacyUpdate.isFollowersOnly = req.body.isFollowersOnly;
+
+            await Post.updateMany({ author: userId }, { $set: privacyUpdate });
+            console.log(`[PRIVACY SYNC] Updated posts for user ${userId}:`, privacyUpdate);
+        }
+
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("CRITICAL SETTINGS FAILURE:", err);

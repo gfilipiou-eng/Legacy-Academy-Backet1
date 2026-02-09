@@ -212,6 +212,14 @@ router.put("/settings", verifyToken, async (req, res) => {
             { new: true }
         ).select("-password");
 
+        // Sync to posts
+        if (isPrivate !== undefined || isFollowersOnly !== undefined) {
+            const pUpdate = {};
+            if (isPrivate !== undefined) pUpdate.isPrivate = isPrivate;
+            if (isFollowersOnly !== undefined) pUpdate.isFollowersOnly = isFollowersOnly;
+            await Post.updateMany({ author: req.user.id }, { $set: pUpdate });
+        }
+
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("Settings Update Error:", err);
