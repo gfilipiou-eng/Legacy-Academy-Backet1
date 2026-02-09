@@ -5,18 +5,31 @@ import { verifyToken } from "../middleware/auth.js";
 const router = express.Router();
 
 // GET ALL USERS (Search)
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
     try {
         const users = await User.find().select('username role profilePic isPrivate followers following requests bio');
-        res.status(200).json(users);
+        const mappedUsers = users.map(u => ({
+            ...u._doc,
+            followRequests: u.requests || []
+        }));
+        res.status(200).json(mappedUsers);
     } catch (err) {
         res.status(500).json([]);
     }
 });
 
-// (Using privacy-guarded find version below)
+// GET NOTIFICATIONS
+router.get("/notifications", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json("User not found");
+        res.status(200).json(user.notifications.reverse());
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
 
-// FOLLOW / UNFOLLOW Logic
+// FOLLOW / UNFOLLOW Logic (FACEBOOK STYLE)
 router.post("/:id/follow", verifyToken, async (req, res) => {
     if (req.user.id === req.params.id) {
         return res.status(403).json("You cannot follow yourself");
@@ -31,51 +44,56 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         const targetId = req.params.id;
         const currentId = req.user.id;
 
-        // CHECK IF ALREADY FOLLOWING -> UNFOLLOW
-        if (targetUser.followers.map(id => id.toString()).includes(req.user.id)) {
+        // 1. UNFOLLOW IF ALREADY FOLLOWING
+        if (targetUser.followers.map(id => id.toString()).includes(currentId)) {
             await targetUser.updateOne({ $pull: { followers: currentId } });
             await currentUser.updateOne({ $pull: { following: targetId } });
-            return res.status(200).json({ message: "Unfollowed" });
+            return res.status(200).json({
+                message: "Unfollowed",
+                followers: targetUser.followers.filter(id => id.toString() !== currentId)
+            });
         }
 
-        // CHECK IF REQUEST PENDING -> CANCEL REQUEST
-        if (targetUser.requests && targetUser.requests.map(id => id.toString()).includes(req.user.id)) {
+        // 2. CANCEL REQUEST IF PENDING
+        if (targetUser.requests && targetUser.requests.map(id => id.toString()).includes(currentId)) {
             await targetUser.updateOne({ $pull: { requests: currentId } });
-            // Optionally remove the notification? Hard to find exact one without ID. 
-            // Ideally we'd pull from notifications where type='follow_request' and from=currentId
             await targetUser.updateOne({ $pull: { notifications: { type: 'follow_request', from: currentId } } });
-            return res.status(200).json({ message: "Request Cancelled" });
+            return res.status(200).json({ message: "Request Cancelled", isRequested: false });
         }
 
-        // START FOLLOW
+        // 3. START FOLLOW / SEND REQUEST
         if (targetUser.isPrivate) {
-            // PRIVATE -> SEND REQUEST
             await targetUser.updateOne({
                 $addToSet: { requests: currentId },
                 $push: {
                     notifications: {
-                        type: 'follow_request', // Correct type for buttons to show
-                        from: currentId,
-                        fromUsername: currentUser.username,
-                        fromProfilePic: currentUser.profilePic,
-                        read: false,
-                        createdAt: new Date()
+                        $each: [{
+                            type: 'follow_request',
+                            from: currentId,
+                            fromUsername: currentUser.username,
+                            fromProfilePic: currentUser.profilePic,
+                            read: false,
+                            createdAt: new Date()
+                        }],
+                        $position: 0
                     }
                 }
             });
-            return res.status(200).json({ message: "Requested", isPrivate: true });
+            return res.status(200).json({ message: "Requested", isRequested: true, isPrivate: true });
         } else {
-            // PUBLIC -> FOLLOW DIRECTLY
             await targetUser.updateOne({
                 $addToSet: { followers: currentId },
                 $push: {
                     notifications: {
-                        type: 'follow',
-                        from: currentId,
-                        fromUsername: currentUser.username,
-                        fromProfilePic: currentUser.profilePic,
-                        read: false,
-                        createdAt: new Date()
+                        $each: [{
+                            type: 'follow',
+                            from: currentId,
+                            fromUsername: currentUser.username,
+                            fromProfilePic: currentUser.profilePic,
+                            read: false,
+                            createdAt: new Date()
+                        }],
+                        $position: 0
                     }
                 }
             });
@@ -214,12 +232,18 @@ router.get("/find/:id", verifyToken, async (req, res) => {
                 ...others,
                 followers: user.followers.length,
                 following: user.following.length,
+                followRequests: user.requests || [], // Map for frontend
+                isRequested: user.requests?.map(id => String(id)).includes(String(req.user.id)),
                 isPrivate: true,
                 isLocked: true // Frontend signal
             });
         }
 
-        res.status(200).json(others);
+        res.status(200).json({
+            ...others,
+            followRequests: user.requests || [],
+            isRequested: user.requests?.map(id => String(id)).includes(String(req.user.id))
+        });
     } catch (err) {
         res.status(500).json(err);
     }

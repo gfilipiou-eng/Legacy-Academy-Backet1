@@ -921,7 +921,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                                 note.type === 'comment' ? t('NOTIF_COMMENT') :
                                     note.type === 'message' ? t('NOTIF_MESSAGE') :
                                         note.type === 'mention' ? t('NOTIF_MENTION') :
-                                            note.type === 'follow_request' ? t('NOTIF_REQUEST') : ''}
+                                            note.type === 'follow_request' ? t('NOTIF_REQUEST') :
+                                                note.type === 'follow_accepted' ? t('NOTIF_FOLLOW_ACCEPTED') : ''}
                     </span>
                 </div>
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}

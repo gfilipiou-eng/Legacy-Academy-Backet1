@@ -99,6 +99,7 @@
     "NOTIF_MESSAGE": "σου έστειλε μήνυμα",
     "NOTIF_MENTION": "σε ανέφερε",
     "NOTIF_REQUEST": "έκανε αίτημα",
+    "NOTIF_FOLLOW_ACCEPTED": "αποδέχτηκε το αίτημα",
     "AUTHORIZE": "ΕΓΚΡΙΣΗ",
     "DENY": "ΑΠΟΡΡΙΨΗ",
     "FOLLOWING_LABEL": "Ακολουθεί",

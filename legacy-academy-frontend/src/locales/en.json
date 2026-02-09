@@ -99,6 +99,7 @@
     "NOTIF_MESSAGE": "sent you a message",
     "NOTIF_MENTION": "mentioned you",
     "NOTIF_REQUEST": "requested entry",
+    "NOTIF_FOLLOW_ACCEPTED": "accepted your follow request",
     "AUTHORIZE": "AUTHORIZE",
     "DENY": "DENY",
     "FOLLOWING_LABEL": "Following",
