@@ -2209,15 +2209,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                 ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                                                                     <div className="relative w-full h-full">
                                                                                         <video
-                                                                                            src={resolveMediaUrl(p.videoUrl || p.image)}
+                                                                                            src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
                                                                                             muted
                                                                                             playsInline
                                                                                             preload="metadata"
-                                                                                            poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
-                                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
+                                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
                                                                                         />
                                                                                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                            <Icons.Play className="w-6 h-6 text-white/80" />
+                                                                                            <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
                                                                                         </div>
                                                                                     </div>
                                                                                 ) : p.image ? (
