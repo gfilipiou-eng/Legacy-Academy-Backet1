@@ -3490,10 +3490,10 @@ const App = () => {
                                                                 <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="font-bold text-white text-sm flex items-center gap-2">
+                                                                <div className="font-bold text-white text-sm">
                                                                     {u.username}
-                                                                    {u.role === 'Founder' && <span className="bg-[var(--gold-primary)] text-black text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider">FOUNDER</span>}
                                                                 </div>
+                                                                {u.role === 'Founder' && <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase mt-0.5">FOUNDER</div>}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>
