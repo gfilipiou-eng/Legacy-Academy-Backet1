@@ -42,7 +42,7 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
             } else if (isAvatar) {
                 // FORCE 8K / SUPER HIGH QUALITY FOR AVATARS
                 // Use 'q_100' (max quality), 'f_auto' (best format), and large dimensions to prevent upscale blur
-                transform = `w_2048,h_2048,c_fill,g_face,q_100,f_auto,dpr_2.0`;
+                transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {

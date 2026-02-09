@@ -7,17 +7,40 @@ import { playSound } from './utils/sounds';
 
 const BASE_URL = axios.defaults.baseURL.replace('/api', '');
 
-const resolveMediaUrl = (path) => {
+const resolveMediaUrl = (path, width = null, isAvatar = false) => {
     if (!path) return '';
-    if (path.startsWith('http') || path.startsWith('blob:')) return path;
-    return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+    let url = path;
+    if (!path.startsWith('http') && !path.startsWith('blob:')) {
+        url = `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+    }
+
+    if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+        const parts = url.split('/upload/');
+        if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_')) {
+            const isVideo = url.includes('/video/upload/');
+            let transform = '';
+
+            if (isAvatar && isVideo) {
+                transform = `w_250,h_250,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
+            } else if (isAvatar) {
+                transform = `w_400,h_400,c_fill,g_face,q_auto:best,f_auto`;
+            } else if (width) {
+                transform = `w_${width},c_fill,g_face,q_auto:best,f_auto`;
+            } else {
+                transform = `c_limit,w_1920,q_auto:best,f_auto`;
+            }
+            url = `${parts[0]}/upload/${transform}/${parts[1]}`;
+        }
+    }
+    return url;
 };
 
 const ProfileAvatar = ({ user }) => {
     if (!user) return <div className="w-full h-full bg-gray-800" />;
     const url = user.profilePic;
     const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
-    const mediaUrl = url ? resolveMediaUrl(url) : null;
+    const mediaUrl = url ? resolveMediaUrl(url, 150, true) : null;
     if (rawIsVideo && mediaUrl) {
         return (
             <video
@@ -33,7 +56,7 @@ const ProfileAvatar = ({ user }) => {
     }
     return (
         <img
-            src={resolveMediaUrl(user.profilePic) || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`}
+            src={mediaUrl || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`}
             className="w-full h-full object-cover"
             alt={user.username || ''}
         />
