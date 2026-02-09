@@ -46,8 +46,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                // CRYSTAL 8K / 4K TARGETING FOR POSTS
-                transform = `c_limit,w_7680,q_100,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                // OPTIMIZED CRYSTAL 4K QUALITY (Visually Lossless, No Lag)
+                // 8K (w_7680) creates 50MB+ images causing stutter. 4K (w_3840) + q_auto:best is the sweet spot.
+                transform = `c_limit,w_3840,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             }
 
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
@@ -808,6 +809,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                 poster={poster}
                 muted={isMuted}
                 playsInline
+                preload="metadata"
                 loop
                 onTimeUpdate={handleTimeUpdate}
                 onPlay={() => setIsPlaying(true)}
