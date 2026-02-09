@@ -158,6 +158,51 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
     }
 });
 
+// DELETE COMMENT
+router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Post not found");
+
+        const comment = post.comments.find(c => c._id.toString() === req.params.commentId);
+        if (!comment) return res.status(404).json("Comment not found");
+
+        if (comment.user.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
+            await post.updateOne({ $pull: { comments: { _id: req.params.commentId } } });
+            res.status(200).json("Comment deleted");
+        } else {
+            res.status(403).json("You can delete only your comment");
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// EDIT COMMENT
+router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Post not found");
+
+        const comment = post.comments.find(c => c._id.toString() === req.params.commentId);
+        if (!comment) return res.status(404).json("Comment not found");
+
+        if (comment.user.toString() === req.user.id || req.user.role === "Founder") {
+            // We need to update a specific item in the array. 
+            // Mongoose array update: "comments.$.text"
+            await Post.updateOne(
+                { _id: req.params.id, "comments._id": req.params.commentId },
+                { $set: { "comments.$.text": req.body.text } }
+            );
+            res.status(200).json("Comment updated");
+        } else {
+            res.status(403).json("You can update only your comment");
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 
 // DELETE POST
 router.delete("/:id", verifyToken, async (req, res) => {
