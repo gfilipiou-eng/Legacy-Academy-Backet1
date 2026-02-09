@@ -176,32 +176,40 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         const requestIdParam = req.params.requestId;
         const requesterId = requestIdParam ? String(requestIdParam).trim() : null;
 
-        console.log(`[ACCEPT REQ] User ${userId} attempting to accept request from ${requesterId}`);
+        console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] User ${userId} starting acceptance of ${requesterId}`);
 
         // Validate requesterId format - Return 200 even if invalid to clear UI safely
         if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
-            console.warn(`[ACCEPT REQ] IGNORED: Invalid ID format: "${requesterId}" (from param: "${requestIdParam}")`);
+            console.warn(`[ACCEPT REQ] [${req.requestId || 'no-id'}] IGNORED: Invalid ID format: "${requesterId}"`);
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid, but we are returning 200 to clear the UI." });
         }
 
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json("Agent not found.");
+        if (!user) {
+            console.error(`[ACCEPT REQ] [${req.requestId || 'no-id'}] User not found: ${userId}`);
+            return res.status(404).json("Agent not found.");
+        }
 
+        console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] Checking if ${requesterId} exists in followRequests...`);
         const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
         if (!hasRequest) {
-            console.warn(`[ACCEPT REQ] Request ${requesterId} not found in ${userId}'s list. Cleaning up stale notification.`);
+            console.warn(`[ACCEPT REQ] [${req.requestId || 'no-id'}] Request ${requesterId} not found in user's list. Cleaning up.`);
             // CLEANUP STALE NOTIFICATION
-            await User.findByIdAndUpdate(userId, {
-                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
-            });
+            try {
+                await User.findByIdAndUpdate(userId, {
+                    $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
+                });
+            } catch (pErr) { console.warn(`[ACCEPT REQ] cleanup pull failed:`, pErr.message); }
 
             // Fallback: If it's already a follower, just say OK to clear UI
             if (user.followers?.some(id => String(id) === String(requesterId))) {
                 return res.status(200).json("Already a follower.");
             }
-            return res.status(200).json("Request expired or canceled."); // Return 200 to clear UI error
+            return res.status(200).json("Request expired or canceled.");
         }
 
+        console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] Proceeding with DB updates...`);
+        // 1. Update self
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
@@ -209,11 +217,13 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             },
             $push: { followers: requesterId }
         });
+
+        // 2. Update requester
         await User.findByIdAndUpdate(requesterId, {
             $push: {
                 following: userId,
                 notifications: {
-                    type: 'message', // Generic enough as 'follow_request_accepted' isn't in Enum (unless added)
+                    type: 'message',
                     from: userId,
                     fromUsername: user.username,
                     fromProfilePic: user.profilePic || '',
@@ -224,8 +234,12 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             }
         });
 
+        console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] SUCCESS: Accepted request from ${requesterId}`);
         res.status(200).json("Follower accepted");
-    } catch (err) { res.status(500).json(err); }
+    } catch (err) {
+        console.error(`[ACCEPT REQ] [${req.requestId || 'no-id'}] CRITICAL ERROR:`, err.message);
+        res.status(500).json(err);
+    }
 });
 
 // REJECT follow request

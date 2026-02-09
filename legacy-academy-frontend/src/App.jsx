@@ -2325,8 +2325,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
                             <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                            <div className="text-[13px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
-                                <Icons.Info className="w-4 h-4 inline mr-1" /> {t('VIDEO_LIMIT_NOTE')}
+                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-2 text-center">
+                                <Icons.Info className="w-4 h-4" /> {t('VIDEO_LIMIT_NOTE')}
                             </div>
                         </div>
                     </div>
@@ -2503,8 +2503,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 />
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="text-[13px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-xl border border-[var(--gold-primary)]/20 w-fit animate-pulse flex items-center gap-2">
-                                    <Icons.Info className="w-4 h-4" /> {t('ONLY VIDEOS UP TO 20 MINUTES ALLOWED')}
+                                <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-2 text-center">
+                                    <Icons.Info className="w-4 h-4" /> {t('VIDEO_LIMIT_NOTE')}
                                 </div>
                             </div>
                         </div>
@@ -3122,7 +3122,7 @@ const App = () => {
         }
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/accept`);
+            await axios.post(`/users/requests/${requesterId}/accept`, {});
             playSound('pop');
         } catch (e) {
             const detail = e.response?.data?.error || e.response?.data || e.message;
@@ -3137,7 +3137,7 @@ const App = () => {
         if (!requesterId) return;
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/reject`);
+            await axios.post(`/users/requests/${requesterId}/reject`, {});
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
