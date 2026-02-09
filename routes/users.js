@@ -11,7 +11,7 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate isFollowersOnly followers following createdAt lastSeen');
+        const users = await User.find().select('username role profilePic isPrivate isFollowersOnly followers following followRequests createdAt lastSeen');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);
@@ -124,11 +124,19 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 });
 
 // 1. Λήψη στοιχείων χρήστη
-router.get("/find/:id", async (req, res) => {
+router.get("/find/:id", verifyToken, async (req, res) => {
     try {
-        const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following createdAt lastSeen');
+        const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following followRequests createdAt lastSeen');
         if (!foundUser) return res.status(404).json("Χρήστης δεν βρέθηκε.");
-        res.status(200).json(foundUser);
+
+        // Add isRequested flag for frontend convenience
+        const currentUserId = req.user?.id || req.user?.userId || req.user?._id;
+        const mappedUser = {
+            ...foundUser._doc,
+            isRequested: foundUser.followRequests?.some(id => String(id) === String(currentUserId))
+        };
+
+        res.status(200).json(mappedUser);
     } catch (err) {
         res.status(500).json("Σφάλμα κατά την αναζήτηση χρήστη.");
     }
@@ -223,7 +231,7 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             $push: {
                 following: userId,
                 notifications: {
-                    type: 'message',
+                    type: 'follow_accepted',
                     from: userId,
                     fromUsername: user.username,
                     fromProfilePic: user.profilePic || '',

@@ -357,13 +357,17 @@ router.get("/", verifyToken, async (req, res) => {
       .lean();
 
     const filtered = posts.filter(p => {
-      // Own posts
-      if (String(p.author?._id || p.author) === String(currentUserId)) return true;
-      if (req.user.role === 'Founder') return true;
+      const authorId = String(p.author?._id || p.author);
+      // Own posts or Founder bypass
+      if (authorId === String(currentUserId)) return true;
+      if (req.user.role === 'Founder' || req.user.role === 'Admin') return true;
+
+      const author = p.author && typeof p.author === 'object' ? p.author : null;
+      const authorIsPrivate = author?.isPrivate || author?.isFollowersOnly || p.isPrivate || p.isFollowersOnly;
 
       // Privacy check
-      if (p.isPrivate || p.isFollowersOnly || p.author?.isPrivate || p.author?.isFollowersOnly) {
-        const followers = p.author?.followers || [];
+      if (authorIsPrivate) {
+        const followers = author?.followers || [];
         return followers.some(id => String(id) === String(currentUserId));
       }
       return true;
@@ -399,10 +403,15 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
       .lean();
 
     const filtered = posts.filter(p => {
-      if (String(p.author?._id || p.author) === String(currentUserId)) return true;
-      if (req.user.role === 'Founder') return true;
-      if (p.isPrivate || p.isFollowersOnly || p.author?.isPrivate || p.author?.isFollowersOnly) {
-        const followers = p.author?.followers || [];
+      const authorId = String(p.author?._id || p.author);
+      if (authorId === String(currentUserId)) return true;
+      if (req.user.role === 'Founder' || req.user.role === 'Admin') return true;
+
+      const author = p.author && typeof p.author === 'object' ? p.author : null;
+      const authorIsPrivate = author?.isPrivate || author?.isFollowersOnly || p.isPrivate || p.isFollowersOnly;
+
+      if (authorIsPrivate) {
+        const followers = author?.followers || [];
         return followers.some(id => String(id) === String(currentUserId));
       }
       return true;
@@ -655,38 +664,28 @@ router.get("/feed", verifyToken, async (req, res) => {
 
     for (const post of allPosts) {
       const postAuthor = await User.findById(post.author);
+      const isFounder = req.user.role === 'Founder' || req.user.role === 'Admin';
 
       if (!postAuthor) {
-        // If author deleted, show public posts only
         if (post.visibility === 'public') filteredPosts.push(post);
         continue;
       }
 
-      // Own posts - always show
-      if (post.author.toString() === currentUserId) {
+      // Own posts or Admin bypass
+      if (post.author.toString() === currentUserId || isFounder) {
         filteredPosts.push(post);
         continue;
       }
 
-      // HIDDEN mode (isPrivate = true)
-      if (postAuthor.isPrivate) {
-        // Only show if currentUser is a follower
-        if (postAuthor.followers?.includes(currentUserId)) {
+      // Privacy check (Unified)
+      const isPrivate = postAuthor.isPrivate || postAuthor.isFollowersOnly || post.isPrivate || post.isFollowersOnly;
+      if (isPrivate) {
+        if (postAuthor.followers?.some(id => String(id) === currentUserId)) {
           filteredPosts.push(post);
         }
         continue;
       }
 
-      // ELITE mode (isFollowersOnly = true)
-      if (postAuthor.isFollowersOnly) {
-        // Only show if currentUser is a follower
-        if (postAuthor.followers?.includes(currentUserId)) {
-          filteredPosts.push(post);
-        }
-        continue;
-      }
-
-      // PUBLIC mode - everyone can see
       filteredPosts.push(post);
     }
 
