@@ -1473,9 +1473,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             }));
             playSound('pop');
         } catch (e) {
-            const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
-            console.error('Send failed:', detail, e.response?.data);
+            const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
+            const fullOutput = e.response?.data ? JSON.stringify(e.response.data) : 'No response body';
+            console.error('Send failed:', detail, fullOutput);
             setInputText(tempText);
+            addToast(t('REQUEST_FAILED') + ': ' + (e.response?.data?.error || 'System error'), 'neutral');
         }
     };
 
@@ -1690,8 +1692,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                     <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-[var(--gold-primary)]/30 group">
                         <div>
-                            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('PRIVATE_TITLE')}</div>
-                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">{t('PRIVATE_DESC')}</div>
+                            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">Private Account</div>
+                            <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Only accepted followers see content</div>
                         </div>
                         <div onClick={() => {
                             if (saving) return;
@@ -1705,8 +1707,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
                     <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-blue-500/30 group">
                         <div>
-                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">{t('GUARD_TITLE')}</div>
-                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">{t('GUARD_DESC')}</div>
+                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">Guard Chat</div>
+                            <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Messages only from your followers</div>
                         </div>
                         <div onClick={() => {
                             if (saving) return;
@@ -2325,8 +2327,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
                             <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-2 text-center">
-                                <Icons.Info className="w-4 h-4" /> {t('VIDEO_LIMIT_NOTE')}
+                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
+                                <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
                             </div>
                         </div>
                     </div>
@@ -2503,8 +2505,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 />
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-2 text-center">
-                                    <Icons.Info className="w-4 h-4" /> {t('VIDEO_LIMIT_NOTE')}
+                                <div className="text-[9px] sm:text-[12px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
+                                    <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
                                 </div>
                             </div>
                         </div>

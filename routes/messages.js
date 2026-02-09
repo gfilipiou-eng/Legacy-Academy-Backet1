@@ -119,10 +119,30 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             return res.status(400).json({ error: "Invalid ID format for sender or recipient.", detail: castErr.message });
         }
 
+        // PREVENT SELF-MESSAGING
+        if (String(senderOid) === String(recipientOid)) {
+            console.warn(`${logPrefix} SELF-WHISPER REJECTED: ${senderId}`);
+            return res.status(400).json({ error: "Self-whisper protocol denied. You cannot send messages to yourself." });
+        }
+
+        // GUARD CHAT CHECK (New Feature: Only followers can message)
+        if (targetUser.isFollowersOnly) {
+            const followersList = Array.isArray(targetUser.followers) ? targetUser.followers : [];
+            const isFollower = followersList.some(id => String(id) === String(senderOid));
+
+            if (!isFollower && req.user.role !== 'Founder') {
+                console.warn(`${logPrefix} GUARD REJECTION: Sender ${senderId} is not a follower of ${recipient}`);
+                return res.status(403).json({
+                    error: "GUARD PROTOCOL ACTIVE",
+                    message: "This operative only accepts intelligence from authorized followers."
+                });
+            }
+        }
+
         const newMessage = new Message({
             sender: senderOid,
             recipient: recipientOid,
-            text: (text || "").trim(),
+            text: (text || "").toString().trim(),
             audioUrl
         });
 
@@ -160,10 +180,11 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         const errorDetail = err && (err.message || String(err));
         res.status(500).json({
             error: "Neural link transmission failed",
-            message: errorDetail,
+            message: "An internal protocol error occurred while deploying the whisper.",
+            detail: errorDetail,
             path: req.originalUrl,
             requestId: reqId,
-            version: "v4.3-hardened"
+            version: "v4.4-hardened-guard"
         });
     }
 });
