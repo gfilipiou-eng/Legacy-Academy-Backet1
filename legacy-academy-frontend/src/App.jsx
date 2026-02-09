@@ -1041,9 +1041,19 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
     if (post.isStory) return null;
 
+    // CRITICAL FIX: Resolve author object if it's just an ID
+    const authorObj = (typeof post.author === 'object' && post.author?._id)
+        ? post.author
+        : allUsers?.find(u => String(u._id) === String(post.author)) || {
+            _id: post.author,
+            username: post.username || 'Unknown',
+            profilePic: post.profilePic || '',
+            role: post.authorRole || 'Member'
+        };
+
     const isFounder = user?.role === 'Founder';
-    const isPostAuthorFounder = post.author?.role === 'Founder';
-    const isOwner = String(post.author?._id || post.author) === String(user?._id);
+    const isPostAuthorFounder = authorObj?.role === 'Founder';
+    const isOwner = String(authorObj?._id || post.author) === String(user?._id);
     const dislikeCount = post.dislikes?.length || 0;
 
 
@@ -1127,9 +1137,9 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             <div className="p-4" >
                 <div className="flex items-start gap-3">
                     <div className="flex flex-col items-center gap-1 shrink-0">
-                        <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer">
+                        <div onClick={(e) => { e.stopPropagation(); onViewProfile(authorObj) }} className="cursor-pointer">
                             <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
-                                <ProfileAvatar user={post.author} />
+                                <ProfileAvatar user={authorObj} />
                             </div>
                         </div>
                     </div>
@@ -1137,8 +1147,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1.5">
-                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
-                                        {post.author?.username}
+                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(authorObj) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
+                                        {authorObj?.username}
                                         <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]">
                                             <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                                         </svg>
@@ -1146,7 +1156,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 </div>
                                 {isPostAuthorFounder && <span className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase mt-0.5">Founder</span>}
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--gold-primary)] font-medium' : 'text-gray-500'}`}>
-                                    @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
+                                    @{authorObj?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
                                 </span>
                             </div>
 
@@ -1247,7 +1257,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
                                     className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
                                     </svg>
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
@@ -1864,53 +1874,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
-                                    {!isMe && (
-                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-50">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); setShowProfileMenu(!showProfileMenu); }}
-                                                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90"
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                                    <circle cx="12" cy="12" r="1" />
-                                                    <circle cx="12" cy="5" r="1" />
-                                                    <circle cx="12" cy="19" r="1" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    )}
-                                    {showProfileMenu && (
-                                        <>
-                                            <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
-                                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
-                                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                                >
-                                                    <Icons.Share className="w-4 h-4 text-gray-400" />
-                                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
-                                                </button>
-                                                {currentUser?.role === 'Founder' && (
-                                                    <button
-                                                        onClick={async (e) => {
-                                                            e.stopPropagation();
-                                                            const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
-                                                            if (!targetId) return;
-                                                            if (!window.confirm(t('CONFIRM_BAN'))) return;
-                                                            try {
-                                                                await axios.post(`/users/${targetId}/ban`, { days: 3 });
-                                                                addToast(t('BAN_SUCCESS'), "success");
-                                                                setShowProfileMenu(false);
-                                                            } catch (e) { addToast(t('BAN_ERROR'), "error"); }
-                                                        }}
-                                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                                    >
-                                                        <Icons.Shield className="w-4 h-4 text-red-500" />
-                                                        <span className="text-xs font-bold text-red-500">{t('BAN')}</span>
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </>
-                                    )}
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
@@ -3020,15 +2983,12 @@ const App = () => {
 
         try {
             console.log(`📡 [HANDSHAKE] Authorizing operative: ${requesterId}`);
-            setNotifications(prev => prev.filter(n => n.from !== requesterId));
+            setAlerts(prev => prev.filter(n => n.from !== requesterId));
             await axios.post(`/users/requests/${requesterId}/accept`, {});
 
             // Success - refresh state with cache-busting
             fetchNotifications();
             fetchUsers();
-            if (activeChat && (activeChat._id === requesterId || activeChat.id === requesterId)) {
-                fetchMessages(requesterId);
-            }
             addToast("AGENT AUTHORIZED. CLEARANCE GRANTED.", "success");
             playSound('unlock');
         } catch (e) {

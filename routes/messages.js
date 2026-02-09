@@ -68,20 +68,27 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     try {
         if (!req.user) {
             console.error(`${logPrefix} FAILED: No req.user after verifyToken`);
-            return res.status(401).json("Neural interface not recognized.");
+            return res.status(401).json({ error: "Neural interface not recognized." });
         }
+
+        // DEFENSIVE PARSING: Catch cases where body might be empty or fields are elsewhere
+        const body = req.body || {};
+        const recipient = body.recipient;
+        const text = body.text;
+
         const senderId = req.user.id || req.user.userId || req.user._id;
-        const { recipient, text } = req.body;
+
+        console.log(`${logPrefix} Payload Probe: recipient=${recipient}, text=${text ? 'Yes' : 'No'}, file=${!!req.file}`);
 
         if (!recipient) {
-            console.error(`${logPrefix} FAILED: No recipient provided`);
-            return res.status(400).json("Recipient identifier required.");
+            console.error(`${logPrefix} FAILED: Recipient missing in body:`, body);
+            return res.status(400).json({ error: "Recipient identifier required (not found in packet body)." });
         }
 
         // Validate recipient ID
         if (!mongoose.Types.ObjectId.isValid(recipient)) {
             console.error(`${logPrefix} FAILED: Invalid recipient ID format: ${recipient}`);
-            return res.status(400).json("Invalid recipient identifier format (expected 24-char hex).");
+            return res.status(400).json({ error: "Invalid recipient identifier format." });
         }
 
         // Validate sender ID
