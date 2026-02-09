@@ -139,12 +139,20 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
 });
 
 // COMMENT ON POST
-router.post("/:id/comment", verifyToken, async (req, res) => {
+router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Post not found");
+
+        let audioUrl = "";
+        if (req.file) {
+            audioUrl = req.file.path; // Cloudinary path from upload middleware
+        }
+
         const comment = {
             user: req.user.id,
-            text: req.body.text,
+            text: req.body.text || "",
+            audioUrl: audioUrl,
             createdAt: new Date()
         };
 
@@ -154,6 +162,7 @@ router.post("/:id/comment", verifyToken, async (req, res) => {
         const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
         res.status(200).json(updatedPost.comments);
     } catch (err) {
+        console.error("Comment Error:", err);
         res.status(500).json(err);
     }
 });
