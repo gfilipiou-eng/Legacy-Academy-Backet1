@@ -114,30 +114,34 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         const savedMessage = await newMessage.save();
         console.log(`[${reqId}] Message SAVED. ID: ${savedMessage._id}`);
 
-        // Send Notification
-        try {
-            // Get sender info for notification
-            const senderUser = await User.findById(senderOid).select('username profilePic');
-            const senderUsername = senderUser?.username || req.user?.username || 'User';
-            const senderProfilePic = senderUser?.profilePic || req.user?.profilePic || '';
-
-            await User.findByIdAndUpdate(recipientOid, {
-                $push: {
-                    notifications: {
-                        type: 'message',
-                        from: senderOid,
-                        fromUsername: senderUsername,
-                        fromProfilePic: senderProfilePic,
-                        text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
-                        read: false,
-                        createdAt: new Date()
-                    }
+        // Send Notification (Non-blocking)
+        setImmediate(async () => {
+            try {
+                // Get sender info for notification
+                const senderUser = await User.findById(senderOid).select('username profilePic').lean();
+                if (!senderUser) {
+                    console.warn(`[${reqId}] Sender user not found for notification: ${senderOid}`);
+                    return;
                 }
-            });
-            console.log(`[${reqId}] Notification DEPLOYED to ${recipientOid}`);
-        } catch (notifErr) {
-            console.warn(`[${reqId}] Notification Background Error (Non-Fatal):`, notifErr.message);
-        }
+
+                await User.findByIdAndUpdate(recipientOid, {
+                    $push: {
+                        notifications: {
+                            type: 'message',
+                            from: senderOid,
+                            fromUsername: senderUser.username || 'User',
+                            fromProfilePic: senderUser.profilePic || '',
+                            text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
+                            read: false,
+                            createdAt: new Date()
+                        }
+                    }
+                });
+                console.log(`[${reqId}] Notification DEPLOYED to ${recipientOid}`);
+            } catch (notifErr) {
+                console.warn(`[${reqId}] Notification Error (Non-Fatal):`, notifErr.message);
+            }
+        });
 
         res.status(201).json(savedMessage);
     } catch (err) {

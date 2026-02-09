@@ -3445,9 +3445,9 @@ const App = () => {
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
 
-                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full">
-                                        <Icons.MessageCircle className="w-5 h-5" />
-                                        <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-glow-red" />
+                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
+                                        <Icons.MessageCircle className="w-5 h-5 text-[var(--gold-primary)]" />
+                                        <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
