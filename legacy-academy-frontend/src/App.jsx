@@ -577,7 +577,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="sticky bottom-0 w-full px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[calc(10px+env(safe-area-inset-bottom,20px))] md:pb-2">
+                    <div className="sticky bottom-0 w-full px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[85px] md:pb-2">
                         <div className="flex items-center justify-between mb-2 px-0">
                             <div className="flex items-center gap-2 sm:gap-4">
                                 <button
