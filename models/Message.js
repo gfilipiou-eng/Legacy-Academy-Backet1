@@ -5,7 +5,8 @@ const MessageSchema = new mongoose.Schema({
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     text: { type: String },
     audioUrl: { type: String },
-    read: { type: Boolean, default: false }
+    read: { type: Boolean, default: false },
+    readAt: { type: Date, default: null }  // For Whispers auto-delete
 }, { timestamps: true });
 
 const Message = mongoose.model("Message", MessageSchema);

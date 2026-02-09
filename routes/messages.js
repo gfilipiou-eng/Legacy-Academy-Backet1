@@ -12,6 +12,53 @@ const router = express.Router();
 router.get("/", (req, res) => res.status(200).json({ status: "Neural link active", protocol: "MESSAGES_V1" }));
 router.get("/status", (req, res) => res.status(200).json({ status: "Neural link active", timestamp: new Date() }));
 
+// 🔥 WHISPERS AUTO-DELETE: Mark message as read (starts 5-minute countdown)
+router.patch("/:messageId/read", verifyToken, async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const userId = req.user.id || req.user.userId;
+
+        const message = await Message.findById(messageId);
+        if (!message) return res.status(404).json("Message not found");
+
+        // Only recipient can mark as read
+        if (String(message.recipient) !== String(userId)) {
+            return res.status(403).json("Not authorized");
+        }
+
+        // Mark as read with timestamp
+        message.read = true;
+        message.readAt = new Date();
+        await message.save();
+
+        console.log(`[WHISPER] Message ${messageId} marked as read. Will self-destruct in 5 minutes.`);
+        res.status(200).json({ success: true, readAt: message.readAt });
+    } catch (err) {
+        console.error("Mark-as-read error:", err);
+        res.status(500).json(err);
+    }
+});
+
+// 🔥 WHISPERS AUTO-DELETE CLEANUP: Run every minute to delete expired messages
+const cleanupExpiredWhispers = async () => {
+    try {
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const result = await Message.deleteMany({
+            readAt: { $ne: null, $lt: fiveMinutesAgo }
+        });
+        if (result.deletedCount > 0) {
+            console.log(`[WHISPERS CLEANUP] 🔥 Auto-deleted ${result.deletedCount} expired whispers`);
+        }
+    } catch (err) {
+        console.error("[WHISPERS CLEANUP] Error:", err);
+    }
+};
+
+// Run cleanup every 60 seconds
+setInterval(cleanupExpiredWhispers, 60 * 1000);
+console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 minutes after reading.");
+
+
 // Send a message (Updated for Audio Support)
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);

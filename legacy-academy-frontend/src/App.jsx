@@ -1392,6 +1392,21 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
             setMessages(prev => ({ ...prev, [otherUserId]: res.data }));
+
+            // 🔥 WHISPERS: Auto-mark incoming messages as read (starts 5-min countdown)
+            const unreadIncoming = res.data.filter(m =>
+                String(m.recipient) === String(user?._id) &&
+                String(m.sender) === String(otherUserId) &&
+                !m.read
+            );
+
+            for (const msg of unreadIncoming) {
+                try {
+                    await axios.patch(`/messages/${msg._id}/read`);
+                } catch (e) {
+                    console.warn('Failed to mark message as read:', e);
+                }
+            }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
@@ -1537,18 +1552,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                                     <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
                                     <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
-                                <button
-                                    onClick={handleClearChat}
-                                    className="p-3 text-gray-500 hover:text-red-500 transition-all active:scale-90 group"
-                                    title={t('CLEAR_CHAT') || "Clear Chat"}
-                                >
-                                    <Icons.Broom className="w-5 h-5 group-hover:rotate-[-20deg] transition-transform" />
-                                </button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => (
                                     <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
+                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
                                             {m.audioUrl ? (
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
