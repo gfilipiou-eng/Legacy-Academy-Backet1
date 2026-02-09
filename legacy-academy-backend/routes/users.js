@@ -57,8 +57,8 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         if (targetUser.isPrivate) {
             // PRIVATE -> Send Request
             await targetUser.updateOne({
-                $push: { requests: req.user.id },
                 $push: {
+                    requests: req.user.id,
                     notifications: {
                         type: 'follow', // technically 'request'
                         from: req.user.id,
@@ -72,8 +72,8 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         } else {
             // PUBLIC -> Follow Directly
             await targetUser.updateOne({
-                $push: { followers: req.user.id },
                 $push: {
+                    followers: req.user.id,
                     notifications: {
                         type: 'follow',
                         from: req.user.id,

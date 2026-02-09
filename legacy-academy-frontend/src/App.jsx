@@ -1383,7 +1383,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
 // ... ChatModal, SettingsModal, ProfileModal, CreateModal same logic ...
 // Re-inserting them to ensure full file integrity
 
-const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
+const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast }) => {
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
@@ -1472,7 +1472,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         setInputText('');
 
         try {
-            const res = await axios.post('/messages', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            const res = await axios.post('/messages', fd);
             setMessages(prev => ({
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
@@ -3413,7 +3413,7 @@ const App = () => {
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
+                        <header className="relative w-full z-[40] bg-white backdrop-blur-md border-b border-gray-200 shrink-0 transition-all duration-500 text-black">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
@@ -3578,7 +3578,7 @@ const App = () => {
                         </div>
                     )}
 
-                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
+                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
