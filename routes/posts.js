@@ -382,6 +382,17 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
     const { userId } = req.params;
     const currentUserId = req.user.id || req.user.userId;
 
+    const targetUser = await User.findById(userId).select('isPrivate isFollowersOnly followers');
+    if (!targetUser) return res.status(404).json("User not found");
+
+    const isOwner = String(userId) === String(currentUserId);
+    const isFollower = (targetUser.followers || []).some(id => String(id) === String(currentUserId));
+    const isPrivate = !!(targetUser.isPrivate || targetUser.isFollowersOnly);
+
+    if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
+      return res.status(403).json("This intel is encrypted. Access restricted to authorized followers.");
+    }
+
     const posts = await Post.find({ author: userId })
       .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
       .sort({ createdAt: -1 })

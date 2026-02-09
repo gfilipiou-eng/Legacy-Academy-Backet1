@@ -2122,7 +2122,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
 
                             {/* PRIVACY LOCK SCREEN */}
-                            {displayUser?.isPrivate && !isMe && !isFollowing ? (
+                            {(displayUser?.isPrivate || displayUser?.isFollowersOnly) && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
                                     <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:border-[var(--gold-primary)]/40 transition-all relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/10 to-transparent animate-pulse" />
@@ -2843,16 +2843,12 @@ const App = () => {
         if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
         try {
             const res = await axios.get('/posts?limit=20');
-            // Simple check to avoid redundant re-renders if nothing changed
-            const currentPosts = postsRef.current;
-            if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
             setPosts(res.data);
         } catch (e) { }
     };
     const fetchUsers = async () => {
         try {
             const res = await axios.get('/users');
-            if (users.length > 0 && res.data.length === users.length) return;
             setUsers(res.data);
         } catch (e) { }
     };
