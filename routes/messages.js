@@ -125,12 +125,15 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
         // Send notification using DB user data to avoid token-sync issues
         try {
-            const sender = await User.findById(senderOid);
+            const sender = await User.findById(senderOid).lean();
+            const fromName = sender?.username || req.user?.username || 'User';
+            const fromPic = sender?.profilePic || req.user?.profilePic || '';
+
             const notifPayload = {
                 type: 'message',
                 from: senderOid,
-                fromUsername: sender?.username || 'User',
-                fromProfilePic: sender?.profilePic || '',
+                fromUsername: fromName,
+                fromProfilePic: fromPic,
                 text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
                 read: false,
                 createdAt: new Date()

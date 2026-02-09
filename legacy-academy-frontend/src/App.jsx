@@ -2320,8 +2320,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
                             <textarea id="c-desc" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                            <div className="text-[11px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2.5 py-1.5 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
-                                <Icons.Info className="w-3.5 h-3.5 inline mr-1" /> {t('VIDEO_LIMIT_NOTE')}
+                            <div className="text-[13px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
+                                <Icons.Info className="w-4 h-4 inline mr-1" /> {t('ONLY VIDEOS UP TO 20 MINUTES ALLOWED')}
                             </div>
                         </div>
                     </div>
@@ -2441,8 +2441,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                 vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
-            if (dur && dur > 600) {
-                alert(t('VIDEO_ERROR'));
+            if (dur && dur > 1200) {
+                alert("Intel packet exceeds 20 minute limit. Truncate required.");
                 e.target.value = '';
                 return;
             }
@@ -2498,8 +2498,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 />
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="text-[11px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-2.5 py-1.5 rounded-xl border border-[var(--gold-primary)]/20 w-fit animate-pulse flex items-center gap-2">
-                                    <Icons.Info className="w-3.5 h-3.5" /> {t('VIDEO_LIMIT_NOTE')}
+                                <div className="text-[13px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-xl border border-[var(--gold-primary)]/20 w-fit animate-pulse flex items-center gap-2">
+                                    <Icons.Info className="w-4 h-4" /> {t('ONLY VIDEOS UP TO 20 MINUTES ALLOWED')}
                                 </div>
                             </div>
                         </div>

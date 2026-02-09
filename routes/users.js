@@ -178,10 +178,10 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 
         console.log(`[ACCEPT REQ] User ${userId} attempting to accept request from ${requesterId}`);
 
-        // Validate requesterId format
+        // Validate requesterId format - Return 200 even if invalid to clear UI safely
         if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
-            console.warn(`[ACCEPT REQ] FAILED: Invalid requesterId format: "${requesterId}" (from param: "${requestIdParam}")`);
-            return res.status(400).json({ error: "Invalid request ID format", received: requesterId });
+            console.warn(`[ACCEPT REQ] IGNORED: Invalid ID format: "${requesterId}" (from param: "${requestIdParam}")`);
+            return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid, but we are returning 200 to clear the UI." });
         }
 
         const user = await User.findById(userId);
@@ -237,10 +237,10 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
 
         console.log(`[REJECT REQ] User ${userId} attempting to reject request from ${requesterId}`);
 
-        // Validate requesterId format
+        // Validate requesterId format - Return 200 even if invalid to clear UI safely
         if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
-            console.warn(`[REJECT REQ] FAILED: Invalid requesterId format: "${requesterId}"`);
-            return res.status(400).json({ error: "Invalid request ID format", received: requesterId });
+            console.warn(`[REJECT REQ] IGNORED: Invalid ID format: "${requesterId}"`);
+            return res.status(200).json({ status: "invalid_id_ignored", detail: "Request ID format invalid, clearing UI safely." });
         }
 
         const user = await User.findById(userId);

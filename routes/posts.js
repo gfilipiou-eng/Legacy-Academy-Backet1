@@ -451,10 +451,10 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
           ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
         });
         const duration = durMeta?.format?.duration || 0;
-        if (duration > 600) { // Standardized to 10 minutes
+        if (duration > 1200) { // Standardized to 20 minutes
           // delete the uploaded file to avoid orphaned large assets
           try { fs.unlinkSync(req.file.path); } catch (e) { console.warn('Failed to cleanup large-upload', e && e.message); }
-          return res.status(400).json({ message: 'Intelligence packets exceed 10 minutes. Truncate required.' });
+          return res.status(400).json({ message: 'Intelligence packets exceed 20 minutes. Truncate required.' });
         }
       }
     } catch (probeErr) {
@@ -586,9 +586,9 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
               ffmpeg.ffprobe(req.file.path, (err, metadata) => err ? reject(err) : resolve(metadata));
             });
             const duration = durMeta?.format?.duration || 0;
-            if (duration > 600) { // Keep consistent with 10min limit in frontend
+            if (duration > 1200) { // Keep consistent with 20min limit in frontend
               try { fs.unlinkSync(req.file.path); } catch (e) { }
-              return res.status(400).json({ message: 'Intelligence packets exceed 10 minutes. Truncate required.' });
+              return res.status(400).json({ message: 'Intelligence packets exceed 20 minutes. Truncate required.' });
             }
           } catch (probeErr) {
             console.warn(`[${reqId}] Probe failed, proceeding with caution:`, probeErr.message);
