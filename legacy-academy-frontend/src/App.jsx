@@ -476,7 +476,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl active:scale-90 transition-all group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
-            <div className="w-full max-w-6xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
+            <div className="w-full max-w-6xl h-full md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto relative">
                 {/* Image Section - Smaller on mobile for more comment space */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -494,7 +494,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full !overflow-visible relative">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 md:h-full overflow-hidden relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
@@ -577,7 +577,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[env(safe-area-inset-bottom,20px)] md:pb-2">
+                    <div className="sticky bottom-0 w-full px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[calc(10px+env(safe-area-inset-bottom,20px))] md:pb-2">
                         <div className="flex items-center justify-between mb-2 px-0">
                             <div className="flex items-center gap-2 sm:gap-4">
                                 <button
