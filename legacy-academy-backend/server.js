@@ -40,5 +40,5 @@ app.use("/api/messages", messageRoute);
 // });
 
 app.listen(process.env.PORT || 8800, () => {
-    console.log("Backend server is running!");
+    console.log("Backend server is running! V5-LEGACY-SYNC");
 });

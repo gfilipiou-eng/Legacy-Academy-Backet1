@@ -239,7 +239,7 @@ console.log("🟡 Starting Express server on port", PORT);
 try {
   const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`✅ Server running on port ${PORT} 🚀`);
-    console.log(`📡 Deployment Version: v4-robust-telemetry`);
+    console.log(`📡 Deployment Version: v5-robust-follow-sync`);
     console.log(`🔍 Registered API Bases: /api/auth, /api/posts, /api/users, /api/messages`);
 
     // Keep-alive ping mechanism (for Render free tier)
