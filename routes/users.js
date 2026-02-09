@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
-import upload from "../middleware/upload.js";
+import upload, { profilePicUpload } from "../middleware/upload.js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -392,7 +392,7 @@ router.put("/settings", verifyToken, async (req, res) => {
 
 // Update profile picture
 router.post("/profile-pic", verifyToken, (req, res, next) => {
-    upload.single("image")(req, res, (err) => {
+    profilePicUpload.single("image")(req, res, (err) => {
         if (err) {
             console.error("Profile Upload Error:", err.message);
             return res.status(500).json({ message: "Upload service failed. Check configurations.", error: err.message });
