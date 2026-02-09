@@ -109,9 +109,15 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             }
         }
 
-        // Explicitly cast strings to ObjectIds to prevent Mongoose cast errors
-        const senderOid = new mongoose.Types.ObjectId(String(senderId));
-        const recipientOid = new mongoose.Types.ObjectId(String(recipient));
+        // Explicitly cast strings to ObjectIds with validation to prevent Mongoose cast errors
+        let senderOid, recipientOid;
+        try {
+            senderOid = new mongoose.Types.ObjectId(String(senderId));
+            recipientOid = new mongoose.Types.ObjectId(String(recipient));
+        } catch (castErr) {
+            console.error(`${logPrefix} CAST ERROR:`, castErr.message, { senderId, recipient });
+            return res.status(400).json({ error: "Invalid ID format for sender or recipient.", detail: castErr.message });
+        }
 
         const newMessage = new Message({
             sender: senderOid,
@@ -134,7 +140,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
                 from: senderOid,
                 fromUsername: fromName,
                 fromProfilePic: fromPic,
-                text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
+                text: text ? (String(text).length > 50 ? String(text).substring(0, 50) + '...' : String(text)) : "Sent a voice note.",
                 read: false,
                 createdAt: new Date()
             };
@@ -151,12 +157,13 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         res.status(201).json(savedMessage);
     } catch (err) {
         console.error(`${logPrefix} CRITICAL ERROR:`, (err && (err.stack || err.message)) || err);
+        const errorDetail = err && (err.message || String(err));
         res.status(500).json({
             error: "Neural link transmission failed",
-            detail: err && (err.message || err),
+            message: errorDetail,
             path: req.originalUrl,
             requestId: reqId,
-            version: "v4.2-diagnostic"
+            version: "v4.3-hardened"
         });
     }
 });

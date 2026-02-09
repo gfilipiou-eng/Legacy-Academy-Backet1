@@ -1473,7 +1473,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
             }));
             playSound('pop');
         } catch (e) {
-            console.error('Send failed', e);
+            const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
+            console.error('Send failed:', detail, e.response?.data);
             setInputText(tempText);
         }
     };
@@ -1526,6 +1527,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                         <div className="relative">
                             <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                             <input
+                                id="chat-search"
+                                name="chat-search"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('SEARCH_PH')}
@@ -1581,6 +1584,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
                             <div className="p-2 bg-[#050505] border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
+                                        id="chat-input"
+                                        name="chat-message"
                                         type="text"
                                         value={inputText}
                                         onChange={(e) => {
@@ -2319,16 +2324,16 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             <ProfileAvatar user={user} />
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
-                            <textarea id="c-desc" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
+                            <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
                             <div className="text-[13px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 px-3 py-2 rounded-lg border border-[var(--gold-primary)]/20 w-fit animate-pulse">
-                                <Icons.Info className="w-4 h-4 inline mr-1" /> {t('ONLY VIDEOS UP TO 20 MINUTES ALLOWED')}
+                                <Icons.Info className="w-4 h-4 inline mr-1" /> {t('VIDEO_LIMIT_NOTE')}
                             </div>
                         </div>
                     </div>
 
                     {/* YouTube URL input */}
                     <div className="mb-3">
-                        <input id="c-youtube" placeholder={t('YOUTUBE_PH')} className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
+                        <input id="c-youtube" name="youtube-url" placeholder={t('YOUTUBE_PH')} className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
                             const v = e.target.value || '';
                             if (isYouTubeUrl(v)) {
                                 const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
@@ -3439,7 +3444,7 @@ const App = () => {
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
                                                 <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
                                             </div>
                                         )}
