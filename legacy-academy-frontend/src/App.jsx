@@ -1796,7 +1796,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         else onClose();
                     }} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
-                    <div className="w-10" />
+                    <button onClick={onClose} className="p-2 -mr-2 rounded-full hover:bg-red-500/10 active:scale-95 transition-all group">
+                        <Icons.X className="w-6 h-6 text-gray-400 group-hover:text-red-500 transition-colors" />
+                    </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
@@ -3428,49 +3430,15 @@ const App = () => {
 
 
 
-                                <div className="relative">
-                                    <button onClick={() => { setNavMenuOpen(!navMenuOpen); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${navMenuOpen || activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
-                                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
-                                            <ProfileAvatar user={user} key={imgKey} />
-                                        </div>
-                                    </button>
+                                <button onClick={() => { setActiveTab('profile'); viewProfile(user); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-0.5 rounded-2xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-10 h-10 rounded-2xl overflow-hidden bg-white/10 relative">
+                                        <ProfileAvatar user={user} key={imgKey} />
+                                    </div>
+                                </button>
 
-                                    <AnimatePresence>
-                                        {navMenuOpen && (
-                                            <>
-                                                <div className="fixed inset-0 z-40" onClick={() => setNavMenuOpen(false)} />
-                                                <motion.div
-                                                    initial={{ opacity: 0, scale: 0.8, y: 20, x: 20 }}
-                                                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.8, y: 20, x: 20 }}
-                                                    className="absolute bottom-16 right-0 w-56 bg-black/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.9)] z-50 overflow-hidden p-2 flex flex-col gap-1.5"
-                                                >
-                                                    <div className="px-4 py-3 border-b border-white/5 mb-1">
-                                                        <div className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{user?.role || 'AGENT'}</div>
-                                                        <div className="text-sm font-bold text-white truncate">{user?.username}</div>
-                                                    </div>
-
-                                                    <button onClick={() => { setNavMenuOpen(false); viewProfile(user); }} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 text-gray-400 hover:text-white transition-all group">
-                                                        <Icons.User className="w-4 h-4 group-hover:text-[var(--gold-primary)]" />
-                                                        <span className="text-xs font-bold uppercase tracking-widest">{t('PROFILE')}</span>
-                                                    </button>
-
-                                                    <button onClick={() => { setNavMenuOpen(false); setIsSettingsOpen(true); }} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 text-gray-400 hover:text-white transition-all group">
-                                                        <Icons.Settings className="w-4 h-4 group-hover:text-blue-400" />
-                                                        <span className="text-xs font-bold uppercase tracking-widest">{t('SETTINGS')}</span>
-                                                    </button>
-
-                                                    <div className="h-px bg-white/5 mx-2 my-1" />
-
-                                                    <button onClick={() => { setNavMenuOpen(false); logout(); playSound('sword'); }} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/10 text-red-500 transition-all group">
-                                                        <Icons.Logout className="w-4 h-4" />
-                                                        <span className="text-xs font-bold uppercase tracking-widest">{t('LOGOUT')}</span>
-                                                    </button>
-                                                </motion.div>
-                                            </>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-item-btn relative transition-all duration-300 z-10 text-red-500/80 hover:text-red-500 active:scale-95">
+                                    <Icons.Logout className="w-5 h-5 relative z-10" />
+                                </button>
                             </div>
                         </div>
                     )}
