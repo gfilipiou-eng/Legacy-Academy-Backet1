@@ -179,5 +179,10 @@
     "FOLLOWERS_COUNT": "FOLLOWERS",
     "ENCRYPTED_COMMS_ONLY": "ENCRYPTED: ONLY FOLLOWERS CAN INITIATE COMMS",
     "SYNC_ERROR": "Connection to neural link failed. Try again.",
-    "NO_AGENTS_FOUND": "Zero Agents Found."
+    "NO_AGENTS_FOUND": "Zero Agents Found.",
+    "MIC_REQUIRED": "Mic required for walkie-talkie mode",
+    "CLEAR_CHAT": "Clear Chat",
+    "SIZE_ERROR_10MB": "Video profile/GIF must be under 10MB to prevent lag.",
+    "UPDATE_FAILED": "Update failed.",
+    "MIC_DENIED": "Microphone access denied."
 }
