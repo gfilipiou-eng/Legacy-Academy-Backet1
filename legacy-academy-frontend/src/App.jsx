@@ -2059,7 +2059,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </svg>
                                         {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />}
                                     </div>
-                                    {displayUser?.role === 'Founder' && <span className="text-[var(--gold-primary)] text-[10px] font-black tracking-wider uppercase">Founder</span>}
+                                    {displayUser?.role === 'Founder' && <span className="text-[var(--gold-primary)] text-[10px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE')}</span>}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
