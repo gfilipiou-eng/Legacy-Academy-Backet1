@@ -1,0 +1,31 @@
+import mongoose from "mongoose";
+
+const MessageSchema = new mongoose.Schema(
+    {
+        sender: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        recipient: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        text: {
+            type: String,
+            default: "",
+        },
+        audio: {
+            type: String, // URL for audio
+            default: "",
+        },
+        isRead: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    { timestamps: true }
+);
+
+export default mongoose.model("Message", MessageSchema);

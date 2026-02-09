@@ -1,6 +1,5 @@
 import express from "express";
 import User from "../models/User.js";
-import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -39,52 +38,59 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         if (!targetUser || !currentUser) return res.status(404).json("User not found");
 
-        // UNFOLLOW / CANCEL REQUEST CHECK
-        if (targetUser.followers.includes(req.user.id)) {
-            // Already following -> Unfollow
-            await targetUser.updateOne({ $pull: { followers: req.user.id } });
-            await currentUser.updateOne({ $pull: { following: req.params.id } });
+        const targetId = req.params.id;
+        const currentId = req.user.id;
+
+        // CHECK IF ALREADY FOLLOWING -> UNFOLLOW
+        if (targetUser.followers.includes(currentId)) {
+            await targetUser.updateOne({ $pull: { followers: currentId } });
+            await currentUser.updateOne({ $pull: { following: targetId } });
             return res.status(200).json({ message: "Unfollowed" });
         }
 
-        if (targetUser.requests && targetUser.requests.includes(req.user.id)) {
-            // Request pending -> Cancel Request
-            await targetUser.updateOne({ $pull: { requests: req.user.id } });
+        // CHECK IF REQUEST PENDING -> CANCEL REQUEST
+        if (targetUser.requests && targetUser.requests.includes(currentId)) {
+            await targetUser.updateOne({ $pull: { requests: currentId } });
+            // Optionally remove the notification? Hard to find exact one without ID. 
+            // Ideally we'd pull from notifications where type='follow_request' and from=currentId
+            await targetUser.updateOne({ $pull: { notifications: { type: 'follow_request', from: currentId } } });
             return res.status(200).json({ message: "Request Cancelled" });
         }
 
-        // FOLLOW ACTION
+        // START FOLLOW
         if (targetUser.isPrivate) {
-            // PRIVATE -> Send Request
+            // PRIVATE -> SEND REQUEST
             await targetUser.updateOne({
+                $addToSet: { requests: currentId },
                 $push: {
-                    requests: req.user.id,
                     notifications: {
-                        type: 'follow', // technically 'request'
-                        from: req.user.id,
+                        type: 'follow_request', // Correct type for buttons to show
+                        from: currentId,
                         fromUsername: currentUser.username,
                         fromProfilePic: currentUser.profilePic,
-                        read: false
+                        read: false,
+                        createdAt: new Date()
                     }
                 }
             });
-            return res.status(200).json({ message: "Request Sent" });
+            return res.status(200).json({ message: "Requested", isPrivate: true });
         } else {
-            // PUBLIC -> Follow Directly
+            // PUBLIC -> FOLLOW DIRECTLY
             await targetUser.updateOne({
+                $addToSet: { followers: currentId },
                 $push: {
-                    followers: req.user.id,
                     notifications: {
                         type: 'follow',
-                        from: req.user.id,
+                        from: currentId,
                         fromUsername: currentUser.username,
                         fromProfilePic: currentUser.profilePic,
-                        read: false
+                        read: false,
+                        createdAt: new Date()
                     }
                 }
             });
-            await currentUser.updateOne({ $push: { following: req.params.id } });
-            return res.status(200).json({ message: "Followed" });
+            await currentUser.updateOne({ $addToSet: { following: targetId } });
+            return res.status(200).json({ message: "Followed", following: [...currentUser.following, targetId] });
         }
     } catch (err) {
         res.status(500).json(err);
@@ -92,28 +98,48 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 });
 
 // ACCEPT FOLLOW REQUEST
-// Route likely matched by frontend: /api/users/requests/:requesterId/accept
 router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
     try {
         const currentUser = await User.findById(req.user.id);
         const requesterId = req.params.requesterId;
 
+        if (!currentUser) return res.status(404).json("User not found");
+
+        // Idempotency: If already following, return success
+        if (currentUser.followers.includes(requesterId)) {
+            return res.status(200).json("Request already accepted");
+        }
+
+        // If not in requests, return success anyway (to clear UI) instead of 403
         if (!currentUser.requests.includes(requesterId)) {
-            return res.status(403).json("Authorization failed: No request found in logs.");
+            // return res.status(403).json("Authorization failed: No request found in logs.");
+            return res.status(200).json("Request no longer active");
         }
 
         // Move from requests to followers
         await currentUser.updateOne({
             $pull: { requests: requesterId },
-            $push: { followers: requesterId }
+            $addToSet: { followers: requesterId }
         });
 
-        // Add current user to requester's following
-        const requester = await User.findById(requesterId);
-        await requester.updateOne({ $push: { following: req.user.id } });
+        // Add current user to requester's following list
+        await User.findByIdAndUpdate(requesterId, {
+            $addToSet: { following: req.user.id },
+            $push: {
+                notifications: {
+                    type: 'follow_accepted', // Optional: Notify them they were accepted
+                    from: req.user.id,
+                    fromUsername: currentUser.username,
+                    fromProfilePic: currentUser.profilePic,
+                    read: false,
+                    createdAt: new Date()
+                }
+            }
+        });
 
         res.status(200).json("Request Accepted");
     } catch (err) {
+        console.error("Accept Error", err);
         res.status(500).json(err);
     }
 });
@@ -124,12 +150,26 @@ router.post("/requests/:requesterId/decline", verifyToken, async (req, res) => {
         const currentUser = await User.findById(req.user.id);
         const requesterId = req.params.requesterId;
 
-        if (!currentUser.requests.includes(requesterId)) {
-            return res.status(403).json("No request found");
-        }
-
+        // Just pull it, doesn't matter if it exists or not
         await currentUser.updateOne({ $pull: { requests: requesterId } });
+
+        // Also remove notification if possible
+        await currentUser.updateOne({ $pull: { notifications: { type: 'follow_request', from: requesterId } } });
+
         res.status(200).json("Request Declined");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// REJECT (Alias for Decline if frontend uses 'reject')
+router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.user.id);
+        const requesterId = req.params.requesterId;
+        await currentUser.updateOne({ $pull: { requests: requesterId } });
+        await currentUser.updateOne({ $pull: { notifications: { type: 'follow_request', from: requesterId } } });
+        res.status(200).json("Request Rejected");
     } catch (err) {
         res.status(500).json(err);
     }
