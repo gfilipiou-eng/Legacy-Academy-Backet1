@@ -3409,7 +3409,7 @@ const App = () => {
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[40] bg-gradient-to-b from-[#111] to-black/80 backdrop-blur-2xl border-b border-yellow-500/20 shrink-0 transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(234,179,8,0.15)]">
+                        <header className="relative w-full z-[40] bg-[#111] backdrop-blur-md border-b border-red-600 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
