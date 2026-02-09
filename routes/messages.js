@@ -114,33 +114,26 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         const savedMessage = await newMessage.save();
         console.log(`[${reqId}] Message SAVED. ID: ${savedMessage._id}`);
 
-        // Send Notification asynchronously (non-blocking)
-        Promise.resolve().then(async () => {
-            try {
-                const senderUser = await User.findById(senderOid).select('username profilePic').lean();
-                if (!senderUser) {
-                    console.warn(`[${reqId}] Sender user not found for notification: ${senderOid}`);
-                    return;
-                }
-
-                await User.findByIdAndUpdate(recipientOid, {
-                    $push: {
-                        notifications: {
-                            type: 'message',
-                            from: senderOid,
-                            fromUsername: senderUser.username || 'User',
-                            fromProfilePic: senderUser.profilePic || '',
-                            text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
-                            read: false,
-                            createdAt: new Date()
-                        }
+        // Send notification using req.user data (no additional DB query needed)
+        try {
+            await User.findByIdAndUpdate(recipientOid, {
+                $push: {
+                    notifications: {
+                        type: 'message',
+                        from: senderOid,
+                        fromUsername: req.user.username || 'User',
+                        fromProfilePic: req.user.profilePic || '',
+                        text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
+                        read: false,
+                        createdAt: new Date()
                     }
-                });
-                console.log(`[${reqId}] Notification DEPLOYED to ${recipientOid}`);
-            } catch (notifErr) {
-                console.warn(`[${reqId}] Notification Error (Non-Fatal):`, notifErr.message);
-            }
-        }).catch(err => console.error(`[${reqId}] Notification Promise Error:`, err));
+                }
+            });
+            console.log(`[${reqId}] Notification sent to ${recipientOid}`);
+        } catch (notifErr) {
+            // Non-fatal - log but don't fail the request
+            console.warn(`[${reqId}] Notification failed (non-fatal):`, notifErr.message);
+        }
 
         res.status(201).json(savedMessage);
     } catch (err) {
