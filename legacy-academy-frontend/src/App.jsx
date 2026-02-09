@@ -2032,22 +2032,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </>
                                     )}
                                 </div>
-                                <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
-                                    <div className="flex flex-col items-center">
+                                <div className="flex-1 grid grid-cols-3 gap-1 bg-white/5 p-3 rounded-2xl border border-white/5">
+                                    <div className="flex flex-col items-center justify-center p-1">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('POSTS')}</div>
+                                        <div className="text-[8px] sm:text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS')}</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-2">
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer group p-1 border-x border-white/5">
                                         <span className="text-lg sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
                                         </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
+                                        <span className="text-[8px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-2">
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center justify-center cursor-pointer group p-1">
                                         <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
                                             {displayUser?.following?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
                                         </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWING')}</span>
+                                        <span className="text-[8px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING')}</span>
                                     </div>
                                 </div>
                             </div>
