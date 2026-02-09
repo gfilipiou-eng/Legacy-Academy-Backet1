@@ -114,10 +114,9 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         const savedMessage = await newMessage.save();
         console.log(`[${reqId}] Message SAVED. ID: ${savedMessage._id}`);
 
-        // Send Notification (Non-blocking)
-        setImmediate(async () => {
+        // Send Notification asynchronously (non-blocking)
+        Promise.resolve().then(async () => {
             try {
-                // Get sender info for notification
                 const senderUser = await User.findById(senderOid).select('username profilePic').lean();
                 if (!senderUser) {
                     console.warn(`[${reqId}] Sender user not found for notification: ${senderOid}`);
@@ -141,7 +140,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             } catch (notifErr) {
                 console.warn(`[${reqId}] Notification Error (Non-Fatal):`, notifErr.message);
             }
-        });
+        }).catch(err => console.error(`[${reqId}] Notification Promise Error:`, err));
 
         res.status(201).json(savedMessage);
     } catch (err) {
