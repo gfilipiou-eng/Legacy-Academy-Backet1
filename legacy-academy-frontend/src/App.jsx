@@ -3419,10 +3419,6 @@ const App = () => {
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => setActiveTab('alerts')} className="header-icon-btn relative rounded-full hover:bg-white/10 transition-colors p-1 group">
-                                        <Icons.Bell className={`w-6 h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse shadow-glow-gold' : 'text-gray-400 group-hover:text-white'}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-600 rounded-full border border-white shadow-sm" />}
-                                    </button>
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
