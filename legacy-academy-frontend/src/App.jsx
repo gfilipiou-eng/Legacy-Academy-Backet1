@@ -922,8 +922,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('AUTHORIZE')}</button>
-                        <button onClick={() => onRejectRequest(note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('AUTHORIZE')}</button>
+                        <button onClick={() => onRejectRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
                     </div>
                 )}
             </div>
@@ -3111,13 +3111,17 @@ const App = () => {
     };
 
     const handleAcceptRequest = async (requesterId) => {
+        if (!requesterId) {
+            console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
+            return;
+        }
         try {
+            console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
             await axios.post(`/users/requests/${requesterId}/accept`);
             playSound('pop');
         } catch (e) {
-            console.error('Accept request failed', e);
-            // If it failed (e.g. 400), it might be stale. Refreshing notifications will clear it if my backend fix is live.
-            // If backend fix NOT live, we still want to refresh to see if it disappears.
+            const detail = e.response?.data?.error || e.response?.data || e.message;
+            console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
         } finally {
             fetchNotifications();
             fetchUsers();
@@ -3125,13 +3129,16 @@ const App = () => {
     };
 
     const handleRejectRequest = async (requesterId) => {
+        if (!requesterId) return;
         try {
+            console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
             await axios.post(`/users/requests/${requesterId}/reject`);
             playSound('pop');
         } catch (e) {
-            console.error('Reject request failed', e);
+            console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
         } finally {
             fetchNotifications();
+            fetchUsers();
         }
     };
 

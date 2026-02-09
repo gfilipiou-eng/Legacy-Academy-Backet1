@@ -232,13 +232,23 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const requesterId = req.params.requestId;
+        const requestIdParam = req.params.requestId;
+        const requesterId = requestIdParam ? String(requestIdParam).trim() : null;
+
+        console.log(`[REJECT REQ] User ${userId} attempting to reject request from ${requesterId}`);
+
+        // Validate requesterId format
+        if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
+            console.warn(`[REJECT REQ] FAILED: Invalid requesterId format: "${requesterId}"`);
+            return res.status(400).json({ error: "Invalid request ID format", received: requesterId });
+        }
 
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
         const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
         if (!hasRequest) {
+            console.warn(`[REJECT REQ] Request ${requesterId} not found. Cleaning up stale notification.`);
             // CLEANUP STALE NOTIFICATION
             await User.findByIdAndUpdate(userId, {
                 $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
