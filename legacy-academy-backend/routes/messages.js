@@ -2,58 +2,62 @@ import express from "express";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
+import upload from "../middleware/upload.js"; // Needed for FormData
 
 const router = express.Router();
 
-// SEND MESSAGE
-router.post("/", verifyToken, async (req, res) => {
+// SEND MESSAGE (Using upload.single('file') for audio support)
+router.post("/", verifyToken, upload.single("file"), async (req, res) => {
     try {
-        const { recipient, text, audio } = req.body;
-        console.log("[MESSAGE] Sending to:", recipient, "Text:", text);
+        const { recipient: recipientId, text } = req.body;
+        const currentUserId = req.user.id;
 
-        if (!recipient) {
-            return res.status(400).json("Recipient is required");
+        // Audio handling
+        const audioUrl = req.file ? req.file.path : null;
+
+        if (!recipientId) return res.status(400).json("Recipient is required");
+
+        const recipientUser = await User.findById(recipientId);
+        if (!recipientUser) return res.status(404).json("Target user no longer exists");
+
+        // GUARD CHAT CHECK
+        // If recipient has Guard Chat enabled, sender MUST be a follower
+        if (recipientUser.isFollowersOnly) {
+            const isFollower = recipientUser.followers.map(id => String(id)).includes(String(currentUserId));
+            const isAdmin = req.user.role === 'Admin' || req.user.role === 'Founder';
+            if (!isFollower && !isAdmin && String(recipientId) !== String(currentUserId)) {
+                return res.status(403).json("GUARD CHAT ACTIVE: You must follow this user to communicate.");
+            }
         }
 
-        // Privacy Check: Only allowed if both follow each other OR one sent a Request?
-        // Or strictly following?
-        // Legacy Academy rules: "Only accepted followers see content"
-        // Usually DM requires mutual follow or open DM.
-        // Assuming open for now, or check follow status.
-
         const newMessage = new Message({
-            sender: req.user.id,
-            recipient,
-            text,
-            audio
+            sender: currentUserId,
+            recipient: recipientId,
+            text: text || "",
+            audio: audioUrl || ""
         });
 
         const savedMessage = await newMessage.save();
 
         // Notify Recipient
-        await User.findByIdAndUpdate(recipient, {
+        const sender = await User.findById(currentUserId);
+        await User.findByIdAndUpdate(recipientId, {
             $push: {
                 notifications: {
                     type: 'message',
-                    from: req.user.id,
-                    fromUsername: req.user.username, // Might be undefined here if req.user doesn't have details. Better fetch sender.
-                    // Actually verifyToken usually attaches minimalistic payload {id, role}.
-                    // We should fetch sender details first.
+                    from: currentUserId,
+                    fromUsername: sender.username,
+                    fromProfilePic: sender.profilePic,
                     read: false,
                     createdAt: new Date()
                 }
             }
         });
 
-        const sender = await User.findById(req.user.id).select('username profilePic');
-        // Update notification with correct details
-        // Or simpler:
-        // socket.io emit if real-time
-
         res.status(200).json(savedMessage);
     } catch (err) {
         console.error("Message Error:", err);
-        res.status(500).json(err);
+        res.status(500).json("Transmission failed: Secure link interrupted.");
     }
 });
 

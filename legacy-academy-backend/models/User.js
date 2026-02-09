@@ -54,19 +54,27 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        isFollowersOnly: {
+            type: Boolean,
+            default: false
+        },
         requests: {
-            type: Array,
+            type: Array, // Array of User IDs
             default: []
+        },
+        settings: {
+            theme: { type: String, default: '#ffd700' },
+            language: { type: String, default: 'en' }
         },
         notifications: [
             {
-                type: { type: String, enum: ['like', 'comment', 'follow', 'system'] }, // Added system for consistency
-                from: { type: String }, // User ID usually
+                type: { type: String, enum: ['like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'message', 'system'] },
+                from: { type: String },
                 fromUsername: { type: String },
                 fromProfilePic: { type: String },
                 read: { type: Boolean, default: false },
                 createdAt: { type: Date, default: Date.now },
-                post: { type: String } // Optional post ID for like/comments
+                post: { type: String }
             }
         ]
     },

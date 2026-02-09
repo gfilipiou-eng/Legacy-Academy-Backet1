@@ -3413,9 +3413,11 @@ const App = () => {
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
 
-                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
-                                        <Icons.MessageCircle className="w-5 h-5 text-[var(--gold-primary)]" />
-                                        <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
+                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold transition-all active:scale-90" title="Whispers">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-[var(--gold-primary)]">
+                                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z" />
+                                        </svg>
+                                        <div className="absolute top-1 right-1 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />

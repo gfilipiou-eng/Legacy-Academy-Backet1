@@ -14,17 +14,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-// GET USER BY ID
-router.get("/find/:id", async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json("User not found");
-        const { password, ...others } = user._doc;
-        res.status(200).json(others);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
+// (Using privacy-guarded find version below)
 
 // FOLLOW / UNFOLLOW Logic
 router.post("/:id/follow", verifyToken, async (req, res) => {
@@ -170,6 +160,78 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
         await currentUser.updateOne({ $pull: { requests: requesterId } });
         await currentUser.updateOne({ $pull: { notifications: { type: 'follow_request', from: requesterId } } });
         res.status(200).json("Request Rejected");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// UPDATE USER SETTINGS (Privacy, Theme, Language)
+router.put("/settings", verifyToken, async (req, res) => {
+    try {
+        const { isPrivate, isFollowersOnly, settings, bio, profilePic } = req.body;
+        const updateData = {};
+
+        if (isPrivate !== undefined) updateData.isPrivate = isPrivate;
+        if (isFollowersOnly !== undefined) updateData.isFollowersOnly = isFollowersOnly;
+        if (bio !== undefined) updateData.bio = bio;
+        if (profilePic !== undefined) updateData.profilePic = profilePic;
+
+        // Nested settings support
+        if (settings) {
+            const user = await User.findById(req.user.id);
+            updateData.settings = { ...(user.settings || {}), ...settings };
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: updateData },
+            { new: true }
+        ).select("-password");
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Settings Update Error:", err);
+        res.status(500).json(err);
+    }
+});
+
+// GET USER BY ID (With Privacy Guard)
+router.get("/find/:id", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json("User not found");
+
+        const { password, email, ...others } = user._doc;
+
+        // CHECK PRIVACY
+        const isSelf = String(req.user.id) === String(user._id);
+        const isFollower = user.followers.map(id => String(id)).includes(String(req.user.id));
+        const isAdmin = req.user.role === 'Admin' || req.user.role === 'Founder';
+
+        if (user.isPrivate && !isSelf && !isFollower && !isAdmin) {
+            // Scrub sensitive info for private accounts
+            return res.status(200).json({
+                ...others,
+                followers: user.followers.length,
+                following: user.following.length,
+                isPrivate: true,
+                isLocked: true // Frontend signal
+            });
+        }
+
+        res.status(200).json(others);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// DELETE NOTIFICATIONS
+router.delete("/notifications", verifyToken, async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(req.user.id, {
+            $set: { notifications: [] }
+        });
+        res.status(200).json("Notifications cleared");
     } catch (err) {
         res.status(500).json(err);
     }
