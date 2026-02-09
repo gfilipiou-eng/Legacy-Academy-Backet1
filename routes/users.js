@@ -173,12 +173,15 @@ router.get("/username/:username", async (req, res) => {
 router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const requesterId = req.params.requestId;
+        const requestIdParam = req.params.requestId;
+        const requesterId = requestIdParam ? String(requestIdParam).trim() : null;
+
+        console.log(`[ACCEPT REQ] User ${userId} attempting to accept request from ${requesterId}`);
 
         // Validate requesterId format
         if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
-            console.warn(`[ACCEPT REQ] Invalid requesterId format: ${requesterId}`);
-            return res.status(400).json("Invalid request ID format");
+            console.warn(`[ACCEPT REQ] FAILED: Invalid requesterId format: "${requesterId}" (from param: "${requestIdParam}")`);
+            return res.status(400).json({ error: "Invalid request ID format", received: requesterId });
         }
 
         const user = await User.findById(userId);

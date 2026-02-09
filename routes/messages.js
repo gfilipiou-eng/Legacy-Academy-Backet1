@@ -60,25 +60,34 @@ console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 minut
 
 
 // Send a message (Updated for Audio Support)
-router.post("/", upload.single("file"), verifyToken, async (req, res) => {
+router.post("/", verifyToken, upload.single("file"), async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
-    console.log(`[${reqId}] MESSAGE ATTEMPT - Body keys:`, Object.keys(req.body || {}));
-    console.log(`[${reqId}] Received Payload:`, { recipient: req.body.recipient, text: req.body.text, hasFile: !!req.file });
+    const logPrefix = `[${reqId}] [WHISPER_SEND]`;
+    console.log(`${logPrefix} Start. Body keys:`, Object.keys(req.body || {}));
 
     try {
-        if (!req.user) return res.status(401).json("Neural interface not recognized.");
+        if (!req.user) {
+            console.error(`${logPrefix} FAILED: No req.user after verifyToken`);
+            return res.status(401).json("Neural interface not recognized.");
+        }
         const senderId = req.user.id || req.user.userId || req.user._id;
         const { recipient, text } = req.body;
 
         if (!recipient) {
-            console.error(`[${reqId}] FAILED: No recipient provided`);
+            console.error(`${logPrefix} FAILED: No recipient provided`);
             return res.status(400).json("Recipient identifier required.");
         }
 
         // Validate recipient ID
         if (!mongoose.Types.ObjectId.isValid(recipient)) {
-            console.error(`[${reqId}] FAILED: Invalid recipient ID format: ${recipient}`);
-            return res.status(400).json("Invalid recipient identifier format.");
+            console.error(`${logPrefix} FAILED: Invalid recipient ID format: ${recipient}`);
+            return res.status(400).json("Invalid recipient identifier format (expected 24-char hex).");
+        }
+
+        // Validate sender ID
+        if (!mongoose.Types.ObjectId.isValid(senderId)) {
+            console.error(`${logPrefix} FAILED: Invalid sender ID from token: ${senderId}`);
+            return res.status(401).json("Neural state corruption: Invalid token payload.");
         }
 
         if (!text && !req.file) {
@@ -112,37 +121,37 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         });
 
         const savedMessage = await newMessage.save();
-        console.log(`[${reqId}] Message SAVED. ID: ${savedMessage._id}`);
+        console.log(`${logPrefix} Message SAVED. ID: ${savedMessage._id}`);
 
         // Send notification using req.user data (no additional DB query needed)
         try {
+            const notifPayload = {
+                type: 'message',
+                from: senderOid,
+                fromUsername: req.user.username || 'User',
+                fromProfilePic: req.user.profilePic || '',
+                text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
+                read: false,
+                createdAt: new Date()
+            };
+
             await User.findByIdAndUpdate(recipientOid, {
-                $push: {
-                    notifications: {
-                        type: 'message',
-                        from: senderOid,
-                        fromUsername: req.user.username || 'User',
-                        fromProfilePic: req.user.profilePic || '',
-                        text: text ? (text.length > 50 ? text.substring(0, 50) + '...' : text) : "Sent a voice note.",
-                        read: false,
-                        createdAt: new Date()
-                    }
-                }
+                $push: { notifications: notifPayload }
             });
-            console.log(`[${reqId}] Notification sent to ${recipientOid}`);
+            console.log(`${logPrefix} Notification pushed to ${recipientOid}`);
         } catch (notifErr) {
             // Non-fatal - log but don't fail the request
-            console.warn(`[${reqId}] Notification failed (non-fatal):`, notifErr.message);
+            console.warn(`${logPrefix} Notification failed (non-fatal):`, notifErr && notifErr.message);
         }
 
         res.status(201).json(savedMessage);
     } catch (err) {
-        console.error(`🚨 [${reqId}] MESSAGE ERROR:`, err);
-        console.error(`🚨 [${reqId}] Stack:`, err.stack);
+        console.error(`${logPrefix} CRITICAL ERROR:`, (err && (err.stack || err.message)) || err);
         res.status(500).json({
             error: "Neural link transmission failed",
-            detail: err.message,
-            requestId: reqId
+            detail: err && err.message,
+            requestId: reqId,
+            version: "v4.1-robust"
         });
     }
 });
