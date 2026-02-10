@@ -1734,35 +1734,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-[var(--gold-primary)]/30 group">
-                        <div>
-                            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">Private Account</div>
-                            <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Only accepted followers see content</div>
-                        </div>
-                        <div onClick={() => {
-                            if (saving) return;
-                            const newVal = !isPrivate;
-                            setIsPrivate(newVal);
-                            handleSave('isPrivate', newVal);
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-[var(--gold-primary)]' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
-                            <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
-                        </div>
-                    </div>
+                    {/* Private Account setting removed */}
 
-                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-blue-500/30 group">
-                        <div>
-                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">Guard Chat</div>
-                            <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Messages only from your followers</div>
-                        </div>
-                        <div onClick={() => {
-                            if (saving) return;
-                            const newVal = !isFollowersOnly;
-                            setIsFollowersOnly(newVal);
-                            handleSave('isFollowersOnly', newVal);
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
-                            <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isFollowersOnly ? 'translate-x-5' : ''}`} />
-                        </div>
-                    </div>
+                    {/* Guard Chat setting removed */}
 
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
@@ -1937,7 +1911,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     };
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
-    const hasRequested = displayUser?.followRequests?.some(id => String(id) === String(currentUser?._id));
+    const hasRequested = false;
 
     return (
 
@@ -2108,21 +2082,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ) : (
                                     <div className="flex-1 flex gap-2">
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
-                                            {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
+                                            {isFollowing ? t('UNFOLLOW') : t('FOLLOW')}
                                         </button>
 
-                                        {/* COMMS BUTTON (Protected by Guard Chat) */}
+                                        {/* COMMS BUTTON */}
                                         <button
-                                            onClick={() => {
-                                                if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
-                                                    addToast(t('ENCRYPTED_COMMS_ONLY'), "neutral");
-                                                    return;
-                                                }
-                                                onOpenChat(displayUser);
-                                            }}
+                                            onClick={() => { onOpenChat(displayUser); }}
                                             className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <Icons.MessageCircle className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110'}`} />
+                                            <Icons.MessageCircle className="w-5 h-5 text-[var(--gold-primary)] group-hover:scale-110" />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -2153,23 +2121,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ))}
                             </div>
 
-                            {/* PRIVACY LOCK SCREEN */}
-                            {(displayUser?.isPrivate || displayUser?.isFollowersOnly) && !isMe && !isFollowing ? (
-                                <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
-                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:border-[var(--gold-primary)]/40 transition-all relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/10 to-transparent animate-pulse" />
-                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-hover:text-[var(--gold-primary)] transition-all relative z-10" />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <h3 className="font-black text-white text-xl uppercase tracking-[0.2em]">{t('PRIVATE_TITLE')}</h3>
-                                        <div className="h-0.5 w-12 bg-[var(--gold-primary)] mx-auto opacity-50" />
-                                        <p className="text-gray-500 text-[11px] uppercase tracking-widest leading-relaxed mx-auto max-w-[240px] font-bold">{t('PRIVATE_DESC')}</p>
-                                    </div>
-                                    <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 transition-all uppercase shadow-lg shadow-[var(--gold-primary)]/20">
-                                        {hasRequested ? t('REQUESTED') : t('FOLLOW_TO_VIEW')}
-                                    </button>
-                                </div>
-                            ) : (
+                            {/* PRIVACY LOCK SCREEN REMOVED */}
+                            {true ? (
                                 <>
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
@@ -3124,46 +3077,29 @@ const App = () => {
         if (!targetId || !user) return;
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
 
-        // CRITICAL: Determine privacy status before optimistic update
-        const inputIsPrivate = typeof input === 'object' && input?.isPrivate;
-        const listUserIsPrivate = users.find(u => String(u._id) === String(targetId))?.isPrivate;
-        const isPrivate = inputIsPrivate || listUserIsPrivate;
-
         const isCurrentlyFollowing = user.following?.some(id => String(id) === String(targetId));
 
         // Optimistic UI Update Logic
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
-        } else if (!isPrivate) {
-            updateUserState({ following: [...(user.following || []), targetId] });
         } else {
-            // Private Account - Do NOT optimistically follow. Set requested state locally if possible, or wait for backend.
-            // We can optimistic update 'followRequests' if we track outgoing requests, but simplest is to wait or assume success 'Requested' toast
+            updateUserState({ following: [...(user.following || []), targetId] });
         }
 
         try {
             const res = await axios.post(`/users/${targetId}/follow`);
-            const { followers, following, message, isRequested } = res.data;
+            const { followers, following, message } = res.data;
 
             // Update user list and profile view
-            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers, followRequests: res.data.followRequests || u.followRequests, isPrivate: res.data.isPrivate ?? u.isPrivate } : u));
+            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers } : u));
             if (profileUser && String(profileUser._id) === String(targetId)) {
-                setProfileUser(prev => ({ ...prev, followers, followRequests: res.data.followRequests || prev.followRequests, isPrivate: res.data.isPrivate ?? prev.isPrivate }));
+                setProfileUser(prev => ({ ...prev, followers }));
             }
 
-            // Sync following state - IF PRIVATE, backend won't return 'following' list updated
             if (following) {
                 updateUserState({ following });
-            } else {
-                // If it was private/requested, ENSURE we are NOT following in local state (revert optimistic if it happened)
-                if (message === 'Requested' || message === 'Request Cancelled') {
-                    updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
-                }
-                fetchUsers();
             }
 
-            if (message === 'Requested') addToast("ENCRYPTION REQUESTED", "success");
-            else if (message === 'Request Cancelled') addToast("REQUEST TERMINATED", "neutral");
             refreshUser();
             playSound('pop');
         } catch (e) {
@@ -3344,25 +3280,30 @@ const App = () => {
         <div className="app-container">
             <div className="liquid-bg" />
             {!user ? (
-                <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
-                    <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
+                <div className="min-h-full bg-black flex items-center justify-center p-4 sm:p-6 relative overflow-hidden carbon-fiber">
+                    {/* F1 Racing Lines Overlay */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[var(--f1-red)] shadow-[0_0_20px_var(--f1-red)] z-50" />
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-white shadow-[0_0_20px_white] z-50" />
+
+                    <div className="w-full max-w-sm glass-panel p-8 sm:p-10 rounded-[2.5rem] text-center shadow-2xl relative z-10 border-t-4 border-[var(--f1-red)]">
                         <div className="flex flex-col items-center">
-                            <div className="flex items-center gap-3 mb-8 px-2">
-                                <div className="flex flex-col items-center mb-8">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
+                            <div className="mb-10 w-full flex flex-col items-center">
+                                <img src="/Logo.png" alt="Legacy Academy" className="h-48 sm:h-56 w-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
+                                <div className="mt-4 flex flex-col">
+                                    <span className="text-[10px] font-black tracking-[0.5em] text-[var(--f1-red)] uppercase">Grid Position: Alpha</span>
+                                    <h1 className="text-2xl font-black italic tracking-tighter uppercase text-white mt-1">Join the Engine</h1>
                                 </div>
                             </div>
-                            <div className="space-y-4">
+
+                            <div className="w-full space-y-4">
                                 {authMode === 'login' && (
                                     <>
                                         <div className="relative">
-                                            <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="email" placeholder="Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
+                                            <input type="email" placeholder="Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="f1-input w-full" />
                                         </div>
                                         <div className="relative">
-                                            <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
-                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                            <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="f1-input w-full" />
+                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
                                                 {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                             </button>
                                         </div>
@@ -3370,81 +3311,62 @@ const App = () => {
                                             setAuthLoading(true);
                                             try {
                                                 const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
-                                                localStorage.setItem('token', res.data.token); // CRITICAL FIX: Save token
+                                                localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || 'en');
                                                 localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
                                                 setUser(res.data.user);
                                             } catch (e) {
-                                                alert(e.response?.data?.message || "Invalid Credentials.");
+                                                alert(e.response?.data?.message || "Ignition Failure: Invalid Credentials.");
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                            {authLoading ? "AUTHENTICATING..." : "LOGIN"}
+                                        }} className="w-full liquid-btn py-4 rounded-full font-black hover:scale-105 active:scale-95 transition-all disabled:opacity-50">
+                                            {authLoading ? "INITIALIZING..." : "IGNITION (LOGIN)"}
                                         </button>
-                                        <div className="flex justify-between text-xs text-gray-500 px-2 mt-4 font-bold tracking-wide">
-                                            <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Create Account</span>
-                                            <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Forgot Password?</span>
+                                        <div className="flex flex-col gap-3 mt-6">
+                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="w-full gold-btn py-3.5 rounded-full text-xs font-bold transition-all">
+                                                CREATE ACCOUNT
+                                            </button>
+                                            <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="text-xs text-gray-500 cursor-pointer hover:text-white transition-colors font-bold uppercase tracking-widest">Forgot Access Code?</span>
                                         </div>
                                     </>
                                 )}
+
                                 {authMode === 'register' && (
-                                    <>
-                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-[var(--gold-primary)] mb-6 flex items-center justify-center transition-all">
-                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-[var(--gold-primary)]" />}
+                                    <div className="animate-fade-in space-y-4">
+                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-black/60 border-2 border-dashed border-[var(--f1-red)] overflow-hidden cursor-pointer relative group flex items-center justify-center transition-all hover:bg-white/5">
+                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-[var(--f1-red)] animate-pulse" />}
                                             <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
                                                 const file = e.target.files[0];
                                                 if (file) setRegisterPreview(URL.createObjectURL(file));
                                             }} />
                                         </div>
-                                        <div className="relative mb-3">
-                                            <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                        </div>
-                                        <div className="relative mb-3">
-                                            <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                        </div>
-                                        <div className="relative mb-3">
-                                            <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                        <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="f1-input w-full" />
+                                        <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="f1-input w-full" />
+                                        <div className="relative">
+                                            <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="f1-input w-full" />
+                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400">
                                                 {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                             </button>
                                         </div>
-                                        <div className="relative mb-4">
-                                            <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-20" />
-                                        </div>
+                                        <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="f1-input w-full text-sm resize-none h-20" />
 
-                                        <div className="flex gap-2 mb-6">
-                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none text-center h-[52px]">
-                                                <option value="en" className="bg-black text-white">English</option>
-                                                <option value="el" className="bg-black text-white">Ελληνικά</option>
-                                                <option value="fr" className="bg-black text-white">Français</option>
-                                                <option value="de" className="bg-black text-white">Deutsch</option>
-                                                <option value="ru" className="bg-black text-white">Русский</option>
-                                                <option value="es" className="bg-black text-white">Español</option>
-                                                <option value="tr" className="bg-black text-white">Türkçe</option>
-                                                <option value="cy" className="bg-black text-white">Cypriot</option>
+                                        <div className="flex gap-2">
+                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/10 rounded-2xl py-3 px-3 text-white text-xs font-bold outline-none focus:border-[var(--f1-red)] appearance-none text-center">
+                                                <option value="en">EN</option>
+                                                <option value="el">EL</option>
+                                                <option value="fr">FR</option>
+                                                <option value="de">DE</option>
+                                                <option value="ru">RU</option>
+                                                <option value="es">ES</option>
+                                                <option value="tr">TR</option>
+                                                <option value="cy">CY</option>
                                             </select>
-
-                                            <div className="flex-1 p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2">
-                                                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">THEME</div>
-                                                <div className="flex gap-2 flex-wrap justify-center">
-                                                    {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
-                                                        <button
-                                                            key={c}
-                                                            onClick={() => { playSound('pop'); setFormData(prev => ({ ...prev, theme: c })); }}
-                                                            className={`w-7 h-7 rounded-lg border-2 transition-all relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/20'}`}
-                                                            style={{ backgroundColor: c }}
-                                                        >
-                                                            {formData.theme === c && (
-                                                                <Icons.Check className={`w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ffffff' ? 'text-black' : 'text-white'} drop-shadow-md`} />
-                                                            )}
-                                                        </button>
-                                                    ))}
-                                                </div>
+                                            <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-20 custom-scrollbar">
+                                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
+                                                    <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-6 h-6 rounded-lg transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_10px_white] ring-2 ring-white/50' : 'opacity-40 hover:opacity-100'}`} style={{ backgroundColor: c }} />
+                                                ))}
                                             </div>
                                         </div>
 
@@ -3461,31 +3383,27 @@ const App = () => {
                                                 if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
 
                                                 const res = await axios.post('/auth/register', fd);
-                                                // Auto-login logic from register response
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
                                                 localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
                                                 setUser(res.data.user);
-                                                setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
                                             } catch (e) {
-                                                alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
+                                                alert(e.response?.data?.message || "Sector Error: Registration Failed.");
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                            {authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}
+                                        }} className="w-full liquid-btn py-4 rounded-full font-black uppercase transition-all">
+                                            {authLoading ? "PREPARING..." : "ENTER GRID"}
                                         </button>
-                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
-                                    </>
+                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-2 font-bold uppercase tracking-widest" onClick={() => setAuthMode('login')}>Return to Base</div>
+                                    </div>
                                 )}
+
                                 {authMode === 'forgot' && (
-                                    <>
-                                        <p className="text-sm text-gray-400 mb-4 px-2 text-center">{t('RESET_LINK_DESC')}</p>
-                                        <div className="relative mb-6">
-                                            <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
-                                        </div>
+                                    <div className="animate-fade-in space-y-6">
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('RESET_LINK_DESC')}</p>
+                                        <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="f1-input w-full" />
                                         <button disabled={authLoading} onClick={async () => {
                                             setAuthLoading(true);
                                             try {
@@ -3493,15 +3411,15 @@ const App = () => {
                                                 alert(t('RESET_LINK_SENT'));
                                                 setAuthMode('login');
                                             } catch (e) {
-                                                alert(t('REQUEST_FAILED'));
+                                                alert("System Override: Reset Failed.");
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
-                                            {authLoading ? t('SENDING') : t('SEND_RESET_LINK')}
+                                        }} className="w-full liquid-btn py-4 rounded-full font-black transition-all">
+                                            {authLoading ? "SENDING..." : "RECOVER ACCESS"}
                                         </button>
-                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
-                                    </>
+                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center font-bold uppercase tracking-widest" onClick={() => setAuthMode('login')}>ABORT MISSION</div>
+                                    </div>
                                 )}
                             </div>
                         </div>

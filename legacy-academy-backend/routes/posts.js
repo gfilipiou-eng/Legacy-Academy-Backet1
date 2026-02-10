@@ -11,37 +11,13 @@ const router = express.Router();
 router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
-        const currentUserId = req.user.id || req.user.userId;
-
         const posts = await Post.find()
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 })
             .lean();
 
-        // Robust Privacy Filtering
-        const filteredPosts = posts.filter(p => {
-            if (!p.author) return false;
-            const authorId = String(p.author?._id || p.author);
-
-            // 1. Own posts always visible
-            if (authorId === String(currentUserId)) return true;
-
-            // 2. Founder/Admin bypass (Real-time check)
-            if (req.user.role === 'Founder' || req.user.role === 'Admin') return true;
-
-            const author = typeof p.author === 'object' ? p.author : null;
-            const authorIsPrivate = !!(author?.isPrivate || author?.isFollowersOnly || p.isPrivate || p.isFollowersOnly);
-
-            if (authorIsPrivate) {
-                const followers = author?.followers || [];
-                // Check if current user is in followers list
-                return followers.some(id => String(id) === String(currentUserId));
-            }
-            return true;
-        }).slice(0, limit);
-
-        res.status(200).json(filteredPosts);
+        res.status(200).json(posts.slice(0, limit));
     } catch (err) {
         console.error("FEED ERROR:", err);
         res.status(500).json(err);
@@ -53,22 +29,6 @@ router.get("/", verifyToken, async (req, res) => {
 router.get("/user/:userId", verifyToken, async (req, res) => {
     try {
         const targetUserId = req.params.userId;
-        const currentUserId = req.user.id;
-
-        const user = await User.findById(targetUserId);
-        if (!user) return res.status(404).json("User not found");
-
-        // Privacy Check
-        const isOwner = String(currentUserId) === String(targetUserId);
-        const isFollower = user.followers.some(id => String(id) === String(currentUserId));
-        const isPrivate = user.isPrivate || user.isFollowersOnly;
-        const isAdmin = req.user.role === 'Founder' || req.user.role === 'Admin';
-
-        if (isPrivate && !isOwner && !isFollower && !isAdmin) {
-            console.log(`[PRIVACY] Blocked access to posts of ${user.username} for ${currentUserId}`);
-            return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
-        }
-
         const posts = await Post.find({ author: targetUserId })
             .populate("author", "username profilePic role")
             .populate("comments.user", "username profilePic role")
@@ -79,6 +39,8 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
         res.status(500).json(err);
     }
 });
+
+// CREATE POST
 
 // CREATE POST
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {

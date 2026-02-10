@@ -36,15 +36,7 @@ router.post("/", verifyToken, upload.single("file"), async (req, res) => {
         const recipientUser = await User.findById(recipientId);
         if (!recipientUser) return res.status(404).json("Target user no longer exists");
 
-        // GUARD CHAT CHECK
-        // If recipient has Guard Chat enabled, sender MUST be a follower
-        if (recipientUser.isFollowersOnly) {
-            const isFollower = recipientUser.followers.map(id => String(id)).includes(String(currentUserId));
-            const isAdmin = req.user.role === 'Admin' || req.user.role === 'Founder';
-            if (!isFollower && !isAdmin && String(recipientId) !== String(currentUserId)) {
-                return res.status(403).json("GUARD CHAT ACTIVE: You must follow this user to communicate.");
-            }
-        }
+        // Guard Chat removed: allow messages freely
 
         const newMessage = new Message({
             sender: currentUserId,

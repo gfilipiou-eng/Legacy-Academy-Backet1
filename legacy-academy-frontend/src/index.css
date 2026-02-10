@@ -6,12 +6,15 @@
 
 :root {
   --gold-primary: #ffd700;
+  --f1-red: #e10600;
+  /* Formula 1 Official Red */
+  --carbon-black: #0d0d0d;
   --gold-secondary: #b8860b;
   --gold-hover: #ffecb3;
   --gold-glow: rgba(255, 215, 0, 0.4);
   --gold-glow-soft: rgba(255, 215, 0, 0.1);
-  --glass-bg: rgba(20, 20, 20, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(10, 10, 10, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 body {
@@ -36,19 +39,30 @@ img {
 /* --- LIQUID GLASS NAV (REFINED) --- */
 /* --- LIQUID GLASS NAV (ULTRA REFINED) --- */
 .liquid-glass-nav {
-  background: rgba(10, 10, 10, 0.45);
-  backdrop-filter: blur(50px) saturate(220%);
-  -webkit-backdrop-filter: blur(50px) saturate(220%);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-left: 1px solid rgba(255, 255, 255, 0.03);
-  border-right: 1px solid rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-top: 2px solid var(--f1-red);
+  /* F1 Racing Line */
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
   box-shadow:
-    0 -15px 60px rgba(0, 0, 0, 0.95),
-    0 0 40px rgba(var(--gold-primary-rgb), 0.03),
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    0 10px 40px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: visible;
+}
+
+/* Carbon Fiber Texture Utility */
+.carbon-fiber {
+  background-color: #0d0d0d;
+  background-image:
+    linear-gradient(45deg, #151515 25%, transparent 25%),
+    linear-gradient(-45deg, #151515 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #151515 75%),
+    linear-gradient(-45deg, transparent 75%, #151515 75%);
+  background-size: 4px 4px;
 }
 
 .liquid-glass-nav::before {
@@ -148,22 +162,40 @@ img {
   @apply bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[var(--gold-primary)] transition-all;
 }
 
+/* Twitter-Style Pill Buttons with F1 Flare */
 .gold-btn {
-  @apply bg-gradient-to-r from-[var(--gold-primary)] to-[var(--gold-secondary)] text-black font-black uppercase tracking-widest px-6 py-3 rounded-2xl transition-all active:scale-95;
-  box-shadow: 0 10px 15px -3px rgba(255, 215, 0, 0.2), 0 4px 6px -4px rgba(255, 215, 0, 0.1);
+  @apply bg-white text-black font-black uppercase tracking-wider px-8 py-3.5 rounded-full transition-all active:scale-95;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
 }
 
 .gold-btn:hover {
-  box-shadow: 0 20px 25px -5px rgba(255, 215, 0, 0.4), 0 8px 10px -6px rgba(255, 215, 0, 0.2);
-  filter: brightness(110%);
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.liquid-btn {
+  @apply bg-[var(--f1-red)] text-white font-black uppercase tracking-widest px-8 py-4 rounded-full transition-all active:scale-95 text-sm;
+  box-shadow: 0 8px 25px rgba(225, 6, 0, 0.3);
+}
+
+.liquid-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 12px 30px rgba(225, 6, 0, 0.5);
 }
 
 .gold-btn-outline {
-  @apply bg-transparent border-2 border-[var(--gold-primary)] text-[var(--gold-primary)] font-black uppercase tracking-widest px-6 py-3 rounded-2xl transition-all active:scale-95;
+  @apply bg-transparent border-2 border-white/20 text-white font-bold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all active:scale-95;
 }
 
 .gold-btn-outline:hover {
-  background: var(--gold-glow-soft);
+  border-color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.f1-input {
+  @apply bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--f1-red)] transition-all font-medium;
+  backdrop-filter: blur(10px);
 }
 
 .liquid-bg {
