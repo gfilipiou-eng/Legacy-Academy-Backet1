@@ -668,6 +668,7 @@ router.get("/:id", verifyToken, async (req, res) => {
       return res.status(403).json("This intel is encrypted. Access restricted to authorized followers.");
     }
     res.status(200).json(post);
+  } catch (e) {
     console.error("Fetch single post error:", e);
     res.status(500).json(e);
   }

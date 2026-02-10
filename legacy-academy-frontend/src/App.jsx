@@ -314,12 +314,16 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     const postAuthorId = post.author?._id || post.author;
     const isPostAuthor = String(postAuthorId) === String(user?._id);
 
-    // Improved role detection handling string vs object IDs and denormalized data
-    const foundUserInList = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
-    const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
+    // Unified author resolution
+    const commentAuthor = useMemo(() => {
+        if (isCommentAuthor) return user;
+        if (comment.user && typeof comment.user === 'object' && comment.user.username) return comment.user;
+        return allUsers?.find(u => String(u._id) === String(currentCommentAuthorId)) || { username: comment.authorName || 'Agent', profilePic: comment.authorProfilePic, role: 'Member' };
+    }, [isCommentAuthor, user, comment.user, allUsers, currentCommentAuthorId, comment.authorName, comment.authorProfilePic]);
 
+    const isAuthorFounder = commentAuthor?.role === 'Founder';
     const canEdit = isCommentAuthor || user?.role === 'Founder';
-    const canDelete = isCommentAuthor || user?.role === 'Founder'; // Only own or Founder can delete
+    const canDelete = isCommentAuthor || user?.role === 'Founder';
 
     const handleSave = () => {
         if (typeof onEdit === 'function') onEdit(post._id, comment._id, editText);
@@ -329,7 +333,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
     return (
         <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
-                <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
+                <ProfileAvatar user={commentAuthor} />
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
@@ -337,13 +341,13 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                     <div className="flex flex-col mb-1 min-w-[120px]">
                         <div className="flex items-center gap-1">
                             <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--f1-primary)] italic' : 'text-gray-400'}`}>
-                                {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
+                                {commentAuthor?.username || 'Agent'}
                             </span>
                             <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0 drop-shadow-[0_0_3px_rgba(29,155,240,0.5)]">
                                 <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                             </svg>
                         </div>
-                        {isFounder && <span className="text-[var(--f1-primary)] text-[8px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}
+                        {isAuthorFounder && <span className="text-[var(--f1-primary)] text-[8px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}
                     </div>
 
                     {isEditing ? (
@@ -1052,9 +1056,16 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
     if (post.isStory) return null;
 
+    // Resolve author object robustly
+    const author = useMemo(() => {
+        if (post.author && typeof post.author === 'object' && post.author.username) return post.author;
+        const targetId = String(post.author?._id || post.author);
+        return allUsers?.find(u => String(u._id) === targetId) || { _id: targetId, username: t('UNKNOWN_AGENT') || 'Agent' };
+    }, [post.author, allUsers, t]);
+
     const isFounder = user?.role === 'Founder';
-    const isPostAuthorFounder = post.author?.role === 'Founder';
-    const isOwner = String(post.author?._id || post.author) === String(user?._id);
+    const isPostAuthorFounder = author?.role === 'Founder';
+    const isOwner = String(author?._id) === String(user?._id);
     const dislikeCount = post.dislikes?.length || 0;
 
 
@@ -1138,9 +1149,9 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             <div className="p-4" >
                 <div className="flex items-start gap-3">
                     <div className="flex flex-col items-center gap-1 shrink-0">
-                        <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer">
+                        <div onClick={(e) => { e.stopPropagation(); onViewProfile(author) }} className="cursor-pointer">
                             <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
-                                <ProfileAvatar user={post.author} />
+                                <ProfileAvatar user={author} />
                             </div>
                         </div>
                     </div>
@@ -1148,8 +1159,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1.5">
-                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
-                                        {post.author?.username}
+                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
+                                        {author?.username}
                                         <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]">
                                             <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                                         </svg>
@@ -1157,7 +1168,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 </div>
                                 {isPostAuthorFounder && <span className="text-[var(--f1-primary)] text-[9px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--f1-primary)] font-medium italic' : 'text-gray-500'}`}>
-                                    @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
+                                    @{author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
                                 </span>
                             </div>
 
@@ -1848,7 +1859,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     }), [posts, profileUser]);
 
     const fetchUserPosts = async () => {
-        if (!profileUser?._id) return;
+        const userId = profileUser?._id || (typeof profileUser === 'string' ? profileUser : null);
+        if (!userId) return;
         setLoadingPosts(true);
         try {
             const res = await axios.get(`/posts/user/${profileUser._id}`);
@@ -1865,6 +1877,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             fetchUserPosts();
         }
     }, [isOpen, profileUser?._id]);
+    useEffect(() => {
+        if (isOpen && isFollowing) {
+            fetchUserPosts();
+        }
+    }, [isOpen, isFollowing]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         if (p.isStory) return false;
@@ -1901,16 +1918,42 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     }, [userPosts, currentUser, lang]);
 
     useEffect(() => {
-        if (profileUser?._id === currentUser?._id) {
+        const targetId = profileUser?._id || (typeof profileUser === 'string' ? profileUser : null);
+        if (!targetId) return;
+
+        if (String(targetId) === String(currentUser?._id)) {
             setUserData(currentUser);
-        } else if (profileUser?._id) {
-            axios.get(`/users/find/${profileUser._id || profileUser}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
+        } else {
+            // Check if we already have it in allUsers to avoid extra network call
+            const cached = allUsers.find(u => String(u._id) === String(targetId));
+            if (cached) {
+                setUserData(cached);
+            } else {
+                axios.get(`/users/find/${targetId}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
+            }
         }
-    }, [profileUser, currentUser]);
+    }, [profileUser, currentUser, allUsers]);
 
     if (!isOpen || !profileUser) return null;
 
-    const displayUser = (profileUser?._id === currentUser?._id || profileUser === currentUser?._id) ? currentUser : (userData || profileUser);
+    const displayUser = useMemo(() => {
+        const targetId = profileUser?._id || (typeof profileUser === 'string' ? profileUser : null);
+        if (String(targetId) === String(currentUser?._id)) return currentUser;
+
+        // Try fetched state first
+        if (userData && userData._id) return userData;
+
+        // Try global list
+        if (allUsers?.length > 0) {
+            const inList = allUsers.find(u => String(u._id) === String(targetId));
+            if (inList) return inList;
+        }
+
+        // Try passed object
+        if (profileUser && typeof profileUser === 'object' && profileUser.username) return profileUser;
+
+        return { _id: targetId, username: t('SCANNING_ID') || 'Agent...' };
+    }, [profileUser, currentUser, userData, allUsers, t]);
     const isMe = displayUser?._id === currentUser?._id;
 
     const getListUsers = () => {
@@ -2145,110 +2188,110 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                 </div>
                             ) : (
-                            <>
-                                {userStories.length > 0 && (
-                                    <div className="mb-6">
-                                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                            {userStories.map(s => (
-                                                <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                    <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-primary)]/10 bg-black overflow-hidden relative">
-                                                        {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                                            <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
-                                                        ) : (
-                                                            <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                                <Icons.Play className="w-6 h-6 text-white" />
-                                                                {/* Ensure video doesn't autoplay in thumbnail view */}
-                                                                <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="space-y-6 pb-20">
-                                    {loadingPosts ? (
-                                        <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                            <div className="w-8 h-8 border-2 border-[var(--f1-primary)] border-t-transparent rounded-full animate-spin" />
-                                            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
-                                        </div>
-                                    ) : userPosts.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-                                            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-2">
-                                                <Icons.Folder className="w-6 h-6 text-gray-600" />
-                                            </div>
-                                            <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
-                                        </div>
-                                    ) : (
-                                        Object.keys(groupedUserPosts).map(dateKey => {
-                                            const isExposed = expandedDates[dateKey];
-                                            return (
-                                                <div key={dateKey} className="animate-fade-in group">
-                                                    <button
-                                                        onClick={(e) => toggleDate(e, dateKey)}
-                                                        className="w-full flex items-center gap-4 mb-3 px-4 py-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-primary)]/40 transition-all cursor-pointer group/folder text-left"
-                                                    >
-                                                        <div className="relative">
-                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20 shadow-[0_0_15px_var(--f1-glow-soft)]' : 'text-gray-500'} transition-all`} />
-                                                            {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-primary)] text-white text-[9px] font-black shadow-lg shadow-[var(--f1-glow)]/30">{groupedUserPosts[dateKey].length}</div>}
-                                                        </div>
-                                                        <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
-                                                        <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-primary)]' : ''}`} />
-                                                    </button>
-                                                    <AnimatePresence>
-                                                        {isExposed && (
-                                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                                <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
-                                                                    {groupedUserPosts[dateKey].map(p => (
-                                                                        <div
-                                                                            key={p._id}
-                                                                            onClick={(e) => { e.stopPropagation(); onOpenDetail(p); }}
-                                                                            className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                                        >
-                                                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                                <div className="relative w-full h-full">
-                                                                                    <video
-                                                                                        src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
-                                                                                        muted
-                                                                                        playsInline
-                                                                                        preload="metadata"
-                                                                                        className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
-                                                                                    />
-                                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                        <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
-                                                                                    </div>
-                                                                                </div>
-                                                                            ) : p.image ? (
-                                                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (
-                                                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                                </div>
-                                                                            )}
-
-                                                                            {/* STATS OVERLAY on hover */}
-                                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
+                                <>
+                                    {userStories.length > 0 && (
+                                        <div className="mb-6">
+                                            <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
+                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                                {userStories.map(s => (
+                                                    <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                        <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-primary)]/10 bg-black overflow-hidden relative">
+                                                            {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                                                <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                            ) : (
+                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
+                                                                    <Icons.Play className="w-6 h-6 text-white" />
+                                                                    {/* Ensure video doesn't autoplay in thumbnail view */}
+                                                                    <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
                                                                 </div>
-                                                            </motion.div>
-                                                        )}
-                                                    </AnimatePresence>
-                                                </div>
-                                            );
-                                        })
+                                                            )}
+                                                        </div>
+                                                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
                                     )}
-                                </div>
-                            </>)}
+
+                                    <div className="space-y-6 pb-20">
+                                        {loadingPosts ? (
+                                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                                <div className="w-8 h-8 border-2 border-[var(--f1-primary)] border-t-transparent rounded-full animate-spin" />
+                                                <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
+                                            </div>
+                                        ) : userPosts.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+                                                <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-2">
+                                                    <Icons.Folder className="w-6 h-6 text-gray-600" />
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
+                                            </div>
+                                        ) : (
+                                            Object.keys(groupedUserPosts).map(dateKey => {
+                                                const isExposed = expandedDates[dateKey];
+                                                return (
+                                                    <div key={dateKey} className="animate-fade-in group">
+                                                        <button
+                                                            onClick={(e) => toggleDate(e, dateKey)}
+                                                            className="w-full flex items-center gap-4 mb-3 px-4 py-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-primary)]/40 transition-all cursor-pointer group/folder text-left"
+                                                        >
+                                                            <div className="relative">
+                                                                <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20 shadow-[0_0_15px_var(--f1-glow-soft)]' : 'text-gray-500'} transition-all`} />
+                                                                {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-primary)] text-white text-[9px] font-black shadow-lg shadow-[var(--f1-glow)]/30">{groupedUserPosts[dateKey].length}</div>}
+                                                            </div>
+                                                            <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
+                                                            <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-primary)]' : ''}`} />
+                                                        </button>
+                                                        <AnimatePresence>
+                                                            {isExposed && (
+                                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
+                                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
+                                                                        {groupedUserPosts[dateKey].map(p => (
+                                                                            <div
+                                                                                key={p._id}
+                                                                                onClick={(e) => { e.stopPropagation(); onOpenDetail(p); }}
+                                                                                className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
+                                                                            >
+                                                                                {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                                    <div className="relative w-full h-full">
+                                                                                        <video
+                                                                                            src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
+                                                                                            muted
+                                                                                            playsInline
+                                                                                            preload="metadata"
+                                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
+                                                                                        />
+                                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                                            <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ) : p.image ? (
+                                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                ) : (
+                                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {/* STATS OVERLAY on hover */}
+                                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
+                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </>)}
                         </div>
                     )}
                 </div>
