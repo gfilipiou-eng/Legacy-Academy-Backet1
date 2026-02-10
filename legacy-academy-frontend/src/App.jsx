@@ -2877,7 +2877,7 @@ const App = () => {
     };
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('/users');
+            const res = await axios.get(`/users?ts=${Date.now()}`);
             setUsers(res.data);
         } catch (e) { }
     };
@@ -2885,7 +2885,7 @@ const App = () => {
     const refreshUser = async () => {
         if (!user?._id) return;
         try {
-            const res = await axios.get(`/users/find/${user._id}`);
+            const res = await axios.get(`/users/find/${user._id}?ts=${Date.now()}`);
             if (res.data) {
                 setUser(prev => {
                     const updated = { ...prev, ...res.data };
@@ -2902,7 +2902,7 @@ const App = () => {
     const fetchNotifications = async () => {
         if (!user) return;
         try {
-            const res = await axios.get('/users/notifications');
+            const res = await axios.get(`/users/notifications?ts=${Date.now()}`);
 
             // 🔥 LIVE SYNC: If we see a new 'follow_accepted' alert, refresh everything
             if (res.data?.some(n => n.type === 'follow_accepted' && !n.read)) {
@@ -3200,6 +3200,7 @@ const App = () => {
                 }
                 if (res.data.notifications) setAlerts(res.data.notifications);
             }
+            addToast('AUTHORIZATION COMPLETE', 'success');
             playSound('pop');
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
@@ -3217,9 +3218,10 @@ const App = () => {
                 console.error(`[HANDSHAKE] Authorization failed: ${msg}`, { requesterId });
             }
         } finally {
-            fetchNotifications();
-            fetchUsers();
-            refreshUser();
+            await new Promise(r => setTimeout(r, 250));
+            await fetchNotifications();
+            await fetchUsers();
+            await refreshUser();
             setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(requesterId)]; return copy; });
         }
     };
@@ -3242,9 +3244,10 @@ const App = () => {
             // ALWAYS wipe the alert if the user clicked Reject, even if server fails
             setAlerts(prev => prev.filter(a => String(a.sender?._id || a.sender || a.from) !== String(requesterId)));
         } finally {
-            fetchNotifications();
-            fetchUsers();
-            refreshUser();
+            await new Promise(r => setTimeout(r, 250));
+            await fetchNotifications();
+            await fetchUsers();
+            await refreshUser();
             setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(requesterId)]; return copy; });
         }
     };
