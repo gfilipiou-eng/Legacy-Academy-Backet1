@@ -3206,6 +3206,12 @@ const App = () => {
                 if (res.data.notifications) setAlerts(res.data.notifications);
             }
             addToast('AUTHORIZATION COMPLETE', 'success');
+            try {
+                const rf = await axios.post(`/users/${String(requesterId)}/follow`);
+                if (rf.data?.following) {
+                    updateUserState({ following: rf.data.following });
+                }
+            } catch (err) { }
             playSound('pop');
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
