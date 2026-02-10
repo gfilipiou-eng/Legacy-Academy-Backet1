@@ -2932,9 +2932,9 @@ const App = () => {
         } catch (e) { console.error('Mark read failed', e); }
     };
 
-    // Polling Intervals - Optimized to reduce lag
+    // Polling Intervals - Optimized for "Live" experience
     let _notifInterval = null;
-    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 15000); };
+    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 5000); };
     const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
 
     let _hbInterval = null;
@@ -2942,11 +2942,11 @@ const App = () => {
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
     let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 10000); };
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 8000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 15000); };
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 30000); };
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
@@ -3200,12 +3200,13 @@ const App = () => {
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
             const isStale = /not found/i.test(msg) || /stale/i.test(msg) || /Endpoint Not Found/i.test(msg);
-            const status400 = e.response?.status === 400;
+            const status400 = (e.response?.status === 400 || e.response?.status === 404);
             if (isStale || status400) {
+                console.warn(`[HANDSHAKE] Cleaning up stale notification: ${requesterId}`);
+                // WIPE IT: If it's stale or 400, remove from UI immediately
+                setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
                 try {
-                    const res = await axios.post(`/users/requests/${requesterId}/reject`, {});
-                    if (res.data?.followRequests) updateUserState({ followRequests: res.data.followRequests });
-                    if (res.data?.notifications) setAlerts(res.data.notifications);
+                    await axios.post(`/users/requests/${requesterId}/reject`, {});
                 } catch { }
                 playSound('pop');
             } else {
@@ -3232,6 +3233,8 @@ const App = () => {
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
+            // Optimistic cleanup: remove it anyway if the user explicitly clicked deny
+            setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
         } finally {
             fetchNotifications();
             fetchUsers();
