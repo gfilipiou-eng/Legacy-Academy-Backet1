@@ -1422,15 +1422,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
 
             for (const msg of unreadIncoming) {
                 processedReadIds.current.add(msg._id);
-                try {
-                    await axios.patch(`/messages/${msg._id}/read`);
-                } catch (e) {
-                    if (e?.response?.status === 404) {
-                        try { await axios.post(`/messages/${msg._id}/read`); } catch (e2) { }
-                    } else {
-                        console.warn('Failed to mark message as read:', e.message);
-                    }
-                }
+                setMessages(prev => {
+                    const arr = prev[otherUserId] || [];
+                    const next = arr.map(m => (String(m._id) === String(msg._id) ? { ...m, read: true } : m));
+                    return { ...prev, [otherUserId]: next };
+                });
             }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
