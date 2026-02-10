@@ -100,25 +100,38 @@ if (typeof document !== 'undefined') {
 }
 
 // Helpers for Youtube detection/embed
+const YT_REGEX = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i;
+
 const isYouTubeUrl = (url) => {
     if (!url) return false;
     try {
-        return /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(url);
+        return YT_REGEX.test(url);
     } catch (e) { return false; }
 };
 const getYouTubeEmbedUrl = (url) => {
-    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(url || '');
+    const m = YT_REGEX.exec(url || '');
     if (!m) return null;
     return `https://www.youtube.com/embed/${m[1]}`;
 };
+
 const getYouTubeThumbnail = (url) => {
-    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(url || '');
+    const m = YT_REGEX.exec(url || '');
     if (!m) return null;
     return `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
 };
 
-const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
-const isVideoFile = (path) => path && /\.(mp4|mov|webm)$/i.test(path);
+const HASHTAG_REGEX = /(#[\p{L}\p{N}_]+)/gu;
+const parseHashtags = (text, onClick) => {
+    if (!text) return text;
+    return text.split(HASHTAG_REGEX).map((part, i) => {
+        return part.startsWith('#') ? (
+            <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span>
+        ) : part;
+    });
+};
+
+const VIDEO_EXT_REGEX = /\.(mp4|mov|webm)$/i;
+const isVideoFile = (path) => path && VIDEO_EXT_REGEX.test(path);
 const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
     // Rule: Only show online status if the user follows me (the current viewer)
