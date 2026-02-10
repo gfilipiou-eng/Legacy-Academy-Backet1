@@ -1864,14 +1864,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const fileRef = useRef(null);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-    // Safety lock to prevent ghost clicks when opening folders
+    const [isGhostLocked, setIsGhostLocked] = useState(false);
     const interactionLock = useRef(0);
 
     const toggleDate = (dateKey) => {
         interactionLock.current = Date.now();
+        setIsGhostLocked(true);
+        setTimeout(() => setIsGhostLocked(false), 600);
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
         playSound('pop');
     };
+
+
+
 
     useEffect(() => {
         if (currentUser && !isEditing) {
@@ -2257,7 +2262,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         <AnimatePresence>
                                                             {isExposed && (
                                                                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                                    <div className={`grid grid-cols-3 gap-1 sm:gap-1.5 pt-2 ${isInteracting ? 'pointer-events-none' : ''}`}>
+                                                                    <div className={`grid grid-cols-3 gap-1 sm:gap-1.5 pt-2 transition-opacity duration-200 ${isGhostLocked ? 'pointer-events-none opacity-90' : ''}`}>
                                                                         {groupedUserPosts[dateKey].map(p => (
                                                                             <div
                                                                                 key={p._id}
@@ -2994,19 +2999,19 @@ const App = () => {
     /*
     useEffect(() => {
         const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
-        if (anyModalOpen) {
-            document.body.style.overflow = 'hidden';
+                    if (anyModalOpen) {
+                        document.body.style.overflow = 'hidden';
             // document.body.style.height = '100vh'; // CAUSES SCROLL JUMP
         } else {
-            document.body.style.overflow = 'auto';
+                        document.body.style.overflow = 'auto';
             // document.body.style.height = 'auto';
         }
         return () => {
-            document.body.style.overflow = 'auto';
-            document.body.style.height = 'auto';
+                        document.body.style.overflow = 'auto';
+                    document.body.style.height = 'auto';
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
-    */
+                    */
 
     const handleLike = async (postId) => {
         const userId = user?._id;
