@@ -118,6 +118,7 @@ const getYouTubeThumbnail = (url) => {
 };
 
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
+const isVideoFile = (path) => path && /\.(mp4|mov|webm)$/i.test(path);
 const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
     // Rule: Only show online status if the user follows me (the current viewer)
@@ -2274,7 +2275,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                 >
                                                                                     {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
                                                                                         <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : getYouTubeThumbnail(p.videoUrl)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 pointer-events-none" />
-                                                                                    ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                                    ) : (p.videoUrl || isVideoFile(p.image)) ? (
                                                                                         <div className="relative w-full h-full">
                                                                                             <video
                                                                                                 src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
