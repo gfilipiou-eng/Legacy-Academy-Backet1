@@ -3172,7 +3172,7 @@ const App = () => {
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
         } else if (!isCurrentlyFollowing && targetIsPrivate) {
-            updateUserState({ followRequests: [...(user.followRequests || []), targetId] });
+            updateUserState({ followRequests: [...(user.followRequests || []), targetId], requested: true });
         } else {
             updateUserState({ following: [...(user.following || []), targetId] });
         }
