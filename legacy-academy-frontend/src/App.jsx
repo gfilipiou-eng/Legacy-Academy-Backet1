@@ -1789,8 +1789,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#ffffff', '#e10600', '#1a1a1a', '#3b82f6', '#10b981', '#a855f7'].map(c => {
-                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffffff';
+                            {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88'].map(c => {
+                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#FFD700';
                                 const isActive = currentTheme === c;
                                 return (
                                     <button key={c} onClick={() => {
@@ -2656,19 +2656,22 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 };
 
 const applyTheme = (color) => {
-    const getSecondary = (hex) => {
-        if (hex === '#ffffff') return '#888888';
-        if (hex === '#ffd700') return '#b8860b';
-        return hex + 'aa';
+    const hex = color.toLowerCase();
+    const getSecondary = (c) => {
+        if (c === '#ffffff') return '#888888';
+        if (c === '#ffd700') return '#b8860b';
+        if (c === '#e10600') return '#b30500';
+        return c + 'aa';
     };
-    const getHover = (hex) => {
-        if (hex === '#ffffff') return '#f0f0f0';
-        return hex + 'cc';
+    const getHover = (c) => {
+        if (c === '#ffffff') return '#f0f0f0';
+        if (c === '#ffd700') return '#ffec8b';
+        return c + 'cc';
     };
-    const secondary = getSecondary(color);
-    const hover = getHover(color);
-    const glow = `${color}44`;
-    const glowSoft = `${color}1a`;
+    const secondary = getSecondary(hex);
+    const hover = getHover(hex);
+    const glow = `${hex}44`;
+    const glowSoft = `${hex}1a`;
 
     document.documentElement.style.setProperty('--gold-primary', color);
     document.documentElement.style.setProperty('--gold-secondary', secondary);
@@ -2695,7 +2698,7 @@ const App = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
-    const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+    const [formData, setFormData] = useState({ email: '', password: '', username: '', theme: '#FFD700' });
 
     const handleAuthInputChange = (e) => {
         const { id, value } = e.target;
@@ -3466,8 +3469,8 @@ const App = () => {
                                                 <option value="tr">TR</option>
                                                 <option value="cy">CY</option>
                                             </select>
-                                            <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-20 custom-scrollbar">
-                                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
+                                            <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-24 custom-scrollbar">
+                                                {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88', '#3b82f6', '#ff4500', '#b0ff00', '#50C878'].map(c => (
                                                     <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-6 h-6 rounded-lg transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_10px_white] ring-2 ring-white/50' : 'opacity-40 hover:opacity-100'}`} style={{ backgroundColor: c }} />
                                                 ))}
                                             </div>
@@ -3482,14 +3485,14 @@ const App = () => {
                                                 fd.append('password', formData.password);
                                                 if (formData.bio) fd.append('bio', formData.bio);
                                                 fd.append('language', formData.language || 'en');
-                                                fd.append('theme', formData.theme || '#ffd700');
+                                                fd.append('theme', formData.theme || '#FFD700');
                                                 if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
 
                                                 const res = await axios.post('/auth/register', fd);
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
-                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#FFD700');
                                                 setUser(res.data.user);
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Sector Error: Registration Failed.");
