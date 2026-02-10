@@ -75,7 +75,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
     const fetchPost = async () => {
         try {
-            const res = await axios.get(`/posts/${postId}`);
+            const res = await axios.get(`/posts/${postId}?ts=${Date.now()}`);
             setPost(res.data);
             setLoading(false);
         } catch (e) {

@@ -7,12 +7,14 @@
 :root {
   --gold-primary: #ffffff;
   --f1-red: #e10600;
+  --f1-primary: #e10600;
+  /* Default theme color */
   /* Formula 1 Official Red */
   --carbon-black: #0d0d0d;
   --gold-secondary: #888888;
   --gold-hover: #f0f0f0;
-  --gold-glow: rgba(255, 255, 255, 0.2);
-  --gold-glow-soft: rgba(255, 255, 255, 0.05);
+  --gold-glow: rgba(225, 6, 0, 0.4);
+  --gold-glow-soft: rgba(225, 6, 0, 0.1);
   --glass-bg: rgba(10, 10, 10, 0.6);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
@@ -129,8 +131,8 @@ img {
 
 .nav-center-action {
   @apply w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300;
-  background: var(--f1-red);
-  box-shadow: 0 8px 25px rgba(225, 6, 0, 0.4);
+  background: var(--f1-primary);
+  box-shadow: 0 8px 25px var(--gold-glow);
   color: white;
 }
 
@@ -184,13 +186,13 @@ img {
 }
 
 .liquid-btn {
-  @apply bg-[var(--f1-red)] text-white font-black uppercase tracking-widest px-8 py-4 rounded-full transition-all active:scale-95 text-sm;
-  box-shadow: 0 8px 25px rgba(225, 6, 0, 0.3);
+  @apply bg-[var(--f1-primary)] text-white font-black uppercase tracking-widest px-8 py-4 rounded-full transition-all active:scale-95 text-sm;
+  box-shadow: 0 8px 25px var(--gold-glow);
 }
 
 .liquid-btn:hover {
   filter: brightness(1.1);
-  box-shadow: 0 12px 30px rgba(225, 6, 0, 0.5);
+  box-shadow: 0 12px 30px var(--gold-glow);
 }
 
 .gold-btn-outline {
@@ -463,7 +465,7 @@ select {
 }
 
 .shadow-glow-f1 {
-  box-shadow: 0 0 30px rgba(225, 6, 0, 0.2);
+  box-shadow: 0 0 30px var(--gold-glow);
 }
 
 @keyframes heart-beat {

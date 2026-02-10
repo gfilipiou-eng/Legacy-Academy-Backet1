@@ -6,8 +6,8 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// GET ALL USERS (Search)
-router.get("/", verifyToken, async (req, res) => {
+// GET ALL USERS (Search - Public)
+router.get("/", async (req, res) => {
     try {
         const users = await User.find().select('username role profilePic isPrivate followers following followRequests bio');
         const mappedUsers = users.map(u => ({
@@ -202,8 +202,8 @@ router.put("/settings", verifyToken, async (req, res) => {
     }
 });
 
-// GET USER BY ID (With Privacy Guard)
-router.get("/find/:id", verifyToken, async (req, res) => {
+// GET USER BY ID (Public)
+router.get("/find/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json("User not found");

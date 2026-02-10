@@ -190,8 +190,8 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
             <div className="relative w-full sm:max-w-[400px] bg-black/95 backdrop-blur-3xl border-b border-white/10 sm:border sm:rounded-[2.5rem] rounded-none p-6 shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-black italic text-white flex items-center gap-3">
-                        <Icons.MessageCircle className="w-5 h-5 text-[var(--f1-red)]" />
-                        {t('ENGAGE')} <span className="text-[var(--f1-red)] opacity-30 select-none">///</span>
+                        <Icons.MessageCircle className="w-5 h-5 text-[var(--f1-primary)]" />
+                        {t('ENGAGE')} <span className="text-[var(--f1-primary)] opacity-30 select-none">///</span>
                     </h3>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-90"><Icons.X className="w-6 h-6 text-gray-500" /></button>
                 </div>
@@ -200,8 +200,8 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                     {audioBlob ? (
                         <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl animate-pulse">
                             <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 rounded-full bg-[var(--f1-red)]" />
-                                <span className="text-xs font-black text-[var(--f1-red)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                <div className="w-2.5 h-2.5 rounded-full bg-[var(--f1-primary)]" />
+                                <span className="text-xs font-black text-[var(--f1-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                             </div>
                             <button onClick={() => setAudioBlob(null)} className="p-2 hover:bg-white/5 rounded-full"><Icons.Trash className="w-5 h-5 text-red-500" /></button>
                         </div>
@@ -239,7 +239,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button
                             onClick={handleSubmit}
                             disabled={(audioBlob ? false : !value.trim()) || loading}
-                            className="flex-1 py-4 bg-[var(--f1-red)] text-white font-black text-xs uppercase tracking-[0.15em] rounded-full shadow-lg shadow-red-500/20 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3 hover:brightness-110"
+                            className="flex-1 py-4 bg-[var(--f1-primary)] text-white font-black text-xs uppercase tracking-[0.15em] rounded-full shadow-lg shadow-red-500/20 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3 hover:brightness-110"
                         >
                             {loading ? <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" /> : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
@@ -333,10 +333,10 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--f1-red)]/10 border-[var(--f1-red)]/20 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
+                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--f1-primary)]/10 border-[var(--f1-primary)]/20 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
                     <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
                         <div className="flex items-center gap-1">
-                            <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--f1-red)] italic' : 'text-gray-400'}`}>
+                            <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--f1-primary)] italic' : 'text-gray-400'}`}>
                                 {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
                             </span>
                             <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0 drop-shadow-[0_0_3px_rgba(29,155,240,0.5)]">
@@ -350,7 +350,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                         <div className="mt-1 min-w-[200px]">
                             <textarea autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-white min-h-[60px] resize-none" />
                             <div className="flex gap-2">
-                                <button onClick={handleSave} className="bg-[var(--f1-red)] px-3 py-1 rounded-lg text-[9px] font-black text-white hover:opacity-90 transition-colors uppercase">{t('SAVE')}</button>
+                                <button onClick={handleSave} className="bg-[var(--f1-primary)] px-3 py-1 rounded-lg text-[9px] font-black text-white hover:opacity-90 transition-colors uppercase">{t('SAVE')}</button>
                                 <button onClick={() => setIsEditing(false)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 hover:bg-white/10 transition-colors uppercase">{t('CANCEL')}</button>
                             </div>
                         </div>
@@ -359,8 +359,8 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                             {comment.text && <span className="text-[14px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere">{comment.text}</span>}
                             {comment.audioUrl && (
                                 <div className="flex flex-col gap-1.5 mt-1">
-                                    <div className="flex items-center gap-1.5 text-[8px] font-black text-[var(--f1-red)] uppercase tracking-widest bg-[var(--f1-red)]/10 w-fit px-2 py-0.5 rounded border border-[var(--f1-red)]/20 italic">
-                                        <div className="w-1 h-1 rounded-full bg-[var(--f1-red)] animate-pulse" /> {t('VOICE_NOTE')}
+                                    <div className="flex items-center gap-1.5 text-[8px] font-black text-[var(--f1-primary)] uppercase tracking-widest bg-[var(--f1-primary)]/10 w-fit px-2 py-0.5 rounded border border-[var(--f1-primary)]/20 italic">
+                                        <div className="w-1 h-1 rounded-full bg-[var(--f1-primary)] animate-pulse" /> {t('VOICE_NOTE')}
                                     </div>
                                     <audio controls src={resolveMediaUrl(comment.audioUrl)} className="w-full h-8 opacity-90 max-w-[220px]" />
                                 </div>
@@ -511,7 +511,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     </svg>
                                 </div>
                                 {author?.role === 'Founder' ? (
-                                    <span className="text-[10px] text-[var(--f1-red)] mt-1 uppercase font-black tracking-widest drop-shadow-sm italic">★ {t('FOUNDER_BADGE')}</span>
+                                    <span className="text-[10px] text-[var(--f1-primary)] mt-1 uppercase font-black tracking-widest drop-shadow-sm italic">★ {t('FOUNDER_BADGE')}</span>
                                 ) : (
                                     <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
                                 )}
@@ -554,7 +554,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
                     <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
-                        <div className="text-[15px] text-white border-l-4 border-[var(--f1-red)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">{parseHashtags(post.desc)}</div>
+                        <div className="text-[15px] text-white border-l-4 border-[var(--f1-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">{parseHashtags(post.desc)}</div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
@@ -636,10 +636,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     </div>
                                 </div>
                             ) : commentAudio ? (
-                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[52px] px-2 bg-black/60 border border-[var(--f1-red)]/40 rounded-2xl p-1 animate-pulse-subtle">
+                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[52px] px-2 bg-black/60 border border-[var(--f1-primary)]/40 rounded-2xl p-1 animate-pulse-subtle">
                                     <div className="flex items-center gap-3 pl-2 shrink-0">
-                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse shadow-[0_0_10px_rgba(225,6,0,0.5)]" />
-                                        <span className="text-[10px] font-black text-[var(--f1-red)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-primary)] animate-pulse shadow-[0_0_10px_rgba(225,6,0,0.5)]" />
+                                        <span className="text-[10px] font-black text-[var(--f1-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                                     </div>
                                     <div className="flex items-center gap-2 shrink-0">
                                         <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-4 h-4" /></button>
@@ -652,7 +652,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             onComment(post._id, fd);
                                             setCommentAudio(null);
                                             setCommentText('');
-                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--f1-red)] hover:opacity-90 rounded-full text-white shadow-lg shadow-red-500/30 active:scale-95 transition-all">
+                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--f1-primary)] hover:opacity-90 rounded-full text-white shadow-lg shadow-red-500/30 active:scale-95 transition-all">
                                             <Icons.Send className="w-4 h-4 fill-white" />
                                         </button>
                                     </div>
@@ -681,7 +681,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-[var(--f1-red)] text-white shadow-lg shadow-red-500/20 hover:scale-105'}`}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-[var(--f1-primary)] text-white shadow-lg shadow-red-500/20 hover:scale-105'}`}
                                             >
                                                 <Icons.Mic className="w-5 h-5" />
                                             </button>
@@ -689,7 +689,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 type="submit"
                                                 disabled={!commentText.trim() || loadingActions?.[post._id]}
                                                 onClick={(e) => e.stopPropagation()}
-                                                className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--f1-red)] text-white shadow-lg shadow-red-500/30 disabled:opacity-20 active:scale-95 transition-all"
+                                                className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--f1-primary)] text-white shadow-lg shadow-red-500/30 disabled:opacity-20 active:scale-95 transition-all"
                                             >
                                                 {loadingActions?.[post._id] ? (
                                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1155,8 +1155,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                         </svg>
                                     </span>
                                 </div>
-                                {isPostAuthorFounder && <span className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}
-                                <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--f1-red)] font-medium italic' : 'text-gray-500'}`}>
+                                {isPostAuthorFounder && <span className="text-[var(--f1-primary)] text-[9px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}
+                                <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--f1-primary)] font-medium italic' : 'text-gray-500'}`}>
                                     @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
                                 </span>
                             </div>
@@ -1170,7 +1170,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         }} className={`mt-2 text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
                             {translatedDesc ? (
                                 <div className="space-y-1">
-                                    <div className="text-[var(--f1-red)] text-[10px] font-black uppercase tracking-[0.2em] mb-1 italic">{t('SEE_TRANSLATION')}</div>
+                                    <div className="text-[var(--f1-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1 italic">{t('SEE_TRANSLATION')}</div>
                                     <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
                             ) : parseHashtags(post.desc, onHashtagClick)}
@@ -1229,7 +1229,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 {(!post.videoUrl && !(post.image && post.image.match(/\.(mp4|mov|webm)$/i)) && !isYouTubeUrl(post.videoUrl)) && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
-                                        className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--f1-red)] transition-all active:scale-90 group z-20 shadow-2xl"
+                                        className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--f1-primary)] transition-all active:scale-90 group z-20 shadow-2xl"
                                     >
                                         <Icons.Maximize className="w-5 h-5" />
                                     </button>
@@ -1243,7 +1243,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <AnimatePresence>
                                     {showHeart && (
                                         <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ opacity: 0, scale: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                            <Icons.Heart className="w-24 h-24 text-[var(--f1-red)] fill-[var(--f1-red)] drop-shadow-2xl" />
+                                            <Icons.Heart className="w-24 h-24 text-[var(--f1-primary)] fill-[var(--f1-primary)] drop-shadow-2xl" />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -1311,10 +1311,10 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                             </div>
                                         </div>
                                     ) : commentAudio ? (
-                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--f1-red)]/40 rounded-[1.2rem] p-1 animate-pop-in">
+                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--f1-primary)]/40 rounded-[1.2rem] p-1 animate-pop-in">
                                             <div className="flex items-center gap-2 pl-1 shrink-0">
-                                                <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse shadow-[0_0_10px_rgba(225,6,0,0.5)]" />
-                                                <span className="text-[10px] font-black text-[var(--f1-red)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
+                                                <div className="w-2 h-2 rounded-full bg-[var(--f1-primary)] animate-pulse shadow-[0_0_10px_rgba(225,6,0,0.5)]" />
+                                                <span className="text-[10px] font-black text-[var(--f1-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
                                             </div>
                                             <div className="flex items-center gap-1 shrink-0">
                                                 <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
@@ -1327,7 +1327,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                     onComment(post._id, fd);
                                                     setCommentAudio(null);
                                                     setCommentText('');
-                                                }} className="w-9 h-9 flex items-center justify-center bg-[var(--f1-red)] hover:opacity-90 rounded-full text-white shadow-lg shadow-red-500/20 active:scale-95 transition-all shrink-0">
+                                                }} className="w-9 h-9 flex items-center justify-center bg-[var(--f1-primary)] hover:opacity-90 rounded-full text-white shadow-lg shadow-red-500/20 active:scale-95 transition-all shrink-0">
                                                     <Icons.Send className="w-4 h-4 fill-white" />
                                                 </button>
                                             </div>
@@ -1355,7 +1355,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
-                                                        className={`w-10 h-10 flex items-center justify-center rounded-full transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-[var(--f1-red)] text-white shadow-lg shadow-red-500/20 hover:scale-105'}`}
+                                                        className={`w-10 h-10 flex items-center justify-center rounded-full transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-[var(--f1-primary)] text-white shadow-lg shadow-red-500/20 hover:scale-105'}`}
                                                     >
                                                         <Icons.Mic className="w-4 h-4" />
                                                     </button>
@@ -1363,7 +1363,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         type="submit"
                                                         disabled={!commentText.trim() || loadingActions?.[post._id]}
                                                         onClick={(e) => e.stopPropagation()}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--f1-red)] text-white shadow-lg shadow-red-500/30 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
+                                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--f1-primary)] text-white shadow-lg shadow-red-500/30 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
                                                     >
                                                         {loadingActions?.[post._id] ? (
                                                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1589,7 +1589,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                     <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-[var(--f1-red)] text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider italic">★ {t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-[var(--f1-primary)] text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider italic">★ {t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
                         })}
@@ -1612,8 +1612,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                             {m.audioUrl ? (
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-red)]">{t('VOICE_NOTE')}</span>
+                                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-primary)] animate-pulse" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-primary)]">{t('VOICE_NOTE')}</span>
                                                     </div>
                                                     <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
                                                     {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
@@ -1650,14 +1650,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                         className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
-                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--f1-red)] animate-pulse border border-[var(--f1-red)]/30 px-1.5 py-0.5 rounded-md bg-[var(--f1-red)]/10">GREEK PH</span>}
+                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--f1-primary)] animate-pulse border border-[var(--f1-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--f1-primary)]/10">GREEK PH</span>}
                                         <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-white transition-colors" />
                                     </div>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => { setIsPhonetic(!isPhonetic); playSound('pop'); }}
-                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--f1-red)]/10 border-[var(--f1-red)] text-[var(--f1-red)] shadow-[0_0_15px_rgba(225,6,0,0.2)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
+                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--f1-primary)]/10 border-[var(--f1-primary)] text-[var(--f1-primary)] shadow-[0_0_15px_rgba(225,6,0,0.2)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
                                     title="Phonetic Greek Keyboard"
                                 >
                                     <Icons.Translate className="w-5 h-5" />
@@ -1672,7 +1672,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 <button
                                     onClick={() => handleSend()}
                                     disabled={!inputText.trim()}
-                                    className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--f1-red)] text-white shadow-lg shadow-red-500/30 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
+                                    className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--f1-primary)] text-white shadow-lg shadow-red-500/30 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                 >
                                     <Icons.Send className="w-5 h-5" />
                                 </button>
@@ -1798,7 +1798,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <Icons.Logout className="w-5 h-5" />
                     </button>
 
-                    {saving && <div className="text-[10px] text-[var(--f1-red)] text-center font-bold animate-pulse">{t('SYNCING')}</div>}
+                    {saving && <div className="text-[10px] text-[var(--f1-primary)] text-center font-bold animate-pulse">{t('SYNCING')}</div>}
                 </div>
             </div>
         </div>
@@ -1841,7 +1841,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (!profileUser?._id) return;
         setLoadingPosts(true);
         try {
-            const res = await axios.get(`/posts/user/${profileUser._id}`);
+            const res = await axios.get(`/posts/user/${profileUser._id}?ts=${Date.now()}`);
             setUserSpecificPosts(res.data);
         } catch (e) {
             console.error("Profile posts fetch error:", e);
@@ -1894,7 +1894,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (profileUser?._id === currentUser?._id) {
             setUserData(currentUser);
         } else if (profileUser?._id) {
-            axios.get(`/users/find/${profileUser._id || profileUser}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
+            axios.get(`/users/find/${profileUser._id || profileUser}?ts=${Date.now()}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
         }
     }, [profileUser, currentUser]);
 
@@ -1918,7 +1918,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-black w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
                 {/* F1 Racing Line Accent */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-[var(--f1-red)] shadow-[0_0_15px_var(--f1-red)] z-[60]" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-[var(--f1-primary)] shadow-[0_0_15px_var(--f1-primary)] z-[60]" />
 
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-black/90 backdrop-blur-xl z-50">
                     <button onClick={() => {
@@ -1945,7 +1945,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
-                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-[2.5rem] bg-gray-800 overflow-hidden border-4 border-[var(--f1-red)] cursor-pointer relative group shadow-2xl shadow-[var(--f1-red)]/10">
+                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-[2.5rem] bg-gray-800 overflow-hidden border-4 border-[var(--f1-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--f1-primary)]/10">
                                 <ProfileAvatar user={displayUser} size="large" />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
@@ -1996,13 +1996,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     console.error(e);
                                     alert(e.response?.data?.message || e.response?.data || "Update failed.");
                                 }
-                            }} className="w-full py-4 bg-[var(--f1-red)] rounded-full text-white font-black uppercase tracking-widest shadow-lg shadow-red-500/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
+                            }} className="w-full py-4 bg-[var(--f1-primary)] rounded-full text-white font-black uppercase tracking-widest shadow-lg shadow-red-500/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-900 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--f1-red)] italic shadow-[0_0_20px_var(--f1-red)]' : 'border-white/20'}`}>
+                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-900 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--f1-primary)] italic shadow-[0_0_20px_var(--f1-primary)]' : 'border-white/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
                                     {!isMe && (
@@ -2050,7 +2050,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="text-[8px] sm:text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS')}</div>
                                     </div>
                                     <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer group p-1 border-x border-white/5">
-                                        <span className="text-lg sm:text-2xl font-black text-[var(--f1-red)] group-hover:text-white transition-colors leading-none">
+                                        <span className="text-lg sm:text-2xl font-black text-[var(--f1-primary)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
                                         </span>
                                         <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
@@ -2075,7 +2075,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         )}
                                         {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />}
                                     </div>
-                                    {displayUser?.role === 'Founder' && <span className="text-[var(--f1-red)] text-[10px] font-black tracking-wider uppercase italic">★ {t('FOUNDER_BADGE')}</span>}
+                                    {displayUser?.role === 'Founder' && <span className="text-[var(--f1-primary)] text-[10px] font-black tracking-wider uppercase italic">★ {t('FOUNDER_BADGE')}</span>}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
@@ -2107,7 +2107,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         addToast(t('BAN_SUCCESS'), "success");
                                                     } catch (e) { addToast(t('BAN_ERROR'), "error"); }
                                                 }}
-                                                className="px-5 py-3.5 bg-black border-2 border-[var(--f1-red)] text-[var(--f1-red)] rounded-full font-black text-[10px] tracking-widest hover:bg-[var(--f1-red)] hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[80px]"
+                                                className="px-5 py-3.5 bg-black border-2 border-[var(--f1-primary)] text-[var(--f1-primary)] rounded-full font-black text-[10px] tracking-widest hover:bg-[var(--f1-primary)] hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[80px]"
                                             >
                                                 {t('BAN')}
                                             </button>
@@ -2130,7 +2130,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                             {userStories.map(s => (
                                                 <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                    <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-red)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-red)]/10 bg-black overflow-hidden relative">
+                                                    <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-primary)]/10 bg-black overflow-hidden relative">
                                                         {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                                             <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                         ) : (
@@ -2151,7 +2151,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="space-y-6 pb-20">
                                     {loadingPosts ? (
                                         <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                            <div className="w-8 h-8 border-2 border-[var(--f1-red)] border-t-transparent rounded-full animate-spin" />
+                                            <div className="w-8 h-8 border-2 border-[var(--f1-primary)] border-t-transparent rounded-full animate-spin" />
                                             <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
                                         </div>
                                     ) : userPosts.length === 0 ? (
@@ -2168,14 +2168,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 <div key={dateKey} className="animate-fade-in group">
                                                     <div
                                                         onClick={() => toggleDate(dateKey)}
-                                                        className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder"
+                                                        className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-primary)]/30 transition-all cursor-pointer group/folder"
                                                     >
                                                         <div className="relative">
-                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
-                                                            {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
+                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20' : 'text-gray-500'} transition-all`} />
+                                                            {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-primary)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
                                                         </div>
                                                         <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
-                                                        <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
+                                                        <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-primary)]' : ''}`} />
                                                     </div>
                                                     <AnimatePresence>
                                                         {isExposed && (
@@ -2482,19 +2482,19 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
                             <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--f1-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
                             </div>
                             <div className="relative group">
-                                <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+                                <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--f1-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
                                 <textarea
                                     value={desc}
                                     onChange={e => setDesc(e.target.value)}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none h-32 sm:h-44 resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none h-32 sm:h-44 resize-none placeholder-gray-600 focus:border-[var(--f1-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
                                 />
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="text-[9px] sm:text-[12px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
+                                <div className="text-[9px] sm:text-[12px] font-bold text-[var(--f1-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--f1-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--f1-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
                                     <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
                                 </div>
                             </div>
@@ -2571,6 +2571,7 @@ const applyTheme = (color) => {
     const glowSoft = `${color}1a`;
 
     document.documentElement.style.setProperty('--gold-primary', color);
+    document.documentElement.style.setProperty('--f1-primary', color);
     document.documentElement.style.setProperty('--gold-secondary', secondary);
     document.documentElement.style.setProperty('--gold-hover', hover);
     document.documentElement.style.setProperty('--gold-glow', glow);
@@ -2821,7 +2822,7 @@ const App = () => {
     const fetchPosts = async () => {
         if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
         try {
-            const res = await axios.get('/posts?limit=20');
+            const res = await axios.get(`/posts?limit=20&ts=${Date.now()}`);
             setPosts(res.data);
         } catch (e) { }
     };
@@ -3279,15 +3280,15 @@ const App = () => {
         <div className="app-container">
             <div className="liquid-bg" />
             {!user ? (
-                <div className="min-h-full bg-black flex items-center justify-center p-4 sm:p-6 relative overflow-hidden carbon-fiber">
+                <div className="min-h-full bg-black flex items-center justify-center p-4 sm:p-6 relative overflow-hidden carbon-fiber pb-20 sm:pb-0">
                     {/* F1 Racing Lines Overlay */}
-                    <div className="absolute top-0 left-0 w-full h-1 bg-[var(--f1-red)] shadow-[0_0_20px_var(--f1-red)] z-50" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[var(--f1-primary)] shadow-[0_0_20px_var(--f1-primary)] z-50" />
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-white shadow-[0_0_20px_white] z-50" />
 
-                    <div className="w-full max-w-sm bg-black p-8 sm:p-10 rounded-[2.5rem] text-center shadow-2xl relative z-10 border border-white/10 border-t-4 border-t-[var(--f1-red)]">
+                    <div className="w-full max-w-sm bg-black p-8 sm:p-10 rounded-[2.5rem] text-center shadow-2xl relative z-10 border border-white/10 border-t-4 border-t-[var(--f1-primary)]">
                         <div className="flex flex-col items-center">
-                            <div className="mb-10 w-full flex flex-col items-center">
-                                <img src="/Logo.png" alt="Legacy Academy" className="h-48 sm:h-56 w-auto object-contain" />
+                            <div className="mb-6 w-full flex flex-col items-center">
+                                <img src="/Logo.png" alt="Legacy Academy" className="h-40 sm:h-48 w-auto object-contain drop-shadow-[0_0_20px_rgba(225,6,0,0.3)] animate-float" />
                             </div>
 
                             <div className="w-full space-y-4">
@@ -3309,7 +3310,7 @@ const App = () => {
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || 'en');
-                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffffff');
                                                 setUser(res.data.user);
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Ignition Failure: Invalid Credentials.");
@@ -3320,7 +3321,7 @@ const App = () => {
                                             {authLoading ? "INITIALIZING..." : "IGNITION (LOGIN)"}
                                         </button>
                                         <div className="flex flex-col gap-3 mt-6">
-                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="w-full gold-btn py-3.5 rounded-full text-xs font-bold transition-all">
+                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '', theme: '#ffffff' }); }} className="w-full bg-white text-black font-black uppercase tracking-widest py-3.5 rounded-full text-xs transition-all hover:bg-gray-200 shadow-lg">
                                                 CREATE ACCOUNT
                                             </button>
                                             <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="text-xs text-gray-500 cursor-pointer hover:text-white transition-colors font-bold uppercase tracking-widest">Forgot Access Code?</span>
@@ -3330,8 +3331,8 @@ const App = () => {
 
                                 {authMode === 'register' && (
                                     <div className="animate-fade-in space-y-4">
-                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-black/60 border-2 border-dashed border-[var(--f1-red)] overflow-hidden cursor-pointer relative group flex items-center justify-center transition-all hover:bg-white/5">
-                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-[var(--f1-red)] animate-pulse" />}
+                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-black/60 border-2 border-dashed border-[var(--f1-primary)] overflow-hidden cursor-pointer relative group flex items-center justify-center transition-all hover:bg-white/5">
+                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-[var(--f1-primary)] animate-pulse" />}
                                             <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
                                                 const file = e.target.files[0];
                                                 if (file) setRegisterPreview(URL.createObjectURL(file));
@@ -3348,7 +3349,7 @@ const App = () => {
                                         <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="f1-input w-full text-sm resize-none h-20" />
 
                                         <div className="flex gap-2">
-                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/10 rounded-2xl py-3 px-3 text-white text-xs font-bold outline-none focus:border-[var(--f1-red)] appearance-none text-center">
+                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/10 rounded-2xl py-3 px-3 text-white text-xs font-bold outline-none focus:border-[var(--f1-primary)] appearance-none text-center">
                                                 <option value="en">EN</option>
                                                 <option value="el">EL</option>
                                                 <option value="fr">FR</option>
@@ -3359,8 +3360,8 @@ const App = () => {
                                                 <option value="cy">CY</option>
                                             </select>
                                             <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-20 custom-scrollbar">
-                                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
-                                                    <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-6 h-6 rounded-lg transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_10px_white] ring-2 ring-white/50' : 'opacity-40 hover:opacity-100'}`} style={{ backgroundColor: c }} />
+                                                {['#ffffff', '#e10600', '#1a1a1a', '#3b82f6', '#10b981', '#a855f7'].map(c => (
+                                                    <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-7 h-7 rounded-full transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_15px_white] ring-2 ring-white/50 z-10' : 'opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c }} />
                                                 ))}
                                             </div>
                                         </div>
@@ -3374,14 +3375,14 @@ const App = () => {
                                                 fd.append('password', formData.password);
                                                 if (formData.bio) fd.append('bio', formData.bio);
                                                 fd.append('language', formData.language || 'en');
-                                                fd.append('theme', formData.theme || '#ffd700');
+                                                fd.append('theme', formData.theme || '#ffffff');
                                                 if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
 
                                                 const res = await axios.post('/auth/register', fd);
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
-                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffffff');
                                                 setUser(res.data.user);
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Sector Error: Registration Failed.");
@@ -3438,7 +3439,7 @@ const App = () => {
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-white">
                                             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z" />
                                         </svg>
-                                        <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-[var(--f1-red)] rounded-full border border-black shadow-[0_0_10px_var(--f1-red)] animate-pulse" />
+                                        <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-[var(--f1-primary)] rounded-full border border-black shadow-[0_0_10px_var(--f1-primary)] animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400 group-hover:text-white" />
@@ -3481,7 +3482,7 @@ const App = () => {
                                                                 <div className="font-bold text-white text-sm">
                                                                     {u.username}
                                                                 </div>
-                                                                {u.role === 'Founder' && <div className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase italic mt-0.5">FOUNDER</div>}
+                                                                {u.role === 'Founder' && <div className="text-[var(--f1-primary)] text-[9px] font-black tracking-wider uppercase italic mt-0.5">FOUNDER</div>}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>
@@ -3498,17 +3499,17 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group">
                                                             <div
                                                                 onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-[var(--f1-red)] transition-all cursor-pointer group/folder my-2 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-[var(--f1-primary)] transition-all cursor-pointer group/folder my-2 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
                                                             >
                                                                 <div className="relative">
-                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all duration-300`} />
-                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{group.posts.length}</div>}
+                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20' : 'text-gray-500'} transition-all duration-300`} />
+                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-primary)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{group.posts.length}</div>}
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
                                                                     <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-300'}`}>{dateKey}</span>
                                                                     {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest italic">{t('EXPAND_INTEL')}</span>}
                                                                 </div>
-                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
+                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--f1-primary)]' : ''}`} />
                                                             </div>
 
                                                             <AnimatePresence>
@@ -3534,8 +3535,8 @@ const App = () => {
                                             </div>
                                             {posts.length === 0 && (
                                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                                    <div className="w-12 h-12 border-4 border-[var(--f1-red)] border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-[var(--f1-red)] font-black text-sm uppercase tracking-[0.2em] animate-pulse italic">{t('DECRYPTING_FEED')}</div>
+                                                    <div className="w-12 h-12 border-4 border-[var(--f1-primary)] border-t-transparent rounded-full animate-spin"></div>
+                                                    <div className="text-[var(--f1-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse italic">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             )}
                                         </div>
