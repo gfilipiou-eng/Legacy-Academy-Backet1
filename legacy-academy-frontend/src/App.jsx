@@ -1986,6 +1986,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
     const hasRequested = !!(currentUser?.followRequests?.some(id => String(id) === String(displayUser?._id)) || displayUser?.isRequested);
+    console.log('hasRequested check:', {
+        currentUserFollowRequests: currentUser?.followRequests,
+        displayUserId: displayUser?._id,
+        hasRequested: hasRequested,
+        currentUser: currentUser?._id
+    });
     const isPrivateView = !!(displayUser?.isPrivate || displayUser?.isFollowersOnly);
     const isFounderViewer = currentUser?.role === 'Founder';
     const isLocked = isPrivateView && !isMe && !isFollowing && !isFounderViewer;
@@ -3178,6 +3184,7 @@ const App = () => {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
         } else if (!isCurrentlyFollowing && targetIsPrivate) {
             const newFollowRequests = [...(user.followRequests || []), targetId];
+            console.log('Adding to followRequests:', targetId, 'new array:', newFollowRequests);
             updateUserState({ followRequests: newFollowRequests });
         } else {
             updateUserState({ following: [...(user.following || []), targetId] });
@@ -3194,7 +3201,7 @@ const App = () => {
             }
 
             if (requested) {
-                updateUserState({ followRequests: [...(user.followRequests || []), targetId] });
+                // Already updated optimistically above, no need to do it again
             }
             if (following) {
                 updateUserState({ following });
