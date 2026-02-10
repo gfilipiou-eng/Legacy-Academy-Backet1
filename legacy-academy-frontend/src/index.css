@@ -5,16 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --gold-primary: #ffffff;
-  --f1-red: #e10600;
-  --f1-primary: #e10600;
-  /* Default theme color */
-  /* Formula 1 Official Red */
+  --gold-primary: #ff8c00;
+  --f1-red: #ff8c00;
+  --f1-primary: #ff8c00;
+  /* Default theme color (Tiger Orange) */
   --carbon-black: #0d0d0d;
-  --gold-secondary: #888888;
-  --gold-hover: #f0f0f0;
-  --gold-glow: rgba(225, 6, 0, 0.4);
-  --gold-glow-soft: rgba(225, 6, 0, 0.1);
+  --gold-secondary: rgba(255, 140, 0, 0.6);
+  --gold-hover: rgba(255, 140, 0, 0.8);
+  --gold-glow: rgba(255, 140, 0, 0.4);
+  --gold-glow-soft: rgba(255, 140, 0, 0.1);
   --glass-bg: rgba(10, 10, 10, 0.6);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
@@ -44,7 +43,7 @@ img {
   background: rgba(10, 10, 10, 0.7);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-top: 2px solid var(--f1-red);
+  border-top: 2px solid var(--f1-primary);
   /* F1 Racing Line */
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -125,8 +124,8 @@ img {
   transform: translateX(-50%);
   width: 20px;
   height: 2px;
-  background: var(--f1-red);
-  box-shadow: 0 0 10px var(--f1-red);
+  background: var(--f1-primary);
+  box-shadow: 0 0 10px var(--f1-primary);
 }
 
 .nav-center-action {
@@ -205,7 +204,7 @@ img {
 }
 
 .f1-input {
-  @apply bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--f1-red)] transition-all font-medium;
+  @apply bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--f1-primary)] transition-all font-medium;
   backdrop-filter: blur(10px);
 }
 
@@ -312,8 +311,8 @@ img {
 /* Neural Network Background Elements */
 .neural-dot {
   @apply absolute w-1.5 h-1.5 rounded-full;
-  background: var(--f1-red);
-  box-shadow: 0 0 10px rgba(225, 6, 0, 0.3);
+  background: var(--f1-primary);
+  box-shadow: 0 0 10px var(--f1-primary);
 }
 
 /* Mobile Safari safe bottom for detail modal UI */
@@ -339,7 +338,7 @@ img {
 }
 
 .premium-gradient-text {
-  background: linear-gradient(to right, #fff, var(--f1-red), #fff);
+  background: linear-gradient(to right, #fff, var(--f1-primary), #fff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% auto;
@@ -371,14 +370,14 @@ img {
   }
 
   50% {
-    border-color: var(--f1-red);
+    border-color: var(--f1-primary);
   }
 }
 
 .story-ring-active {
   @apply border-2 border-transparent p-0.5;
   background-image: linear-gradient(black, black),
-    linear-gradient(to right, var(--f1-red), #ff4d4d, white);
+    linear-gradient(to right, var(--f1-primary), var(--gold-hover), white);
   background-origin: border-box;
   background-clip: content-box, border-box;
 }
