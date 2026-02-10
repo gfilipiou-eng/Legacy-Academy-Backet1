@@ -1740,8 +1740,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#ffffff', '#e10600', '#1a1a1a', '#3b82f6', '#10b981', '#a855f7'].map(c => {
-                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffffff';
+                            {['#ff8c00', '#e10600', '#44d62c', '#00ffff', '#3b82f6', '#a855f7', '#006f62', '#ffea00', '#ff2d55', '#c5a059', '#ff5f1f', '#10b981'].map(c => {
+                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ff8c00';
                                 const isActive = currentTheme === c;
                                 return (
                                     <button key={c} onClick={() => {
@@ -1751,7 +1751,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         {isActive && (
                                             <motion.div layoutId="theme-active" className="absolute -inset-1.5 border-2 border-white/20 rounded-full pointer-events-none" initial={false} animate={{ opacity: 1 }} />
                                         )}
-                                        {isActive && <Icons.Check className={`w-5 h-5 ${c === '#ffffff' ? 'text-black' : 'text-white'} mx-auto drop-shadow-md`} />}
+                                        {isActive && <Icons.Check className={`w-5 h-5 ${c === '#ffea00' || c === '#ffffff' ? 'text-black' : 'text-white'} mx-auto drop-shadow-md`} />}
                                     </button>
                                 );
                             })}
@@ -2557,12 +2557,10 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
 const applyTheme = (color) => {
     const getSecondary = (hex) => {
-        if (hex === '#ffffff') return '#888888';
-        if (hex === '#ffd700') return '#b8860b';
+        if (hex === '#ffea00') return '#b8860b';
         return hex + 'aa';
     };
     const getHover = (hex) => {
-        if (hex === '#ffffff') return '#f0f0f0';
         return hex + 'cc';
     };
     const secondary = getSecondary(color);
@@ -2595,7 +2593,7 @@ const App = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
-    const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+    const [formData, setFormData] = useState({ email: '', password: '', username: '', theme: '#ff8c00' });
 
     const handleAuthInputChange = (e) => {
         const { id, value } = e.target;
@@ -2719,7 +2717,7 @@ const App = () => {
             setUser(JSON.parse(saved));
         }
 
-        const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
+        const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor') || '#ff8c00';
         if (savedTheme) applyTheme(savedTheme);
 
         // SYNC THEME LIVE ACROSS TABS
@@ -3309,7 +3307,7 @@ const App = () => {
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || 'en');
-                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ff8c00');
                                                 setUser(res.data.user);
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Ignition Failure: Invalid Credentials.");
@@ -3320,7 +3318,7 @@ const App = () => {
                                             {authLoading ? "INITIALIZING..." : "IGNITION (LOGIN)"}
                                         </button>
                                         <div className="flex flex-col gap-3 mt-6">
-                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="w-full gold-btn py-3.5 rounded-full text-xs font-bold transition-all">
+                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '', theme: '#ff8c00' }); }} className="w-full gold-btn py-3.5 rounded-full text-xs font-bold transition-all">
                                                 CREATE ACCOUNT
                                             </button>
                                             <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="text-xs text-gray-500 cursor-pointer hover:text-white transition-colors font-bold uppercase tracking-widest">Forgot Access Code?</span>
@@ -3358,9 +3356,12 @@ const App = () => {
                                                 <option value="tr">TR</option>
                                                 <option value="cy">CY</option>
                                             </select>
-                                            <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-20 custom-scrollbar">
-                                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
-                                                    <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-6 h-6 rounded-lg transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_10px_white] ring-2 ring-white/50' : 'opacity-40 hover:opacity-100'}`} style={{ backgroundColor: c }} />
+                                            <div className="flex-1 p-3 bg-black/60 backdrop-blur-3xl rounded-3xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-[120px] shadow-inner custom-scrollbar">
+                                                {['#ff8c00', '#e10600', '#44d62c', '#00ffff', '#3b82f6', '#a855f7', '#006f62', '#ffea00', '#ff2d55', '#c5a059', '#ff5f1f', '#10b981'].map(c => (
+                                                    <button key={c} onClick={() => {
+                                                        setFormData(prev => ({ ...prev, theme: c }));
+                                                        applyTheme(c);
+                                                    }} className={`w-7 h-7 rounded-full transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_15px_white] ring-2 ring-white/50 z-10' : 'opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c }} />
                                                 ))}
                                             </div>
                                         </div>
@@ -3374,7 +3375,7 @@ const App = () => {
                                                 fd.append('password', formData.password);
                                                 if (formData.bio) fd.append('bio', formData.bio);
                                                 fd.append('language', formData.language || 'en');
-                                                fd.append('theme', formData.theme || '#ffd700');
+                                                fd.append('theme', formData.theme || '#ff8c00');
                                                 if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
 
                                                 const res = await axios.post('/auth/register', fd);
