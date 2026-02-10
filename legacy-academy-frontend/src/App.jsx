@@ -1864,7 +1864,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const fileRef = useRef(null);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+    // Safety lock to prevent ghost clicks when opening folders
+    const interactionLock = useRef(0);
+
     const toggleDate = (dateKey) => {
+        interactionLock.current = Date.now();
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
         playSound('pop');
     };
@@ -2253,11 +2257,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         <AnimatePresence>
                                                             {isExposed && (
                                                                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
+                                                                    <div className={`grid grid-cols-3 gap-1 sm:gap-1.5 pt-2 ${isInteracting ? 'pointer-events-none' : ''}`}>
                                                                         {groupedUserPosts[dateKey].map(p => (
                                                                             <div
                                                                                 key={p._id}
-                                                                                onClick={(e) => { e.stopPropagation(); onOpenDetail(p); }}
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    // safety lock check
+                                                                                    if (Date.now() - interactionLock.current < 500) return;
+                                                                                    onOpenDetail(p);
+                                                                                }}
                                                                                 className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-all flex items-center justify-center group/card shadow-2xl active:scale-95 touch-manipulation"
                                                                             >
                                                                                 {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
