@@ -213,7 +213,7 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             if (user.followers?.some(id => String(id) === String(requesterId))) {
                 return res.status(200).json("Already a follower.");
             }
-            return res.status(200).json("Request expired or canceled.");
+            return res.status(200).json("Request not found");
         }
 
         console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] Proceeding with DB updates...`);
@@ -275,7 +275,7 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
             await User.findByIdAndUpdate(userId, {
                 $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
             });
-            return res.status(200).json("Request already removed.");
+            return res.status(200).json("Request not found");
         }
 
         await User.findByIdAndUpdate(userId, {

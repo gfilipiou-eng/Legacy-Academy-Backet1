@@ -1400,6 +1400,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const audioChunks = useRef([]);
     const scrollRef = useRef();
 
+    const processedReadIds = useRef(new Set());
+
     const fetchMessages = async (otherUserId) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
@@ -1409,14 +1411,19 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             const unreadIncoming = res.data.filter(m =>
                 String(m.recipient) === String(user?._id) &&
                 String(m.sender) === String(otherUserId) &&
-                !m.read
+                !m.read &&
+                !processedReadIds.current.has(m._id)
             );
 
             for (const msg of unreadIncoming) {
+                processedReadIds.current.add(msg._id);
                 try {
                     await axios.patch(`/messages/${msg._id}/read`);
                 } catch (e) {
-                    console.warn('Failed to mark message as read:', e);
+                    // If it 404s, it's already gone (Whisper cleanup) - ignore
+                    if (e.response?.status !== 404) {
+                        console.warn('Failed to mark message as read:', e.message);
+                    }
                 }
             }
         } catch (e) { console.error('Failed to fetch messages', e); }
@@ -3149,7 +3156,7 @@ const App = () => {
             playSound('pop');
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
-            const isStale = /No request found/i.test(msg) || /Endpoint Not Found/i.test(msg);
+            const isStale = /not found/i.test(msg) || /stale/i.test(msg) || /Endpoint Not Found/i.test(msg);
             const status400 = e.response?.status === 400;
             if (isStale || status400) {
                 try { await axios.post(`/users/requests/${requesterId}/reject`, {}); } catch { }

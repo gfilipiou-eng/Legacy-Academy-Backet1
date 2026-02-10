@@ -9,5 +9,7 @@ const MessageSchema = new mongoose.Schema({
     readAt: { type: Date, default: null }  // For Whispers auto-delete
 }, { timestamps: true });
 
+MessageSchema.index({ readAt: 1 });
+
 const Message = mongoose.model("Message", MessageSchema);
 export default Message;
