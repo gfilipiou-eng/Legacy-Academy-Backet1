@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -392,18 +392,13 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
 };
 
 const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
-    if (!post) return null;
     const { t, lang } = useTranslation(user);
+    const author = useMemo(() => {
+        if (post?.author && typeof post.author === 'object' && post.author.username) return post.author;
+        const targetId = String(post?.author?._id || post?.author);
+        return allUsers?.find(u => String(u._id) === targetId) || { _id: targetId, username: t('UNKNOWN_AGENT') || 'Agent' };
+    }, [post?.author, allUsers, t]);
 
-    // Resolve author object if it's just an ID or missing details
-    const author = (post.author && typeof post.author === 'object' && post.author.username)
-        ? post.author
-        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
-
-    const isOwner = String(author?._id) === String(user?._id);
-    const isFounder = user?.role === 'Founder';
-
-    // Audio Comment State
     const [commentText, setCommentText] = useState('');
     const [isWritingComment, setIsWritingComment] = useState(false);
     const audioRef = useRef(null);
@@ -413,6 +408,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
     const [showMenu, setShowMenu] = useState(false);
+
+    if (!post) return null;
+
+    const isOwner = String(author?._id) === String(user?._id);
+    const isFounder = user?.role === 'Founder';
 
     const handleClearComments = async () => {
         if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
@@ -1052,16 +1052,15 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     const [translatedDesc, setTranslatedDesc] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-
-    // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
-    if (post.isStory) return null;
-
     // Resolve author object robustly
     const author = useMemo(() => {
         if (post.author && typeof post.author === 'object' && post.author.username) return post.author;
         const targetId = String(post.author?._id || post.author);
         return allUsers?.find(u => String(u._id) === targetId) || { _id: targetId, username: t('UNKNOWN_AGENT') || 'Agent' };
     }, [post.author, allUsers, t]);
+
+    // Safety check: Do not render stories as posts - MOVED AFTER HOOKS
+    if (post.isStory) return null;
 
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = author?.role === 'Founder';
@@ -1872,11 +1871,34 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         }
     };
 
+    const displayUser = useMemo(() => {
+        const targetId = profileUser?._id || (typeof profileUser === 'string' ? profileUser : null);
+        if (String(targetId) === String(currentUser?._id)) return currentUser;
+
+        // Try fetched state first
+        if (userData && userData._id) return userData;
+
+        // Try global list
+        if (allUsers?.length > 0) {
+            const inList = allUsers.find(u => String(u._id) === String(targetId));
+            if (inList) return inList;
+        }
+
+        // Try passed object
+        if (profileUser && typeof profileUser === 'object' && profileUser.username) return profileUser;
+
+        return { _id: targetId, username: t('SCANNING_ID') || 'Agent...' };
+    }, [profileUser, currentUser, userData, allUsers, t]);
+
+    const isMe = displayUser?._id === currentUser?._id;
+    const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
+
     useEffect(() => {
         if (isOpen) {
             fetchUserPosts();
         }
     }, [isOpen, profileUser?._id]);
+
     useEffect(() => {
         if (isOpen && isFollowing) {
             fetchUserPosts();
@@ -1936,33 +1958,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     if (!isOpen || !profileUser) return null;
 
-    const displayUser = useMemo(() => {
-        const targetId = profileUser?._id || (typeof profileUser === 'string' ? profileUser : null);
-        if (String(targetId) === String(currentUser?._id)) return currentUser;
-
-        // Try fetched state first
-        if (userData && userData._id) return userData;
-
-        // Try global list
-        if (allUsers?.length > 0) {
-            const inList = allUsers.find(u => String(u._id) === String(targetId));
-            if (inList) return inList;
-        }
-
-        // Try passed object
-        if (profileUser && typeof profileUser === 'object' && profileUser.username) return profileUser;
-
-        return { _id: targetId, username: t('SCANNING_ID') || 'Agent...' };
-    }, [profileUser, currentUser, userData, allUsers, t]);
-    const isMe = displayUser?._id === currentUser?._id;
-
     const getListUsers = () => {
         if (!activeList || !displayUser) return [];
         const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
         return allUsers.filter(u => ids?.includes(u._id));
     };
 
-    const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
     const hasRequested = false;
 
     return (

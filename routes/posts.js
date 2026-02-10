@@ -620,7 +620,12 @@ router.get("/feed", verifyToken, async (req, res) => {
   try {
     const currentUserId = req.user.id || req.user.userId;
     const limit = parseInt(req.query.limit) || 100;
-    const allPosts = await Post.find().sort({ createdAt: -1 }).limit(limit).lean();
+    const allPosts = await Post.find()
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
+      .populate('comments.user', 'username profilePic role')
+      .lean();
     const filteredPosts = [];
 
     for (const post of allPosts) {
