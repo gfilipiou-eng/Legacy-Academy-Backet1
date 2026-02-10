@@ -1425,8 +1425,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                 try {
                     await axios.patch(`/messages/${msg._id}/read`);
                 } catch (e) {
-                    // If it 404s, it's already gone (Whisper cleanup) - ignore
-                    if (e.response?.status !== 404) {
+                    if (e?.response?.status === 404) {
+                        try { await axios.post(`/messages/${msg._id}/read`); } catch (e2) { }
+                    } else {
                         console.warn('Failed to mark message as read:', e.message);
                     }
                 }
@@ -3521,7 +3522,7 @@ const App = () => {
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[40] bg-black backdrop-blur-md border-b border-red-600 shrink-0 transition-all duration-500">
+                        <header className="relative w-full z-[40] liquid-glass-nav shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
@@ -3659,7 +3660,7 @@ const App = () => {
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                            <div className="h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-red-600 bg-[#111] backdrop-blur-md relative">
+                            <div className="h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto liquid-glass-nav">
                                 <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
@@ -3679,7 +3680,7 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
