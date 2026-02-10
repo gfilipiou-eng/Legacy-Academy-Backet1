@@ -2157,7 +2157,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ) : (
                                     <div className="flex-1 flex gap-2">
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3.5 ${isFollowing ? 'bg-white/10 text-white border border-white/20' : (isLocked ? 'bg-white text-black' : 'liquid-btn')} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
-                                            {isFollowing ? t('UNFOLLOW') : (isLocked ? (hasRequested ? t('REQUESTED') : t('REQUEST')) : t('FOLLOW'))}
+                                            {isFollowing ? t('UNFOLLOW') : (isLocked ? (hasRequested ? t('REQUESTED') : t('FOLLOW')) : t('FOLLOW'))}
                                         </button>
 
                                         {/* COMMS BUTTON */}
@@ -2202,7 +2202,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">{t('PRIVATE_LOCK_DESC')}</div>
                                     </div>
                                     <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className="w-full py-3.5 bg-white text-black rounded-full text-xs font-black tracking-widest hover:bg-gray-200 transition-all active:scale-95">
-                                        {hasRequested ? t('REQUESTED') : t('REQUEST')}
+                                        {hasRequested ? t('REQUESTED') : t('FOLLOW')}
                                     </button>
                                 </div>
                             ) : (
