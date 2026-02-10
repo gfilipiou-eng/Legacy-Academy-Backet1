@@ -31,14 +31,15 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
             const isVideo = url.includes('/video/upload/');
             let transform = '';
 
+            const CLOUDINARY_VIDEO_REGEX = /\.(mp4|mov|webm|m4v)$/i;
             if (isPoster && isVideo) {
                 // GENERATE POSTER IMAGE FROM VIDEO
                 transform = `so_0.5,f_jpg,q_auto:best,w_1080,c_limit`;
-                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
+                parts[1] = parts[1].replace(CLOUDINARY_VIDEO_REGEX, '.jpg');
             } else if (isAvatar && isVideo) {
                 // USE ANIMATED WEBP FOR AVATARS (HIGH QUALITY)
                 transform = `w_250,h_250,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
-                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
+                parts[1] = parts[1].replace(CLOUDINARY_VIDEO_REGEX, '.webp');
             } else if (isAvatar) {
                 // FORCE 8K / SUPER HIGH QUALITY FOR AVATARS
                 // Use 'q_100' (max quality), 'f_auto' (best format), and large dimensions to prevent upscale blur
