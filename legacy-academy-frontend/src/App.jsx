@@ -1867,9 +1867,17 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const fetchUserPosts = async () => {
         const userId = profileUser?._id || (typeof profileUser === 'string' ? profileUser : null);
         if (!userId) return;
-        setLoadingPosts(true);
+
+        // Optimistic: If we have global posts for this user, show them first
+        const cached = posts.filter(p => String(p.author?._id || p.author) === String(userId));
+        if (cached.length > 0) {
+            setUserSpecificPosts(cached);
+        } else {
+            setLoadingPosts(true);
+        }
+
         try {
-            const res = await axios.get(`/posts/user/${profileUser._id}`);
+            const res = await axios.get(`/posts/user/${userId}`);
             setUserSpecificPosts(res.data);
         } catch (e) {
             console.error("Profile posts fetch error:", e);
