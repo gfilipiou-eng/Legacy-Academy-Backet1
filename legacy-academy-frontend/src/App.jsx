@@ -2330,8 +2330,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
                     )}
                         </div>
-            </motion.div >
-        </div >
+            </motion.div>
+        </div>
     );
 };
 
