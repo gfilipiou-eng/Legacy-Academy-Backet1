@@ -2904,11 +2904,11 @@ const App = () => {
         try {
             const res = await axios.get('/users/notifications');
 
-            // If we see a follow_accepted that we haven't read yet, refresh our whole state
-            const hasNewAccept = res.data?.some(n => n.type === 'follow_accepted' && !n.read);
-            if (hasNewAccept) {
-                console.log("🔄 [LIVE] Detected accepted follow, refreshing profile state...");
+            // 🔥 LIVE SYNC: If we see a new 'follow_accepted' alert, refresh everything
+            if (res.data?.some(n => n.type === 'follow_accepted' && !n.read)) {
+                console.log("🔄 [LIVE] Follow accepted! Syncing profile locks...");
                 refreshUser();
+                fetchUsers();
             }
 
             setAlerts(res.data);
@@ -2918,7 +2918,9 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-        } catch (e) { console.error('Fetch notifications failed', e); }
+        } catch (e) {
+            // Silently fail to avoid console clutter during unstable connects
+        }
     };
 
     const markAllNotificationsRead = async () => {
@@ -3232,9 +3234,9 @@ const App = () => {
             }
             playSound('pop');
         } catch (e) {
-            console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
-            // Optimistic cleanup: remove it anyway if the user explicitly clicked deny
-            setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
+            console.warn("[HANDSHAKE] Denial suppressed. Cleaning up UI.");
+            // ALWAYS wipe the alert if the user clicked Reject, even if server fails
+            setAlerts(prev => prev.filter(a => String(a.sender?._id || a.sender || a.from) !== String(requesterId)));
         } finally {
             fetchNotifications();
             fetchUsers();

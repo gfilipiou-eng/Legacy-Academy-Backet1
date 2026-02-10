@@ -58,8 +58,9 @@ router.get('/heartbeat', heartbeatHandler);
 
 
 // 2. Follow - Absolute Priority
-// 2. Follow / Request Logic - Absolute Priority
+// 2. Follow / Request Logic - Absolute Priority [DIAGNOSTIC_LOG_V7]
 router.post("/:id/follow", verifyToken, async (req, res) => {
+    console.log("📡 [REJECT_TRACE] Follow handler hit for ID:", req.params.id);
     try {
         const currentUserId = String(req.user?.id || req.user?.userId);
         const targetId = req.params.id;
