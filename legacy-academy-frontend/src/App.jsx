@@ -1405,10 +1405,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const fetchMessages = async (otherUserId) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
-            setMessages(prev => ({ ...prev, [otherUserId]: res.data }));
+            const normalized = (res.data || []).map(m => ({
+                ...m,
+                read: (m.read ?? m.isRead ?? false),
+                audioUrl: (m.audioUrl ?? m.audio ?? '')
+            }));
+            setMessages(prev => ({ ...prev, [otherUserId]: normalized }));
 
             // 🔥 WHISPERS: Auto-mark incoming messages as read
-            const unreadIncoming = res.data.filter(m =>
+            const unreadIncoming = normalized.filter(m =>
                 String(m.recipient) === String(user?._id) &&
                 String(m.sender) === String(otherUserId) &&
                 !m.read &&

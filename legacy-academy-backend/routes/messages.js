@@ -6,6 +6,22 @@ import upload from "../middleware/upload.js"; // Needed for FormData
 
 const router = express.Router();
 
+// Mark message as read
+router.patch("/:messageId/read", verifyToken, async (req, res) => {
+    try {
+        const messageId = req.params.messageId;
+        const userId = req.user.id;
+        const msg = await Message.findById(messageId);
+        if (!msg) return res.status(404).json("Message not found");
+        if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
+        msg.isRead = true;
+        await msg.save();
+        res.status(200).json({ success: true, isRead: true });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // SEND MESSAGE (Using upload.single('file') for audio support)
 router.post("/", verifyToken, upload.single("file"), async (req, res) => {
     try {
