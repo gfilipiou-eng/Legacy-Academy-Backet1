@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 const router = express.Router();
 
-// GET ALL POSTS (Feed - Auth)
+// GET ALL POSTS (Feed)
 router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
@@ -25,6 +25,7 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // GET USER POSTS (Profile)
+// CRITICAL FIX: Respect Privacy Settings
 router.get("/user/:userId", verifyToken, async (req, res) => {
     try {
         const targetUserId = req.params.userId;

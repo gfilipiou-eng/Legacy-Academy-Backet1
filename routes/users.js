@@ -135,11 +135,12 @@ router.get("/find/:id", verifyToken, async (req, res) => {
     }
 });
 
-// 2. Λήψη όλων των posts ενός χρήστη (Με Privacy Φίλτρο)
+// 2. Λήψη όλων των posts ενός χρήστη (With Privacy Filter)
 router.get("/posts/:userId", verifyToken, async (req, res) => {
     try {
         const targetUserId = req.params.userId;
         const currentUserId = req.user.id || req.user.userId;
+
         const targetUser = await User.findById(targetUserId);
         if (!targetUser) return res.status(404).json("Agent not found.");
 
