@@ -1733,9 +1733,18 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-                    {/* Private Account setting removed */}
-
-                    {/* Guard Chat setting removed */}
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Private Account</div>
+                        <div className="flex items-center justify-between p-3 bg-black/40 rounded-xl border border-white/10">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Only accepted followers see content</div>
+                            <button onClick={() => handleSave('isPrivate', !isPrivate)} className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isPrivate ? 'bg-white text-black' : 'bg-white/10 text-gray-400'}`}>{isPrivate ? 'ON' : 'OFF'}</button>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-black/40 rounded-xl border border-white/10">
+                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Followers-only posts</div>
+                            <button onClick={() => handleSave('isFollowersOnly', !isFollowersOnly)} className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isFollowersOnly ? 'bg-white text-black' : 'bg-white/10 text-gray-400'}`}>{isFollowersOnly ? 'ON' : 'OFF'}</button>
+                        </div>
+                        <div className="text-[10px] text-gray-500 font-medium">Όταν είναι ενεργό, οι μη-ακόλουθοι βλέπουν το μήνυμα “FOLLOW TO VIEW CONTENT”.</div>
+                    </div>
 
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
@@ -1819,7 +1828,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const fileRef = useRef(null);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-    const toggleDate = (dateKey) => {
+    const toggleDate = (e, dateKey) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
         playSound('pop');
     };
@@ -2122,7 +2132,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ))}
                             </div>
 
-                            {/* CONTENT: Always show posts */}
+                            {/* CONTENT: Lock when private and not follower */}
+                            {(!isMe && (displayUser?.isPrivate || displayUser?.isFollowersOnly) && !isFollowing && currentUser?.role !== 'Founder') ? (
+                                <div className="space-y-6 pb-20">
+                                    <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+                                        <div className="w-14 h-14 bg-white/5 rounded-full flex items-center justify-center mb-2 border border-white/10">
+                                            <Icons.Lock className="w-6 h-6 text-gray-400" />
+                                        </div>
+                                        <div className="text-sm font-black text-white uppercase tracking-[0.2em]">Private Account</div>
+                                        <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">Only accepted followers see content</div>
+                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className="mt-4 px-6 py-3 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all active:scale-95">FOLLOW TO VIEW CONTENT</button>
+                                    </div>
+                                </div>
+                            ) : (
                             <>
                                 {userStories.length > 0 && (
                                     <div className="mb-6">
@@ -2166,17 +2188,17 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             const isExposed = expandedDates[dateKey];
                                             return (
                                                 <div key={dateKey} className="animate-fade-in group">
-                                                    <div
-                                                        onClick={() => toggleDate(dateKey)}
-                                                        className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-primary)]/30 transition-all cursor-pointer group/folder"
+                                                    <button
+                                                        onClick={(e) => toggleDate(e, dateKey)}
+                                                        className="w-full flex items-center gap-4 mb-3 px-4 py-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-primary)]/40 transition-all cursor-pointer group/folder text-left"
                                                     >
                                                         <div className="relative">
-                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20' : 'text-gray-500'} transition-all`} />
+                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20 shadow-[0_0_15px_var(--f1-glow-soft)]' : 'text-gray-500'} transition-all`} />
                                                             {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-primary)] text-white text-[9px] font-black shadow-lg shadow-[var(--f1-glow)]/30">{groupedUserPosts[dateKey].length}</div>}
                                                         </div>
                                                         <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
                                                         <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-primary)]' : ''}`} />
-                                                    </div>
+                                                    </button>
                                                     <AnimatePresence>
                                                         {isExposed && (
                                                             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
@@ -2184,7 +2206,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                     {groupedUserPosts[dateKey].map(p => (
                                                                         <div
                                                                             key={p._id}
-                                                                            onClick={() => onOpenDetail(p)}
+                                                                            onClick={(e) => { e.stopPropagation(); onOpenDetail(p); }}
                                                                             className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
                                                                         >
                                                                             {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
@@ -2226,7 +2248,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         })
                                     )}
                                 </div>
-                            </>
+                            </>)}
                         </div>
                     )}
                 </div>
@@ -2642,7 +2664,8 @@ const App = () => {
         }
     }, [user?._id, activeTab]);
 
-    const toggleDate = (dateKey) => {
+    const toggleDate = (e, dateKey) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
         playSound('pop');
     };
@@ -2826,7 +2849,7 @@ const App = () => {
     const fetchPosts = async () => {
         if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
         try {
-            const res = await axios.get('/posts?limit=20');
+            const res = await axios.get('/posts/feed?limit=20');
             setPosts(res.data);
         } catch (e) { }
     };
@@ -3504,9 +3527,9 @@ const App = () => {
                                                     const isOpen = expandedDates[dateKey];
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group">
-                                                            <div
-                                                                onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-[var(--f1-primary)] transition-all cursor-pointer group/folder my-2 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+                                                            <button
+                                                                onClick={(e) => toggleDate(e, dateKey)}
+                                                                className="w-full flex items-center gap-4 py-4 px-5 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-[var(--f1-primary)]/40 transition-all cursor-pointer group/folder my-2 shadow-[0_4px_20px_rgba(0,0,0,0.3)] text-left"
                                                             >
                                                                 <div className="relative">
                                                                     <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)]/20' : 'text-gray-500'} transition-all duration-300`} />
@@ -3517,7 +3540,7 @@ const App = () => {
                                                                     {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest italic">{t('EXPAND_INTEL')}</span>}
                                                                 </div>
                                                                 <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--f1-primary)]' : ''}`} />
-                                                            </div>
+                                                            </button>
 
                                                             <AnimatePresence>
                                                                 {isOpen && (

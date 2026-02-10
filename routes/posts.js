@@ -360,10 +360,22 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET POSTS BY USER ID (Public)
-router.get("/user/:userId", async (req, res) => {
+// GET POSTS BY USER ID (With Privacy Filter)
+router.get("/user/:userId", verifyToken, async (req, res) => {
   try {
     const { userId } = req.params;
+    const currentUserId = req.user.id || req.user.userId;
+    const targetUser = await User.findById(userId).select('isPrivate isFollowersOnly followers');
+    if (!targetUser) return res.status(404).json("Agent not found.");
+
+    const isOwner = String(userId) === String(currentUserId);
+    const isFollower = (targetUser.followers || []).some(id => String(id) === String(currentUserId));
+    const isPrivate = !!(targetUser.isPrivate || targetUser.isFollowersOnly);
+
+    if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
+      return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
+    }
+
     const posts = await Post.find({ author: userId })
       .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
       .sort({ createdAt: -1 })
@@ -603,29 +615,64 @@ router.delete("/:id", verifyToken, async (req, res) => {
   } catch (e) { res.status(500).json(e); }
 });
 
-// GET FEED (Public)
-router.get("/feed", async (req, res) => {
+// GET FILTERED FEED (respects privacy settings)
+router.get("/feed", verifyToken, async (req, res) => {
   try {
+    const currentUserId = req.user.id || req.user.userId;
     const limit = parseInt(req.query.limit) || 100;
-    const posts = await Post.find().sort({ createdAt: -1 }).limit(limit).lean();
-    res.status(200).json(posts);
+    const allPosts = await Post.find().sort({ createdAt: -1 }).limit(limit).lean();
+    const filteredPosts = [];
+
+    for (const post of allPosts) {
+      const postAuthor = await User.findById(post.author);
+      const isFounder = req.user.role === 'Founder' || req.user.role === 'Admin';
+
+      if (!postAuthor) {
+        if (post.visibility === 'public') filteredPosts.push(post);
+        continue;
+      }
+
+      if (post.author.toString() === currentUserId || isFounder) {
+        filteredPosts.push(post);
+        continue;
+      }
+
+      const isPrivate = postAuthor.isPrivate || postAuthor.isFollowersOnly || post.isPrivate || post.isFollowersOnly;
+      if (isPrivate) {
+        if (postAuthor.followers?.some(id => String(id) === currentUserId)) {
+          filteredPosts.push(post);
+        }
+        continue;
+      }
+
+      filteredPosts.push(post);
+    }
+
+    res.status(200).json(filteredPosts);
   } catch (e) {
     console.error("Feed error:", e);
     res.status(500).json(e);
   }
 });
 
-// GET SINGLE POST (Public)
-router.get("/:id", async (req, res) => {
+// GET SINGLE POST (With Privacy Filter)
+router.get("/:id", verifyToken, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).populate('author', 'username profilePic role isPrivate isFollowersOnly followers');
     if (!post) return res.status(404).json("Post not found");
+    const currentUserId = req.user.id || req.user.userId;
+    const isOwner = String(post.author?._id || post.author) === String(currentUserId);
+    const isPrivate = post.isPrivate || post.isFollowersOnly || post.author?.isPrivate || post.author?.isFollowersOnly;
+    const isFollower = post.author?.followers?.some(id => String(id) === String(currentUserId));
+    if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
+      return res.status(403).json("This intel is encrypted. Access restricted to authorized followers.");
+    }
     res.status(200).json(post);
-  } catch (e) {
     console.error("Fetch single post error:", e);
     res.status(500).json(e);
   }
 });
+
 
 // CATCH-ALL FOR DEBUGGING (404 for API, but identifying the cause)
 router.use((req, res) => {
