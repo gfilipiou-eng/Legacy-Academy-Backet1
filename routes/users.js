@@ -74,9 +74,14 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         // 1. UNFOLLOW if already following
         if (userToFollow.followers?.some(id => String(id) === currentUserId)) {
-            const updatedUser = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
-            await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetId } });
-            return res.status(200).json({ message: "Unfollowed", isFollowing: false, followers: updatedUser.followers });
+            const updatedTarget = await User.findByIdAndUpdate(targetId, { $pull: { followers: currentUserId } }, { new: true });
+            const updatedSelf = await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetId } }, { new: true });
+            return res.status(200).json({
+                message: "Unfollowed",
+                isFollowing: false,
+                followers: updatedTarget.followers,
+                following: updatedSelf.following
+            });
         }
 
         // 2. CANCEL REQUEST if already requested
@@ -105,7 +110,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         }
 
         // 4. PUBLIC FOLLOW (INSTANT)
-        const updatedUser = await User.findByIdAndUpdate(targetId, {
+        const updatedTarget = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,
                 notifications: {
@@ -115,8 +120,13 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             }
         }, { new: true });
 
-        await User.findByIdAndUpdate(currentUserId, { $push: { following: targetId } });
-        res.status(200).json({ message: "Followed", isFollowing: true, followers: updatedUser.followers });
+        const updatedSelf = await User.findByIdAndUpdate(currentUserId, { $push: { following: targetId } }, { new: true });
+        res.status(200).json({
+            message: "Followed",
+            isFollowing: true,
+            followers: updatedTarget.followers,
+            following: updatedSelf.following
+        });
     } catch (err) {
         console.error("🔥 Follow Protocol Error:", err.message);
         res.status(500).json({ message: "System failure", error: err.message });
@@ -218,13 +228,13 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 
         console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] Proceeding with DB updates...`);
         // 1. Update self
-        await User.findByIdAndUpdate(userId, {
+        const updatedSelf = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+                notifications: { from: requesterId, type: 'follow_request' }
             },
             $push: { followers: requesterId }
-        });
+        }, { new: true });
 
         // 2. Update requester
         await User.findByIdAndUpdate(requesterId, {
@@ -243,7 +253,12 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         });
 
         console.log(`[ACCEPT REQ] [${req.requestId || 'no-id'}] SUCCESS: Accepted request from ${requesterId}`);
-        res.status(200).json("Follower accepted");
+        res.status(200).json({
+            message: "Follower accepted",
+            followers: updatedSelf.followers,
+            followRequests: updatedSelf.followRequests,
+            notifications: updatedSelf.notifications
+        });
     } catch (err) {
         console.error(`[ACCEPT REQ] [${req.requestId || 'no-id'}] CRITICAL ERROR:`, err.message);
         res.status(500).json(err);
@@ -278,13 +293,17 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
             return res.status(200).json("Request not found");
         }
 
-        await User.findByIdAndUpdate(userId, {
+        const updatedSelf = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+                notifications: { from: requesterId, type: 'follow_request' }
             }
+        }, { new: true });
+        res.status(200).json({
+            message: "Request neutralized.",
+            followRequests: updatedSelf.followRequests,
+            notifications: updatedSelf.notifications
         });
-        res.status(200).json("Request neutralized.");
     } catch (err) { res.status(500).json(err); }
 });
 

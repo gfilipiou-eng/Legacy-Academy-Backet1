@@ -3172,14 +3172,27 @@ const App = () => {
         }
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/accept`, {});
+            const res = await axios.post(`/users/requests/${requesterId}/accept`, {});
+            if (res.data?.followRequests) {
+                updateUserState({
+                    followRequests: res.data.followRequests,
+                    followers: res.data.followers || user.followers
+                });
+            }
+            if (res.data?.notifications) {
+                setAlerts(res.data.notifications);
+            }
             playSound('pop');
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
             const isStale = /not found/i.test(msg) || /stale/i.test(msg) || /Endpoint Not Found/i.test(msg);
             const status400 = e.response?.status === 400;
             if (isStale || status400) {
-                try { await axios.post(`/users/requests/${requesterId}/reject`, {}); } catch { }
+                try {
+                    const res = await axios.post(`/users/requests/${requesterId}/reject`, {});
+                    if (res.data?.followRequests) updateUserState({ followRequests: res.data.followRequests });
+                    if (res.data?.notifications) setAlerts(res.data.notifications);
+                } catch { }
                 playSound('pop');
             } else {
                 console.error(`[HANDSHAKE] Authorization failed: ${msg}`, { requesterId });
@@ -3195,7 +3208,13 @@ const App = () => {
         if (!requesterId) return;
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/reject`, {});
+            const res = await axios.post(`/users/requests/${requesterId}/reject`, {});
+            if (res.data?.followRequests) {
+                updateUserState({ followRequests: res.data.followRequests });
+            }
+            if (res.data?.notifications) {
+                setAlerts(res.data.notifications);
+            }
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
