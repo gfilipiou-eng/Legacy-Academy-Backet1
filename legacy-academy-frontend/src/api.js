@@ -1,12 +1,10 @@
 import axios from "axios";
 
-// FORCE LIVE CONNECTION
-// Πλέον συνδέεται ΠΑΝΤΑ στο Render για να μην έχεις θέματα με Localhost.
-const API = axios.create({
-    baseURL: "https://legacy-academy-backet1.onrender.com/api",
-});
+const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+const BASE_URL = isLocal ? "http://localhost:5000/api" : "https://legacy-academy-backet1.onrender.com/api";
 
-// Αυτό το κομμάτι στέλνει το Token σου αυτόματα σε κάθε αίτημα
+const API = axios.create({ baseURL: BASE_URL });
+
 API.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {
