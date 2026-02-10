@@ -2164,66 +2164,67 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     ) : (
                                         Object.keys(groupedUserPosts).map(dateKey => {
                                             const isExposed = expandedDates[dateKey];
-                                            return <div key={dateKey} className="animate-fade-in group">
-                                                <div
-                                                    onClick={() => toggleDate(dateKey)}
-                                                    className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder"
-                                                >
-                                                    <div className="relative">
-                                                        <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
-                                                        {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
+                                            return (
+                                                <div key={dateKey} className="animate-fade-in group">
+                                                    <div
+                                                        onClick={() => toggleDate(dateKey)}
+                                                        className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder"
+                                                    >
+                                                        <div className="relative">
+                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
+                                                            {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
+                                                        </div>
+                                                        <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
+                                                        <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
                                                     </div>
-                                                    <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
-                                                    <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
-                                                </div>
-                                                <AnimatePresence>
-                                                    {isExposed && (
-                                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                            <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
-                                                                {groupedUserPosts[dateKey].map(p => (
-                                                                    <div
-                                                                        key={p._id}
-                                                                        onClick={() => onOpenDetail(p)}
-                                                                        className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                                    >
-                                                                        {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                            <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                        ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                            <div className="relative w-full h-full">
-                                                                                <video
-                                                                                    src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
-                                                                                    muted
-                                                                                    playsInline
-                                                                                    preload="metadata"
-                                                                                    className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
-                                                                                />
-                                                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                    <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
+                                                    <AnimatePresence>
+                                                        {isExposed && (
+                                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
+                                                                <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
+                                                                    {groupedUserPosts[dateKey].map(p => (
+                                                                        <div
+                                                                            key={p._id}
+                                                                            onClick={() => onOpenDetail(p)}
+                                                                            className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
+                                                                        >
+                                                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                                <div className="relative w-full h-full">
+                                                                                    <video
+                                                                                        src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
+                                                                                        muted
+                                                                                        playsInline
+                                                                                        preload="metadata"
+                                                                                        className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
+                                                                                    />
+                                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                                        <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        ) : p.image ? (
-                                                                            <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                        ) : (
-                                                                            <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                            </div>
-                                                                        )}
+                                                                            ) : p.image ? (
+                                                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                            ) : (
+                                                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                                </div>
+                                                                            )}
 
-                                                                        {/* STATS OVERLAY on hover */}
-                                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
-                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
+                                                                            {/* STATS OVERLAY on hover */}
+                                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
+                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>
-                                        );
-                                    })
-                                )}
+                                                                    ))}
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                            );
+                                        })
+                                    )}
                                 </div>
                             </>
                         </div>
