@@ -1789,7 +1789,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88'].map(c => {
+                            {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88', '#39FF14', '#FF00BF', '#7000FF', '#00FFFF', '#FF3131'].map(c => {
                                 const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#FFD700';
                                 const isActive = currentTheme === c;
                                 return (
@@ -3470,7 +3470,7 @@ const App = () => {
                                                 <option value="cy">CY</option>
                                             </select>
                                             <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-24 custom-scrollbar">
-                                                {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88', '#3b82f6', '#ff4500', '#b0ff00', '#50C878'].map(c => (
+                                                {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88', '#3b82f6', '#ff4500', '#b0ff00', '#50C878', '#39FF14', '#FF00BF', '#7000FF', '#00FFFF', '#FF3131'].map(c => (
                                                     <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-6 h-6 rounded-lg transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_10px_white] ring-2 ring-white/50' : 'opacity-40 hover:opacity-100'}`} style={{ backgroundColor: c }} />
                                                 ))}
                                             </div>
