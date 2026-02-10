@@ -2211,8 +2211,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                                                                         {/* STATS OVERLAY on hover */}
                                                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
-                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
+                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
+                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
                                                                         </div>
                                                                     </div>
                                                                 ))}
@@ -2221,9 +2221,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                     )}
                                                 </AnimatePresence>
                                             </div>
-                                            );
-                                        })
-                                    )}
+                                        );
+                                    })
+                                )}
                                 </div>
                             </>
                         </div>
