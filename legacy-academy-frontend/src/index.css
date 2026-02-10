@@ -111,18 +111,27 @@ img {
 }
 
 .nav-item-active {
-  background: var(--gold-glow) !important;
-  color: var(--gold-primary) !important;
-  box-shadow: 0 0 20px var(--gold-glow);
-  border: 1px solid var(--gold-glow);
+  color: white !important;
+  position: relative;
+}
+
+.nav-item-active::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--f1-red);
+  box-shadow: 0 0 10px var(--f1-red);
 }
 
 .nav-center-action {
-  @apply w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300;
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
-  box-shadow: 0 0 15px var(--gold-glow), inset 0 2px 4px rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: black;
+  @apply w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300;
+  background: var(--f1-red);
+  box-shadow: 0 8px 25px rgba(225, 6, 0, 0.4);
+  color: white;
 }
 
 .nav-center-action:hover {
@@ -144,8 +153,8 @@ img {
 }
 
 .header-icon-btn:hover {
-  color: var(--gold-primary);
-  border-color: var(--gold-glow);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
@@ -159,7 +168,7 @@ img {
 }
 
 .glass-input {
-  @apply bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[var(--gold-primary)] transition-all;
+  @apply bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-all;
 }
 
 /* Twitter-Style Pill Buttons with F1 Flare */
@@ -254,7 +263,7 @@ img {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-primary);
+  background: var(--f1-red);
 }
 
 .animate-pop-in {
@@ -273,8 +282,8 @@ img {
   }
 }
 
-.shadow-glow-yellow {
-  box-shadow: 0 0 15px var(--gold-primary);
+.shadow-glow-white {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .shadow-glow-red {
@@ -295,14 +304,14 @@ img {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  @apply rounded-xl px-4 py-3 text-white outline-none focus:border-[var(--gold-primary)] transition-all;
+  @apply rounded-xl px-4 py-3 text-white outline-none focus:border-white transition-all;
 }
 
 /* Neural Network Background Elements */
 .neural-dot {
   @apply absolute w-1.5 h-1.5 rounded-full;
-  background: var(--gold-glow);
-  box-shadow: 0 0 10px var(--gold-glow-soft);
+  background: var(--f1-red);
+  box-shadow: 0 0 10px rgba(225, 6, 0, 0.3);
 }
 
 /* Mobile Safari safe bottom for detail modal UI */
@@ -328,7 +337,7 @@ img {
 }
 
 .premium-gradient-text {
-  background: linear-gradient(to right, #fff, var(--gold-primary), #fff);
+  background: linear-gradient(to right, #fff, var(--f1-red), #fff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% auto;
@@ -356,18 +365,18 @@ img {
 
   0%,
   100% {
-    border-color: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   50% {
-    border-color: rgba(255, 215, 0, 0.6);
+    border-color: var(--f1-red);
   }
 }
 
 .story-ring-active {
-  @apply border-2 border-transparent;
+  @apply border-2 border-transparent p-0.5;
   background-image: linear-gradient(black, black),
-    linear-gradient(to right, #ffd700, #b8860b, #ff0000);
+    linear-gradient(to right, var(--f1-red), #ff4d4d, white);
   background-origin: border-box;
   background-clip: content-box, border-box;
 }
@@ -380,11 +389,11 @@ img {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
 
-.animate-pulse-gold {
-  animation: gold-pulse 2s infinite;
+.animate-pulse-red {
+  animation: red-pulse 2s infinite;
 }
 
-@keyframes gold-pulse {
+@keyframes red-pulse {
 
   0%,
   100% {
@@ -403,9 +412,9 @@ img {
 }
 
 .premium-tab-active {
-  background: var(--gold-primary);
+  background: white;
   color: #000;
-  box-shadow: 0 8px 25px var(--gold-glow);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
 }
 
 @keyframes neural-drift {
@@ -453,8 +462,8 @@ select {
   font-size: 16px !important;
 }
 
-.shadow-glow-gold {
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+.shadow-glow-f1 {
+  box-shadow: 0 0 30px rgba(225, 6, 0, 0.2);
 }
 
 @keyframes heart-beat {

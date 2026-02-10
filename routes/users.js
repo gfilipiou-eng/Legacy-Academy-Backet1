@@ -58,7 +58,7 @@ router.get('/heartbeat', heartbeatHandler);
 
 
 // 2. Follow - Absolute Priority
-// 2. Follow / Request Logic - Absolute Priority [DIAGNOSTIC_LOG_V7]
+// 2. Follow / Request Logic - Simplified: Always instant follow/unfollow
 router.post("/:id/follow", verifyToken, async (req, res) => {
     console.log("📡 [REJECT_TRACE] Follow handler hit for ID:", req.params.id);
     try {
@@ -85,32 +85,14 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             });
         }
 
-        // 2. CANCEL REQUEST if already requested
+        // 2. If previously requested, convert to follower
         if (userToFollow.followRequests?.some(id => String(id) === currentUserId)) {
             await User.findByIdAndUpdate(targetId, {
-                $pull: {
-                    followRequests: currentUserId,
-                    notifications: { from: new mongoose.Types.ObjectId(String(currentUserId)), type: 'follow_request' }
-                }
+                $pull: { followRequests: currentUserId },
             });
-            return res.status(200).json({ message: "Request Cancelled", isRequested: false });
         }
 
-        // 3. HANDLE PRIVATE ACCOUNT (REQUEST)
-        if (userToFollow.isPrivate) {
-            const updatedUser = await User.findByIdAndUpdate(targetId, {
-                $push: {
-                    followRequests: currentUserId,
-                    notifications: {
-                        type: 'follow_request', from: currentUserId, fromUsername: currentUser.username,
-                        fromProfilePic: currentUser.profilePic || '', read: false, createdAt: new Date()
-                    }
-                }
-            }, { new: true });
-            return res.status(200).json({ message: "Requested", isRequested: true, followRequests: updatedUser.followRequests });
-        }
-
-        // 4. PUBLIC FOLLOW (INSTANT)
+        // 3. PUBLIC FOLLOW (INSTANT)
         const updatedTarget = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,

@@ -1578,7 +1578,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('SEARCH_PH')}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-white transition-colors"
                             />
                         </div>
                     </div>
@@ -1589,7 +1589,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                     <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-[var(--gold-primary)] text-black text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider">{t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-[var(--f1-red)] text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider italic">★ {t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
                         })}
@@ -1601,7 +1601,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                    <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
+                                    <div className="w-10 h-10 rounded-xl border border-white/20 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
                                     <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             </div>
@@ -1612,8 +1612,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                             {m.audioUrl ? (
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
+                                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-red)]">{t('VOICE_NOTE')}</span>
                                                     </div>
                                                     <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
                                                     {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
@@ -1627,8 +1627,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
-                            <div className="p-2 bg-[#050505] border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
-                                <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
+                            <div className="p-2 bg-black border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                                <div className="flex-1 relative flex items-center bg-white/5 border border-white/10 rounded-full px-5 py-1 focus-within:border-white transition-all group overflow-hidden">
                                     <input
                                         id="chat-input"
                                         name="chat-message"
@@ -1650,14 +1650,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                         className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
-                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
-                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--f1-red)] animate-pulse border border-[var(--f1-red)]/30 px-1.5 py-0.5 rounded-md bg-[var(--f1-red)]/10">GREEK PH</span>}
+                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-white transition-colors" />
                                     </div>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => { setIsPhonetic(!isPhonetic); playSound('pop'); }}
-                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
+                                    className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--f1-red)]/10 border-[var(--f1-red)] text-[var(--f1-red)] shadow-[0_0_15px_rgba(225,6,0,0.2)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
                                     title="Phonetic Greek Keyboard"
                                 >
                                     <Icons.Translate className="w-5 h-5" />
@@ -1665,14 +1665,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] active:scale-90'}`}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white active:scale-90'}`}
                                 >
                                     <Icons.Mic className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => handleSend()}
                                     disabled={!inputText.trim()}
-                                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
+                                    className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--f1-red)] text-white shadow-lg shadow-red-500/30 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                 >
                                     <Icons.Send className="w-5 h-5" />
                                 </button>
@@ -1916,18 +1916,21 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
         <div className="fixed inset-0 z-[1200] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
-                <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-black w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
+                {/* F1 Racing Line Accent */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-[var(--f1-red)] shadow-[0_0_15px_var(--f1-red)] z-[60]" />
+
+                <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-black/90 backdrop-blur-xl z-50">
                     <button onClick={() => {
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
                         else onClose();
                     }} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
-                    <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
+                    <div className="font-black italic text-white text-sm uppercase tracking-tighter">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
                     <div className="w-10" />
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
+                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-black carbon-fiber overscroll-y-contain pb-32">
                     {activeList ? (
                         <div className="p-2 space-y-2">
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
@@ -1999,7 +2002,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
+                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-900 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--f1-red)] italic shadow-[0_0_20px_var(--f1-red)]' : 'border-white/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
                                     {!isMe && (
@@ -2047,10 +2050,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="text-[8px] sm:text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS')}</div>
                                     </div>
                                     <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer group p-1 border-x border-white/5">
-                                        <span className="text-lg sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
+                                        <span className="text-lg sm:text-2xl font-black text-[var(--f1-red)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
                                         </span>
-                                        <span className="text-[8px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
+                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="flex flex-col items-center justify-center cursor-pointer group p-1">
                                         <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
@@ -2072,24 +2075,24 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         )}
                                         {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />}
                                     </div>
-                                    {displayUser?.role === 'Founder' && <span className="text-[var(--gold-primary)] text-[10px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE')}</span>}
+                                    {displayUser?.role === 'Founder' && <span className="text-[var(--f1-red)] text-[10px] font-black tracking-wider uppercase italic">★ {t('FOUNDER_BADGE')}</span>}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
                                 {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px]">{t('EDIT_PROFILE')}</button>
+                                    <button onClick={() => setIsEditing(true)} className="w-full gold-btn py-3 sm:py-3.5 text-xs font-black tracking-widest hover:scale-[0.98] transition-all">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex-1 flex gap-2">
-                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
+                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3.5 ${isFollowing ? 'bg-white/10 text-white border border-white/20' : 'liquid-btn'} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
                                             {isFollowing ? t('UNFOLLOW') : t('FOLLOW')}
                                         </button>
 
                                         {/* COMMS BUTTON */}
                                         <button
                                             onClick={() => { onOpenChat(displayUser); }}
-                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
+                                            className="px-6 py-3.5 bg-white text-black rounded-full hover:bg-gray-200 transition-all active:scale-95 group shadow-lg"
                                         >
-                                            <Icons.MessageCircle className="w-5 h-5 text-[var(--gold-primary)] group-hover:scale-110" />
+                                            <Icons.MessageCircle className="w-5 h-5 group-hover:scale-110" />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -2104,7 +2107,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         addToast(t('BAN_SUCCESS'), "success");
                                                     } catch (e) { addToast(t('BAN_ERROR'), "error"); }
                                                 }}
-                                                className="px-3 py-3 bg-red-600/20 border border-red-500/40 rounded-2xl text-red-500 font-black text-[9px] tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[70px]"
+                                                className="px-5 py-3.5 bg-black border-2 border-[var(--f1-red)] text-[var(--f1-red)] rounded-full font-black text-[10px] tracking-widest hover:bg-[var(--f1-red)] hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[80px]"
                                             >
                                                 {t('BAN')}
                                             </button>
@@ -2113,9 +2116,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4">
+                            <div className="flex gap-2 p-1 bg-black/40 backdrop-blur-md rounded-full mb-6 border border-white/5">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.1em] rounded-full transition-all ${activeTab === tab ? 'bg-white text-black shadow-xl' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
                                 ))}
                             </div>
 
@@ -2127,12 +2130,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                             {userStories.map(s => (
                                                 <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                    <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                    <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-red)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-red)]/10 bg-black overflow-hidden relative">
                                                         {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                                             <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                         ) : (
                                                             <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                                <Icons.Play className="w-6 h-6 text-[var(--gold-primary)]" />
+                                                                <Icons.Play className="w-6 h-6 text-white" />
                                                                 {/* Ensure video doesn't autoplay in thumbnail view */}
                                                                 <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
                                                             </div>
@@ -2148,8 +2151,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="space-y-6 pb-20">
                                     {loadingPosts ? (
                                         <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                            <div className="w-8 h-8 border-2 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin" />
-                                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
+                                            <div className="w-8 h-8 border-2 border-[var(--f1-red)] border-t-transparent rounded-full animate-spin" />
+                                            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
                                         </div>
                                     ) : userPosts.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -2161,64 +2164,63 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     ) : (
                                         Object.keys(groupedUserPosts).map(dateKey => {
                                             const isExposed = expandedDates[dateKey];
-                                            return (
-                                                <div key={dateKey} className="group animate-fade-in">
-                                                    <div
-                                                        onClick={() => toggleDate(dateKey)}
-                                                        className="flex items-center gap-3 mb-4 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--gold-primary)]/30 transition-all cursor-pointer group/folder"
-                                                    >
-                                                        <div className="relative">
-                                                            <Icons.Folder className={`w-5 h-5 ${isExposed ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-colors`} />
-                                                            {!isExposed && <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-[var(--gold-primary)] text-black text-[8px] font-black shadow-lg shadow-[var(--gold-primary)]/20">{groupedUserPosts[dateKey].length}</div>}
-                                                        </div>
-                                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
-                                                        <Icons.ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
+                                            return <div key={dateKey} className="animate-fade-in group">
+                                                <div
+                                                    onClick={() => toggleDate(dateKey)}
+                                                    className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder"
+                                                >
+                                                    <div className="relative">
+                                                        <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
+                                                        {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
                                                     </div>
-                                                    <AnimatePresence>
-                                                        {isExposed && (
-                                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                                <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
-                                                                    {groupedUserPosts[dateKey].map(p => (
-                                                                        <div
-                                                                            key={p._id}
-                                                                            onClick={() => onOpenDetail(p)}
-                                                                            className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                                        >
-                                                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                                <div className="relative w-full h-full">
-                                                                                    <video
-                                                                                        src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
-                                                                                        muted
-                                                                                        playsInline
-                                                                                        preload="metadata"
-                                                                                        className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
-                                                                                    />
-                                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                        <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
-                                                                                    </div>
-                                                                                </div>
-                                                                            ) : p.image ? (
-                                                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (
-                                                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                                </div>
-                                                                            )}
-
-                                                                            {/* STATS OVERLAY on hover */}
-                                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </motion.div>
-                                                        )}
-                                                    </AnimatePresence>
+                                                    <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
+                                                    <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
                                                 </div>
+                                                <AnimatePresence>
+                                                    {isExposed && (
+                                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
+                                                            <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
+                                                                {groupedUserPosts[dateKey].map(p => (
+                                                                    <div
+                                                                        key={p._id}
+                                                                        onClick={() => onOpenDetail(p)}
+                                                                        className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
+                                                                    >
+                                                                        {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                            <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                        ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                            <div className="relative w-full h-full">
+                                                                                <video
+                                                                                    src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
+                                                                                    muted
+                                                                                    playsInline
+                                                                                    preload="metadata"
+                                                                                    className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
+                                                                                />
+                                                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                                    <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
+                                                                                </div>
+                                                                            </div>
+                                                                        ) : p.image ? (
+                                                                            <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                        ) : (
+                                                                            <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                                <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                            </div>
+                                                                        )}
+
+                                                                        {/* STATS OVERLAY on hover */}
+                                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
+                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
                                             );
                                         })
                                     )}
@@ -3431,14 +3433,14 @@ const App = () => {
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
 
-                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold transition-all active:scale-90" title="Whispers">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-[var(--gold-primary)]">
+                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border border-white/10 hover:border-white/30 transition-all active:scale-90" title="Whispers">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-white">
                                             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z" />
                                         </svg>
-                                        <div className="absolute top-1 right-1 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
+                                        <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-[var(--f1-red)] rounded-full border border-black shadow-[0_0_10px_var(--f1-red)] animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
-                                        <Icons.Settings className="w-5 h-5 text-gray-400" />
+                                        <Icons.Settings className="w-5 h-5 text-gray-400 group-hover:text-white" />
                                     </button>
                                 </div>
                             </div>
@@ -3462,7 +3464,7 @@ const App = () => {
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-white transition-all shadow-inner" /></div>
                                                 <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
                                             </div>
                                         )}
@@ -3478,7 +3480,7 @@ const App = () => {
                                                                 <div className="font-bold text-white text-sm">
                                                                     {u.username}
                                                                 </div>
-                                                                {u.role === 'Founder' && <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase mt-0.5">FOUNDER</div>}
+                                                                {u.role === 'Founder' && <div className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase italic mt-0.5">FOUNDER</div>}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>

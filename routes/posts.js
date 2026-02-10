@@ -349,31 +349,12 @@ router.delete("/:id/comments", verifyToken, async (req, res) => {
 router.get("/", verifyToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 100;
-    const currentUserId = req.user.id || req.user.userId;
-
     const posts = await Post.find()
       .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
       .sort({ createdAt: -1 })
       .lean();
 
-    const filtered = posts.filter(p => {
-      const authorId = String(p.author?._id || p.author);
-      // Own posts or Founder bypass
-      if (authorId === String(currentUserId)) return true;
-      if (req.user.role === 'Founder' || req.user.role === 'Admin') return true;
-
-      const author = p.author && typeof p.author === 'object' ? p.author : null;
-      const authorIsPrivate = author?.isPrivate || author?.isFollowersOnly || p.isPrivate || p.isFollowersOnly;
-
-      // Privacy check
-      if (authorIsPrivate) {
-        const followers = author?.followers || [];
-        return followers.some(id => String(id) === String(currentUserId));
-      }
-      return true;
-    }).slice(0, limit);
-
-    return res.status(200).json(filtered);
+    return res.status(200).json(posts.slice(0, limit));
   } catch (err) {
     console.error("Fetch posts error:", err);
     return res.status(500).json(err);
@@ -384,40 +365,12 @@ router.get("/", verifyToken, async (req, res) => {
 router.get("/user/:userId", verifyToken, async (req, res) => {
   try {
     const { userId } = req.params;
-    const currentUserId = req.user.id || req.user.userId;
-
-    const targetUser = await User.findById(userId).select('isPrivate isFollowersOnly followers');
-    if (!targetUser) return res.status(404).json("User not found");
-
-    const isOwner = String(userId) === String(currentUserId);
-    const isFollower = (targetUser.followers || []).some(id => String(id) === String(currentUserId));
-    const isPrivate = !!(targetUser.isPrivate || targetUser.isFollowersOnly);
-
-    if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
-      return res.status(403).json("This intel is encrypted. Access restricted to authorized followers.");
-    }
-
     const posts = await Post.find({ author: userId })
       .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
       .sort({ createdAt: -1 })
       .lean();
 
-    const filtered = posts.filter(p => {
-      const authorId = String(p.author?._id || p.author);
-      if (authorId === String(currentUserId)) return true;
-      if (req.user.role === 'Founder' || req.user.role === 'Admin') return true;
-
-      const author = p.author && typeof p.author === 'object' ? p.author : null;
-      const authorIsPrivate = author?.isPrivate || author?.isFollowersOnly || p.isPrivate || p.isFollowersOnly;
-
-      if (authorIsPrivate) {
-        const followers = author?.followers || [];
-        return followers.some(id => String(id) === String(currentUserId));
-      }
-      return true;
-    });
-
-    res.status(200).json(filtered);
+    res.status(200).json(posts);
   } catch (err) {
     console.error("Fetch user posts error:", err);
     res.status(500).json(err);
