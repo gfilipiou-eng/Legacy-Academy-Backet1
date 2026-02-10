@@ -231,7 +231,7 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         const updatedSelf = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: requesterId, type: 'follow_request' }
+                notifications: { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
             },
             $push: { followers: requesterId }
         }, { new: true });
@@ -296,7 +296,7 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
         const updatedSelf = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: requesterId, type: 'follow_request' }
+                notifications: { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
             }
         }, { new: true });
         res.status(200).json({
