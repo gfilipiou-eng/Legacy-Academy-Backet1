@@ -69,7 +69,7 @@ if (typeof document !== 'undefined') {
             backdrop-filter: blur(25px) saturate(180%);
             -webkit-backdrop-filter: blur(25px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 40px rgba(var(--gold-primary-rgb), 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 40px rgba(225, 6, 0, 0.05);
         }
         @keyframes gradient-shift {
             0%, 100% {
@@ -1740,18 +1740,18 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
-                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
+                            {['#ffffff', '#e10600', '#1a1a1a', '#3b82f6', '#10b981', '#a855f7'].map(c => {
+                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffffff';
                                 const isActive = currentTheme === c;
                                 return (
                                     <button key={c} onClick={() => {
                                         applyTheme(c);
                                         handleSave('settings', { theme: c });
-                                    }} className={`w-9 h-9 rounded-xl border-2 transition-all relative ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.5)] z-10' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c, borderColor: isActive ? 'white' : 'transparent' }}>
+                                    }} className={`w-9 h-9 rounded-full border-2 transition-all relative ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)] z-10' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c, borderColor: isActive ? 'white' : 'transparent' }}>
                                         {isActive && (
-                                            <motion.div layoutId="theme-active" className="absolute -inset-1.5 border-2 border-white/20 rounded-[1rem] pointer-events-none" initial={false} animate={{ opacity: 1 }} />
+                                            <motion.div layoutId="theme-active" className="absolute -inset-1.5 border-2 border-white/20 rounded-full pointer-events-none" initial={false} animate={{ opacity: 1 }} />
                                         )}
-                                        {isActive && <Icons.Check className="w-5 h-5 text-black mx-auto drop-shadow-md" />}
+                                        {isActive && <Icons.Check className={`w-5 h-5 ${c === '#ffffff' ? 'text-black' : 'text-white'} mx-auto drop-shadow-md`} />}
                                     </button>
                                 );
                             })}
@@ -1798,7 +1798,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <Icons.Logout className="w-5 h-5" />
                     </button>
 
-                    {saving && <div className="text-[10px] text-[var(--gold-primary)] text-center font-bold animate-pulse">{t('SYNCING')}</div>}
+                    {saving && <div className="text-[10px] text-[var(--f1-red)] text-center font-bold animate-pulse">{t('SYNCING')}</div>}
                 </div>
             </div>
         </div>
@@ -3498,17 +3498,17 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group">
                                                             <div
                                                                 onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-[1.5rem] hover:bg-white/10 hover:border-[var(--gold-primary)] transition-all cursor-pointer group/folder my-2"
+                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-[var(--f1-red)] transition-all cursor-pointer group/folder my-2 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
                                                             >
                                                                 <div className="relative">
-                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--gold-primary)]' : 'text-gray-500'} transition-all duration-300`} />
-                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{group.posts.length}</div>}
+                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all duration-300`} />
+                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{group.posts.length}</div>}
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
                                                                     <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-300'}`}>{dateKey}</span>
-                                                                    {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">{t('EXPAND_INTEL')}</span>}
+                                                                    {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest italic">{t('EXPAND_INTEL')}</span>}
                                                                 </div>
-                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
+                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
                                                             </div>
 
                                                             <AnimatePresence>
@@ -3534,8 +3534,8 @@ const App = () => {
                                             </div>
                                             {posts.length === 0 && (
                                                 <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                                    <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">{t('DECRYPTING_FEED')}</div>
+                                                    <div className="w-12 h-12 border-4 border-[var(--f1-red)] border-t-transparent rounded-full animate-spin"></div>
+                                                    <div className="text-[var(--f1-red)] font-black text-sm uppercase tracking-[0.2em] animate-pulse italic">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             )}
                                         </div>
