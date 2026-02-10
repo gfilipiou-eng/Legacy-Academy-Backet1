@@ -167,13 +167,14 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
 // UPDATE USER SETTINGS (Privacy, Theme, Language)
 router.put("/settings", verifyToken, async (req, res) => {
     try {
-        const { isPrivate, isFollowersOnly, settings, bio, profilePic } = req.body;
+        const { isPrivate, isFollowersOnly, settings, bio, profilePic, username } = req.body;
         const updateData = {};
 
         if (isPrivate !== undefined) updateData.isPrivate = isPrivate;
         if (isFollowersOnly !== undefined) updateData.isFollowersOnly = isFollowersOnly;
         if (bio !== undefined) updateData.bio = bio;
         if (profilePic !== undefined) updateData.profilePic = profilePic;
+        if (username !== undefined) updateData.username = username;
 
         // Nested settings support
         if (settings) {

@@ -2047,7 +2047,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <button onClick={async () => {
                                 try {
-                                    const res = await axios.put(`/users/${displayUser?._id}`, { bio, username: editUsername });
+                                    const res = await axios.put('/users/settings', { bio, username: editUsername });
                                     if (res.data) {
                                         localStorage.setItem('user', JSON.stringify(res.data));
                                         if (onUpdateUser) onUpdateUser(res.data);
