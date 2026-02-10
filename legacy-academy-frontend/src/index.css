@@ -457,11 +457,24 @@ img {
   animation: slide-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Fix mobile zoom issue - Force 16px to prevent iOS auto-zoom */
-input,
-textarea,
-select {
-  font-size: 16px !important;
+/* Fix mobile zoom issue and double-tap delay */
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media screen and (max-width: 768px) {
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px !important;
+  }
+}
+
+.group\/folder {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .shadow-glow-f1 {
