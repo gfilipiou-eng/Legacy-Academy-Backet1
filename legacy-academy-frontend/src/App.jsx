@@ -1870,7 +1870,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const toggleDate = (dateKey) => {
         interactionLock.current = Date.now();
         setIsGhostLocked(true);
-        setTimeout(() => setIsGhostLocked(false), 600);
+        // Robust 1.2s lock during folder expansion/collapse to prevent "ghost" taps on mobile
+        setTimeout(() => setIsGhostLocked(false), 1200);
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
         playSound('pop');
     };
@@ -2268,8 +2269,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                 key={p._id}
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    // safety lock check
-                                                                                    if (Date.now() - interactionLock.current < 500) return;
+                                                                                    // Extra safety: block all clicks during the 1.2s ghost lock window
+                                                                                    if (isGhostLocked || (Date.now() - interactionLock.current < 1200)) return;
                                                                                     onOpenDetail(p);
                                                                                 }}
                                                                                 className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-all flex items-center justify-center group/card shadow-2xl active:scale-95 touch-manipulation"
