@@ -2230,7 +2230,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                     {userStories.map(s => (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                             <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-primary)]/10 bg-black overflow-hidden relative">
-                                                                {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                                                {s.thumbnailUrl || (s.image && !isVideoFile(s.image)) ? (
                                                                     <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                                 ) : (
                                                                     <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
