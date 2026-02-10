@@ -162,12 +162,16 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
             };
             mediaRecorder.current.start();
             setIsRecording(true);
+            playSound('mic_start');
+            if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
         } catch (e) { alert("Mic required"); }
     };
 
     const stopRecording = () => {
         if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
             mediaRecorder.current.stop();
+            playSound('mic_stop');
+            if (navigator.vibrate) navigator.vibrate(15);
         }
     };
 
@@ -3173,7 +3177,8 @@ const App = () => {
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
         } else if (!isCurrentlyFollowing && targetIsPrivate) {
-            updateUserState({ followRequests: [...(user.followRequests || []), targetId], requested: true });
+            const newFollowRequests = [...(user.followRequests || []), targetId];
+            updateUserState({ followRequests: newFollowRequests });
         } else {
             updateUserState({ following: [...(user.following || []), targetId] });
         }
