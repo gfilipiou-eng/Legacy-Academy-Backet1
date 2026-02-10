@@ -31,15 +31,14 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
             const isVideo = url.includes('/video/upload/');
             let transform = '';
 
-            const CLOUDINARY_VIDEO_REGEX = /\.(mp4|mov|webm|m4v)$/i;
             if (isPoster && isVideo) {
                 // GENERATE POSTER IMAGE FROM VIDEO
                 transform = `so_0.5,f_jpg,q_auto:best,w_1080,c_limit`;
-                parts[1] = parts[1].replace(CLOUDINARY_VIDEO_REGEX, '.jpg');
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
             } else if (isAvatar && isVideo) {
                 // USE ANIMATED WEBP FOR AVATARS (HIGH QUALITY)
                 transform = `w_250,h_250,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
-                parts[1] = parts[1].replace(CLOUDINARY_VIDEO_REGEX, '.webp');
+                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
                 // FORCE 8K / SUPER HIGH QUALITY FOR AVATARS
                 // Use 'q_100' (max quality), 'f_auto' (best format), and large dimensions to prevent upscale blur
@@ -101,38 +100,19 @@ if (typeof document !== 'undefined') {
 }
 
 // Helpers for Youtube detection/embed
-const YT_REGEX = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i;
-
 const isYouTubeUrl = (url) => {
     if (!url) return false;
     try {
-        return YT_REGEX.test(url);
+        return /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(url);
     } catch (e) { return false; }
 };
 const getYouTubeEmbedUrl = (url) => {
-    const m = YT_REGEX.exec(url || '');
+    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(url || '');
     if (!m) return null;
     return `https://www.youtube.com/embed/${m[1]}`;
 };
 
-const getYouTubeThumbnail = (url) => {
-    const m = YT_REGEX.exec(url || '');
-    if (!m) return null;
-    return `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
-};
-
-const HASHTAG_REGEX = /(#[\p{L}\p{N}_]+)/gu;
-const parseHashtags = (text, onClick) => {
-    if (!text) return text;
-    return text.split(HASHTAG_REGEX).map((part, i) => {
-        return part.startsWith('#') ? (
-            <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span>
-        ) : part;
-    });
-};
-
-const VIDEO_EXT_REGEX = /\.(mp4|mov|webm)$/i;
-const isVideoFile = (path) => path && VIDEO_EXT_REGEX.test(path);
+const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
     // Rule: Only show online status if the user follows me (the current viewer)
@@ -2159,7 +2139,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <svg viewBox="0 0 22 22" className="w-5 h-5 shrink-0 drop-shadow-[0_0_6px_rgba(29,155,240,0.7)]">
                                             <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                                         </svg>
-                                        {displayUser?._id !== currentUser?._id && <div className={`ml-2 w-2.5 h-2.5 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />}
                                         {displayUser?.role === 'Founder' && <span className="text-[var(--f1-primary)] text-[10px] font-black tracking-wider uppercase italic">★ {t('FOUNDER_BADGE')}</span>}
                                         {currentUser?.followers?.some(id => String(id) === String(displayUser?._id)) && (
                                             <span className="self-start px-2 py-0.5 bg-white/10 rounded text-[7px] font-black tracking-widest text-gray-400 uppercase leading-none mt-1">{t('FOLLOWS_YOU')}</span>
@@ -2231,7 +2210,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                     {userStories.map(s => (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                             <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-primary)]/10 bg-black overflow-hidden relative">
-                                                                {s.thumbnailUrl || (s.image && !isVideoFile(s.image)) ? (
+                                                                {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                                                     <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                                 ) : (
                                                                     <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
@@ -2288,8 +2267,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                     className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
                                                                                 >
                                                                                     {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                        <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : getYouTubeThumbnail(p.videoUrl)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 pointer-events-none" />
-                                                                                    ) : (p.videoUrl || isVideoFile(p.image)) ? (
+                                                                                        <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 pointer-events-none" />
+                                                                                    ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                                                                         <div className="relative w-full h-full">
                                                                                             <video
                                                                                                 src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
@@ -2330,8 +2309,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
                     )}
                         </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
 };
 
