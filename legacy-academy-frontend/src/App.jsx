@@ -1677,8 +1677,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                     <Icons.Send className="w-5 h-5" />
                                 </button>
                             </div>
-                        </>
-                    ) : (
+                                </>) : (
                         <div className="flex-1 flex items-center justify-center text-center"><div><Icons.MessageCircle className="w-16 h-16 text-gray-800 mx-auto mb-4" /><h3 className="font-black italic text-2xl tracking-tighter">{t('MESSAGES')}</h3><p className="text-gray-500 text-sm mt-2">{t('SECURE_COMMS')}</p></div></div>
                     )}
                 </div>
@@ -2121,9 +2120,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ))}
                             </div>
 
-                            {/* PRIVACY LOCK SCREEN REMOVED */}
-                            {true ? (
-                                <>
+                            {/* CONTENT: Always show posts */}
+                            <>
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
@@ -2227,7 +2225,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         )}
                                     </div>
                                 </>
-                            )}
                         </div>
                     )}
                 </div>
