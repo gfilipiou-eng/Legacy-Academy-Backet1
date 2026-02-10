@@ -2679,6 +2679,10 @@ const applyTheme = (color) => {
     document.documentElement.style.setProperty('--gold-glow', glow);
     document.documentElement.style.setProperty('--gold-glow-soft', glowSoft);
 
+    // Sync with global F1 accent variables so profile and nav change too
+    document.documentElement.style.setProperty('--f1-red', color);
+    document.documentElement.style.setProperty('--f1-primary', color);
+
     localStorage.setItem('themeColor', color);
     localStorage.setItem('themeSecondary', secondary);
     localStorage.setItem('themeHover', hover);
