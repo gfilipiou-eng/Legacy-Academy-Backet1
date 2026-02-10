@@ -886,7 +886,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 };
 
 // Notification item component for Alerts tab
-const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t }) => {
+const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, handshakeLoading }) => {
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
@@ -933,8 +933,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('AUTHORIZE')}</button>
-                        <button onClick={() => onRejectRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
+                        <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onAcceptRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 ${handshakeLoading?.[String(note.sender?._id || note.from)] ? 'bg-gray-600 opacity-60' : 'bg-[var(--gold-primary)]'} text-black text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:scale-105 active:scale-95'} transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest`}>{t('AUTHORIZE')}</button>
+                        <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onRejectRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:bg-red-500/20 hover:text-red-500'} transition-all uppercase tracking-widest`}>{t('DENY')}</button>
                     </div>
                 )}
             </div>
@@ -3175,12 +3175,14 @@ const App = () => {
         finally { setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; }); }
     };
 
+    const [handshakeLoading, setHandshakeLoading] = useState({});
     const handleAcceptRequest = async (requesterId) => {
         if (!requesterId) {
             console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
             return;
         }
         try {
+            setHandshakeLoading(prev => ({ ...prev, [String(requesterId)]: true }));
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
 
             // OPTIMISTIC UI: Remove it from the alerts list right now so it feels "Live"
@@ -3218,12 +3220,14 @@ const App = () => {
             fetchNotifications();
             fetchUsers();
             refreshUser();
+            setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(requesterId)]; return copy; });
         }
     };
 
     const handleRejectRequest = async (requesterId) => {
         if (!requesterId) return;
         try {
+            setHandshakeLoading(prev => ({ ...prev, [String(requesterId)]: true }));
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
             const res = await axios.post(`/users/requests/${requesterId}/reject`, {});
             if (res.data?.followRequests) {
@@ -3241,6 +3245,7 @@ const App = () => {
             fetchNotifications();
             fetchUsers();
             refreshUser();
+            setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(requesterId)]; return copy; });
         }
     };
 
@@ -3535,7 +3540,7 @@ const App = () => {
                                             </button>
                                         )}
                                     </div>
-                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
+                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} handshakeLoading={handshakeLoading} />)}
                                 </div>
                             ) : (
                                 <>
