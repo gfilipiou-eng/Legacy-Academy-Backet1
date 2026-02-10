@@ -1874,6 +1874,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         setTimeout(() => setIsGhostLocked(false), 1200);
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
         playSound('pop');
+        if (navigator.vibrate) navigator.vibrate(8);
     };
 
 
