@@ -258,6 +258,7 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             message: "Follower accepted",
             followers: updatedSelf.followers,
             followRequests: updatedSelf.followRequests,
+            following: updatedSelf.following,
             notifications: updatedSelf.notifications
         });
     } catch (err) {

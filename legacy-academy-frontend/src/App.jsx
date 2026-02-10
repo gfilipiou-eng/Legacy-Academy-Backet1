@@ -3201,18 +3201,13 @@ const App = () => {
                 if (res.data.followRequests) {
                     updateUserState({
                         followRequests: res.data.followRequests,
-                        followers: res.data.followers || user.followers
+                        followers: res.data.followers || user.followers,
+                        following: res.data.following || user.following
                     });
                 }
                 if (res.data.notifications) setAlerts(res.data.notifications);
             }
             addToast('AUTHORIZATION COMPLETE', 'success');
-            try {
-                const rf = await axios.post(`/users/${String(requesterId)}/follow`);
-                if (rf.data?.following) {
-                    updateUserState({ following: rf.data.following });
-                }
-            } catch (err) { }
             try { await axios.delete(`/users/notifications/from/${String(requesterId)}`); } catch (e) { }
             playSound('pop');
         } catch (e) {
