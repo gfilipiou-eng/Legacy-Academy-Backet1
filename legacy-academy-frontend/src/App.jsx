@@ -3527,7 +3527,7 @@ const App = () => {
                         <header className="relative w-full z-[40] liquid-glass-nav shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-28 sm:h-40 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
@@ -3649,9 +3649,7 @@ const App = () => {
                                         flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10
                                         ${toast.type === 'success' ? 'bg-green-500/20 text-green-400' : toast.type === 'neutral' ? 'bg-red-500/20 text-red-500' : 'bg-[#1a1a1a]/90 text-white'}
                                     `}>
-                                            <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
-                                                <Icons.Bell className="w-4 h-4" />
-                                            </div>
+                                            {/* icon removed by request */}
                                             <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
                                         </motion.div>
                                     ))}

@@ -48,7 +48,7 @@ img {
     0 0 40px rgba(var(--gold-primary-rgb), 0.03),
     inset 0 1px 1px rgba(255, 255, 255, 0.15);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .liquid-glass-nav::before {
