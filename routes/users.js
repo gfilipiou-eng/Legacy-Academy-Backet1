@@ -234,13 +234,13 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
                 followRequests: requesterId,
                 notifications: { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
             },
-            $push: { followers: requesterId }
+            $addToSet: { followers: requesterId, following: requesterId } // Mutual follow for instant unlock
         }, { new: true });
 
-        // 2. Update requester
+        // 2. Update requester (ensure mutual follow both ways)
         await User.findByIdAndUpdate(requesterId, {
+            $addToSet: { following: userId, followers: userId },
             $push: {
-                following: userId,
                 notifications: {
                     type: 'follow_accepted',
                     from: userId,
@@ -374,6 +374,23 @@ router.delete("/notifications/:id", verifyToken, async (req, res) => {
         });
         res.status(200).json("Notification deleted");
     } catch (err) { res.status(500).json(err); }
+});
+
+// Delete notifications by sender (cleanup helper)
+router.delete("/notifications/from/:fromId", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const fromId = req.params.fromId;
+        if (!fromId || !mongoose.Types.ObjectId.isValid(String(fromId))) {
+            return res.status(200).json({ status: "invalid_id_ignored" });
+        }
+        await User.findByIdAndUpdate(userId, {
+            $pull: { notifications: { from: new mongoose.Types.ObjectId(String(fromId)), type: 'follow_request' } }
+        });
+        res.status(200).json("Notifications from sender cleared");
+    } catch (err) {
+        res.status(500).json(err);
+    }
 });
 
 // Get followers list

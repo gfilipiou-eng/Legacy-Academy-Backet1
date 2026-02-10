@@ -3213,6 +3213,7 @@ const App = () => {
                     updateUserState({ following: rf.data.following });
                 }
             } catch (err) { }
+            try { await axios.delete(`/users/notifications/from/${String(requesterId)}`); } catch (e) { }
             playSound('pop');
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
@@ -3354,6 +3355,7 @@ const App = () => {
 
     return (
         <div className="app-container">
+            <div className="liquid-bg" />
             {!user ? (
                 <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
