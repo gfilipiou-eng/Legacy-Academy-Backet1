@@ -2643,11 +2643,7 @@ const App = () => {
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation(user);
     const [toasts, setToasts] = useState([]);
-    const addToast = (text, type = 'info') => {
-        const id = Date.now();
-        setToasts(prev => [...prev, { id, text, type }]);
-        setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
-    };
+    const addToast = (text, type = 'info') => { return; };
 
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
@@ -3000,7 +2996,7 @@ const App = () => {
         }
 
         const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
-        if (isLiking) addToast(t('ACTION_LIKED'), 'success');
+        // toast disabled for like
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
@@ -3049,7 +3045,7 @@ const App = () => {
         }
 
         const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
-        if (isDisliking) addToast(t('ACTION_DISLIKED'), 'neutral');
+        // toast disabled for dislike
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
@@ -3637,25 +3633,13 @@ const App = () => {
                                     </div>
                                 </>
                             )}
-                            <AnimatePresence>
-                                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
-                                    {toasts.map(toast => (
-                                        <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
-                                        flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10
-                                        ${toast.type === 'success' ? 'bg-green-500/20 text-green-400' : toast.type === 'neutral' ? 'bg-red-500/20 text-red-500' : 'bg-[#1a1a1a]/90 text-white'}
-                                    `}>
-                                            {/* icon removed by request */}
-                                            <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </AnimatePresence>
+                            {/* Toast overlay disabled by request */}
                         </div >
                     </main >
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                            <div className="h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto liquid-glass-nav">
+                            <div className="h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto liquid-glass-nav floating-nav">
                                 <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
