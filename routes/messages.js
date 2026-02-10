@@ -142,8 +142,9 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             return res.status(400).json({ error: "Self-whisper protocol denied. You cannot send messages to yourself." });
         }
 
-        // GUARD CHAT CHECK (New Feature: Only followers can message)
-        if (targetUser.isFollowersOnly) {
+        // GUARD CHAT CHECK: Only followers can message if recipient enabled setting
+        const dmGuard = !!(targetUser.settings?.dmFollowersOnly);
+        if (dmGuard) {
             const followersList = Array.isArray(targetUser.followers) ? targetUser.followers : [];
             const isFollower = followersList.some(id => String(id) === String(senderOid));
 

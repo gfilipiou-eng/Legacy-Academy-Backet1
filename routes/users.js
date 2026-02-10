@@ -58,7 +58,6 @@ router.get('/heartbeat', heartbeatHandler);
 
 
 // 2. Follow - Absolute Priority
-// 2. Follow / Request Logic - Simplified: Always instant follow/unfollow
 router.post("/:id/follow", verifyToken, async (req, res) => {
     console.log("📡 [REJECT_TRACE] Follow handler hit for ID:", req.params.id);
     try {
@@ -85,14 +84,38 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             });
         }
 
-        // 2. If previously requested, convert to follower
-        if (userToFollow.followRequests?.some(id => String(id) === currentUserId)) {
-            await User.findByIdAndUpdate(targetId, {
-                $pull: { followRequests: currentUserId },
+        // 2. Private account: create follow request
+        const targetIsPrivate = !!(userToFollow.isPrivate || userToFollow.isFollowersOnly);
+        if (targetIsPrivate) {
+            const alreadyRequested = userToFollow.followRequests?.some(id => String(id) === currentUserId);
+            if (!alreadyRequested) {
+                await User.findByIdAndUpdate(targetId, {
+                    $addToSet: { followRequests: currentUserId },
+                    $push: {
+                        notifications: {
+                            type: 'follow_request',
+                            from: currentUserId,
+                            fromUsername: currentUser.username,
+                            fromProfilePic: currentUser.profilePic || '',
+                            read: false,
+                            createdAt: new Date()
+                        }
+                    }
+                });
+            }
+            return res.status(200).json({
+                message: "Request sent",
+                requested: true,
+                followers: userToFollow.followers
             });
         }
 
-        // 3. PUBLIC FOLLOW (INSTANT)
+        // 3. If previously requested, convert to follower
+        if (userToFollow.followRequests?.some(id => String(id) === currentUserId)) {
+            await User.findByIdAndUpdate(targetId, { $pull: { followRequests: currentUserId } });
+        }
+
+        // 4. PUBLIC FOLLOW (INSTANT)
         const updatedTarget = await User.findByIdAndUpdate(targetId, {
             $push: {
                 followers: currentUserId,

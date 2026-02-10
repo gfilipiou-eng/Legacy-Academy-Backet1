@@ -56,7 +56,32 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             });
         }
 
-        // 2. INSTANT FOLLOW (REMOVE PRIVATE/REQUEST BEHAVIOR)
+        // 2. PRIVATE: send follow request
+        const targetIsPrivate = !!(targetUser.isPrivate || targetUser.isFollowersOnly);
+        if (targetIsPrivate) {
+            const alreadyRequested = targetUser.followRequests?.some(id => String(id) === String(currentId));
+            if (!alreadyRequested) {
+                await targetUser.updateOne({
+                    $addToSet: { followRequests: currentId },
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'follow_request',
+                                from: currentId,
+                                fromUsername: currentUser.username,
+                                fromProfilePic: currentUser.profilePic,
+                                read: false,
+                                createdAt: new Date()
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+            }
+            return res.status(200).json({ message: "Request sent", requested: true, followers: targetUser.followers });
+        }
+
+        // 3. PUBLIC FOLLOW (INSTANT)
         await targetUser.updateOne({
             $addToSet: { followers: currentId },
             $push: {

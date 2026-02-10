@@ -17,7 +17,16 @@ router.get("/", verifyToken, async (req, res) => {
             .sort({ createdAt: -1 })
             .lean();
 
-        res.status(200).json(posts.slice(0, limit));
+        const currentUserId = String(req.user?.id || req.user?.userId || '');
+        const isFounder = req.user?.role === 'Founder';
+        const filtered = posts.filter(p => {
+            const a = p.author || {};
+            const isOwner = String(a?._id || a) === currentUserId;
+            const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+            const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+            return !isPrivate || isOwner || isFollower || isFounder;
+        });
+        res.status(200).json(filtered.slice(0, limit));
     } catch (err) {
         console.error("FEED ERROR:", err);
         res.status(500).json(err);
@@ -29,6 +38,16 @@ router.get("/", verifyToken, async (req, res) => {
 router.get("/user/:userId", verifyToken, async (req, res) => {
     try {
         const targetUserId = req.params.userId;
+        const author = await User.findById(targetUserId).select('isPrivate isFollowersOnly followers');
+        if (!author) return res.status(404).json("Agent not found.");
+        const currentUserId = String(req.user?.id || req.user?.userId || '');
+        const isFounder = req.user?.role === 'Founder';
+        const isOwner = String(targetUserId) === currentUserId;
+        const isFollower = Array.isArray(author?.followers) && author.followers.some(id => String(id) === currentUserId);
+        const isPrivate = !!(author?.isPrivate || author?.isFollowersOnly);
+        if (isPrivate && !isOwner && !isFollower && !isFounder) {
+            return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
+        }
         const posts = await Post.find({ author: targetUserId })
             .populate("author", "username profilePic role")
             .populate("comments.user", "username profilePic role")

@@ -36,7 +36,13 @@ router.post("/", verifyToken, upload.single("file"), async (req, res) => {
         const recipientUser = await User.findById(recipientId);
         if (!recipientUser) return res.status(404).json("Target user no longer exists");
 
-        // Guard Chat removed: allow messages freely
+        const dmGuard = !!(recipientUser.settings?.dmFollowersOnly);
+        if (dmGuard) {
+            const isFollower = Array.isArray(recipientUser.followers) && recipientUser.followers.some(id => String(id) === String(currentUserId));
+            if (!isFollower && req.user.role !== 'Founder') {
+                return res.status(403).json("Messages restricted to followers");
+            }
+        }
 
         const newMessage = new Message({
             sender: currentUserId,

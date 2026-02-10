@@ -1691,11 +1691,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [saving, setSaving] = useState(false);
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
+    const [dmFollowersOnly, setDmFollowersOnly] = useState(user?.settings?.dmFollowersOnly || false);
 
     useEffect(() => {
         if (user) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
+            setDmFollowersOnly(user.settings?.dmFollowersOnly || false);
         }
     }, [user]);
 
@@ -1712,12 +1714,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
+            if (key === 'settings' && typeof val?.dmFollowersOnly !== 'undefined') setDmFollowersOnly(!!val.dmFollowersOnly);
             playSound('pop');
         } catch (e) {
             console.error("Settings update failed", e);
             // Revert state on error?
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
+            if (key === 'settings' && typeof val?.dmFollowersOnly !== 'undefined') setDmFollowersOnly(!val.dmFollowersOnly);
             alert(t('SYNC_ERROR'));
         }
         finally { setSaving(false); }
@@ -1733,9 +1737,50 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-                    {/* Private Account setting removed */}
-
-                    {/* Guard Chat setting removed */}
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('PRIVACY')}</div>
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('PRIVATE_ACCOUNT')}</span>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('PRIVATE_DESC')}</span>
+                                </div>
+                                <button
+                                    onClick={() => handleSave('isPrivate', !isPrivate)}
+                                    className={`w-12 h-7 rounded-full border transition-all ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
+                                    aria-pressed={isPrivate}
+                                >
+                                    <div className={`w-6 h-6 rounded-full bg-black translate-x-0 ${isPrivate ? 'translate-x-6' : ''} transition-transform`} />
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('FOLLOWERS_ONLY')}</span>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('FOLLOWERS_ONLY_DESC')}</span>
+                                </div>
+                                <button
+                                    onClick={() => handleSave('isFollowersOnly', !isFollowersOnly)}
+                                    className={`w-12 h-7 rounded-full border transition-all ${isFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
+                                    aria-pressed={isFollowersOnly}
+                                >
+                                    <div className={`w-6 h-6 rounded-full bg-black translate-x-0 ${isFollowersOnly ? 'translate-x-6' : ''} transition-transform`} />
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('DM_FOLLOWERS_ONLY')}</span>
+                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('DM_FOLLOWERS_ONLY_DESC')}</span>
+                                </div>
+                                <button
+                                    onClick={() => handleSave('settings', { dmFollowersOnly: !dmFollowersOnly })}
+                                    className={`w-12 h-7 rounded-full border transition-all ${dmFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
+                                    aria-pressed={dmFollowersOnly}
+                                >
+                                    <div className={`w-6 h-6 rounded-full bg-black translate-x-0 ${dmFollowersOnly ? 'translate-x-6' : ''} transition-transform`} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
@@ -1890,6 +1935,21 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         return groups;
     }, [userPosts, currentUser, lang]);
 
+    // Force Expand All Folders - Robust
+    useEffect(() => {
+        if (isOpen && userPosts.length > 0) {
+            const groups = {};
+            Object.keys(groupedUserPosts).forEach(key => {
+                groups[key] = true;
+            });
+            // Only update if actually different to prevent loops
+            setExpandedDates(prev => {
+                const isDifferent = Object.keys(groups).some(k => !prev[k]);
+                return isDifferent ? { ...prev, ...groups } : prev;
+            });
+        }
+    }, [isOpen, userPosts, groupedUserPosts]);
+
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
             setUserData(currentUser);
@@ -1910,7 +1970,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     };
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
-    const hasRequested = false;
+    const hasRequested = !!(currentUser?.followRequests?.some(id => String(id) === String(displayUser?._id)) || displayUser?.isRequested);
+    const isPrivateView = !!(displayUser?.isPrivate || displayUser?.isFollowersOnly);
+    const isFounderViewer = currentUser?.role === 'Founder';
+    const isLocked = isPrivateView && !isMe && !isFollowing && !isFounderViewer;
 
     return (
 
@@ -2083,8 +2146,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <button onClick={() => setIsEditing(true)} className="w-full gold-btn py-3 sm:py-3.5 text-xs font-black tracking-widest hover:scale-[0.98] transition-all">{t('EDIT_PROFILE')}</button>
                                 ) : (
                                     <div className="flex-1 flex gap-2">
-                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3.5 ${isFollowing ? 'bg-white/10 text-white border border-white/20' : 'liquid-btn'} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
-                                            {isFollowing ? t('UNFOLLOW') : t('FOLLOW')}
+                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3.5 ${isFollowing ? 'bg-white/10 text-white border border-white/20' : (isLocked ? 'bg-white text-black' : 'liquid-btn')} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
+                                            {isFollowing ? t('UNFOLLOW') : (isLocked ? (hasRequested ? t('REQUESTED') : t('REQUEST')) : t('FOLLOW'))}
                                         </button>
 
                                         {/* COMMS BUTTON */}
@@ -2122,111 +2185,122 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 ))}
                             </div>
 
-                            {/* CONTENT: Always show posts */}
-                            <>
-                                {userStories.length > 0 && (
-                                    <div className="mb-6">
-                                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                            {userStories.map(s => (
-                                                <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                    <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-red)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-red)]/10 bg-black overflow-hidden relative">
-                                                        {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                                            <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
-                                                        ) : (
-                                                            <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                                <Icons.Play className="w-6 h-6 text-white" />
-                                                                {/* Ensure video doesn't autoplay in thumbnail view */}
-                                                                <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
-                                                </div>
-                                            ))}
-                                        </div>
+                            {isLocked ? (
+                                <div className="space-y-4 p-4">
+                                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
+                                        <div className="text-sm font-black uppercase tracking-widest text-white">{t('PRIVATE_ACCOUNT')}</div>
+                                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">{t('PRIVATE_LOCK_DESC')}</div>
                                     </div>
-                                )}
-
-                                <div className="space-y-6 pb-20">
-                                    {loadingPosts ? (
-                                        <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                            <div className="w-8 h-8 border-2 border-[var(--f1-red)] border-t-transparent rounded-full animate-spin" />
-                                            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
-                                        </div>
-                                    ) : userPosts.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-                                            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-2">
-                                                <Icons.Folder className="w-6 h-6 text-gray-600" />
-                                            </div>
-                                            <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
-                                        </div>
-                                    ) : (
-                                        Object.keys(groupedUserPosts).map(dateKey => {
-                                            const isExposed = expandedDates[dateKey];
-                                            return (
-                                                <div key={dateKey} className="animate-fade-in group">
-                                                    <div
-                                                        onClick={() => toggleDate(dateKey)}
-                                                        className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder"
-                                                    >
-                                                        <div className="relative">
-                                                            <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
-                                                            {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
-                                                        </div>
-                                                        <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
-                                                        <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
-                                                    </div>
-                                                    <AnimatePresence>
-                                                        {isExposed && (
-                                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                                <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
-                                                                    {groupedUserPosts[dateKey].map(p => (
-                                                                        <div
-                                                                            key={p._id}
-                                                                            onClick={() => onOpenDetail(p)}
-                                                                            className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                                        >
-                                                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                                <div className="relative w-full h-full">
-                                                                                    <video
-                                                                                        src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
-                                                                                        muted
-                                                                                        playsInline
-                                                                                        preload="metadata"
-                                                                                        className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500 pointer-events-none"
-                                                                                    />
-                                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                        <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
-                                                                                    </div>
-                                                                                </div>
-                                                                            ) : p.image ? (
-                                                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (
-                                                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                                </div>
-                                                                            )}
-
-                                                                            {/* STATS OVERLAY on hover */}
-                                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </motion.div>
-                                                        )}
-                                                    </AnimatePresence>
-                                                </div>
-                                            );
-                                        })
-                                    )}
+                                    <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className="w-full py-3.5 bg-white text-black rounded-full text-xs font-black tracking-widest hover:bg-gray-200 transition-all active:scale-95">
+                                        {hasRequested ? t('REQUESTED') : t('REQUEST')}
+                                    </button>
                                 </div>
-                            </>
+                            ) : (
+                                <>
+                                    {userStories.length > 0 && (
+                                        <div className="mb-6">
+                                            <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
+                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                                {userStories.map(s => (
+                                                    <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                        <div className="w-16 h-16 rounded-full border-2 border-[var(--f1-red)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--f1-red)]/10 bg-black overflow-hidden relative">
+                                                            {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                                                <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                            ) : (
+                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
+                                                                    <Icons.Play className="w-6 h-6 text-white" />
+                                                                    {/* Ensure video doesn't autoplay in thumbnail view */}
+                                                                    <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="space-y-6 pb-20">
+                                        {loadingPosts ? (
+                                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                                <div className="w-8 h-8 border-2 border-[var(--f1-red)] border-t-transparent rounded-full animate-spin" />
+                                                <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
+                                            </div>
+                                        ) : userPosts.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+                                                <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-2">
+                                                    <Icons.Folder className="w-6 h-6 text-gray-600" />
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
+                                            </div>
+                                        ) : (
+                                            Object.keys(groupedUserPosts).map(dateKey => {
+                                                const isExposed = expandedDates[dateKey];
+                                                return (
+                                                    <div key={dateKey} className="animate-fade-in group">
+                                                        <div
+                                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleDate(dateKey); }}
+                                                            className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder select-none touch-manipulation"
+                                                        >
+                                                            <div className="relative">
+                                                                <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
+                                                                {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
+                                                            </div>
+                                                            <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
+                                                            <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
+                                                        </div>
+                                                        <AnimatePresence>
+                                                            {isExposed && (
+                                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
+                                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
+                                                                        {groupedUserPosts[dateKey].map(p => (
+                                                                            <div
+                                                                                key={p._id}
+                                                                                onClick={(e) => { e.stopPropagation(); onOpenDetail(p); }}
+                                                                                className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-all flex items-center justify-center group/card shadow-2xl active:scale-95 touch-manipulation"
+                                                                            >
+                                                                                {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 pointer-events-none" />
+                                                                                ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                                    <div className="relative w-full h-full pointer-events-none">
+                                                                                        <video
+                                                                                            src={`${resolveMediaUrl(p.videoUrl || p.image)}#t=0.1`}
+                                                                                            muted
+                                                                                            playsInline
+                                                                                            preload="metadata"
+                                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
+                                                                                        />
+                                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                                            <Icons.Play className="w-8 h-8 text-white/90 drop-shadow-md" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ) : p.image ? (
+                                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                ) : (
+                                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {/* STATS OVERLAY - Desktop Hover Only (Hidden on Mobile to prevent ghost overlay) */}
+                                                                                <div className="hidden sm:flex absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity items-center justify-center gap-3 pointer-events-none">
+                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
+                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
@@ -3077,17 +3151,20 @@ const App = () => {
         setFollowLoading(prev => ({ ...prev, [targetId]: true }));
 
         const isCurrentlyFollowing = user.following?.some(id => String(id) === String(targetId));
+        const targetObj = typeof input === 'object' ? input : (users.find(u => String(u._id) === String(targetId)) || null);
+        const targetIsPrivate = !!(targetObj?.isPrivate || targetObj?.isFollowersOnly);
 
-        // Optimistic UI Update Logic
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
+        } else if (!isCurrentlyFollowing && targetIsPrivate) {
+            updateUserState({ followRequests: [...(user.followRequests || []), targetId] });
         } else {
             updateUserState({ following: [...(user.following || []), targetId] });
         }
 
         try {
             const res = await axios.post(`/users/${targetId}/follow`);
-            const { followers, following, message } = res.data;
+            const { followers, following, message, requested } = res.data;
 
             // Update user list and profile view
             setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, followers } : u));
@@ -3095,6 +3172,9 @@ const App = () => {
                 setProfileUser(prev => ({ ...prev, followers }));
             }
 
+            if (requested) {
+                updateUserState({ followRequests: [...(user.followRequests || []), targetId] });
+            }
             if (following) {
                 updateUserState({ following });
             }
