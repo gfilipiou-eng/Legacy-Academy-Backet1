@@ -1414,7 +1414,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
 
     const fetchMessages = async (otherUserId) => {
         try {
-            const res = await axios.get(`/messages/conversation/${otherUserId}`);
+            // FIX: Use correct route /messages/:userId, not conversation
+            const res = await axios.get(`/messages/${otherUserId}`);
             const normalized = (res.data || []).map(m => ({
                 ...m,
                 read: (m.read ?? m.isRead ?? false),
@@ -1422,21 +1423,27 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             }));
             setMessages(prev => ({ ...prev, [otherUserId]: normalized }));
 
-            // 🔥 WHISPERS: Auto-mark incoming messages as read
+            // 🔥 WHISPERS: Auto-mark incoming messages as read (Backend Persistence)
             const unreadIncoming = normalized.filter(m =>
                 String(m.recipient) === String(user?._id) &&
                 String(m.sender) === String(otherUserId) &&
-                !m.read &&
+                !(m.read === true || m.isRead === true) && // Double check
                 !processedReadIds.current.has(m._id)
             );
 
             for (const msg of unreadIncoming) {
                 processedReadIds.current.add(msg._id);
-                setMessages(prev => {
-                    const arr = prev[otherUserId] || [];
-                    const next = arr.map(m => (String(m._id) === String(msg._id) ? { ...m, read: true } : m));
-                    return { ...prev, [otherUserId]: next };
-                });
+                try {
+                    await axios.patch(`/messages/${msg._id}/read`);
+                    // Update local state to reflect read
+                    setMessages(prev => {
+                        const arr = prev[otherUserId] || [];
+                        const next = arr.map(m => (String(m._id) === String(msg._id) ? { ...m, read: true, isRead: true } : m));
+                        return { ...prev, [otherUserId]: next };
+                    });
+                } catch (e) {
+                    console.error("Read mark failed", e);
+                }
             }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
@@ -1925,7 +1932,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             });
             setExpandedDates(groups);
         }
-    }, [isOpen, userPosts.length, lang]);
+    }, [isOpen, userPosts.length, userPosts]); // Added userPosts object dependency to force re-run on data load
 
     const groupedUserPosts = React.useMemo(() => {
         const groups = {};
@@ -2254,7 +2261,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                 className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
                                                                             >
                                                                                 {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 pointer-events-none" />
                                                                                 ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                                                                     <div className="relative w-full h-full">
                                                                                         <video
@@ -2269,15 +2276,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                         </div>
                                                                                     </div>
                                                                                 ) : p.image ? (
-                                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 pointer-events-none" />
                                                                                 ) : (
-                                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500 pointer-events-none">
+                                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight line-clamp-3">{p.desc?.substring(0, 50)}</span>
                                                                                     </div>
                                                                                 )}
 
-                                                                                {/* STATS OVERLAY on hover */}
-                                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                                {/* STATS OVERLAY on hover - Mobile: only show on active tap/long press, not default */}
+                                                                                <div className="absolute inset-0 bg-black/60 opacity-0 md:group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
                                                                                     <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
                                                                                     <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
                                                                                 </div>
