@@ -2903,6 +2903,14 @@ const App = () => {
         if (!user) return;
         try {
             const res = await axios.get('/users/notifications');
+
+            // If we see a follow_accepted that we haven't read yet, refresh our whole state
+            const hasNewAccept = res.data?.some(n => n.type === 'follow_accepted' && !n.read);
+            if (hasNewAccept) {
+                console.log("🔄 [LIVE] Detected accepted follow, refreshing profile state...");
+                refreshUser();
+            }
+
             setAlerts(res.data);
             setUser(prev => {
                 if (!prev) return prev;
@@ -3172,15 +3180,21 @@ const App = () => {
         }
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
+
+            // OPTIMISTIC UI: Remove it from the alerts list right now so it feels "Live"
+            setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
+
             const res = await axios.post(`/users/requests/${requesterId}/accept`, {});
-            if (res.data?.followRequests) {
-                updateUserState({
-                    followRequests: res.data.followRequests,
-                    followers: res.data.followers || user.followers
-                });
-            }
-            if (res.data?.notifications) {
-                setAlerts(res.data.notifications);
+
+            // If backend is updated, it returns the new state
+            if (res.data && typeof res.data === 'object') {
+                if (res.data.followRequests) {
+                    updateUserState({
+                        followRequests: res.data.followRequests,
+                        followers: res.data.followers || user.followers
+                    });
+                }
+                if (res.data.notifications) setAlerts(res.data.notifications);
             }
             playSound('pop');
         } catch (e) {
