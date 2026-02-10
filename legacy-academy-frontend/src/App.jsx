@@ -492,7 +492,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
-                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--gold-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
+                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--f1-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
 
                 </div>
 
@@ -830,14 +830,14 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             <div className="flex justify-start items-start gap-2.5">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
-                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--f1-primary)]/20 hover:border-[var(--f1-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                                 >
                                     {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
                                 </button>
                                 {onExpand && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
-                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--f1-primary)]/20 hover:border-[var(--f1-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                                     >
                                         <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                     </button>
@@ -849,7 +849,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             <motion.div
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                                className="w-16 h-16 rounded-full bg-[var(--f1-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--f1-primary)]/40 pointer-events-none"
                             >
                                 {isPlaying ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
                             </motion.div>
@@ -868,12 +868,12 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             >
                                 <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
                                 <motion.div
-                                    className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
+                                    className="absolute inset-y-0 left-0 bg-[var(--f1-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
                                     style={{ width: `${progress}%` }}
                                     transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
                                 />
                                 <motion.div
-                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
+                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--f1-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
                                     style={{ left: `${progress}%`, marginLeft: '-8px' }}
                                 />
                             </div>
@@ -903,18 +903,18 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
             onClick={handleClick}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
+                <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--f1-primary)]/50 transition-all shadow-lg">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
-                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
+                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--f1-primary)] rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
                 {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm">
-                    <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{note.fromUsername}</span>
+                    <span className="font-black text-white group-hover:text-[var(--f1-primary)] transition-colors uppercase tracking-tight">{note.fromUsername}</span>
                     <span className="text-gray-500 text-[10px] sm:text-[11px] ml-1 uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
                             note.type === 'like' ? t('NOTIF_LIKE') :
@@ -928,12 +928,12 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
                 <div className="flex items-center gap-3 mt-2">
                     <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt)}</div>
-                    {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-glow-yellow" />}
+                    {!note.read && <div className="w-1.5 h-1.5 bg-[var(--f1-primary)] rounded-full shadow-glow-yellow" />}
                 </div>
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onAcceptRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 ${handshakeLoading?.[String(note.sender?._id || note.from)] ? 'bg-gray-600 opacity-60' : 'bg-[var(--gold-primary)]'} text-black text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:scale-105 active:scale-95'} transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest`}>{t('AUTHORIZE')}</button>
+                        <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onAcceptRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 ${handshakeLoading?.[String(note.sender?._id || note.from)] ? 'bg-gray-600 opacity-60' : 'bg-[var(--f1-primary)]'} text-black text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:scale-105 active:scale-95'} transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest`}>{t('AUTHORIZE')}</button>
                         <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onRejectRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:bg-red-500/20 hover:text-red-500'} transition-all uppercase tracking-widest`}>{t('DENY')}</button>
                     </div>
                 )}
@@ -953,7 +953,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
+                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--f1-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--f1-primary)]'} transition-colors`}>
                     <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
                         <ProfileAvatar user={user} className="opacity-80" />
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -966,7 +966,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 
             {stories && stories.map((group, i) => (
                 <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90">
+                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--f1-primary)] to-red-600 transition-transform active:scale-90">
                         <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl">
                             <ProfileAvatar user={group.author} />
                         </div>
@@ -1740,8 +1740,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#ffffff', '#e10600', '#1a1a1a', '#3b82f6', '#10b981', '#a855f7'].map(c => {
-                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffffff';
+                            {['#ff8c00', '#e10600', '#44d62c', '#3b82f6', '#10b981', '#a855f7'].map(c => {
+                                const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ff8c00';
                                 const isActive = currentTheme === c;
                                 return (
                                     <button key={c} onClick={() => {
@@ -1771,7 +1771,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', label: 'Türkçe', flag: '🇹🇷' },
                                 { id: 'fr', label: 'Français', flag: '🇫🇷' }
                             ].map(l => (
-                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-[var(--gold-primary)] bg-white/10' : 'border-white/5 bg-white/5'}`}>
+                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-[var(--f1-primary)] bg-white/10' : 'border-white/5 bg-white/5'}`}>
                                     <div className="text-xl">{l.flag}</div>
                                     <div className="text-[8px] sm:text-[9px] font-bold text-white mt-1 uppercase tracking-tight">{l.label}</div>
                                 </button>
@@ -2056,7 +2056,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="flex flex-col items-center justify-center cursor-pointer group p-1">
-                                        <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
+                                        <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--f1-primary)] transition-colors leading-none">
                                             {displayUser?.following?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
                                         </span>
                                         <span className="text-[8px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING')}</span>
@@ -2316,7 +2316,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         </div>
                         <div className="flex-1 flex flex-col gap-1">
                             <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
+                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--f1-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--f1-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--f1-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
                                 <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
                             </div>
                         </div>
@@ -2345,7 +2345,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                     <video src={preview} className="w-full h-full object-contain" controls />
                                 ) : isAudio ? (
                                     <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 gap-2 p-4">
-                                        <Icons.Music className="w-12 h-12 text-[var(--gold-primary)] animate-pulse" />
+                                        <Icons.Music className="w-12 h-12 text-[var(--f1-primary)] animate-pulse" />
                                         <span className="text-xs text-gray-400 font-bold truncate max-w-[200px]">{audioName}</span>
                                         <audio src={preview} controls className="w-full mt-2" />
                                     </div>
@@ -2363,12 +2363,12 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
-                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
+                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--f1-primary)]/10 border-[var(--f1-primary)]/50 shadow-lg shadow-[var(--f1-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--f1-primary)] bg-[var(--f1-primary)] scale-110' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
                             <div className="flex flex-col">
-                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
+                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--f1-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
                                 <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
@@ -2396,7 +2396,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 setPreview(null); fileRef.current.value = '';
                                 setIsStory(false);
                             } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--f1-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--f1-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
                     </div>
                 </div>
             </motion.div>
@@ -2509,7 +2509,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     id="edit-youtube"
                                     value={youtubeUrl}
                                     placeholder="https://youtube.com/..."
-                                    className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner"
+                                    className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--f1-primary)]/40 hover:border-white/20 transition-all shadow-inner"
                                     onChange={(e) => {
                                         const v = e.target.value || '';
                                         setYoutubeUrl(v);
@@ -2546,7 +2546,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                         <div className="flex gap-4">
                             <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
+                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--f1-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-f1/40 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
                         </div>
                     </div>
                 </div>
@@ -2567,10 +2567,9 @@ const applyTheme = (color) => {
     };
     const secondary = getSecondary(color);
     const hover = getHover(color);
-    const glow = `${color}44`;
-    const glowSoft = `${color}1a`;
+    const glow = color === '#ff8c00' ? `rgba(255, 140, 0, 0.4)` : `${color}44`;
+    const glowSoft = color === '#ff8c00' ? `rgba(255, 140, 0, 0.1)` : `${color}1a`;
 
-    document.documentElement.style.setProperty('--gold-primary', color);
     document.documentElement.style.setProperty('--f1-primary', color);
     document.documentElement.style.setProperty('--gold-secondary', secondary);
     document.documentElement.style.setProperty('--gold-hover', hover);
@@ -3310,7 +3309,7 @@ const App = () => {
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || 'en');
-                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffffff');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ff8c00');
                                                 setUser(res.data.user);
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Ignition Failure: Invalid Credentials.");
@@ -3321,7 +3320,7 @@ const App = () => {
                                             {authLoading ? "INITIALIZING..." : "IGNITION (LOGIN)"}
                                         </button>
                                         <div className="flex flex-col gap-3 mt-6">
-                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '', theme: '#ffffff' }); }} className="w-full bg-white text-black font-black uppercase tracking-widest py-3.5 rounded-full text-xs transition-all hover:bg-gray-200 shadow-lg">
+                                            <button onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '', theme: '#ff8c00' }); }} className="w-full bg-white text-black font-black uppercase tracking-widest py-3.5 rounded-full text-xs transition-all hover:bg-gray-200 shadow-lg">
                                                 CREATE ACCOUNT
                                             </button>
                                             <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="text-xs text-gray-500 cursor-pointer hover:text-white transition-colors font-bold uppercase tracking-widest">Forgot Access Code?</span>
@@ -3360,8 +3359,11 @@ const App = () => {
                                                 <option value="cy">CY</option>
                                             </select>
                                             <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-20 custom-scrollbar">
-                                                {['#ffffff', '#e10600', '#1a1a1a', '#3b82f6', '#10b981', '#a855f7'].map(c => (
-                                                    <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-7 h-7 rounded-full transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_15px_white] ring-2 ring-white/50 z-10' : 'opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c }} />
+                                                {['#ff8c00', '#e10600', '#44d62c', '#3b82f6', '#10b981', '#a855f7'].map(c => (
+                                                    <button key={c} onClick={() => {
+                                                        setFormData(prev => ({ ...prev, theme: c }));
+                                                        applyTheme(c);
+                                                    }} className={`w-7 h-7 rounded-full transition-all ${formData.theme === c ? 'scale-110 shadow-[0_0_15px_white] ring-2 ring-white/50 z-10' : 'opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c }} />
                                                 ))}
                                             </div>
                                         </div>
@@ -3382,7 +3384,7 @@ const App = () => {
                                                 localStorage.setItem('token', res.data.token);
                                                 localStorage.setItem('user', JSON.stringify(res.data.user));
                                                 localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
-                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffffff');
+                                                localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ff8c00');
                                                 setUser(res.data.user);
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Sector Error: Registration Failed.");
@@ -3550,17 +3552,17 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
                             <div className="h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto liquid-glass-nav floating-nav">
-                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--f1-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--f1-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Search className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--f1-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative z-10">
-                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--f1-primary)] fill-[var(--f1-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                     </div>
                                 </button>
@@ -3569,7 +3571,7 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
+                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--f1-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
