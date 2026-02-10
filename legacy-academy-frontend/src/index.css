@@ -5,14 +5,14 @@
 @tailwind utilities;
 
 :root {
-  --gold-primary: #ffd700;
+  --gold-primary: #ffffff;
   --f1-red: #e10600;
   /* Formula 1 Official Red */
   --carbon-black: #0d0d0d;
-  --gold-secondary: #b8860b;
-  --gold-hover: #ffecb3;
-  --gold-glow: rgba(255, 215, 0, 0.4);
-  --gold-glow-soft: rgba(255, 215, 0, 0.1);
+  --gold-secondary: #888888;
+  --gold-hover: #f0f0f0;
+  --gold-glow: rgba(255, 255, 255, 0.2);
+  --gold-glow-soft: rgba(255, 255, 255, 0.05);
   --glass-bg: rgba(10, 10, 10, 0.6);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
