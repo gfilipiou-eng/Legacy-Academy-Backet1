@@ -116,17 +116,17 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
     }
 });
 
-// 1. Λήψη στοιχείων χρήστη (Public)
-router.get("/find/:id", async (req, res) => {
+// 1. Λήψη στοιχείων χρήστη
+router.get("/find/:id", verifyToken, async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following followRequests createdAt lastSeen');
         if (!foundUser) return res.status(404).json("Χρήστης δεν βρέθηκε.");
 
         // Add isRequested flag for frontend convenience
-        const currentUserId = null;
+        const currentUserId = req.user?.id || req.user?.userId || req.user?._id;
         const mappedUser = {
             ...foundUser._doc,
-            isRequested: false
+            isRequested: foundUser.followRequests?.some(id => String(id) === String(currentUserId))
         };
 
         res.status(200).json(mappedUser);
@@ -135,10 +135,23 @@ router.get("/find/:id", async (req, res) => {
     }
 });
 
-// 2. Λήψη όλων των posts ενός χρήστη (Public)
-router.get("/posts/:userId", async (req, res) => {
+// 2. Λήψη όλων των posts ενός χρήστη (With Privacy Filter)
+router.get("/posts/:userId", verifyToken, async (req, res) => {
     try {
         const targetUserId = req.params.userId;
+        const currentUserId = req.user.id || req.user.userId;
+
+        const targetUser = await User.findById(targetUserId);
+        if (!targetUser) return res.status(404).json("Agent not found.");
+
+        const isOwner = String(targetUserId) === String(currentUserId);
+        const isFollower = targetUser.followers?.some(id => String(id) === String(currentUserId));
+        const isPrivate = targetUser.isPrivate || targetUser.isFollowersOnly;
+
+        if (isPrivate && !isOwner && !isFollower && req.user.role !== 'Founder') {
+            return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
+        }
+
         const posts = await Post.find({ author: targetUserId }).sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
