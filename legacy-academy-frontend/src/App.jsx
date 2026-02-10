@@ -1740,7 +1740,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
                         <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
-                            {['#ff8c00', '#e10600', '#44d62c', '#3b82f6', '#10b981', '#a855f7'].map(c => {
+                            {['#ff8c00', '#e10600', '#44d62c', '#00ffff', '#3b82f6', '#10b981', '#a855f7'].map(c => {
                                 const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ff8c00';
                                 const isActive = currentTheme === c;
                                 return (
@@ -3359,7 +3359,7 @@ const App = () => {
                                                 <option value="cy">CY</option>
                                             </select>
                                             <div className="flex-1 p-2.5 bg-black/40 rounded-2xl border border-white/10 flex gap-1.5 flex-wrap justify-center overflow-auto max-h-20 custom-scrollbar">
-                                                {['#ff8c00', '#e10600', '#44d62c', '#3b82f6', '#10b981', '#a855f7'].map(c => (
+                                                {['#ff8c00', '#e10600', '#44d62c', '#00ffff', '#3b82f6', '#10b981', '#a855f7'].map(c => (
                                                     <button key={c} onClick={() => {
                                                         setFormData(prev => ({ ...prev, theme: c }));
                                                         applyTheme(c);
