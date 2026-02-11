@@ -2880,6 +2880,7 @@ const App = () => {
         if (!user || isProcessingRequest.current) return;
         try {
             const res = await axios.get('/users/notifications');
+            if (isProcessingRequest.current) return; // Post-await safety check
             setAlerts(res.data);
             setUser(prev => {
                 if (!prev) return prev;
@@ -3184,7 +3185,10 @@ const App = () => {
             // Small delay before general fetch to let DB settle
             setTimeout(() => {
                 isProcessingRequest.current = false;
-                fetchUsers();
+                // Add a post-await check to fetchNotifications to skip if an action is still processing.
+                if (!isProcessingRequest.current) {
+                    fetchUsers();
+                }
             }, 1000);
         }
     };

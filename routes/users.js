@@ -261,28 +261,28 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        console.log(`📡 [ACCEPT] User: ${userId} | Requester: ${requesterId} | NotifId: ${notificationId}`);
+        const requester = await User.findById(requesterId).select('username');
+        const reqUsername = requester?.username;
+
         const countBefore = user.notifications?.length || 0;
 
-        // Clear followRequests
         user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
-
-        // Clear notifications
         user.notifications = (user.notifications || []).filter(n => {
-            const nIdStr = String(n._id);
-            const nFromStr = String(n.from);
+            const nid = String(n._id);
+            const nFrom = String(n.from || '');
+            const nUser = n.fromUsername || '';
 
-            const matchesId = notificationId && nIdStr === String(notificationId);
-            const matchesRequester = nFromStr === String(requesterId) && n.type === 'follow_request';
+            const isMatchId = notificationId && nid === String(notificationId);
+            const isMatchFrom = nFrom === String(requesterId);
+            const isMatchUser = (reqUsername && nUser === reqUsername);
+            const isFollowReq = n.type === 'follow_request';
 
-            if (matchesId || matchesRequester) {
-                console.log(`🗑️ [ACCEPT] Removing Notif: ${nIdStr} (Type: ${n.type}, From: ${nFromStr})`);
-                return false;
-            }
-            return true;
+            return !(isFollowReq && (isMatchId || isMatchFrom || isMatchUser));
         });
 
-        console.log(`📊 [ACCEPT] Notifs: ${countBefore} -> ${user.notifications.length}`);
+        user.markModified('notifications');
+        user.markModified('followRequests');
+        console.log(`[ACCEPT REQ] Cleanup: ${countBefore} -> ${user.notifications.length}`);
 
         // 2. Mutual Follow Logic
         if (!user.followers.some(id => String(id) === String(requesterId))) {
@@ -293,8 +293,6 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             user.following.push(requesterId);
         }
 
-        user.markModified('notifications');
-        user.markModified('followRequests');
         user.markModified('followers');
         user.markModified('following');
         await user.save();
@@ -356,22 +354,23 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        console.log(`📡 [REJECT] User: ${userId} | Requester: ${requesterId} | NotifId: ${notificationId}`);
+        const requester = await User.findById(requesterId).select('username');
+        const reqUsername = requester?.username;
+
         const countBefore = user.notifications?.length || 0;
 
         user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
         user.notifications = (user.notifications || []).filter(n => {
-            const nIdStr = String(n._id);
-            const nFromStr = String(n.from);
+            const nid = String(n._id);
+            const nFrom = String(n.from || '');
+            const nUser = n.fromUsername || '';
 
-            const matchesId = notificationId && nIdStr === String(notificationId);
-            const matchesRequester = nFromStr === String(requesterId) && n.type === 'follow_request';
+            const isMatchId = notificationId && nid === String(notificationId);
+            const isMatchFrom = nFrom === String(requesterId);
+            const isMatchUser = (reqUsername && nUser === reqUsername);
+            const isFollowReq = n.type === 'follow_request';
 
-            if (matchesId || matchesRequester) {
-                console.log(`🗑️ [REJECT] Removing Notif: ${nIdStr} (Type: ${n.type}, From: ${nFromStr})`);
-                return false;
-            }
-            return true;
+            return !(isFollowReq && (isMatchId || isMatchFrom || isMatchUser));
         });
 
         console.log(`📊 [REJECT] Notifs: ${countBefore} -> ${user.notifications.length}`);
