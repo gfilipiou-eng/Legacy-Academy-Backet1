@@ -1794,7 +1794,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
