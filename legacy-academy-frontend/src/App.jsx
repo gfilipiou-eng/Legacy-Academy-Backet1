@@ -1402,6 +1402,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
+    const [userSentMessage, setUserSentMessage] = useState(false);
     const [inputText, setInputText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [isPhonetic, setIsPhonetic] = useState(false);
@@ -1461,29 +1462,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     }, [isOpen, activeChat?._id]);
 
     useEffect(() => { 
-        // Only scroll to bottom when new messages are added, not when opening chat
-        if (activeChat && messages[activeChat._id]?.length > 0) {
+        // Only scroll to bottom when user sends a message, not when receiving
+        if (activeChat && messages[activeChat._id]?.length > 0 && userSentMessage) {
             scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+            setUserSentMessage(false); // Reset after scrolling
         }
-    }, [messages, activeChat]);
+    }, [messages, activeChat, userSentMessage]);
 
-    // Auto-mark messages as read when they appear
-    useEffect(() => {
-        if (!activeChat || !messages[activeChat._id]) return;
-        
-        const unreadMessages = messages[activeChat._id].filter(m => 
-            String(m.recipient) === String(user?._id) && !m.read && m._id
-        );
-        
-        unreadMessages.forEach(msg => {
-            // Only mark as read if message ID is valid (24 characters)
-            if (msg._id && msg._id.length === 24) {
-                axios.patch(`/messages/${msg._id}/read`).catch(err => {
-                    console.log('Failed to mark message as read:', err);
-                });
-            }
-        });
-    }, [messages, activeChat, user?._id]);
+    // Auto-mark messages as read is handled in fetchMessages function to avoid duplicate calls
 
     const handleClearChat = async () => {
         if (!activeChat) return;
@@ -1530,6 +1516,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
             }));
+            setUserSentMessage(true); // Set flag when user sends message
             playSound('pop');
         } catch (e) {
             const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
