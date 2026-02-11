@@ -3130,7 +3130,7 @@ const App = () => {
         }
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
-            await axios.post(`/api/users/requests/${requesterId}/accept`, {});
+            await axios.post(`/users/requests/${requesterId}/accept`, {});
             playSound('pop');
         } catch (e) {
             const detail = e.response?.data?.error || e.response?.data || e.message;
