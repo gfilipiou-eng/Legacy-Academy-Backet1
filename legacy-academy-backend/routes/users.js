@@ -118,25 +118,20 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        const hasRequest = user.followRequests?.some(id => String(id) === String(requesterId));
-        if (!hasRequest) {
-            // Already follower?
-            if (user.followers?.some(id => String(id) === String(requesterId))) {
-                return res.status(200).json("Already a follower.");
-            }
-            return res.status(200).json("Request no longer active");
-        }
-
-        // 1. Update self
+        // Force cleanup regardless of request existence (to fix stuck notifications)
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
                 notifications: { from: requesterId, type: 'follow_request' }
-            },
-            $addToSet: { followers: requesterId }
+            }
         });
 
-        // 2. Update requester
+        // Add follower if not already following
+        if (!user.followers?.some(id => String(id) === String(requesterId))) {
+             await User.findByIdAndUpdate(userId, { $addToSet: { followers: requesterId } });
+        }
+
+        // Update requester
         await User.findByIdAndUpdate(requesterId, {
             $addToSet: { following: userId },
             $push: {
@@ -164,6 +159,8 @@ router.post("/requests/:requesterId/decline", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId;
+        
+        // Always try to cleanup, even if request missing
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
@@ -179,9 +176,8 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId ? String(req.params.requesterId).trim() : null;
-        if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
-            return res.status(200).json({ status: "invalid_id_ignored" });
-        }
+        
+        // Always try to cleanup
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
