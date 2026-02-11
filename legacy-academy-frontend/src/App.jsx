@@ -1750,13 +1750,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         try {
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
+            if (key === 'isPrivate') setIsPrivate(!!val);
+            if (key === 'isFollowersOnly') setIsFollowersOnly(!!val);
             if (key === 'settings' && typeof val?.dmFollowersOnly !== 'undefined') setDmFollowersOnly(!!val.dmFollowersOnly);
 
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
 
-            if (key === 'isPrivate') setIsPrivate(val);
-            if (key === 'isFollowersOnly') setIsFollowersOnly(val);
             if (key === 'settings' && typeof val?.dmFollowersOnly !== 'undefined') setDmFollowersOnly(!!val.dmFollowersOnly);
             playSound('pop');
         } catch (e) {
@@ -2801,30 +2801,31 @@ const App = () => {
     };
 
     const handleUpdateUser = (updatedUser) => {
-        // 1. Update primary user state
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        const current = user || JSON.parse(localStorage.getItem('user') || '{ }');
+        const mergedSettings = { ...(current?.settings || {}), ...(updatedUser?.settings || {}) };
+        const mergedUser = { ...current, ...updatedUser, settings: mergedSettings };
+        setUser(mergedUser);
+        localStorage.setItem('user', JSON.stringify(mergedUser));
         setImgKey(Date.now());
 
-        // 2. Synchronize across all local state arrays for immediate UI update
-        const userId = String(updatedUser._id || updatedUser.id);
+        const userId = String(mergedUser._id || mergedUser.id);
 
         // Update 'users' array
-        setUsers(prev => prev.map(u => String(u._id) === userId ? { ...u, ...updatedUser } : u));
+        setUsers(prev => prev.map(u => String(u._id) === userId ? { ...u, ...mergedUser } : u));
 
         // Update 'posts' array (authors, direct profilePic, and comments authors)
         setPosts(prev => prev.map(p => {
             let updatedPost = p;
             if (String(p.author?._id || p.author) === userId) {
-                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : p.author;
-                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
+                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...mergedUser } : p.author;
+                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: mergedUser.profilePic };
             }
 
             // Deep sync comments
             if (p.comments?.some(c => String(c.authorId) === userId)) {
                 updatedPost = {
                     ...updatedPost,
-                    comments: p.comments.map(c => String(c.authorId) === userId ? { ...c, authorProfilePic: updatedUser.profilePic } : c)
+                    comments: p.comments.map(c => String(c.authorId) === userId ? { ...c, authorProfilePic: mergedUser.profilePic } : c)
                 };
             }
             return updatedPost;
@@ -2835,8 +2836,8 @@ const App = () => {
         // Update selectedPost if open
         if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === userId) {
             setSelectedPost(prev => {
-                const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...updatedUser } : prev.author;
-                return { ...prev, author: updatedAuthor, profilePic: updatedUser.profilePic };
+                const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...mergedUser } : prev.author;
+                return { ...prev, author: updatedAuthor, profilePic: mergedUser.profilePic };
             });
         }
 
@@ -3212,7 +3213,8 @@ const App = () => {
 
         const isCurrentlyFollowing = user.following?.some(id => String(id) === String(targetId));
         const targetObj = typeof input === 'object' ? input : (users.find(u => String(u._id) === String(targetId)) || null);
-        const targetIsPrivate = !!(targetObj?.isPrivate || targetObj?.isFollowersOnly);
+        const profileTarget = (profileUser && String(profileUser._id || profileUser.id) === String(targetId)) ? profileUser : null;
+        const targetIsPrivate = !!(targetObj?.isPrivate || profileTarget?.isPrivate || targetObj?.isFollowersOnly || profileTarget?.isFollowersOnly);
 
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
