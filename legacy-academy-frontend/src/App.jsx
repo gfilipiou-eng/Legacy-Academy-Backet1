@@ -1286,12 +1286,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none">{dislikeCount}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-2 group transition-all cursor-pointer active:scale-95 text-gray-500 hover:text-[var(--gold-primary)]">
-                                    <div className="p-2 rounded-xl transition-all group-hover:bg-[var(--gold-primary)]/10">
-                                        <Icons.Share className="w-5 h-5 pointer-events-none" />
-                                    </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.shares?.length || 0}</span>
-                                </button>
+                                {/* Share button removed */}
                             </div>
 
                         </div>
@@ -1472,6 +1467,19 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
         }
     }, [messages, activeChat]);
 
+    // Auto-mark messages as read when they appear
+    useEffect(() => {
+        if (!activeChat || !messages[activeChat._id]) return;
+        
+        const unreadMessages = messages[activeChat._id].filter(m => 
+            String(m.recipient) === String(user?._id) && !m.read && m._id
+        );
+        
+        unreadMessages.forEach(msg => {
+            axios.patch(`/messages/${msg._id}/read`).catch(() => {});
+        });
+    }, [messages, activeChat, user?._id]);
+
     const handleClearChat = async () => {
         if (!activeChat) return;
         if (!window.confirm(t('CONFIRM_CLEAR_CHAT') || 'Clear this entire conversation?')) return;
@@ -1626,37 +1634,28 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 </div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                {(messages[activeChat._id] || []).map((m, i) => {
-                                    // Auto-mark messages as read when they appear on screen
-                                    useEffect(() => {
-                                        if (String(m.recipient) === String(user?._id) && !m.read && m._id) {
-                                            axios.patch(`/messages/${m._id}/read`).catch(() => {});
-                                        }
-                                    }, [m._id, m.read, m.recipient, user?._id]);
-                                    
-                                    return (
-                                        <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
-                                                {m.audioUrl ? (
-                                                    <div className="flex flex-col gap-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-red)]">{t('VOICE_NOTE')}</span>
-                                                        </div>
-                                                        <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                        {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
+                                {(messages[activeChat._id] || []).map((m, i) => (
+                                    <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
+                                            {m.audioUrl ? (
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-red)]">{t('VOICE_NOTE')}</span>
                                                     </div>
-                                                ) : (
-                                                    m.text
-                                                )}
-                                                <div className="text-[9px] opacity-50 text-right mt-1">
-                                                    {formatDate(m.createdAt, t, lang)}
-                                                    {m.read && <span className="ml-2 text-[var(--f1-red)] animate-pulse">🔥</span>}
+                                                    <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
+                                                    {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
                                                 </div>
+                                            ) : (
+                                                m.text
+                                            )}
+                                            <div className="text-[9px] opacity-50 text-right mt-1">
+                                                {formatDate(m.createdAt, t, lang)}
+                                                {m.read && <span className="ml-2 text-[var(--f1-red)] animate-pulse">🔥</span>}
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                                 <div ref={scrollRef} />
                             </div>
                             <div className="p-2 bg-black border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
@@ -3594,7 +3593,7 @@ const App = () => {
                         <header className="relative w-full z-[40] liquid-glass-nav shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-28 sm:h-40 w-auto object-contain" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-32 sm:h-48 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
