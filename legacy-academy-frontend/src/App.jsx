@@ -1710,6 +1710,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [dmFollowersOnly, setDmFollowersOnly] = useState(user?.settings?.dmFollowersOnly || false);
 
+    // Debug dmFollowersOnly state
+    useEffect(() => {
+        console.log('dmFollowersOnly state changed:', dmFollowersOnly);
+        console.log('User settings dmFollowersOnly:', user?.settings?.dmFollowersOnly);
+    }, [dmFollowersOnly, user?.settings?.dmFollowersOnly]);
+
+    // Sync dmFollowersOnly with user object changes
+    useEffect(() => {
+        setDmFollowersOnly(user?.settings?.dmFollowersOnly || false);
+    }, [user?.settings?.dmFollowersOnly]);
+
     useEffect(() => {
         if (user) {
             setIsPrivate(user.isPrivate || false);
@@ -1730,6 +1741,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             console.log('Sending payload:', payload);
             const res = await axios.put('/users/settings', payload);
             console.log('Settings response:', res.data);
+            console.log('Updated dmFollowersOnly:', res.data?.settings?.dmFollowersOnly);
             onUpdateUser(res.data);
 
             if (key === 'isPrivate') setIsPrivate(val);
@@ -1792,7 +1804,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('DM_FOLLOWERS_ONLY_DESC')}</span>
                                 </div>
                                 <button
-                                    onClick={() => handleSave('settings', { dmFollowersOnly: !dmFollowersOnly })}
+                                    onClick={() => {
+                                        console.log('Toggling dmFollowersOnly from', dmFollowersOnly, 'to', !dmFollowersOnly);
+                                        handleSave('settings', { dmFollowersOnly: !dmFollowersOnly });
+                                    }}
                                     className={`w-12 h-7 rounded-full border transition-all ${dmFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
                                     aria-pressed={dmFollowersOnly}
                                 >
