@@ -2279,10 +2279,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 return (
                                                     <div key={dateKey} className="animate-fade-in group px-1">
                                                         <div
-                                                            className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all group/folder select-none touch-manipulation my-2"
+                                                            className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder select-none pointer-events-none my-2"
                                                         >
                                                             <div className="relative">
-                                                                <Icons.Folder className="w-6 h-6 text-[var(--f1-red)] fill-[var(--f1-red)]/20 transition-all duration-300" />
+                                                                <Icons.Folder className="w-6 h-6 text-[var(--f1-red)] fill-[var(--f1-red)]/20 shadow-glow-soft" />
                                                                 <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{groupedUserPosts[dateKey].length}</div>
                                                             </div>
                                                             <div className="flex-1 flex flex-col">
@@ -3646,10 +3646,10 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group">
                                                             <div
-                                                                className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all group/folder my-2"
+                                                                className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder select-none pointer-events-none my-2"
                                                             >
                                                                 <div className="relative">
-                                                                    <Icons.Folder className="w-6 h-6 text-[var(--f1-red)] fill-[var(--f1-red)]/20 transition-all duration-300" />
+                                                                    <Icons.Folder className="w-6 h-6 text-[var(--f1-red)] fill-[var(--f1-red)]/20 shadow-glow-soft" />
                                                                     <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{group.posts.length}</div>
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
