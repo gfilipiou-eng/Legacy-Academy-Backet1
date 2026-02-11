@@ -56,9 +56,14 @@ router.get("/:messageId/read", verifyToken, async (req, res) => {
 router.post("/", verifyToken, upload.single("file"), async (req, res) => {
     try {
         // Validation: Ensure req.body exists (multer should populate it)
-        if (!req.body) return res.status(400).json({ error: "Request body missing", detail: "Multipart parsing failed" });
+        if (!req.body) {
+            console.error("Messages Error: req.body is undefined");
+            return res.status(400).json({ error: "Request body missing", detail: "Multipart parsing failed" });
+        }
 
+        // FAIL-SAFE DESTRUCTURING
         const { recipient: recipientId, text } = req.body || {};
+        console.log(`[MESSAGE] Processing send request. Recipient: ${recipientId}, HasFile: ${!!req.file}`);
         const currentUserId = req.user.id;
 
         // Audio handling

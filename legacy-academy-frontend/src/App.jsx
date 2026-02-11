@@ -3146,8 +3146,11 @@ const App = () => {
             return;
         }
 
-        // Optimistic UI Update: Remove notification immediately
-        const removeNotif = (list) => list ? list.filter(n => !(n.type === 'follow_request' && String(n.from) === String(requesterId))) : [];
+        // Optimistic UI Update: Remove notification immediately (Robust check)
+        const removeNotif = (list) => list ? list.filter(n => {
+            const fromId = n.from?._id || n.from; // Handle both populated and raw ID
+            return !(n.type === 'follow_request' && String(fromId) === String(requesterId));
+        }) : [];
         setAlerts(prev => removeNotif(prev));
         setUser(prev => {
             if (!prev) return prev;
@@ -3173,8 +3176,11 @@ const App = () => {
     const handleRejectRequest = async (requesterId) => {
         if (!requesterId) return;
 
-        // Optimistic UI Update
-        const removeNotif = (list) => list ? list.filter(n => !(n.type === 'follow_request' && String(n.from) === String(requesterId))) : [];
+        // Optimistic UI Update (Robust)
+        const removeNotif = (list) => list ? list.filter(n => {
+            const fromId = n.from?._id || n.from;
+            return !(n.type === 'follow_request' && String(fromId) === String(requesterId));
+        }) : [];
         setAlerts(prev => removeNotif(prev));
         setUser(prev => {
             if (!prev) return prev;
