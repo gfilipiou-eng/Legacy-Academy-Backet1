@@ -1476,7 +1476,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
         );
         
         unreadMessages.forEach(msg => {
-            axios.patch(`/messages/${msg._id}/read`).catch(() => {});
+            // Only mark as read if message ID is valid (24 characters)
+            if (msg._id && msg._id.length === 24) {
+                axios.patch(`/messages/${msg._id}/read`).catch(err => {
+                    console.log('Failed to mark message as read:', err);
+                });
+            }
         });
     }, [messages, activeChat, user?._id]);
 
