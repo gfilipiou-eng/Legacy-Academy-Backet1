@@ -131,7 +131,7 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+                notifications: { from: requesterId, type: 'follow_request' }
             },
             $addToSet: { followers: requesterId }
         });
@@ -167,7 +167,7 @@ router.post("/requests/:requesterId/decline", verifyToken, async (req, res) => {
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+                notifications: { from: requesterId, type: 'follow_request' }
             }
         });
         res.status(200).json("Request Declined");
@@ -185,7 +185,7 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
-                notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
+                notifications: { from: requesterId, type: 'follow_request' }
             }
         });
         res.status(200).json("Request Rejected");

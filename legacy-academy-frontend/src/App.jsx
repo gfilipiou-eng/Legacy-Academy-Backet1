@@ -2852,7 +2852,24 @@ const App = () => {
     const fetchUsers = async () => {
         try {
             const res = await axios.get('/users');
-            if (users.length > 0 && res.data.length === users.length) return;
+            // Sync self (fix for "Follow" button state not updating without reload)
+            if (user) {
+                const me = res.data.find(u => String(u._id) === String(user._id));
+                if (me) {
+                    setUser(prev => {
+                        const isDiff = JSON.stringify(prev.following) !== JSON.stringify(me.following) ||
+                                       JSON.stringify(prev.followers) !== JSON.stringify(me.followers) ||
+                                       JSON.stringify(prev.followRequests) !== JSON.stringify(me.followRequests);
+                        
+                        if (isDiff) {
+                            const updated = { ...prev, following: me.following, followers: me.followers, followRequests: me.followRequests };
+                            localStorage.setItem('user', JSON.stringify(updated));
+                            return updated;
+                        }
+                        return prev;
+                    });
+                }
+            }
             setUsers(res.data);
         } catch (e) { }
     };
@@ -3128,6 +3145,17 @@ const App = () => {
             console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
             return;
         }
+
+        // Optimistic UI Update: Remove notification immediately
+        const removeNotif = (list) => list ? list.filter(n => !(n.type === 'follow_request' && String(n.from) === String(requesterId))) : [];
+        setAlerts(prev => removeNotif(prev));
+        setUser(prev => {
+            if (!prev) return prev;
+            const updated = { ...prev, notifications: removeNotif(prev.notifications) };
+            localStorage.setItem('user', JSON.stringify(updated));
+            return updated;
+        });
+
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
             await axios.post(`/users/requests/${requesterId}/accept`, {});
@@ -3135,6 +3163,7 @@ const App = () => {
         } catch (e) {
             const detail = e.response?.data?.error || e.response?.data || e.message;
             console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
+            fetchNotifications(); // Revert/Sync on error
         } finally {
             fetchNotifications();
             fetchUsers();
@@ -3143,12 +3172,24 @@ const App = () => {
 
     const handleRejectRequest = async (requesterId) => {
         if (!requesterId) return;
+
+        // Optimistic UI Update
+        const removeNotif = (list) => list ? list.filter(n => !(n.type === 'follow_request' && String(n.from) === String(requesterId))) : [];
+        setAlerts(prev => removeNotif(prev));
+        setUser(prev => {
+            if (!prev) return prev;
+            const updated = { ...prev, notifications: removeNotif(prev.notifications) };
+            localStorage.setItem('user', JSON.stringify(updated));
+            return updated;
+        });
+
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
             await axios.post(`/users/requests/${requesterId}/reject`, {});
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
+            fetchNotifications();
         } finally {
             fetchNotifications();
             fetchUsers();
