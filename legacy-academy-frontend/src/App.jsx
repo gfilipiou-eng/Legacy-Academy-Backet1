@@ -3707,8 +3707,8 @@ const App = () => {
                     </main >
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                            <div className="h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto liquid-glass-nav floating-nav">
+                        <div className="fixed bottom-0 left-0 right-0 pb-4 flex justify-center z-[1000] pointer-events-none">
+                            <div className="h-[75px] w-full max-w-none rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto liquid-glass-nav floating-nav">
                                 <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
