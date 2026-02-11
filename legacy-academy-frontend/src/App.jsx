@@ -3707,29 +3707,29 @@ const App = () => {
                     </main >
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 pb-2 flex justify-center z-[1000] pointer-events-none">
-                            <div className="h-[58px] sm:h-[70px] w-full max-w-none rounded-[1.1rem] sm:rounded-[2rem] px-3 sm:px-5 flex items-center justify-between pointer-events-auto liquid-glass-nav floating-nav overflow-hidden">
+                        <div className="fixed bottom-0 left-0 right-0 pb-1.5 flex justify-center z-[1000] pointer-events-none">
+                            <div className="h-[52px] sm:h-[66px] w-full max-w-none rounded-[0.95rem] sm:rounded-[1.8rem] px-2.5 sm:px-4 flex items-center justify-between pointer-events-auto liquid-glass-nav floating-nav overflow-hidden">
                                 <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Home className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                                    <Icons.Home className="w-3.5 h-3.5 sm:w-5 sm:h-5 relative z-10" />
                                 </button>
 
                                 <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Search className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                                    <Icons.Search className="w-3.5 h-3.5 sm:w-5 sm:h-5 relative z-10" />
                                 </button>
 
                                 <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative z-10">
-                                        <Icons.Bell className={`w-4 h-4 sm:w-5 sm:h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                                        <Icons.Bell className={`w-3.5 h-3.5 sm:w-5 sm:h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                     </div>
                                 </button>
 
 
 
-                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-4 h-4 sm:w-5 sm:h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-3.5 h-3.5 sm:w-5 sm:h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
                                 <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-lg border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden bg-white/10 relative">
+                                    <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
