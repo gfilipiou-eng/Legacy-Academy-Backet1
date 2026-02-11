@@ -124,7 +124,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
             fetchPost();
-            playSound('trash');
+            playSound('premium_delete');
         } catch (e) {
             alert(t('ERROR_DELETING') || "Deletion failed.");
         }

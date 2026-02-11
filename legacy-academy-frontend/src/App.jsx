@@ -748,7 +748,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
-            playSound('sword');
+            playSound('premium_delete');
         }
     };
 
@@ -1508,11 +1508,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             console.log('📡 [DEBUG] Attempting to clear conversation:', targetId);
             await axios.post(`/messages/conversation/clear/${targetId}`);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
-            playSound('sword');
+            playSound('premium_delete');
         } catch (e) {
             console.error('Clear failed', e);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
-            playSound('sword');
+            playSound('premium_delete');
         }
     };
 
@@ -2342,9 +2342,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                                 </div>
                                                                             )}
 
-                                                                            <div className="hidden sm:flex absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity items-center justify-center gap-3 pointer-events-none">
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
+                                                                            <div className="absolute inset-x-0 bottom-0 bg-black/65 flex items-center justify-center gap-3 py-1.5 pointer-events-none">
+                                                                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-white" /> {p.likes?.length || 0}</div>
+                                                                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-white" /> {p.comments?.length || 0}</div>
                                                                             </div>
                                                                         </div>
                                                                     ))}
@@ -3383,7 +3383,7 @@ const App = () => {
                 }
                 return p;
             }));
-            playSound('sword');
+            playSound('premium_delete');
         } catch (err) {
             console.error("Failed to delete comment", err);
         }
@@ -3405,7 +3405,7 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } };
+    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('premium_delete'); explodeEffect(); } catch (e) { } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     // AUTO-LANGUAGE DETECTION

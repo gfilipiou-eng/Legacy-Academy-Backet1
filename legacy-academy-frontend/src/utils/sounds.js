@@ -69,6 +69,30 @@ export const playSound = (type) => {
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + 0.2);
+    } else if (type === 'premium_delete') {
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        osc1.type = 'sawtooth';
+        osc2.type = 'sine';
+        osc1.frequency.setValueAtTime(420, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.22);
+        osc2.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(260, ctx.currentTime + 0.18);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.24);
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc1.start();
+        osc2.start();
+        osc1.stop(ctx.currentTime + 0.24);
+        osc2.stop(ctx.currentTime + 0.2);
     } else if (type === 'magic' || type === 'success') {
         // Ethereal chime pulse
         for (let i = 0; i < 3; i++) {
