@@ -62,5 +62,8 @@ app.use("/api/messages", messageRoute);
 // });
 
 app.listen(process.env.PORT || 8800, () => {
+    console.log("🟢 Server initialization started...");
+    console.log("🚀 DEPLOYMENT VERSION: V5 LEGACY (Fixes Applied)");
+    console.log("Environment: ", process.env.NODE_ENV || 'production');
     console.log("Backend server is running! V5-LEGACY-SYNC");
 });
