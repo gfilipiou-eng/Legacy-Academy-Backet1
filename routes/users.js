@@ -257,20 +257,22 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         }
 
         // FORCE CLEANUP FIRST: Always remove from notifications and followRequests
-        // We do this aggressively to fix "stuck" notifications
         try {
+            const { notificationId } = req.body;
             await User.findByIdAndUpdate(userId, {
                 $pull: {
                     followRequests: requesterId,
-                    notifications: { from: requesterId, type: 'follow_request' }
+                    notifications: notificationId
+                        ? { _id: notificationId }
+                        : { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
                 }
             });
-            // Double tap: Explicit ObjectId pull for notifications (in case of type mismatch in DB)
-            await User.findByIdAndUpdate(userId, {
-                $pull: {
-                    notifications: { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
-                }
-            });
+            // Backup cleanup for string IDs
+            if (!notificationId) {
+                await User.findByIdAndUpdate(userId, {
+                    $pull: { notifications: { from: requesterId, type: 'follow_request' } }
+                });
+            }
         } catch (cleanupErr) {
             console.warn(`[ACCEPT REQ] Cleanup warning: ${cleanupErr.message}`);
         }
@@ -336,18 +338,21 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
 
         // FORCE CLEANUP: Always remove from notifications and followRequests
         try {
+            const { notificationId } = req.body;
             await User.findByIdAndUpdate(userId, {
                 $pull: {
                     followRequests: requesterId,
-                    notifications: { from: requesterId, type: 'follow_request' }
+                    notifications: notificationId
+                        ? { _id: notificationId }
+                        : { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
                 }
             });
-            // Double tap for ObjectId mismatch
-            await User.findByIdAndUpdate(userId, {
-                $pull: {
-                    notifications: { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
-                }
-            });
+            // Backup for strings
+            if (!notificationId) {
+                await User.findByIdAndUpdate(userId, {
+                    $pull: { notifications: { from: requesterId, type: 'follow_request' } }
+                });
+            }
         } catch (cleanupErr) {
             console.warn(`[REJECT REQ] Cleanup warning: ${cleanupErr.message}`);
         }

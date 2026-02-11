@@ -928,8 +928,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
-                        <button onClick={() => onRejectRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('REJECT')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
+                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
             </div>
@@ -3140,7 +3140,7 @@ const App = () => {
         finally { setFollowLoading(prev => { const copy = { ...prev }; delete copy[targetId]; return copy; }); }
     };
 
-    const handleAcceptRequest = async (requesterId) => {
+    const handleAcceptRequest = async (requesterId, notificationId) => {
         if (!requesterId) {
             console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
             return;
@@ -3148,8 +3148,10 @@ const App = () => {
 
         // Optimistic UI Update: Remove notification immediately (Robust check)
         const removeNotif = (list) => list ? list.filter(n => {
-            const fromId = n.from?._id || n.from; // Handle both populated and raw ID
-            return !(n.type === 'follow_request' && String(fromId) === String(requesterId));
+            const fromId = n.from?._id || n.from;
+            const matchesId = notificationId && String(n._id) === String(notificationId);
+            const matchesRequester = n.type === 'follow_request' && String(fromId) === String(requesterId);
+            return !(matchesId || matchesRequester);
         }) : [];
         setAlerts(prev => removeNotif(prev));
         setUser(prev => {
@@ -3161,7 +3163,7 @@ const App = () => {
 
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/accept`, {});
+            await axios.post(`/users/requests/${requesterId}/accept`, { notificationId });
             playSound('pop');
         } catch (e) {
             const detail = e.response?.data?.error || e.response?.data || e.message;
@@ -3173,13 +3175,15 @@ const App = () => {
         }
     };
 
-    const handleRejectRequest = async (requesterId) => {
+    const handleRejectRequest = async (requesterId, notificationId) => {
         if (!requesterId) return;
 
         // Optimistic UI Update (Robust)
         const removeNotif = (list) => list ? list.filter(n => {
             const fromId = n.from?._id || n.from;
-            return !(n.type === 'follow_request' && String(fromId) === String(requesterId));
+            const matchesId = notificationId && String(n._id) === String(notificationId);
+            const matchesRequester = n.type === 'follow_request' && String(fromId) === String(requesterId);
+            return !(matchesId || matchesRequester);
         }) : [];
         setAlerts(prev => removeNotif(prev));
         setUser(prev => {
@@ -3191,7 +3195,7 @@ const App = () => {
 
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/reject`, {});
+            await axios.post(`/users/requests/${requesterId}/reject`, { notificationId });
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
