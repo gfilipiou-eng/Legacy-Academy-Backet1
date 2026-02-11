@@ -259,20 +259,24 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         // FORCE CLEANUP FIRST: Always remove from notifications and followRequests
         try {
             const { notificationId } = req.body;
+            const pullQuery = { followRequests: requesterId };
+
+            // Notification cleanup - Multiple strategies to ensure it's gone
+            const notificationPull = notificationId && mongoose.Types.ObjectId.isValid(notificationId)
+                ? { _id: new mongoose.Types.ObjectId(String(notificationId)) }
+                : { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' };
+
             await User.findByIdAndUpdate(userId, {
                 $pull: {
                     followRequests: requesterId,
-                    notifications: notificationId
-                        ? { _id: notificationId }
-                        : { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
+                    notifications: notificationPull
                 }
             });
-            // Backup cleanup for string IDs
-            if (!notificationId) {
-                await User.findByIdAndUpdate(userId, {
-                    $pull: { notifications: { from: requesterId, type: 'follow_request' } }
-                });
-            }
+
+            // Extra insurance pull by from/type regardless of notificationId
+            await User.findByIdAndUpdate(userId, {
+                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
+            });
         } catch (cleanupErr) {
             console.warn(`[ACCEPT REQ] Cleanup warning: ${cleanupErr.message}`);
         }
@@ -339,20 +343,21 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
         // FORCE CLEANUP: Always remove from notifications and followRequests
         try {
             const { notificationId } = req.body;
+            const notificationPull = notificationId && mongoose.Types.ObjectId.isValid(notificationId)
+                ? { _id: new mongoose.Types.ObjectId(String(notificationId)) }
+                : { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' };
+
             await User.findByIdAndUpdate(userId, {
                 $pull: {
                     followRequests: requesterId,
-                    notifications: notificationId
-                        ? { _id: notificationId }
-                        : { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
+                    notifications: notificationPull
                 }
             });
-            // Backup for strings
-            if (!notificationId) {
-                await User.findByIdAndUpdate(userId, {
-                    $pull: { notifications: { from: requesterId, type: 'follow_request' } }
-                });
-            }
+
+            // Fallback pull
+            await User.findByIdAndUpdate(userId, {
+                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
+            });
         } catch (cleanupErr) {
             console.warn(`[REJECT REQ] Cleanup warning: ${cleanupErr.message}`);
         }

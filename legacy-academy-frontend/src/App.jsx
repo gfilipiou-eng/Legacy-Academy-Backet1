@@ -3495,7 +3495,7 @@ const App = () => {
                                             </button>
                                         )}
                                     </div>
-                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} lang={lang} />)}
+                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={n._id || i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} lang={lang} />)}
                                 </div>
                             ) : (
                                 <>
