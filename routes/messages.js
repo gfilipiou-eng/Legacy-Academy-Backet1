@@ -108,7 +108,13 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             return res.status(401).json("Neural interface not recognized.");
         }
         const senderId = req.user.id || req.user.userId || req.user._id;
-        const { recipient, text } = req.body || {};
+
+        // FAIL-SAFE BODY ACCESS
+        const body = req.body || {};
+        const recipient = body.recipient;
+        const text = body.text;
+
+        console.log(`[MESSAGE] Processing send request. Recipient: ${recipient}, HasFile: ${!!req.file}`);
 
         if (!recipient) {
             console.error(`${logPrefix} FAILED: No recipient provided`);

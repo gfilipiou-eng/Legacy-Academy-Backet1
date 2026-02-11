@@ -1460,9 +1460,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
 
     const handleSend = async (audioBlob = null) => {
         if (!activeChat) return;
+        
+        // CLIENT-SIDE VALIDATION: Ensure we have a valid recipient
+        const targetId = activeChat._id || activeChat.id;
+        if (!targetId) {
+            console.error("Attempted to send message to user with no ID:", activeChat);
+            addToast(t('INVALID_RECIPIENT') || "Invalid recipient data. Please refresh.", 'error');
+            return;
+        }
+
         if (!inputText.trim() && !audioBlob) return;
 
-        const targetId = activeChat._id || activeChat.id;
         const fd = new FormData();
         fd.append('recipient', targetId);
         if (inputText.trim()) fd.append('text', inputText.trim());

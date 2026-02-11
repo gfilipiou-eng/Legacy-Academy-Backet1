@@ -61,8 +61,11 @@ router.post("/", verifyToken, upload.single("file"), async (req, res) => {
             return res.status(400).json({ error: "Request body missing", detail: "Multipart parsing failed" });
         }
 
-        // FAIL-SAFE DESTRUCTURING
-        const { recipient: recipientId, text } = req.body || {};
+        // FAIL-SAFE BODY ACCESS
+        const body = req.body || {};
+        const recipientId = body.recipient;
+        const text = body.text;
+        
         console.log(`[MESSAGE] Processing send request. Recipient: ${recipientId}, HasFile: ${!!req.file}`);
         const currentUserId = req.user.id;
 
