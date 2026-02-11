@@ -53,7 +53,8 @@ router.get("/:messageId/read", verifyToken, async (req, res) => {
 });
 
 // SEND MESSAGE (Using upload.single('file') for audio support)
-router.post("/", verifyToken, upload.single("file"), async (req, res) => {
+// FIXED: Middleware order swapped to ensure Multer runs before Auth (for FormData body access if needed)
+router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     try {
         // Validation: Ensure req.body exists (multer should populate it)
         if (!req.body) {
@@ -67,6 +68,8 @@ router.post("/", verifyToken, upload.single("file"), async (req, res) => {
         const text = body.text;
         
         console.log(`[MESSAGE] Processing send request. Recipient: ${recipientId}, HasFile: ${!!req.file}`);
+        
+        if (!req.user) return res.status(401).json("Auth failed");
         const currentUserId = req.user.id;
 
         // Audio handling

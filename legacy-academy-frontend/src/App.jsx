@@ -1460,7 +1460,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
 
     const handleSend = async (audioBlob = null) => {
         if (!activeChat) return;
-        
+
         // CLIENT-SIDE VALIDATION: Ensure we have a valid recipient
         const targetId = activeChat._id || activeChat.id;
         if (!targetId) {
@@ -3157,11 +3157,24 @@ const App = () => {
         }
         isProcessingRequest.current = true;
 
+        // OPTIMISTIC UPDATE: Clear immediately from UI
+        const removeLocally = (list) => (list || []).filter(n => {
+            const nFromId = String(n.from?._id || n.from || '');
+            const isMatchId = notificationId && String(n._id) === String(notificationId);
+            const isMatchFrom = nFromId === String(requesterId) && n.type === 'follow_request';
+            return !(isMatchId || isMatchFrom);
+        });
+
+        setAlerts(prev => removeLocally(prev));
+        setUser(prev => {
+            if (!prev) return prev;
+            return { ...prev, notifications: removeLocally(prev.notifications) };
+        });
+
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
             const res = await axios.post(`/users/requests/${requesterId}/accept`, { notificationId });
 
-            // SERVER SYNC
             const { notifications: updatedNotifs, followers, followRequests, following } = res.data;
             if (updatedNotifs) setAlerts(updatedNotifs);
             setUser(prev => {
@@ -3172,8 +3185,8 @@ const App = () => {
             });
             playSound('pop');
         } catch (e) {
-            const detail = e.response?.data?.error || e.response?.data || e.message;
-            console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
+            console.error(`[HANDSHAKE] Accept Error:`, e);
+            fetchNotifications(); // Revert by fetching fresh
         } finally {
             setTimeout(() => {
                 isProcessingRequest.current = false;
@@ -3185,6 +3198,20 @@ const App = () => {
     const handleRejectRequest = async (requesterId, notificationId) => {
         if (!requesterId) return;
         isProcessingRequest.current = true;
+
+        // OPTIMISTIC UPDATE
+        const removeLocally = (list) => (list || []).filter(n => {
+            const nFromId = String(n.from?._id || n.from || '');
+            const isMatchId = notificationId && String(n._id) === String(notificationId);
+            const isMatchFrom = nFromId === String(requesterId) && n.type === 'follow_request';
+            return !(isMatchId || isMatchFrom);
+        });
+
+        setAlerts(prev => removeLocally(prev));
+        setUser(prev => {
+            if (!prev) return prev;
+            return { ...prev, notifications: removeLocally(prev.notifications) };
+        });
 
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
@@ -3200,7 +3227,8 @@ const App = () => {
             });
             playSound('pop');
         } catch (e) {
-            console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
+            console.error("[HANDSHAKE] Reject Error:", e);
+            fetchNotifications();
         } finally {
             setTimeout(() => {
                 isProcessingRequest.current = false;
