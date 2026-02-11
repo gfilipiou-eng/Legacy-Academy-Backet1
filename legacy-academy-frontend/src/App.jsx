@@ -901,6 +901,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 
 // Notification item component for Alerts tab
 const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, handshakeLoading }) => {
+    const senderId = note?.sender?._id || note?.from || note?.sender;
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
@@ -947,8 +948,8 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onAcceptRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 ${handshakeLoading?.[String(note.sender?._id || note.from)] ? 'bg-gray-600 opacity-60' : 'bg-[var(--gold-primary)]'} text-black text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:scale-105 active:scale-95'} transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest`}>{t('AUTHORIZE')}</button>
-                        <button disabled={!!handshakeLoading?.[String(note.sender?._id || note.from)]} onClick={() => onRejectRequest(note.sender?._id || note.from)} className={`flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg ${handshakeLoading?.[String(note.sender?._id || note.from)] ? '' : 'hover:bg-red-500/20 hover:text-red-500'} transition-all uppercase tracking-widest`}>{t('DENY')}</button>
+                        <button disabled={!!handshakeLoading?.[String(senderId)]} onClick={() => onAcceptRequest(senderId)} className={`flex-1 py-1.5 ${handshakeLoading?.[String(senderId)] ? 'bg-gray-600 opacity-60' : 'bg-[var(--gold-primary)]'} text-black text-[10px] font-black rounded-lg ${handshakeLoading?.[String(senderId)] ? '' : 'hover:scale-105 active:scale-95'} transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest`}>{t('AUTHORIZE')}</button>
+                        <button disabled={!!handshakeLoading?.[String(senderId)]} onClick={() => onRejectRequest(senderId)} className={`flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg ${handshakeLoading?.[String(senderId)] ? '' : 'hover:bg-red-500/20 hover:text-red-500'} transition-all uppercase tracking-widest`}>{t('DENY')}</button>
                     </div>
                 )}
             </div>
@@ -1100,7 +1101,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                 <div className="relative">
                     <button
                         onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                        className="p-2 text-gray-400 hover:text-white transition-all rounded-full bg-black/40 hover:bg-white/10 active:scale-95 shadow-lg border border-white/5 backdrop-blur-md"
+                        className="p-2 text-gray-400 md:hover:text-white transition-all rounded-full bg-black/40 md:hover:bg-white/10 active:scale-95 shadow-lg border border-white/5 backdrop-blur-md"
                     >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                             <circle cx="12" cy="12" r="1" />
@@ -1157,7 +1158,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1.5">
-                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
+                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white md:hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
                                         {post.author?.username}
                                         <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]">
                                             <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
@@ -1203,7 +1204,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     } catch (e) { console.error(e); }
                                     finally { setIsTranslating(false); }
                                 }}
-                                className="text-[10px] font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest mb-2"
+                                className="text-[10px] font-bold text-gray-500 md:hover:text-white transition-colors uppercase tracking-widest mb-2"
                             >
                                 {isTranslating ? '...' : (translatedDesc ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
                             </button>
@@ -1238,7 +1239,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 {(!post.videoUrl && !(post.image && post.image.match(/\.(mp4|mov|webm)$/i)) && !isYouTubeUrl(post.videoUrl)) && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
-                                        className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--f1-red)] transition-all active:scale-90 group z-20 shadow-2xl"
+                                        className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl md:hover:bg-[var(--f1-red)] transition-all active:scale-90 group z-20 shadow-2xl"
                                     >
                                         <Icons.Maximize className="w-5 h-5" />
                                     </button>
@@ -1265,23 +1266,23 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-90 p-2 rounded-xl hover:bg-white/5 text-gray-400"
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-90 p-2 rounded-xl md:hover:bg-white/5 text-gray-400"
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 md:group-hover:text-blue-400 transition-colors filter md:hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
                                     </svg>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none md:group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
 
-                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-90 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
-                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)] border border-red-500/20' : 'group-hover:bg-red-500/10'}`}>
+                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-90 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 md:hover:text-red-500'}`}>
+                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)] border border-red-500/20' : 'md:group-hover:bg-red-500/10'}`}>
                                         <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
                                     </div>
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-90 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20' : 'group-hover:bg-white/10'}`}>
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-90 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]' : 'text-gray-500 md:hover:text-white'}`}>
+                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20' : 'md:group-hover:bg-white/10'}`}>
                                         <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none">{dislikeCount}</span>
@@ -2198,7 +2199,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 {isMe ? (
                                     <button onClick={() => setIsEditing(true)} className="w-full gold-btn py-3 sm:py-3.5 text-xs font-black tracking-widest hover:scale-[0.98] transition-all">{t('EDIT_PROFILE')}</button>
                                 ) : (
-                                    <div className="flex flex-col sm:flex-row gap-2">
+                                    <div className="flex flex-row gap-2 items-center">
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-black text-white border border-[#2f3336]' : (isLocked ? 'bg-white text-black' : 'liquid-btn')} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
                                             {isFollowing ? t('UNFOLLOW') : (isLocked ? (hasRequested ? t('REQUESTED') : t('FOLLOW')) : t('FOLLOW'))}
                                         </button>
@@ -2206,9 +2207,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         {/* COMMS BUTTON */}
                                         <button
                                             onClick={() => { onOpenChat(displayUser); }}
-                                            className="w-full sm:w-auto px-6 py-3 bg-white text-black rounded-full hover:bg-gray-200 transition-all active:scale-95 group shadow-lg"
+                                            className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-white text-black rounded-full hover:bg-gray-200 transition-all active:scale-95 group shadow-lg"
                                         >
-                                            <Icons.MessageCircle className="w-5 h-5 group-hover:scale-110" />
+                                            <Icons.MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110" />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -3304,12 +3305,16 @@ const App = () => {
     };
 
     const handleRejectRequest = async (requesterId) => {
-        const normalizedId = isValidObjectId(requesterId) ? String(requesterId) : null;
+        const normalizedId = isValidObjectId(requesterId) ? String(requesterId).trim() : null;
         if (!normalizedId) {
             setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
             return;
         }
         try {
+            if (!user?.followRequests?.some(id => String(id) === String(normalizedId))) {
+                setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
+                return;
+            }
             setHandshakeLoading(prev => ({ ...prev, [String(normalizedId)]: true }));
             const res = await axios.post(`/users/requests/${normalizedId}/reject`, {});
             if (res.data?.followRequests) {

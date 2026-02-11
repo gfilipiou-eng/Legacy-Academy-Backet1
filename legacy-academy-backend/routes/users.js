@@ -178,7 +178,10 @@ router.post("/requests/:requesterId/decline", verifyToken, async (req, res) => {
 router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const requesterId = req.params.requesterId;
+        const requesterId = req.params.requesterId ? String(req.params.requesterId).trim() : null;
+        if (!requesterId || !mongoose.Types.ObjectId.isValid(requesterId)) {
+            return res.status(200).json({ status: "invalid_id_ignored" });
+        }
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
@@ -186,7 +189,9 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
             }
         });
         res.status(200).json("Request Rejected");
-    } catch (err) { res.status(500).json(err); }
+    } catch (err) {
+        res.status(200).json({ status: "ignored_error" });
+    }
 });
 
 // UPDATE USER SETTINGS (Privacy, Theme, Language)
