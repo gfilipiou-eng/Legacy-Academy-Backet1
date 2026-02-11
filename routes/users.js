@@ -94,7 +94,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                 const updatedTarget = await User.findByIdAndUpdate(targetId, {
                     $pull: {
                         followRequests: currentUserId,
-                        notifications: { from: new mongoose.Types.ObjectId(currentUserId), type: 'follow_request' }
+                        notifications: { from: currentUserId, type: 'follow_request' }
                     }
                 }, { new: true });
 
@@ -178,7 +178,11 @@ router.post("/:id/unfollow", verifyToken, async (req, res) => {
         const updatedTarget = await User.findByIdAndUpdate(targetId, {
             $pull: {
                 followers: currentUserId,
-                followRequests: currentUserId
+                followRequests: currentUserId,
+                notifications: {
+                    from: currentUserId,
+                    type: { $in: ['follow', 'follow_request'] }
+                }
             }
         }, { new: true });
 
@@ -267,34 +271,23 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid." });
         }
 
-        // 1. AGGRESSIVE CLEANUP: Core DB Pull (Removes all occurrences)
+        // ATOMIC UPDATE: Cleanup AND Follow in one shot
         const { notificationId } = req.body || {};
-        console.log(`[ACCEPT REQ] Cleanup started for requester: ${requesterId}, notifId: ${notificationId}`);
-        
-        try {
-            await User.findByIdAndUpdate(userId, {
+        const updatedUser = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
                 notifications: {
                     $or: [
                         { _id: notificationId },
                         { from: requesterId, type: 'follow_request' },
-                        { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
+                        { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
                     ]
                 }
-            }
-        });
+            },
+            $addToSet: { followers: requesterId, following: requesterId }
+        }, { new: true });
 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("Agent not found.");
-
-        // 2. Mutual Follow Logic
-        if (!user.followers.some(id => String(id) === String(requesterId))) user.followers.push(requesterId);
-        if (!user.following.some(id => String(id) === String(requesterId))) user.following.push(requesterId);
-
-        user.markModified('followers');
-        user.markModified('following');
-        await user.save();
+        if (!updatedUser) return res.status(404).json("Agent not found.");
 
         // 3. Update Requester
         await User.findByIdAndUpdate(requesterId, {
@@ -303,8 +296,8 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
                 notifications: {
                     type: 'follow_accepted',
                     from: userId,
-                    fromUsername: user.username,
-                    fromProfilePic: user.profilePic || '',
+                    fromUsername: updatedUser.username,
+                    fromProfilePic: updatedUser.profilePic || '',
                     text: `Accepted your follow request.`,
                     read: false,
                     createdAt: new Date()
@@ -312,8 +305,8 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             }
         });
 
-        // 4. Transform for frontend (consistent sender format)
-        const transformedNotifs = (user.notifications || []).map(n => {
+        // 4. Transform for frontend
+        const transformedNotifs = (updatedUser.notifications || []).map(n => {
             const doc = n._doc || n;
             return {
                 ...doc,
@@ -323,9 +316,9 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 
         res.status(200).json({
             message: "Follower accepted",
-            followers: user.followers,
-            followRequests: user.followRequests,
-            following: user.following,
+            followers: updatedUser.followers,
+            followRequests: updatedUser.followRequests,
+            following: updatedUser.following,
             notifications: transformedNotifs
         });
     } catch (err) {
@@ -348,23 +341,22 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored" });
         }
 
-        // ULTRA-AGGRESSIVE CLEANUP: Pull ALL matching follow requests for this user
-        const { notificationId } = req.body;
-        await User.findByIdAndUpdate(userId, {
+        // ATOMIC CLEANUP
+        const { notificationId } = req.body || {};
+        const updatedUser = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
                 notifications: {
                     $or: [
                         { _id: notificationId },
                         { from: requesterId, type: 'follow_request' },
-                        { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
+                        { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
                     ]
                 }
             }
-        });
+        }, { new: true });
 
-        // Re-fetch to return state
-        const updatedUser = await User.findById(userId);
+        if (!updatedUser) return res.status(404).json("Agent not found.");
 
         const transformedNotifs = (updatedUser.notifications || []).map(n => {
             const doc = n._doc || n;
