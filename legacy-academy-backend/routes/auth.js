@@ -17,6 +17,11 @@ router.post("/register", async (req, res) => {
             password: hashedPassword,
             bio: "Entrepreneur. Legacy Member.", // Default
             role: "User",
+            settings: {
+                theme: '#ffd700',
+                language: 'en',
+                dmFollowersOnly: false
+            }
         });
 
         const user = await newUser.save();

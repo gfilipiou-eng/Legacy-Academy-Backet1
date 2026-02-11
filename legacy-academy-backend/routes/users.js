@@ -246,7 +246,7 @@ router.get("/find/:id", verifyToken, async (req, res) => {
         res.status(200).json({
             ...others,
             followRequests: user.followRequests || [],
-            isRequested: false
+            isRequested: user.followRequests?.some(id => String(id) === String(req.user?.id || req.user?.userId))
         });
     } catch (err) {
         res.status(500).json(err);

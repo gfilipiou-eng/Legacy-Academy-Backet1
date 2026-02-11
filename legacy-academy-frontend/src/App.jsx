@@ -1411,6 +1411,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
     const scrollRef = useRef();
+    const autoScrollState = useRef({ chatId: null, done: false });
 
     const processedReadIds = useRef(new Set());
 
@@ -1467,6 +1468,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
 
     useEffect(() => {
         if (!isOpen || !activeChat?._id) return;
+        autoScrollState.current = { chatId: String(activeChat._id), done: false };
+    }, [isOpen, activeChat?._id]);
+
+    useEffect(() => {
+        if (!isOpen || !activeChat?._id) return;
         const targetId = activeChat._id;
         fetchMessages(targetId);
         const interval = setInterval(() => fetchMessages(targetId), 3000);
@@ -1479,6 +1485,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             setUserSentMessage(false);
         }
     }, [messages, activeChat, userSentMessage]);
+
+    useEffect(() => {
+        if (!isOpen || !activeChat?._id) return;
+        const chatId = String(activeChat._id);
+        const state = autoScrollState.current;
+        if (state.chatId !== chatId || state.done) return;
+        const list = messages[chatId] || [];
+        if (list.length === 0) return;
+        state.done = true;
+        setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'auto' }), 0);
+    }, [messages, isOpen, activeChat?._id]);
 
     const handleClearChat = async () => {
         if (!activeChat) return;
@@ -1733,6 +1750,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         try {
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
+            if (key === 'settings' && typeof val?.dmFollowersOnly !== 'undefined') setDmFollowersOnly(!!val.dmFollowersOnly);
 
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);

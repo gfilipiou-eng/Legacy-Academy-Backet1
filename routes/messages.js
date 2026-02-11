@@ -56,6 +56,22 @@ router.post("/:messageId/read", verifyToken, async (req, res) => {
     }
 });
 
+router.get("/:messageId/read", verifyToken, async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const userId = req.user.id || req.user.userId;
+        const message = await Message.findById(messageId);
+        if (!message) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
+        if (String(message.recipient) !== String(userId)) return res.status(403).json("Not authorized");
+        message.read = true;
+        message.readAt = new Date();
+        await message.save();
+        res.status(200).json({ success: true, readAt: message.readAt });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // 🔥 WHISPERS AUTO-DELETE CLEANUP: Run every minute to delete expired messages
 const cleanupExpiredWhispers = async () => {
     try {
