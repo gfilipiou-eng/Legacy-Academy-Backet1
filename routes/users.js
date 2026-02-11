@@ -256,47 +256,36 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid." });
         }
 
-        // FORCE CLEANUP FIRST: Always remove from notifications and followRequests
-        try {
-            const { notificationId } = req.body;
-            const pullQuery = { followRequests: requesterId };
-
-            // Notification cleanup - Multiple strategies to ensure it's gone
-            const notificationPull = notificationId && mongoose.Types.ObjectId.isValid(notificationId)
-                ? { _id: new mongoose.Types.ObjectId(String(notificationId)) }
-                : { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' };
-
-            await User.findByIdAndUpdate(userId, {
-                $pull: {
-                    followRequests: requesterId,
-                    notifications: notificationPull
-                }
-            });
-
-            // Extra insurance pull by from/type regardless of notificationId
-            await User.findByIdAndUpdate(userId, {
-                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
-            });
-        } catch (cleanupErr) {
-            console.warn(`[ACCEPT REQ] Cleanup warning: ${cleanupErr.message}`);
-        }
-
+        // 1. BULLETPROOF CLEANUP: Manual filter + Save
+        const { notificationId } = req.body;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        // Check if already following (Idempotency)
-        if (user.followers?.some(id => String(id) === String(requesterId))) {
-            return res.status(200).json({ message: "Already a follower", followers: user.followers });
+        const initialLength = user.notifications?.length || 0;
+
+        // Remove from followRequests
+        user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
+
+        // Remove the notification(s)
+        user.notifications = (user.notifications || []).filter(n => {
+            const matchesId = notificationId && String(n._id) === String(notificationId);
+            const matchesRequester = String(n.from) === String(requesterId) && n.type === 'follow_request';
+            return !(matchesId || matchesRequester);
+        });
+
+        console.log(`[ACCEPT REQ] Cleanup: Notifications ${initialLength} -> ${user.notifications.length}`);
+
+        // 2. Add as follower (Idempotency check included in JS)
+        const isAlreadyFollower = user.followers?.some(id => String(id) === String(requesterId));
+        if (!isAlreadyFollower) {
+            user.followers.push(requesterId);
+            // Optionally mutual follow
+            if (!user.following?.includes(requesterId)) user.following.push(requesterId);
         }
 
-        // Proceed to ADD as follower (Implicitly allowing acceptance even if request was missing/cleaned up)
-        const updatedSelf = await User.findByIdAndUpdate(userId, {
-            $addToSet: { followers: requesterId, following: requesterId }, // Mutual follow for instant unlock
-            // Redundant pull ensures it's gone
-            $pull: { followRequests: requesterId }
-        }, { new: true });
+        await user.save();
 
-        // Update requester (ensure mutual follow both ways)
+        // 3. Update Requester
         await User.findByIdAndUpdate(requesterId, {
             $addToSet: { following: userId, followers: userId },
             $push: {
@@ -315,10 +304,10 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         console.log(`[ACCEPT REQ] SUCCESS: Accepted request from ${requesterId}`);
         res.status(200).json({
             message: "Follower accepted",
-            followers: updatedSelf.followers,
-            followRequests: updatedSelf.followRequests,
-            following: updatedSelf.following,
-            notifications: updatedSelf.notifications
+            followers: user.followers,
+            followRequests: user.followRequests,
+            following: user.following,
+            notifications: user.notifications
         });
     } catch (err) {
         console.error(`[ACCEPT REQ] CRITICAL ERROR:`, err.message);
@@ -340,40 +329,28 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored" });
         }
 
-        // FORCE CLEANUP: Always remove from notifications and followRequests
-        try {
-            const { notificationId } = req.body;
-            const notificationPull = notificationId && mongoose.Types.ObjectId.isValid(notificationId)
-                ? { _id: new mongoose.Types.ObjectId(String(notificationId)) }
-                : { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' };
+        // BULLETPROOF CLEANUP
+        const { notificationId } = req.body;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
 
-            await User.findByIdAndUpdate(userId, {
-                $pull: {
-                    followRequests: requesterId,
-                    notifications: notificationPull
-                }
-            });
+        user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
+        user.notifications = (user.notifications || []).filter(n => {
+            const matchesId = notificationId && String(n._id) === String(notificationId);
+            const matchesRequester = String(n.from) === String(requesterId) && n.type === 'follow_request';
+            return !(matchesId || matchesRequester);
+        });
 
-            // Fallback pull
-            await User.findByIdAndUpdate(userId, {
-                $pull: { notifications: { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' } }
-            });
-        } catch (cleanupErr) {
-            console.warn(`[REJECT REQ] Cleanup warning: ${cleanupErr.message}`);
-        }
-
-        // Return updated state
-        const updatedSelf = await User.findById(userId);
-        if (!updatedSelf) return res.status(404).json("Agent not found.");
+        await user.save();
 
         res.status(200).json({
             message: "Request neutralized.",
-            followRequests: updatedSelf.followRequests,
-            notifications: updatedSelf.notifications
+            followRequests: user.followRequests,
+            notifications: user.notifications
         });
     } catch (err) {
-        console.warn(`[REJECT REQ] Non-fatal error: ${err?.message || err}`);
-        res.status(200).json({ status: "ignored_error" });
+        console.warn(`[REJECT REQ] error: ${err?.message || err}`);
+        res.status(500).json(err);
     }
 });
 
