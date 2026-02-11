@@ -265,31 +265,31 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 
         if (!mongoose.Types.ObjectId.isValid(requesterId)) return res.status(400).json("Invalid ID");
 
-        // 1. FETCH USER
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("Agent not found.");
+        const rId = new mongoose.Types.ObjectId(requesterId);
+        const nId = notificationId ? new mongoose.Types.ObjectId(String(notificationId)) : null;
 
-        // 2. JS CLEANUP (Guaranteed removal)
-        user.followRequests = (user.followRequests || []).filter(id => String(id) !== requesterId);
-        user.notifications = (user.notifications || []).filter(n => {
-            const nFromId = String(n.from?._id || n.from || '');
-            const isMatchId = notificationId && String(n._id) === String(notificationId);
-            const isMatchReq = nFromId === requesterId && n.type === 'follow_request';
-            return !(isMatchId || isMatchReq);
-        });
+        // 1. ATOMIC DB SYNC - This is the ONLY way to prevent ghosts
+        const updatedSelf = await User.findOneAndUpdate(
+            { _id: userId },
+            {
+                $pull: {
+                    followRequests: requesterId,
+                    notifications: {
+                        $or: [
+                            { _id: nId },
+                            { from: rId, type: 'follow_request' },
+                            { from: requesterId, type: 'follow_request' }
+                        ]
+                    }
+                },
+                $addToSet: { followers: requesterId, following: requesterId }
+            },
+            { new: true }
+        );
 
-        // 3. MUTUAL FOLLOW
-        const reqStr = String(requesterId);
-        if (!user.followers.some(id => String(id) === reqStr)) user.followers.push(requesterId);
-        if (!user.following.some(id => String(id) === reqStr)) user.following.push(requesterId);
+        if (!updatedSelf) return res.status(404).json("Agent not found.");
 
-        user.markModified('notifications');
-        user.markModified('followRequests');
-        user.markModified('followers');
-        user.markModified('following');
-        await user.save();
-
-        // 4. UPDATE FAN (Side effect)
+        // 2. UPDATE SENDER (Side effect)
         try {
             await User.findByIdAndUpdate(requesterId, {
                 $addToSet: { following: userId, followers: userId },
@@ -297,32 +297,31 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
                     notifications: {
                         type: 'follow_accepted',
                         from: userId,
-                        fromUsername: user.username,
-                        fromProfilePic: user.profilePic || '',
+                        fromUsername: updatedSelf.username,
+                        fromProfilePic: updatedSelf.profilePic || '',
                         text: `Accepted your follow request.`,
                         read: false,
                         createdAt: new Date()
                     }
                 }
             });
-        } catch (e) { console.error("Fan update failed:", e.message); }
+        } catch (e) { console.error("Sender update failed:", e.message); }
 
-        // 5. TRANSFORMED RESPONSE
-        const transformedNotifs = (user.notifications || []).map(n => ({
+        const transformedNotifs = (updatedSelf.notifications || []).map(n => ({
             ... (n._doc || n),
             sender: { _id: n.from, username: n.fromUsername, profilePic: n.fromProfilePic }
         }));
 
         res.status(200).json({
             message: "Follower accepted",
-            followers: user.followers,
-            followRequests: user.followRequests,
-            following: user.following,
+            followers: updatedSelf.followers,
+            followRequests: updatedSelf.followRequests,
+            following: updatedSelf.following,
             notifications: transformedNotifs,
             syncReset: true
         });
     } catch (err) {
-        console.error(`[ACCEPT] Error:`, err);
+        console.error(`[ACCEPT] CRITICAL ERROR:`, err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -337,30 +336,36 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
 
         if (!mongoose.Types.ObjectId.isValid(requesterId)) return res.status(400).json("Invalid ID");
 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("Agent not found.");
+        const rId = new mongoose.Types.ObjectId(requesterId);
+        const nId = notificationId ? new mongoose.Types.ObjectId(String(notificationId)) : null;
 
-        // JS CLEANUP
-        user.followRequests = (user.followRequests || []).filter(id => String(id) !== requesterId);
-        user.notifications = (user.notifications || []).filter(n => {
-            const nFromId = String(n.from?._id || n.from || '');
-            const isMatchId = notificationId && String(n._id) === String(notificationId);
-            const isMatchReq = nFromId === requesterId && n.type === 'follow_request';
-            return !(isMatchId || isMatchReq);
-        });
+        const updatedSelf = await User.findOneAndUpdate(
+            { _id: userId },
+            {
+                $pull: {
+                    followRequests: requesterId,
+                    notifications: {
+                        $or: [
+                            { _id: nId },
+                            { from: rId, type: 'follow_request' },
+                            { from: requesterId, type: 'follow_request' }
+                        ]
+                    }
+                }
+            },
+            { new: true }
+        );
 
-        user.markModified('notifications');
-        user.markModified('followRequests');
-        await user.save();
+        if (!updatedSelf) return res.status(404).json("Agent not found.");
 
-        const transformedNotifs = (user.notifications || []).map(n => ({
+        const transformedNotifs = (updatedSelf.notifications || []).map(n => ({
             ... (n._doc || n),
             sender: { _id: n.from, username: n.fromUsername, profilePic: n.fromProfilePic }
         }));
 
         res.status(200).json({
             message: "Request neutralized",
-            followRequests: user.followRequests,
+            followRequests: updatedSelf.followRequests,
             notifications: transformedNotifs,
             syncReset: true
         });

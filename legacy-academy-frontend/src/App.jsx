@@ -2887,8 +2887,10 @@ const App = () => {
     const fetchNotifications = async () => {
         if (!user || isProcessingRequest.current) return;
         try {
-            const res = await axios.get('/users/notifications');
+            // CACHE BUSTER + Strict Processing Lock
+            const res = await axios.get(`/users/notifications?t=${Date.now()}`);
             if (isProcessingRequest.current) return; // Post-await safety check
+
             setAlerts(res.data);
             setUser(prev => {
                 if (!prev) return prev;
@@ -2902,11 +2904,13 @@ const App = () => {
     const markAllNotificationsRead = async () => {
         try {
             await axios.put('/users/notifications/read');
-            const updatedAlerts = alerts.map(a => ({ ...a, read: true }));
-            setAlerts(updatedAlerts);
-            const updatedUser = { ...user, notifications: updatedAlerts };
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setAlerts(prev => prev.map(a => ({ ...a, read: true })));
+            setUser(prev => {
+                if (!prev) return prev;
+                const updated = { ...prev, notifications: prev.notifications.map(n => ({ ...n, read: true })) };
+                localStorage.setItem('user', JSON.stringify(updated));
+                return updated;
+            });
         } catch (e) { console.error('Mark read failed', e); }
     };
 
