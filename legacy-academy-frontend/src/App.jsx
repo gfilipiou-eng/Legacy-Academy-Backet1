@@ -1398,24 +1398,19 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const fetchMessages = async (otherUserId) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
-            setMessages(prev => ({ ...prev, [otherUserId]: res.data }));
 
-            // 🔥 WHISPERS: Auto-mark incoming messages as read (TEMPORARILY DISABLED - waiting for backend deploy)
-            /*
-            const unreadIncoming = res.data.filter(m =>
-                String(m.recipient) === String(user?._id) &&
-                String(m.sender) === String(otherUserId) &&
-                !m.read
-            );
-
-            for (const msg of unreadIncoming) {
-                try {
-                    await axios.patch(`/messages/${msg._id}/read`);
-                } catch (e) {
-                    console.warn('Failed to mark message as read:', e);
+            // Only update if data actually changed to avoid unnecessary re-renders and scroll jumps
+            setMessages(prev => {
+                const currentMsgs = prev[otherUserId] || [];
+                // Simple comparison - for more complex objects we'd use a deep compare helper
+                if (currentMsgs.length === res.data.length && JSON.stringify(currentMsgs[currentMsgs.length - 1]) === JSON.stringify(res.data[res.data.length - 1])) {
+                    return prev;
                 }
-            }
-            */
+                return { ...prev, [otherUserId]: res.data };
+            });
+
+            // 🔥 WHISPERS: Auto-mark incoming messages as read
+            /* ... existing disabled logic ... */
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
@@ -1434,11 +1429,21 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
         if (!isOpen || !activeChat?._id) return;
         const targetId = activeChat._id;
         fetchMessages(targetId);
-        const interval = setInterval(() => fetchMessages(targetId), 3000);
+        const interval = setInterval(() => fetchMessages(targetId), 4000);
         return () => clearInterval(interval);
     }, [isOpen, activeChat?._id]);
 
-    useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
+    // WHISPERS: Improved Auto-Scroll Logic
+    useEffect(() => {
+        if (activeChat && scrollRef.current) {
+            const behavior = (messages[activeChat._id]?.length <= 1) ? 'auto' : 'smooth';
+            // Use a small timeout to ensure DOM has updated with new content
+            const timer = setTimeout(() => {
+                scrollRef.current?.scrollIntoView({ behavior, block: 'end' });
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [messages[activeChat?._id]?.length, activeChat?._id]);
 
     const handleClearChat = async () => {
         if (!activeChat) return;
