@@ -2280,7 +2280,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             </div>
                                         ) : (
                                             Object.keys(groupedUserPosts).sort((a, b) => b.localeCompare(a)).map(dateKey => {
-                                                const displayDate = new Date(dateKey).toLocaleDateString(user?.settings?.language === 'el' ? 'el-GR' : user?.settings?.language === 'de' ? 'de-DE' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+                                                const displayDate = new Date(dateKey).toLocaleDateString(currentUser?.settings?.language === 'el' ? 'el-GR' : currentUser?.settings?.language === 'de' ? 'de-DE' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
                                                 return (
                                                     <div key={dateKey} className="animate-fade-in group px-1">
                                                         <div
