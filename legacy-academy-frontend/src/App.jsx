@@ -3493,16 +3493,7 @@ const App = () => {
                                     {alerts.length === 0 ? (
                                         <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div>
                                     ) : (
-                                        alerts.filter(n => {
-                                            // FINAL DEFENSE: Hide requests if they are already followers or not pending
-                                            if (n.type === 'follow_request' && user) {
-                                                const fid = String(n.from?._id || n.from);
-                                                const isFollower = user.followers?.some(id => String(id) === fid);
-                                                const isPending = user.followRequests?.some(id => String(id) === fid);
-                                                if (isFollower || !isPending) return false;
-                                            }
-                                            return true;
-                                        }).map((n, i) => (
+                                        alerts.map((n, i) => (
                                             <NotificationItem
                                                 key={n._id || i}
                                                 note={n}

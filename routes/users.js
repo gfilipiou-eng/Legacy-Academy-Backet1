@@ -111,7 +111,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
                 // Prevent duplicate notifications
                 const targetUserActual = await User.findById(targetId);
-                const hasExistingReq = targetUserActual.notifications?.some(n =>
+                const hasExistingReq = (targetUserActual.notifications || []).some(n =>
                     String(n.from) === String(currentUserId) && n.type === 'follow_request'
                 );
 
@@ -402,14 +402,13 @@ router.get("/notifications", verifyToken, async (req, res) => {
         if (!user) return res.status(200).json([]);
 
         const followers = (user.followers || []).map(id => String(id));
-        const pending = (user.followRequests || []).map(id => String(id));
 
-        // ULTIMATE SAFETY FILTER: Remove ghosts and stale requests
+        // SAFETY FILTER: Only hide if they are ALREADY followers
+        // (Removing the 'pending' check as it can cause race conditions if the arrays are out of sync)
         const filteredNotifications = (user.notifications || []).filter(n => {
             if (n.type === 'follow_request') {
                 const fId = String(n.from);
-                // IF they are already followers OR they aren't in the pending list -> HIDE IT
-                if (followers.includes(fId) || !pending.includes(fId)) return false;
+                if (followers.includes(fId)) return false;
             }
             return true;
         }).map(n => ({
