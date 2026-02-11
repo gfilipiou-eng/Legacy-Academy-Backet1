@@ -1089,15 +1089,14 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             whileHover={{
-                rotateX: 5, rotateY: 5,
-                z: 20,
-                transition: { duration: 0.3 }
+                y: -5,
+                transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
             }}
-            viewport={{ once: true }}
-            className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
+            viewport={{ once: true, margin: "-50px" }}
+            className={`premium-post-card mb-6 rounded-[2rem] relative transform transition-all active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
             {/* ABSOLUTE MENU TOP RIGHT */}
             <div className="absolute top-4 right-4 z-50">
@@ -2288,7 +2287,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                             </div>
                                                             <div className="flex-1 flex flex-col">
                                                                 <span className="text-[11px] font-black uppercase tracking-[0.3em] font-mono text-white italic">{dateKey}</span>
-                                                                <span className="text-[8px] text-gray-500 font-bold uppercase tracking-widest italic">{groupedUserPosts[dateKey].length} {t('POSTS_COUNT') || 'POSTS'} DEPLOYED</span>
+                                                                <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest italic">{groupedUserPosts[dateKey].length} {t('POSTS_COUNT') || 'POSTS'} DEPLOYED</span>
                                                             </div>
                                                         </div>
                                                         <AnimatePresence>
@@ -3655,7 +3654,7 @@ const App = () => {
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
                                                                     <span className="text-[11px] font-black uppercase tracking-[0.3em] font-mono text-white">{dateKey}</span>
-                                                                    <span className="text-[8px] text-gray-500 font-bold uppercase tracking-widest italic">{group.posts.length} {t('POSTS_COUNT') || 'POSTS'} DETECTED</span>
+                                                                    <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest italic">{group.posts.length} {t('POSTS_COUNT') || 'POSTS'} DETECTED</span>
                                                                 </div>
                                                             </div>
 

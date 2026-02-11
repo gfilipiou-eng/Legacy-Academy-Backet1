@@ -464,6 +464,7 @@ img {
 }
 
 @media screen and (max-width: 768px) {
+
   input,
   textarea,
   select,
@@ -481,24 +482,56 @@ img {
   box-shadow: 0 0 30px var(--gold-glow);
 }
 
+.premium-post-card {
+  background: linear-gradient(165deg, rgba(20, 20, 20, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.03);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-post-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 35px 80px -20px rgba(0, 0, 0, 0.9);
+}
+
 .liquid-folder {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px) saturate(200%);
-  -webkit-backdrop-filter: blur(25px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(30px) saturate(210%);
+  -webkit-backdrop-filter: blur(30px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 15px 45px -10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-folder::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--f1-red), transparent);
+  opacity: 0.3;
 }
 
 .liquid-folder:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--f1-red);
-  box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.8), 0 0 20px var(--gold-glow-soft);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.9), 0 0 25px var(--gold-glow-soft);
+  transform: translateY(-1px);
 }
 
-.liquid-folder:active {
-  transform: translateY(0) scale(0.98);
+.liquid-folder:hover::after {
+  opacity: 0.8;
+  height: 2px;
 }
 
 @keyframes heart-beat {
