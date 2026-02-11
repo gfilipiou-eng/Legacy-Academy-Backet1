@@ -5,23 +5,21 @@
 @tailwind utilities;
 
 :root {
-  --gold-primary: #ffffff;
-  --f1-red: #e10600;
-  --f1-primary: #e10600;
-  /* Default theme color */
-  /* Formula 1 Official Red */
-  --carbon-black: #0d0d0d;
-  --gold-secondary: #888888;
-  --gold-hover: #f0f0f0;
-  --gold-glow: rgba(225, 6, 0, 0.4);
-  --gold-glow-soft: rgba(225, 6, 0, 0.1);
-  --glass-bg: rgba(10, 10, 10, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --gold-primary: #1d9bf0;
+  --f1-red: #1d9bf0;
+  --f1-primary: #1d9bf0;
+  --carbon-black: #000000;
+  --gold-secondary: #71767b;
+  --gold-hover: #1a8cd8;
+  --gold-glow: rgba(29, 155, 240, 0.35);
+  --gold-glow-soft: rgba(29, 155, 240, 0.2);
+  --glass-bg: rgba(0, 0, 0, 0.9);
+  --glass-border: #2f3336;
 }
 
 body {
   background-color: #000;
-  color: #fff;
+  color: #e7e9ea;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
@@ -41,17 +39,9 @@ img {
 /* --- LIQUID GLASS NAV (REFINED) --- */
 /* --- LIQUID GLASS NAV (ULTRA REFINED) --- */
 .liquid-glass-nav {
-  background: rgba(10, 10, 10, 0.7);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-top: 2px solid var(--f1-red);
-  /* F1 Racing Line */
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-  box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid #2f3336;
+  box-shadow: none;
   position: relative;
   overflow: visible;
 }
@@ -105,7 +95,7 @@ img {
 
 .nav-item-btn {
   @apply p-3.5 rounded-full transition-all duration-300 flex items-center justify-center;
-  color: rgba(255, 255, 255, 0.5);
+  color: #71767b;
 }
 
 .nav-item-btn:active {
@@ -132,7 +122,7 @@ img {
 .nav-center-action {
   @apply w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300;
   background: var(--f1-primary);
-  box-shadow: 0 8px 25px var(--gold-glow);
+  box-shadow: 0 6px 20px rgba(29, 155, 240, 0.35);
   color: white;
 }
 
@@ -143,12 +133,12 @@ img {
 
 .header-icon-btn {
   padding: 0.75rem;
-  background-color: rgb(255 255 255 / 0.05);
-  border: 1px solid rgb(255 255 255 / 0.1);
+  background-color: #000;
+  border: 1px solid #2f3336;
   border-radius: 1rem;
-  color: rgb(156 163 175);
+  color: #e7e9ea;
   transition: all 0.15s;
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,47 +146,45 @@ img {
 
 .header-icon-btn:hover {
   color: white;
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  border-color: #3f4348;
+  background: #0a0a0a;
+  transform: translateY(-1px);
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  background: #000;
+  border: 1px solid #2f3336;
+  box-shadow: none;
 }
 
 .glass-input {
-  @apply bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-white transition-all;
+  @apply bg-black border border-[#2f3336] rounded-2xl px-4 py-3 text-white placeholder-[#71767b] focus:outline-none focus:border-[#1d9bf0] transition-all;
 }
 
 /* Twitter-Style Pill Buttons with F1 Flare */
 .gold-btn {
-  @apply bg-white text-black font-black uppercase tracking-wider px-8 py-3.5 rounded-full transition-all active:scale-95;
-  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+  @apply bg-[var(--f1-primary)] text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95;
+  box-shadow: none;
 }
 
 .gold-btn:hover {
-  background: #f0f0f0;
+  background: #1a8cd8;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+  box-shadow: none;
 }
 
 .liquid-btn {
-  @apply bg-[var(--f1-primary)] text-white font-black uppercase tracking-widest px-8 py-4 rounded-full transition-all active:scale-95 text-sm;
-  box-shadow: 0 8px 25px var(--gold-glow);
+  @apply bg-[var(--f1-primary)] text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95 text-sm;
+  box-shadow: none;
 }
 
 .liquid-btn:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 12px 30px var(--gold-glow);
+  filter: brightness(1.05);
+  box-shadow: none;
 }
 
 .gold-btn-outline {
-  @apply bg-transparent border-2 border-white/20 text-white font-bold uppercase tracking-widest px-8 py-3.5 rounded-full transition-all active:scale-95;
+  @apply bg-transparent border-2 border-[#2f3336] text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95;
 }
 
 .gold-btn-outline:hover {
@@ -479,34 +467,27 @@ img {
 }
 
 .shadow-glow-f1 {
-  box-shadow: 0 0 30px var(--gold-glow);
+  box-shadow: 0 0 12px rgba(29, 155, 240, 0.25);
 }
 
 .premium-post-card {
-  background: linear-gradient(165deg, rgba(20, 20, 20, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.7),
-    inset 0 1px 1px rgba(255, 255, 255, 0.03);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #000;
+  border: 1px solid #2f3336;
+  box-shadow: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .premium-post-card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 35px 80px -20px rgba(0, 0, 0, 0.9);
+  border-color: #3f4348;
+  background: #0a0a0a;
+  box-shadow: none;
 }
 
 .liquid-folder {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(30px) saturate(210%);
-  -webkit-backdrop-filter: blur(30px) saturate(210%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 15px 45px -10px rgba(0, 0, 0, 0.6),
-    inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  background: #000;
+  border: 1px solid #2f3336;
+  box-shadow: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
@@ -519,18 +500,18 @@ img {
   width: 100%;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--f1-red), transparent);
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .liquid-folder:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.9), 0 0 25px var(--gold-glow-soft);
+  background: #0a0a0a;
+  border-color: #3f4348;
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
 .liquid-folder:hover::after {
-  opacity: 0.8;
+  opacity: 0.6;
   height: 2px;
 }
 

@@ -2732,7 +2732,7 @@ const App = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
-    const [formData, setFormData] = useState({ email: '', password: '', username: '', theme: '#FFD700' });
+    const [formData, setFormData] = useState({ email: '', password: '', username: '', theme: '#1D9BF0' });
 
     const handleAuthInputChange = (e) => {
         const { id, value } = e.target;
