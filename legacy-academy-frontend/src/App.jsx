@@ -1773,59 +1773,59 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative w-full max-w-sm h-full sm:h-auto bg-[#0a0a0a] sm:border border-white/10 sm:rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
-                <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
-                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">{t('SETTINGS')}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
+            <div className="relative w-full max-w-md md:max-w-lg h-full sm:h-auto bg-black sm:border border-[#2f3336] sm:rounded-[1.5rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
+                <div className="p-4 border-b border-[#2f3336] flex justify-between items-center bg-black shrink-0">
+                    <h2 className="font-bold uppercase tracking-widest text-[10px] text-[#71767b]">{t('SETTINGS')}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-[#0a0a0a] rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
                 </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('PRIVACY')}</div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 sm:p-4 space-y-3">
+                    <div className="p-4 bg-black rounded-2xl border border-[#2f3336] space-y-3">
+                        <div className="text-[10px] font-bold text-[#71767b] uppercase tracking-widest pl-1">{t('PRIVACY')}</div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col">
                                     <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('PRIVATE_ACCOUNT')}</span>
-                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('PRIVATE_DESC')}</span>
+                                    <span className="text-[9px] font-bold text-[#71767b] uppercase tracking-widest">{t('PRIVATE_DESC')}</span>
                                 </div>
                                 <button
                                     onClick={() => handleSave('isPrivate', !isPrivate)}
-                                    className={`w-12 h-7 rounded-full border transition-all ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
+                                    className={`w-12 h-7 rounded-full border transition-all ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'bg-black border-[#2f3336]'}`}
                                     aria-pressed={isPrivate}
                                 >
-                                    <div className={`w-6 h-6 rounded-full bg-black translate-x-0 ${isPrivate ? 'translate-x-6' : ''} transition-transform`} />
+                                    <div className={`w-6 h-6 rounded-full bg-white translate-x-0 ${isPrivate ? 'translate-x-6' : ''} transition-transform`} />
                                 </button>
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col">
                                     <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('FOLLOWERS_ONLY')}</span>
-                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('FOLLOWERS_ONLY_DESC')}</span>
+                                    <span className="text-[9px] font-bold text-[#71767b] uppercase tracking-widest">{t('FOLLOWERS_ONLY_DESC')}</span>
                                 </div>
                                 <button
                                     onClick={() => handleSave('isFollowersOnly', !isFollowersOnly)}
-                                    className={`w-12 h-7 rounded-full border transition-all ${isFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
+                                    className={`w-12 h-7 rounded-full border transition-all ${isFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'bg-black border-[#2f3336]'}`}
                                     aria-pressed={isFollowersOnly}
                                 >
-                                    <div className={`w-6 h-6 rounded-full bg-black translate-x-0 ${isFollowersOnly ? 'translate-x-6' : ''} transition-transform`} />
+                                    <div className={`w-6 h-6 rounded-full bg-white translate-x-0 ${isFollowersOnly ? 'translate-x-6' : ''} transition-transform`} />
                                 </button>
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col">
                                     <span className="text-[11px] font-black uppercase tracking-widest text-white">{t('DM_FOLLOWERS_ONLY')}</span>
-                                    <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('DM_FOLLOWERS_ONLY_DESC')}</span>
+                                    <span className="text-[9px] font-bold text-[#71767b] uppercase tracking-widest">{t('DM_FOLLOWERS_ONLY_DESC')}</span>
                                 </div>
                                 <button
                                     onClick={() => handleSave('settings', { dmFollowersOnly: !dmFollowersOnly })}
-                                    className={`w-12 h-7 rounded-full border transition-all ${dmFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
+                                    className={`w-12 h-7 rounded-full border transition-all ${dmFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'bg-black border-[#2f3336]'}`}
                                     aria-pressed={dmFollowersOnly}
                                 >
-                                    <div className={`w-6 h-6 rounded-full bg-black translate-x-0 ${dmFollowersOnly ? 'translate-x-6' : ''} transition-transform`} />
+                                    <div className={`w-6 h-6 rounded-full bg-white translate-x-0 ${dmFollowersOnly ? 'translate-x-6' : ''} transition-transform`} />
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
+                    <div className="p-4 bg-black rounded-2xl border border-[#2f3336] space-y-3">
+                        <div className="text-[10px] font-bold text-[#71767b] uppercase tracking-widest pl-1">{t('THEME')}</div>
                         <div className="flex gap-2.5 flex-wrap justify-center pt-2">
                             {['#FFD700', '#e10600', '#00d4ff', '#10b981', '#a855f7', '#ff8c00', '#ff00f7', '#00ff88', '#39FF14', '#FF00BF', '#7000FF', '#00FFFF', '#FF3131'].map(c => {
                                 const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#FFD700';
@@ -2091,13 +2091,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             }} />
 
                             <div className="space-y-2 text-left">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-white outline-none" placeholder={t('USERNAME_PH')} />
+                                <label className="text-xs font-bold text-[#71767b] uppercase tracking-widest pl-1">{t('USERNAME')}</label>
+                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-black border border-[#2f3336] rounded-2xl p-4 text-white text-sm font-bold focus:border-[#1d9bf0] outline-none" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
-                                <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-white outline-none resize-none h-32" placeholder={t('BIO_PH')} />
+                                <label className="text-xs font-bold text-[#71767b] uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
+                                <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-black border border-[#2f3336] rounded-2xl p-4 text-white text-sm focus:border-[#1d9bf0] outline-none resize-none h-32" placeholder={t('BIO_PH')} />
                             </div>
 
                             <button onClick={async () => {
@@ -2112,13 +2112,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     console.error(e);
                                     alert(e.response?.data?.message || e.response?.data || "Update failed.");
                                 }
-                            }} className="w-full py-4 bg-[var(--f1-red)] rounded-full text-white font-black uppercase tracking-widest shadow-lg shadow-red-500/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
+                            }} className="w-full py-4 bg-[var(--f1-red)] rounded-full text-white font-black uppercase tracking-widest active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
-                        <div className="p-4 sm:p-6 pb-20">
-                            <div className="flex items-center gap-4 sm:gap-8 mb-6">
+                        <div className="p-4 sm:p-6 md:p-8 pb-24">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-6">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-900 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--f1-red)] italic shadow-[0_0_20px_var(--f1-red)]' : 'border-white/20'}`}>
+                                    <div className={`w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-2xl bg-gray-900 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--f1-red)] italic shadow-[0_0_20px_var(--f1-red)]' : 'border-[#2f3336]'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
                                     {!isMe && (
@@ -2160,22 +2160,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </>
                                     )}
                                 </div>
-                                <div className="flex-1 grid grid-cols-3 gap-1 bg-white/5 p-3 rounded-2xl border border-white/5">
+                                <div className="flex-1 grid grid-cols-3 gap-2 sm:gap-1 bg-black p-3 sm:p-4 rounded-2xl border border-[#2f3336]">
                                     <div className="flex flex-col items-center justify-center p-1">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[8px] sm:text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS')}</div>
+                                        <div className="text-[8px] sm:text-[10px] text-[#71767b] uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS')}</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer group p-1 border-x border-white/5">
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center justify-center cursor-pointer group p-1 border-x border-[#2f3336]">
                                         <span className="text-lg sm:text-2xl font-black text-[var(--f1-red)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
                                         </span>
-                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
+                                        <span className="text-[8px] sm:text-[10px] text-[#71767b] font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS')}</span>
                                     </div>
                                     <div onClick={() => setActiveList('following')} className="flex flex-col items-center justify-center cursor-pointer group p-1">
                                         <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
                                             {displayUser?.following?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
                                         </span>
-                                        <span className="text-[8px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING')}</span>
+                                        <span className="text-[8px] sm:text-[10px] text-[#71767b] font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2193,20 +2193,20 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                     {displayUser?.role === 'Founder' && <span className="text-[var(--f1-red)] text-[10px] font-black tracking-wider uppercase italic">★ {t('FOUNDER_BADGE')}</span>}
                                 </div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
+                                <div className="text-sm text-[#e7e9ea] leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
 
                                 {isMe ? (
                                     <button onClick={() => setIsEditing(true)} className="w-full gold-btn py-3 sm:py-3.5 text-xs font-black tracking-widest hover:scale-[0.98] transition-all">{t('EDIT_PROFILE')}</button>
                                 ) : (
-                                    <div className="flex-1 flex gap-2">
-                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3.5 ${isFollowing ? 'bg-white/10 text-white border border-white/20' : (isLocked ? 'bg-white text-black' : 'liquid-btn')} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
+                                    <div className="flex flex-col sm:flex-row gap-2">
+                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-black text-white border border-[#2f3336]' : (isLocked ? 'bg-white text-black' : 'liquid-btn')} rounded-full text-xs font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
                                             {isFollowing ? t('UNFOLLOW') : (isLocked ? (hasRequested ? t('REQUESTED') : t('FOLLOW')) : t('FOLLOW'))}
                                         </button>
 
                                         {/* COMMS BUTTON */}
                                         <button
                                             onClick={() => { onOpenChat(displayUser); }}
-                                            className="px-6 py-3.5 bg-white text-black rounded-full hover:bg-gray-200 transition-all active:scale-95 group shadow-lg"
+                                            className="w-full sm:w-auto px-6 py-3 bg-white text-black rounded-full hover:bg-gray-200 transition-all active:scale-95 group shadow-lg"
                                         >
                                             <Icons.MessageCircle className="w-5 h-5 group-hover:scale-110" />
                                         </button>
@@ -2232,9 +2232,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-black/40 backdrop-blur-md rounded-full mb-6 border border-white/5">
+                            <div className="flex gap-2 p-1 bg-black rounded-full mb-6 border border-[#2f3336]">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.1em] rounded-full transition-all ${activeTab === tab ? 'bg-white text-black shadow-xl' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.1em] rounded-full transition-all ${activeTab === tab ? 'bg-white text-black shadow-none' : 'text-[#71767b] hover:text-white'}`}>{t('TAB_' + tab)}</button>
                                 ))}
                             </div>
 
