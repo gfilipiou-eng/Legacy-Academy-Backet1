@@ -3168,9 +3168,7 @@ const App = () => {
         } catch (e) {
             const detail = e.response?.data?.error || e.response?.data || e.message;
             console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
-            fetchNotifications(); // Revert/Sync on error
         } finally {
-            fetchNotifications();
             fetchUsers();
         }
     };
@@ -3199,9 +3197,7 @@ const App = () => {
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
-            fetchNotifications();
         } finally {
-            fetchNotifications();
             fetchUsers();
         }
     };

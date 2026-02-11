@@ -256,38 +256,48 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid." });
         }
 
-        // 1. BULLETPROOF CLEANUP: Manual filter + Save
+        // 1. ULTRA-AGGRESSIVE CLEANUP
         const { notificationId } = req.body;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        const initialLength = user.notifications?.length || 0;
+        console.log(`📡 [ACCEPT] User: ${userId} | Requester: ${requesterId} | NotifId: ${notificationId}`);
+        const countBefore = user.notifications?.length || 0;
 
-        // Remove from followRequests
+        // Clear followRequests
         user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
 
-        // Remove the notification(s)
+        // Clear notifications
         user.notifications = (user.notifications || []).filter(n => {
-            const matchesId = notificationId && String(n._id) === String(notificationId);
-            const matchesRequester = String(n.from) === String(requesterId) && n.type === 'follow_request';
-            return !(matchesId || matchesRequester);
+            const nIdStr = String(n._id);
+            const nFromStr = String(n.from);
+
+            const matchesId = notificationId && nIdStr === String(notificationId);
+            const matchesRequester = nFromStr === String(requesterId) && n.type === 'follow_request';
+
+            if (matchesId || matchesRequester) {
+                console.log(`🗑️ [ACCEPT] Removing Notif: ${nIdStr} (Type: ${n.type}, From: ${nFromStr})`);
+                return false;
+            }
+            return true;
         });
 
-        console.log(`[ACCEPT REQ] Cleanup: Notifications ${initialLength} -> ${user.notifications.length}`);
+        console.log(`📊 [ACCEPT] Notifs: ${countBefore} -> ${user.notifications.length}`);
 
-        // 2. Add as follower (Idempotency check included in JS)
-        const isAlreadyFollower = user.followers?.some(id => String(id) === String(requesterId));
-        if (!isAlreadyFollower) {
+        // 2. Mutual Follow Logic
+        if (!user.followers.some(id => String(id) === String(requesterId))) {
             user.followers.push(requesterId);
-            // Optionally mutual follow
-            if (!user.following?.includes(requesterId)) user.following.push(requesterId);
+        }
+        // Force mutual follow
+        if (!user.following.some(id => String(id) === String(requesterId))) {
+            user.following.push(requesterId);
         }
 
         await user.save();
 
-        // 3. Update Requester
+        // 3. Update Requester as well (ensure they follow back)
         await User.findByIdAndUpdate(requesterId, {
-            $addToSet: { following: userId, followers: userId },
+            $addToSet: { followers: userId, following: userId },
             $push: {
                 notifications: {
                     type: 'follow_accepted',
@@ -301,7 +311,6 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             }
         });
 
-        console.log(`[ACCEPT REQ] SUCCESS: Accepted request from ${requesterId}`);
         res.status(200).json({
             message: "Follower accepted",
             followers: user.followers,
@@ -310,7 +319,7 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             notifications: user.notifications
         });
     } catch (err) {
-        console.error(`[ACCEPT REQ] CRITICAL ERROR:`, err.message);
+        console.error(`[ACCEPT REQ] ERROR:`, err.message);
         res.status(500).json(err);
     }
 });
@@ -329,17 +338,30 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored" });
         }
 
-        // BULLETPROOF CLEANUP
+        // ULTRA-AGGRESSIVE CLEANUP
         const { notificationId } = req.body;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
+        console.log(`📡 [REJECT] User: ${userId} | Requester: ${requesterId} | NotifId: ${notificationId}`);
+        const countBefore = user.notifications?.length || 0;
+
         user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
         user.notifications = (user.notifications || []).filter(n => {
-            const matchesId = notificationId && String(n._id) === String(notificationId);
-            const matchesRequester = String(n.from) === String(requesterId) && n.type === 'follow_request';
-            return !(matchesId || matchesRequester);
+            const nIdStr = String(n._id);
+            const nFromStr = String(n.from);
+
+            const matchesId = notificationId && nIdStr === String(notificationId);
+            const matchesRequester = nFromStr === String(requesterId) && n.type === 'follow_request';
+
+            if (matchesId || matchesRequester) {
+                console.log(`🗑️ [REJECT] Removing Notif: ${nIdStr} (Type: ${n.type}, From: ${nFromStr})`);
+                return false;
+            }
+            return true;
         });
+
+        console.log(`📊 [REJECT] Notifs: ${countBefore} -> ${user.notifications.length}`);
 
         await user.save();
 
