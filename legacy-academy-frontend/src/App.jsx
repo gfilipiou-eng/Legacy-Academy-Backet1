@@ -1507,7 +1507,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             audioChunks.current = [];
             mediaRecorder.current.ondataavailable = e => audioChunks.current.push(e.data);
             mediaRecorder.current.onstop = () => {
+                if (audioChunks.current.length === 0) {
+                    setIsRecording(false);
+                    return;
+                }
                 const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
+                // Safety: Avoid sending empty or corrupt tiny blobs ( < 500 bytes is usually just silence/header error)
+                if (blob.size < 500) {
+                    setIsRecording(false);
+                    console.warn('[WHISPER] Recording too short/invalid, skipping send');
+                    return;
+                }
                 handleSend(blob);
             };
             mediaRecorder.current.start();

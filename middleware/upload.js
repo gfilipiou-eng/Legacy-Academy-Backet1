@@ -25,8 +25,7 @@ if (hasCloudinary) {
     cloudinary,
     params: {
       folder: "legacyacademy",
-      allowed_formats: ["jpg", "png", "jpeg", "mp4", "mov", "avi", "webm", "mp3", "wav", "ogg"],
-      resource_type: "auto",
+      resource_type: "auto", // Automatically detect if it's an image, video, or audio
     },
   });
 } else {
