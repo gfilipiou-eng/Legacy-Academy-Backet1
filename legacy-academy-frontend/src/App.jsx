@@ -347,7 +347,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                                 <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                             </svg>
                         </div>
-                        {isFounder && <span className="text-[7px] bg-gradient-to-r from-red-600 to-red-500 text-white px-1.5 py-0.5 rounded font-black tracking-widest shadow-lg shadow-red-500/30">{t('FOUNDER_BADGE')}</span>}
+                        {isFounder && <span className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}
                     </div>
 
                     {isEditing ? (
@@ -614,7 +614,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <button
                                     type="button"
                                     onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-90 p-2 rounded-xl hover:bg-white/5 text-gray-400"
                                 >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
@@ -625,7 +625,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 <button
                                     type="button"
                                     onClick={() => onShare(post)}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl text-gray-400 hover:text-[var(--gold-primary)]"
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-95 p-2 rounded-xl text-gray-400 hover:text-[var(--gold-primary)]"
                                 >
                                     <Icons.Share className="w-5 h-5 pointer-events-none" />
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.shares?.length || 0}</span>
@@ -1088,15 +1088,11 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
 
     return (
         <motion.div
-            layout
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            whileHover={{
-                y: -5,
-                transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
-            }}
+            whileTap={{ scale: 0.98 }}
             viewport={{ once: true, margin: "-50px" }}
-            className={`premium-post-card mb-6 rounded-[2rem] relative transform transition-all active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
+            className={`premium-post-card mb-6 rounded-[2rem] relative !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
             {/* ABSOLUTE MENU TOP RIGHT */}
             <div className="absolute top-4 right-4 z-50">
@@ -1268,7 +1264,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-90 p-2 rounded-xl hover:bg-white/5 text-gray-400"
                                 >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
                                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
@@ -1276,21 +1272,21 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
 
-                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
+                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-90 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
                                     <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)] border border-red-500/20' : 'group-hover:bg-red-500/10'}`}>
                                         <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
                                     </div>
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-90 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]' : 'text-gray-500 hover:text-white'}`}>
                                     <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20' : 'group-hover:bg-white/10'}`}>
                                         <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none">{dislikeCount}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-gray-500 hover:text-[var(--gold-primary)]">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-2 group transition-all cursor-pointer active:scale-95 text-gray-500 hover:text-[var(--gold-primary)]">
                                     <div className="p-2 rounded-xl transition-all group-hover:bg-[var(--gold-primary)]/10">
                                         <Icons.Share className="w-5 h-5 pointer-events-none" />
                                     </div>
@@ -1608,7 +1604,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                     <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="bg-[var(--f1-red)] text-white text-[8px] px-1.5 py-0.5 rounded font-black tracking-wider italic">★ {t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <span className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
                         })}
@@ -1621,7 +1617,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
                                     <div className="w-10 h-10 rounded-xl border border-white/20 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
-                                    <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div><div className="font-bold text-sm flex items-center gap-2">{activeChat?.username} {activeChat?.role === 'Founder' && <span className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase italic">★ {t('FOUNDER_BADGE')}</span>}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
@@ -3640,7 +3636,7 @@ const App = () => {
                                                                 <div className="font-bold text-white text-sm">
                                                                     {u.username}
                                                                 </div>
-                                                                {u.role === 'Founder' && <div className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase italic mt-0.5">FOUNDER</div>}
+                                                                {u.role === 'Founder' && <div className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase italic mt-0.5">★ {t('FOUNDER_BADGE')}</div>}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>

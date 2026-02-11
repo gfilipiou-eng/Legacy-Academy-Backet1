@@ -199,7 +199,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                         <div className="flex items-center justify-between mb-1">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[11px] font-black text-white hover:text-[var(--gold-primary)] transition-colors cursor-pointer uppercase tracking-tight">{c.authorName}</span>
-                                                {(c.user?.role === 'Founder') && <span className="text-[10px] text-[var(--gold-primary)] font-black tracking-wider uppercase ml-1 drop-shadow-sm">FOUNDER</span>}
+                                                {(c.user?.role === 'Founder') && <span className="text-[var(--f1-red)] text-[9px] font-black tracking-wider uppercase mt-0.5 italic">★ {t('FOUNDER_BADGE') || 'FOUNDER'}</span>}
                                             </div>
                                             <span className="text-[9px] text-gray-600 font-bold uppercase">{new Date(c.createdAt).toLocaleDateString()}</span>
                                         </div>
