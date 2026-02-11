@@ -77,6 +77,9 @@ img {
     left: 0 !important;
     transform: none !important;
   }
+  .nav-item-btn {
+    padding: 0.55rem;
+  }
 }
 
 @keyframes liquid-glass-sweep {
