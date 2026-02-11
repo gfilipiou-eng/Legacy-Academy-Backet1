@@ -2650,6 +2650,7 @@ const App = () => {
     // Keep refs correctly updated
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
     useEffect(() => { postsRef.current = posts; }, [posts]);
+    const isProcessingRequest = useRef(false);
 
     // SCROLL TO TOP ON LOGIN / TAB CHANGE
     useEffect(() => {
@@ -2876,7 +2877,7 @@ const App = () => {
 
     // Notifications
     const fetchNotifications = async () => {
-        if (!user) return;
+        if (!user || isProcessingRequest.current) return;
         try {
             const res = await axios.get('/users/notifications');
             setAlerts(res.data);
@@ -3145,6 +3146,7 @@ const App = () => {
             console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
             return;
         }
+        isProcessingRequest.current = true;
 
         // Optimistic UI Update: Remove notification immediately (Robust check)
         const removeNotif = (list) => list ? list.filter(n => {
@@ -3180,12 +3182,16 @@ const App = () => {
             console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
         } finally {
             // Small delay before general fetch to let DB settle
-            setTimeout(fetchUsers, 500);
+            setTimeout(() => {
+                isProcessingRequest.current = false;
+                fetchUsers();
+            }, 1000);
         }
     };
 
     const handleRejectRequest = async (requesterId, notificationId) => {
         if (!requesterId) return;
+        isProcessingRequest.current = true;
 
         // Optimistic UI Update (Robust)
         const removeNotif = (list) => list ? list.filter(n => {
@@ -3219,7 +3225,10 @@ const App = () => {
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
         } finally {
-            setTimeout(fetchUsers, 500);
+            setTimeout(() => {
+                isProcessingRequest.current = false;
+                fetchUsers();
+            }, 1000);
         }
     };
 

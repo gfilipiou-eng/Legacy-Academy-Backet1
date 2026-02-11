@@ -293,9 +293,13 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             user.following.push(requesterId);
         }
 
+        user.markModified('notifications');
+        user.markModified('followRequests');
+        user.markModified('followers');
+        user.markModified('following');
         await user.save();
 
-        // 3. Update Requester as well (ensure they follow back)
+        // 3. Update Requester
         await User.findByIdAndUpdate(requesterId, {
             $addToSet: { followers: userId, following: userId },
             $push: {
@@ -311,12 +315,21 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             }
         });
 
+        // 4. Transform for frontend (consistent sender format)
+        const transformedNotifs = (user.notifications || []).map(n => {
+            const doc = n._doc || n;
+            return {
+                ...doc,
+                sender: { _id: doc.from, username: doc.fromUsername, profilePic: doc.fromProfilePic }
+            };
+        });
+
         res.status(200).json({
             message: "Follower accepted",
             followers: user.followers,
             followRequests: user.followRequests,
             following: user.following,
-            notifications: user.notifications
+            notifications: transformedNotifs
         });
     } catch (err) {
         console.error(`[ACCEPT REQ] ERROR:`, err.message);
@@ -363,12 +376,22 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
 
         console.log(`📊 [REJECT] Notifs: ${countBefore} -> ${user.notifications.length}`);
 
+        user.markModified('notifications');
+        user.markModified('followRequests');
         await user.save();
+
+        const transformedNotifs = (user.notifications || []).map(n => {
+            const doc = n._doc || n;
+            return {
+                ...doc,
+                sender: { _id: doc.from, username: doc.fromUsername, profilePic: doc.fromProfilePic }
+            };
+        });
 
         res.status(200).json({
             message: "Request neutralized.",
             followRequests: user.followRequests,
-            notifications: user.notifications
+            notifications: transformedNotifs
         });
     } catch (err) {
         console.warn(`[REJECT REQ] error: ${err?.message || err}`);
