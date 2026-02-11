@@ -3163,13 +3163,24 @@ const App = () => {
 
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/accept`, { notificationId });
+            const res = await axios.post(`/users/requests/${requesterId}/accept`, { notificationId });
+
+            // SERVER SYNC: Use the actual data returned from server
+            const { notifications: updatedNotifs, followers, followRequests, following } = res.data;
+            if (updatedNotifs) setAlerts(updatedNotifs);
+            setUser(prev => {
+                if (!prev) return prev;
+                const updated = { ...prev, notifications: updatedNotifs || [], followers: followers || prev.followers, following: following || prev.following, followRequests: followRequests || prev.followRequests };
+                localStorage.setItem('user', JSON.stringify(updated));
+                return updated;
+            });
             playSound('pop');
         } catch (e) {
             const detail = e.response?.data?.error || e.response?.data || e.message;
             console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
         } finally {
-            fetchUsers();
+            // Small delay before general fetch to let DB settle
+            setTimeout(fetchUsers, 500);
         }
     };
 
@@ -3193,12 +3204,22 @@ const App = () => {
 
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
-            await axios.post(`/users/requests/${requesterId}/reject`, { notificationId });
+            const res = await axios.post(`/users/requests/${requesterId}/reject`, { notificationId });
+
+            // SERVER SYNC: Use the actual data returned from server
+            const { notifications: updatedNotifs, followRequests } = res.data;
+            if (updatedNotifs) setAlerts(updatedNotifs);
+            setUser(prev => {
+                if (!prev) return prev;
+                const updated = { ...prev, notifications: updatedNotifs || [], followRequests: followRequests || prev.followRequests };
+                localStorage.setItem('user', JSON.stringify(updated));
+                return updated;
+            });
             playSound('pop');
         } catch (e) {
             console.error("[HANDSHAKE] Denial failed:", e.response?.data || e.message);
         } finally {
-            fetchUsers();
+            setTimeout(fetchUsers, 500);
         }
     };
 
