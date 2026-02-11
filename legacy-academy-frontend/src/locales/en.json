@@ -194,5 +194,7 @@
     "SIZE_ERROR_10MB": "Video profile/GIF must be under 10MB to prevent lag.",
     "UPDATE_FAILED": "Update failed.",
     "MIC_DENIED": "Microphone access denied.",
-    "FOLLOWS_YOU": "Follows you"
+    "FOLLOWS_YOU": "Follows you",
+    "INTEL_COUNT_DETECTED": "{{count}} POSTS DETECTED",
+    "INTEL_COUNT_DEPLOYED": "{{count}} POSTS DEPLOYED"
 }

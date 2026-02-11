@@ -192,19 +192,26 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
 // UPDATE USER SETTINGS (Privacy, Theme, Language)
 router.put("/settings", verifyToken, async (req, res) => {
     try {
-        const { isPrivate, isFollowersOnly, settings, bio, profilePic } = req.body;
+        const userId = req.user.id || req.user.userId;
+        if (!userId) return res.status(401).json("Unauthorized - Neural Interface missing");
+
+        console.log('Settings update request:', req.body);
+
+        const oldUser = await User.findById(userId);
+        if (!oldUser) return res.status(404).json("Agent not found in mission database");
+
         const updateData = {};
+        Object.keys(req.body).forEach(key => {
+            if (typeof req.body[key] === 'object' && req.body[key] !== null && !Array.isArray(req.body[key])) {
+                Object.keys(req.body[key]).forEach(subKey => {
+                    updateData[`${key}.${subKey}`] = req.body[key][subKey];
+                });
+            } else {
+                updateData[key] = req.body[key];
+            }
+        });
 
-        if (isPrivate !== undefined) updateData.isPrivate = isPrivate;
-        if (isFollowersOnly !== undefined) updateData.isFollowersOnly = isFollowersOnly;
-        if (bio !== undefined) updateData.bio = bio;
-        if (profilePic !== undefined) updateData.profilePic = profilePic;
-
-        // Nested settings support
-        if (settings) {
-            const user = await User.findById(req.user.id);
-            updateData.settings = { ...(user.settings || {}), ...settings };
-        }
+        console.log('Update data:', updateData);
 
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id,
@@ -212,11 +219,13 @@ router.put("/settings", verifyToken, async (req, res) => {
             { new: true }
         ).select("-password");
 
+        console.log('Updated user:', updatedUser);
+
         // Sync to posts
-        if (isPrivate !== undefined || isFollowersOnly !== undefined) {
+        if (updateData.isPrivate !== undefined || updateData.isFollowersOnly !== undefined) {
             const pUpdate = {};
-            if (isPrivate !== undefined) pUpdate.isPrivate = isPrivate;
-            if (isFollowersOnly !== undefined) pUpdate.isFollowersOnly = isFollowersOnly;
+            if (updateData.isPrivate !== undefined) pUpdate.isPrivate = updateData.isPrivate;
+            if (updateData.isFollowersOnly !== undefined) pUpdate.isFollowersOnly = updateData.isFollowersOnly;
             await Post.updateMany({ author: req.user.id }, { $set: pUpdate });
         }
 

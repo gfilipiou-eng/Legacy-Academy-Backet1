@@ -173,5 +173,7 @@
     "ENGAGE_INTEL": "KOMMENTARE",
     "COMMENT_MODE_HINT": "Vollbild öffnen zum Lesen, Bearbeiten oder Löschen von Kommentaren.",
     "VIEW_COMMENTS": "KOMMENTARE ÖFFNEN",
-    "ANONYMOUS": "Agent"
+    "ANONYMOUS": "Agent",
+    "INTEL_COUNT_DETECTED": "{{count}} BEITRÄGE ENTDECKT",
+    "INTEL_COUNT_DEPLOYED": "{{count}} BEITRÄGE EINGESETZT"
 }
