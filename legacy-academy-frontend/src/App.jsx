@@ -3149,26 +3149,11 @@ const App = () => {
         }
         isProcessingRequest.current = true;
 
-        // Optimistic UI Update: Remove notification immediately (Robust check)
-        const removeNotif = (list) => list ? list.filter(n => {
-            const fromId = n.from?._id || n.from;
-            const matchesId = notificationId && String(n._id) === String(notificationId);
-            const matchesRequester = n.type === 'follow_request' && String(fromId) === String(requesterId);
-            return !(matchesId || matchesRequester);
-        }) : [];
-        setAlerts(prev => removeNotif(prev));
-        setUser(prev => {
-            if (!prev) return prev;
-            const updated = { ...prev, notifications: removeNotif(prev.notifications) };
-            localStorage.setItem('user', JSON.stringify(updated));
-            return updated;
-        });
-
         try {
             console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
             const res = await axios.post(`/users/requests/${requesterId}/accept`, { notificationId });
 
-            // SERVER SYNC: Use the actual data returned from server
+            // SERVER SYNC
             const { notifications: updatedNotifs, followers, followRequests, following } = res.data;
             if (updatedNotifs) setAlerts(updatedNotifs);
             setUser(prev => {
@@ -3182,13 +3167,9 @@ const App = () => {
             const detail = e.response?.data?.error || e.response?.data || e.message;
             console.error(`[HANDSHAKE] Authorization failed: ${detail}`, { requesterId });
         } finally {
-            // Small delay before general fetch to let DB settle
             setTimeout(() => {
                 isProcessingRequest.current = false;
-                // Add a post-await check to fetchNotifications to skip if an action is still processing.
-                if (!isProcessingRequest.current) {
-                    fetchUsers();
-                }
+                fetchUsers();
             }, 1000);
         }
     };
@@ -3197,26 +3178,10 @@ const App = () => {
         if (!requesterId) return;
         isProcessingRequest.current = true;
 
-        // Optimistic UI Update (Robust)
-        const removeNotif = (list) => list ? list.filter(n => {
-            const fromId = n.from?._id || n.from;
-            const matchesId = notificationId && String(n._id) === String(notificationId);
-            const matchesRequester = n.type === 'follow_request' && String(fromId) === String(requesterId);
-            return !(matchesId || matchesRequester);
-        }) : [];
-        setAlerts(prev => removeNotif(prev));
-        setUser(prev => {
-            if (!prev) return prev;
-            const updated = { ...prev, notifications: removeNotif(prev.notifications) };
-            localStorage.setItem('user', JSON.stringify(updated));
-            return updated;
-        });
-
         try {
             console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
             const res = await axios.post(`/users/requests/${requesterId}/reject`, { notificationId });
 
-            // SERVER SYNC: Use the actual data returned from server
             const { notifications: updatedNotifs, followRequests } = res.data;
             if (updatedNotifs) setAlerts(updatedNotifs);
             setUser(prev => {
@@ -3525,7 +3490,32 @@ const App = () => {
                                             </button>
                                         )}
                                     </div>
-                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={n._id || i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} lang={lang} />)}
+                                    {alerts.length === 0 ? (
+                                        <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div>
+                                    ) : (
+                                        alerts.filter(n => {
+                                            // FINAL DEFENSE: Hide requests if they are already followers or not pending
+                                            if (n.type === 'follow_request' && user) {
+                                                const fid = String(n.from?._id || n.from);
+                                                const isFollower = user.followers?.some(id => String(id) === fid);
+                                                const isPending = user.followRequests?.some(id => String(id) === fid);
+                                                if (isFollower || !isPending) return false;
+                                            }
+                                            return true;
+                                        }).map((n, i) => (
+                                            <NotificationItem
+                                                key={n._id || i}
+                                                note={n}
+                                                onViewProfile={viewProfile}
+                                                onOpenChat={handleOpenChat}
+                                                onAcceptRequest={handleAcceptRequest}
+                                                onRejectRequest={handleRejectRequest}
+                                                onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }}
+                                                t={t}
+                                                lang={lang}
+                                            />
+                                        ))
+                                    )}
                                 </div>
                             ) : (
                                 <>
