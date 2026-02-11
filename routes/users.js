@@ -271,24 +271,31 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid." });
         }
 
-        // ATOMIC UPDATE: Cleanup AND Follow in one shot
+        // 1. FETCH & JS FILTER (Manual for 100% certainty)
         const { notificationId } = req.body || {};
-        const updatedUser = await User.findByIdAndUpdate(userId, {
-            $pull: {
-                followRequests: requesterId,
-                notifications: {
-                    $or: [
-                        { _id: notificationId },
-                        { from: requesterId, type: 'follow_request' },
-                        { from: new mongoose.Types.ObjectId(String(requesterId)), type: 'follow_request' }
-                    ]
-                }
-            },
-            $addToSet: { followers: requesterId, following: requesterId }
-        }, { new: true });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
 
-        if (!updatedUser) return res.status(404).json("Agent not found.");
+        // Clean arrays manually
+        const initialCount = user.notifications?.length || 0;
+        user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
+        user.notifications = (user.notifications || []).filter(n => {
+            const isMatchId = notificationId && String(n._id) === String(notificationId);
+            const isMatchFrom = String(n.from) === String(requesterId) && n.type === 'follow_request';
+            return !(isMatchId || isMatchFrom);
+        });
 
+        // 2. Mutual Follow
+        if (!user.followers.some(id => String(id) === String(requesterId))) user.followers.push(requesterId);
+        if (!user.following.some(id => String(id) === String(requesterId))) user.following.push(requesterId);
+
+        user.markModified('notifications');
+        user.markModified('followRequests');
+        user.markModified('followers');
+        user.markModified('following');
+        await user.save();
+
+        console.log(`[ACCEPT] Manual Cleanup: ${initialCount} -> ${user.notifications.length}`);
         // 3. Update Requester
         await User.findByIdAndUpdate(requesterId, {
             $addToSet: { followers: userId, following: userId },
@@ -296,8 +303,8 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
                 notifications: {
                     type: 'follow_accepted',
                     from: userId,
-                    fromUsername: updatedUser.username,
-                    fromProfilePic: updatedUser.profilePic || '',
+                    fromUsername: user.username,
+                    fromProfilePic: user.profilePic || '',
                     text: `Accepted your follow request.`,
                     read: false,
                     createdAt: new Date()
@@ -306,7 +313,7 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         });
 
         // 4. Transform for frontend
-        const transformedNotifs = (updatedUser.notifications || []).map(n => {
+        const transformedNotifs = (user.notifications || []).map(n => {
             const doc = n._doc || n;
             return {
                 ...doc,
@@ -316,9 +323,9 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
 
         res.status(200).json({
             message: "Follower accepted",
-            followers: updatedUser.followers,
-            followRequests: updatedUser.followRequests,
-            following: updatedUser.following,
+            followers: user.followers,
+            followRequests: user.followRequests,
+            following: user.following,
             notifications: transformedNotifs
         });
     } catch (err) {
@@ -391,28 +398,31 @@ router.get("/requests/pending", verifyToken, async (req, res) => {
 router.get("/notifications", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).lean();
         if (!user) return res.status(200).json([]);
 
         const followers = (user.followers || []).map(id => String(id));
+        const pending = (user.followRequests || []).map(id => String(id));
 
-        // Filter out stale follow requests (where they are already followers)
-        const notifications = (user.notifications || []).filter(n => {
-            if (n.type === 'follow_request' && followers.includes(String(n.from))) return false;
+        // ULTIMATE SAFETY FILTER: Remove ghosts and stale requests
+        const filteredNotifications = (user.notifications || []).filter(n => {
+            if (n.type === 'follow_request') {
+                const fId = String(n.from);
+                // IF they are already followers OR they aren't in the pending list -> HIDE IT
+                if (followers.includes(fId) || !pending.includes(fId)) return false;
+            }
             return true;
-        }).map(n => {
-            const doc = n._doc || n;
-            return {
-                ...doc,
-                sender: {
-                    _id: doc.from,
-                    username: doc.fromUsername,
-                    profilePic: doc.fromProfilePic
-                }
-            };
-        });
+        }).map(n => ({
+            ...n,
+            sender: {
+                _id: n.from,
+                username: n.fromUsername,
+                profilePic: n.fromProfilePic
+            }
+        }));
 
-        const sortedNotifications = notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        const sortedNotifications = filteredNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         res.status(200).json(sortedNotifications);
     } catch (err) {
         console.error("Get notifications error:", err);
