@@ -263,62 +263,66 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         const requesterId = String(req.params.requestId).trim();
         const { notificationId } = req.body || {};
 
-        if (!mongoose.Types.ObjectId.isValid(requesterId)) {
-            return res.status(400).json("Invalid ID");
-        }
+        if (!mongoose.Types.ObjectId.isValid(requesterId)) return res.status(400).json("Invalid ID");
 
-        // 1. ATOMIC CLEANUP & FOLLOW (Direct DB Level - Bypass state sync issues)
-        const updatedSelf = await User.findByIdAndUpdate(userId, {
-            $pull: {
-                followRequests: requesterId,
-                notifications: {
-                    $or: [
-                        { _id: notificationId },
-                        { _id: new mongoose.Types.ObjectId(String(notificationId)) },
-                        { from: requesterId, type: 'follow_request' },
-                        { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
-                    ]
-                }
-            },
-            $addToSet: { followers: requesterId, following: requesterId }
-        }, { new: true });
+        // 1. FETCH USER
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
 
-        if (!updatedSelf) return res.status(404).json("Agent not found.");
+        // 2. JS CLEANUP (Guaranteed removal)
+        user.followRequests = (user.followRequests || []).filter(id => String(id) !== requesterId);
+        user.notifications = (user.notifications || []).filter(n => {
+            const nFromId = String(n.from?._id || n.from || '');
+            const isMatchId = notificationId && String(n._id) === String(notificationId);
+            const isMatchReq = nFromId === requesterId && n.type === 'follow_request';
+            return !(isMatchId || isMatchReq);
+        });
 
-        // 2. UPDATE REQUESTER (Mutual follow + notification)
-        const requester = await User.findById(requesterId);
-        if (requester) {
+        // 3. MUTUAL FOLLOW
+        const reqStr = String(requesterId);
+        if (!user.followers.some(id => String(id) === reqStr)) user.followers.push(requesterId);
+        if (!user.following.some(id => String(id) === reqStr)) user.following.push(requesterId);
+
+        user.markModified('notifications');
+        user.markModified('followRequests');
+        user.markModified('followers');
+        user.markModified('following');
+        await user.save();
+
+        // 4. UPDATE FAN (Side effect)
+        try {
             await User.findByIdAndUpdate(requesterId, {
                 $addToSet: { following: userId, followers: userId },
                 $push: {
                     notifications: {
                         type: 'follow_accepted',
                         from: userId,
-                        fromUsername: updatedSelf.username,
-                        fromProfilePic: updatedSelf.profilePic || '',
+                        fromUsername: user.username,
+                        fromProfilePic: user.profilePic || '',
                         text: `Accepted your follow request.`,
                         read: false,
                         createdAt: new Date()
                     }
                 }
             });
-        }
+        } catch (e) { console.error("Fan update failed:", e.message); }
 
-        // 3. TRANSFORM NOTIFICATIONS FOR FRONTEND
-        const transformedNotifs = (updatedSelf.notifications || []).map(n => ({
+        // 5. TRANSFORMED RESPONSE
+        const transformedNotifs = (user.notifications || []).map(n => ({
             ... (n._doc || n),
             sender: { _id: n.from, username: n.fromUsername, profilePic: n.fromProfilePic }
         }));
 
         res.status(200).json({
             message: "Follower accepted",
-            followers: updatedSelf.followers,
-            followRequests: updatedSelf.followRequests,
-            following: updatedSelf.following,
-            notifications: transformedNotifs
+            followers: user.followers,
+            followRequests: user.followRequests,
+            following: user.following,
+            notifications: transformedNotifs,
+            syncReset: true
         });
     } catch (err) {
-        console.error(`[ACCEPT REQ] CRITICAL:`, err);
+        console.error(`[ACCEPT] Error:`, err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -331,39 +335,37 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
         const requesterId = String(req.params.requestId).trim();
         const { notificationId } = req.body || {};
 
-        if (!mongoose.Types.ObjectId.isValid(requesterId)) {
-            return res.status(400).json("Invalid ID");
-        }
+        if (!mongoose.Types.ObjectId.isValid(requesterId)) return res.status(400).json("Invalid ID");
 
-        // ATOMIC CLEANUP
-        const updatedSelf = await User.findByIdAndUpdate(userId, {
-            $pull: {
-                followRequests: requesterId,
-                notifications: {
-                    $or: [
-                        { _id: notificationId },
-                        { _id: new mongoose.Types.ObjectId(String(notificationId)) },
-                        { from: requesterId, type: 'follow_request' },
-                        { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
-                    ]
-                }
-            }
-        }, { new: true });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
 
-        if (!updatedSelf) return res.status(404).json("Agent not found.");
+        // JS CLEANUP
+        user.followRequests = (user.followRequests || []).filter(id => String(id) !== requesterId);
+        user.notifications = (user.notifications || []).filter(n => {
+            const nFromId = String(n.from?._id || n.from || '');
+            const isMatchId = notificationId && String(n._id) === String(notificationId);
+            const isMatchReq = nFromId === requesterId && n.type === 'follow_request';
+            return !(isMatchId || isMatchReq);
+        });
 
-        const transformedNotifs = (updatedSelf.notifications || []).map(n => ({
+        user.markModified('notifications');
+        user.markModified('followRequests');
+        await user.save();
+
+        const transformedNotifs = (user.notifications || []).map(n => ({
             ... (n._doc || n),
             sender: { _id: n.from, username: n.fromUsername, profilePic: n.fromProfilePic }
         }));
 
         res.status(200).json({
-            message: "Request neutralized.",
-            followRequests: updatedSelf.followRequests,
-            notifications: transformedNotifs
+            message: "Request neutralized",
+            followRequests: user.followRequests,
+            notifications: transformedNotifs,
+            syncReset: true
         });
     } catch (err) {
-        console.error(`[REJECT REQ] ERROR:`, err);
+        console.error(`[REJECT] Error:`, err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -382,35 +384,41 @@ router.get("/requests/pending", verifyToken, async (req, res) => {
 router.get("/notifications", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const user = await User.findById(userId).lean();
+        const user = await User.findById(userId);
         if (!user) return res.status(200).json([]);
 
         const followers = (user.followers || []).map(id => String(id));
         const pending = (user.followRequests || []).map(id => String(id));
 
-        // SAFETY FILTER: Hide if already followers OR if no longer in pending list
-        const filteredNotifications = (user.notifications || []).filter(n => {
+        // DRIVE-BY CLEANUP: Permanently remove stale requests from DB
+        const initialCount = user.notifications?.length || 0;
+        const filtered = (user.notifications || []).filter(n => {
             if (n.type === 'follow_request') {
-                const fId = String(n.from);
-                // If they ARE followers OR NOT in pending -> HIDE IT
+                const fId = String(n.from?._id || n.from || '');
                 if (followers.includes(fId) || !pending.includes(fId)) return false;
             }
             return true;
-        }).map(n => ({
-            ...n,
-            sender: {
-                _id: n.from,
-                username: n.fromUsername,
-                profilePic: n.fromProfilePic
-            }
+        });
+
+        // PERSIST CLEANUP if inconsistencies found
+        if (filtered.length !== initialCount) {
+            console.log(`📡 [AUTO-CLEANUP] Purged ${initialCount - filtered.length} stale notifications for ${userId}`);
+            user.notifications = filtered;
+            user.markModified('notifications');
+            await user.save();
+        }
+
+        const transformed = filtered.map(n => ({
+            ... (n._doc || n),
+            sender: { _id: n.from, username: n.fromUsername, profilePic: n.fromProfilePic }
         }));
 
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        const sortedNotifications = filteredNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        res.status(200).json(sortedNotifications);
+        const sorted = transformed.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.status(200).json(sorted);
     } catch (err) {
-        console.error("Get notifications error:", err);
-        res.status(200).json([]); // Return empty array instead of 500
+        console.error("Notif Error:", err);
+        res.status(200).json([]);
     }
 });
 
