@@ -2280,18 +2280,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 return (
                                                     <div key={dateKey} className="animate-fade-in group px-1">
                                                         <div
-                                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleDate(dateKey); }}
-                                                            className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all cursor-pointer group/folder select-none touch-manipulation my-2"
+                                                            className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all group/folder select-none touch-manipulation my-2"
                                                         >
                                                             <div className="relative">
-                                                                <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all duration-300`} />
-                                                                {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{groupedUserPosts[dateKey].length}</div>}
+                                                                <Icons.Folder className="w-6 h-6 text-[var(--f1-red)] fill-[var(--f1-red)]/20 transition-all duration-300" />
+                                                                <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{groupedUserPosts[dateKey].length}</div>
                                                             </div>
                                                             <div className="flex-1 flex flex-col">
-                                                                <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isExposed ? 'text-white italic' : 'text-gray-300'}`}>{dateKey}</span>
-                                                                {!isExposed && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest italic">{t('EXPAND_INTEL')}</span>}
+                                                                <span className="text-[11px] font-black uppercase tracking-[0.3em] font-mono text-white italic">{dateKey}</span>
+                                                                <span className="text-[8px] text-gray-500 font-bold uppercase tracking-widest italic">{groupedUserPosts[dateKey].length} {t('POSTS_COUNT') || 'POSTS'} DEPLOYED</span>
                                                             </div>
-                                                            <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
                                                         </div>
                                                         <AnimatePresence>
                                                             {isExposed && (
@@ -3649,18 +3647,16 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group">
                                                             <div
-                                                                onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all cursor-pointer group/folder my-2"
+                                                                className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all group/folder my-2"
                                                             >
                                                                 <div className="relative">
-                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all duration-300`} />
-                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{group.posts.length}</div>}
+                                                                    <Icons.Folder className="w-6 h-6 text-[var(--f1-red)] fill-[var(--f1-red)]/20 transition-all duration-300" />
+                                                                    <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{group.posts.length}</div>
                                                                 </div>
                                                                 <div className="flex-1 flex flex-col">
-                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-300'}`}>{dateKey}</span>
-                                                                    {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest italic">{t('EXPAND_INTEL')}</span>}
+                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] font-mono text-white">{dateKey}</span>
+                                                                    <span className="text-[8px] text-gray-500 font-bold uppercase tracking-widest italic">{group.posts.length} {t('POSTS_COUNT') || 'POSTS'} DETECTED</span>
                                                                 </div>
-                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
                                                             </div>
 
                                                             <AnimatePresence>
