@@ -23,8 +23,9 @@ if (process.env.REQUEST_DUMP_AUTO === 'true') {
   console.warn(`🔧 REQUEST_DUMP_AUTO enabled: REQUEST_DUMP=true, TTL=${process.env.REQUEST_DUMP_TTL_MINUTES} minute(s)`);
 }
 
+const SERVER_VERSION = "V6.2 (Deploy Kick)";
 console.log("🟢 Server initialization started...");
-  console.log("🚀 DEPLOYMENT VERSION: V6.1 (Production Hardened)");
+  console.log("🚀 DEPLOYMENT VERSION:", SERVER_VERSION);
   console.log("Environment: ", process.env.NODE_ENV || 'production');
 console.log("Port: ", process.env.PORT || 5000);
 
