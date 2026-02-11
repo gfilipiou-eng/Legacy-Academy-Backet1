@@ -271,21 +271,24 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid." });
         }
 
-        // 1. FETCH & JS FILTER (Manual for 100% certainty)
+        // 1. FETCH & MANUAL CLEANUP (JS level for absolute certainty)
         const { notificationId } = req.body || {};
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        // Clean arrays manually
-        const initialCount = user.notifications?.length || 0;
+        const initialLength = user.notifications?.length || 0;
+
+        // Remove from followRequests
         user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
+
+        // Remove from notifications (Matching by ID or Requester ID + type)
         user.notifications = (user.notifications || []).filter(n => {
             const isMatchId = notificationId && String(n._id) === String(notificationId);
             const isMatchFrom = String(n.from) === String(requesterId) && n.type === 'follow_request';
             return !(isMatchId || isMatchFrom);
         });
 
-        // 2. Mutual Follow
+        // 2. MUTUAL FOLLOW LOGIC
         if (!user.followers.some(id => String(id) === String(requesterId))) user.followers.push(requesterId);
         if (!user.following.some(id => String(id) === String(requesterId))) user.following.push(requesterId);
 
@@ -295,31 +298,33 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         user.markModified('following');
         await user.save();
 
-        console.log(`[ACCEPT] Manual Cleanup: ${initialCount} -> ${user.notifications.length}`);
-        // 3. Update Requester
-        await User.findByIdAndUpdate(requesterId, {
-            $addToSet: { followers: userId, following: userId },
-            $push: {
-                notifications: {
-                    type: 'follow_accepted',
-                    from: userId,
-                    fromUsername: user.username,
-                    fromProfilePic: user.profilePic || '',
-                    text: `Accepted your follow request.`,
-                    read: false,
-                    createdAt: new Date()
-                }
-            }
-        });
+        console.log(`[ACCEPT REQ] Cleared notifs: ${initialLength} -> ${user.notifications.length}`);
 
-        // 4. Transform for frontend
-        const transformedNotifs = (user.notifications || []).map(n => {
-            const doc = n._doc || n;
-            return {
-                ...doc,
-                sender: { _id: doc.from, username: doc.fromUsername, profilePic: doc.fromProfilePic }
-            };
-        });
+        // 3. UPDATE REQUESTER (Side effect, don't block success)
+        try {
+            await User.findByIdAndUpdate(requesterId, {
+                $addToSet: { following: userId, followers: userId },
+                $push: {
+                    notifications: {
+                        type: 'follow_accepted',
+                        from: userId,
+                        fromUsername: user.username,
+                        fromProfilePic: user.profilePic || '',
+                        text: `Accepted your follow request.`,
+                        read: false,
+                        createdAt: new Date()
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("[ACCEPT REQ] Requester update failed:", e.message);
+        }
+
+        // 4. RETURN FULL STATE
+        const transformedNotifs = (user.notifications || []).map(n => ({
+            ... (n._doc || n),
+            sender: { _id: n.from, username: n.fromUsername, profilePic: n.fromProfilePic }
+        }));
 
         res.status(200).json({
             message: "Follower accepted",
@@ -329,10 +334,11 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             notifications: transformedNotifs
         });
     } catch (err) {
-        console.error(`[ACCEPT REQ] ERROR:`, err.message);
-        res.status(500).json(err);
+        console.error("Accept Error", err);
+        res.status(500).json({ message: "Internal Error", error: err.message });
     }
 });
+
 
 // REJECT follow request
 router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
@@ -402,13 +408,14 @@ router.get("/notifications", verifyToken, async (req, res) => {
         if (!user) return res.status(200).json([]);
 
         const followers = (user.followers || []).map(id => String(id));
+        const pending = (user.followRequests || []).map(id => String(id));
 
-        // SAFETY FILTER: Only hide if they are ALREADY followers
-        // (Removing the 'pending' check as it can cause race conditions if the arrays are out of sync)
+        // SAFETY FILTER: Hide if already followers OR if no longer in pending list
         const filteredNotifications = (user.notifications || []).filter(n => {
             if (n.type === 'follow_request') {
                 const fId = String(n.from);
-                if (followers.includes(fId)) return false;
+                // If they ARE followers OR NOT in pending -> HIDE IT
+                if (followers.includes(fId) || !pending.includes(fId)) return false;
             }
             return true;
         }).map(n => ({
