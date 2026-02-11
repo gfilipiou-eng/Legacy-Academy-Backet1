@@ -2000,6 +2000,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
     const hasRequested = !!(currentUser?.followRequests?.some(id => String(id) === String(displayUser?._id)) || displayUser?.isRequested);
+    const isPrivateView = !!(displayUser?.isPrivate || displayUser?.isFollowersOnly);
+    const isFounderViewer = currentUser?.role === 'Founder';
+    const isLocked = isPrivateView && !isMe && !isFollowing && !isFounderViewer;
+
     console.log('Follow button state:', {
         isFollowing,
         hasRequested,
@@ -2014,9 +2018,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         hasRequested: hasRequested,
         currentUser: currentUser?._id
     });
-    const isPrivateView = !!(displayUser?.isPrivate || displayUser?.isFollowersOnly);
-    const isFounderViewer = currentUser?.role === 'Founder';
-    const isLocked = isPrivateView && !isMe && !isFollowing && !isFounderViewer;
 
     return (
 
