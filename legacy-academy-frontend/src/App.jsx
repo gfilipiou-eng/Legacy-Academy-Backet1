@@ -882,7 +882,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 };
 
 // Notification item component for Alerts tab
-const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t }) => {
+const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, lang }) => {
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
@@ -922,14 +922,14 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                 </div>
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
                 <div className="flex items-center gap-3 mt-2">
-                    <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt)}</div>
+                    <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt, t, lang)}</div>
                     {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-glow-yellow" />}
                 </div>
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('AUTHORIZE')}</button>
-                        <button onClick={() => onRejectRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('DENY')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
+                        <button onClick={() => onRejectRequest(note.sender?._id || note.from)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
             </div>
@@ -1720,7 +1720,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             if (saving) return;
                             const newVal = !isFollowersOnly;
                             setIsFollowersOnly(newVal);
-                            handleSave('isFollowersOnly', newVal);
+                            handleSave('settings', { ...user.settings, dmFollowersOnly: newVal });
                         }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
                             <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isFollowersOnly ? 'translate-x-5' : ''}`} />
                         </div>
@@ -2858,9 +2858,9 @@ const App = () => {
                 if (me) {
                     setUser(prev => {
                         const isDiff = JSON.stringify(prev.following) !== JSON.stringify(me.following) ||
-                                       JSON.stringify(prev.followers) !== JSON.stringify(me.followers) ||
-                                       JSON.stringify(prev.followRequests) !== JSON.stringify(me.followRequests);
-                        
+                            JSON.stringify(prev.followers) !== JSON.stringify(me.followers) ||
+                            JSON.stringify(prev.followRequests) !== JSON.stringify(me.followRequests);
+
                         if (isDiff) {
                             const updated = { ...prev, following: me.following, followers: me.followers, followRequests: me.followRequests };
                             localStorage.setItem('user', JSON.stringify(updated));
@@ -3491,7 +3491,7 @@ const App = () => {
                                             </button>
                                         )}
                                     </div>
-                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} />)}
+                                    {alerts.length === 0 ? <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div> : alerts.map((n, i) => <NotificationItem key={i} note={n} onViewProfile={viewProfile} onOpenChat={handleOpenChat} onAcceptRequest={handleAcceptRequest} onRejectRequest={handleRejectRequest} onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }} t={t} lang={lang} />)}
                                 </div>
                             ) : (
                                 <>
