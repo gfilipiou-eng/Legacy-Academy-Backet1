@@ -106,23 +106,34 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             } else {
                 // CREATE REQUEST
                 await User.findByIdAndUpdate(targetId, {
-                    $addToSet: { followRequests: currentUserId },
-                    $push: {
-                        notifications: {
-                            type: 'follow_request',
-                            from: new mongoose.Types.ObjectId(currentUserId),
-                            fromUsername: currentUser.username,
-                            fromProfilePic: currentUser.profilePic || '',
-                            read: false,
-                            createdAt: new Date()
-                        }
-                    }
+                    $addToSet: { followRequests: currentUserId }
                 });
+
+                // Prevent duplicate notifications
+                const targetUserActual = await User.findById(targetId);
+                const hasExistingReq = targetUserActual.notifications?.some(n =>
+                    String(n.from) === String(currentUserId) && n.type === 'follow_request'
+                );
+
+                if (!hasExistingReq) {
+                    await User.findByIdAndUpdate(targetId, {
+                        $push: {
+                            notifications: {
+                                type: 'follow_request',
+                                from: new mongoose.Types.ObjectId(currentUserId),
+                                fromUsername: currentUser.username,
+                                fromProfilePic: currentUser.profilePic || '',
+                                read: false,
+                                createdAt: new Date()
+                            }
+                        }
+                    });
+                }
 
                 return res.status(200).json({
                     message: "Request sent",
                     requested: true,
-                    followers: userToFollow.followers
+                    followers: targetUserActual.followers
                 });
             }
         }
@@ -256,42 +267,27 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored", detail: "The request ID format was invalid." });
         }
 
-        // 1. ULTRA-AGGRESSIVE CLEANUP
+        // 1. AGGRESSIVE CLEANUP: Core DB Pull (Removes all occurrences)
         const { notificationId } = req.body;
+        await User.findByIdAndUpdate(userId, {
+            $pull: {
+                followRequests: requesterId,
+                notifications: {
+                    $or: [
+                        { _id: notificationId },
+                        { from: requesterId, type: 'follow_request' },
+                        { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
+                    ]
+                }
+            }
+        });
+
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
 
-        const requester = await User.findById(requesterId).select('username');
-        const reqUsername = requester?.username;
-
-        const countBefore = user.notifications?.length || 0;
-
-        user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
-        user.notifications = (user.notifications || []).filter(n => {
-            const nid = String(n._id);
-            const nFrom = String(n.from || '');
-            const nUser = n.fromUsername || '';
-
-            const isMatchId = notificationId && nid === String(notificationId);
-            const isMatchFrom = nFrom === String(requesterId);
-            const isMatchUser = (reqUsername && nUser === reqUsername);
-            const isFollowReq = n.type === 'follow_request';
-
-            return !(isFollowReq && (isMatchId || isMatchFrom || isMatchUser));
-        });
-
-        user.markModified('notifications');
-        user.markModified('followRequests');
-        console.log(`[ACCEPT REQ] Cleanup: ${countBefore} -> ${user.notifications.length}`);
-
         // 2. Mutual Follow Logic
-        if (!user.followers.some(id => String(id) === String(requesterId))) {
-            user.followers.push(requesterId);
-        }
-        // Force mutual follow
-        if (!user.following.some(id => String(id) === String(requesterId))) {
-            user.following.push(requesterId);
-        }
+        if (!user.followers.some(id => String(id) === String(requesterId))) user.followers.push(requesterId);
+        if (!user.following.some(id => String(id) === String(requesterId))) user.following.push(requesterId);
 
         user.markModified('followers');
         user.markModified('following');
@@ -349,37 +345,25 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
             return res.status(200).json({ status: "invalid_id_ignored" });
         }
 
-        // ULTRA-AGGRESSIVE CLEANUP
+        // ULTRA-AGGRESSIVE CLEANUP: Pull ALL matching follow requests for this user
         const { notificationId } = req.body;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("Agent not found.");
-
-        const requester = await User.findById(requesterId).select('username');
-        const reqUsername = requester?.username;
-
-        const countBefore = user.notifications?.length || 0;
-
-        user.followRequests = (user.followRequests || []).filter(id => String(id) !== String(requesterId));
-        user.notifications = (user.notifications || []).filter(n => {
-            const nid = String(n._id);
-            const nFrom = String(n.from || '');
-            const nUser = n.fromUsername || '';
-
-            const isMatchId = notificationId && nid === String(notificationId);
-            const isMatchFrom = nFrom === String(requesterId);
-            const isMatchUser = (reqUsername && nUser === reqUsername);
-            const isFollowReq = n.type === 'follow_request';
-
-            return !(isFollowReq && (isMatchId || isMatchFrom || isMatchUser));
+        await User.findByIdAndUpdate(userId, {
+            $pull: {
+                followRequests: requesterId,
+                notifications: {
+                    $or: [
+                        { _id: notificationId },
+                        { from: requesterId, type: 'follow_request' },
+                        { from: new mongoose.Types.ObjectId(requesterId), type: 'follow_request' }
+                    ]
+                }
+            }
         });
 
-        console.log(`📊 [REJECT] Notifs: ${countBefore} -> ${user.notifications.length}`);
+        // Re-fetch to return state
+        const updatedUser = await User.findById(userId);
 
-        user.markModified('notifications');
-        user.markModified('followRequests');
-        await user.save();
-
-        const transformedNotifs = (user.notifications || []).map(n => {
+        const transformedNotifs = (updatedUser.notifications || []).map(n => {
             const doc = n._doc || n;
             return {
                 ...doc,
@@ -389,7 +373,7 @@ router.post("/requests/:requestId/reject", verifyToken, async (req, res) => {
 
         res.status(200).json({
             message: "Request neutralized.",
-            followRequests: user.followRequests,
+            followRequests: updatedUser.followRequests,
             notifications: transformedNotifs
         });
     } catch (err) {
@@ -412,10 +396,16 @@ router.get("/requests/pending", verifyToken, async (req, res) => {
 router.get("/notifications", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const user = await User.findById(userId).select('notifications');
+        const user = await User.findById(userId);
+        if (!user) return res.status(200).json([]);
 
-        // Transform backend 'from' to frontend 'sender' for compatibility
-        const notifications = (user?.notifications || []).map(n => {
+        const followers = (user.followers || []).map(id => String(id));
+
+        // Filter out stale follow requests (where they are already followers)
+        const notifications = (user.notifications || []).filter(n => {
+            if (n.type === 'follow_request' && followers.includes(String(n.from))) return false;
+            return true;
+        }).map(n => {
             const doc = n._doc || n;
             return {
                 ...doc,
