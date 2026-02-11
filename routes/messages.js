@@ -95,7 +95,7 @@ console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 secon
 // Send a message (Updated for Audio Support)
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
-    const logPrefix = `[${reqId}] [WHISPER_SEND]`;
+    const logPrefix = `[${reqId}] [WHISPER_SEND_V5]`;
     
     // Debug logging for FormData/Body issues
     console.log(`${logPrefix} Start. Content-Type:`, req.headers['content-type']);

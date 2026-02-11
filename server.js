@@ -24,6 +24,7 @@ if (process.env.REQUEST_DUMP_AUTO === 'true') {
 }
 
 console.log("🟢 Server initialization started...");
+console.log("🚀 DEPLOYMENT VERSION: V5 (Fixes Applied)");
 console.log("Environment: ", process.env.NODE_ENV || 'production');
 console.log("Port: ", process.env.PORT || 5000);
 

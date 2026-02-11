@@ -268,8 +268,11 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
         }
 
         // 1. AGGRESSIVE CLEANUP: Core DB Pull (Removes all occurrences)
-        const { notificationId } = req.body;
-        await User.findByIdAndUpdate(userId, {
+        const { notificationId } = req.body || {};
+        console.log(`[ACCEPT REQ] Cleanup started for requester: ${requesterId}, notifId: ${notificationId}`);
+        
+        try {
+            await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
                 notifications: {
