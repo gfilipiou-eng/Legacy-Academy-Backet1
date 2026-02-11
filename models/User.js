@@ -30,7 +30,8 @@ const UserSchema = new mongoose.Schema({
     theme: { type: String, default: 'purple' },
     language: { type: String, default: 'en' },
     soundEnabled: { type: Boolean, default: true },
-    notifications: { type: Boolean, default: true }
+    notifications: { type: Boolean, default: true },
+    dmFollowersOnly: { type: Boolean, default: false }
   },
 
   // Notifications

@@ -10,6 +10,7 @@ import CommentView from './CommentView';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
+const isValidObjectId = (value) => /^[a-f\d]{24}$/i.test(String(value || ''));
 
 const GREEK_PHONETIC = {
     'a': 'α', 'b': 'β', 'c': 'ψ', 'd': 'δ', 'e': 'ε', 'f': 'φ', 'g': 'γ', 'h': 'η', 'i': 'ι', 'j': 'ξ', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'o': 'ο', 'p': 'π', 'q': 'θ', 'r': 'ρ', 's': 'σ', 't': 'τ', 'u': 'υ', 'v': 'ω', 'w': 'ς', 'x': 'χ', 'y': 'υ', 'z': 'ζ',
@@ -1413,6 +1414,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
 
     const processedReadIds = useRef(new Set());
 
+    const markMessageRead = async (messageId) => {
+        if (!isValidObjectId(messageId)) return;
+        try {
+            await axios.patch(`/messages/${messageId}/read`);
+        } catch (e) {
+            try {
+                await axios.post(`/messages/${messageId}/read`);
+            } catch (err) { }
+        }
+    };
+
     const fetchMessages = async (otherUserId) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
@@ -1423,7 +1435,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             }));
             setMessages(prev => ({ ...prev, [otherUserId]: normalized }));
 
-            // 🔥 WHISPERS: Auto-mark incoming messages as read
             const unreadIncoming = normalized.filter(m =>
                 String(m.recipient) === String(user?._id) &&
                 String(m.sender) === String(otherUserId) &&
@@ -1438,6 +1449,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                     const next = arr.map(m => (String(m._id) === String(msg._id) ? { ...m, read: true } : m));
                     return { ...prev, [otherUserId]: next };
                 });
+                markMessageRead(msg._id);
             }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
@@ -1462,14 +1474,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     }, [isOpen, activeChat?._id]);
 
     useEffect(() => { 
-        // Only scroll to bottom when user sends a message, not when receiving
         if (activeChat && messages[activeChat._id]?.length > 0 && userSentMessage) {
             scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-            setUserSentMessage(false); // Reset after scrolling
+            setUserSentMessage(false);
         }
     }, [messages, activeChat, userSentMessage]);
-
-    // Auto-mark messages as read is handled in fetchMessages function to avoid duplicate calls
 
     const handleClearChat = async () => {
         if (!activeChat) return;
@@ -1516,7 +1525,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
             }));
-            setUserSentMessage(true); // Set flag when user sends message
+            setUserSentMessage(true);
             playSound('pop');
         } catch (e) {
             const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
@@ -1710,17 +1719,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [dmFollowersOnly, setDmFollowersOnly] = useState(user?.settings?.dmFollowersOnly || false);
 
-    // Debug dmFollowersOnly state
-    useEffect(() => {
-        console.log('dmFollowersOnly state changed:', dmFollowersOnly);
-        console.log('User settings dmFollowersOnly:', user?.settings?.dmFollowersOnly);
-    }, [dmFollowersOnly, user?.settings?.dmFollowersOnly]);
-
-    // Sync dmFollowersOnly with user object changes
-    useEffect(() => {
-        setDmFollowersOnly(user?.settings?.dmFollowersOnly || false);
-    }, [user?.settings?.dmFollowersOnly]);
-
     useEffect(() => {
         if (user) {
             setIsPrivate(user.isPrivate || false);
@@ -1732,16 +1730,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     const handleSave = async (key, val) => {
         setSaving(true);
-        console.log('Settings save:', key, val);
         try {
-            // FIX: Nested settings support for language
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
 
-            console.log('Sending payload:', payload);
             const res = await axios.put('/users/settings', payload);
-            console.log('Settings response:', res.data);
-            console.log('Updated dmFollowersOnly:', res.data?.settings?.dmFollowersOnly);
             onUpdateUser(res.data);
 
             if (key === 'isPrivate') setIsPrivate(val);
@@ -1750,7 +1743,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             playSound('pop');
         } catch (e) {
             console.error("Settings update failed", e);
-            // Revert state on error?
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
             if (key === 'settings' && typeof val?.dmFollowersOnly !== 'undefined') setDmFollowersOnly(!val.dmFollowersOnly);
@@ -1804,10 +1796,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{t('DM_FOLLOWERS_ONLY_DESC')}</span>
                                 </div>
                                 <button
-                                    onClick={() => {
-                                        console.log('Toggling dmFollowersOnly from', dmFollowersOnly, 'to', !dmFollowersOnly);
-                                        handleSave('settings', { dmFollowersOnly: !dmFollowersOnly });
-                                    }}
+                                    onClick={() => handleSave('settings', { dmFollowersOnly: !dmFollowersOnly })}
                                     className={`w-12 h-7 rounded-full border transition-all ${dmFollowersOnly ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_12px_var(--gold-glow)]' : 'bg-white/10 border-white/20'}`}
                                     aria-pressed={dmFollowersOnly}
                                 >
@@ -1932,7 +1921,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (!profileUser?._id) return;
         setLoadingPosts(true);
         try {
-            const res = await axios.get(`/posts/user/${profileUser._id}`);
+            const res = await axios.get(`/users/posts/${profileUser._id}`);
             setUserSpecificPosts(res.data);
         } catch (e) {
             console.error("Profile posts fetch error:", e);
@@ -1945,7 +1934,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (isOpen) {
             fetchUserPosts();
         }
-    }, [isOpen, profileUser?._id]);
+    }, [isOpen, profileUser?._id, currentUser?.following]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         if (p.isStory) return false;
@@ -2016,25 +2005,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     };
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
-    const hasRequested = !!(currentUser?.followRequests?.some(id => String(id) === String(displayUser?._id)) || displayUser?.isRequested);
+    const hasRequested = !!displayUser?.isRequested;
     const isPrivateView = !!(displayUser?.isPrivate || displayUser?.isFollowersOnly);
     const isFounderViewer = currentUser?.role === 'Founder';
     const isLocked = isPrivateView && !isMe && !isFollowing && !isFounderViewer;
-
-    console.log('Follow button state:', {
-        isFollowing,
-        hasRequested,
-        isPrivateView,
-        isLocked,
-        currentUserFollowRequests: currentUser?.followRequests,
-        displayUserId: displayUser?._id
-    });
-    console.log('hasRequested check:', {
-        currentUserFollowRequests: currentUser?.followRequests,
-        displayUserId: displayUser?._id,
-        hasRequested: hasRequested,
-        currentUser: currentUser?._id
-    });
 
     return (
 
@@ -3222,20 +3196,11 @@ const App = () => {
         const targetObj = typeof input === 'object' ? input : (users.find(u => String(u._id) === String(targetId)) || null);
         const targetIsPrivate = !!(targetObj?.isPrivate || targetObj?.isFollowersOnly);
 
-        console.log('handleFollow debug:', {
-            targetId,
-            isCurrentlyFollowing,
-            targetIsPrivate,
-            currentUserFollowRequests: user.followRequests,
-            targetObj
-        });
-
         if (isCurrentlyFollowing) {
             updateUserState({ following: user.following.filter(id => String(id) !== String(targetId)) });
         } else if (!isCurrentlyFollowing && targetIsPrivate) {
-            const newFollowRequests = [...(user.followRequests || []), targetId];
-            console.log('Adding to followRequests:', targetId, 'new array:', newFollowRequests);
-            updateUserState({ followRequests: newFollowRequests });
+            setProfileUser(prev => (prev && String(prev._id || prev.id) === String(targetId)) ? { ...prev, isRequested: true } : prev);
+            setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, isRequested: true } : u));
         } else {
             updateUserState({ following: [...(user.following || []), targetId] });
         }
@@ -3251,7 +3216,8 @@ const App = () => {
             }
 
             if (requested) {
-                // Already updated optimistically above, no need to do it again
+                setProfileUser(prev => (prev && String(prev._id || prev.id) === String(targetId)) ? { ...prev, isRequested: true } : prev);
+                setUsers(prev => prev.map(u => String(u._id) === String(targetId) ? { ...u, isRequested: true } : u));
             }
             if (following) {
                 updateUserState({ following });
@@ -3268,18 +3234,17 @@ const App = () => {
 
     const [handshakeLoading, setHandshakeLoading] = useState({});
     const handleAcceptRequest = async (requesterId) => {
-        if (!requesterId) {
-            console.error('[HANDSHAKE] Accept skipped: Target ID is null/undefined');
+        const normalizedId = isValidObjectId(requesterId) ? String(requesterId) : null;
+        if (!normalizedId) {
+            setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
             return;
         }
         try {
-            setHandshakeLoading(prev => ({ ...prev, [String(requesterId)]: true }));
-            console.log(`[HANDSHAKE] Authorizing request: ${requesterId}`);
+            setHandshakeLoading(prev => ({ ...prev, [String(normalizedId)]: true }));
 
-            // OPTIMISTIC UI: Remove it from the alerts list right now so it feels "Live"
             setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
 
-            const res = await axios.post(`/users/requests/${requesterId}/accept`, {});
+            const res = await axios.post(`/users/requests/${normalizedId}/accept`, {});
 
             // If backend is updated, it returns the new state
             if (res.data && typeof res.data === 'object') {
@@ -3293,18 +3258,17 @@ const App = () => {
                 if (res.data.notifications) setAlerts(res.data.notifications);
             }
             addToast('AUTHORIZATION COMPLETE', 'success');
-            try { await axios.delete(`/users/notifications/from/${String(requesterId)}`); } catch (e) { }
+            try { await axios.delete(`/users/notifications/from/${String(normalizedId)}`); } catch (e) { }
             playSound('pop');
         } catch (e) {
             const msg = e.response?.data?.error || e.response?.data?.message || e.message || '';
             const isStale = /not found/i.test(msg) || /stale/i.test(msg) || /Endpoint Not Found/i.test(msg);
             const status400 = (e.response?.status === 400 || e.response?.status === 404);
             if (isStale || status400) {
-                console.warn(`[HANDSHAKE] Cleaning up stale notification: ${requesterId}`);
-                // WIPE IT: If it's stale or 400, remove from UI immediately
+                console.warn(`[HANDSHAKE] Cleaning up stale notification: ${normalizedId}`);
                 setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
                 try {
-                    await axios.post(`/users/requests/${requesterId}/reject`, {});
+                    await axios.post(`/users/requests/${normalizedId}/reject`, {});
                 } catch { }
                 playSound('pop');
             } else {
@@ -3315,16 +3279,19 @@ const App = () => {
             await fetchNotifications();
             await fetchUsers();
             await refreshUser();
-            setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(requesterId)]; return copy; });
+            setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(normalizedId)]; return copy; });
         }
     };
 
     const handleRejectRequest = async (requesterId) => {
-        if (!requesterId) return;
+        const normalizedId = isValidObjectId(requesterId) ? String(requesterId) : null;
+        if (!normalizedId) {
+            setAlerts(prev => prev.filter(a => String(a.sender?._id || a.from) !== String(requesterId)));
+            return;
+        }
         try {
-            setHandshakeLoading(prev => ({ ...prev, [String(requesterId)]: true }));
-            console.log(`[HANDSHAKE] Denying request: ${requesterId}`);
-            const res = await axios.post(`/users/requests/${requesterId}/reject`, {});
+            setHandshakeLoading(prev => ({ ...prev, [String(normalizedId)]: true }));
+            const res = await axios.post(`/users/requests/${normalizedId}/reject`, {});
             if (res.data?.followRequests) {
                 updateUserState({ followRequests: res.data.followRequests });
             }
@@ -3334,14 +3301,13 @@ const App = () => {
             playSound('pop');
         } catch (e) {
             console.warn("[HANDSHAKE] Denial suppressed. Cleaning up UI.");
-            // ALWAYS wipe the alert if the user clicked Reject, even if server fails
             setAlerts(prev => prev.filter(a => String(a.sender?._id || a.sender || a.from) !== String(requesterId)));
         } finally {
             await new Promise(r => setTimeout(r, 250));
             await fetchNotifications();
             await fetchUsers();
             await refreshUser();
-            setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(requesterId)]; return copy; });
+            setHandshakeLoading(prev => { const copy = { ...prev }; delete copy[String(normalizedId)]; return copy; });
         }
     };
 

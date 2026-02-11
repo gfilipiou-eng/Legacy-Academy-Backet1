@@ -142,7 +142,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 // 1. Λήψη στοιχείων χρήστη
 router.get("/find/:id", verifyToken, async (req, res) => {
     try {
-        const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following followRequests createdAt lastSeen');
+        const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following followRequests settings createdAt lastSeen');
         if (!foundUser) return res.status(404).json("Χρήστης δεν βρέθηκε.");
 
         // Add isRequested flag for frontend convenience

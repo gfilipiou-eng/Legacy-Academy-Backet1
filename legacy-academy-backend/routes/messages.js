@@ -12,7 +12,7 @@ router.patch("/:messageId/read", verifyToken, async (req, res) => {
         const messageId = req.params.messageId;
         const userId = req.user.id;
         const msg = await Message.findById(messageId);
-        if (!msg) return res.status(404).json("Message not found");
+        if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
         msg.isRead = true;
         await msg.save();

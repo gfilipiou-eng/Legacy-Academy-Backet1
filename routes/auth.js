@@ -58,6 +58,7 @@ router.post("/register", safeUpload, async (req, res) => {
                 language: 'en',
                 soundEnabled: true,
                 notifications: true,
+                dmFollowersOnly: false,
                 notificationSound: req.body.notificationSound || 'pop'
             }
         });
