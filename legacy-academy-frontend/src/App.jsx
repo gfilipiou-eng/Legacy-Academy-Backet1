@@ -1383,7 +1383,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
 // ... ChatModal, SettingsModal, ProfileModal, CreateModal same logic ...
 // Re-inserting them to ensure full file integrity
 
-const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
+const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast }) => {
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState({});
@@ -1472,7 +1472,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser }) => {
         setInputText('');
 
         try {
-            const res = await axios.post('/messages', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            const res = await axios.post('/messages', fd);
             setMessages(prev => ({
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
@@ -3578,7 +3578,7 @@ const App = () => {
                         </div>
                     )}
 
-                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} />
+                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />

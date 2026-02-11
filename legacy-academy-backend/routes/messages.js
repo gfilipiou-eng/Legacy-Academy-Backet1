@@ -55,6 +55,9 @@ router.get("/:messageId/read", verifyToken, async (req, res) => {
 // SEND MESSAGE (Using upload.single('file') for audio support)
 router.post("/", verifyToken, upload.single("file"), async (req, res) => {
     try {
+        // Validation: Ensure req.body exists (multer should populate it)
+        if (!req.body) return res.status(400).json({ error: "Request body missing", detail: "Multipart parsing failed" });
+
         const { recipient: recipientId, text } = req.body;
         const currentUserId = req.user.id;
 
