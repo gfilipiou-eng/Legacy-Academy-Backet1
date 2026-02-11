@@ -621,6 +621,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     </svg>
                                     <span className="text-[12px] font-black tracking-tighter pointer-events-none text-gray-400 group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => onShare(post)}
+                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl text-gray-400 hover:text-[var(--gold-primary)]"
+                                >
+                                    <Icons.Share className="w-5 h-5 pointer-events-none" />
+                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.shares?.length || 0}</span>
+                                </button>
                             </div>
                         </div>
 
@@ -1280,6 +1289,13 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                         <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="text-[11px] font-black tracking-tighter pointer-events-none">{dislikeCount}</span>
+                                </button>
+
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(post); }} className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 text-gray-500 hover:text-[var(--gold-primary)]">
+                                    <div className="p-2 rounded-xl transition-all group-hover:bg-[var(--gold-primary)]/10">
+                                        <Icons.Share className="w-5 h-5 pointer-events-none" />
+                                    </div>
+                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.shares?.length || 0}</span>
                                 </button>
                             </div>
 
@@ -2903,14 +2919,14 @@ const App = () => {
         return Object.values(groups).sort((a, b) => b.dateVal - a.dateVal);
     }, [filteredPosts, user]);
 
-    // AUTO-EXPAND FEED FOLDERS (Open Latest Folder)
+    // AUTO-EXPAND ALL FEED FOLDERS
     useEffect(() => {
         if (groupedPosts.length > 0) {
-            // Always open the most recent folder (first in list)
-            const latestKey = groupedPosts[0].key;
-            setExpandedDates(prev => ({ ...prev, [latestKey]: true }));
+            const allKeys = {};
+            groupedPosts.forEach(g => { allKeys[g.key] = true; });
+            setExpandedDates(prev => ({ ...prev, ...allKeys }));
         }
-    }, [groupedPosts.length, groupedPosts[0]?.key]);
+    }, [groupedPosts.length]);
 
     const stories = React.useMemo(() => {
         const groups = {};
@@ -3320,6 +3336,21 @@ const App = () => {
             text: `Check out this post by ${post.author?.username}`,
             url: window.location.href // Ideally this would be a direct post link
         };
+
+        // TRACK SHARE IN BACKEND
+        try {
+            const res = await axios.post(`/posts/${post._id}/share`);
+            if (res.data?.shares) {
+                // Optimistically update posts state
+                setPosts(prev => prev.map(p => p._id === post._id ? { ...p, shares: res.data.shares } : p));
+                if (selectedPost?._id === post._id) {
+                    setSelectedPost(prev => ({ ...prev, shares: res.data.shares }));
+                }
+            }
+        } catch (e) {
+            console.warn("Share count tracking failure", e);
+        }
+
         if (navigator.share) {
             try { await navigator.share(shareData); } catch (e) { }
         } else {

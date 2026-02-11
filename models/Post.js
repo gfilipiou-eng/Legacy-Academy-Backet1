@@ -23,6 +23,7 @@ const PostSchema = new mongoose.Schema({
   // ENGAGEMENT
   likes: { type: Array, default: [] },      // IDs of users who liked
   dislikes: { type: Array, default: [] },   // IDs of users who disliked
+  shares: { type: Array, default: [] },     // IDs of users who shared
   likesUsers: { type: Array, default: [] },
   comments: [{
     text: { type: String, required: false }, // Text optional if audio present

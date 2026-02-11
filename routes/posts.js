@@ -107,6 +107,21 @@ router.get("/:id/dislike", (req, res) => res.status(200).send("Dislike endpoint 
 router.post("/:id/dislike", verifyToken, handleDislike);
 router.put("/:id/dislike", verifyToken, handleDislike);
 
+// SHARE HANDLER
+const handleShare = async (req, res) => {
+  try {
+    const userId = req.user.id || req.user.userId;
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $addToSet: { shares: userId } },
+      { new: true }
+    );
+    if (!post) return res.status(404).json("Post not found");
+    res.status(200).json({ shares: post.shares });
+  } catch (e) { res.status(500).json(e); }
+};
+router.post("/:id/share", verifyToken, handleShare);
+
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
 // Update: Allow file upload for voice comments w/ Safe Wrapper
 const safeCommentUpload = (req, res, next) => {
