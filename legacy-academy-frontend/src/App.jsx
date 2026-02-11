@@ -1465,7 +1465,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
         return () => clearInterval(interval);
     }, [isOpen, activeChat?._id]);
 
-    useEffect(() => { if (activeChat) scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, activeChat]);
+    useEffect(() => { 
+        // Only scroll to bottom when new messages are added, not when opening chat
+        if (activeChat && messages[activeChat._id]?.length > 0) {
+            scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages, activeChat]);
 
     const handleClearChat = async () => {
         if (!activeChat) return;
@@ -1621,25 +1626,37 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 </div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                {(messages[activeChat._id] || []).map((m, i) => (
-                                    <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
-                                            {m.audioUrl ? (
-                                                <div className="flex flex-col gap-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-red)]">{t('VOICE_NOTE')}</span>
+                                {(messages[activeChat._id] || []).map((m, i) => {
+                                    // Auto-mark messages as read when they appear on screen
+                                    useEffect(() => {
+                                        if (String(m.recipient) === String(user?._id) && !m.read && m._id) {
+                                            axios.patch(`/messages/${m._id}/read`).catch(() => {});
+                                        }
+                                    }, [m._id, m.read, m.recipient, user?._id]);
+                                    
+                                    return (
+                                        <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
+                                                {m.audioUrl ? (
+                                                    <div className="flex flex-col gap-2">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-2 h-2 rounded-full bg-[var(--f1-red)] animate-pulse" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--f1-red)]">{t('VOICE_NOTE')}</span>
+                                                        </div>
+                                                        <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
+                                                        {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
                                                     </div>
-                                                    <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                    {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
+                                                ) : (
+                                                    m.text
+                                                )}
+                                                <div className="text-[9px] opacity-50 text-right mt-1">
+                                                    {formatDate(m.createdAt, t, lang)}
+                                                    {m.read && <span className="ml-2 text-[var(--f1-red)] animate-pulse">🔥</span>}
                                                 </div>
-                                            ) : (
-                                                m.text
-                                            )}
-                                            <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                                 <div ref={scrollRef} />
                             </div>
                             <div className="p-2 bg-black border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
@@ -1677,13 +1694,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 >
                                     <Icons.Translate className="w-5 h-5" />
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white active:scale-90'}`}
-                                >
-                                    <Icons.Mic className="w-5 h-5" />
-                                </button>
+                                {/* Recording button removed - use text input only */}
                                 <button
                                     onClick={() => handleSend()}
                                     disabled={!inputText.trim()}
