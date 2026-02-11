@@ -49,6 +49,15 @@ mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.log(err));
 
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    deployed: "V6 (Paranoid Fixes)",
+    timestamp: new Date(),
+    uptime: process.uptime()
+  });
+});
+
 // Routes
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);

@@ -73,7 +73,7 @@ app.get("/", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "healthy",
-    deployed: "v4-robust-telemetry",
+    deployed: "V6 (Paranoid Fixes)",
     timestamp: new Date(),
     uptime: process.uptime()
   });
