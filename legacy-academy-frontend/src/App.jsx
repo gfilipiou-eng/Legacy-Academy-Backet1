@@ -1708,12 +1708,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     const handleSave = async (key, val) => {
         setSaving(true);
+        console.log('Settings save:', key, val);
         try {
             // FIX: Nested settings support for language
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
 
+            console.log('Sending payload:', payload);
             const res = await axios.put('/users/settings', payload);
+            console.log('Settings response:', res.data);
             onUpdateUser(res.data);
 
             if (key === 'isPrivate') setIsPrivate(val);
@@ -2259,16 +2262,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             Object.keys(groupedUserPosts).map(dateKey => {
                                                 const isExposed = expandedDates[dateKey];
                                                 return (
-                                                    <div key={dateKey} className="animate-fade-in group">
+                                                    <div key={dateKey} className="animate-fade-in group px-1">
                                                         <div
                                                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleDate(dateKey); }}
-                                                            className="flex items-center gap-4 mb-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--f1-red)]/30 transition-all cursor-pointer group/folder select-none touch-manipulation"
+                                                            className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all cursor-pointer group/folder select-none touch-manipulation my-2"
                                                         >
                                                             <div className="relative">
-                                                                <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all`} />
-                                                                {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/30">{groupedUserPosts[dateKey].length}</div>}
+                                                                <Icons.Folder className={`w-6 h-6 ${isExposed ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all duration-300`} />
+                                                                {!isExposed && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--f1-red)] text-white text-[9px] font-black shadow-lg shadow-red-500/20">{groupedUserPosts[dateKey].length}</div>}
                                                             </div>
-                                                            <span className={`text-xs font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white italic' : 'text-gray-500'}`}>{dateKey}</span>
+                                                            <div className="flex-1 flex flex-col">
+                                                                <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isExposed ? 'text-white italic' : 'text-gray-300'}`}>{dateKey}</span>
+                                                                {!isExposed && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest italic">{t('EXPAND_INTEL')}</span>}
+                                                            </div>
                                                             <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--f1-red)]' : ''}`} />
                                                         </div>
                                                         <AnimatePresence>
@@ -3613,7 +3619,7 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group">
                                                             <div
                                                                 onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-[var(--f1-red)] transition-all cursor-pointer group/folder my-2 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+                                                                className="flex items-center gap-4 py-4 px-4 rounded-2xl liquid-folder transition-all cursor-pointer group/folder my-2"
                                                             >
                                                                 <div className="relative">
                                                                     <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--f1-red)] fill-[var(--f1-red)]/20' : 'text-gray-500'} transition-all duration-300`} />
