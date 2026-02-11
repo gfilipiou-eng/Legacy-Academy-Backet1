@@ -2117,7 +2117,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     ) : (
                         <div className="p-4 sm:p-6 md:p-8 pb-24">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-6">
+                            <div className="flex flex-row items-start gap-3 sm:gap-6 mb-6">
                                 <div className="relative">
                                     <div className={`w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-2xl bg-gray-900 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--f1-red)] italic shadow-[0_0_20px_var(--f1-red)]' : 'border-[#2f3336]'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
@@ -2161,7 +2161,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </>
                                     )}
                                 </div>
-                                <div className="flex-1 grid grid-cols-3 gap-2 sm:gap-1 bg-black p-3 sm:p-4 rounded-2xl border border-[#2f3336]">
+                                <div className="flex-1 grid grid-cols-3 gap-2 sm:gap-1 bg-black p-2.5 sm:p-4 rounded-2xl border border-[#2f3336]">
                                     <div className="flex flex-col items-center justify-center p-1">
                                         <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[8px] sm:text-[10px] text-[#71767b] uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS')}</div>
