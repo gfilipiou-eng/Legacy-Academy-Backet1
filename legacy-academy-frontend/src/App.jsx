@@ -980,42 +980,22 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
-                    <div className="w-full h-full rounded-xl border-2 border-black overflow-hidden bg-gray-900 relative">
+                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
+                    <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
                         <ProfileAvatar user={user} className="opacity-80" />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
                         </div>
                     </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Add to Story/Highlights</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
             </div>
 
             {stories && stories.map((group, i) => (
                 <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                    <div className="w-16 h-16 rounded-xl p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90 relative">
-                        <div className="w-full h-full rounded-xl border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
-                            {group.latestStory.thumbnailUrl || (group.latestStory.image && !group.latestStory.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                <img src={resolveMediaUrl(group.latestStory.thumbnailUrl || group.latestStory.image)} className="w-full h-full object-cover" alt={group.author?.username} />
-                            ) : (group.latestStory.image || group.latestStory.videoUrl) ? (
-                                <div className="w-full h-full relative">
-                                    <video 
-                                        src={resolveMediaUrl(group.latestStory.image || group.latestStory.videoUrl)} 
-                                        className="w-full h-full object-cover" 
-                                        muted 
-                                        playsInline 
-                                        autoPlay 
-                                        loop
-                                    />
-                                </div>
-                            ) : (
-                                <div className="w-full h-full bg-[var(--gold-primary)] flex items-center justify-center text-black font-black text-[8px] p-1 text-center leading-tight">
-                                    {group.latestStory.desc ? group.latestStory.desc.substring(0, 15) + (group.latestStory.desc.length > 15 ? '...' : '') : <Icons.Type className="w-6 h-6" />}
-                                </div>
-                            )}
-                            <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full border border-black overflow-hidden">
-                                <ProfileAvatar user={group.author} />
-                            </div>
+                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90">
+                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl">
+                            <ProfileAvatar user={group.author} />
                         </div>
                     </div>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
@@ -1966,7 +1946,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, stories = [], allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -1991,14 +1971,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
         }
     }, [currentUser, isEditing]);
 
-    // Use userSpecificPosts (which contains ALL user posts) to filter highlights
-    // Highlights = Posts with isHighlight=true OR Active Stories (isStory=true && <24h)
-    const userStories = React.useMemo(() => (userSpecificPosts || []).filter(p => {
-        const isHighlight = p.isHighlight === true || String(p.isHighlight) === 'true';
-        const isStory = p.isStory === true || String(p.isStory) === 'true';
-        const isActiveStory = isStory && (new Date() - new Date(p.createdAt) < 24 * 60 * 60 * 1000);
-        return isHighlight || isActiveStory;
-    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)), [userSpecificPosts]);
+    const userStories = React.useMemo(() => (posts || []).filter(p => {
+        const pId = String(p.author?._id || p.author);
+        const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
+        return pId === uId && p.isStory;
+    }), [posts, profileUser]);
 
     const fetchUserPosts = async () => {
         if (!profileUser?._id) return;
@@ -2020,7 +1997,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
     }, [isOpen, profileUser?._id]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
-        if (p.isStory) return false;
+        // Strict exclusion of stories from the main grid
+        if (p.isStory === true || String(p.isStory) === 'true') return false;
+
         const isVideo = isYouTubeUrl(p.videoUrl) || (p.videoUrl && p.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         if (activeTab === 'VIDEO') return isVideo;
         if (activeTab === 'POSTS') return !isVideo;
@@ -2219,22 +2198,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                         </>
                                     )}
                                 </div>
-                                <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
+                                <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
-                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('POSTS')}</div>
+                                        <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-2">
-                                        <span className="text-lg sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
-                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                        <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
+                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
+                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-2">
-                                        <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
-                                            {displayUser?.following?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                        <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
+                                            {displayUser?.following?.length || 0}
                                         </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWING')}</span>
+                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING') || 'FOLLOWING'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2322,7 +2301,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                 </div>
                             ) : (
                                 <>
-                                    {/* HIGHLIGHTS REMOVED FROM PROFILE
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
@@ -2330,18 +2308,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                                 {userStories.map(s => (
                                                     <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                         <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
-                                                            {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
-                                                    ) : (s.videoUrl || (s.image && s.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative overflow-hidden">
-                                                            <video src={resolveMediaUrl(s.videoUrl || s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
-                                                            <Icons.Play className="w-6 h-6 text-[var(--gold-primary)] relative z-10" />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-full h-full bg-[var(--gold-primary)] rounded-full flex items-center justify-center relative overflow-hidden text-center p-1">
-                                                            <span className="text-[6px] font-black text-black leading-none">{s.desc ? s.desc.substring(0, 10) + '..' : <Icons.Type className="w-4 h-4" />}</span>
-                                                        </div>
-                                                    )}
+                                                            {(s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm|m4v)$/i))) ? (
+                                                                <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                            ) : (
+                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative shadow-inner">
+                                                                    <img src={resolveMediaUrl(s.image, null, false, true)} className="absolute inset-0 w-full h-full object-cover rounded-full opacity-60 group-hover:opacity-80 transition-opacity" />
+                                                                    <Icons.Play className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
                                                     </div>
@@ -2349,7 +2323,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                             </div>
                                         </div>
                                     )}
-                                    */}
 
                                     <div className="space-y-6 pb-20">
                                         {loadingPosts ? (
@@ -2434,14 +2407,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
     );
 };
 
-const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
+const CreateModal = ({ isOpen, onClose, onSuccess, user, forceStory = false }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
     const [isAudio, setIsAudio] = useState(false);
     const [audioName, setAudioName] = useState('');
     const [creating, setCreating] = useState(false);
-    const [isStory, setIsStory] = useState(false);
-    const [isHighlight, setIsHighlight] = useState(false); // New State
+    const [isStory, setIsStory] = useState(forceStory);
+
+    useEffect(() => {
+        if (isOpen) {
+            setIsStory(forceStory);
+        }
+    }, [isOpen, forceStory]);
     const fileRef = useRef(null);
     const { t } = useTranslation(user);
     const [audioBlob, setAudioBlob] = useState(null);
@@ -2566,29 +2544,15 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
-                        {/* STORY TOGGLE */}
-                        <div onClick={() => { setIsStory(!isStory); if (isStory) setIsHighlight(false); }} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
+                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
                             <div className="flex flex-col">
-                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>Add to Story/Highlights</span>
-                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">VANISHES IN 24H</span>
+                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
-
-                        {/* HIGHLIGHT TOGGLE (Only if Story is selected) */}
-                        {isStory && (
-                            <div onClick={() => setIsHighlight(!isHighlight)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${isHighlight ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                                <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isHighlight ? 'border-purple-500 bg-purple-500 scale-110' : 'border-gray-500'}`}>
-                                    {isHighlight && <Icons.Check className="w-4 h-4 text-white font-black" />}
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className={`text-[11px] font-black uppercase tracking-widest ${isHighlight ? 'text-purple-400' : 'text-gray-400'}`}>HIGHLIGHT</span>
-                                    <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">PERMANENT</span>
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     <div className="flex gap-4">
@@ -2603,7 +2567,6 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             if (youtube) fd.append('videoUrl', youtube.trim());
                             else if (file) fd.append('image', file);
                             fd.append('isStory', isStory);
-                            fd.append('isHighlight', isHighlight);
 
                             try {
                                 setCreating(true);
@@ -2613,9 +2576,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 document.getElementById('c-youtube').value = '';
                                 setPreview(null); fileRef.current.value = '';
                                 setIsStory(false);
-                                setIsHighlight(false);
                             } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? (isHighlight ? 'POST HIGHLIGHT' : t('POST_STORY')) : t('POST'))}</button>
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
                     </div>
                 </div>
             </motion.div>
@@ -2829,13 +2791,13 @@ const App = () => {
         setFormData(prev => ({ ...prev, [key]: value }));
     };
     const [posts, setPosts] = useState([]);
-    const [fetchedStories, setFetchedStories] = useState([]);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('home');
     const [searchQuery, setSearchQuery] = useState('');
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
+    const [createModeStory, setCreateModeStory] = useState(false);
     const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
@@ -2921,17 +2883,7 @@ const App = () => {
             return updatedPost;
         }));
 
-        // Update 'fetchedStories' array
-        setFetchedStories(prev => prev.map(p => {
-            let updatedPost = p;
-            if (String(p.author?._id || p.author) === userId) {
-                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : p.author;
-                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
-            }
-            return updatedPost;
-        }));
-
-        // stories will update automatically via useMemo since it depends on 'fetchedStories'
+        // stories will update automatically via useMemo since it depends on 'posts'
 
         // Update selectedPost if open
         if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === userId) {
@@ -2984,7 +2936,6 @@ const App = () => {
         if (user && user._id !== lastInitializedId.current) {
             lastInitializedId.current = user._id;
             fetchPosts();
-            fetchStories();
             fetchUsers();
             startHeartbeat();
             startUserPoll();
@@ -3006,7 +2957,8 @@ const App = () => {
     const filteredPosts = React.useMemo(() => {
         return (posts || []).filter(p => {
             // Robust check for stories - exclude them from feed
-            if (p.isStory === true || String(p.isStory) === 'true') return false;
+            const storyFlag = p.isStory === true || String(p.isStory) === 'true';
+            if (storyFlag) return false;
             const q = searchQuery.toLowerCase();
             if (!q) return true;
             const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
@@ -3040,10 +2992,10 @@ const App = () => {
 
     const stories = React.useMemo(() => {
         const groups = {};
-        (fetchedStories || []).forEach(p => {
+        posts.filter(p => p.isStory === true || String(p.isStory) === 'true').forEach(p => {
             const uid = String(p.author?._id || p.author);
-            // Backend already filters 24h, but safety check doesn't hurt
-            if (!p.isHighlight && (Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
+            // Filter only last 24h
+            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
 
             if (!groups[uid]) {
                 groups[uid] = {
@@ -3055,7 +3007,7 @@ const App = () => {
             groups[uid].allStories.push(p);
         });
         return Object.values(groups).sort((a, b) => new Date(b.latestStory.createdAt) - new Date(a.latestStory.createdAt));
-    }, [fetchedStories]);
+    }, [posts]);
 
     const trendingHashtags = React.useMemo(() => {
         const counts = {};
@@ -3084,12 +3036,6 @@ const App = () => {
             if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
             setPosts(res.data);
         } catch (e) { }
-    };
-    const fetchStories = async () => {
-        try {
-            const res = await axios.get('/posts/stories');
-            setFetchedStories(res.data);
-        } catch (e) { console.error('Fetch stories failed', e); }
     };
     const fetchUsers = async () => {
         try {
@@ -3161,7 +3107,7 @@ const App = () => {
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(() => { fetchPosts(); fetchStories(); }, 15000); };
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 15000); };
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
@@ -3731,7 +3677,7 @@ const App = () => {
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-14 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
+                                    <button onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
 
@@ -3776,7 +3722,7 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
-                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
+                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
@@ -3900,8 +3846,8 @@ const App = () => {
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} stories={fetchedStories} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); fetchStories(); }} user={user} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
                         selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {

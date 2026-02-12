@@ -7,45 +7,11 @@ import mongoose from "mongoose";
 
 const router = express.Router();
 
-// GET ALL ACTIVE STORIES (Live, 24h window)
-router.get("/stories", verifyToken, async (req, res) => {
-    try {
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        // FETCH ALL POSTS FROM LAST 24H (Including regular posts as "stories")
-        // User request: "highlights dld auta ta 24 na fenonte panto" -> "highlights i.e. these 24h ones to appear everywhere"
-        const stories = await Post.find({
-            $or: [
-                { createdAt: { $gt: twentyFourHoursAgo } },
-                { isHighlight: true }
-            ]
-        })
-        .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
-        .sort({ createdAt: -1 })
-        .lean();
-
-        const currentUserId = String(req.user?.id || req.user?.userId || '');
-        const isFounder = req.user?.role === 'Founder';
-
-        const filtered = stories.filter(p => {
-             const a = p.author || {};
-             const isOwner = String(a?._id || a) === currentUserId;
-             const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
-             const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
-             return !isPrivate || isOwner || isFollower || isFounder;
-        });
-
-        res.status(200).json(filtered);
-    } catch (err) {
-        console.error("STORIES ERROR:", err);
-        res.status(500).json(err);
-    }
-});
-
 // GET ALL POSTS (Feed)
 router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
-        const posts = await Post.find({ isStory: { $ne: true } })
+        const posts = await Post.find()
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 })
@@ -114,8 +80,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             likes: [],
             dislikes: [],
             comments: [],
-            isStory: req.body.isStory === 'true',
-            isHighlight: req.body.isHighlight === 'true'
+            isStory: req.body.isStory === 'true'
         });
 
         const savedPost = await newPost.save();
