@@ -993,9 +993,25 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 
             {stories && stories.map((group, i) => (
                 <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90">
-                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl">
-                            <ProfileAvatar user={group.author} />
+                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90 relative">
+                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
+                            {group.latestStory.thumbnailUrl || (group.latestStory.image && !group.latestStory.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                <img src={resolveMediaUrl(group.latestStory.thumbnailUrl || group.latestStory.image)} className="w-full h-full object-cover" alt={group.author?.username} />
+                            ) : (
+                                <div className="w-full h-full relative">
+                                    <video 
+                                        src={resolveMediaUrl(group.latestStory.image || group.latestStory.videoUrl)} 
+                                        className="w-full h-full object-cover" 
+                                        muted 
+                                        playsInline 
+                                        autoPlay 
+                                        loop
+                                    />
+                                </div>
+                            )}
+                            <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full border border-black overflow-hidden">
+                                <ProfileAvatar user={group.author} />
+                            </div>
                         </div>
                     </div>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
@@ -2307,14 +2323,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                                     <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                         <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                             {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
-                                                                <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
-                                                            ) : (
-                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                                    <Icons.Play className="w-6 h-6 text-[var(--gold-primary)]" />
-                                                                    {/* Ensure video doesn't autoplay in thumbnail view */}
-                                                                    <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
-                                                                </div>
-                                                            )}
+                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative overflow-hidden">
+                                                            <video src={resolveMediaUrl(s.videoUrl || s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
+                                                            <Icons.Play className="w-6 h-6 text-[var(--gold-primary)] relative z-10" />
+                                                        </div>
+                                                    )}
                                                         </div>
                                                         <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
                                                     </div>
