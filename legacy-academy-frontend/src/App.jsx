@@ -1748,74 +1748,91 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 overflow-hidden">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-[20px]" onClick={onClose} />
+            <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/80 backdrop-blur-[20px]" 
+                onClick={onClose} 
+            />
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="relative w-full max-w-[340px] sm:max-w-[600px] max-h-[90vh] bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/10 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-3xl animate-fade-in"
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-gradient-to-b from-[#1a1a1a]/90 to-black/95 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-3xl"
             >
-                {/* CYBER BACKGROUND ELEMENTS */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/10 rounded-full blur-[80px]" />
-                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-[80px]" />
+                {/* CYBER BACKGROUND ELEMENTS - REFINED */}
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-30" />
+                <div className="absolute -top-[200px] -right-[200px] w-[400px] h-[400px] bg-[var(--gold-primary)]/5 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute -bottom-[200px] -left-[200px] w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-                <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/[0.02] relative shrink-0">
+                {/* HEADER */}
+                <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
                     <div className="flex flex-col">
-                        <div className="flex items-center gap-2">
-                            <Icons.Settings className="w-4 h-4 text-[var(--gold-primary)] opacity-80" />
-                            <h2 className="font-black uppercase tracking-[0.25em] text-[11px] text-white/90 leading-none">{t('SETTINGS')}</h2>
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-[var(--gold-primary)]/10 rounded-xl">
+                                <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
+                            </div>
+                            <div>
+                                <h2 className="font-black uppercase tracking-[0.2em] text-sm text-white leading-none">{t('SETTINGS')}</h2>
+                                <div className="text-[10px] font-medium text-gray-500 mt-1 tracking-wide">Customize your experience</div>
+                            </div>
                         </div>
-                        <div className="h-[2px] w-12 bg-gradient-to-r from-[var(--gold-primary)] to-transparent mt-2.5 rounded-full" />
                     </div>
-                    <button onClick={onClose} className="w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-xl transition-all active:scale-90 group border border-white/10 shadow-lg">
-                        <Icons.X className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 group border border-white/5 shadow-lg">
+                        <Icons.X className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 scroll-smooth">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {/* CONTENT */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 space-y-8 scroll-smooth relative z-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
                         {/* LEFT COLUMN: MODES & IDENTITY */}
-                        <div className="space-y-6">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2 px-1">
-                                    <div className="w-[2px] h-3 bg-[var(--gold-primary)] rounded-full" />
-                                    <div className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">{t('PRIVACY') || "PRIVACY"}</div>
+                        <div className="space-y-8">
+                            {/* PRIVACY SECTION */}
+                            <section className="space-y-4">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-1 h-4 bg-[var(--gold-primary)] rounded-full shadow-[0_0_10px_var(--gold-primary)]" />
+                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{t('PRIVACY') || "PRIVACY"}</h3>
                                 </div>
 
-                                <div className="p-4 bg-white/[0.03] rounded-2xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all group shadow-xl">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex-1 pr-3">
-                                            <div className="text-[13px] font-black text-white/90 group-hover:text-[var(--gold-primary)] transition-colors">{t('PRIVATE_TITLE')}</div>
-                                            <div className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-tight leading-tight">{t('PRIVATE_DESC_SHORT')}</div>
+                                <div className="space-y-4">
+                                    <div className="p-5 bg-white/[0.03] rounded-3xl border border-white/5 hover:border-[var(--gold-primary)]/30 transition-all group hover:bg-white/[0.05]">
+                                        <div className="flex items-center justify-between gap-4">
+                                            <div className="flex-1">
+                                                <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('PRIVATE_TITLE')}</div>
+                                                <div className="text-[11px] text-gray-500 mt-1 leading-relaxed">{t('PRIVATE_DESC_SHORT')}</div>
+                                            </div>
+                                            <div onClick={() => { if (!saving) { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); } }}
+                                                className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'bg-black/40 border-white/20'}`}>
+                                                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${isPrivate ? 'translate-x-5' : 'translate-x-0'}`} />
+                                            </div>
                                         </div>
-                                        <div onClick={() => { if (!saving) { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); } }}
-                                            className={`relative w-14 h-8 rounded-xl transition-all duration-500 cursor-pointer p-1.5 border-2 ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_25px_rgba(255,215,0,0.4)]' : 'bg-black/60 border-white/10 hover:border-white/25'}`}>
-                                            <div className={`w-6 h-full rounded-lg transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-2xl ${isPrivate ? 'translate-x-5 bg-black' : 'translate-x-0 bg-gray-600 opacity-40'}`} />
+                                    </div>
+
+                                    <div className="p-5 bg-white/[0.03] rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all group hover:bg-white/[0.05]">
+                                        <div className="flex items-center justify-between gap-4">
+                                            <div className="flex-1">
+                                                <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{t('GUARD_TITLE')}</div>
+                                                <div className="text-[11px] text-gray-500 mt-1 leading-relaxed">{t('GUARD_DESC_SHORT')}</div>
+                                            </div>
+                                            <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); } }}
+                                                className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border ${isFollowersOnly ? 'bg-blue-600 border-blue-500' : 'bg-black/40 border-white/20'}`}>
+                                                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${isFollowersOnly ? 'translate-x-5' : 'translate-x-0'}`} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </section>
 
-                                <div className="p-4 bg-white/[0.03] rounded-2xl border border-white/5 hover:border-blue-500/20 transition-all group shadow-xl">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex-1 pr-3">
-                                            <div className="text-[13px] font-black text-white/90 group-hover:text-blue-400 transition-colors">{t('GUARD_TITLE')}</div>
-                                            <div className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-tight leading-tight">{t('GUARD_DESC_SHORT')}</div>
-                                        </div>
-                                        <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); } }}
-                                            className={`relative w-14 h-8 rounded-xl transition-all duration-500 cursor-pointer p-1.5 border-2 ${isFollowersOnly ? 'bg-blue-600 border-blue-400 shadow-[0_0_25px_rgba(37,99,235,0.4)]' : 'bg-black/60 border-white/10 hover:border-white/25'}`}>
-                                            <div className={`w-6 h-full rounded-lg transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-2xl ${isFollowersOnly ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-600 opacity-40'}`} />
-                                        </div>
-                                    </div>
+                            {/* LANGUAGE SECTION */}
+                            <section className="space-y-4">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{t('COGNITION')}</h3>
                                 </div>
-                            </div>
-
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2 px-1">
-                                    <div className="w-[2px] h-3 bg-blue-500 rounded-full" />
-                                    <div className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">{t('COGNITION')}</div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-4 gap-3">
                                     {[
                                         { id: 'en', flag: '🇺🇸', label: 'EN' }, { id: 'el', flag: '🇬🇷', label: 'EL' },
                                         { id: 'de', flag: '🇩🇪', label: 'DE' }, { id: 'ru', flag: '🇷🇺', label: 'RU' },
@@ -1823,82 +1840,87 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         { id: 'tr', flag: '🇹🇷', label: 'TR' }, { id: 'fr', flag: '🇫🇷', label: 'FR' }
                                     ].map(l => (
                                         <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
-                                            className={`py-3.5 rounded-2xl border transition-all flex items-center justify-center gap-3 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_rgba(255,215,0,0.1)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/20'}`}>
-                                            <div className="text-xl group-hover:scale-125 transition-transform duration-500">{l.flag}</div>
-                                            <div className={`text-[10px] font-black ${lang === l.id ? 'text-white' : 'text-gray-500'}`}>{l.label}</div>
-                                            {lang === l.id && <div className="absolute top-0 right-0 p-1.5"><div className="w-1 h-1 bg-[var(--gold-primary)] rounded-full animate-pulse" /></div>}
+                                            className={`aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center gap-2 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_20px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/20'}`}>
+                                            <div className="text-2xl group-hover:scale-110 transition-transform duration-300 drop-shadow-lg">{l.flag}</div>
+                                            <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500 group-hover:text-gray-300'}`}>{l.label}</div>
                                         </button>
                                     ))}
                                 </div>
-                            </div>
+                            </section>
                         </div>
 
                         {/* RIGHT COLUMN: AESTHETICS & ACTIONS */}
-                        <div className="space-y-6">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2 px-1">
-                                    <div className="w-[2px] h-3 bg-purple-500 rounded-full" />
-                                    <div className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">AESTHETICS</div>
+                        <div className="space-y-8">
+                            {/* THEME SECTION */}
+                            <section className="space-y-4">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-1 h-4 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">AESTHETICS</h3>
                                 </div>
-                                <div className="p-5 bg-white/[0.02] rounded-3xl border border-white/5 shadow-inner">
-                                    <div className="grid grid-cols-4 gap-4 place-items-center">
+                                <div className="p-6 bg-white/[0.02] rounded-3xl border border-white/5 shadow-inner">
+                                    <div className="grid grid-cols-4 gap-5 place-items-center">
                                         {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
                                             const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                             const isActive = currentTheme === c;
                                             return (
                                                 <button key={c} onClick={() => { applyTheme(c); handleSave('settings', { theme: c }); }}
-                                                    className={`w-9 h-9 rounded-full transition-all duration-500 relative flex items-center justify-center ${isActive ? 'scale-110 ring-2 ring-white ring-offset-4 ring-offset-black z-10 shadow-[0_0_25px_rgba(255,255,255,0.4)]' : 'opacity-20 hover:opacity-100 hover:scale-110'}`}
-                                                    style={{ backgroundColor: c }}>
-                                                    {isActive && <Icons.Check className={`w-4 h-4 ${c === '#ffffff' ? 'text-black' : 'text-white'} drop-shadow-md`} />}
+                                                    className={`w-10 h-10 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'opacity-40 hover:opacity-100 hover:scale-110'}`}
+                                                >
+                                                    <div className="w-full h-full rounded-full" style={{ backgroundColor: c, boxShadow: isActive ? `0 0 15px ${c}` : 'none' }} />
+                                                    {isActive && <div className="absolute inset-0 ring-2 ring-white ring-offset-2 ring-offset-black rounded-full" />}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <div className="pt-4 border-t border-white/5 space-y-4">
-                                <div className="flex items-center gap-2 px-1">
-                                    <div className="w-[2px] h-3 bg-red-600 rounded-full" />
-                                    <div className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">OPERATIONS</div>
+                            {/* OPERATIONS SECTION */}
+                            <section className="pt-4 border-t border-white/5 space-y-4">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-1 h-4 bg-red-600 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">OPERATIONS</h3>
                                 </div>
 
                                 <div className="flex flex-col gap-3">
                                     {showDanger ? (
-                                        <div className="p-4 bg-red-950/20 rounded-2xl border border-red-500/20 text-center shadow-2xl animate-pop-in">
-                                            <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-3">{t('DANGER_ZONE')}</div>
+                                        <div className="p-5 bg-red-950/20 rounded-3xl border border-red-500/20 text-center shadow-2xl animate-pop-in">
+                                            <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+                                                <Icons.AlertTriangle className="w-3 h-3" />
+                                                {t('DANGER_ZONE')}
+                                            </div>
                                             <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                                className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-xl active:scale-95 uppercase">
+                                                className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-lg active:scale-95 uppercase">
                                                 {t('DELETE_FOREVER')}
                                             </button>
-                                            <button onClick={() => setShowDanger(false)} className="mt-3 text-[9px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">{t('CANCEL')}</button>
+                                            <button onClick={() => setShowDanger(false)} className="mt-4 text-[9px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">{t('CANCEL')}</button>
                                         </div>
                                     ) : (
-                                        <button onClick={() => setShowDanger(true)} className="w-full py-4.5 bg-white/[0.02] hover:bg-red-500/10 rounded-2xl border border-white/5 text-gray-500 hover:text-red-400 transition-all text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3 group">
+                                        <button onClick={() => setShowDanger(true)} className="w-full py-5 bg-white/[0.02] hover:bg-red-500/10 rounded-3xl border border-white/5 text-gray-500 hover:text-red-400 transition-all text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3 group">
                                             <Icons.Shield className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:animate-pulse" />
                                             {t('UNCOVER_RESTRICTED_OPS')}
                                         </button>
                                     )}
 
-                                    <button onClick={logout} className="w-full flex items-center justify-between p-5 bg-white/[0.04] hover:bg-red-500/20 rounded-2xl border border-white/5 hover:border-red-500/30 transition-all group active:scale-95 shadow-xl">
+                                    <button onClick={logout} className="w-full flex items-center justify-between p-5 bg-white/[0.04] hover:bg-red-500/20 rounded-3xl border border-white/5 hover:border-red-500/30 transition-all group active:scale-95 shadow-xl">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
+                                            <div className="w-10 h-10 rounded-2xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
                                                 <Icons.Logout className="w-5 h-5 text-red-500" />
                                             </div>
-                                            <span className="text-[12px] font-black text-white/80 group-hover:text-red-400 transition-colors uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
+                                            <span className="text-xs font-black text-white/80 group-hover:text-red-400 transition-colors uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
                                         </div>
-                                        <Icons.X className="w-4 h-4 text-white/10 group-hover:text-red-500 transition-transform group-hover:rotate-90" />
+                                        <Icons.ArrowRight className="w-4 h-4 text-white/10 group-hover:text-red-500 transition-transform group-hover:translate-x-1" />
                                     </button>
                                 </div>
-                            </div>
+                            </section>
                         </div>
                     </div>
 
                     {saving && (
-                        <div className="absolute top-0 right-0 p-5 animate-fade-in pointer-events-none">
-                            <div className="flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--gold-primary)]/40 shadow-[0_0_20px_rgba(255,215,0,0.3)]">
-                                <div className="w-2 h-2 bg-[var(--gold-primary)] rounded-full animate-ping" />
-                                <div className="text-[9px] text-[var(--gold-primary)] font-black uppercase tracking-[0.25em]">{t('SYNCING')}</div>
+                        <div className="absolute top-6 right-8 pointer-events-none">
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 backdrop-blur-md">
+                                <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full animate-ping" />
+                                <span className="text-[9px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">{t('SYNCING')}</span>
                             </div>
                         </div>
                     )}
