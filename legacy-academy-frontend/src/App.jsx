@@ -2322,6 +2322,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                 </div>
                             ) : (
                                 <>
+                                    {/* HIGHLIGHTS REMOVED FROM PROFILE
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
@@ -2348,6 +2349,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                             </div>
                                         </div>
                                     )}
+                                    */}
 
                                     <div className="space-y-6 pb-20">
                                         {loadingPosts ? (
@@ -2571,7 +2573,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             </div>
                             <div className="flex flex-col">
                                 <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>Add to Story/Highlights</span>
-                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">{t('STORY_DURATION')}</span>
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">VANISHES IN 24H</span>
                             </div>
                         </div>
 
@@ -3041,7 +3043,7 @@ const App = () => {
         (fetchedStories || []).forEach(p => {
             const uid = String(p.author?._id || p.author);
             // Backend already filters 24h, but safety check doesn't hurt
-            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
+            if (!p.isHighlight && (Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
 
             if (!groups[uid]) {
                 groups[uid] = {
