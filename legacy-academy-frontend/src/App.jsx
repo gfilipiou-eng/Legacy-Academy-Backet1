@@ -1989,11 +1989,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     };
 
     useEffect(() => {
-        if (currentUser && !isEditing) {
-            setBio(currentUser.bio || "");
-            setEditUsername(currentUser.username || "");
+        if (displayUser && !isEditing) {
+            setBio(displayUser.bio || "");
+            setEditUsername(displayUser.username || "");
         }
-    }, [currentUser, isEditing]);
+    }, [displayUser, isEditing]);
 
     const userStories = React.useMemo(() => (posts || []).filter(p => {
         const pId = String(p.author?._id || p.author);
@@ -2068,10 +2068,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         if (!profileUser) return null;
         const profileUserId = String(profileUser?._id || profileUser);
         const currentUserId = String(currentUser?._id || '');
-        const base = (profileUserId === currentUserId) ? currentUser : (userData || profileUser);
+        const isMe = profileUserId === currentUserId;
 
-        // Sync with allUsers for real-time online status
+        const base = isMe ? currentUser : (userData || profileUser);
         const live = allUsers.find(u => String(u._id) === String(base?._id));
+
+        // CRITICAL SYNC: Merge live data (online status) with base data (bio, username)
+        // If it's ME, prioritize currentUser object which is the most fresh
+        if (isMe) {
+            return { ...base, ...live, bio: currentUser?.bio || base?.bio || live?.bio };
+        }
         return live || base;
     }, [profileUser, currentUser, userData, allUsers]);
 
@@ -2168,7 +2174,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                             <button onClick={async () => {
                                 try {
-                                    const res = await axios.put(`/users/${displayUser?._id}`, { bio, username: editUsername });
+                                    const trimmedBio = bio?.trim() || "";
+                                    const trimmedUsername = editUsername?.trim() || "";
+                                    const res = await axios.put(`/users/${displayUser?._id}`, { bio: trimmedBio, username: trimmedUsername });
                                     if (res.data) {
                                         localStorage.setItem('user', JSON.stringify(res.data));
                                         if (onUpdateUser) onUpdateUser(res.data);
@@ -2270,7 +2278,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     )}
                                 </div>
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">
-                                    {parseHashtags(displayUser?.bio || t("DEFAULT_BIO"))}
+                                    {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                 </div>
 
                                 {isMe ? (
@@ -3664,10 +3672,10 @@ const App = () => {
                                             setAuthLoading(true);
                                             try {
                                                 const fd = new FormData();
-                                                fd.append('username', formData.username);
-                                                fd.append('email', formData.email);
+                                                fd.append('username', formData.username?.trim());
+                                                fd.append('email', formData.email?.trim());
                                                 fd.append('password', formData.password);
-                                                if (formData.bio !== undefined) fd.append('bio', formData.bio);
+                                                if (formData.bio !== undefined) fd.append('bio', formData.bio.trim());
                                                 fd.append('language', formData.language || 'en');
                                                 fd.append('theme', formData.theme || '#ffd700');
                                                 if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
