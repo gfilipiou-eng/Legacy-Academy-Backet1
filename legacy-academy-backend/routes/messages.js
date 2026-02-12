@@ -6,8 +6,8 @@ import upload from "../middleware/upload.js"; // Needed for FormData
 
 const router = express.Router();
 
-// Mark message as read
-router.patch("/:messageId/read", verifyToken, async (req, res) => {
+// Mark message as read (1-Minute Burn Timer)
+const markMessageRead = async (req, res) => {
     try {
         const messageId = req.params.messageId;
         const userId = req.user.id;
@@ -15,45 +15,21 @@ router.patch("/:messageId/read", verifyToken, async (req, res) => {
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
         
-        await Message.findByIdAndDelete(messageId);
+        // WHISPER PROTOCOL: Burn after 1 minute
+        // We set readAt now. Cleanup happens on GET.
+        msg.isRead = true;
+        msg.readAt = new Date();
+        await msg.save();
         
         res.status(200).json({ success: true, isRead: true });
     } catch (err) {
         res.status(500).json(err);
     }
-});
+};
 
-router.post("/:messageId/read", verifyToken, async (req, res) => {
-    try {
-        const messageId = req.params.messageId;
-        const userId = req.user.id;
-        const msg = await Message.findById(messageId);
-        if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
-        if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        
-        await Message.findByIdAndDelete(messageId);
-        
-        res.status(200).json({ success: true, isRead: true });
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
-
-router.get("/:messageId/read", verifyToken, async (req, res) => {
-    try {
-        const messageId = req.params.messageId;
-        const userId = req.user.id;
-        const msg = await Message.findById(messageId);
-        if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
-        if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        
-        await Message.findByIdAndDelete(messageId);
-        
-        res.status(200).json({ success: true, isRead: true });
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
+router.patch("/:messageId/read", verifyToken, markMessageRead);
+router.post("/:messageId/read", verifyToken, markMessageRead);
+router.get("/:messageId/read", verifyToken, markMessageRead);
 
 // SEND MESSAGE (Using upload.single('file') for audio support)
 // FIXED: Middleware order swapped to ensure Multer runs before Auth (for FormData body access if needed)
@@ -123,10 +99,23 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 });
 
 // GET CONVERSATION
-router.get("/:userId", verifyToken, async (req, res) => {
+const getConversation = async (req, res) => {
     try {
         const otherUserId = req.params.userId;
         const currentUserId = req.user.id;
+
+        // WHISPER CLEANUP: Delete messages read > 1 minute ago
+        const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+        
+        // Clean up messages in this specific conversation
+        await Message.deleteMany({
+            $or: [
+                { sender: currentUserId, recipient: otherUserId },
+                { sender: otherUserId, recipient: currentUserId }
+            ],
+            isRead: true,
+            readAt: { $lt: oneMinuteAgo }
+        });
 
         const messages = await Message.find({
             $or: [
@@ -139,6 +128,9 @@ router.get("/:userId", verifyToken, async (req, res) => {
     } catch (err) {
         res.status(500).json(err);
     }
-});
+};
+
+router.get("/conversation/:userId", verifyToken, getConversation);
+router.get("/:userId", verifyToken, getConversation);
 
 export default router;
