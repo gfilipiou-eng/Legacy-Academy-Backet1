@@ -1079,7 +1079,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                 transition: { duration: 0.3 }
             }}
             viewport={{ once: true }}
-            className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black/40 border-white/5 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
+            className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
             {/* ABSOLUTE MENU TOP RIGHT */}
             <div className="absolute top-4 right-4 z-50">
@@ -1245,35 +1245,28 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                             </div>
                         )}
 
-                        {/* ACTIONS BAR - VIVID NEURAL STYLE */}
-                        <div className="flex items-center justify-between mt-6 pr-4 relative z-10 py-1">
-                            <div className="flex items-center gap-4 sm:gap-8">
+                        {/* ACTIONS BAR - TWITTER STYLE BLACK */}
+                        <div className="flex items-center justify-between mt-6 pr-4 relative z-10 py-2 border-t border-white/5">
+                            <div className="flex items-center gap-10 sm:gap-14">
                                 <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
+                                    className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
-                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
-                                    </svg>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
+                                    <Icons.MessageCircle className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
+                                    <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
 
-                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'text-gray-500 hover:text-red-500'}`}>
-                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.15)] border border-red-500/20' : 'group-hover:bg-red-500/10'}`}>
-                                        <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
-                                    </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
+                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-pink-500' : 'text-gray-500 hover:text-pink-500'}`}>
+                                    <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
+                                    <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_var(--gold-glow)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'bg-[var(--gold-primary)]/10 shadow-[0_0_15px_var(--gold-glow-soft)] border border-[var(--gold-primary)]/20' : 'group-hover:bg-[var(--gold-primary)]/10'}`}>
-                                        <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
-                                    </div>
-                                    <span className="text-[11px] font-black tracking-tighter pointer-events-none">{dislikeCount}</span>
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                    <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
+                                    <span className="text-[12px] font-bold transition-colors">{dislikeCount}</span>
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -1832,8 +1825,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     const toggleDate = (dateKey) => {
-        setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
-        playSound('pop');
+        // Disabled clicking - folders are always open
     };
 
     useEffect(() => {
@@ -2211,60 +2203,52 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 const isExposed = expandedDates[dateKey];
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
-                                                        <div
-                                                            onClick={() => toggleDate(dateKey)}
-                                                            className="flex items-center gap-3 mb-4 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--gold-primary)]/30 transition-all cursor-pointer group/folder"
-                                                        >
-                                                            <div className="relative">
-                                                                <Icons.Folder className={`w-5 h-5 ${isExposed ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)]/20' : 'text-gray-500'} transition-colors`} />
-                                                                {!isExposed && <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-[var(--gold-primary)] text-black text-[8px] font-black shadow-lg shadow-[var(--gold-primary)]/20">{groupedUserPosts[dateKey].length}</div>}
-                                                            </div>
-                                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] font-mono flex-1 ${isExposed ? 'text-white' : 'text-gray-500'}`}>{dateKey}</span>
-                                                            <Icons.ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-500 ${isExposed ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
+                                                        <div className="flex items-center gap-2 mb-3 px-1">
+                                                            <div className="w-1 h-3 bg-[var(--gold-primary)]/50 rounded-full" />
+                                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{dateKey}</span>
                                                         </div>
                                                         <AnimatePresence>
-                                                            {isExposed && (
-                                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="overflow-hidden">
-                                                                    <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2">
-                                                                        {groupedUserPosts[dateKey].map(p => (
-                                                                            <div
-                                                                                key={p._id}
-                                                                                onClick={() => onOpenDetail(p)}
-                                                                                className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                                            >
-                                                                                {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                    <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                                ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                                    <div className="relative w-full h-full">
-                                                                                        <video
-                                                                                            src={resolveMediaUrl(p.videoUrl || p.image)}
-                                                                                            muted
-                                                                                            playsInline
-                                                                                            preload="metadata"
-                                                                                            poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
-                                                                                            className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
-                                                                                        />
-                                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                            <Icons.Play className="w-6 h-6 text-white/80" />
-                                                                                        </div>
+                                                            <div className="overflow-hidden">
+                                                                <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2 mb-8">
+                                                                    {groupedUserPosts[dateKey].map(p => (
+                                                                        <div
+                                                                            key={p._id}
+                                                                            onClick={() => onOpenDetail(p)}
+                                                                            className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
+                                                                        >
+                                                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
+                                                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                                <div className="relative w-full h-full">
+                                                                                    <video
+                                                                                        src={resolveMediaUrl(p.videoUrl || p.image)}
+                                                                                        muted
+                                                                                        playsInline
+                                                                                        preload="metadata"
+                                                                                        poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
+                                                                                        className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
+                                                                                    />
+                                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                                                                                        <Icons.Play className="w-6 h-6 text-white/80" />
                                                                                     </div>
-                                                                                ) : p.image ? (
-                                                                                    <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                                ) : (
-                                                                                    <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                        <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                                    </div>
-                                                                                )}
-
-                                                                                {/* STATS OVERLAY on hover */}
-                                                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
-                                                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
                                                                                 </div>
+                                                                            ) : p.image ? (
+                                                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
+                                                                            ) : (
+                                                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
+                                                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
+                                                                                </div>
+                                                                            )}
+
+                                                                            {/* STATS OVERLAY on hover */}
+                                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
+                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
                                                                             </div>
-                                                                        ))}
-                                                                    </div>
-                                                                </motion.div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </motion.div>
                                                             )}
                                                         </AnimatePresence>
                                                     </div>
@@ -3636,83 +3620,87 @@ const App = () => {
                                                                                 <PostCard key={p._id} post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                             ))}
                                                                         </div>
-                                                                    </motion.div>
-                                                                )}
+                                                                    </div>
+                                                                </div>
                                                             </AnimatePresence>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                            {posts.length === 0 && (
-                                                <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                                    <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">{t('DECRYPTING_FEED')}</div>
-                                                </div>
-                                            )}
                                         </div>
+                                        );
+                                                })}
                                     </div>
-                                </>
+                                    {posts.length === 0 && (
+                                        <div className="h-96 flex flex-col items-center justify-center space-y-4">
+                                            <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
+                                            <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">{t('DECRYPTING_FEED')}</div>
+                                        </div>
+                                    )}
+                                </div>
+                        </div>
+                    </>
                             )}
-                            <AnimatePresence>
-                                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
-                                    {toasts.map(toast => (
-                                        <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
+                    <AnimatePresence>
+                        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
+                            {toasts.map(toast => (
+                                <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
                                         flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10
                                         ${toast.type === 'success' ? 'bg-green-500/20 text-green-400' : toast.type === 'neutral' ? 'bg-red-500/20 text-red-500' : 'bg-[#1a1a1a]/90 text-white'}
                                     `}>
-                                            <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
-                                                <Icons.Bell className="w-4 h-4" />
-                                            </div>
-                                            <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </AnimatePresence>
-                        </div >
+                                    <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
+                                        <Icons.Bell className="w-4 h-4" />
+                                    </div>
+                                    <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </AnimatePresence>
+                </div >
                     </main >
 
-                    {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                            <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Home className="w-5 h-5 relative z-10" />
-                                </button>
+                    {
+        (!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
+            <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
+                <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
+                    <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                        <Icons.Home className="w-5 h-5 relative z-10" />
+                    </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Search className="w-5 h-5 relative z-10" />
-                                </button>
+                    <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                        <Icons.Search className="w-5 h-5 relative z-10" />
+                    </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <div className="relative z-10">
-                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
-                                    </div>
-                                </button>
-
-
-
-                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
-
-                                <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
-                                        <ProfileAvatar user={user} key={imgKey} />
-                                    </div>
-                                </button>
-                            </div>
+                    <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                        <div className="relative z-10">
+                            <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                            {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                         </div>
-                    )}
+                    </button>
+
+
+
+                    <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
+
+                    <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
+                            <ProfileAvatar user={user} key={imgKey} />
+                        </div>
+                    </button>
+                </div>
+            </div>
+        )
+    }
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
-                    {selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
-                        setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
-                        setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
-                    }} />}
+    {
+        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
+            setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
+        }} />
+    }
 
-                </div>
+                </div >
             )
             }
         </div >
