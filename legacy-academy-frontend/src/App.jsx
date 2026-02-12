@@ -2956,6 +2956,24 @@ const App = () => {
         return Object.values(groups).sort((a, b) => new Date(b.latestStory.createdAt) - new Date(a.latestStory.createdAt));
     }, [posts]);
 
+    const trendingHashtags = React.useMemo(() => {
+        const counts = {};
+        posts.forEach(p => {
+            if (!p.desc) return;
+            const tags = p.desc.match(/#[\p{L}\p{N}_]+/gu);
+            if (tags) {
+                tags.forEach(tag => {
+                    const normalized = tag.toLowerCase();
+                    counts[normalized] = (counts[normalized] || 0) + 1;
+                });
+            }
+        });
+        return Object.entries(counts)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 8)
+            .map(([tag]) => tag);
+    }, [posts]);
+
     const fetchPosts = async () => {
         if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
         try {
@@ -3664,7 +3682,7 @@ const App = () => {
                                                         </h3>
                                                     </div>
                                                     <div className="flex gap-2 p-1 overflow-x-auto no-scrollbar pb-2">
-                                                        {['#legacy', '#hustle', '#crypto', '#boxing', '#mindset', '#freedom'].map(tag => (
+                                                        {(trendingHashtags.length > 0 ? trendingHashtags : ['#legacy', '#hustle', '#crypto', '#boxing', '#mindset', '#freedom']).map(tag => (
                                                             <span
                                                                 key={tag}
                                                                 onClick={() => setSearchQuery(tag)}
