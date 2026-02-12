@@ -3500,7 +3500,7 @@ const App = () => {
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain mb-4" />
                                 </div>
                             </div>
                             <div className="space-y-4">
@@ -3665,7 +3665,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/Logo.png" alt="Legacy Academy" className="h-40 w-auto object-contain" />
+                                    <img src="/Logo.png" alt="Legacy Academy" className="h-14 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
