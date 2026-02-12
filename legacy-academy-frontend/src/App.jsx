@@ -991,13 +991,12 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
             </div>
 
-            {stories && stories.map((group, i) => {
-                const s = group.latestStory;
+            {stories && stories.map((s, i) => {
                 const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
                 const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
 
                 return (
-                    <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
+                    <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                         <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
                             <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
                                 {hasMedia ? (
@@ -1025,13 +1024,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                                         </span>
                                     </div>
                                 )}
-                                {/* Mini Avatar Badge */}
-                                <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full border border-black overflow-hidden">
-                                    <ProfileAvatar user={group.author} />
-                                </div>
                             </div>
                         </div>
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{s.author?.username}</span>
                     </div>
                 );
             })}
@@ -3037,22 +3032,13 @@ const App = () => {
     }, [groupedPosts.length, groupedPosts[0]?.key]);
 
     const stories = React.useMemo(() => {
-        const groups = {};
-        posts.filter(p => p.isStory === true || String(p.isStory) === 'true').forEach(p => {
-            const uid = String(p.author?._id || p.author);
+        return posts.filter(p => {
+            const isStory = p.isStory === true || String(p.isStory) === 'true';
+            if (!isStory) return false;
             // Filter only last 24h
-            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
-
-            if (!groups[uid]) {
-                groups[uid] = {
-                    author: p.author || { username: p.username, profilePic: p.profilePic, _id: p.author },
-                    latestStory: p,
-                    allStories: []
-                };
-            }
-            groups[uid].allStories.push(p);
-        });
-        return Object.values(groups).sort((a, b) => new Date(b.latestStory.createdAt) - new Date(a.latestStory.createdAt));
+            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return false;
+            return true;
+        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }, [posts]);
 
     const trendingHashtags = React.useMemo(() => {
