@@ -991,16 +991,50 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
             </div>
 
-            {stories && stories.map((group, i) => (
-                <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90">
-                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl">
-                            <ProfileAvatar user={group.author} />
+            {stories && stories.map((group, i) => {
+                const s = group.latestStory;
+                const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
+                const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
+
+                return (
+                    <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
+                        <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
+                            <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
+                                {hasMedia ? (
+                                    isVideo ? (
+                                        <div className="w-full h-full relative">
+                                            <video
+                                                src={resolveMediaUrl(s.videoUrl || s.image)}
+                                                className="w-full h-full object-cover pointer-events-none"
+                                                muted
+                                                playsInline
+                                                preload="metadata"
+                                                onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                <Icons.Play className="w-4 h-4 text-white/80" />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" />
+                                    )
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
+                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
+                                            {s.desc}
+                                        </span>
+                                    </div>
+                                )}
+                                {/* Mini Avatar Badge */}
+                                <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full border border-black overflow-hidden">
+                                    <ProfileAvatar user={group.author} />
+                                </div>
+                            </div>
                         </div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
                     </div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{group.author?.username}</span>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };
@@ -2305,21 +2339,33 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                                {userStories.map(s => (
-                                                    <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
-                                                            {(s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm|m4v)$/i))) ? (
-                                                                <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
-                                                            ) : (
-                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative shadow-inner">
-                                                                    <img src={resolveMediaUrl(s.image, null, false, true)} className="absolute inset-0 w-full h-full object-cover rounded-full opacity-60 group-hover:opacity-80 transition-opacity" />
-                                                                    <Icons.Play className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
-                                                                </div>
-                                                            )}
+                                                {userStories.map(s => {
+                                                    const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
+                                                    const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
+                                                    return (
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                            <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                                {hasMedia ? (
+                                                                    isVideo ? (
+                                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative shadow-inner">
+                                                                            <img src={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)} className="absolute inset-0 w-full h-full object-cover rounded-full opacity-60" />
+                                                                            <Icons.Play className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+                                                                        </div>
+                                                                    ) : (
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                                    )
+                                                                ) : (
+                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
+                                                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
+                                                                            {s.desc}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
                                                         </div>
-                                                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
