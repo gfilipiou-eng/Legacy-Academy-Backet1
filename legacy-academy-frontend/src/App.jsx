@@ -194,8 +194,8 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
             <div className="relative w-full sm:max-w-[400px] bg-black/95 backdrop-blur-3xl border-b border-white/10 sm:border sm:rounded-[2.5rem] rounded-none p-6 shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-black italic text-white flex items-center gap-3">
-                        <Icons.MessageCircle className="w-5 h-5 text-[var(--gold-primary)]" />
-                        {t('ENGAGE')} <span className="text-[var(--gold-primary)] opacity-30 select-none">///</span>
+                        <Icons.Terminal className="w-5 h-5 text-[var(--gold-primary)]" />
+                        {t('FOUNDER_CONSOLE')} <span className="text-[var(--gold-primary)] opacity-30 select-none">///</span>
                     </h3>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-90"><Icons.X className="w-6 h-6 text-gray-500" /></button>
                 </div>
@@ -311,18 +311,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
     <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]`}>
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="url(#founder_shield_grad)" stroke="#FFD700" strokeWidth="0.8" />
-            <path d="M12 17.5L13.5 14.5L16.5 14L14.5 12L15 9L12 10.5L9 9L9.5 12L7.5 14L10.5 14.5L12 17.5Z" fill="white" className="animate-pulse shadow-white" />
-            <defs>
-                <linearGradient id="founder_shield_grad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#FFD700" />
-                    <stop offset="0.3" stopColor="#FFFACD" />
-                    <stop offset="0.6" stopColor="#B8860B" />
-                    <stop offset="1" stopColor="#8B4513" />
-                </linearGradient>
-            </defs>
-        </svg>
+        <Icons.Crown className="w-full h-full text-[var(--gold-primary)]" />
     </div>
 );
 
@@ -1314,9 +1303,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
                                     className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors">
-                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
-                                    </svg>
+                                    <Icons.MessageSquare className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
                                     <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
 
@@ -1402,7 +1389,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                 className="relative flex items-center glass-input-premium rounded-[1.3rem] px-0.5 py-0.5 group overflow-hidden max-w-full"
                                             >
                                                 <input
-                                                    placeholder={t('ENGAGE')}
+                                                    placeholder={t('FOUNDER_PLACEHOLDER')}
                                                     value={commentText}
                                                     onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
                                                     className="flex-1 min-w-0 bg-transparent py-2.5 px-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
@@ -1620,7 +1607,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
+                                    <Icons.WalkieTalkie className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
                                     {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
@@ -3888,6 +3875,10 @@ const App = () => {
                                             <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                             {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                         </div>
+                                    </button>
+
+                                    <button onClick={() => { setIsChatOpen(true); playSound('pop'); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${isChatOpen ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
+                                        <Icons.WalkieTalkie className="w-5 h-5" />
                                     </button>
 
 
