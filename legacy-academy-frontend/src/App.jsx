@@ -1625,9 +1625,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
                             </div>
-                            <div className="bg-red-500/[0.03] border border-red-500/10 rounded-xl p-2.5 shadow-inner relative overflow-hidden group/warn">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-red-500/20" />
-                                <span className="text-[9px] text-red-500/80 font-black uppercase tracking-[0.1em] leading-relaxed block pl-2">
+                            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 shadow-inner relative overflow-hidden group/warn">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-red-500/40" />
+                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider leading-tight block pl-3">
                                     {t('MESSAGES_SUBTITLE')}
                                 </span>
                             </div>
@@ -2257,7 +2257,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
                                 </div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{parseHashtags(displayUser?.bio || t("DEFAULT_BIO"))}</div>
+                                {displayUser?.role === 'Founder' && (
+                                    <div className="mb-2 text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.2em] animate-pulse">
+                                        {t('WELCOME_FOUNDER')}
+                                    </div>
+                                )}
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">
+                                    {parseHashtags(displayUser?.bio || t("DEFAULT_BIO"))}
+                                </div>
 
                                 {isMe ? (
                                     <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px]">{t('EDIT_PROFILE')}</button>
@@ -3562,6 +3569,9 @@ const App = () => {
                                                 localStorage.setItem('language', res.data.user.settings?.language || 'en');
                                                 localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
                                                 setUser(res.data.user);
+                                                if (res.data.user?.role === 'Founder') {
+                                                    addToast(t('WELCOME_FOUNDER'), 'success');
+                                                }
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Invalid Credentials.");
                                             } finally {
@@ -3654,6 +3664,9 @@ const App = () => {
                                                 localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
                                                 localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
                                                 setUser(res.data.user);
+                                                if (res.data.user?.role === 'Founder') {
+                                                    addToast(t('WELCOME_FOUNDER'), 'success');
+                                                }
                                                 setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
                                             } catch (e) {
                                                 alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));

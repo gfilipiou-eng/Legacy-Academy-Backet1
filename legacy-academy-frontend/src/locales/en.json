@@ -161,7 +161,7 @@
     "DEFAULT_BIO": "No Intel Provided.",
     "SEARCH_PH": "Search for posts, users, or feeds",
     "SEARCH_USERS_PH": "Search for users",
-    "MESSAGES_SUBTITLE": "SECURE COMMS: End-to-end encrypted, self-destructing transmissions.",
+    "MESSAGES_SUBTITLE": "SECURE COMMS: Encrypted & Private.",
     "TRENDING_NOW": "TRENDING INTELLIGENCE",
     "ONLINE": "Online",
     "OFFLINE": "Offline",
@@ -202,5 +202,6 @@
     "MIC_DENIED": "Microphone access denied.",
     "FOLLOWS_YOU": "Follows you",
     "INTEL_COUNT_DETECTED": "{{count}} POSTS DETECTED",
-    "INTEL_COUNT_DEPLOYED": "{{count}} POSTS DEPLOYED"
+    "INTEL_COUNT_DEPLOYED": "{{count}} POSTS DEPLOYED",
+    "WELCOME_FOUNDER": "Welcome Founder/CEO"
 }

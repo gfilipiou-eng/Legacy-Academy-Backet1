@@ -2,24 +2,31 @@ import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
 // REGISTER
-router.post("/register", async (req, res) => {
+router.post("/register", upload.single("image"), async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+        let profilePic = "";
+        if (req.file) {
+            profilePic = req.file.path || `/uploads/${req.file.filename}`;
+        }
 
         const newUser = new User({
             username: req.body.username,
             email: req.body.email,
             password: hashedPassword,
-            bio: "Entrepreneur. Legacy Member.", // Default
+            bio: req.body.bio || "Entrepreneur. Legacy Member.",
+            profilePic: profilePic,
             role: "User",
             settings: {
-                theme: '#ffd700',
-                language: 'en',
+                theme: req.body.theme || '#ffd700',
+                language: req.body.language || 'en',
                 dmFollowersOnly: false
             }
         });
