@@ -1910,9 +1910,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         }
     }, [profileUser, currentUser]);
 
-    if (!isOpen || !profileUser) return null;
-
     const displayUser = React.useMemo(() => {
+        if (!profileUser) return null;
         const base = (profileUser?._id === currentUser?._id || profileUser === currentUser?._id) ? currentUser : (userData || profileUser);
         // Sync with allUsers for real-time online status
         const live = allUsers.find(u => String(u._id) === String(base?._id));
@@ -1920,6 +1919,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = displayUser?._id === currentUser?._id;
+
+    if (!isOpen || !profileUser) return null;
 
     const getListUsers = () => {
         if (!activeList || !displayUser) return [];
