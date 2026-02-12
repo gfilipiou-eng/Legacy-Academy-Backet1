@@ -92,6 +92,13 @@ if (typeof document !== 'undefined') {
             background-size: 200% 200%;
             animation: gradient-shift-reverse 20s ease infinite;
         }
+        @keyframes heart-beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .animate-heart-beat {
+            animation: heart-beat 0.3s ease-in-out;
+        }
     `;
     document.head.appendChild(style);
 }
@@ -340,7 +347,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
                                 <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
                             </svg>
                         </div>
-                        {isFounder && <span className="text-[7px] bg-gradient-to-r from-red-600 to-red-500 text-white px-1.5 py-0.5 rounded font-black tracking-widest shadow-lg shadow-red-500/30">FOUNDER</span>}
+                        {isFounder && <span className="text-[7px] bg-[var(--gold-primary)] text-black px-1.5 py-0.5 rounded font-black tracking-widest shadow-lg shadow-[var(--gold-primary)]/30 uppercase">FOUNDER</span>}
                     </div>
 
                     {isEditing ? (
@@ -578,43 +585,42 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
 
                     <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2">
-                        <div className="flex items-center justify-between mb-2 px-0">
-                            <div className="flex items-center gap-2 sm:gap-4">
-                                <button
-                                    type="button"
-                                    disabled={loadingActions?.[post._id]}
-                                    onClick={() => onLike(post._id)}
-                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.5)]' : 'text-gray-400 hover:text-red-400'}`}
-                                >
-                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'bg-red-500/20 border border-red-500/30' : 'bg-white/5'}`}>
-                                        <Icons.Heart className={`w-4 h-4 pointer-events-none ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current' : ''}`} />
-                                    </div>
-                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.likes?.length || 0}</span>
-                                </button>
+                        <div className="flex items-center gap-6 sm:gap-8">
+                            <button
+                                type="button"
+                                disabled={loadingActions?.[post._id]}
+                                onClick={() => onLike(post._id)}
+                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-pink-500' : 'text-gray-500'}`}
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current animate-heart-beat' : ''}`}>
+                                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 0 0-7.7 7.8l1.1 1 7.7 7.8 7.7-7.8 1.1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+                                </svg>
+                                <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
+                            </button>
 
-                                <button
-                                    type="button"
-                                    disabled={loadingActions?.[post._id]}
-                                    onClick={() => onDislike(post._id)}
-                                    className={`flex items-center gap-2 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_12px_var(--gold-glow)]' : 'text-gray-400 hover:text-[var(--gold-primary)]'}`}
-                                >
-                                    <div className={`p-2 rounded-xl transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'bg-[var(--gold-primary)]/20 border border-[var(--gold-primary)]/30' : 'bg-white/5'}`}>
-                                        <Icons.ThumbsDown className={`w-4 h-4 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current' : ''}`} />
-                                    </div>
-                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none">{post.dislikes?.length || 0}</span>
-                                </button>
+                            <button
+                                type="button"
+                                disabled={loadingActions?.[post._id]}
+                                onClick={() => onDislike(post._id)}
+                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 pointer-events-none">
+                                    <path d="M17 14V2"></path>
+                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
+                                </svg>
+                                <span className="text-[12px] font-bold transition-colors">{post.dislikes?.length || 0}</span>
+                            </button>
 
-                                <button
-                                    type="button"
-                                    onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                    className="flex items-center gap-2 group transition-all cursor-pointer active:scale-125 p-2 rounded-xl hover:bg-white/5"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors filter hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
-                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
-                                    </svg>
-                                    <span className="text-[12px] font-black tracking-tighter pointer-events-none text-gray-400 group-hover:text-blue-400 transition-colors">{post.comments?.length || 0}</span>
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
+                                </svg>
+                                <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
+                            </button>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -1253,17 +1259,24 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
                                     className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
                                 >
-                                    <Icons.MessageCircle className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
+                                    </svg>
                                     <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                                 </button>
 
                                 <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-pink-500' : 'text-gray-500 hover:text-pink-500'}`}>
-                                    <Icons.Heart className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`} />
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`}>
+                                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 0 0-7.7 7.8l1.1 1 7.7 7.8 7.7-7.8 1.1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+                                    </svg>
                                     <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
                                 </button>
 
                                 <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                    <Icons.ThumbsDown className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current' : ''}`} />
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 pointer-events-none">
+                                        <path d="M17 14V2"></path>
+                                        <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
+                                    </svg>
                                     <span className="text-[12px] font-bold transition-colors">{dislikeCount}</span>
                                 </button>
                             </div>
@@ -1580,7 +1593,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
                                     <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
-                                    <div><div className="font-bold text-sm">{activeChat?.username}</div><div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div>
+                                        <div className="font-bold text-sm flex items-center gap-2">
+                                            {activeChat?.username}
+                                            {activeChat?.role === 'Founder' && <span className="bg-[var(--gold-primary)] text-black text-[7px] px-1.5 py-0.5 rounded font-black tracking-wider uppercase">FOUNDER</span>}
+                                        </div>
+                                        <div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
