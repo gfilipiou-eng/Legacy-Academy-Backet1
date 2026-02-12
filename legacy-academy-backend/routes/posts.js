@@ -11,8 +11,9 @@ const router = express.Router();
 router.get("/stories", verifyToken, async (req, res) => {
     try {
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        // FETCH ALL POSTS FROM LAST 24H (Including regular posts as "stories")
+        // User request: "highlights dld auta ta 24 na fenonte panto" -> "highlights i.e. these 24h ones to appear everywhere"
         const stories = await Post.find({
-            isStory: true,
             createdAt: { $gt: twentyFourHoursAgo }
         })
         .populate("author", "username profilePic role isPrivate isFollowersOnly followers")

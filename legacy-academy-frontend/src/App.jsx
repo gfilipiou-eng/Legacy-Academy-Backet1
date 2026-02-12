@@ -980,21 +980,21 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
-                    <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
+                <div className={`w-16 h-16 rounded-xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
+                    <div className="w-full h-full rounded-xl border-2 border-black overflow-hidden bg-gray-900 relative">
                         <ProfileAvatar user={user} className="opacity-80" />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
                         </div>
                     </div>
                 </div>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Add to Story/Highlights</span>
             </div>
 
             {stories && stories.map((group, i) => (
                 <div key={i} onClick={() => onViewStory(group.latestStory)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90 relative">
-                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
+                    <div className="w-16 h-16 rounded-xl p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 transition-transform active:scale-90 relative">
+                        <div className="w-full h-full rounded-xl border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
                             {group.latestStory.thumbnailUrl || (group.latestStory.image && !group.latestStory.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                 <img src={resolveMediaUrl(group.latestStory.thumbnailUrl || group.latestStory.image)} className="w-full h-full object-cover" alt={group.author?.username} />
                             ) : (group.latestStory.image || group.latestStory.videoUrl) ? (
@@ -2565,20 +2565,20 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                     </div>
                     <div className="flex gap-4 items-center mb-4">
                         {/* STORY TOGGLE */}
-                        <div onClick={() => { setIsStory(!isStory); if (isStory) setIsHighlight(false); }} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
+                        <div onClick={() => { setIsStory(!isStory); if (isStory) setIsHighlight(false); }} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
                             <div className="flex flex-col">
-                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
+                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>Add to Story/Highlights</span>
                                 <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
 
                         {/* HIGHLIGHT TOGGLE (Only if Story is selected) */}
                         {isStory && (
-                            <div onClick={() => setIsHighlight(!isHighlight)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isHighlight ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isHighlight ? 'border-purple-500 bg-purple-500 scale-110' : 'border-gray-500'}`}>
+                            <div onClick={() => setIsHighlight(!isHighlight)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${isHighlight ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                                <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isHighlight ? 'border-purple-500 bg-purple-500 scale-110' : 'border-gray-500'}`}>
                                     {isHighlight && <Icons.Check className="w-4 h-4 text-white font-black" />}
                                 </div>
                                 <div className="flex flex-col">
