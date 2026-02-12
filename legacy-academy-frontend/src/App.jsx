@@ -3606,41 +3606,22 @@ const App = () => {
 
                                                 {groupedPosts.map(group => {
                                                     const dateKey = group.key;
-                                                    const isOpen = expandedDates[dateKey];
                                                     return (
-                                                        <div key={dateKey} className="animate-fade-in group">
-                                                            <div
-                                                                onClick={() => toggleDate(dateKey)}
-                                                                className="flex items-center gap-4 py-4 px-4 bg-white/5 border border-white/5 rounded-[1.5rem] hover:bg-white/10 hover:border-[var(--gold-primary)] transition-all cursor-pointer group/folder my-2"
-                                                            >
-                                                                <div className="relative">
-                                                                    <Icons.Folder className={`w-6 h-6 ${isOpen ? 'text-[var(--gold-primary)]' : 'text-gray-500'} transition-all duration-300`} />
-                                                                    {!isOpen && <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-[var(--gold-primary)] text-black text-[9px] font-black shadow-glow-yellow">{group.posts.length}</div>}
+                                                        <div key={dateKey} className="animate-fade-in group mb-12">
+                                                            <div className="flex items-center gap-3 mb-8 px-1 opacity-80">
+                                                                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                                                <div className="flex items-center gap-2.5">
+                                                                    <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-glow-gold" />
+                                                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 font-mono">{dateKey}</span>
                                                                 </div>
-                                                                <div className="flex-1 flex flex-col">
-                                                                    <span className={`text-[11px] font-black uppercase tracking-[0.3em] font-mono ${isOpen ? 'text-white' : 'text-gray-300'}`}>{dateKey}</span>
-                                                                    {!isOpen && <span className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">{t('EXPAND_INTEL')}</span>}
-                                                                </div>
-                                                                <Icons.ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--gold-primary)]' : ''}`} />
+                                                                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                                                             </div>
 
-                                                            <AnimatePresence>
-                                                                {isOpen && (
-                                                                    <motion.div
-                                                                        initial={{ height: 0, opacity: 0 }}
-                                                                        animate={{ height: 'auto', opacity: 1 }}
-                                                                        exit={{ height: 0, opacity: 0 }}
-                                                                        transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                                                                        className="overflow-hidden"
-                                                                    >
-                                                                        <div className="space-y-6 pt-4 pb-8 w-full max-w-full overflow-hidden">
-                                                                            {group.posts.map(p => (
-                                                                                <PostCard key={p._id} post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
-                                                                            ))}
-                                                                        </div>
-                                                                    </motion.div>
-                                                                )}
-                                                            </AnimatePresence>
+                                                            <div className="space-y-8">
+                                                                {group.posts.map(p => (
+                                                                    <PostCard key={p._id} post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                     );
                                                 })}
@@ -3670,8 +3651,8 @@ const App = () => {
                                     ))}
                                 </div>
                             </AnimatePresence>
-                        </div >
-                    </main >
+                        </div>
+                    </main>
 
                     {
                         (!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
@@ -3718,10 +3699,10 @@ const App = () => {
                         }} />
                     }
 
-                </div >
+                </div>
             )
             }
-        </div >
+        </div>
     );
 };
 
