@@ -2219,12 +2219,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             </div>
                                         ) : (
                                             Object.keys(groupedUserPosts).map(dateKey => {
-                                                const isExposed = expandedDates[dateKey];
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
-                                                        <div className="flex items-center gap-2 mb-3 px-1">
-                                                            <div className="w-1 h-3 bg-[var(--gold-primary)]/50 rounded-full" />
-                                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{dateKey}</span>
+                                                        <div className="flex items-center gap-3 mb-6 px-1 opacity-80 mt-4">
+                                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                                            <div className="flex items-center gap-2.5">
+                                                                <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-glow-gold" />
+                                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 font-mono">{dateKey}</span>
+                                                            </div>
+                                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                                                         </div>
                                                         <AnimatePresence>
                                                             <div className="overflow-hidden">
