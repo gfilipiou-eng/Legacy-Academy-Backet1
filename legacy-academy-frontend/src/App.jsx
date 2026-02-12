@@ -1785,8 +1785,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             <div className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-tight leading-tight">{t('PRIVATE_DESC_SHORT')}</div>
                                         </div>
                                         <div onClick={() => { if (!saving) { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); } }}
-                                            className={`relative w-14 h-7.5 rounded-lg transition-all duration-300 cursor-pointer p-1.5 border ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_20px_rgba(255,215,0,0.3)]' : 'bg-black/40 border-white/10 hover:border-white/20'}`}>
-                                            <div className={`w-full h-full rounded-md transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-lg ${isPrivate ? 'translate-x-[26px] bg-black' : 'translate-x-0 bg-gray-700 opacity-60'}`} />
+                                            className={`relative w-14 h-8 rounded-xl transition-all duration-500 cursor-pointer p-1.5 border-2 ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_25px_rgba(255,215,0,0.4)]' : 'bg-black/60 border-white/10 hover:border-white/25'}`}>
+                                            <div className={`w-6 h-full rounded-lg transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-2xl ${isPrivate ? 'translate-x-5 bg-black' : 'translate-x-0 bg-gray-600 opacity-40'}`} />
                                         </div>
                                     </div>
                                 </div>
@@ -1798,8 +1798,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             <div className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-tight leading-tight">{t('GUARD_DESC_SHORT')}</div>
                                         </div>
                                         <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('settings', { ...user.settings, dmFollowersOnly: v }); } }}
-                                            className={`relative w-14 h-7.5 rounded-lg transition-all duration-300 cursor-pointer p-1.5 border ${isFollowersOnly ? 'bg-blue-600 border-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.3)]' : 'bg-black/40 border-white/10 hover:border-white/20'}`}>
-                                            <div className={`w-full h-full rounded-md transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-lg ${isFollowersOnly ? 'translate-x-[26px] bg-white' : 'translate-x-0 bg-gray-700 opacity-60'}`} />
+                                            className={`relative w-14 h-8 rounded-xl transition-all duration-500 cursor-pointer p-1.5 border-2 ${isFollowersOnly ? 'bg-blue-600 border-blue-400 shadow-[0_0_25px_rgba(37,99,235,0.4)]' : 'bg-black/60 border-white/10 hover:border-white/25'}`}>
+                                            <div className={`w-6 h-full rounded-lg transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-2xl ${isFollowersOnly ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-600 opacity-40'}`} />
                                         </div>
                                     </div>
                                 </div>
