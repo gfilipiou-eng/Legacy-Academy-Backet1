@@ -2418,7 +2418,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                 vid.onloadedmetadata = () => { resolve(vid.duration || 0); URL.revokeObjectURL(url); };
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
-            if (dur && dur > 600) {
+            if (dur && dur > 1200) {
                 alert(t('VIDEO_ERROR'));
                 e.target.value = '';
                 return;
@@ -2571,7 +2571,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                 vid.onerror = () => { resolve(0); URL.revokeObjectURL(url); };
             });
             if (dur && dur > 1200) {
-                alert("Intel packet exceeds 20 minute limit. Truncate required.");
+                alert(t('VIDEO_ERROR'));
                 e.target.value = '';
                 return;
             }
@@ -2623,7 +2623,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     value={desc}
                                     onChange={e => setDesc(e.target.value)}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none h-32 sm:h-44 resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
                                 />
                             </div>
                             <div className="flex items-center gap-2 px-1">
