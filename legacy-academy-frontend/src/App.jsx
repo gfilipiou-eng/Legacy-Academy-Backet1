@@ -2066,9 +2066,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                             if (!window.confirm(t('CONFIRM_BAN'))) return;
                                                             try {
                                                                 await axios.post(`/users/${targetId}/ban`, { days: 3 });
-                                                                addToast(t('BAN_SUCCESS'), "success");
                                                                 setShowProfileMenu(false);
-                                                            } catch (e) { addToast(t('BAN_ERROR'), "error"); }
+                                                            } catch (e) { }
                                                         }}
                                                         className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
                                                     >
@@ -2124,7 +2123,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <button
                                             onClick={() => {
                                                 if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
-                                                    addToast(t('ENCRYPTED_COMMS_ONLY'), "neutral");
                                                     return;
                                                 }
                                                 onOpenChat(displayUser);
@@ -2143,8 +2141,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                     if (!window.confirm(t('CONFIRM_BAN'))) return;
                                                     try {
                                                         await axios.post(`/users/${targetId}/ban`, { days: 3 });
-                                                        addToast(t('BAN_SUCCESS'), "success");
-                                                    } catch (e) { addToast(t('BAN_ERROR'), "error"); }
+                                                    } catch (e) { }
                                                 }}
                                                 className="px-3 py-3 bg-red-600/20 border border-red-500/40 rounded-2xl text-red-500 font-black text-[9px] tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[70px]"
                                             >
@@ -3001,7 +2998,6 @@ const App = () => {
         }
 
         const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
-        if (isLiking) addToast(t('ACTION_LIKED'), 'success');
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
@@ -3050,7 +3046,6 @@ const App = () => {
         }
 
         const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
-        if (isDisliking) addToast(t('ACTION_DISLIKED'), 'neutral');
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
@@ -3113,7 +3108,6 @@ const App = () => {
             playSound('pop');
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
-            addToast(t('ACTION_COMMENTED'), 'info'); playSound('pop');
         } catch (e) {
             // ROLLBACK OPTIMISTIC UPDATE ON ERROR
             if (textValue) {
@@ -3122,7 +3116,6 @@ const App = () => {
             }
             console.error("Add comment error:", e);
             const errorMsg = e.response?.data?.message || e.response?.data?.error || "Transmission failed";
-            addToast(`ERROR: ${errorMsg}`, 'neutral');
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
@@ -3171,8 +3164,6 @@ const App = () => {
                 fetchUsers();
             }
 
-            if (message === 'Requested') addToast("ENCRYPTION REQUESTED", "success");
-            else if (message === 'Request Cancelled') addToast("REQUEST TERMINATED", "neutral");
             playSound('pop');
         } catch (e) {
             console.error('Follow failed', e);
@@ -3284,7 +3275,6 @@ const App = () => {
             try { await navigator.share(shareData); } catch (e) { }
         } else {
             navigator.clipboard.writeText(shareData.url);
-            addToast(t('ACTION_SHARED'), 'info');
         }
     };
 
@@ -3639,21 +3629,6 @@ const App = () => {
                                     </div>
                                 </>
                             )}
-                            <AnimatePresence>
-                                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-[2000] w-full max-w-sm px-4">
-                                    {toasts.map(toast => (
-                                        <motion.div key={toast.id} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className={`
-                                        flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10
-                                        ${toast.type === 'success' ? 'bg-green-500/20 text-green-400' : toast.type === 'neutral' ? 'bg-red-500/20 text-red-500' : 'bg-[#1a1a1a]/90 text-white'}
-                                    `}>
-                                            <div className={`p-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500/20' : toast.type === 'neutral' ? 'bg-red-500/20' : 'bg-white/10'}`}>
-                                                <Icons.Bell className="w-4 h-4" />
-                                            </div>
-                                            <span className="text-xs font-bold uppercase tracking-widest">{toast.text}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </AnimatePresence>
                         </div>
                     </main>
 
