@@ -110,7 +110,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             likes: [],
             dislikes: [],
             comments: [],
-            isStory: req.body.isStory === 'true'
+            isStory: req.body.isStory === 'true',
+            isHighlight: req.body.isHighlight === 'true'
         });
 
         const savedPost = await newPost.save();

@@ -1987,11 +1987,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
         }
     }, [currentUser, isEditing]);
 
-    const userStories = React.useMemo(() => (stories || []).filter(p => {
-        const pId = String(p.author?._id || p.author);
-        const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
-        return pId === uId && (p.isStory === true || String(p.isStory) === 'true');
-    }), [stories, profileUser]);
+    // Use userSpecificPosts (which contains ALL user posts) to filter highlights
+    // Highlights = Posts with isHighlight=true OR Active Stories (isStory=true && <24h)
+    const userStories = React.useMemo(() => (userSpecificPosts || []).filter(p => {
+        const isHighlight = p.isHighlight === true || String(p.isHighlight) === 'true';
+        const isStory = p.isStory === true || String(p.isStory) === 'true';
+        const isActiveStory = isStory && (new Date() - new Date(p.createdAt) < 24 * 60 * 60 * 1000);
+        return isHighlight || isActiveStory;
+    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)), [userSpecificPosts]);
 
     const fetchUserPosts = async () => {
         if (!profileUser?._id) return;
@@ -2428,6 +2431,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
     const [audioName, setAudioName] = useState('');
     const [creating, setCreating] = useState(false);
     const [isStory, setIsStory] = useState(false);
+    const [isHighlight, setIsHighlight] = useState(false); // New State
     const fileRef = useRef(null);
     const { t } = useTranslation(user);
     const [audioBlob, setAudioBlob] = useState(null);
@@ -2552,7 +2556,8 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
-                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                        {/* STORY TOGGLE */}
+                        <div onClick={() => { setIsStory(!isStory); if (isStory) setIsHighlight(false); }} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
                             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
@@ -2561,6 +2566,19 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
+
+                        {/* HIGHLIGHT TOGGLE (Only if Story is selected) */}
+                        {isStory && (
+                            <div onClick={() => setIsHighlight(!isHighlight)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isHighlight ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isHighlight ? 'border-purple-500 bg-purple-500 scale-110' : 'border-gray-500'}`}>
+                                    {isHighlight && <Icons.Check className="w-4 h-4 text-white font-black" />}
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className={`text-[11px] font-black uppercase tracking-widest ${isHighlight ? 'text-purple-400' : 'text-gray-400'}`}>HIGHLIGHT</span>
+                                    <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">PERMANENT</span>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex gap-4">
@@ -2575,6 +2593,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             if (youtube) fd.append('videoUrl', youtube.trim());
                             else if (file) fd.append('image', file);
                             fd.append('isStory', isStory);
+                            fd.append('isHighlight', isHighlight);
 
                             try {
                                 setCreating(true);
@@ -2584,8 +2603,9 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                                 document.getElementById('c-youtube').value = '';
                                 setPreview(null); fileRef.current.value = '';
                                 setIsStory(false);
+                                setIsHighlight(false);
                             } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
+                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? (isHighlight ? 'POST HIGHLIGHT' : t('POST_STORY')) : t('POST'))}</button>
                     </div>
                 </div>
             </motion.div>
