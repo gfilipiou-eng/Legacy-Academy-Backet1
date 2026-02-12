@@ -3656,7 +3656,26 @@ const App = () => {
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
-                                                <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar">{['#legacy', '#hustle', '#crypto', '#boxing'].map(t => <span key={t} onClick={() => setSearchQuery(t)} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-400 cursor-pointer hover:text-white hover:bg-white/10 transition-colors border border-white/5">{t}</span>)}</div>
+                                                <div className="flex flex-col gap-3">
+                                                    <div className="flex items-center justify-between px-1">
+                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
+                                                            <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-glow)]" />
+                                                            {t('TRENDING_NOW') || 'TRENDING INTELLIGENCE'}
+                                                        </h3>
+                                                    </div>
+                                                    <div className="flex gap-2 p-1 overflow-x-auto no-scrollbar pb-2">
+                                                        {['#legacy', '#hustle', '#crypto', '#boxing', '#mindset', '#freedom'].map(tag => (
+                                                            <span
+                                                                key={tag}
+                                                                onClick={() => setSearchQuery(tag)}
+                                                                className="px-4 py-2 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl text-xs font-black text-gray-400 cursor-pointer hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all border border-white/5 whitespace-nowrap active:scale-95 shadow-lg flex items-center gap-2 group"
+                                                            >
+                                                                <span className="text-[var(--gold-primary)] opacity-40 group-hover:opacity-100 transition-opacity">#</span>
+                                                                {tag.replace('#', '').toUpperCase()}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                         <div className="space-y-6">
