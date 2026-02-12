@@ -79,7 +79,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             videoUrl: mediaType === "video" ? mediaUrl : "",
             likes: [],
             dislikes: [],
-            comments: []
+            comments: [],
+            isStory: req.body.isStory === 'true'
         });
 
         const savedPost = await newPost.save();
