@@ -1623,8 +1623,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                     <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
                                     {t('CHAT')}
                                 </div>
-                                <span className="text-[10px] text-gray-400 font-medium not-italic tracking-wide">
-                                    MESSAGES SECURE COMMS: End-to-end encrypted, self-destructing transmissions.
+                                <span className="text-[9px] text-gray-500 font-bold not-italic tracking-wider leading-tight max-w-[240px] mt-0.5">
+                                    {t('MESSAGES_SUBTITLE')}
                                 </span>
                             </h2>
                             <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
