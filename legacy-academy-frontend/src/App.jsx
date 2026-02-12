@@ -309,15 +309,16 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     );
 };
 
-const FounderBadge = ({ className = "w-4 h-4" }) => (
-    <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]`}>
+const FounderBadge = ({ className = "w-5 h-5" }) => (
+    <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]`}>
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="url(#founder_shield_grad)" stroke="#FFD700" strokeWidth="0.5" />
+            <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="url(#founder_shield_grad)" stroke="#FFD700" strokeWidth="0.8" />
             <path d="M12 17.5L13.5 14.5L16.5 14L14.5 12L15 9L12 10.5L9 9L9.5 12L7.5 14L10.5 14.5L12 17.5Z" fill="white" className="animate-pulse shadow-white" />
             <defs>
                 <linearGradient id="founder_shield_grad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
                     <stop stopColor="#FFD700" />
-                    <stop offset="0.5" stopColor="#B8860B" />
+                    <stop offset="0.3" stopColor="#FFFACD" />
+                    <stop offset="0.6" stopColor="#B8860B" />
                     <stop offset="1" stopColor="#8B4513" />
                 </linearGradient>
             </defs>
@@ -1585,7 +1586,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
-                        <div className="flex justify-between items-center"><h2 className="text-xl font-black italic">{t('CHAT')}</h2><button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button></div>
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-xl font-black italic flex items-center gap-2">
+                                <Icons.Shield className="w-5 h-5 text-blue-400" />
+                                {t('WHISPERS') || 'WHISPERS'}
+                            </h2>
+                            <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
+                        </div>
                         <div className="relative">
                             <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                             <input
@@ -1797,7 +1804,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             <div className="text-[13px] font-black text-white/90 group-hover:text-blue-400 transition-colors">{t('GUARD_TITLE')}</div>
                                             <div className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-tight leading-tight">{t('GUARD_DESC_SHORT')}</div>
                                         </div>
-                                        <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('settings', { ...user.settings, dmFollowersOnly: v }); } }}
+                                        <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); } }}
                                             className={`relative w-14 h-8 rounded-xl transition-all duration-500 cursor-pointer p-1.5 border-2 ${isFollowersOnly ? 'bg-blue-600 border-blue-400 shadow-[0_0_25px_rgba(37,99,235,0.4)]' : 'bg-black/60 border-white/10 hover:border-white/25'}`}>
                                             <div className={`w-6 h-full rounded-lg transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) shadow-2xl ${isFollowersOnly ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-600 opacity-40'}`} />
                                         </div>
@@ -2208,7 +2215,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             }}
                                             className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <Icons.MessageCircle className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110'}`} />
+                                            <Icons.Shield className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-blue-400 group-hover:scale-110'}`} />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -3605,8 +3612,8 @@ const App = () => {
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
 
-                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
-                                        <Icons.MessageCircle className="w-5 h-5 text-[var(--gold-primary)]" />
+                                    <button onClick={() => setIsChatOpen(true)} className="header-icon-btn relative rounded-full border-2 border-blue-500/30 hover:border-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                        <Icons.Shield className="w-5 h-5 text-blue-400" />
                                         <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
