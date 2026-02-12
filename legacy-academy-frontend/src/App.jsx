@@ -1122,6 +1122,14 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
         <motion.div
             layout
             initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{
+                opacity: 0,
+                scale: 0.8,
+                filter: "blur(20px) brightness(2) contrast(2)",
+                rotateX: 45,
+                transition: { duration: 0.4, ease: "circIn" }
+            }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
@@ -3503,7 +3511,7 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } };
+    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('galactic_dissolve'); explodeEffect(); } catch (e) { } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     // AUTO-LANGUAGE DETECTION
