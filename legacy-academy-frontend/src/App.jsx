@@ -1631,7 +1631,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                     <div>
                                         <div className="font-bold text-sm flex items-center gap-2">
                                             {activeChat?.username}
-                                            {activeChat?.role === 'Founder' && <span className="bg-[var(--gold-primary)] text-black text-[7px] px-1.5 py-0.5 rounded font-black tracking-wider uppercase">FOUNDER</span>}
+                                            {activeChat?.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5" />}
                                         </div>
                                         <div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div>
                                     </div>
