@@ -47,7 +47,7 @@ const UserSchema = new mongoose.Schema(
         },
         bio: {
             type: String,
-            max: 150,
+            max: 500,
             default: "Entrepreneur. Legacy Member."
         },
         isPrivate: {

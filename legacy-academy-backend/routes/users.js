@@ -3,8 +3,36 @@ import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
+
+// UPDATE PROFILE PICTURE
+router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
+
+        let profilePic = user.profilePic;
+        if (req.file) {
+            // If Cloudinary is used, req.file.path or req.file.secure_url will be the URL
+            // If disk storage is used, we need to prefix with /uploads/
+            profilePic = req.file.path || `/uploads/${req.file.filename}`;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { profilePic } },
+            { new: true }
+        ).select("-password");
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Profile Pic Update Error:", err);
+        res.status(500).json(err);
+    }
+});
 
 // GET ALL USERS (Search)
 router.get("/", verifyToken, async (req, res) => {
@@ -160,7 +188,7 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
 
         // Add follower if not already following
         if (!user.followers?.some(id => String(id) === String(requesterId))) {
-             await User.findByIdAndUpdate(userId, { $addToSet: { followers: requesterId } });
+            await User.findByIdAndUpdate(userId, { $addToSet: { followers: requesterId } });
         }
 
         // Update requester
@@ -192,7 +220,7 @@ router.post("/requests/:requesterId/decline", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId;
-        
+
         // Always try to cleanup, even if request missing
         await User.findByIdAndUpdate(userId, {
             $pull: {
@@ -209,7 +237,7 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId ? String(req.params.requesterId).trim() : null;
-        
+
         // Always try to cleanup
         await User.findByIdAndUpdate(userId, {
             $pull: {
@@ -220,6 +248,40 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
         res.status(200).json("Request Rejected");
     } catch (err) {
         res.status(200).json({ status: "ignored_error" });
+    }
+});
+
+// UPDATE USER
+router.put("/:id", verifyToken, async (req, res) => {
+    if (req.user.id === req.params.id) {
+        try {
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.id,
+                { $set: req.body },
+                { new: true }
+            );
+
+            // SYNC ACROSS POSTS & COMMENTS
+            const userId = req.params.id;
+            const { username, profilePic } = req.body;
+            if (username || profilePic) {
+                const postUpdate = {};
+                if (username) postUpdate["comments.$[elem].authorName"] = username;
+                if (profilePic) postUpdate["comments.$[elem].authorProfilePic"] = profilePic;
+
+                await Post.updateMany(
+                    { "comments.authorId": userId },
+                    { $set: postUpdate },
+                    { arrayFilters: [{ "elem.authorId": userId }] }
+                );
+            }
+
+            res.status(200).json(updatedUser);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    } else {
+        return res.status(403).json("You can update only your account!");
     }
 });
 
@@ -245,13 +307,25 @@ router.put("/settings", verifyToken, async (req, res) => {
             }
         });
 
-        console.log('Update data:', updateData);
-
         const updatedUser = await User.findByIdAndUpdate(
-            req.user.id,
+            userId,
             { $set: updateData },
             { new: true }
         ).select("-password");
+
+        // SYNC ACROSS POSTS & COMMENTS
+        const { username, profilePic } = updateData;
+        if (username || profilePic) {
+            const postUpdate = {};
+            if (username) postUpdate["comments.$[elem].authorName"] = username;
+            if (profilePic) postUpdate["comments.$[elem].authorProfilePic"] = profilePic;
+
+            await Post.updateMany(
+                { "comments.authorId": userId },
+                { $set: postUpdate },
+                { arrayFilters: [{ "elem.authorId": userId }] }
+            );
+        }
 
         console.log('Updated user:', updatedUser);
 

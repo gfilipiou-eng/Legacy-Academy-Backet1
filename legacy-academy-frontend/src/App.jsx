@@ -2257,7 +2257,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
                                 </div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{displayUser?.bio || t("DEFAULT_BIO")}</div>
+                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">{parseHashtags(displayUser?.bio || t("DEFAULT_BIO"))}</div>
 
                                 {isMe ? (
                                     <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px]">{t('EDIT_PROFILE')}</button>
