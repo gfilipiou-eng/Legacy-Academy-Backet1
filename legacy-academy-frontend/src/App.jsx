@@ -1946,7 +1946,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, stories = [], allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -1971,11 +1971,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         }
     }, [currentUser, isEditing]);
 
-    const userStories = React.useMemo(() => (posts || []).filter(p => {
+    const userStories = React.useMemo(() => (stories || []).filter(p => {
         const pId = String(p.author?._id || p.author);
         const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
-        return pId === uId && p.isStory;
-    }), [posts, profileUser]);
+        return pId === uId && (p.isStory === true || String(p.isStory) === 'true');
+    }), [stories, profileUser]);
 
     const fetchUserPosts = async () => {
         if (!profileUser?._id) return;
@@ -2784,6 +2784,7 @@ const App = () => {
         setFormData(prev => ({ ...prev, [key]: value }));
     };
     const [posts, setPosts] = useState([]);
+    const [fetchedStories, setFetchedStories] = useState([]);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('home');
     const [searchQuery, setSearchQuery] = useState('');
@@ -2875,7 +2876,17 @@ const App = () => {
             return updatedPost;
         }));
 
-        // stories will update automatically via useMemo since it depends on 'posts'
+        // Update 'fetchedStories' array
+        setFetchedStories(prev => prev.map(p => {
+            let updatedPost = p;
+            if (String(p.author?._id || p.author) === userId) {
+                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : p.author;
+                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
+            }
+            return updatedPost;
+        }));
+
+        // stories will update automatically via useMemo since it depends on 'fetchedStories'
 
         // Update selectedPost if open
         if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === userId) {
@@ -2928,6 +2939,7 @@ const App = () => {
         if (user && user._id !== lastInitializedId.current) {
             lastInitializedId.current = user._id;
             fetchPosts();
+            fetchStories();
             fetchUsers();
             startHeartbeat();
             startUserPoll();
@@ -2983,9 +2995,9 @@ const App = () => {
 
     const stories = React.useMemo(() => {
         const groups = {};
-        posts.filter(p => p.isStory === true || String(p.isStory) === 'true').forEach(p => {
+        (fetchedStories || []).forEach(p => {
             const uid = String(p.author?._id || p.author);
-            // Filter only last 24h
+            // Backend already filters 24h, but safety check doesn't hurt
             if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return;
 
             if (!groups[uid]) {
@@ -2998,7 +3010,7 @@ const App = () => {
             groups[uid].allStories.push(p);
         });
         return Object.values(groups).sort((a, b) => new Date(b.latestStory.createdAt) - new Date(a.latestStory.createdAt));
-    }, [posts]);
+    }, [fetchedStories]);
 
     const trendingHashtags = React.useMemo(() => {
         const counts = {};
@@ -3027,6 +3039,12 @@ const App = () => {
             if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
             setPosts(res.data);
         } catch (e) { }
+    };
+    const fetchStories = async () => {
+        try {
+            const res = await axios.get('/posts/stories');
+            setFetchedStories(res.data);
+        } catch (e) { console.error('Fetch stories failed', e); }
     };
     const fetchUsers = async () => {
         try {
@@ -3098,7 +3116,7 @@ const App = () => {
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 15000); };
+    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(() => { fetchPosts(); fetchStories(); }, 15000); };
     const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
 
 
@@ -3837,8 +3855,8 @@ const App = () => {
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} stories={fetchedStories} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); fetchStories(); }} user={user} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
                         selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
