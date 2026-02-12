@@ -602,9 +602,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 type="button"
                                 disabled={loadingActions?.[post._id]}
                                 onClick={() => onDislike(post._id)}
-                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}
+                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 pointer-events-none">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current scale-110' : 'group-hover:scale-110'}`}>
                                     <path d="M17 14V2"></path>
                                     <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
                                 </svg>
@@ -1272,8 +1272,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
                                 </button>
 
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 pointer-events-none">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current scale-110' : 'group-hover:scale-110'}`}>
                                         <path d="M17 14V2"></path>
                                         <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
                                     </svg>
@@ -1689,6 +1689,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [saving, setSaving] = useState(false);
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
+    const [showDanger, setShowDanger] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -1697,132 +1698,116 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         }
     }, [user]);
 
-
     const handleSave = async (key, val) => {
         setSaving(true);
         try {
-            // FIX: Nested settings support for language
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
-
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
-
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
             playSound('pop');
         } catch (e) {
             console.error("Settings update failed", e);
-            // Revert state on error?
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
-            alert(t('SYNC_ERROR'));
-        }
-        finally { setSaving(false); }
+        } finally { setSaving(false); }
     };
 
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative w-full max-w-sm h-full sm:h-auto bg-[#0a0a0a] sm:border border-white/10 sm:rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
-                <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
-                    <h2 className="font-bold uppercase tracking-widest text-xs text-gray-400">{t('SETTINGS')}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><Icons.X className="w-5 h-5" /></button>
+            <div className="relative w-full max-w-[340px] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden animate-pop-in shadow-2xl flex flex-col">
+                <div className="p-3.5 border-b border-white/5 flex justify-between items-center bg-white/5 shrink-0">
+                    <h2 className="font-bold uppercase tracking-widest text-[10px] text-gray-400">{t('SETTINGS')}</h2>
+                    <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-full transition-colors active:scale-90"><Icons.X className="w-4 h-4 text-gray-400" /></button>
                 </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-[var(--gold-primary)]/30 group">
-                        <div>
-                            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">Private Account</div>
-                            <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Only accepted followers see content</div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1.5 scroll-smooth">
+                    {/* TOGGLES */}
+                    <div className="p-3.5 flex items-center justify-between bg-white/[0.03] rounded-2xl border border-white/5 transition-all hover:bg-white/[0.05] group">
+                        <div className="flex-1">
+                            <div className="text-[13px] font-bold text-white/90 group-hover:text-[var(--gold-primary)] transition-colors">Private Account</div>
+                            <div className="text-[9px] text-gray-500 uppercase tracking-tight">{t('PRIVATE_DESC_SHORT') || "Only followers see content"}</div>
                         </div>
-                        <div onClick={() => {
-                            if (saving) return;
-                            const newVal = !isPrivate;
-                            setIsPrivate(newVal);
-                            handleSave('isPrivate', newVal);
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isPrivate ? 'bg-[var(--gold-primary)]' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
-                            <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isPrivate ? 'translate-x-5' : ''}`} />
+                        <div onClick={() => { if (!saving) { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); } }}
+                            className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 relative border ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-glow-gold' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <div className={`absolute top-0.5 bottom-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transform transition-all duration-300 ${isPrivate ? 'right-1 scale-100' : 'left-1 scale-90'}`} />
                         </div>
                     </div>
 
-                    <div className="p-4 flex items-center justify-between bg-white/5 rounded-2xl border border-white/5 transition-all hover:border-blue-500/30 group">
-                        <div>
-                            <div className="text-sm font-bold text-white group-hover:text-blue-500 transition-colors">Guard Chat</div>
-                            <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Messages only from your followers</div>
+                    <div className="p-3.5 flex items-center justify-between bg-white/[0.03] rounded-2xl border border-white/5 transition-all hover:bg-white/[0.05] group">
+                        <div className="flex-1">
+                            <div className="text-[13px] font-bold text-white/90 group-hover:text-blue-400 transition-colors">Guard Chat</div>
+                            <div className="text-[9px] text-gray-500 uppercase tracking-tight">{t('GUARD_DESC_SHORT') || "Messages only from followers"}</div>
                         </div>
-                        <div onClick={() => {
-                            if (saving) return;
-                            const newVal = !isFollowersOnly;
-                            setIsFollowersOnly(newVal);
-                            handleSave('settings', { ...user.settings, dmFollowersOnly: newVal });
-                        }} className={`w-12 h-7 rounded-full p-1 cursor-pointer transition-colors ${isFollowersOnly ? 'bg-blue-500' : 'bg-gray-700'} ${saving ? 'opacity-50' : ''}`}>
-                            <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform ${isFollowersOnly ? 'translate-x-5' : ''}`} />
+                        <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('settings', { ...user.settings, dmFollowersOnly: v }); } }}
+                            className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 relative border ${isFollowersOnly ? 'bg-blue-500 border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <div className={`absolute top-0.5 bottom-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transform transition-all duration-300 ${isFollowersOnly ? 'right-1 scale-100' : 'left-1 scale-90'}`} />
                         </div>
                     </div>
 
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('THEME')}</div>
-                        <div className="flex gap-2.5 flex-wrap justify-center pt-2">
+                    {/* THEME */}
+                    <div className="p-3 bg-white/[0.03] rounded-2xl border border-white/5 space-y-2">
+                        <div className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] pl-1">THEME</div>
+                        <div className="flex gap-2.5 flex-wrap justify-center py-1">
                             {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
                                 const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                 const isActive = currentTheme === c;
                                 return (
-                                    <button key={c} onClick={() => {
-                                        applyTheme(c);
-                                        handleSave('settings', { theme: c });
-                                    }} className={`w-9 h-9 rounded-xl border-2 transition-all relative ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.5)] z-10' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105'}`} style={{ backgroundColor: c, borderColor: isActive ? 'white' : 'transparent' }}>
-                                        {isActive && (
-                                            <motion.div layoutId="theme-active" className="absolute -inset-1.5 border-2 border-white/20 rounded-[1rem] pointer-events-none" initial={false} animate={{ opacity: 1 }} />
-                                        )}
-                                        {isActive && <Icons.Check className="w-5 h-5 text-black mx-auto drop-shadow-md" />}
+                                    <button key={c} onClick={() => { applyTheme(c); handleSave('settings', { theme: c }); }}
+                                        className={`w-7 h-7 rounded-lg border-2 transition-all relative ${isActive ? 'scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)] z-10 border-white' : 'border-transparent opacity-40 hover:opacity-100 hover:scale-105'}`}
+                                        style={{ backgroundColor: c }}>
+                                        {isActive && <Icons.Check className={`w-3.5 h-3.5 mx-auto ${c === '#ffffff' ? 'text-black' : 'text-white'} drop-shadow-md`} />}
                                     </button>
                                 );
                             })}
                         </div>
                     </div>
 
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('COGNITION')}</div>
-                        <div className="grid grid-cols-4 gap-2">
+                    {/* LANGUAGE */}
+                    <div className="p-3 bg-white/[0.03] rounded-2xl border border-white/5 space-y-2">
+                        <div className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] pl-1">{t('COGNITION')}</div>
+                        <div className="grid grid-cols-4 gap-1.5">
                             {[
-                                { id: 'en', label: 'English', flag: '🇺🇸' },
-                                { id: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
-                                { id: 'de', label: 'Deutsch', flag: '🇩🇪' },
-                                { id: 'ru', label: 'Русский', flag: '🇷🇺' },
-                                { id: 'cy', label: 'Kypriaka', flag: '🇨🇾' },
-                                { id: 'es', label: 'Español', flag: '🇪🇸' },
-                                { id: 'tr', label: 'Türkçe', flag: '🇹🇷' },
-                                { id: 'fr', label: 'Français', flag: '🇫🇷' }
+                                { id: 'en', flag: '🇺🇸' }, { id: 'el', flag: '🇬🇷' }, { id: 'de', flag: '🇩🇪' }, { id: 'ru', flag: '🇷🇺' },
+                                { id: 'cy', flag: '🇨🇾' }, { id: 'es', flag: '🇪🇸' }, { id: 'tr', flag: '🇹🇷' }, { id: 'fr', flag: '🇫🇷' }
                             ].map(l => (
-                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }} className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center ${lang === l.id ? 'border-[var(--gold-primary)] bg-white/10' : 'border-white/5 bg-white/5'}`}>
-                                    <div className="text-xl">{l.flag}</div>
-                                    <div className="text-[8px] sm:text-[9px] font-bold text-white mt-1 uppercase tracking-tight">{l.label}</div>
+                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
+                                    className={`py-2 rounded-xl border transition-all flex flex-col items-center justify-center gap-0.5 ${lang === l.id ? 'border-[var(--gold-primary)]/50 bg-[var(--gold-primary)]/10' : 'border-white/5 bg-white/5 hover:bg-white/10'}`}>
+                                    <div className="text-sm">{l.flag}</div>
+                                    <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">{l.id}</div>
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="p-4 bg-red-500/5 rounded-2xl border border-red-500/20 space-y-3">
-                        <div className="text-xs font-bold text-red-500 uppercase tracking-widest pl-1">{t('DANGER_ZONE')}</div>
-                        <button onClick={async () => {
-                            if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) {
-                                try {
-                                    await axios.delete(`/users/${user._id}`);
-                                    logout();
-                                } catch (e) { alert("Deletion failed."); }
-                            }
-                        }} className="w-full py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-500 font-bold text-[10px] tracking-widest hover:bg-red-500 hover:text-white transition-all">
-                            {t('DELETE_FOREVER')}
+                    {/* DANGER ZONE - COLLAPSIBLE */}
+                    <div className={`transition-all duration-500 overflow-hidden ${showDanger ? 'max-h-40 opacity-100 mb-1' : 'max-h-0 opacity-0'}`}>
+                        <div className="p-3.5 bg-red-950/10 rounded-2xl border border-red-500/20 space-y-3">
+                            <div className="text-[9px] font-black text-red-500/60 uppercase tracking-widest pl-1">{t('DANGER_ZONE')}</div>
+                            <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
+                                className="w-full py-2.5 bg-red-500/10 border border-red-500/30 rounded-xl text-red-500 font-black text-[9px] tracking-widest hover:bg-red-500 hover:text-white transition-all uppercase">
+                                {t('DELETE_FOREVER')}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5 pb-2">
+                        {!showDanger && (
+                            <button onClick={() => setShowDanger(true)} className="w-full py-2.5 bg-white/[0.02] border border-white/5 rounded-xl text-gray-600 font-bold text-[9px] tracking-widest hover:text-red-500/60 transition-all uppercase">
+                                {t('UNCOVER_RESTRICTED_OPS') || "UNCOVER RESTRICTED SECURE OPS"}
+                            </button>
+                        )}
+
+                        <button onClick={logout} className="w-full flex items-center justify-between p-3.5 bg-white/[0.03] hover:bg-red-500/10 rounded-2xl border border-white/5 hover:border-red-500/20 transition-all group active:scale-95">
+                            <span className="text-[11px] font-black text-gray-400 group-hover:text-red-500 transition-colors uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
+                            <Icons.Logout className="w-4 h-4 text-gray-500 group-hover:text-red-500 transition-colors" />
                         </button>
                     </div>
 
-                    <button onClick={logout} className="w-full text-left p-4 hover:bg-red-500/10 flex items-center justify-between text-red-500 font-black text-sm border border-red-500/20 rounded-2xl transition-all hover:scale-[0.98]">
-                        <span className="tracking-[0.2em]">{t('LOGOUT')}</span>
-                        <Icons.Logout className="w-5 h-5" />
-                    </button>
-
-                    {saving && <div className="text-[10px] text-[var(--gold-primary)] text-center font-bold animate-pulse">{t('SYNCING')}</div>}
+                    {saving && <div className="text-[8px] text-[var(--gold-primary)] text-center font-bold animate-pulse tracking-widest">{t('SYNCING')}</div>}
                 </div>
             </div>
         </div>
