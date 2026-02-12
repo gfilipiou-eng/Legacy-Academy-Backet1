@@ -482,8 +482,10 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       visibility: visibility || 'public',
       isPrivate: author?.isPrivate || false,
       isFollowersOnly: author?.isFollowersOnly || false,
-      isStory: req.body.isStory === 'true' || req.body.isStory === true
+      isStory: String(req.body.isStory) === 'true'
     });
+
+    console.log(`[DEPLOY] Classification: ${newPost.isStory ? 'HIGHLIGHT' : 'POST'} | Sector: ${req.body.visibility || 'public'}`);
 
     const savedPost = await newPost.save();
 

@@ -2406,13 +2406,19 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     );
 };
 
-const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
+const CreateModal = ({ isOpen, onClose, onSuccess, user, forceStory = false }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
     const [isAudio, setIsAudio] = useState(false);
     const [audioName, setAudioName] = useState('');
     const [creating, setCreating] = useState(false);
-    const [isStory, setIsStory] = useState(false);
+    const [isStory, setIsStory] = useState(forceStory);
+
+    useEffect(() => {
+        if (isOpen) {
+            setIsStory(forceStory);
+        }
+    }, [isOpen, forceStory]);
     const fileRef = useRef(null);
     const { t } = useTranslation(user);
     const [audioBlob, setAudioBlob] = useState(null);
@@ -2790,6 +2796,7 @@ const App = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
+    const [createModeStory, setCreateModeStory] = useState(false);
     const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
@@ -2949,7 +2956,8 @@ const App = () => {
     const filteredPosts = React.useMemo(() => {
         return (posts || []).filter(p => {
             // Robust check for stories - exclude them from feed
-            if (p.isStory === true || String(p.isStory) === 'true') return false;
+            const storyFlag = p.isStory === true || String(p.isStory) === 'true';
+            if (storyFlag) return false;
             const q = searchQuery.toLowerCase();
             if (!q) return true;
             const descMatch = p.desc ? p.desc.toLowerCase().includes(q) : false;
@@ -3668,7 +3676,7 @@ const App = () => {
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-14 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => { setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
+                                    <button onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
                                         <Icons.Plus className="w-6 h-6" />
                                     </button>
 
@@ -3713,7 +3721,7 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
-                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => setIsCreateOpen(true)} onViewStory={(s) => setSelectedPost(s)} />}
+                                    {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="p-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
@@ -3838,7 +3846,7 @@ const App = () => {
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
                         selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
