@@ -1617,17 +1617,20 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-black italic flex flex-col gap-0.5">
-                                <div className="flex items-center gap-2">
+                        <div className="flex flex-col gap-3">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-xl font-black italic flex items-center gap-2">
                                     <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
                                     {t('CHAT')}
-                                </div>
-                                <span className="text-[9px] text-gray-500 font-bold not-italic tracking-wider leading-tight max-w-[240px] mt-0.5">
+                                </h2>
+                                <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
+                            </div>
+                            <div className="bg-red-500/[0.03] border border-red-500/10 rounded-xl p-2.5 shadow-inner relative overflow-hidden group/warn">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-red-500/20" />
+                                <span className="text-[9px] text-red-500/80 font-black uppercase tracking-[0.1em] leading-relaxed block pl-2">
                                     {t('MESSAGES_SUBTITLE')}
                                 </span>
-                            </h2>
-                            <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
+                            </div>
                         </div>
                         <div className="relative">
                             <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
