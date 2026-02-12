@@ -1105,11 +1105,6 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             layout
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            whileHover={{
-                rotateX: 5, rotateY: 5,
-                z: 20,
-                transition: { duration: 0.3 }
-            }}
             viewport={{ once: true }}
             className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
