@@ -159,6 +159,7 @@
     "CONFIRM_DELETE_ALL_COMMENTS": "ALLE KOMMENTARE LÖSCHEN?",
     "DEFAULT_BIO": "Keine Informationen bereitgestellt.",
     "SEARCH_PH": "Suche nach Posts, Benutzern oder Feeds",
+    "SEARCH_USERS_PH": "Benutzer suchen",
     "ONLINE": "Online",
     "OFFLINE": "Offline",
     "POSTING": "Status wird gepostet...",

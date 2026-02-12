@@ -160,6 +160,7 @@
     "CONFIRM_DELETE_ALL_COMMENTS": "DELETE ALL COMMENTS?",
     "DEFAULT_BIO": "No Intel Provided.",
     "SEARCH_PH": "Search for posts, users, or feeds",
+    "SEARCH_USERS_PH": "Search for users",
     "TRENDING_NOW": "TRENDING INTELLIGENCE",
     "ONLINE": "Online",
     "OFFLINE": "Offline",
