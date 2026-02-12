@@ -997,7 +997,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                         <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
                             {group.latestStory.thumbnailUrl || (group.latestStory.image && !group.latestStory.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                 <img src={resolveMediaUrl(group.latestStory.thumbnailUrl || group.latestStory.image)} className="w-full h-full object-cover" alt={group.author?.username} />
-                            ) : (
+                            ) : (group.latestStory.image || group.latestStory.videoUrl) ? (
                                 <div className="w-full h-full relative">
                                     <video 
                                         src={resolveMediaUrl(group.latestStory.image || group.latestStory.videoUrl)} 
@@ -1007,6 +1007,10 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                                         autoPlay 
                                         loop
                                     />
+                                </div>
+                            ) : (
+                                <div className="w-full h-full bg-[var(--gold-primary)] flex items-center justify-center text-black font-black text-[8px] p-1 text-center leading-tight">
+                                    {group.latestStory.desc ? group.latestStory.desc.substring(0, 15) + (group.latestStory.desc.length > 15 ? '...' : '') : <Icons.Type className="w-6 h-6" />}
                                 </div>
                             )}
                             <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full border border-black overflow-hidden">
@@ -2327,10 +2331,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, storie
                                                         <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                             {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
                                                         <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
-                                                    ) : (
+                                                    ) : (s.videoUrl || (s.image && s.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                                         <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative overflow-hidden">
                                                             <video src={resolveMediaUrl(s.videoUrl || s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
                                                             <Icons.Play className="w-6 h-6 text-[var(--gold-primary)] relative z-10" />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-full h-full bg-[var(--gold-primary)] rounded-full flex items-center justify-center relative overflow-hidden text-center p-1">
+                                                            <span className="text-[6px] font-black text-black leading-none">{s.desc ? s.desc.substring(0, 10) + '..' : <Icons.Type className="w-4 h-4" />}</span>
                                                         </div>
                                                     )}
                                                         </div>
