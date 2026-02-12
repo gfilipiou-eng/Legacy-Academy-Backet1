@@ -1178,9 +1178,22 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     </span>
                                 </div>
                                 {isPostAuthorFounder && (
-                                    <div className="flex items-center gap-1.5 mt-0.5 animate-fade-in group/badge">
-                                        <FounderBadge className="w-3.5 h-3.5" />
-                                        <span className="text-[var(--gold-primary)] text-[9px] font-black tracking-[0.15em] uppercase">{t('FOUNDER_BADGE')}</span>
+                                    <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit">
+                                        <div className="relative flex items-center justify-center w-4 h-4 drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]">
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="url(#founder_shield_grad)" stroke="#FFD700" strokeWidth="0.8"></path>
+                                                <path d="M12 17.5L13.5 14.5L16.5 14L14.5 12L15 9L12 10.5L9 9L9.5 12L7.5 14L10.5 14.5L12 17.5Z" fill="white" className="animate-pulse shadow-white"></path>
+                                                <defs>
+                                                    <linearGradient id="founder_shield_grad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                                                        <stop stopColor="#FFD700"></stop>
+                                                        <stop offset="0.3" stopColor="#FFFACD"></stop>
+                                                        <stop offset="0.6" stopColor="#B8860B"></stop>
+                                                        <stop offset="1" stopColor="#8B4513"></stop>
+                                                    </linearGradient>
+                                                </defs>
+                                            </svg>
+                                        </div>
+                                        <span className="text-[var(--gold-primary)] text-[11px] font-black tracking-widest uppercase">LEGACY FOUNDER</span>
                                     </div>
                                 )}
                                 <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--gold-primary)] font-medium' : 'text-gray-500'}`}>
