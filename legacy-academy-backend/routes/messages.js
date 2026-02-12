@@ -14,8 +14,9 @@ router.patch("/:messageId/read", verifyToken, async (req, res) => {
         const msg = await Message.findById(messageId);
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        msg.isRead = true;
-        await msg.save();
+        
+        await Message.findByIdAndDelete(messageId);
+        
         res.status(200).json({ success: true, isRead: true });
     } catch (err) {
         res.status(500).json(err);
@@ -29,8 +30,9 @@ router.post("/:messageId/read", verifyToken, async (req, res) => {
         const msg = await Message.findById(messageId);
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        msg.isRead = true;
-        await msg.save();
+        
+        await Message.findByIdAndDelete(messageId);
+        
         res.status(200).json({ success: true, isRead: true });
     } catch (err) {
         res.status(500).json(err);
@@ -44,8 +46,9 @@ router.get("/:messageId/read", verifyToken, async (req, res) => {
         const msg = await Message.findById(messageId);
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        msg.isRead = true;
-        await msg.save();
+        
+        await Message.findByIdAndDelete(messageId);
+        
         res.status(200).json({ success: true, isRead: true });
     } catch (err) {
         res.status(500).json(err);

@@ -1441,8 +1441,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                 return { ...prev, [otherUserId]: res.data };
             });
 
-            // 🔥 WHISPERS: Auto-mark incoming messages as read
-            /* ... existing disabled logic ... */
+            // 🔥 WHISPERS: Auto-mark incoming messages as read (and trigger deletion on backend)
+            const incomingUnread = res.data.filter(m => m.recipient === user._id && !m.isRead);
+            if (incomingUnread.length > 0) {
+                // Trigger burn protocol
+                Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => {})));
+            }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
@@ -1897,7 +1901,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         </div>
                                     ) : (
                                         <button onClick={() => setShowDanger(true)} className="w-full py-5 bg-white/[0.02] hover:bg-red-500/10 rounded-3xl border border-white/5 text-gray-500 hover:text-red-400 transition-all text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3 group">
-                                            <Icons.Shield className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:animate-pulse" />
                                             {t('UNCOVER_RESTRICTED_OPS')}
                                         </button>
                                     )}

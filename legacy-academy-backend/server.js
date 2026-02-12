@@ -32,9 +32,11 @@ const markMessageRead = async (req, res) => {
         const msg = await Message.findById(messageId);
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        msg.isRead = true;
-        await msg.save();
-        res.status(200).json({ success: true, isRead: true });
+        
+        // WHISPER PROTOCOL: Burn after reading (Delete immediately)
+        await Message.findByIdAndDelete(messageId);
+        
+        res.status(200).json({ success: true, isRead: true, status: "neutralized" });
     } catch (err) {
         res.status(200).json({ success: true, ignored: true });
     }
