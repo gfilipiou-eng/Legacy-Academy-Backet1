@@ -1408,7 +1408,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
                                                         className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                                     >
-                                                        <Icons.WalkieTalkie className="w-4 h-4" />
+                                                        <Icons.Ghost className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         type="submit"
@@ -1614,9 +1614,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.WalkieTalkie className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
-                                    {t('CHAT')}
+                                <h2 className="text-xl font-black italic flex flex-col gap-0.5">
+                                    <div className="flex items-center gap-2">
+                                        <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
+                                        {t('CHAT')}
+                                    </div>
+                                    <span className="text-[10px] text-gray-400 font-medium not-italic tracking-wide">
+                                        MESSAGES SECURE COMMS: End-to-end encrypted, self-destructing transmissions.
+                                    </span>
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
                             </div>
@@ -3885,9 +3890,7 @@ const App = () => {
                                         </div>
                                     </button>
 
-                                    <button onClick={() => { setIsChatOpen(true); playSound('pop'); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${isChatOpen ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
-                                        <Icons.WalkieTalkie className="w-5 h-5" />
-                                    </button>
+
 
 
 
