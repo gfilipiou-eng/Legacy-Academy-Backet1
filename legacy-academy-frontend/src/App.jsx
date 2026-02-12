@@ -1458,7 +1458,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             const incomingUnread = res.data.filter(m => m.recipient === user._id && !m.isRead);
             if (incomingUnread.length > 0) {
                 // Trigger burn protocol
-                Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => {})));
+                Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => { })));
             }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
@@ -1765,12 +1765,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 overflow-hidden">
-            <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-[20px]" 
-                onClick={onClose} 
+                className="absolute inset-0 bg-black/80 backdrop-blur-[20px]"
+                onClick={onClose}
             />
 
             <motion.div
@@ -2485,10 +2485,13 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
                             <ProfileAvatar user={user} />
                         </div>
-                        <div className="flex-1 flex flex-col gap-1">
-                            <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-sm outline-none text-white resize-none h-20 placeholder-gray-500" />
-                            <div className="text-[10px] sm:text-[13px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
-                                <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
+                        <div className="flex-1 flex flex-col gap-2">
+                            <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-base outline-none text-white resize-none h-24 placeholder-gray-500 font-bold" />
+                            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note">
+                                <Icons.Info className="w-4 h-4 text-red-500 shrink-0 group-hover/note:animate-pulse" />
+                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none">
+                                    {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -2540,7 +2543,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user }) => {
                             </div>
                             <div className="flex flex-col">
                                 <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
-                                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">{t('STORY_DURATION')}</span>
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
                     </div>
@@ -2647,7 +2650,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-6">
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
                     <div className="flex flex-col gap-4">
@@ -2665,8 +2668,11 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 />
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="text-[9px] sm:text-[12px] font-bold text-[var(--gold-primary)] uppercase tracking-tight sm:tracking-widest bg-[var(--gold-primary)]/10 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-[var(--gold-primary)]/20 w-full sm:w-fit animate-pulse flex items-center justify-center gap-1.5 text-center leading-tight">
-                                    <Icons.Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t('VIDEO_LIMIT_NOTE')}
+                                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note w-full">
+                                    <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
+                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest leading-none">
+                                        {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
