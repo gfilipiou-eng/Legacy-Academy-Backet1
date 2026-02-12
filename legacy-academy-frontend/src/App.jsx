@@ -1476,7 +1476,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
         const targetId = activeChat._id || activeChat.id;
         if (!targetId) {
             console.error("Attempted to send message to user with no ID:", activeChat);
-            addToast(t('INVALID_RECIPIENT') || "Invalid recipient data. Please refresh.", 'error');
             return;
         }
 
@@ -1502,7 +1501,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             const fullOutput = e.response?.data ? JSON.stringify(e.response.data) : 'No response body';
             console.error('Send failed:', detail, fullOutput);
             setInputText(tempText);
-            addToast(t('REQUEST_FAILED') + ': ' + (e.response?.data?.error || 'System error'), 'neutral');
         }
     };
 
@@ -1732,8 +1730,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[9px] text-gray-500 uppercase tracking-tight">{t('PRIVATE_DESC_SHORT') || "Only followers see content"}</div>
                         </div>
                         <div onClick={() => { if (!saving) { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); } }}
-                            className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 relative border ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-glow-gold' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <div className={`absolute top-0.5 bottom-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transform transition-all duration-300 ${isPrivate ? 'right-1 scale-100' : 'left-1 scale-90'}`} />
+                            className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 relative border ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)] shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'bg-[#151515] border-white/10'}`}>
+                            <div className={`absolute top-0.5 bottom-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transform transition-all duration-300 ${isPrivate ? 'translate-x-5' : 'translate-x-0 opacity-40'}`} />
                         </div>
                     </div>
 
@@ -1743,8 +1741,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[9px] text-gray-500 uppercase tracking-tight">{t('GUARD_DESC_SHORT') || "Messages only from followers"}</div>
                         </div>
                         <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('settings', { ...user.settings, dmFollowersOnly: v }); } }}
-                            className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 relative border ${isFollowersOnly ? 'bg-blue-500 border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <div className={`absolute top-0.5 bottom-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transform transition-all duration-300 ${isFollowersOnly ? 'right-1 scale-100' : 'left-1 scale-90'}`} />
+                            className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 relative border ${isFollowersOnly ? 'bg-blue-500 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-[#151515] border-white/10'}`}>
+                            <div className={`absolute top-0.5 bottom-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transform transition-all duration-300 ${isFollowersOnly ? 'translate-x-5' : 'translate-x-0 opacity-40'}`} />
                         </div>
                     </div>
 
@@ -2036,7 +2034,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
                                             <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); addToast('Profile link copied!', 'success'); }}
+                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); }}
                                                     className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
                                                 >
                                                     <Icons.Share className="w-4 h-4 text-gray-400" />
