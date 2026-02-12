@@ -7,11 +7,41 @@ import mongoose from "mongoose";
 
 const router = express.Router();
 
+// GET ALL ACTIVE STORIES (Live, 24h window)
+router.get("/stories", verifyToken, async (req, res) => {
+    try {
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const stories = await Post.find({
+            isStory: true,
+            createdAt: { $gt: twentyFourHoursAgo }
+        })
+        .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
+        .sort({ createdAt: -1 })
+        .lean();
+
+        const currentUserId = String(req.user?.id || req.user?.userId || '');
+        const isFounder = req.user?.role === 'Founder';
+
+        const filtered = stories.filter(p => {
+             const a = p.author || {};
+             const isOwner = String(a?._id || a) === currentUserId;
+             const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+             const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+             return !isPrivate || isOwner || isFollower || isFounder;
+        });
+
+        res.status(200).json(filtered);
+    } catch (err) {
+        console.error("STORIES ERROR:", err);
+        res.status(500).json(err);
+    }
+});
+
 // GET ALL POSTS (Feed)
 router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
-        const posts = await Post.find()
+        const posts = await Post.find({ isStory: { $ne: true } })
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 })
