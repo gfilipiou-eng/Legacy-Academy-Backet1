@@ -1984,6 +1984,33 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const fileRef = useRef(null);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+    useEffect(() => {
+        if (profileUser?._id === currentUser?._id) {
+            setUserData(currentUser);
+        } else if (profileUser?._id) {
+            axios.get(`/users/find/${profileUser._id || profileUser}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
+        }
+    }, [profileUser, currentUser]);
+
+    const displayUser = React.useMemo(() => {
+        if (!profileUser) return null;
+        const profileUserId = String(profileUser?._id || profileUser);
+        const currentUserId = String(currentUser?._id || '');
+        const isMe = profileUserId === currentUserId;
+
+        const base = isMe ? currentUser : (userData || profileUser);
+        const live = allUsers.find(u => String(u._id) === String(base?._id));
+
+        // CRITICAL SYNC: Merge live data (online status) with base data (bio, username)
+        // If it's ME, prioritize currentUser object which is the most fresh
+        if (isMe) {
+            return { ...base, ...live, bio: currentUser?.bio || base?.bio || live?.bio };
+        }
+        return live || base;
+    }, [profileUser, currentUser, userData, allUsers]);
+
+    const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
+
     const toggleDate = (dateKey) => {
         // Disabled clicking - folders are always open
     };
@@ -2055,33 +2082,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         });
         return groups;
     }, [userPosts, currentUser, lang]);
-
-    useEffect(() => {
-        if (profileUser?._id === currentUser?._id) {
-            setUserData(currentUser);
-        } else if (profileUser?._id) {
-            axios.get(`/users/find/${profileUser._id || profileUser}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
-        }
-    }, [profileUser, currentUser]);
-
-    const displayUser = React.useMemo(() => {
-        if (!profileUser) return null;
-        const profileUserId = String(profileUser?._id || profileUser);
-        const currentUserId = String(currentUser?._id || '');
-        const isMe = profileUserId === currentUserId;
-
-        const base = isMe ? currentUser : (userData || profileUser);
-        const live = allUsers.find(u => String(u._id) === String(base?._id));
-
-        // CRITICAL SYNC: Merge live data (online status) with base data (bio, username)
-        // If it's ME, prioritize currentUser object which is the most fresh
-        if (isMe) {
-            return { ...base, ...live, bio: currentUser?.bio || base?.bio || live?.bio };
-        }
-        return live || base;
-    }, [profileUser, currentUser, userData, allUsers]);
-
-    const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
 
     if (!isOpen || !profileUser) return null;
 
