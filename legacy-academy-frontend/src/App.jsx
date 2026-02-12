@@ -2066,13 +2066,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
-        const base = (profileUser?._id === currentUser?._id || profileUser === currentUser?._id) ? currentUser : (userData || profileUser);
+        const profileUserId = String(profileUser?._id || profileUser);
+        const currentUserId = String(currentUser?._id || '');
+        const base = (profileUserId === currentUserId) ? currentUser : (userData || profileUser);
+
         // Sync with allUsers for real-time online status
         const live = allUsers.find(u => String(u._id) === String(base?._id));
         return live || base;
     }, [profileUser, currentUser, userData, allUsers]);
 
-    const isMe = displayUser?._id === currentUser?._id;
+    const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
 
     if (!isOpen || !profileUser) return null;
 
@@ -2150,8 +2153,17 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             </div>
 
                             <div className="space-y-2 text-left">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
-                                <textarea value={bio} onChange={e => setBio(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32" placeholder={t('BIO_PH')} />
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
+                                <div className="relative">
+                                    <textarea
+                                        value={bio}
+                                        onChange={e => setBio(e.target.value)}
+                                        maxLength={500}
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 transition-all"
+                                        placeholder={t('BIO_PH')}
+                                    />
+                                    <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
+                                </div>
                             </div>
 
                             <button onClick={async () => {
@@ -2257,11 +2269,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
                                 </div>
-                                {displayUser?.role === 'Founder' && (
-                                    <div className="mb-2 text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.2em] animate-pulse">
-                                        {t('WELCOME_FOUNDER')}
-                                    </div>
-                                )}
                                 <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">
                                     {parseHashtags(displayUser?.bio || t("DEFAULT_BIO"))}
                                 </div>
@@ -3569,9 +3576,6 @@ const App = () => {
                                                 localStorage.setItem('language', res.data.user.settings?.language || 'en');
                                                 localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
                                                 setUser(res.data.user);
-                                                if (res.data.user?.role === 'Founder') {
-                                                    addToast(t('WELCOME_FOUNDER'), 'success');
-                                                }
                                             } catch (e) {
                                                 alert(e.response?.data?.message || "Invalid Credentials.");
                                             } finally {
@@ -3610,8 +3614,19 @@ const App = () => {
                                                 {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                             </button>
                                         </div>
-                                        <div className="relative mb-4">
-                                            <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-20" />
+                                        <div className="space-y-2 text-left mb-4">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
+                                            <div className="relative">
+                                                <textarea
+                                                    placeholder={t('BIO_PH')}
+                                                    id="r-bio"
+                                                    value={formData.bio || ''}
+                                                    onChange={handleAuthInputChange}
+                                                    maxLength={500}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-24"
+                                                />
+                                                <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/20 uppercase tracking-widest">{(formData.bio || '').length} / 500</div>
+                                            </div>
                                         </div>
 
                                         <div className="flex gap-2 mb-6">
@@ -3652,7 +3667,7 @@ const App = () => {
                                                 fd.append('username', formData.username);
                                                 fd.append('email', formData.email);
                                                 fd.append('password', formData.password);
-                                                if (formData.bio) fd.append('bio', formData.bio);
+                                                if (formData.bio !== undefined) fd.append('bio', formData.bio);
                                                 fd.append('language', formData.language || 'en');
                                                 fd.append('theme', formData.theme || '#ffd700');
                                                 if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
@@ -3664,9 +3679,6 @@ const App = () => {
                                                 localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
                                                 localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
                                                 setUser(res.data.user);
-                                                if (res.data.user?.role === 'Founder') {
-                                                    addToast(t('WELCOME_FOUNDER'), 'success');
-                                                }
                                                 setAuthMode('login'); // Actually usually we just start the app, but here we set User state so the main app renders
                                             } catch (e) {
                                                 alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
