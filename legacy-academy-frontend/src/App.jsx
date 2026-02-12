@@ -1997,7 +1997,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     }, [isOpen, profileUser?._id]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
-        if (p.isStory) return false;
+        // Strict exclusion of stories from the main grid
+        if (p.isStory === true || String(p.isStory) === 'true') return false;
+
         const isVideo = isYouTubeUrl(p.videoUrl) || (p.videoUrl && p.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         if (activeTab === 'VIDEO') return isVideo;
         if (activeTab === 'POSTS') return !isVideo;
@@ -2196,22 +2198,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </>
                                     )}
                                 </div>
-                                <div className="flex-1 flex justify-around items-center bg-white/5 p-4 rounded-2xl border border-white/5">
+                                <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
-                                        <div className="font-black text-white text-lg sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">{t('POSTS')}</div>
+                                        <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
+                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-2">
-                                        <span className="text-lg sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
-                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0)}
+                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                        <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
+                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
+                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-2">
-                                        <span className="text-lg sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
-                                            {displayUser?.following?.filter(id => allUsers.some(u => String(u._id) === String(id)))?.length || 0}
+                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                        <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
+                                            {displayUser?.following?.length || 0}
                                         </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{t('FOLLOWING')}</span>
+                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING') || 'FOLLOWING'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2306,13 +2308,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                 {userStories.map(s => (
                                                     <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                         <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 group-hover:scale-105 transition-transform shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
-                                                            {s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm)$/i)) ? (
+                                                            {(s.thumbnailUrl || (s.image && !s.image.match(/\.(mp4|mov|webm|m4v)$/i))) ? (
                                                                 <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                             ) : (
-                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                                                                    <Icons.Play className="w-6 h-6 text-[var(--gold-primary)]" />
-                                                                    {/* Ensure video doesn't autoplay in thumbnail view */}
-                                                                    <video src={resolveMediaUrl(s.image)} className="absolute inset-0 w-full h-full object-cover opacity-50" muted playsInline />
+                                                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative shadow-inner">
+                                                                    <img src={resolveMediaUrl(s.image, null, false, true)} className="absolute inset-0 w-full h-full object-cover rounded-full opacity-60 group-hover:opacity-80 transition-opacity" />
+                                                                    <Icons.Play className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
                                                                 </div>
                                                             )}
                                                         </div>
