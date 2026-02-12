@@ -1077,7 +1077,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     const [showMenu, setShowMenu] = useState(false);
 
     // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
-    if (post.isStory) return null;
+    // Safety check: Do not render stories as posts
+    if (post.isStory === true || String(post.isStory) === 'true') return null;
 
     const isFounder = user?.role === 'Founder';
     const isPostAuthorFounder = post.author?.role === 'Founder';
