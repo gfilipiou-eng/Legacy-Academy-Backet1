@@ -39,7 +39,8 @@ const PostSchema = new mongoose.Schema({
   boostExpiry: Date,  // When boost expires
   visibility: { type: String, enum: ['public', 'followers', 'private'], default: 'public' },
   isPrivate: { type: Boolean, default: false }, // Denormalized for quick feed filtering
-  isFollowersOnly: { type: Boolean, default: false } // Denormalized for quick feed filtering
+  isFollowersOnly: { type: Boolean, default: false }, // Denormalized for quick feed filtering
+  isStory: { type: Boolean, default: false } // Temporary intelligence (Highlights)
 
 }, { timestamps: true });
 

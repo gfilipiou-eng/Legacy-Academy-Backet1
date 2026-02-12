@@ -481,7 +481,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       role: req.user.role,
       visibility: visibility || 'public',
       isPrivate: author?.isPrivate || false,
-      isFollowersOnly: author?.isFollowersOnly || false
+      isFollowersOnly: author?.isFollowersOnly || false,
+      isStory: req.body.isStory === 'true' || req.body.isStory === true
     });
 
     const savedPost = await newPost.save();
