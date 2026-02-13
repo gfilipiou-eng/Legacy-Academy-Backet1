@@ -2852,10 +2852,17 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         const fd = new FormData();
         fd.append('desc', desc);
         const file = fileRef.current?.files[0];
-        const yt = document.getElementById('edit-youtube')?.value;
-        if (typeof yt === 'string') fd.append('videoUrl', yt.trim()); // Append even if empty to allow removal
+
+        // Use state instead of direct DOM access for consistency
+        if (typeof youtubeUrl === 'string') {
+            fd.append('videoUrl', youtubeUrl.trim());
+        }
+
         if (file) {
             fd.append('image', file);
+        } else if (!preview && !youtubeUrl) {
+            // If user cleared everything, we might want to tell backend to remove media
+            // Depending on backend, a specific flag or empty videoUrl might do it.
         }
 
         try {
@@ -2929,16 +2936,31 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         </div>
 
 
-                        <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
+                        <div onClick={() => fileRef.current?.click()} className="cursor-pointer mb-4">
                             {preview ? (
-                                <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner">
-                                    {isVideo ? <video src={preview} className="w-full h-full object-contain" controls /> : <img src={preview} className="w-full h-full object-cover" />}
-                                    <button onClick={(e) => { e.stopPropagation(); setPreview(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
+                                <div className="w-full min-h-[200px] aspect-video rounded-2xl overflow-hidden relative bg-black/60 border border-white/10 shadow-2xl flex items-center justify-center group/preview">
+                                    {isVideo ? (
+                                        <video src={preview} className="w-full h-full object-contain" controls />
+                                    ) : (
+                                        <img src={preview} className="w-full h-full object-contain" alt="Neural Preview" />
+                                    )}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPreview(null);
+                                            setIsVideo(false);
+                                            setYoutubeUrl('');
+                                            if (fileRef.current) fileRef.current.value = '';
+                                        }}
+                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl hover:bg-red-500 text-white transition-all shadow-xl border border-white/10 opacity-0 group-hover/preview:opacity-100"
+                                    >
+                                        <Icons.X className="w-4 h-4" />
+                                    </button>
                                 </div>
                             ) : (
-                                <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
-                                    <Icons.Image className="w-8 h-8 opacity-50" />
-                                    <span className="text-xs font-bold uppercase tracking-widest">{t('UPDATE_MEDIA')}</span>
+                                <div className="w-full py-10 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 hover:bg-white/5 hover:border-[var(--gold-primary)]/40 transition-all text-gray-500 cursor-pointer group">
+                                    <Icons.Image className="w-8 h-8 opacity-30 group-hover:scale-110 group-hover:text-[var(--gold-primary)] transition-all" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-gray-300">{t('UPDATE_MEDIA')}</span>
                                 </div>
                             )}
                             <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
