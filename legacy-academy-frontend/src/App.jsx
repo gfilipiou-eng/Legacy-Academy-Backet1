@@ -1305,9 +1305,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                 <div className="flex items-center gap-3 mt-1">
                                     {/* FOUNDER BADGE */}
                                     {isFounder && (
-                                        <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 shadow-[0_0_15px_rgba(255,215,0,0.1)]">
-                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]">
-                                                <Icons.Ghost className="w-full h-full text-[var(--gold-primary)]" />
+                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]">
+                                                <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
                                             </div>
                                             <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
                                         </div>
@@ -2250,9 +2250,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className={`ml-2 w-3 h-3 rounded-full border-2 border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                     {displayUser?.role === 'Founder' && (
-                                        <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit shadow-[0_0_15px_rgba(255,215,0,0.1)]">
-                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]">
-                                                <Icons.Ghost className="w-full h-full text-[var(--gold-primary)]" />
+                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]">
+                                                <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
                                             </div>
                                             <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
                                         </div>
@@ -2280,7 +2280,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             }}
                                             className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_5px_var(--gold-glow)]'}`} />
+                                            <Icons.Crown className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_5px_var(--gold-glow)]'}`} />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (

@@ -200,9 +200,9 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[11px] font-black text-white hover:text-[var(--gold-primary)] transition-colors cursor-pointer uppercase tracking-tight">{c.authorName}</span>
                                                 {(c.user?.role === 'Founder') && (
-                                                    <div className="flex items-center gap-1.5 bg-[var(--gold-primary)]/10 px-2 py-0.5 rounded-lg border border-[var(--gold-primary)]/20 shadow-[0_0_10px_rgba(255,215,0,0.1)] ml-1">
-                                                        <div className="relative flex items-center justify-center w-3 h-3 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]">
-                                                            <Icons.Ghost className="w-full h-full text-[var(--gold-primary)]" />
+                                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-0.5 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_10px_rgba(255,215,0,0.2)] ml-1">
+                                                        <div className="relative flex items-center justify-center w-3 h-3 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]">
+                                                            <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
                                                         </div>
                                                         <span className="text-[8px] sm:text-[9px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
                                                     </div>
