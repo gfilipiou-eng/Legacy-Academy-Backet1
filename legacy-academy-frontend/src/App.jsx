@@ -1359,7 +1359,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                         {/* DISLIKE */}
                         <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
                             <div className="relative">
-                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''} transition-transform group-hover:rotate-12`} />
+                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''} transition-transform`} />
                             </div>
                             <span className="text-xs font-black">{post.dislikes?.length || 0}</span>
                         </button>
@@ -3385,7 +3385,7 @@ const App = () => {
             const createdPost = res.data;
             playSound('success');
             // Replace temp post with real one
-            setPosts(prev => prev.map(p => p._id === tempId ? createdPost : p));
+            setPosts(prev => prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p));
         } catch (e) {
             console.error("Upload failed", e);
             playSound('error');
