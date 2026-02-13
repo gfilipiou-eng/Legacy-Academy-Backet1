@@ -1194,17 +1194,17 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 };
 
 const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
-    // Comment Recording State (Local to PostCard if possible, but PostCard is complex, simplified here or need dedicated component hook)
-    // Doing quick dirty way: prop drilling or wrapper. Wait, PostCard IS the component. I will add state inside PostCard via refactor or just using the one provided.
-    // Actually PostCard is defined above. I need to add state TO PostCard.
-    // To avoid rewriting the entire PostCard, I will use a ref or internal state if I can't change signature easily.
-    // CHECK: PostCard definition at line 337. It's a functional component, I can add hooks!
-
+    const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
     const commentRecorderRef = useRef(null);
     const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
+
+    const isFounder = post.author?.role === 'Founder';
+    const isCurrentUserFounder = user?.role === 'Founder';
+    const isOwner = String(post.author?._id || post.author) === String(user?._id);
+    const canDelete = isOwner || isCurrentUserFounder;
 
     const stopRecording = (shouldDiscard = false) => {
         discardRef.current = shouldDiscard;
@@ -1254,8 +1254,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
         }
     };
 
-
-
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
 
@@ -1299,27 +1297,34 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="font-black text-white text-sm sm:text-base uppercase tracking-tighter hover:text-[var(--gold-primary)] transition-colors cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
-                                <VerifiedBadge isFounder={post.author?.role === 'Founder'} className="w-4 h-4" />
+                                <VerifiedBadge isFounder={isFounder} className="w-4 h-4" />
                             </div>
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, (k) => k, 'en')}</span>
-                        </div>
-                    </div>
 
-                    <div className="flex items-center gap-1 sm:gap-2">
-                        {post.author?.role === 'Founder' && (
-                            <div className="flex items-center gap-1.5 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent pl-2 pr-4 py-1 rounded-xl border-l-2 border-[var(--gold-primary)] shadow-lg shadow-[var(--gold-primary)]/10 animate-fade-in">
-                                <FounderBadge className="w-4 h-4" />
-                                <span className="text-[9px] text-[var(--gold-primary)] font-black tracking-[0.2em] uppercase">FOUNDER</span>
-                            </div>
-                        )}
-                        {(String(post.author?._id || post.author) === String(user?._id) || user?.role === 'Founder') && (
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onDelete(post._id); }}
-                                className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-red-500/10 hover:border-red-500/30 text-gray-500 hover:text-red-500 transition-all active:scale-90"
-                            >
-                                <Icons.Trash className="w-5 h-5 text-red-500" />
-                            </button>
-                        )}
+                            {/* FOUNDER & DELETE SECTION BELOW NAME */}
+                            {(isFounder || canDelete) && (
+                                <div className="flex items-center gap-3 mt-1">
+                                    {/* FOUNDER BADGE */}
+                                    {isFounder && (
+                                        <span className="text-[9px] text-[var(--gold-primary)] font-black tracking-[0.2em] uppercase">FOUNDER</span>
+                                    )}
+
+                                    {/* DELETE ICON / BUTTON */}
+                                    {canDelete && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onDelete(post._id); }}
+                                            className="hover:bg-red-500/10 rounded-full p-1 transition-colors"
+                                            title="Delete Post"
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-red-500">
+                                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, t, lang)}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -1337,18 +1342,29 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                 <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
                             ) : post.image && (
-                                <img src={resolveMediaUrl(post.image)} alt="Intel" className="w-full h-auto object-contain bg-[#050505]" onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} />
+                                <img src={resolveMediaUrl(post.image)} alt="Media" className="w-full h-auto object-contain bg-[#050505]" onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} />
                             )}
                         </div>
                     )}
                 </div>
 
                 <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
-                    <div className="flex items-center gap-10">
-                        <button onClick={() => onLike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                    <div className="flex items-center gap-2 xs:gap-6 sm:gap-10">
+                        {/* LIKE */}
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
                             <Icons.Heart className={`w-6 h-6 ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} />
                             <span className="text-xs font-black">{post.likes?.length || 0}</span>
                         </button>
+
+                        {/* DISLIKE */}
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                            <div className="relative">
+                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''} transition-transform group-hover:rotate-12`} />
+                            </div>
+                            <span className="text-xs font-black">{post.dislikes?.length || 0}</span>
+                        </button>
+
+                        {/* COMMENTS */}
                         <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2.5 text-gray-500 hover:text-sky-400 transition-all">
                             <Icons.MessageSquare className="w-6 h-6" />
                             <span className="text-xs font-black">{post.comments?.length || 0}</span>
@@ -1370,7 +1386,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                     <textarea
                                         value={commentText}
                                         onChange={(e) => setCommentText(e.target.value)}
-                                        placeholder="Add a comment..."
+                                        placeholder={t('WRITE_COMMENT')}
                                         className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
                                     />
                                     <div className="absolute bottom-2 left-2 flex gap-2">
