@@ -93,6 +93,61 @@ export const playSound = (type) => {
         osc2.start();
         osc1.stop(ctx.currentTime + 0.24);
         osc2.stop(ctx.currentTime + 0.2);
+    } else if (type === 'cyber_delete' || type === 'digital_shatter') {
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const noise = ctx.createBufferSource();
+        const bufferSize = ctx.sampleRate * 0.2;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize / 4));
+
+        noise.buffer = buffer;
+        osc1.type = 'sawtooth';
+        osc1.frequency.setValueAtTime(400, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.2);
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(120, ctx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+        noise.connect(gain);
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        noise.start();
+        osc1.start();
+        osc2.start();
+        osc1.stop(ctx.currentTime + 0.2);
+        osc2.stop(ctx.currentTime + 0.2);
+    } else if (type === 'cyber_scroll') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+    } else if (type === 'cyber_click') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(1500, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.02);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.02);
     } else if (type === 'magic' || type === 'success') {
         // Ethereal chime pulse
         for (let i = 0; i < 3; i++) {
@@ -168,4 +223,27 @@ export const playSound = (type) => {
     }
 };
 
-export const explodeEffect = () => confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 }, colors: ['#ff4444', '#ff6666', '#ffd700'], gravity: 1.2, scalar: 0.9 });
+export const explodeEffect = () => confetti({
+    particleCount: 80,
+    spread: 100,
+    origin: { y: 0.6 },
+    colors: ['#ff0000', '#ffffff', '#222222'],
+    gravity: 2,
+    scalar: 0.7,
+    shapes: ['square'],
+    ticks: 150
+});
+
+export const cyberDeleteEffect = () => {
+    confetti({
+        particleCount: 150,
+        spread: 180,
+        origin: { y: 0.5 },
+        colors: ['#ff0000', '#000000', '#ffffff'],
+        gravity: 0.8,
+        scalar: 1.2,
+        shapes: ['square'],
+        ticks: 60,
+        disableForReducedMotion: true
+    });
+};

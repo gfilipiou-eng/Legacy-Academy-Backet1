@@ -764,7 +764,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         if (videoRef.current.paused) {
             videoRef.current.play();
             setIsPlaying(true);
-            playSound('pop');
+            playSound('cyber_scroll');
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
@@ -1566,7 +1566,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
             }));
-            playSound('pop');
+            playSound('cyber_scroll');
         } catch (e) {
             const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
             const fullOutput = e.response?.data ? JSON.stringify(e.response.data) : 'No response body';
@@ -1784,7 +1784,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-            playSound('pop');
+            playSound('cyber_scroll');
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
@@ -2708,7 +2708,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             setSaving(true);
             await axios.put(`/posts/${post._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
             onSuccess();
-            playSound('pop');
+            playSound('cyber_scroll');
         } catch (e) {
             console.error("Edit failed", e);
             const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
@@ -2889,7 +2889,7 @@ const App = () => {
     const scrollToTop = () => {
         if (mainScrollRef.current) {
             mainScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-            playSound('pop');
+            playSound('cyber_scroll');
         }
     };
 
@@ -3329,7 +3329,7 @@ const App = () => {
             console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment with FormData`);
             res = await axios.post(`/posts/${postId}/comment`, formData);
             const updatedComments = res.data;
-            playSound('pop');
+            playSound('cyber_scroll');
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
         } catch (e) {
@@ -3388,7 +3388,7 @@ const App = () => {
                 fetchUsers();
             }
 
-            playSound('pop');
+            playSound('cyber_scroll');
         } catch (e) {
             console.error('Follow failed', e);
             fetchUsers();
@@ -3429,7 +3429,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-            playSound('pop');
+            playSound('cyber_scroll');
         } catch (e) {
             console.error(`[HANDSHAKE] Accept Error:`, e);
             fetchNotifications(); // Revert by fetching fresh
@@ -3471,7 +3471,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-            playSound('pop');
+            playSound('cyber_scroll');
         } catch (e) {
             console.error("[HANDSHAKE] Reject Error:", e);
             fetchNotifications();
@@ -3514,7 +3514,8 @@ const App = () => {
                 }
                 return p;
             }));
-            playSound('sword');
+            playSound('cyber_delete');
+            cyberDeleteEffect();
         } catch (err) {
             console.error("Failed to delete comment", err);
         }
@@ -3536,9 +3537,9 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } };
+    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('cyber_delete'); cyberDeleteEffect(); } catch (e) { } };
 
-    const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
+    const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); playSound('cyber_click'); };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
         if (user?.settings?.language) {
@@ -3560,10 +3561,11 @@ const App = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
+        playSound('cyber_click');
         window.location.reload();
     };
 
-    const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); } catch (e) { } };
+    const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); playSound('cyber_delete'); cyberDeleteEffect(); } catch (e) { } };
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
@@ -3675,7 +3677,7 @@ const App = () => {
                                                     {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
                                                         <button
                                                             key={c}
-                                                            onClick={() => { playSound('pop'); setFormData(prev => ({ ...prev, theme: c })); }}
+                                                            onClick={() => { playSound('cyber_click'); setFormData(prev => ({ ...prev, theme: c })); }}
                                                             className={`w-7 h-7 rounded-lg border-2 transition-all relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/20'}`}
                                                             style={{ backgroundColor: c }}
                                                         >
@@ -3888,61 +3890,55 @@ const App = () => {
                         </div>
                     </main>
 
-                    {
-                        (!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                            <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                                <div className="absolute -top-20 right-4 flex items-center gap-3 pointer-events-auto">
-                                    <AnimatePresence>
-                                        {showScrollTop && (
-                                            <motion.button
-                                                initial={{ opacity: 0, x: 20, scale: 0.8 }}
-                                                animate={{ opacity: 1, x: 0, scale: 1 }}
-                                                exit={{ opacity: 0, x: 20, scale: 0.8 }}
-                                                onClick={scrollToTop}
-                                                className="w-12 h-12 bg-white/10 backdrop-blur-xl text-white rounded-full flex items-center justify-center shadow-2xl border border-white/20 active:scale-90 transition-all hover:bg-white/20"
-                                            >
-                                                <Icons.ArrowUp className="w-5 h-5" />
-                                            </motion.button>
-                                        )}
-                                    </AnimatePresence>
-                                    <button
-                                        onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }}
-                                        className="w-12 h-12 bg-white/10 backdrop-blur-xl text-white rounded-full flex items-center justify-center shadow-2xl border border-white/20 active:scale-90 transition-all hover:bg-white/20 group"
+                    <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
+                        <div className="absolute -top-20 right-4 flex items-center gap-3 pointer-events-auto">
+                            <AnimatePresence>
+                                {showScrollTop && (
+                                    <motion.button
+                                        initial={{ opacity: 0, x: 50, scale: 0 }}
+                                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                                        exit={{ opacity: 0, x: 50, scale: 0 }}
+                                        onClick={() => { scrollToTop(); playSound('cyber_scroll'); }}
+                                        className="w-12 h-12 bg-white/10 backdrop-blur-2xl text-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] border border-white/20 active:scale-90 transition-all hover:bg-white/20"
                                     >
-                                        <Icons.Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                                    </button>
-                                </div>
-                                <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
-                                    <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                        <Icons.Home className="w-5 h-5 relative z-10" />
-                                    </button>
+                                        <Icons.ArrowUp className="w-5 h-5" />
+                                    </motion.button>
+                                )}
+                            </AnimatePresence>
+                            <button
+                                onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }}
+                                className="w-12 h-12 bg-white/10 backdrop-blur-2xl text-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] border border-white/20 active:scale-90 transition-all hover:bg-white/20 group"
+                            >
+                                <Icons.Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                            </button>
+                        </div>
+                        {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
+                            <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
+                                <button onClick={() => { setActiveTab('home'); playSound('cyber_click'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                    <Icons.Home className="w-5 h-5 relative z-10" />
+                                </button>
 
-                                    <button onClick={() => { setActiveTab('search'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                        <Icons.Search className="w-5 h-5 relative z-10" />
-                                    </button>
+                                <button onClick={() => { setActiveTab('search'); playSound('cyber_click'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                    <Icons.Search className="w-5 h-5 relative z-10" />
+                                </button>
 
-                                    <button onClick={() => { setActiveTab('alerts'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
-                                        <div className="relative z-10">
-                                            <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
-                                            {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
-                                        </div>
-                                    </button>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_click'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                    <div className="relative z-10">
+                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                                        {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
+                                    </div>
+                                </button>
 
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-
-
-
-                                    <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
-
-                                    <button onClick={() => { viewProfile(user); playSound('pop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
-                                            <ProfileAvatar user={user} key={imgKey} />
-                                        </div>
-                                    </button>
-                                </div>
+                                <button onClick={() => { viewProfile(user); playSound('cyber_click'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
+                                        <ProfileAvatar user={user} key={imgKey} />
+                                    </div>
+                                </button>
                             </div>
-                        )
-                    }
+                        )}
+                    </div>
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
