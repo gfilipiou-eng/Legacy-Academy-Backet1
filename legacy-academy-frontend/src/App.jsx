@@ -630,9 +630,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
                                 className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
-                                </svg>
+                                <Icons.MessageSquare className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
                                 <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                             </button>
                         </div>
@@ -689,7 +687,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     >
                                         <input
                                             id={`comment-input-${post._id}`}
-                                            placeholder={t('ENGAGE')}
+                                            placeholder={t('FOUNDER_PLACEHOLDER')}
                                             value={commentText}
                                             onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
                                             className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
@@ -923,7 +921,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageCircle className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageSquare className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
                 {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
                 {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
@@ -1400,7 +1398,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
                                                         className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                                     >
-                                                        <Icons.WalkieTalkie className="w-4 h-4" />
+                                                        <Icons.Mic className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         type="submit"
@@ -1607,16 +1605,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.WalkieTalkie className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
+                                    <Icons.Whisper className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
                                     {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
-                            </div>
-                            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 shadow-inner relative overflow-hidden group/warn">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-red-500/40" />
-                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider leading-tight block pl-3">
-                                    {t('MESSAGES_SUBTITLE')}
-                                </span>
                             </div>
                         </div>
                         <div className="relative">
@@ -2430,7 +2422,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                             {/* STATS OVERLAY on hover */}
                                                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
                                                                                 <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageCircle className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
+                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageSquare className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
                                                                             </div>
                                                                         </div>
                                                                     ))}
@@ -3878,7 +3870,7 @@ const App = () => {
                                     </button>
 
                                     <button onClick={() => { setIsChatOpen(true); playSound('pop'); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${isChatOpen ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
-                                        <Icons.WalkieTalkie className="w-5 h-5" />
+                                        <Icons.Whisper className="w-5 h-5" />
                                     </button>
 
 
