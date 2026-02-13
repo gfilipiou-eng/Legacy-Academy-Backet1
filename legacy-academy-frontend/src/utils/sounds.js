@@ -137,25 +137,25 @@ export const playSound = (type) => {
         osc.start();
         osc.stop(ctx.currentTime + 0.05);
     } else if (type === 'cyber_click') {
-        // LUXURY PREMIUM TAP: Two layers - Crystal chime + Velvet sub
+        // LUXURY PREMIUM TAP: Shorter, tighter, more precise
         const crystal = ctx.createOscillator();
         const velvet = ctx.createOscillator();
         const cg = ctx.createGain();
         const vg = ctx.createGain();
 
-        // Crystal layer (High frequency precision)
+        // Crystal layer (Sharp precision)
         crystal.type = 'sine';
-        crystal.frequency.setValueAtTime(3200, ctx.currentTime);
-        crystal.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.02);
-        cg.gain.setValueAtTime(0.04, ctx.currentTime);
-        cg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+        crystal.frequency.setValueAtTime(3500, ctx.currentTime);
+        crystal.frequency.exponentialRampToValueAtTime(2800, ctx.currentTime + 0.015);
+        cg.gain.setValueAtTime(0.035, ctx.currentTime);
+        cg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
 
-        // Velvet layer (Deep luxury body)
+        // Velvet layer (Tight taptic body)
         velvet.type = 'sine';
-        velvet.frequency.setValueAtTime(80, ctx.currentTime);
-        velvet.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.04);
-        vg.gain.setValueAtTime(0.06, ctx.currentTime);
-        vg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        velvet.frequency.setValueAtTime(100, ctx.currentTime);
+        velvet.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.02);
+        vg.gain.setValueAtTime(0.05, ctx.currentTime);
+        vg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
 
         crystal.connect(cg);
         velvet.connect(vg);
@@ -164,8 +164,8 @@ export const playSound = (type) => {
 
         crystal.start();
         velvet.start();
-        crystal.stop(ctx.currentTime + 0.05);
-        velvet.stop(ctx.currentTime + 0.05);
+        crystal.stop(ctx.currentTime + 0.03);
+        velvet.stop(ctx.currentTime + 0.03);
     } else if (type === 'magic' || type === 'success') {
         // Ethereal chime pulse
         for (let i = 0; i < 3; i++) {

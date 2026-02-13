@@ -1225,10 +1225,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         </div>
 
                         {/* POST TEXT CONTENT */}
-                        <div onClick={() => {
-                            const isVid = (isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i)));
-                            if (!isVid) onOpenDetail(post);
-                        }} className={`mt-2 text-[14px] sm:text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
+                        <div onClick={() => onOpenDetail(post)} className="mt-2 text-[14px] sm:text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed cursor-pointer">
                             {translatedDesc ? (
                                 <div className="space-y-1">
                                     <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
