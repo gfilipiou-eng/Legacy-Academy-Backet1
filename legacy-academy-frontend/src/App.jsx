@@ -3578,7 +3578,7 @@ const App = () => {
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/Applogo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
                                 </div>
                             </div>
                             <div className="space-y-4">
