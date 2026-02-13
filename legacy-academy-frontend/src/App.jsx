@@ -753,18 +753,71 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => {
     const videoRef = useRef(null);
     const seekRef = useRef(null);
+    const ytPlayerRef = useRef(null);
+    const ytIdRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [progress, setProgress] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    const [isActivated, setIsActivated] = useState(false); // For YouTube activation
+    const [isActivated, setIsActivated] = useState(false);
+    const [duration, setDuration] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
 
     const ytId = getYouTubeId(src);
 
+    // Initialize YouTube API
     useEffect(() => {
-        if (forcePause && videoRef.current && !videoRef.current.paused) {
-            videoRef.current.pause();
+        if (!ytId) return;
+        ytIdRef.current = ytId;
+
+        const loadYT = () => {
+            if (!window.YT) {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        };
+        loadYT();
+
+        window.onYouTubeIframeAPIReady = () => {
+            // This is global, but we handle multiple players via manual init
+        };
+    }, [ytId]);
+
+    const onYTReady = (event) => {
+        ytPlayerRef.current = event.target;
+        if (isMuted) event.target.mute();
+        setDuration(event.target.getDuration());
+    };
+
+    const onYTStateChange = (event) => {
+        if (event.data === window.YT.PlayerState.PLAYING) {
+            setIsPlaying(true);
+            setIsActivated(true);
+        } else if (event.data === window.YT.PlayerState.PAUSED) {
+            setIsPlaying(false);
+        }
+    };
+
+    useEffect(() => {
+        let interval;
+        if (isPlaying && ytPlayerRef.current) {
+            interval = setInterval(() => {
+                const cur = ytPlayerRef.current.getCurrentTime();
+                const dur = ytPlayerRef.current.getDuration();
+                setCurrentTime(cur);
+                setProgress((cur / dur) * 100);
+            }, 500);
+        }
+        return () => clearInterval(interval);
+    }, [isPlaying]);
+
+    useEffect(() => {
+        if (forcePause) {
+            if (ytPlayerRef.current) ytPlayerRef.current.pauseVideo();
+            if (videoRef.current) videoRef.current.pause();
             setIsPlaying(false);
         }
     }, [forcePause]);
@@ -772,11 +825,20 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     const togglePlay = (e) => {
         if (e) e.stopPropagation();
         if (ytId) {
-            setIsActivated(true);
-            setIsPlaying(true);
+            if (!isActivated) setIsActivated(true);
+            if (!ytPlayerRef.current) {
+                // Not ready yet, just wait or re-init
+                return;
+            }
+            if (isPlaying) {
+                ytPlayerRef.current.pauseVideo();
+            } else {
+                ytPlayerRef.current.playVideo();
+            }
             playSound('cyber_click');
             return;
         }
+
         if (!videoRef.current) return;
         if (videoRef.current.paused) {
             videoRef.current.play();
@@ -791,37 +853,46 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 
     const toggleMute = (e) => {
         e.stopPropagation();
-        if (ytId) {
-            setIsMuted(!isMuted);
-            return;
+        const nextMute = !isMuted;
+        setIsMuted(nextMute);
+
+        if (ytId && ytPlayerRef.current) {
+            if (nextMute) ytPlayerRef.current.mute();
+            else ytPlayerRef.current.unMute();
+        } else if (videoRef.current) {
+            videoRef.current.muted = nextMute;
         }
-        if (!videoRef.current) return;
-        videoRef.current.muted = !videoRef.current.muted;
-        setIsMuted(videoRef.current.muted);
+        playSound('cyber_click');
     };
 
     const handleTimeUpdate = () => {
         if (!videoRef.current || isDragging) return;
         const p = (videoRef.current.currentTime / videoRef.current.duration) * 100;
         setProgress(p);
+        setCurrentTime(videoRef.current.currentTime);
+        setDuration(videoRef.current.duration);
     };
 
     const handleSeek = (e) => {
-        if (ytId) return; // YouTube seek via iframe controls or API (complex)
-        if (!videoRef.current || !seekRef.current) return;
+        if (!seekRef.current) return;
         const rect = seekRef.current.getBoundingClientRect();
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
         const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-        videoRef.current.currentTime = pos * videoRef.current.duration;
-        setProgress(pos * 100);
+
+        if (ytId && ytPlayerRef.current) {
+            const goTo = pos * ytPlayerRef.current.getDuration();
+            ytPlayerRef.current.seekTo(goTo, true);
+            setProgress(pos * 100);
+            setCurrentTime(goTo);
+        } else if (videoRef.current) {
+            videoRef.current.currentTime = pos * videoRef.current.duration;
+            setProgress(pos * 100);
+        }
     };
 
     useEffect(() => {
-        const handleMove = (e) => {
-            if (isDragging) handleSeek(e);
-        };
+        const handleMove = (e) => { if (isDragging) handleSeek(e); };
         const handleEnd = () => setIsDragging(false);
-
         if (isDragging) {
             window.addEventListener('mousemove', handleMove);
             window.addEventListener('mouseup', handleEnd);
@@ -844,17 +915,45 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     };
 
     const handleMouseDown = (e) => {
-        if (ytId) return;
         e.stopPropagation();
         setIsDragging(true);
         handleSeek(e);
     };
 
+    // Initialize YouTube Player inside component
+    useEffect(() => {
+        if (isActivated && ytId && !ytPlayerRef.current) {
+            const initPlayer = () => {
+                if (window.YT && window.YT.Player) {
+                    new window.YT.Player(`yt-frame-${ytId}`, {
+                        videoId: ytId,
+                        playerVars: {
+                            autoplay: 1,
+                            controls: 0,
+                            modestbranding: 1,
+                            rel: 0,
+                            iv_load_policy: 3,
+                            disablekb: 1,
+                            fs: 0
+                        },
+                        events: {
+                            onReady: onYTReady,
+                            onStateChange: onYTStateChange
+                        }
+                    });
+                } else {
+                    setTimeout(initPlayer, 200);
+                }
+            };
+            initPlayer();
+        }
+    }, [isActivated, ytId]);
+
     const youtubeThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null;
 
     return (
         <div
-            className={`relative group/video overflow-hidden bg-black flex items-center justify-center ${className || ''}`}
+            className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${className || ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={(e) => {
@@ -864,14 +963,13 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
             }}
         >
             {ytId && isActivated ? (
-                <iframe
-                    title="yt-player"
-                    src={`https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`}
-                    className="w-full h-full absolute inset-0 border-none"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                />
-            ) : (
+                <div className="w-full h-full absolute inset-0 pointer-events-none scale-[1.35]">
+                    {/* Scale up to hide YT logo and controls if modded */}
+                    <div id={`yt-frame-${ytId}`} className="w-full h-full" />
+                </div>
+            ) : null}
+
+            {!isActivated || !ytId ? (
                 <>
                     {ytId ? (
                         <img src={youtubeThumb} className="w-full h-full object-cover opacity-60" onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} />
@@ -884,82 +982,78 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             playsInline
                             loop
                             onTimeUpdate={handleTimeUpdate}
-                            onPlay={() => setIsPlaying(true)}
+                            onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
                             className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]"
                         />
                     )}
-
-                    {/* NEURAL OVERLAY */}
-                    <AnimatePresence>
-                        {(isHovered || !isPlaying || isDragging) && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none"
-                            >
-                                <div className="flex flex-col items-start gap-4">
-                                    <div className="flex justify-start items-start gap-2.5">
-                                        {!ytId && (
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('cyber_click'); }}
-                                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
-                                            >
-                                                {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
-                                            </button>
-                                        )}
-                                        {onExpand && (
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); onExpand(); playSound('cyber_click'); }}
-                                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
-                                            >
-                                                <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center justify-center">
-                                    <motion.div
-                                        initial={{ scale: 0.8, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
-                                    >
-                                        {isPlaying && !ytId ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
-                                    </motion.div>
-                                </div>
-
-                                {!ytId && (
-                                    <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
-                                        <div className="flex justify-between text-[10px] font-black text-white/70 uppercase tracking-widest px-1">
-                                            <span>{videoRef.current ? formatTime(videoRef.current.currentTime) : '0:00'}</span>
-                                            <span>{videoRef.current ? formatTime(videoRef.current.duration) : '0:00'}</span>
-                                        </div>
-                                        <div
-                                            ref={seekRef}
-                                            className="w-full h-2 bg-white/10 rounded-full cursor-pointer relative group/seek"
-                                            onMouseDown={handleMouseDown}
-                                            onTouchStart={handleMouseDown}
-                                        >
-                                            <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
-                                            <motion.div
-                                                className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
-                                                style={{ width: `${progress}%` }}
-                                                transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
-                                            />
-                                            <motion.div
-                                                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
-                                                style={{ left: `${progress}%`, marginLeft: '-8px' }}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </>
-            )}
+            ) : null}
+
+            {/* NEURAL OVERLAY - ALWAYS VISIBLE OVER EVERYTHING */}
+            <AnimatePresence>
+                {(isHovered || !isPlaying || isDragging) && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none z-20"
+                    >
+                        <div className="flex flex-col items-start gap-4">
+                            <div className="flex justify-start items-start gap-2.5">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); toggleMute(e); }}
+                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                >
+                                    {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
+                                </button>
+                                {onExpand && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onExpand(); playSound('cyber_click'); }}
+                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                    >
+                                        <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-center">
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                            >
+                                {isPlaying ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
+                            </motion.div>
+                        </div>
+
+                        <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                            <div className="flex justify-between text-[10px] font-black text-white/70 uppercase tracking-widest px-1">
+                                <span>{formatTime(currentTime)}</span>
+                                <span>{formatTime(duration)}</span>
+                            </div>
+                            <div
+                                ref={seekRef}
+                                className="w-full h-2 bg-white/10 rounded-full cursor-pointer relative group/seek"
+                                onMouseDown={handleMouseDown}
+                                onTouchStart={handleMouseDown}
+                            >
+                                <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
+                                <motion.div
+                                    className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
+                                    style={{ width: `${progress}%` }}
+                                    transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
+                                />
+                                <motion.div
+                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
+                                    style={{ left: `${progress}%`, marginLeft: '-8px' }}
+                                />
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div >
     );
 };
