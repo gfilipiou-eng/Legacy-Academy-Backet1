@@ -3721,7 +3721,7 @@ const App = () => {
                                     </button>
 
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
-                                        <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)]" />
+                                        <Icons.Whisper className="w-5 h-5 text-[var(--gold-primary)]" />
                                         <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
@@ -3869,9 +3869,6 @@ const App = () => {
                                         </div>
                                     </button>
 
-                                    <button onClick={() => { setIsChatOpen(true); playSound('pop'); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${isChatOpen ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
-                                        <Icons.Whisper className="w-5 h-5" />
-                                    </button>
 
 
 
