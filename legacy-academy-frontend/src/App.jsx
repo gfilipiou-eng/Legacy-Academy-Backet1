@@ -354,7 +354,7 @@ const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) 
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-4 py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
+                <div className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
                     <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
                         <div className="flex items-center gap-1">
                             <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
@@ -983,7 +983,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
 const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     const { t } = useTranslation(user);
     return (
-        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-black/40">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
@@ -1142,7 +1142,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
+            className={`glass-card mb-3 sm:mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
         >
             {/* ABSOLUTE MENU TOP RIGHT */}
             <div className="absolute top-4 right-4 z-50">
@@ -1193,8 +1193,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
             </div>
 
             {/* WRAPPER LINK FOR DETAILS */}
-            <div className="p-4" >
-                <div className="flex items-start gap-3">
+            <div className="p-3 sm:p-4" >
+                <div className="flex items-start gap-2.5 sm:gap-3">
                     <div className="flex flex-col items-center gap-1 shrink-0">
                         <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer">
                             <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
@@ -1228,7 +1228,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         <div onClick={() => {
                             const isVid = (isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i)));
                             if (!isVid) onOpenDetail(post);
-                        }} className={`mt-2 text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
+                        }} className={`mt-2 text-[14px] sm:text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed ${(isYouTubeUrl(post.videoUrl) || post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? '' : 'cursor-pointer'}`}>
                             {translatedDesc ? (
                                 <div className="space-y-1">
                                     <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
@@ -1321,8 +1321,8 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                         )}
 
                         {/* ACTIONS BAR - TWITTER STYLE BLACK */}
-                        <div className="flex items-center justify-between mt-6 pr-4 relative z-10 py-2 border-t border-white/5">
-                            <div className="flex items-center gap-10 sm:gap-14">
+                        <div className="flex items-center justify-between mt-5 sm:mt-6 pr-2 sm:pr-4 relative z-10 py-2 border-t border-white/5">
+                            <div className="flex items-center gap-6 xs:gap-8 sm:gap-14 leading-none">
                                 <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
@@ -3736,7 +3736,7 @@ const App = () => {
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
-                            <div className="w-full px-4 sm:px-6 py-2 flex items-center justify-between">
+                            <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-14 w-auto object-contain" />
                                 </div>
@@ -3787,7 +3787,7 @@ const App = () => {
                             ) : (
                                 <>
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
-                                    <div className="p-4 sm:p-8">
+                                    <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
