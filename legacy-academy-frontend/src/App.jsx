@@ -508,12 +508,19 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 {/* Image Section - Smaller on mobile for more comment space */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
-                        (isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '')) ? (
-                            <div className="w-full h-full flex items-center justify-center bg-black">
-                                <iframe title="youtube" src={getYouTubeEmbedUrl(post.videoUrl || post.thumbnailUrl || post.image)} className="max-w-full max-h-full" style={{ width: '100%', height: '100%' }} frameBorder="0" allowFullScreen />
-                            </div>
+                        isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
+                            <NeuralVideoPlayer
+                                src={post.videoUrl || post.thumbnailUrl || post.image}
+                                className="w-full h-full"
+                                forcePause={isWritingComment}
+                            />
                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-full" forcePause={isWritingComment} />
+                            <NeuralVideoPlayer
+                                src={resolveMediaUrl(post.videoUrl || post.image)}
+                                poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                className="w-full h-full"
+                                forcePause={isWritingComment}
+                            />
                         ) : (
                             <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
                         )
@@ -751,6 +758,9 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     const [progress, setProgress] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [isActivated, setIsActivated] = useState(false); // For YouTube activation
+
+    const ytId = getYouTubeId(src);
 
     useEffect(() => {
         if (forcePause && videoRef.current && !videoRef.current.paused) {
@@ -760,7 +770,14 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     }, [forcePause]);
 
     const togglePlay = (e) => {
-        e.stopPropagation();
+        if (e) e.stopPropagation();
+        if (ytId) {
+            setIsActivated(true);
+            setIsPlaying(true);
+            playSound('cyber_click');
+            return;
+        }
+        if (!videoRef.current) return;
         if (videoRef.current.paused) {
             videoRef.current.play();
             setIsPlaying(true);
@@ -768,12 +785,17 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
-            playSound('sword');
+            playSound('cyber_click');
         }
     };
 
     const toggleMute = (e) => {
         e.stopPropagation();
+        if (ytId) {
+            setIsMuted(!isMuted);
+            return;
+        }
+        if (!videoRef.current) return;
         videoRef.current.muted = !videoRef.current.muted;
         setIsMuted(videoRef.current.muted);
     };
@@ -785,6 +807,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     };
 
     const handleSeek = (e) => {
+        if (ytId) return; // YouTube seek via iframe controls or API (complex)
         if (!videoRef.current || !seekRef.current) return;
         const rect = seekRef.current.getBoundingClientRect();
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -821,10 +844,13 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     };
 
     const handleMouseDown = (e) => {
+        if (ytId) return;
         e.stopPropagation();
         setIsDragging(true);
         handleSeek(e);
     };
+
+    const youtubeThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null;
 
     return (
         <div
@@ -837,83 +863,103 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                 togglePlay(e);
             }}
         >
-            <video
-                ref={videoRef}
-                src={src}
-                poster={poster}
-                muted={isMuted}
-                playsInline
-                loop
-                onTimeUpdate={handleTimeUpdate}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-                className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]"
-            />
+            {ytId && isActivated ? (
+                <iframe
+                    title="yt-player"
+                    src={`https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`}
+                    className="w-full h-full absolute inset-0 border-none"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                />
+            ) : (
+                <>
+                    {ytId ? (
+                        <img src={youtubeThumb} className="w-full h-full object-cover opacity-60" onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} />
+                    ) : (
+                        <video
+                            ref={videoRef}
+                            src={src}
+                            poster={poster}
+                            muted={isMuted}
+                            playsInline
+                            loop
+                            onTimeUpdate={handleTimeUpdate}
+                            onPlay={() => setIsPlaying(true)}
+                            onPause={() => setIsPlaying(false)}
+                            className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]"
+                        />
+                    )}
 
-            {/* NEURAL OVERLAY */}
-            <AnimatePresence>
-                {(isHovered || !isPlaying || isDragging) && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none"
-                    >
-                        <div className="flex flex-col items-start gap-4">
-                            <div className="flex justify-start items-start gap-2.5">
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('pop'); }}
-                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
-                                >
-                                    {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
-                                </button>
-                                {onExpand && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onExpand(); playSound('pop'); }}
-                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
-                                    >
-                                        <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-center">
+                    {/* NEURAL OVERLAY */}
+                    <AnimatePresence>
+                        {(isHovered || !isPlaying || isDragging) && (
                             <motion.div
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 bg-black/30 flex flex-col justify-between p-4 pointer-events-none"
                             >
-                                {isPlaying ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
-                            </motion.div>
-                        </div>
+                                <div className="flex flex-col items-start gap-4">
+                                    <div className="flex justify-start items-start gap-2.5">
+                                        {!ytId && (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); toggleMute(e); playSound('cyber_click'); }}
+                                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                            >
+                                                {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
+                                            </button>
+                                        )}
+                                        {onExpand && (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onExpand(); playSound('cyber_click'); }}
+                                                className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                            >
+                                                <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
 
-                        <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
-                            <div className="flex justify-between text-[10px] font-black text-white/70 uppercase tracking-widest px-1">
-                                <span>{videoRef.current ? formatTime(videoRef.current.currentTime) : '0:00'}</span>
-                                <span>{videoRef.current ? formatTime(videoRef.current.duration) : '0:00'}</span>
-                            </div>
-                            <div
-                                ref={seekRef}
-                                className="w-full h-2 bg-white/10 rounded-full cursor-pointer relative group/seek"
-                                onMouseDown={handleMouseDown}
-                                onTouchStart={handleMouseDown}
-                            >
-                                <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
-                                <motion.div
-                                    className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
-                                    style={{ width: `${progress}%` }}
-                                    transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
-                                />
-                                <motion.div
-                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
-                                    style={{ left: `${progress}%`, marginLeft: '-8px' }}
-                                />
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                                <div className="flex items-center justify-center">
+                                    <motion.div
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                                    >
+                                        {isPlaying && !ytId ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
+                                    </motion.div>
+                                </div>
+
+                                {!ytId && (
+                                    <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                                        <div className="flex justify-between text-[10px] font-black text-white/70 uppercase tracking-widest px-1">
+                                            <span>{videoRef.current ? formatTime(videoRef.current.currentTime) : '0:00'}</span>
+                                            <span>{videoRef.current ? formatTime(videoRef.current.duration) : '0:00'}</span>
+                                        </div>
+                                        <div
+                                            ref={seekRef}
+                                            className="w-full h-2 bg-white/10 rounded-full cursor-pointer relative group/seek"
+                                            onMouseDown={handleMouseDown}
+                                            onTouchStart={handleMouseDown}
+                                        >
+                                            <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
+                                            <motion.div
+                                                className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
+                                                style={{ width: `${progress}%` }}
+                                                transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
+                                            />
+                                            <motion.div
+                                                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
+                                                style={{ left: `${progress}%`, marginLeft: '-8px' }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </>
+            )}
         </div >
     );
 };
@@ -1272,9 +1318,11 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                             <div className="mt-2 rounded-[1.5rem] overflow-hidden border border-white/10 relative shadow-2xl bg-black/60 aspect-auto" style={{ maxHeight: '600px' }}>
                                 {/* DETECT VIDEO VS IMAGE - DO NOT ZOOM VIDEOS TO PREVENT GLITCHES */}
                                 {isYouTubeUrl(post.videoUrl) ? (
-                                    <div className="w-full aspect-video bg-black">
-                                        <iframe title="youtube-feed" src={getYouTubeEmbedUrl(post.videoUrl)} className="w-full h-full" frameBorder="0" allowFullScreen />
-                                    </div>
+                                    <NeuralVideoPlayer
+                                        src={post.videoUrl}
+                                        className="w-full aspect-video rounded-xl"
+                                        onExpand={() => onOpenDetail(post)}
+                                    />
                                 ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                     <NeuralVideoPlayer
                                         src={resolveMediaUrl(post.videoUrl || post.image)}
