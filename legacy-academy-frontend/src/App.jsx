@@ -3907,9 +3907,9 @@ const App = () => {
                                     </AnimatePresence>
                                     <button
                                         onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }}
-                                        className="w-16 h-16 bg-[var(--gold-primary)] text-black rounded-full flex items-center justify-center shadow-[0_15px_40px_rgba(255,215,0,0.5)] hover:scale-110 active:scale-95 transition-all border-4 border-black group"
+                                        className="w-12 h-12 bg-white/10 backdrop-blur-xl text-white rounded-full flex items-center justify-center shadow-2xl border border-white/20 active:scale-90 transition-all hover:bg-white/20 group"
                                     >
-                                        <Icons.Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-300" />
+                                        <Icons.Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                                     </button>
                                 </div>
                                 <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
