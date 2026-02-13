@@ -3891,19 +3891,27 @@ const App = () => {
                     {
                         (!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                             <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
-                                <AnimatePresence>
-                                    {showScrollTop && (
-                                        <motion.button
-                                            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 20, scale: 0.8 }}
-                                            onClick={scrollToTop}
-                                            className="absolute -top-16 right-4 w-12 h-12 bg-[var(--gold-primary)] text-black rounded-full flex items-center justify-center shadow-[0_0_20px_var(--gold-glow)] pointer-events-auto active:scale-90 transition-all border border-black/20"
-                                        >
-                                            <Icons.ArrowUp className="w-6 h-6" />
-                                        </motion.button>
-                                    )}
-                                </AnimatePresence>
+                                <div className="absolute -top-20 right-4 flex items-center gap-3 pointer-events-auto">
+                                    <AnimatePresence>
+                                        {showScrollTop && (
+                                            <motion.button
+                                                initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                                                animate={{ opacity: 1, x: 0, scale: 1 }}
+                                                exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                                                onClick={scrollToTop}
+                                                className="w-12 h-12 bg-white/10 backdrop-blur-xl text-white rounded-full flex items-center justify-center shadow-2xl border border-white/20 active:scale-90 transition-all hover:bg-white/20"
+                                            >
+                                                <Icons.ArrowUp className="w-5 h-5" />
+                                            </motion.button>
+                                        )}
+                                    </AnimatePresence>
+                                    <button
+                                        onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }}
+                                        className="w-16 h-16 bg-[var(--gold-primary)] text-black rounded-full flex items-center justify-center shadow-[0_15px_40px_rgba(255,215,0,0.5)] hover:scale-110 active:scale-95 transition-all border-4 border-black group"
+                                    >
+                                        <Icons.Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-300" />
+                                    </button>
+                                </div>
                                 <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
                                     <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                         <Icons.Home className="w-5 h-5 relative z-10" />
@@ -3920,12 +3928,6 @@ const App = () => {
                                         </div>
                                     </button>
 
-                                    <button
-                                        onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }}
-                                        className="relative -top-8 w-14 h-14 bg-[var(--gold-primary)] text-black rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(255,215,0,0.4)] hover:scale-110 active:scale-90 transition-all z-[20] border-4 border-black group"
-                                    >
-                                        <Icons.Plus className="w-7 h-7 group-hover:rotate-90 transition-transform duration-300" />
-                                    </button>
 
 
 
