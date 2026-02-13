@@ -424,6 +424,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
     const [showMenu, setShowMenu] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleClearComments = async () => {
         if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
@@ -572,7 +573,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
                     <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
-                        <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">{parseHashtags(post.desc)}</div>
+                        <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
+                            {parseHashtags(post.desc && post.desc.length > 500 && !isExpanded ? post.desc.slice(0, 500) + '...' : post.desc)}
+                            {post.desc && post.desc.length > 500 && (
+                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
+                                    {isExpanded ? t('READ_LESS') : t('READ_MORE')}
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
@@ -1091,6 +1099,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     const [translatedDesc, setTranslatedDesc] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
     if (post.isStory) return null;
@@ -1216,7 +1225,16 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
                                     <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
-                            ) : parseHashtags(post.desc, onHashtagClick)}
+                            ) : (
+                                <>
+                                    {parseHashtags(post.desc && post.desc.length > 500 && !isExpanded ? post.desc.slice(0, 500) + '...' : post.desc, onHashtagClick)}
+                                    {post.desc && post.desc.length > 500 && (
+                                        <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-1 hover:underline">
+                                            {isExpanded ? t('READ_LESS') : t('READ_MORE')}
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </div>
 
                         {post.desc && post.desc.length > 5 && (

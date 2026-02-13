@@ -205,5 +205,7 @@
     "FOLLOWS_YOU": "Follows you",
     "INTEL_COUNT_DETECTED": "{{count}} POSTS DETECTED",
     "INTEL_COUNT_DEPLOYED": "{{count}} POSTS DEPLOYED",
-    "WELCOME_FOUNDER": "Welcome Founder/CEO"
+    "WELCOME_FOUNDER": "Welcome Founder/CEO",
+    "READ_MORE": "...READ MORE",
+    "READ_LESS": "READ LESS"
 }

@@ -205,5 +205,7 @@
     "FOLLOWS_YOU": "Σας ακολουθεί",
     "INTEL_COUNT_DETECTED": "{{count}} ΔΗΜΟΣΙΕΥΣΕΙΣ ΕΝΤΟΠΙΣΤΗΚΑΝ",
     "INTEL_COUNT_DEPLOYED": "{{count}} ΔΗΜΟΣΙΕΥΣΕΙΣ ΠΑΡΑΤΑΧΘΗΚΑΝ",
-    "WELCOME_FOUNDER": "Καλωσόρισες Founder/CEO"
+    "WELCOME_FOUNDER": "Καλωσόρισες Founder/CEO",
+    "READ_MORE": "...ΔΙΑΒΑΣΤΕ ΠΕΡΙΣΣΟΤΕΡΑ",
+    "READ_LESS": "ΛΙΓΟΤΕΡΑ"
 }
