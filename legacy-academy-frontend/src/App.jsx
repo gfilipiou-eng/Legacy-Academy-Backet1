@@ -977,7 +977,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 
             {/* NEUTRAL POSTER LAYER (Keeps visual consistency until confirmed play) */}
             {(!isActuallyPlaying || !ytId) && (
-                <div className="absolute inset-0 z-10 will-change-transform transform-gpu">
+                <div className={`${ytId ? 'absolute inset-0' : 'relative w-full'} z-10 will-change-transform transform-gpu`}>
                     {ytId ? (
                         <div className="w-full h-full relative bg-[#050505]">
                             <img
@@ -997,7 +997,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             onTimeUpdate={handleTimeUpdate}
                             onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
-                            className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] transition-transform duration-500 will-change-transform transform-gpu"
+                            className="w-full h-auto object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] transition-transform duration-500 will-change-transform transform-gpu"
                         />
                     )}
                 </div>
