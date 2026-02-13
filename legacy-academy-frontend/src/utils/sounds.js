@@ -137,17 +137,35 @@ export const playSound = (type) => {
         osc.start();
         osc.stop(ctx.currentTime + 0.05);
     } else if (type === 'cyber_click') {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(1500, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.02);
-        gain.gain.setValueAtTime(0.02, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.02);
+        // LUXURY PREMIUM TAP: Two layers - Crystal chime + Velvet sub
+        const crystal = ctx.createOscillator();
+        const velvet = ctx.createOscillator();
+        const cg = ctx.createGain();
+        const vg = ctx.createGain();
+
+        // Crystal layer (High frequency precision)
+        crystal.type = 'sine';
+        crystal.frequency.setValueAtTime(3200, ctx.currentTime);
+        crystal.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.02);
+        cg.gain.setValueAtTime(0.04, ctx.currentTime);
+        cg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+
+        // Velvet layer (Deep luxury body)
+        velvet.type = 'sine';
+        velvet.frequency.setValueAtTime(80, ctx.currentTime);
+        velvet.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.04);
+        vg.gain.setValueAtTime(0.06, ctx.currentTime);
+        vg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+
+        crystal.connect(cg);
+        velvet.connect(vg);
+        cg.connect(ctx.destination);
+        vg.connect(ctx.destination);
+
+        crystal.start();
+        velvet.start();
+        crystal.stop(ctx.currentTime + 0.05);
+        velvet.stop(ctx.currentTime + 0.05);
     } else if (type === 'magic' || type === 'success') {
         // Ethereal chime pulse
         for (let i = 0; i < 3; i++) {
