@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -750,7 +750,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
     );
 };
 
-const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => {
+const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }) => {
     const videoRef = useRef(null);
     const seekRef = useRef(null);
     const ytPlayerRef = useRef(null);
@@ -763,28 +763,21 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     const [isActivated, setIsActivated] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
-    const [isActuallyPlaying, setIsActuallyPlaying] = useState(false); // Confirmed playback
+    const [isActuallyPlaying, setIsActuallyPlaying] = useState(false);
+    const playerUniqueId = useMemo(() => `yt-${Math.random().toString(36).substr(2, 9)}`, []);
 
     const ytId = getYouTubeId(src);
 
-    // Initialize YouTube API
+    // Initialize YouTube API once
     useEffect(() => {
         if (!ytId) return;
-        ytIdRef.current = ytId;
-
-        const loadYT = () => {
-            if (!window.YT) {
-                const tag = document.createElement('script');
-                tag.src = "https://www.youtube.com/iframe_api";
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            }
-        };
-        loadYT();
-
-        window.onYouTubeIframeAPIReady = () => {
-            // This is global, but we handle multiple players via manual init
-        };
+        if (!window._yt_api_loading) {
+            window._yt_api_loading = true;
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
     }, [ytId]);
 
     const onYTReady = (event) => {
@@ -797,7 +790,8 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         if (event.data === window.YT.PlayerState.PLAYING) {
             setIsPlaying(true);
             setIsActivated(true);
-            setTimeout(() => setIsActuallyPlaying(true), 200); // Small buffer to ensure first frame is painted
+            // Slight delay to allow first frame to render before hiding poster
+            setTimeout(() => setIsActuallyPlaying(true), 300);
         } else if (event.data === window.YT.PlayerState.PAUSED) {
             setIsPlaying(false);
         }
@@ -807,12 +801,14 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         let interval;
         if (isPlaying && ytPlayerRef.current) {
             interval = setInterval(() => {
-                const cur = ytPlayerRef.current.getCurrentTime();
-                const dur = ytPlayerRef.current.getDuration();
-                if (cur && dur) {
-                    setCurrentTime(cur);
-                    setProgress((cur / dur) * 100);
-                }
+                try {
+                    const cur = ytPlayerRef.current.getCurrentTime();
+                    const dur = ytPlayerRef.current.getDuration();
+                    if (cur && dur) {
+                        setCurrentTime(cur);
+                        setProgress((cur / dur) * 100);
+                    }
+                } catch (e) { }
             }, 500);
         }
         return () => clearInterval(interval);
@@ -820,10 +816,10 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 
     useEffect(() => {
         if (forcePause) {
-            if (ytPlayerRef.current) ytPlayerRef.current.pauseVideo();
+            if (ytPlayerRef.current && ytPlayerRef.current.pauseVideo) ytPlayerRef.current.pauseVideo();
             if (videoRef.current) videoRef.current.pause();
             setIsPlaying(false);
-            setIsActuallyPlaying(false); // Reset actual playing state on force pause
+            setIsActuallyPlaying(false);
         }
     }, [forcePause]);
 
@@ -867,7 +863,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         } else if (videoRef.current) {
             videoRef.current.muted = nextMute;
         }
-        playSound('pop');
+        playSound('cyber_click');
     };
 
     const handleTimeUpdate = () => {
@@ -884,7 +880,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
         const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
 
-        if (ytId && ytPlayerRef.current) {
+        if (ytId && ytPlayerRef.current && ytPlayerRef.current.seekTo) {
             const goTo = pos * ytPlayerRef.current.getDuration();
             ytPlayerRef.current.seekTo(goTo, true);
             setProgress(pos * 100);
@@ -925,12 +921,12 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         handleSeek(e);
     };
 
-    // Initialize YouTube Player inside component
+    // Initialize YouTube Player with unique ID
     useEffect(() => {
         if (isActivated && ytId && !ytPlayerRef.current) {
             const initPlayer = () => {
                 if (window.YT && window.YT.Player) {
-                    new window.YT.Player(`yt-frame-${ytId}`, {
+                    new window.YT.Player(playerUniqueId, {
                         videoId: ytId,
                         playerVars: {
                             autoplay: 1,
@@ -940,7 +936,8 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             iv_load_policy: 3,
                             disablekb: 1,
                             fs: 0,
-                            playsinline: 1
+                            playsinline: 1,
+                            widget_referrer: window.location.origin
                         },
                         events: {
                             onReady: onYTReady,
@@ -948,12 +945,12 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                         }
                     });
                 } else {
-                    setTimeout(initPlayer, 200);
+                    setTimeout(initPlayer, 100);
                 }
             };
             initPlayer();
         }
-    }, [isActivated, ytId]);
+    }, [isActivated, ytId, playerUniqueId]);
 
     const youtubeThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null;
 
@@ -970,10 +967,10 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         >
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
-                <div className={`w-full h-full absolute inset-0 pointer-events-none transform transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
+                <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
                     {/* Ghost Layer to hide YT branding by pushing it way off-screen */}
-                    <div className="absolute top-[-35%] left-[-35%] w-[170%] h-[170%] pointer-events-none select-none">
-                        <div id={`yt-frame-${ytId}`} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
+                    <div className="absolute top-[-35%] left-[-35%] w-[170%] h-[170%] pointer-events-none select-none transform-gpu backface-hidden">
+                        <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
                     {/* Neural Glitch Mask (Subtle glass over YT to hide the 'YouTube' label that sometimes leaks) */}
                     <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none" />
@@ -982,12 +979,12 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
 
             {/* NEUTRAL POSTER LAYER (Keeps visual consistency until confirmed play) */}
             {(!isActuallyPlaying || !ytId) && (
-                <div className="absolute inset-0 z-10 will-change-transform">
+                <div className="absolute inset-0 z-10 will-change-transform transform-gpu">
                     {ytId ? (
                         <div className="w-full h-full relative bg-[#050505]">
                             <img
                                 src={youtubeThumb}
-                                className="w-full h-full object-cover opacity-60"
+                                className="w-full h-full object-cover opacity-60 transform-gpu"
                                 onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
                             />
                         </div>
@@ -1002,7 +999,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             onTimeUpdate={handleTimeUpdate}
                             onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
-                            className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] transition-transform duration-500 will-change-transform"
+                            className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] transition-transform duration-500 will-change-transform transform-gpu"
                         />
                     )}
                 </div>
@@ -1074,7 +1071,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
             </AnimatePresence>
         </div >
     );
-};
+});
 
 // Notification item component for Alerts tab
 const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, lang }) => {
