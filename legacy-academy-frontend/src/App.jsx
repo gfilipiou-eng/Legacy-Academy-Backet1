@@ -3754,7 +3754,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-16 w-auto object-contain" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-32 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
 
