@@ -2250,9 +2250,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className={`ml-2 w-3 h-3 rounded-full border-2 border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                     {displayUser?.role === 'Founder' && (
-                                        <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit">
-                                            <FounderBadge className="w-4 h-4" />
-                                            <span className="text-[var(--gold-primary)] text-[11px] font-black tracking-widest uppercase">{t('FOUNDER_BADGE')}</span>
+                                        <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit shadow-[0_0_15px_rgba(255,215,0,0.1)]">
+                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]">
+                                                <Icons.Ghost className="w-full h-full text-[var(--gold-primary)]" />
+                                            </div>
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
                                         </div>
                                     )}
                                 </div>
@@ -2278,7 +2280,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             }}
                                             className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <Icons.Shield className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_5px_var(--gold-glow)]'}`} />
+                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_5px_var(--gold-glow)]'}`} />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -3817,8 +3819,8 @@ const App = () => {
                     </div>
                 </div>
             ) : (
-                <div className="h-[100dvh] bg-[#050505] text-white relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-black to-black"></div>
+                <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
+                    <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
