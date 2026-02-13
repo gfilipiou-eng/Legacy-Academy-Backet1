@@ -3895,11 +3895,12 @@ const App = () => {
                             <AnimatePresence>
                                 {showScrollTop && (
                                     <motion.button
-                                        initial={{ opacity: 0, x: 50, scale: 0 }}
+                                        initial={{ opacity: 0, x: 80, scale: 0.5 }}
                                         animate={{ opacity: 1, x: 0, scale: 1 }}
-                                        exit={{ opacity: 0, x: 50, scale: 0 }}
+                                        exit={{ opacity: 0, x: 80, scale: 0.5 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                                         onClick={() => { scrollToTop(); playSound('cyber_scroll'); }}
-                                        className="w-12 h-12 bg-white/10 backdrop-blur-2xl text-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] border border-white/20 active:scale-90 transition-all hover:bg-white/20"
+                                        className="w-12 h-12 bg-white/10 backdrop-blur-2xl text-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] border border-white/20 active:scale-90 hover:bg-white/20"
                                     >
                                         <Icons.ArrowUp className="w-5 h-5" />
                                     </motion.button>
