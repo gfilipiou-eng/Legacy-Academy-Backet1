@@ -987,14 +987,9 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                         <div className="w-full h-full relative bg-[#050505]">
                             <img
                                 src={youtubeThumb}
-                                className={`w-full h-full object-cover transition-all duration-700 ${isActivated && !isActuallyPlaying ? 'opacity-40 blur-sm scale-110' : 'opacity-60'}`}
+                                className="w-full h-full object-cover opacity-60"
                                 onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
                             />
-                            {isActivated && !isActuallyPlaying && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-14 h-14 border-[3px] border-[var(--gold-primary)]/10 border-t-[var(--gold-primary)] rounded-full animate-spin shadow-[0_0_20px_rgba(212,175,55,0.2)]" />
-                                </div>
-                            )}
                         </div>
                     ) : (
                         <video
