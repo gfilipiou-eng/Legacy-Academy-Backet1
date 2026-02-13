@@ -1799,15 +1799,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-[20px]"
+                className="absolute inset-0 bg-black/60"
                 onClick={onClose}
             />
 
             <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-gradient-to-b from-[#1a1a1a]/90 to-black/95 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-3xl"
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-2xl will-change-transform"
             >
                 {/* CYBER BACKGROUND ELEMENTS - REFINED */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-30" />
