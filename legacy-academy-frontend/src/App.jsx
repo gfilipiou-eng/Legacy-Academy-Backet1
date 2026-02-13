@@ -413,6 +413,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
     const isOwner = String(author?._id) === String(user?._id);
     const isFounder = user?.role === 'Founder';
+    const [isDescExpanded, setIsDescExpanded] = useState(false);
 
     // Audio Comment State
     const [commentText, setCommentText] = useState('');
@@ -572,11 +573,24 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
                     <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
-                        <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">{parseHashtags(post.desc)}</div>
+                        <div
+                            className={`text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl transition-all duration-300 ${!isDescExpanded && post.desc?.length > 500 ? 'max-h-[160px] overflow-hidden relative' : 'max-h-[400px] overflow-y-auto'}`}
+                        >
+                            {parseHashtags(!isDescExpanded && post.desc?.length > 500 ? post.desc.slice(0, 500) + '...' : post.desc, (tag) => { onClose(); if (onHashtagClick) onHashtagClick(tag); })}
+
+                            {post.desc?.length > 500 && (
+                                <button
+                                    onClick={() => setIsDescExpanded(!isDescExpanded)}
+                                    className="block mt-2 text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] hover:opacity-80 transition-opacity"
+                                >
+                                    {isDescExpanded ? t('SHOW_LESS') || 'SHOW LESS' : t('READ_MORE') || 'READ MORE'}
+                                </button>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
-                        <div className="w-full animate-fade-in space-y-4">
+                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30">
+                        <div className="w-full animate-fade-in space-y-4 pb-20">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                             ) : (
@@ -598,8 +612,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2">
-                        <div className="flex items-center gap-6 sm:gap-8">
+                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2 shrink-0">
+                        <div className="flex items-center gap-6 sm:gap-8 mb-4">
                             <button
                                 type="button"
                                 disabled={loadingActions?.[post._id]}
@@ -630,9 +644,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
                                 className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
-                                </svg>
+                                <Icons.Whisper className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
                                 <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                             </button>
                         </div>
@@ -689,7 +701,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     >
                                         <input
                                             id={`comment-input-${post._id}`}
-                                            placeholder={t('ENGAGE')}
+                                            placeholder={t('FOUNDER_PLACEHOLDER') || 'Σχολιάστε...'}
                                             value={commentText}
                                             onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
                                             className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
@@ -700,7 +712,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
                                                 className={`w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                             >
-                                                <Icons.Mic className="w-5 h-5" />
+                                                <Icons.Whisper className="w-5 h-5" />
                                             </button>
                                             <button
                                                 type="submit"
@@ -1101,6 +1113,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     const isPostAuthorFounder = post.author?.role === 'Founder';
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
     const dislikeCount = post.dislikes?.length || 0;
+    const [isCardDescExpanded, setIsCardDescExpanded] = useState(false);
 
 
 
@@ -1226,7 +1239,19 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
                                     <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
-                            ) : parseHashtags(post.desc, onHashtagClick)}
+                            ) : (
+                                <>
+                                    {parseHashtags(!isCardDescExpanded && post.desc?.length > 500 ? post.desc.slice(0, 500) + '...' : post.desc, onHashtagClick)}
+                                    {post.desc?.length > 500 && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setIsCardDescExpanded(!isCardDescExpanded); }}
+                                            className="block mt-1 text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] hover:opacity-80 transition-opacity"
+                                        >
+                                            {isCardDescExpanded ? t('SHOW_LESS') || 'SHOW LESS' : t('READ_MORE') || 'READ MORE'}
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </div>
 
                         {post.desc && post.desc.length > 5 && (
