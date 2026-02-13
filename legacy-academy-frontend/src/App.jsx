@@ -326,7 +326,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
     );
 };
 
-const CommentItem = ({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang }) => {
+const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
@@ -1072,7 +1072,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 });
 
 // Notification item component for Alerts tab
-const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, lang }) => {
+const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, lang }) => {
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
@@ -1131,7 +1131,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
             )}
         </motion.div>
     );
-};
+});
 
 const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     const { t } = useTranslation(user);
@@ -1193,7 +1193,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     );
 };
 
-const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
     // Comment Recording State (Local to PostCard if possible, but PostCard is complex, simplified here or need dedicated component hook)
     // Doing quick dirty way: prop drilling or wrapper. Wait, PostCard IS the component. I will add state inside PostCard via refactor or just using the one provided.
     // Actually PostCard is defined above. I need to add state TO PostCard.
@@ -1258,351 +1258,500 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
 
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
-    const [showHeart, setShowHeart] = useState(false);
-    const { t, lang } = useTranslation(user);
-    const [translatedDesc, setTranslatedDesc] = useState(null);
-    const [isTranslating, setIsTranslating] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    // Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
-    if (post.isStory) return null;
-
-    const isFounder = user?.role === 'Founder';
-    const isPostAuthorFounder = post.author?.role === 'Founder';
-    const isOwner = String(post.author?._id || post.author) === String(user?._id);
-    const dislikeCount = post.dislikes?.length || 0;
-
-
-
-    const handleDelete = () => {
-        onDelete(post._id);
-    };
 
     const handleDoubleTap = (e) => {
-        e.stopPropagation();
-        const isLiked = Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id));
-        if (!isLiked) {
-            onLike(post._id);
-        }
-        setShowHeart(true);
-        setTimeout(() => setShowHeart(false), 800);
+        e.preventDefault();
+        onLike(post._id);
     };
 
     return (
         <motion.div
             layout
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className={`glass-card mb-3 sm:mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-3xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl overflow-hidden`}
         >
-            {/* ABSOLUTE MENU TOP RIGHT */}
-            <div className="absolute top-4 right-4 z-50">
-                <div className="relative">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                        className="p-2 text-gray-400 hover:text-white transition-all rounded-full bg-black/40 hover:bg-white/10 active:scale-95 shadow-lg border border-white/5 backdrop-blur-md"
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="12" cy="5" r="1" />
-                            <circle cx="12" cy="19" r="1" />
-                        </svg>
-                    </button>
-                    {showMenu && (
-                        <>
-                            <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
-                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                >
-                                    <Icons.Share className="w-4 h-4 text-gray-400" />
-                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
-                                </button>
-                                {isOwner && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
-                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                    >
-                                        <Icons.Edit className="w-4 h-4 text-blue-400" />
-                                        <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
-                                    </button>
-                                )}
-                                {(isOwner || isFounder) && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
-                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
-                                    >
-                                        <Icons.Trash className="w-4 h-4 text-red-500" />
-                                        <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
-                                    </button>
-                                )}
-                            </div>
-                        </>
-                    )}
-                </div>
-            </div>
+            {/* AMBIENT BACKGROUND GLOW */}
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
+            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
 
-            {/* WRAPPER LINK FOR DETAILS */}
-            <div className="p-3 sm:p-4" >
-                <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="flex flex-col items-center gap-1 shrink-0">
-                        <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer">
-                            <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
+            {/* UPLOADING OVERLAY */}
+            {post.isUploading && (
+                <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-[2.5rem] animate-fade-in pointer-events-none">
+                    <div className="w-16 h-16 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_20px_var(--gold-glow)]" />
+                    <div className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] animate-pulse text-lg drop-shadow-md">
+                        TRANSMITTING {post.uploadProgress || 0}%
+                    </div>
+                    <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">ENCRYPTING DATA PACKETS</div>
+                </div>
+            )}
+
+            {/* CARD CONTENT */}
+            <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4 sm:mb-6">
+                    <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-gray-800 to-black p-[1.5px] shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
+                            <div className="w-full h-full rounded-[0.9rem] overflow-hidden">
                                 <ProfileAvatar user={post.author} />
                             </div>
                         </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                            <div className="flex flex-col">
-                                <div className="flex items-center gap-1.5">
-                                    <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
-                                        {post.author?.username}
-                                        <VerifiedBadge isFounder={isPostAuthorFounder} className="w-4 h-4" />
-                                    </span>
-                                </div>
-                                {isPostAuthorFounder && (
-                                    <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit">
-                                        <FounderBadge className="w-4 h-4" />
-                                        <span className="text-[var(--gold-primary)] text-[11px] font-black tracking-widest uppercase">{t('FOUNDER_BADGE')}</span>
-                                    </div>
-                                )}
-                                <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--gold-primary)] font-medium' : 'text-gray-500'}`}>
-                                    @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
-                                </span>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="font-black text-white text-sm sm:text-base uppercase tracking-tighter hover:text-[var(--gold-primary)] transition-colors cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
+                                <VerifiedBadge isFounder={post.author?.role === 'Founder'} className="w-4 h-4" />
                             </div>
-
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, (k) => k, 'en')}</span>
                         </div>
+                    </div>
 
-                        {/* POST TEXT CONTENT */}
-                        <div onClick={() => onOpenDetail(post)} className="mt-2 text-[14px] sm:text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed cursor-pointer">
-                            {translatedDesc ? (
-                                <div className="space-y-1">
-                                    <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
-                                    <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
-                                </div>
-                            ) : (
-                                <>
-                                    {parseHashtags(post.desc && post.desc.length > 500 && !isExpanded ? post.desc.slice(0, 500) + '...' : post.desc, onHashtagClick)}
-                                    {post.desc && post.desc.length > 500 && (
-                                        <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-1 hover:underline">
-                                            {isExpanded ? t('READ_LESS') : t('READ_MORE')}
-                                        </button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-
-                        {post.desc && post.desc.length > 5 && (
+                    <div className="flex items-center gap-1 sm:gap-2">
+                        {post.author?.role === 'Founder' && (
+                            <div className="flex items-center gap-1.5 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent pl-2 pr-4 py-1 rounded-xl border-l-2 border-[var(--gold-primary)] shadow-lg shadow-[var(--gold-primary)]/10 animate-fade-in">
+                                <FounderBadge className="w-4 h-4" />
+                                <span className="text-[9px] text-[var(--gold-primary)] font-black tracking-[0.2em] uppercase">FOUNDER</span>
+                            </div>
+                        )}
+                        {(String(post.author?._id || post.author) === String(user?._id) || user?.role === 'Founder') && (
                             <button
-                                onClick={async (e) => {
-                                    e.stopPropagation();
-                                    if (translatedDesc) {
-                                        setTranslatedDesc(null);
-                                        return;
-                                    }
-                                    setIsTranslating(true);
-                                    try {
-                                        // Use lang from useTranslation (needs to be available)
-                                        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(post.desc)}`);
-                                        const data = await res.json();
-                                        const translated = data[0].map(item => item[0]).join('');
-                                        setTranslatedDesc(translated);
-                                    } catch (e) { console.error(e); }
-                                    finally { setIsTranslating(false); }
-                                }}
-                                className="text-[10px] font-bold text-gray-500 hover:text-[var(--gold-primary)] transition-colors uppercase tracking-widest mb-2"
+                                onClick={(e) => { e.stopPropagation(); onDelete(post._id); }}
+                                className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-red-500/10 hover:border-red-500/30 text-gray-500 hover:text-red-500 transition-all active:scale-90"
                             >
-                                {isTranslating ? '...' : (translatedDesc ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                                <Icons.Trash className="w-5 h-5 text-red-500" />
                             </button>
                         )}
+                    </div>
+                </div>
 
-                        {/* MEDIA CONTENT */}
-                        {(post.image || post.videoUrl) && (
-                            <div className="mt-2 rounded-[1.5rem] overflow-hidden border border-white/10 relative shadow-2xl bg-black/60 aspect-auto" style={{ maxHeight: '600px' }}>
-                                {/* DETECT VIDEO VS IMAGE - DO NOT ZOOM VIDEOS TO PREVENT GLITCHES */}
-                                {isYouTubeUrl(post.videoUrl) ? (
-                                    <NeuralVideoPlayer
-                                        src={post.videoUrl}
-                                        className="w-full aspect-video rounded-xl"
-                                        onExpand={() => onOpenDetail(post)}
-                                    />
-                                ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                    <NeuralVideoPlayer
-                                        src={resolveMediaUrl(post.videoUrl || post.image)}
-                                        poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                        className="w-full h-auto max-h-[600px] rounded-xl"
-                                        onExpand={() => onOpenDetail(post)}
-                                    />
-                                ) : post.image ? (
-                                    <img
-                                        onDoubleClick={handleDoubleTap}
-                                        onClick={() => onOpenDetail(post)}
-                                        src={resolveMediaUrl(post.image)}
-                                        className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer"
-                                        loading="lazy"
-                                    />
-                                ) : null}
+                <div className="space-y-4">
+                    {post.desc && (
+                        <p className="text-[15px] sm:text-[17px] text-white/90 leading-[1.6] font-medium whitespace-pre-wrap break-words px-1">
+                            {parseHashtags(post.desc, (tag) => onHashtagClick(tag))}
+                        </p>
+                    )}
 
-                                {/* ZOOM BUTTON OVERLAY - Only for images, Video has its own */}
-                                {(!post.videoUrl && !(post.image && post.image.match(/\.(mp4|mov|webm)$/i)) && !isYouTubeUrl(post.videoUrl)) && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
-                                        className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--gold-primary)] hover:text-black transition-all active:scale-90 group z-20 shadow-2xl"
-                                    >
-                                        <Icons.Maximize className="w-5 h-5" />
-                                    </button>
-                                )}
+                    {(post.image || post.videoUrl) && (
+                        <div className="rounded-[2.5rem] overflow-hidden border border-white/5 bg-black/60 relative group-hover/media:scale-[1.01] transition-transform duration-700 shadow-2xl h-auto min-h-[100px]">
+                            {isYouTubeUrl(post.videoUrl) ? (
+                                <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} />
+                            ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
+                            ) : post.image && (
+                                <img src={resolveMediaUrl(post.image)} alt="Intel" className="w-full h-auto object-contain bg-[#050505]" onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} />
+                            )}
+                        </div>
+                    )}
+                </div>
 
-                                {post.audioUrl && (
-                                    <div className="p-4 bg-gray-900 border-t border-white/10">
-                                        <audio controls src={resolveMediaUrl(post.audioUrl)} className="w-full h-8" />
+                <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
+                    <div className="flex items-center gap-10">
+                        <button onClick={() => onLike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+                            <Icons.Heart className={`w-6 h-6 ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} />
+                            <span className="text-xs font-black">{post.likes?.length || 0}</span>
+                        </button>
+                        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2.5 text-gray-500 hover:text-sky-400 transition-all">
+                            <Icons.MessageSquare className="w-6 h-6" />
+                            <span className="text-xs font-black">{post.comments?.length || 0}</span>
+                        </button>
+                    </div>
+                    <button onClick={() => onShare(post)} className="p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-500 hover:text-[var(--gold-primary)] transition-all">
+                        <Icons.Share className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {showComments && (
+                    <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
+                        <div className="flex gap-4">
+                            <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-white/10">
+                                <ProfileAvatar user={user} />
+                            </div>
+                            <div className="flex-1 flex flex-col gap-3">
+                                <div className="relative">
+                                    <textarea
+                                        value={commentText}
+                                        onChange={(e) => setCommentText(e.target.value)}
+                                        placeholder="Add a comment..."
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
+                                    />
+                                    <div className="absolute bottom-2 left-2 flex gap-2">
+                                        <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
+                                            <Icons.Mic className="w-5 h-5" />
+                                        </button>
+                                        <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90 active:scale-95 transition-all">
+                                            <Icons.Send className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                                {commentAudio && (
+                                    <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
+                                            <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => setCommentAudio(null)} className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
+                                            <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-[var(--gold-primary)] text-black font-black text-[10px] rounded-lg">SEND</button>
+                                        </div>
                                     </div>
                                 )}
-                                <AnimatePresence>
-                                    {showHeart && (
-                                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ opacity: 0, scale: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                            <Icons.Heart className="w-24 h-24 text-[var(--gold-primary)] fill-[var(--gold-primary)] drop-shadow-2xl" />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
                             </div>
-                        )}
+                        </div>
+                        <div className="space-y-6">
+                            {(post.comments || []).map(c => (
+                                <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} lang="en" />
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    );
+});
+const [showHeart, setShowHeart] = useState(false);
+const { t, lang } = useTranslation(user);
+const [translatedDesc, setTranslatedDesc] = useState(null);
+const [isTranslating, setIsTranslating] = useState(false);
+const [showMenu, setShowMenu] = useState(false);
+const [isExpanded, setIsExpanded] = useState(false);
 
-                        {/* ACTIONS BAR - TWITTER STYLE BLACK */}
-                        <div className="flex items-center justify-between mt-5 sm:mt-6 pr-2 sm:pr-4 relative z-10 py-2 border-t border-white/5">
-                            <div className="flex items-center gap-6 xs:gap-8 sm:gap-14 leading-none">
+// Safety check: Do not render stories as posts - MOVED AFTER HOOKS TO FIX INVARIANT 310
+if (post.isStory) return null;
+
+const isFounder = user?.role === 'Founder';
+const isPostAuthorFounder = post.author?.role === 'Founder';
+const isOwner = String(post.author?._id || post.author) === String(user?._id);
+const dislikeCount = post.dislikes?.length || 0;
+
+
+
+const handleDelete = () => {
+    onDelete(post._id);
+};
+
+const handleDoubleTap = (e) => {
+    e.stopPropagation();
+    const isLiked = Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id));
+    if (!isLiked) {
+        onLike(post._id);
+    }
+    setShowHeart(true);
+    setTimeout(() => setShowHeart(false), 800);
+};
+
+return (
+    <motion.div
+        layout
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className={`glass-card mb-3 sm:mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
+    >
+        {/* ABSOLUTE MENU TOP RIGHT */}
+        <div className="absolute top-4 right-4 z-50">
+            <div className="relative">
+                <button
+                    onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                    className="p-2 text-gray-400 hover:text-white transition-all rounded-full bg-black/40 hover:bg-white/10 active:scale-95 shadow-lg border border-white/5 backdrop-blur-md"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                        <circle cx="12" cy="12" r="1" />
+                        <circle cx="12" cy="5" r="1" />
+                        <circle cx="12" cy="19" r="1" />
+                    </svg>
+                </button>
+                {showMenu && (
+                    <>
+                        <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }}
+                                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                            >
+                                <Icons.Share className="w-4 h-4 text-gray-400" />
+                                <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                            </button>
+                            {isOwner && (
                                 <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
-                                    className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
+                                    onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }}
+                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
                                 >
-                                    <Icons.MessageSquare className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
-                                    <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
+                                    <Icons.Edit className="w-4 h-4 text-blue-400" />
+                                    <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
                                 </button>
+                            )}
+                            {(isOwner || isFounder) && (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(); setShowMenu(false); }}
+                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                >
+                                    <Icons.Trash className="w-4 h-4 text-red-500" />
+                                    <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
+                                </button>
+                            )}
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
 
-                                <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-pink-500' : 'text-gray-500 hover:text-pink-500'}`}>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`}>
-                                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 0 0-7.7 7.8l1.1 1 7.7 7.8 7.7-7.8 1.1-1a5.5 5.5 0 0 0 0-7.8z"></path>
-                                    </svg>
-                                    <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
-                                </button>
-
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current scale-110' : 'group-hover:scale-110'}`}>
-                                        <path d="M17 14V2"></path>
-                                        <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
-                                    </svg>
-                                    <span className="text-[12px] font-bold transition-colors">{dislikeCount}</span>
-                                </button>
+        {/* WRAPPER LINK FOR DETAILS */}
+        <div className="p-3 sm:p-4" >
+            <div className="flex items-start gap-2.5 sm:gap-3">
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                    <div onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="cursor-pointer">
+                        <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border border-white/10">
+                            <ProfileAvatar user={post.author} />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5">
+                                <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
+                                    {post.author?.username}
+                                    <VerifiedBadge isFounder={isPostAuthorFounder} className="w-4 h-4" />
+                                </span>
                             </div>
+                            {isPostAuthorFounder && (
+                                <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 w-fit">
+                                    <FounderBadge className="w-4 h-4" />
+                                    <span className="text-[var(--gold-primary)] text-[11px] font-black tracking-widest uppercase">{t('FOUNDER_BADGE')}</span>
+                                </div>
+                            )}
+                            <span className={`text-xs ${isPostAuthorFounder ? 'text-[var(--gold-primary)] font-medium' : 'text-gray-500'}`}>
+                                @{post.author?.username?.toLowerCase()} · {formatDate(post.createdAt, t, lang)}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    {/* POST TEXT CONTENT */}
+                    <div onClick={() => onOpenDetail(post)} className="mt-2 text-[14px] sm:text-[15px] text-white/100 whitespace-pre-wrap break-words mb-3 font-bold leading-relaxed cursor-pointer">
+                        {translatedDesc ? (
+                            <div className="space-y-1">
+                                <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
+                                <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
+                            </div>
+                        ) : (
+                            <>
+                                {parseHashtags(post.desc && post.desc.length > 500 && !isExpanded ? post.desc.slice(0, 500) + '...' : post.desc, onHashtagClick)}
+                                {post.desc && post.desc.length > 500 && (
+                                    <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-1 hover:underline">
+                                        {isExpanded ? t('READ_LESS') : t('READ_MORE')}
+                                    </button>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    {post.desc && post.desc.length > 5 && (
+                        <button
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                if (translatedDesc) {
+                                    setTranslatedDesc(null);
+                                    return;
+                                }
+                                setIsTranslating(true);
+                                try {
+                                    // Use lang from useTranslation (needs to be available)
+                                    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(post.desc)}`);
+                                    const data = await res.json();
+                                    const translated = data[0].map(item => item[0]).join('');
+                                    setTranslatedDesc(translated);
+                                } catch (e) { console.error(e); }
+                                finally { setIsTranslating(false); }
+                            }}
+                            className="text-[10px] font-bold text-gray-500 hover:text-[var(--gold-primary)] transition-colors uppercase tracking-widest mb-2"
+                        >
+                            {isTranslating ? '...' : (translatedDesc ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                        </button>
+                    )}
+
+                    {/* MEDIA CONTENT */}
+                    {(post.image || post.videoUrl) && (
+                        <div className="mt-2 rounded-[1.5rem] overflow-hidden border border-white/10 relative shadow-2xl bg-black/60 aspect-auto" style={{ maxHeight: '600px' }}>
+                            {/* DETECT VIDEO VS IMAGE - DO NOT ZOOM VIDEOS TO PREVENT GLITCHES */}
+                            {isYouTubeUrl(post.videoUrl) ? (
+                                <NeuralVideoPlayer
+                                    src={post.videoUrl}
+                                    className="w-full aspect-video rounded-xl"
+                                    onExpand={() => onOpenDetail(post)}
+                                />
+                            ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                <NeuralVideoPlayer
+                                    src={resolveMediaUrl(post.videoUrl || post.image)}
+                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                    className="w-full h-auto max-h-[600px] rounded-xl"
+                                    onExpand={() => onOpenDetail(post)}
+                                />
+                            ) : post.image ? (
+                                <img
+                                    onDoubleClick={handleDoubleTap}
+                                    onClick={() => onOpenDetail(post)}
+                                    src={resolveMediaUrl(post.image)}
+                                    className="w-full h-auto max-h-[600px] object-contain bg-black cursor-pointer"
+                                    loading="lazy"
+                                />
+                            ) : null}
+
+                            {/* ZOOM BUTTON OVERLAY - Only for images, Video has its own */}
+                            {(!post.videoUrl && !(post.image && post.image.match(/\.(mp4|mov|webm)$/i)) && !isYouTubeUrl(post.videoUrl)) && (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}
+                                    className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-[var(--gold-primary)] hover:text-black transition-all active:scale-90 group z-20 shadow-2xl"
+                                >
+                                    <Icons.Maximize className="w-5 h-5" />
+                                </button>
+                            )}
+
+                            {post.audioUrl && (
+                                <div className="p-4 bg-gray-900 border-t border-white/10">
+                                    <audio controls src={resolveMediaUrl(post.audioUrl)} className="w-full h-8" />
+                                </div>
+                            )}
+                            <AnimatePresence>
+                                {showHeart && (
+                                    <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.5, opacity: 1 }} exit={{ opacity: 0, scale: 0 }} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                        <Icons.Heart className="w-24 h-24 text-[var(--gold-primary)] fill-[var(--gold-primary)] drop-shadow-2xl" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    )}
+
+                    {/* ACTIONS BAR - TWITTER STYLE BLACK */}
+                    <div className="flex items-center justify-between mt-5 sm:mt-6 pr-2 sm:pr-4 relative z-10 py-2 border-t border-white/5">
+                        <div className="flex items-center gap-6 xs:gap-8 sm:gap-14 leading-none">
+                            <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenDetail(post); }}
+                                className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
+                            >
+                                <Icons.MessageSquare className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
+                                <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
+                            </button>
+
+                            <button type="button" disabled={loadingActions?.[post._id]} onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!loadingActions?.[post._id]) onLike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${loadingActions?.[post._id] ? 'opacity-50 cursor-not-allowed' : ''} ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'text-pink-500' : 'text-gray-500 hover:text-pink-500'}`}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.some(id => String(id) === String(user?._id))) ? 'fill-current animate-heart-beat' : ''}`}>
+                                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 0 0-7.7 7.8l1.1 1 7.7 7.8 7.7-7.8 1.1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+                                </svg>
+                                <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
+                            </button>
+
+                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDislike(post._id); }} className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none transition-all ${(Array.isArray(post.dislikes) && post.dislikes.some(id => String(id) === String(user?._id))) ? 'fill-current scale-110' : 'group-hover:scale-110'}`}>
+                                    <path d="M17 14V2"></path>
+                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
+                                </svg>
+                                <span className="text-[12px] font-bold transition-colors">{dislikeCount}</span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            {/* INLINE COMMENTS EXPANSION */}
-            <AnimatePresence>
-                {showComments && (
-                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
-                        <div className="p-4 space-y-4">
-                            {post.comments?.map((c, idx) => (
-                                <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
-                            ))}
-                            <div
-                                className="flex flex-col gap-4 mt-6"
-                            >
-                                <div className="flex gap-3 items-start">
-                                    <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 mt-1 shadow-lg ring-1 ring-white/10">
-                                        <ProfileAvatar user={user} />
-                                    </div>
-                                    {isRecordingComment ? (
-                                        <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-2 sm:p-3 flex items-center justify-between animate-pop-in">
-                                            <div className="flex items-center gap-2 pl-1 shrink-0">
-                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-tight">{t('TRANSMITTING')}</span>
-                                            </div>
-                                            <div className="flex gap-1 shrink-0">
-                                                <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-4 h-4" /></button>
-                                                <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-3 sm:px-5 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
-                                            </div>
+        {/* INLINE COMMENTS EXPANSION */}
+        <AnimatePresence>
+            {showComments && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#0a0a0a]/50 border-t border-white/5 overflow-hidden">
+                    <div className="p-4 space-y-4">
+                        {post.comments?.map((c, idx) => (
+                            <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                        ))}
+                        <div
+                            className="flex flex-col gap-4 mt-6"
+                        >
+                            <div className="flex gap-3 items-start">
+                                <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 mt-1 shadow-lg ring-1 ring-white/10">
+                                    <ProfileAvatar user={user} />
+                                </div>
+                                {isRecordingComment ? (
+                                    <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/20 rounded-[1.2rem] p-2 sm:p-3 flex items-center justify-between animate-pop-in">
+                                        <div className="flex items-center gap-2 pl-1 shrink-0">
+                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-tight">{t('TRANSMITTING')}</span>
                                         </div>
-                                    ) : commentAudio ? (
-                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--gold-glow)] rounded-[1.2rem] p-1 animate-pop-in">
-                                            <div className="flex items-center gap-2 pl-1 shrink-0">
-                                                <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
-                                                <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1 shrink-0">
-                                                <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
-                                                <button type="button" onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    const fd = new FormData();
-                                                    fd.append('file', commentAudio, 'voice.webm');
-                                                    if (commentText.trim()) fd.append('text', commentText.trim());
-                                                    onComment(post._id, fd);
-                                                    setCommentAudio(null);
+                                        <div className="flex gap-1 shrink-0">
+                                            <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-red-500/30 transition-all shrink-0"><Icons.X className="w-4 h-4" /></button>
+                                            <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-3 sm:px-5 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all shrink-0">{t('STOP')}</button>
+                                        </div>
+                                    </div>
+                                ) : commentAudio ? (
+                                    <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[48px] px-1.5 bg-black/40 border border-[var(--gold-glow)] rounded-[1.2rem] p-1 animate-pop-in">
+                                        <div className="flex items-center gap-2 pl-1 shrink-0">
+                                            <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                            <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-tight">{t('VOICE_NOTE_READY')}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors shrink-0"><Icons.Trash className="w-4 h-4" /></button>
+                                            <button type="button" onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                const fd = new FormData();
+                                                fd.append('file', commentAudio, 'voice.webm');
+                                                if (commentText.trim()) fd.append('text', commentText.trim());
+                                                onComment(post._id, fd);
+                                                setCommentAudio(null);
+                                                setCommentText('');
+                                            }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
+                                                <Icons.Send className="w-4 h-4 fill-black" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 min-w-0">
+                                        <form
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                if (commentText.trim()) {
+                                                    onComment(post._id, commentText);
                                                     setCommentText('');
-                                                }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all shrink-0">
-                                                    <Icons.Send className="w-4 h-4 fill-black" />
+                                                }
+                                            }}
+                                            className="relative flex items-center glass-input-premium rounded-[1.3rem] px-0.5 py-0.5 group overflow-hidden max-w-full"
+                                        >
+                                            <input
+                                                placeholder={t('FOUNDER_PLACEHOLDER')}
+                                                value={commentText}
+                                                onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
+                                                className="flex-1 min-w-0 bg-transparent py-2.5 px-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
+                                            />
+                                            <div className="flex gap-1 pr-1 shrink-0">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
+                                                    className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
+                                                >
+                                                    <Icons.Mic className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    disabled={!commentText.trim() || loadingActions?.[post._id]}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
+                                                >
+                                                    {loadingActions?.[post._id] ? (
+                                                        <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                                    ) : (
+                                                        <Icons.Send className="w-4 h-4" />
+                                                    )}
                                                 </button>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex-1 min-w-0">
-                                            <form
-                                                onSubmit={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    if (commentText.trim()) {
-                                                        onComment(post._id, commentText);
-                                                        setCommentText('');
-                                                    }
-                                                }}
-                                                className="relative flex items-center glass-input-premium rounded-[1.3rem] px-0.5 py-0.5 group overflow-hidden max-w-full"
-                                            >
-                                                <input
-                                                    placeholder={t('FOUNDER_PLACEHOLDER')}
-                                                    value={commentText}
-                                                    onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
-                                                    className="flex-1 min-w-0 bg-transparent py-2.5 px-3 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
-                                                />
-                                                <div className="flex gap-1 pr-1 shrink-0">
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
-                                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
-                                                    >
-                                                        <Icons.Mic className="w-4 h-4" />
-                                                    </button>
-                                                    <button
-                                                        type="submit"
-                                                        disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 disabled:opacity-20 active:scale-95 transition-all mobile-os-action-btn shrink-0"
-                                                    >
-                                                        {loadingActions?.[post._id] ? (
-                                                            <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                                        ) : (
-                                                            <Icons.Send className="w-4 h-4" />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    )}
-                                </div>
+                                        </form>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </motion.div >
-    );
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </motion.div >
+);
 };
 
 // ... ChatModal, SettingsModal, ProfileModal, CreateModal same logic ...
@@ -2622,12 +2771,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     );
 };
 
-const CreateModal = ({ isOpen, onClose, onSuccess, user, forceStory = false }) => {
+const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }) => {
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
     const [isAudio, setIsAudio] = useState(false);
     const [audioName, setAudioName] = useState('');
-    const [creating, setCreating] = useState(false);
     const [isStory, setIsStory] = useState(forceStory);
 
     useEffect(() => {
@@ -2772,27 +2920,29 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user, forceStory = false }) =
 
                     <div className="flex gap-4">
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button disabled={creating} onClick={async () => {
-                            if (creating) return;
+                        <button onClick={() => {
                             const desc = document.getElementById('c-desc').value;
                             const youtube = document.getElementById('c-youtube').value;
                             const file = fileRef.current.files[0];
                             if (!desc && !file && !youtube) return;
-                            const fd = new FormData(); fd.append('desc', desc);
+                            const fd = new FormData();
+                            fd.append('desc', desc);
                             if (youtube) fd.append('videoUrl', youtube.trim());
                             else if (file) fd.append('image', file);
                             fd.append('isStory', isStory);
 
-                            try {
-                                setCreating(true);
-                                await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                                onSuccess(); playSound('cyber_click');
-                                document.getElementById('c-desc').value = '';
-                                document.getElementById('c-youtube').value = '';
-                                setPreview(null); fileRef.current.value = '';
-                                setIsStory(false);
-                            } catch (e) { console.error('Create post failed', e); alert('Post failed'); } finally { setCreating(false); }
-                        }} className={`flex-1 py-3 ${creating ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>{creating ? '...' : (isStory ? t('POST_STORY') : t('POST'))}</button>
+                            // Trigger optimistic upload
+                            onCreatePost(fd, preview, isStory);
+
+                            // Reset logic
+                            document.getElementById('c-desc').value = '';
+                            document.getElementById('c-youtube').value = '';
+                            setPreview(null);
+                            if (fileRef.current) fileRef.current.value = '';
+                            setIsStory(false);
+                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>
+                            {isStory ? t('POST_STORY') : t('POST')}
+                        </button>
                     </div>
                 </div>
             </motion.div>
@@ -3012,6 +3162,7 @@ const App = () => {
     const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation(user);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [toasts, setToasts] = useState([]);
     const addToast = (text, type = 'info') => {
         const id = Date.now();
@@ -3315,6 +3466,12 @@ const App = () => {
             const res = await axios.get(`/users/notifications?t=${Date.now()}`);
             if (isProcessingRequest.current) return; // Post-await safety check
 
+            // CYBER NOTIFICATION SOUND CHECK
+            if (res.data.length > (user.notifications?.length || 0)) {
+                const latest = res.data[0];
+                if (latest && !latest.read) playSound('cyber_notification');
+            }
+
             setAlerts(res.data);
             setUser(prev => {
                 if (!prev) return prev;
@@ -3401,7 +3558,7 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
-        playSound('pop');
+        playSound('cyber_like');
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
@@ -3449,7 +3606,7 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
-        playSound('pop');
+        playSound('cyber_dislike');
 
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
@@ -3518,6 +3675,55 @@ const App = () => {
             const errorMsg = e.response?.data?.message || e.response?.data?.error || "Transmission failed";
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+        }
+    };
+
+    const handleCreatePost = async (formData, previewUrl, isStory) => {
+        setIsCreateOpen(false); // Close immediately for zero-latency feel
+        playSound('cyber_click');
+
+        // 1. OPTIMISTIC UPDATE: Create a temporary "Uploading..." post/story
+        const tempId = 'temp-' + Date.now();
+        const tempPost = {
+            _id: tempId,
+            desc: formData.get('desc'),
+            image: previewUrl, // Use local blob
+            user: user,
+            author: user,
+            createdAt: new Date().toISOString(),
+            likes: [],
+            comments: [],
+            isOptimistic: true,
+            isUploading: true,
+            uploadProgress: 0,
+            isStory: isStory
+        };
+
+        // Add to feed immediately
+        setPosts(prev => [tempPost, ...prev]);
+        if (isStory) {
+            // Stories are derived from posts, so this works, but we might want to force a refresh of the stories list
+        }
+
+        try {
+            const res = await axios.post('/posts', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (base) => {
+                    const percent = Math.round((base.loaded * 100) / base.total);
+                    // Update progress on the temp post
+                    setPosts(prev => prev.map(p => p._id === tempId ? { ...p, uploadProgress: percent } : p));
+                }
+            });
+            const createdPost = res.data;
+            playSound('success');
+            // Replace temp post with real one
+            setPosts(prev => prev.map(p => p._id === tempId ? createdPost : p));
+        } catch (e) {
+            console.error("Upload failed", e);
+            playSound('error');
+            // Remove temp post or show error
+            setPosts(prev => prev.filter(p => p._id !== tempId));
+            alert(t('POST_FAILED') || "Transmission Failed");
         }
     };
 
@@ -3680,20 +3886,22 @@ const App = () => {
 
     // COMMENT MANAGEMENT
     const handleDeleteComment = async (postId, commentId) => {
+        // OPTIMISTIC PURGE
+        setPosts(prev => prev.map(p => {
+            if (p._id === postId) {
+                const filtered = p.comments.filter(c => c._id !== commentId);
+                return { ...p, comments: filtered };
+            }
+            return p;
+        }));
+
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
-            setPosts(prev => prev.map(p => {
-                if (p._id === postId) {
-                    const filtered = p.comments.filter(c => c._id !== commentId);
-                    if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: filtered }));
-                    return { ...p, comments: filtered };
-                }
-                return p;
-            }));
             playSound('cyber_delete');
             cyberDeleteEffect();
         } catch (err) {
             console.error("Failed to delete comment", err);
+            fetchPosts(); // Rollback on error
         }
     };
 
@@ -3713,7 +3921,17 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('cyber_delete'); cyberDeleteEffect(); } catch (e) { } };
+    const handleDeletePost = async (postId) => {
+        // OPTIMISTIC SHATTER
+        setPosts(prev => prev.filter(p => p._id !== postId));
+        try {
+            await axios.delete(`/posts/${postId}`);
+            playSound('cyber_delete');
+            cyberDeleteEffect();
+        } catch (e) {
+            fetchPosts(); // Re-sync on failure
+        }
+    };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); playSound('cyber_click'); };
     // AUTO-LANGUAGE DETECTION
@@ -4045,9 +4263,26 @@ const App = () => {
                                                             </div>
 
                                                             <div className="space-y-8">
-                                                                {group.posts.map(p => (
-                                                                    <PostCard key={p._id} post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
-                                                                ))}
+                                                                <AnimatePresence mode="popLayout">
+                                                                    {group.posts.map(p => (
+                                                                        <motion.div
+                                                                            key={p._id}
+                                                                            layout
+                                                                            initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                                                                            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                                                                            exit={{
+                                                                                opacity: 0,
+                                                                                scale: 1.1,
+                                                                                filter: 'blur(20px) contrast(2)',
+                                                                                x: -20,
+                                                                                transition: { duration: 0.4 }
+                                                                            }}
+                                                                            className="relative"
+                                                                        >
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                        </motion.div>
+                                                                    ))}
+                                                                </AnimatePresence>
                                                             </div>
                                                         </div>
                                                     );
@@ -4120,7 +4355,7 @@ const App = () => {
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSuccess={() => { setIsCreateOpen(false); fetchPosts(); }} user={user} forceStory={createModeStory} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
                         selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
