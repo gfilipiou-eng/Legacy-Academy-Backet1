@@ -3817,8 +3817,8 @@ const App = () => {
                     </div>
                 </div>
             ) : (
-                <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0 bg-black"></div>
+                <div className="h-[100dvh] bg-[#050505] text-white relative font-sans overflow-hidden flex flex-col">
+                    <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-black to-black"></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
@@ -3829,7 +3829,6 @@ const App = () => {
 
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
                                         <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)]" />
-                                        <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
