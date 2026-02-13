@@ -763,6 +763,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
     const [isActivated, setIsActivated] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
+    const [isActuallyPlaying, setIsActuallyPlaying] = useState(false); // Confirmed playback
 
     const ytId = getYouTubeId(src);
 
@@ -796,6 +797,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         if (event.data === window.YT.PlayerState.PLAYING) {
             setIsPlaying(true);
             setIsActivated(true);
+            setTimeout(() => setIsActuallyPlaying(true), 200); // Small buffer to ensure first frame is painted
         } else if (event.data === window.YT.PlayerState.PAUSED) {
             setIsPlaying(false);
         }
@@ -807,8 +809,10 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
             interval = setInterval(() => {
                 const cur = ytPlayerRef.current.getCurrentTime();
                 const dur = ytPlayerRef.current.getDuration();
-                setCurrentTime(cur);
-                setProgress((cur / dur) * 100);
+                if (cur && dur) {
+                    setCurrentTime(cur);
+                    setProgress((cur / dur) * 100);
+                }
             }, 500);
         }
         return () => clearInterval(interval);
@@ -819,6 +823,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
             if (ytPlayerRef.current) ytPlayerRef.current.pauseVideo();
             if (videoRef.current) videoRef.current.pause();
             setIsPlaying(false);
+            setIsActuallyPlaying(false); // Reset actual playing state on force pause
         }
     }, [forcePause]);
 
@@ -862,7 +867,7 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
         } else if (videoRef.current) {
             videoRef.current.muted = nextMute;
         }
-        playSound('cyber_click');
+        playSound('pop');
     };
 
     const handleTimeUpdate = () => {
@@ -934,7 +939,8 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             rel: 0,
                             iv_load_policy: 3,
                             disablekb: 1,
-                            fs: 0
+                            fs: 0,
+                            playsinline: 1
                         },
                         events: {
                             onReady: onYTReady,
@@ -962,17 +968,27 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                 togglePlay(e);
             }}
         >
-            {ytId && isActivated ? (
-                <div className="w-full h-full absolute inset-0 pointer-events-none scale-[1.35]">
-                    {/* Scale up to hide YT logo and controls if modded */}
-                    <div id={`yt-frame-${ytId}`} className="w-full h-full" />
+            {/* YOUTUBE ENGINE LAYER */}
+            {ytId && isActivated && (
+                <div className={`w-full h-full absolute inset-0 pointer-events-none transform transition-opacity duration-1000 ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className="w-full h-full scale-[1.35] origin-center">
+                        <div id={`yt-frame-${ytId}`} className="w-full h-full" />
+                    </div>
                 </div>
-            ) : null}
+            )}
 
-            {!isActivated || !ytId ? (
-                <>
+            {/* NEUTRAL POSTER LAYER (Keeps visual consistency until confirmed play) */}
+            {(!isActuallyPlaying || !ytId) && (
+                <div className="absolute inset-0 z-10">
                     {ytId ? (
-                        <img src={youtubeThumb} className="w-full h-full object-cover opacity-60" onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} />
+                        <div className="w-full h-full relative">
+                            <img src={youtubeThumb} className={`w-full h-full object-cover transition-opacity duration-500 ${isActivated && !isActuallyPlaying ? 'opacity-40 animate-pulse' : 'opacity-60'}`} onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} />
+                            {isActivated && !isActuallyPlaying && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-12 h-12 border-4 border-[var(--gold-primary)]/20 border-t-[var(--gold-primary)] rounded-full animate-spin" />
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <video
                             ref={videoRef}
@@ -987,8 +1003,8 @@ const NeuralVideoPlayer = ({ src, poster, className, onExpand, forcePause }) => 
                             className="w-full h-full object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]"
                         />
                     )}
-                </>
-            ) : null}
+                </div>
+            )}
 
             {/* NEURAL OVERLAY - ALWAYS VISIBLE OVER EVERYTHING */}
             <AnimatePresence>
