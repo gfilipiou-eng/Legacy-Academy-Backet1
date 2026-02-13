@@ -2813,9 +2813,10 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         if (post) {
             setDesc(post.desc || '');
             setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
-            setIsVideo(post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
+            const isYT = isYouTubeUrl(post.videoUrl);
+            setIsVideo(isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false)));
             // initialize youtube state
-            setYoutubeUrl(isYouTubeUrl(post?.videoUrl) ? post.videoUrl : '');
+            setYoutubeUrl(isYT ? post.videoUrl : '');
         }
     }, [post]);
 
@@ -2852,7 +2853,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         fd.append('desc', desc);
         const file = fileRef.current?.files[0];
         const yt = document.getElementById('edit-youtube')?.value;
-        if (yt && yt.trim()) fd.append('videoUrl', yt.trim());
+        if (typeof yt === 'string') fd.append('videoUrl', yt.trim()); // Append even if empty to allow removal
         if (file) {
             fd.append('image', file);
         }
@@ -2912,11 +2913,11 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     onChange={(e) => {
                                         const v = e.target.value || '';
                                         setYoutubeUrl(v);
-                                        if (isYouTubeUrl(v)) {
-                                            const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
-                                            const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
-                                            setPreview(thumb ? thumb : null);
-                                            setIsVideo(true);
+                                        const id = getYouTubeId(v);
+                                        if (id) {
+                                            const thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+                                            setPreview(thumb);
+                                            setIsVideo(false);
                                         } else if (!v) {
                                             if (!fileRef.current?.files[0]) {
                                                 setPreview(null);
