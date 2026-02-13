@@ -572,36 +572,40 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                     </div>
 
-                    <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
-                        <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
-                            {parseHashtags(post.desc && post.desc.length > 500 && !isExpanded ? post.desc.slice(0, 500) + '...' : post.desc)}
-                            {post.desc && post.desc.length > 500 && (
-                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
-                                    {isExpanded ? t('READ_LESS') : t('READ_MORE')}
-                                </button>
-                            )}
+                    <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/30">
+                        {/* Description Section */}
+                        <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
+                            <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
+                                {parseHashtags(post.desc && post.desc.length > 500 && !isExpanded ? post.desc.slice(0, 500) + '...' : post.desc)}
+                                {post.desc && post.desc.length > 500 && (
+                                    <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
+                                        {isExpanded ? t('READ_LESS') : t('READ_MORE')}
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
-                        <div className="w-full animate-fade-in space-y-4">
-                            {!post.comments?.length ? (
-                                <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
-                            ) : (
-                                post.comments.slice().reverse().slice(0, 50).reverse().map((c, idx) => (
-                                    <CommentItem
-                                        key={c._id || idx}
-                                        comment={c}
-                                        post={post}
-                                        user={user}
-                                        allUsers={allUsers}
-                                        onEdit={onEditComment}
-                                        onDelete={onDeleteComment}
-                                        t={t}
-                                        lang={lang}
-                                    />
-                                ))
-                            )}
+                        {/* Comments Section */}
+                        <div className="p-3">
+                            <div className="w-full animate-fade-in space-y-4">
+                                {!post.comments?.length ? (
+                                    <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
+                                ) : (
+                                    post.comments.slice().reverse().slice(0, 50).reverse().map((c, idx) => (
+                                        <CommentItem
+                                            key={c._id || idx}
+                                            comment={c}
+                                            post={post}
+                                            user={user}
+                                            allUsers={allUsers}
+                                            onEdit={onEditComment}
+                                            onDelete={onDeleteComment}
+                                            t={t}
+                                            lang={lang}
+                                        />
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
 
