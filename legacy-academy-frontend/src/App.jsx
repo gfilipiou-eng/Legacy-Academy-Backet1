@@ -948,7 +948,7 @@ const NotificationItem = ({ note, onViewProfile, onOpenPost, onOpenChat, onAccep
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
                     <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{note.fromUsername}</span>
-                    {note.sender?.role === 'Founder' && <FounderBadge className="w-3 h-3" />}
+                    <VerifiedBadge isFounder={note.sender?.role === 'Founder'} className="w-3.5 h-3.5 ml-1" />
                     <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
                             note.type === 'like' ? t('NOTIF_LIKE') :
@@ -1208,9 +1208,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                 <div className="flex items-center gap-1.5">
                                     <span onClick={(e) => { e.stopPropagation(); onViewProfile(post.author) }} className="font-bold text-base text-white hover:underline cursor-pointer leading-tight flex items-center gap-1.5">
                                         {post.author?.username}
-                                        <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]">
-                                            <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
-                                        </svg>
+                                        <VerifiedBadge isFounder={isPostAuthorFounder} className="w-4 h-4" />
                                     </span>
                                 </div>
                                 {isPostAuthorFounder && (
@@ -1659,7 +1657,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
                                     <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} {u.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5" />}</div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4" /></div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
                         })}
@@ -1675,7 +1673,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                     <div>
                                         <div className="font-bold text-sm flex items-center gap-2">
                                             {activeChat?.username}
-                                            {activeChat?.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5" />}
+                                            <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4" />
                                         </div>
                                         <div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div>
                                     </div>
@@ -2273,9 +2271,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 <div className="flex flex-col gap-1">
                                     <div className="font-black text-white text-xl flex items-center gap-2">
                                         {displayUser?.username || "Unknown Agent"}
-                                        <svg viewBox="0 0 22 22" className="w-5 h-5 shrink-0 drop-shadow-[0_0_6px_rgba(29,155,240,0.7)]">
-                                            <path fill="#1D9BF0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
-                                        </svg>
+                                        <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-5 h-5" />
                                         <div className={`ml-2 w-3 h-3 rounded-full border-2 border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                     {displayUser?.role === 'Founder' && (
