@@ -104,16 +104,16 @@ if (typeof document !== 'undefined') {
 }
 
 // Helpers for Youtube detection/embed
-const isYouTubeUrl = (url) => {
-    if (!url) return false;
-    try {
-        return /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.test(url);
-    } catch (e) { return false; }
+// Helpers for Youtube detection/embed
+const getYouTubeId = (url) => {
+    if (!url) return null;
+    const m = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
+    return m ? m[1] : null;
 };
+const isYouTubeUrl = (url) => !!getYouTubeId(url);
 const getYouTubeEmbedUrl = (url) => {
-    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(url || '');
-    if (!m) return null;
-    return `https://www.youtube.com/embed/${m[1]}`;
+    const id = getYouTubeId(url);
+    return id ? `https://www.youtube.com/embed/${id}` : null;
 };
 
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
@@ -2569,12 +2569,12 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user, forceStory = false }) =
                     {/* YouTube URL input */}
                     <div className="mb-3">
                         <input id="c-youtube" name="youtube-url" placeholder={t('YOUTUBE_PH')} className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
-                            const v = e.target.value || '';
-                            if (isYouTubeUrl(v)) {
-                                const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(v);
-                                const thumb = m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
-                                setPreview(thumb);
-                                setIsVideo(true);
+                            const v = e.target.value?.trim() || '';
+                            const id = getYouTubeId(v);
+                            if (id) {
+                                setPreview(`https://img.youtube.com/vi/${id}/hqdefault.jpg`);
+                                setIsVideo(false); // Youtube is a thumbnail preview (image)
+                                setIsAudio(false);
                             } else if (!v) {
                                 setPreview(null);
                                 setIsVideo(false);
@@ -2634,7 +2634,7 @@ const CreateModal = ({ isOpen, onClose, onSuccess, user, forceStory = false }) =
                             try {
                                 setCreating(true);
                                 await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                                onSuccess(); playSound('pop');
+                                onSuccess(); playSound('cyber_click');
                                 document.getElementById('c-desc').value = '';
                                 document.getElementById('c-youtube').value = '';
                                 setPreview(null); fileRef.current.value = '';
