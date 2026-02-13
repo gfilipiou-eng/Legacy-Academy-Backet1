@@ -2873,9 +2873,25 @@ const App = () => {
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
     const [expandedDates, setExpandedDates] = useState({});
+    const [showScrollTop, setShowScrollTop] = useState(false);
     const mainScrollRef = useRef(null);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
+
+    const handleScroll = (e) => {
+        if (e.target.scrollTop > 500) {
+            setShowScrollTop(true);
+        } else {
+            setShowScrollTop(false);
+        }
+    };
+
+    const scrollToTop = () => {
+        if (mainScrollRef.current) {
+            mainScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            playSound('pop');
+        }
+    };
 
     // Keep refs correctly updated
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
@@ -3734,7 +3750,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
-                    <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -3878,6 +3894,19 @@ const App = () => {
                     {
                         (!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                             <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 flex justify-center z-[1000] pointer-events-none">
+                                <AnimatePresence>
+                                    {showScrollTop && (
+                                        <motion.button
+                                            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                                            onClick={scrollToTop}
+                                            className="absolute -top-16 right-4 w-12 h-12 bg-[var(--gold-primary)] text-black rounded-full flex items-center justify-center shadow-[0_0_20px_var(--gold-glow)] pointer-events-auto active:scale-90 transition-all border border-black/20"
+                                        >
+                                            <Icons.ArrowUp className="w-6 h-6" />
+                                        </motion.button>
+                                    )}
+                                </AnimatePresence>
                                 <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
                                     <button onClick={() => { setActiveTab('home'); playSound('pop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                         <Icons.Home className="w-5 h-5 relative z-10" />
