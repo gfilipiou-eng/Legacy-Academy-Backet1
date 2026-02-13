@@ -2258,8 +2258,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </div>
                                     )}
                                 </div>
-                                <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium mb-4">
-                                    {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
+                                <div className="mb-4">
+                                    <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">{t('DESCRIPTION')}</div>
+                                    <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">
+                                        {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
+                                    </div>
                                 </div>
 
                                 {isMe ? (
