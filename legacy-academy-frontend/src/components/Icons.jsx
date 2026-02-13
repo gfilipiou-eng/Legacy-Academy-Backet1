@@ -56,20 +56,11 @@ export const Icons = {
     Crown: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" /></svg>,
     Terminal: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" /></svg>,
     Whisper: p => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-            {/* The Head */}
-            <path d="M2 13s1 0 1-2c0-4 3-7 7-7s7 3 7 7c0 1.5-.5 3-1.5 4.5S13 18 10 18" />
-            <path d="M7 14c.5.5 1 1 3 1" />
-            <path d="M2 17c.5 1.5 1.5 3 3 4" />
-
-            {/* Sound Lines */}
-            <path d="M16 10l2-1" />
-            <path d="M16 12h2.5" />
-            <path d="M16 14l2 1" />
-
-            {/* The Ear */}
-            <path d="M22 13c0-3-2-5-4-5s-3 2-3 5 1 5 3 5 4-2 4-5z" />
-            <path d="M18 11c0 1 1 2 2 2" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}>
+            <circle cx="10" cy="11" r="7" strokeDasharray="1 3" opacity="0.3" />
+            <path d="M2 11c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8h-3" />
+            <path d="M15 8l3 3-3 3" />
+            <circle cx="21" cy="11" r="1" fill="currentColor" stroke="none" />
         </svg>
     ),
 };
