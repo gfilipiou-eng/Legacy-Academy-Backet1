@@ -1305,7 +1305,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                 <div className="flex items-center gap-3 mt-1">
                                     {/* FOUNDER BADGE */}
                                     {isFounder && (
-                                        <span className="text-[9px] text-[var(--gold-primary)] font-black tracking-[0.2em] uppercase">FOUNDER</span>
+                                        <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 shadow-[0_0_15px_rgba(255,215,0,0.1)]">
+                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-[var(--gold-primary)]">
+                                                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path>
+                                                </svg>
+                                            </div>
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
+                                        </div>
                                     )}
 
                                     {/* DELETE ICON / BUTTON */}
