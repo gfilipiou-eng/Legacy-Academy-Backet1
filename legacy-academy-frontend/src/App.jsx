@@ -3757,9 +3757,6 @@ const App = () => {
                                     <img src="/Logo.png" alt="Legacy Academy" className="h-14 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }} className="nav-center-action active:scale-95 transition-transform rounded-full">
-                                        <Icons.Plus className="w-6 h-6" />
-                                    </button>
 
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
                                         <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)]" />
@@ -3921,6 +3918,13 @@ const App = () => {
                                             <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                             {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                         </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); playSound('sweep'); }}
+                                        className="relative -top-8 w-14 h-14 bg-[var(--gold-primary)] text-black rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(255,215,0,0.4)] hover:scale-110 active:scale-90 transition-all z-[20] border-4 border-black group"
+                                    >
+                                        <Icons.Plus className="w-7 h-7 group-hover:rotate-90 transition-transform duration-300" />
                                     </button>
 
 
