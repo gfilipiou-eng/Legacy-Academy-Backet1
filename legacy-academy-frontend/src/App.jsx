@@ -972,8 +972,6 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                     <div className="absolute top-[-35%] left-[-35%] w-[170%] h-[170%] pointer-events-none select-none transform-gpu backface-hidden">
                         <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
-                    {/* Neural Glitch Mask (Subtle glass over YT to hide the 'YouTube' label that sometimes leaks) */}
-                    <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none" />
                 </div>
             )}
 
