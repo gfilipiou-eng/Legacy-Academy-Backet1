@@ -413,7 +413,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
     const isOwner = String(author?._id) === String(user?._id);
     const isFounder = user?.role === 'Founder';
-    const [isDescExpanded, setIsDescExpanded] = useState(false);
 
     // Audio Comment State
     const [commentText, setCommentText] = useState('');
@@ -573,24 +572,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
                     <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
-                        <div
-                            className={`text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl transition-all duration-300 ${!isDescExpanded && post.desc?.length > 500 ? 'max-h-[160px] overflow-hidden relative' : 'max-h-[400px] overflow-y-auto'}`}
-                        >
-                            {parseHashtags(!isDescExpanded && post.desc?.length > 500 ? post.desc.slice(0, 500) + '...' : post.desc, (tag) => { onClose(); if (onHashtagClick) onHashtagClick(tag); })}
-
-                            {post.desc?.length > 500 && (
-                                <button
-                                    onClick={() => setIsDescExpanded(!isDescExpanded)}
-                                    className="block mt-2 text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] hover:opacity-80 transition-opacity"
-                                >
-                                    {isDescExpanded ? t('SHOW_LESS') || 'SHOW LESS' : t('READ_MORE') || 'READ MORE'}
-                                </button>
-                            )}
-                        </div>
+                        <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">{parseHashtags(post.desc)}</div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30">
-                        <div className="w-full animate-fade-in space-y-4 pb-20">
+                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-black/30 min-h-[200px]">
+                        <div className="w-full animate-fade-in space-y-4">
                             {!post.comments?.length ? (
                                 <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                             ) : (
@@ -612,8 +598,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                     </div>
 
 
-                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2 shrink-0">
-                        <div className="flex items-center gap-6 sm:gap-8 mb-4">
+                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2">
+                        <div className="flex items-center gap-6 sm:gap-8">
                             <button
                                 type="button"
                                 disabled={loadingActions?.[post._id]}
@@ -644,7 +630,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
                                 className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
                             >
-                                <Icons.Whisper className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"></path>
+                                </svg>
                                 <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                             </button>
                         </div>
@@ -701,7 +689,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     >
                                         <input
                                             id={`comment-input-${post._id}`}
-                                            placeholder={t('FOUNDER_PLACEHOLDER') || 'Σχολιάστε...'}
+                                            placeholder={t('ENGAGE')}
                                             value={commentText}
                                             onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
                                             className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
@@ -712,7 +700,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
                                                 className={`w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                             >
-                                                <Icons.Whisper className="w-5 h-5" />
+                                                <Icons.Mic className="w-5 h-5" />
                                             </button>
                                             <button
                                                 type="submit"
@@ -1113,7 +1101,6 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
     const isPostAuthorFounder = post.author?.role === 'Founder';
     const isOwner = String(post.author?._id || post.author) === String(user?._id);
     const dislikeCount = post.dislikes?.length || 0;
-    const [isCardDescExpanded, setIsCardDescExpanded] = useState(false);
 
 
 
@@ -1135,14 +1122,6 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
         <motion.div
             layout
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{
-                opacity: 0,
-                scale: 0.8,
-                filter: "blur(20px) brightness(2) contrast(2)",
-                rotateX: 45,
-                transition: { duration: 0.4, ease: "circIn" }
-            }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className={`glass-card mb-4 rounded-3xl relative border transform transition-all bg-black border-white/10 active:scale-[0.98] !overflow-visible ${showMenu ? 'z-[1000]' : ''}`}
@@ -1239,19 +1218,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                     <div className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] mb-1">{t('SEE_TRANSLATION')}</div>
                                     <div className="text-white font-bold">{parseHashtags(translatedDesc, onHashtagClick)}</div>
                                 </div>
-                            ) : (
-                                <>
-                                    {parseHashtags(!isCardDescExpanded && post.desc?.length > 500 ? post.desc.slice(0, 500) + '...' : post.desc, onHashtagClick)}
-                                    {post.desc?.length > 500 && (
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); setIsCardDescExpanded(!isCardDescExpanded); }}
-                                            className="block mt-1 text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-[0.2em] hover:opacity-80 transition-opacity"
-                                        >
-                                            {isCardDescExpanded ? t('SHOW_LESS') || 'SHOW LESS' : t('READ_MORE') || 'READ MORE'}
-                                        </button>
-                                    )}
-                                </>
-                            )}
+                            ) : parseHashtags(post.desc, onHashtagClick)}
                         </div>
 
                         {post.desc && post.desc.length > 5 && (
@@ -1433,7 +1400,7 @@ const PostCard = ({ post, user, allUsers, onLike, onDislike, onComment, onDelete
                                                         onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
                                                         className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all mobile-os-action-btn shrink-0 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
                                                     >
-                                                        <Icons.Whisper className="w-4 h-4" />
+                                                        <Icons.WalkieTalkie className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         type="submit"
@@ -1639,14 +1606,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-black italic flex flex-col gap-0.5">
-                                    <div className="flex items-center gap-2">
-                                        <Icons.Whisper className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
-                                        {t('CHAT')}
-                                    </div>
-                                    <span className="text-[10px] text-gray-400 font-medium not-italic tracking-wide">
-                                        MESSAGES SECURE COMMS: End-to-end encrypted, self-destructing transmissions.
-                                    </span>
+                                <h2 className="text-xl font-black italic flex items-center gap-2">
+                                    <Icons.WalkieTalkie className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
+                                    {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
                             </div>
@@ -3541,7 +3503,7 @@ const App = () => {
         }
     };
 
-    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('galactic_dissolve'); explodeEffect(); } catch (e) { } };
+    const handleDeletePost = async (postId) => { try { await axios.delete(`/posts/${postId}`); setPosts(prev => prev.filter(p => p._id !== postId)); playSound('sword'); explodeEffect(); } catch (e) { } };
 
     const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); };
     // AUTO-LANGUAGE DETECTION
@@ -3767,7 +3729,7 @@ const App = () => {
                                     </button>
 
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
-                                        <Icons.Whisper className="w-5 h-5 text-[var(--gold-primary)]" />
+                                        <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)]" />
                                         <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold-primary)] rounded-full border border-black shadow-glow-gold animate-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
@@ -3915,7 +3877,9 @@ const App = () => {
                                         </div>
                                     </button>
 
-
+                                    <button onClick={() => { setIsChatOpen(true); playSound('pop'); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${isChatOpen ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-500 hover:text-white'}`}>
+                                        <Icons.WalkieTalkie className="w-5 h-5" />
+                                    </button>
 
 
 
