@@ -1203,7 +1203,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                                             muted
                                             loop
                                             playsInline
-                                            preload="auto"
+                                            preload="metadata"
+                                            poster={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)}
                                             onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                                         />
                                     ) : isYT ? (
@@ -1216,7 +1217,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" alt="" />
+                                        <img src={resolveMediaUrl(s.image)} loading="lazy" className="w-full h-full object-cover" alt="" />
                                     )
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
@@ -2396,7 +2397,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                             muted
                                                                             loop
                                                                             playsInline
-                                                                            preload="auto"
+                                                                            preload="metadata"
+                                                                            poster={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)}
                                                                             onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                                                                         />
                                                                     ) : isYT ? (
@@ -2409,7 +2411,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                             </div>
                                                                         </div>
                                                                     ) : (
-                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} loading="lazy" className="w-full h-full object-cover rounded-full" />
                                                                     )
                                                                 ) : (
                                                                     <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
@@ -2944,13 +2946,15 @@ const App = () => {
     const mainScrollRef = useRef(null);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
+    const scrollRafLock = useRef(false);
 
     const handleScroll = (e) => {
-        if (e.target.scrollTop > 500) {
-            setShowScrollTop(true);
-        } else {
-            setShowScrollTop(false);
-        }
+        if (scrollRafLock.current) return;
+        scrollRafLock.current = true;
+        requestAnimationFrame(() => {
+            setShowScrollTop(e.target.scrollTop > 500);
+            scrollRafLock.current = false;
+        });
     };
 
     const scrollToTop = () => {
@@ -3928,7 +3932,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
