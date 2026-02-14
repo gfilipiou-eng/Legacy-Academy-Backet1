@@ -1642,7 +1642,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.Ghost className="w-7 h-7 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
+                                    <Icons.Ghost className="w-8 h-8" />
                                     {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
@@ -1765,8 +1765,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                     ) : (
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
-                                <button className="mb-6 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group shadow-lg">
-                                    <Icons.Ghost className="w-12 h-12 group-hover:scale-105 transition-all duration-500" />
+                                <button className="mb-6 bg-transparent border-none p-0 transition-all active:scale-95 group">
+                                    <Icons.Ghost className="w-24 h-24 group-hover:scale-105 transition-all duration-500" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
                                 <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
@@ -3926,9 +3926,8 @@ const App = () => {
                                     <img src="/logo.png" alt="Legacy Academy" className="h-32 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-
-                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border border-white/20 hover:border-white/40">
-                                        <Icons.Ghost className="w-5 h-5" />
+                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative bg-transparent border-none p-0 overflow-hidden flex items-center justify-center">
+                                        <Icons.Ghost className="w-8 h-8" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
