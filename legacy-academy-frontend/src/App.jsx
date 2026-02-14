@@ -1717,7 +1717,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
                                 <div className="flex items-center gap-3">
-                                    {/* Back button removed */}
+                                    <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
                                     <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
                                     <div>
                                         <div className="font-bold text-sm flex items-center gap-2">
@@ -2171,6 +2171,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
+                    <button onClick={() => {
+                        if (activeList) setActiveList(null);
+                        else if (isEditing) setIsEditing(false);
+                        else onClose();
+                    }} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
                     <div className="w-10" />
                 </div>
@@ -2263,7 +2268,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                     {!isMe && (
                                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-50">
-                                            {/* Menu removed */}
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setShowProfileMenu(!showProfileMenu); }}
+                                                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                                    <circle cx="12" cy="12" r="1" />
+                                                    <circle cx="12" cy="5" r="1" />
+                                                    <circle cx="12" cy="19" r="1" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     )}
                                     {showProfileMenu && (
