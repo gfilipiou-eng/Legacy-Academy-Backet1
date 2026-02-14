@@ -6,7 +6,6 @@ import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
-import { io } from 'socket.io-client';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
@@ -151,17 +150,10 @@ const getYouTubeEmbedUrl = (url) => {
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
+    // Rule: Removed follower restriction - online status is now visible to all for better connectivity
     try {
-        const lastSeenDate = new Date(u.lastSeen);
-        if (isNaN(lastSeenDate.getTime())) return false;
-
-        const diff = Date.now() - lastSeenDate.getTime();
-
-        // Fix: If lastSeen is in the future (clock skew), treat as online only if within 5 seconds
-        if (diff < -5000) return false;
-
-        // Rule: Tighter threshold (35s) to reflect "Offline" state faster (Heartbeat is 30s)
-        return diff < 35000;
+        // 60 seconds threshold for "Online"
+        return (Date.now() - new Date(u.lastSeen).getTime()) < 60000;
     } catch (e) { return false; }
 };
 
@@ -965,7 +957,6 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             const initPlayer = () => {
                 if (window.YT && window.YT.Player) {
                     new window.YT.Player(playerUniqueId, {
-                        host: 'https://www.youtube-nocookie.com',
                         videoId: ytId,
                         playerVars: {
                             autoplay: 1,
@@ -976,8 +967,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             disablekb: 1,
                             fs: 0,
                             playsinline: 1,
-                            widget_referrer: window.location.origin,
-                            origin: window.location.origin
+                            widget_referrer: window.location.origin
                         },
                         events: {
                             onReady: onYTReady,
@@ -1008,13 +998,10 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                    {/* Ghost Layer - Deeper crop to hide YouTube UI edges */}
-                    <div className="absolute top-[-15%] left-[-15%] w-[130%] h-[130%] pointer-events-none select-none transform-gpu backface-hidden">
-                        <div id={playerUniqueId} className="w-full h-full pointer-events-none" />
+                    {/* Ghost Layer - Precision masking (115% zoom instead of 170%) to avoid cutting content */}
+                    <div className="absolute top-[-7.5%] left-[-7.5%] w-[115%] h-[115%] pointer-events-none select-none transform-gpu backface-hidden">
+                        <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
-                    {/* Soft bars to hide any residual overlays */}
-                    <div className="absolute top-0 left-0 right-0 h-[14%] bg-gradient-to-b from-black via-black/70 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 h-[16%] bg-gradient-to-t from-black via-black/70 to-transparent" />
                 </div>
             )}
 
@@ -1182,10 +1169,12 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
-                    <ProfileAvatar user={user} className="w-full h-full object-cover opacity-80" />
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <Icons.Plus className="w-7 h-7 text-white drop-shadow-lg" />
+                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
+                    <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
+                        <ProfileAvatar user={user} className="opacity-80" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
+                        </div>
                     </div>
                 </div>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
@@ -1203,39 +1192,40 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                        <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
-                            {hasMedia ? (
-                                isNativeVideo ? (
-                                    <video
-                                        src={resolveMediaUrl(s.videoUrl || s.image)}
-                                        className="w-full h-full object-cover pointer-events-none"
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                        preload="metadata"
-                                        poster={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)}
-                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                    />
-                                ) : isYT ? (
-                                    <div className="w-full h-full relative">
-                                        <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-7 h-7 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                <Icons.Play className="w-4 h-4 text-white -ml-0.5" />
+                        <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
+                            <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
+                                {hasMedia ? (
+                                    isNativeVideo ? (
+                                        <video
+                                            src={resolveMediaUrl(s.videoUrl || s.image)}
+                                            className="w-full h-full object-cover pointer-events-none"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                            preload="auto"
+                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                        />
+                                    ) : isYT ? (
+                                        <div className="w-full h-full relative">
+                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" alt="" />
+                                    )
                                 ) : (
-                                    <img src={resolveMediaUrl(s.image)} loading="lazy" className="w-full h-full object-cover" alt="" />
-                                )
-                            ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
-                                    <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
-                                        {s.desc}
-                                    </span>
-                                </div>
-                            )}
+                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
+                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
+                                            {s.desc}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{s.author?.username}</span>
                     </div>
@@ -2384,7 +2374,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                            <div className="flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory scroll-pl-2">
+                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {userStories.map(s => {
                                                     const isYT = isYouTubeUrl(s.videoUrl);
                                                     const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
@@ -2395,35 +2385,34 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
                                                     }
                                                     return (
-                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer snap-start">
-                                                            <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                            <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
                                                                             src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                            className="w-full h-full object-cover pointer-events-none"
+                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
                                                                             autoPlay
                                                                             muted
                                                                             loop
                                                                             playsInline
-                                                                            preload="metadata"
-                                                                            poster={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)}
+                                                                            preload="auto"
                                                                             onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                                                                         />
                                                                     ) : isYT ? (
                                                                         <div className="w-full h-full relative">
-                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
                                                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                                                <div className="w-7 h-7 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                                                    <Icons.Play className="w-4 h-4 text-white -ml-0.5" />
+                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     ) : (
-                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} loading="lazy" className="w-full h-full object-cover" />
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
                                                                     )
                                                                 ) : (
-                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
+                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
                                                                         <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
                                                                             {s.desc}
                                                                         </span>
@@ -2955,16 +2944,13 @@ const App = () => {
     const mainScrollRef = useRef(null);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
-    const scrollRafLock = useRef(false);
-    const socketRef = useRef(null);
 
     const handleScroll = (e) => {
-        if (scrollRafLock.current) return;
-        scrollRafLock.current = true;
-        requestAnimationFrame(() => {
-            setShowScrollTop(e.target.scrollTop > 500);
-            scrollRafLock.current = false;
-        });
+        if (e.target.scrollTop > 500) {
+            setShowScrollTop(true);
+        } else {
+            setShowScrollTop(false);
+        }
     };
 
     const scrollToTop = () => {
@@ -3110,51 +3096,6 @@ const App = () => {
         }
         return () => { }; // Cleanup handled by functions
     }, [user]);
-
-    // --- REALTIME SOCKET.IO ---
-    useEffect(() => {
-        if (socketRef.current) return;
-        const BASE_URL = axios.defaults.baseURL.replace('/api', '');
-        const socket = io(BASE_URL, { transports: ['websocket', 'polling'] });
-        socketRef.current = socket;
-
-        // Posts created
-        socket.on('post.created', (post) => {
-            setPosts(prev => {
-                if (!Array.isArray(prev)) return [post];
-                if (prev.some(p => p._id === post._id)) return prev;
-                // Client-side privacy guard (approximate)
-                const a = post.author || {};
-                const currentUserId = String(user?._id || '');
-                const isOwner = String(a?._id || a) === currentUserId;
-                const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
-                const isFounder = user?.role === 'Founder';
-                const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
-                if (isPrivate && !isOwner && !isFollower && !isFounder) return prev;
-                return [post, ...prev];
-            });
-        });
-        // Posts deleted
-        socket.on('post.deleted', ({ postId }) => {
-            setPosts(prev => prev.filter(p => p._id !== postId));
-            if (selectedPostRef.current?._id === postId) setSelectedPost(null);
-        });
-        // Comments sync (added/updated/deleted)
-        const syncComments = ({ postId, comments }) => {
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments } : p));
-            if (selectedPostRef.current?._id === postId) {
-                setSelectedPost(prev => prev ? { ...prev, comments } : prev);
-            }
-        };
-        socket.on('comment.added', syncComments);
-        socket.on('comment.updated', syncComments);
-        socket.on('comment.deleted', syncComments);
-
-        return () => {
-            try { socket.disconnect(); } catch { }
-            socketRef.current = null;
-        };
-    }, [user?._id, user?.role]);
 
 
     // FIX: Optimized search filtering with useMemo
@@ -3815,7 +3756,7 @@ const App = () => {
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-[450px] w-auto object-contain mb-4" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
                                 </div>
                             </div>
                             <div className="space-y-4">
@@ -3987,11 +3928,11 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-44 w-auto object-contain" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-32 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
