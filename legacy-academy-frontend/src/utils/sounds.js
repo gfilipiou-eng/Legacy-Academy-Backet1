@@ -5,10 +5,24 @@ if (typeof window !== 'undefined') {
     window.SOUND_ENABLED = localStorage.getItem('soundEnabled') !== 'false';
 }
 
+// Shared AudioContext to avoid overhead and limit issues
+let audioCtx = null;
+
+const getCtx = () => {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    // Mobile/Modern browsers require resume() on user gesture
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+};
+
 export const playSound = (type) => {
     if (typeof window === 'undefined' || !window.SOUND_ENABLED) return;
 
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getCtx();
 
     if (type === 'pop' || type === 'click' || type === 'tap') {
         const osc = ctx.createOscillator();

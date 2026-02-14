@@ -552,7 +552,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <div className="flex gap-1 relative">
                             <div className="relative">
-                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                                         <circle cx="12" cy="12" r="1" />
                                         <circle cx="12" cy="5" r="1" />
@@ -574,7 +574,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 </button>
                                             )}
                                             {(isOwner || isFounder) && (
-                                                <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); onClose(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); onClose(); setShowMenu(false); playSound('cyber_delete'); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
                                                     <Icons.Trash className="w-4 h-4 text-red-500" />
                                                     <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
                                                 </button>
@@ -1329,7 +1329,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 
                     {/* MORE MENU */}
                     <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                                 <circle cx="12" cy="12" r="1" />
                                 <circle cx="12" cy="5" r="1" />
