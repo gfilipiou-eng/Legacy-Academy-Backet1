@@ -392,7 +392,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
+                <div className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl border transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-[#1a1a1a] border-white/10 rounded-tl-none hover:bg-white/10'}`}>
                     <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
                         <div className="flex items-center gap-1">
                             <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
