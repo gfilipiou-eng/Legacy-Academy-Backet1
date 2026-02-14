@@ -1980,7 +1980,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat, onDeletePost }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -2455,6 +2455,20 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
                                                                                 <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
                                                                                 <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageSquare className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
+                                                                                {(isMe || currentUser?.role === 'Founder') && (
+                                                                                    <button
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            onDeletePost(p._id);
+                                                                                            // Optimistic local update for ProfileModal's specific state
+                                                                                            setUserSpecificPosts(prev => prev.filter(post => post._id !== p._id));
+                                                                                        }}
+                                                                                        className="p-1 px-2.5 bg-red-600/20 text-red-500 rounded-lg border border-red-500/30 hover:bg-red-600 hover:text-white transition-all transform hover:scale-110 active:scale-90"
+                                                                                        title={t('DELETE')}
+                                                                                    >
+                                                                                        <Icons.Trash className="w-3 h-3" />
+                                                                                    </button>
+                                                                                )}
                                                                             </div>
                                                                         </div>
                                                                     ))}
@@ -4081,11 +4095,17 @@ const App = () => {
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} onDeletePost={handleDeletePost} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
-                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
+                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={(pid) => {
+                            handleDeletePost(pid);
+                            // Also trigger manual refresh for profile if open
+                            if (isProfileOpen) {
+                                // fetchUserPosts is inside ProfileModal, so we should actually pass the delete handler in
+                            }
+                        }} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
                             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
                             setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
                         }} />
