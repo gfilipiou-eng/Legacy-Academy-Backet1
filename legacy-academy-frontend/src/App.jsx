@@ -99,6 +99,31 @@ if (typeof document !== 'undefined') {
         .animate-heart-beat {
             animation: heart-beat 0.3s ease-in-out;
         }
+        
+        /* --- MOBILE LANDSCAPE LOCK --- */
+        @media screen and (orientation: landscape) and (max-width: 950px) {
+            body::after {
+                content: "SYSTEM LOCKED\\A\\A ROTATION DETECTED \\A RETURN TO PORTRAIT";
+                white-space: pre;
+                position: fixed;
+                inset: 0;
+                z-index: 99999;
+                background: #000;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Inter', sans-serif;
+                font-weight: 900;
+                font-size: 12px;
+                letter-spacing: 0.2em;
+                text-align: center;
+                backdrop-filter: blur(20px);
+            }
+            #root {
+                display: none;
+            }
+        }
         @keyframes ghost-pulse {
             0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 5px var(--gold-glow)); transform: scale(1); }
             50% { opacity: 1; filter: drop-shadow(0 0 15px var(--gold-glow)); transform: scale(1.05); }
