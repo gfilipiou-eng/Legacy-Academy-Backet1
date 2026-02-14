@@ -3581,6 +3581,14 @@ const App = () => {
             return p;
         }));
 
+        // CRITICAL SYNC: Update the open Zoom view immediately
+        if (selectedPost?._id === postId) {
+            setSelectedPost(prev => ({
+                ...prev,
+                comments: prev.comments.filter(c => c._id !== commentId)
+            }));
+        }
+
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
             playSound('cyber_delete');
@@ -3592,18 +3600,33 @@ const App = () => {
     };
 
     const handleEditComment = async (postId, commentId, text) => {
+        // OPTIMISTIC SYNC
+        const syncUpdate = (postsArray) => postsArray.map(p => {
+            if (p._id === postId) {
+                const updatedComments = p.comments.map(c => c._id === commentId ? { ...c, text } : c);
+                return { ...p, comments: updatedComments };
+            }
+            return p;
+        });
+
+        setPosts(prev => syncUpdate(prev));
+        if (selectedPost?._id === postId) {
+            setSelectedPost(prev => ({
+                ...prev,
+                comments: prev.comments.map(c => c._id === commentId ? { ...c, text } : c)
+            }));
+        }
+
         try {
             const res = await axios.put(`/posts/${postId}/comment/${commentId}`, { text });
-            const updatedComments = res.data;
-            setPosts(prev => prev.map(p => {
-                if (p._id === postId) {
-                    if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
-                    return { ...p, comments: updatedComments };
-                }
-                return p;
-            }));
+            const finalComments = res.data;
+
+            // Final sync with backend data
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: finalComments } : p));
+            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: finalComments }));
         } catch (e) {
             console.error("Failed to edit comment", e);
+            fetchPosts(); // Rollback to server state
         }
     };
 
