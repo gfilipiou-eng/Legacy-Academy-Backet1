@@ -4,8 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound } from './utils/sounds';
+import { io } from 'socket.io-client';
 
-const BASE_URL = axios.defaults.baseURL.replace('/api', '');
+const API_URL = axios.defaults.baseURL;
+const BASE_URL = API_URL.replace('/api', '');
+const socket = io(BASE_URL);
 
 const resolveMediaUrl = (path, width = null, isAvatar = false) => {
     if (!path) return '';
@@ -86,8 +89,28 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
     useEffect(() => {
         fetchPost();
-        const interval = setInterval(fetchPost, 5000);
-        return () => clearInterval(interval);
+
+        const handlePostUpdate = (updatedPost) => {
+            if (String(updatedPost._id) === String(postId)) {
+                setPost(updatedPost);
+            }
+        };
+
+        const handleNewComment = ({ postId: updatedPostId, comments }) => {
+            if (String(updatedPostId) === String(postId)) {
+                setPost(prev => prev ? { ...prev, comments } : null);
+                playSound('pop');
+                setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+            }
+        };
+
+        socket.on("post_updated", handlePostUpdate);
+        socket.on("new_comment", handleNewComment);
+
+        return () => {
+            socket.off("post_updated", handlePostUpdate);
+            socket.off("new_comment", handleNewComment);
+        };
     }, [postId]);
 
     const handleSubmit = async (e) => {

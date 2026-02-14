@@ -6,10 +6,16 @@ import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
+import { io } from 'socket.io-client';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
+const socket = io(BASE_URL, {
+    autoConnect: true,
+    reconnection: true,
+    reconnectionDelay: 5000
+});
 
 const GREEK_PHONETIC = {
     'a': 'α', 'b': 'β', 'c': 'ψ', 'd': 'δ', 'e': 'ε', 'f': 'φ', 'g': 'γ', 'h': 'η', 'i': 'ι', 'j': 'ξ', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'o': 'ο', 'p': 'π', 'q': 'θ', 'r': 'ρ', 's': 'σ', 't': 'τ', 'u': 'υ', 'v': 'ω', 'w': 'ς', 'x': 'χ', 'y': 'υ', 'z': 'ζ',
@@ -1551,12 +1557,36 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     }, [isOpen, initialChatUser, allUsers]);
 
     useEffect(() => {
-        if (!isOpen || !activeChat?._id) return;
+        if (!isOpen || !activeChat?._id || !user?._id) return;
+
         const targetId = activeChat._id;
         fetchMessages(targetId);
-        const interval = setInterval(() => fetchMessages(targetId), 4000);
-        return () => clearInterval(interval);
-    }, [isOpen, activeChat?._id]);
+
+        // Join the private channel for this user to receive real-time updates
+        socket.emit("join", user._id);
+
+        // Listen for new messages
+        const handleNewMessage = (msg) => {
+            if (String(msg.sender) === String(targetId) || String(msg.recipient) === String(targetId)) {
+                setMessages(prev => {
+                    const currentMsgs = prev[targetId] || [];
+                    if (currentMsgs.some(m => m._id === msg._id)) return prev;
+                    return { ...prev, [targetId]: [...currentMsgs, msg] };
+                });
+
+                // If it's an incoming message in the active chat, mark as read immediately
+                if (String(msg.recipient) === String(user._id)) {
+                    axios.patch(`/messages/${msg._id}/read`).catch(() => { });
+                }
+            }
+        };
+
+        socket.on("new_message", handleNewMessage);
+
+        return () => {
+            socket.off("new_message", handleNewMessage);
+        };
+    }, [isOpen, activeChat?._id, user?._id]);
 
     // WHISPERS: Improved Auto-Scroll Logic
     useEffect(() => {
@@ -2942,6 +2972,82 @@ const App = () => {
     const [expandedDates, setExpandedDates] = useState({});
     const [showScrollTop, setShowScrollTop] = useState(false);
     const mainScrollRef = useRef(null);
+
+    // --- SOCKET REAL-TIME SYNC ---
+    useEffect(() => {
+        if (!user?._id) return;
+
+        // Join personal room for notifications and general sync
+        socket.emit("join", user._id);
+
+        const handleNotification = (note) => {
+            console.log("📡 [REAL-TIME] New notification received:", note);
+            playSound('cyber_notification');
+
+            // Re-fetch or update local state
+            setAlerts(prev => [note, ...prev]);
+            setUser(prev => {
+                const currentNotes = prev?.notifications || [];
+                const updated = {
+                    ...prev,
+                    notifications: [note, ...currentNotes]
+                };
+                localStorage.setItem('user', JSON.stringify(updated));
+                return updated;
+            });
+        };
+
+        const handlePostUpdated = (updatedPost) => {
+            console.log("📡 [REAL-TIME] Post updated:", updatedPost._id);
+            setPosts(prev => prev.map(p => p._id === updatedPost._id ? updatedPost : p));
+        };
+
+        const handlePostDeleted = (postId) => {
+            console.log("📡 [REAL-TIME] Post deleted:", postId);
+            setPosts(prev => prev.filter(p => p._id !== postId));
+            if (selectedPost?._id === postId) setSelectedPost(null);
+        };
+
+        const handleNewComment = ({ postId, comments }) => {
+            console.log("📡 [REAL-TIME] New comments for post:", postId);
+            setPosts(prev => prev.map(p => {
+                if (p._id === postId) {
+                    return { ...p, comments };
+                }
+                return p;
+            }));
+
+            // Update selected post if open
+            setSelectedPost(prev => {
+                if (prev?._id === postId) {
+                    return { ...prev, comments };
+                }
+                return prev;
+            });
+        };
+
+        const handleNewPost = (post) => {
+            console.log("📡 [REAL-TIME] New post received:", post._id);
+            setPosts(prev => {
+                if (prev.some(p => p._id === post._id)) return prev;
+                return [post, ...prev];
+            });
+        };
+
+        socket.on("notification", handleNotification);
+        socket.on("post_updated", handlePostUpdated);
+        socket.on("post_deleted", handlePostDeleted);
+        socket.on("new_comment", handleNewComment);
+        socket.on("new_post", handleNewPost);
+
+        return () => {
+            socket.off("notification", handleNotification);
+            socket.off("post_updated", handlePostUpdated);
+            socket.off("post_deleted", handlePostDeleted);
+            socket.off("new_comment", handleNewComment);
+            socket.off("new_post", handleNewPost);
+        };
+    }, [user?._id]);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
 
@@ -3084,9 +3190,9 @@ const App = () => {
             fetchUsers();
             startHeartbeat();
             startUserPoll();
-            startPostPoll();
+            // startPostPoll(); // REPLACED BY SOCKET.IO
             fetchNotifications();
-            startNotificationPoll();
+            // startNotificationPoll(); // REPLACED BY SOCKET.IO
         } else if (!user) {
             lastInitializedId.current = null;
             stopHeartbeat();

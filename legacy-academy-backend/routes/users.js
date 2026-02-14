@@ -111,44 +111,59 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         if (targetIsPrivate) {
             const alreadyRequested = targetUser.followRequests?.some(id => String(id) === String(currentId));
             if (!alreadyRequested) {
+                const note = {
+                    type: 'follow_request',
+                    from: currentId,
+                    fromUsername: currentUser.username,
+                    fromProfilePic: currentUser.profilePic,
+                    read: false,
+                    createdAt: new Date()
+                };
+
                 await targetUser.updateOne({
                     $addToSet: { followRequests: currentId },
                     $push: {
                         notifications: {
-                            $each: [{
-                                type: 'follow_request',
-                                from: currentId,
-                                fromUsername: currentUser.username,
-                                fromProfilePic: currentUser.profilePic,
-                                read: false,
-                                createdAt: new Date()
-                            }],
+                            $each: [note],
                             $position: 0
                         }
                     }
                 });
+
+                const io = req.app.get("io");
+                if (io) {
+                    io.to(String(targetId)).emit("notification", note);
+                }
             }
             return res.status(200).json({ message: "Request sent", requested: true, followers: targetUser.followers });
         }
 
         // 3. PUBLIC FOLLOW (INSTANT)
+        const note = {
+            type: 'follow',
+            from: currentId,
+            fromUsername: currentUser.username,
+            fromProfilePic: currentUser.profilePic,
+            read: false,
+            createdAt: new Date()
+        };
+
         await targetUser.updateOne({
             $addToSet: { followers: currentId },
             $push: {
                 notifications: {
-                    $each: [{
-                        type: 'follow',
-                        from: currentId,
-                        fromUsername: currentUser.username,
-                        fromProfilePic: currentUser.profilePic,
-                        read: false,
-                        createdAt: new Date()
-                    }],
+                    $each: [note],
                     $position: 0
                 }
             }
         });
         await currentUser.updateOne({ $addToSet: { following: targetId } });
+
+        const io = req.app.get("io");
+        if (io) {
+            io.to(String(targetId)).emit("notification", note);
+        }
+
         return res.status(200).json({ message: "Followed", following: [...currentUser.following, targetId] });
     } catch (err) {
         res.status(500).json(err);
@@ -192,20 +207,27 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
         }
 
         // Update requester
+        const note = {
+            type: 'follow_accepted',
+            from: userId,
+            fromUsername: user.username,
+            fromProfilePic: user.profilePic || '',
+            text: `Accepted your follow request.`,
+            read: false,
+            createdAt: new Date()
+        };
+
         await User.findByIdAndUpdate(requesterId, {
             $addToSet: { following: userId },
             $push: {
-                notifications: {
-                    type: 'follow_accepted',
-                    from: userId,
-                    fromUsername: user.username,
-                    fromProfilePic: user.profilePic || '',
-                    text: `Accepted your follow request.`,
-                    read: false,
-                    createdAt: new Date()
-                }
+                notifications: note
             }
         });
+
+        const io = req.app.get("io");
+        if (io) {
+            io.to(String(requesterId)).emit("notification", note);
+        }
 
         res.status(200).json("Request Accepted");
     } catch (err) {
