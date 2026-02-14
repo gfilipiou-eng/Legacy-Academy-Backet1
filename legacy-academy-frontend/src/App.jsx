@@ -1501,6 +1501,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
     const scrollRef = useRef();
+    const lastInitUser = useRef(null);
 
     const fetchMessages = async (otherUserId) => {
         try {
@@ -1526,12 +1527,26 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     };
 
     useEffect(() => {
-        if (isOpen && initialChatUser) {
-            if (typeof initialChatUser === 'string') {
-                const found = allUsers.find(u => String(u._id) === String(initialChatUser));
-                if (found) setActiveChat(found);
-            } else if (initialChatUser._id || initialChatUser.id) {
-                setActiveChat(initialChatUser);
+        if (!isOpen) {
+            setActiveChat(null);
+            lastInitUser.current = null;
+            return;
+        }
+
+        if (initialChatUser) {
+            const initId = String(initialChatUser._id || initialChatUser);
+            // Only force open chat if it's a NEW request we haven't handled yet
+            if (lastInitUser.current !== initId) {
+                if (typeof initialChatUser === 'string') {
+                    const found = allUsers.find(u => String(u._id) === String(initialChatUser));
+                    if (found) {
+                        setActiveChat(found);
+                        lastInitUser.current = initId;
+                    }
+                } else if (initialChatUser._id || initialChatUser.id) {
+                    setActiveChat(initialChatUser);
+                    lastInitUser.current = initId;
+                }
             }
         }
     }, [isOpen, initialChatUser, allUsers]);
