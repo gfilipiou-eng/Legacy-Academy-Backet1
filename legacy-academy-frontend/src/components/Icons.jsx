@@ -52,10 +52,18 @@ export const Icons = {
     Maximize: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>,
     Broom: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 2L4 16h6l-3 6 12-10h-6l5-10h-6z" transform="scale(0.8) translate(4,4)" opacity="0" /><path d="m19 2-8.5 8.5" /><path d="m14 6.5 3 3" /><path d="M9.5 12.5C7 15 5 13.5 3 15.5c-2 2-1 4 0 5s4 1 6-1c2-2 .5-4 3-6.5" /><path d="M5 16s2 2 4 0" /></svg>,
     Ghost: ({ className, ...p }) => (
-        <div
-            className={`bg-black bg-[url('/ghost_logo_1771069362755.jpg')] bg-[length:150%] bg-center bg-no-repeat flex-shrink-0 ${className || 'w-5 h-5'}`}
-            {...p}
-        />
+        <div className={`flex items-center justify-center overflow-hidden ${className || 'w-5 h-5'}`}>
+            <img
+                src="/ghost_logo_1771069362755.jpg"
+                alt="Ghost"
+                className="w-full h-full object-contain scale-[1.85]"
+                style={{
+                    filter: 'contrast(1.25) brightness(1.1)',
+                    imageRendering: '-webkit-optimize-contrast'
+                }}
+                {...p}
+            />
+        </div>
     ),
     AlertTriangle: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
     Crown: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" /></svg>,
