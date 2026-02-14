@@ -1980,7 +1980,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat, onDeletePost }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat, onDeletePost, lastDeletedPostId }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -2056,6 +2056,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             fetchUserPosts();
         }
     }, [isOpen, profileUser?._id]);
+
+    // LIVE SYNC: React to global deletions if the profile is open
+    useEffect(() => {
+        if (lastDeletedPostId) {
+            setUserSpecificPosts(prev => prev.filter(p => p._id !== lastDeletedPostId));
+        }
+    }, [lastDeletedPostId]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         // Strict exclusion of stories from the main grid
@@ -2455,20 +2462,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
                                                                                 <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
                                                                                 <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageSquare className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
-                                                                                {(isMe || currentUser?.role === 'Founder') && (
-                                                                                    <button
-                                                                                        onClick={(e) => {
-                                                                                            e.stopPropagation();
-                                                                                            onDeletePost(p._id);
-                                                                                            // Optimistic local update for ProfileModal's specific state
-                                                                                            setUserSpecificPosts(prev => prev.filter(post => post._id !== p._id));
-                                                                                        }}
-                                                                                        className="p-1 px-2.5 bg-red-600/20 text-red-500 rounded-lg border border-red-500/30 hover:bg-red-600 hover:text-white transition-all transform hover:scale-110 active:scale-90"
-                                                                                        title={t('DELETE')}
-                                                                                    >
-                                                                                        <Icons.Trash className="w-3 h-3" />
-                                                                                    </button>
-                                                                                )}
                                                                             </div>
                                                                         </div>
                                                                     ))}
@@ -2899,6 +2892,7 @@ const App = () => {
         setFormData(prev => ({ ...prev, [key]: value }));
     };
     const [posts, setPosts] = useState([]);
+    const [lastDeletedPostId, setLastDeletedPostId] = useState(null);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('home');
     const [searchQuery, setSearchQuery] = useState('');
@@ -3666,6 +3660,7 @@ const App = () => {
     const handleDeletePost = async (postId) => {
         // OPTIMISTIC SHATTER
         setPosts(prev => prev.filter(p => p._id !== postId));
+        setLastDeletedPostId(postId); // Propagate to modals
         try {
             await axios.delete(`/posts/${postId}`);
             playSound('cyber_delete');
@@ -4095,7 +4090,7 @@ const App = () => {
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} onDeletePost={handleDeletePost} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} onDeletePost={handleDeletePost} lastDeletedPostId={lastDeletedPostId} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
