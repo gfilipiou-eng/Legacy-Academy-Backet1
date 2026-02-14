@@ -505,8 +505,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
-                {/* Image Section - Smaller on mobile for more comment space */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
+                {/* Image Section - Balanced for mobile to show full videos/photos */}
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
                             <NeuralVideoPlayer
@@ -968,8 +968,8 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                    {/* Ghost Layer to hide YT branding by pushing it way off-screen */}
-                    <div className="absolute top-[-35%] left-[-35%] w-[170%] h-[170%] pointer-events-none select-none transform-gpu backface-hidden">
+                    {/* Ghost Layer - Precision masking (115% zoom instead of 170%) to avoid cutting content */}
+                    <div className="absolute top-[-7.5%] left-[-7.5%] w-[115%] h-[115%] pointer-events-none select-none transform-gpu backface-hidden">
                         <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
                 </div>
