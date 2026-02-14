@@ -365,7 +365,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         {isFounder && (
                             <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)] animate-fade-in group/badge">
                                 <FounderBadge className="w-4 h-4" />
-                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
+                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                             </div>
                         )}
                     </div>
@@ -543,7 +543,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 {author?.role === 'Founder' ? (
                                     <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
                                         <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
+                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                     </div>
                                 ) : (
                                     <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
@@ -1151,30 +1151,42 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
             </div>
 
             {stories && stories.map((s, i) => {
-                const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
+                const isYT = isYouTubeUrl(s.videoUrl);
+                const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
                 const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
+                let ytThumb = null;
+                if (isYT) {
+                    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(s.videoUrl || '');
+                    if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+                }
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                         <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
                             <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
                                 {hasMedia ? (
-                                    isVideo ? (
+                                    isNativeVideo ? (
+                                        <video
+                                            src={resolveMediaUrl(s.videoUrl || s.image)}
+                                            className="w-full h-full object-cover pointer-events-none"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                            preload="auto"
+                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                        />
+                                    ) : isYT ? (
                                         <div className="w-full h-full relative">
-                                            <video
-                                                src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                className="w-full h-full object-cover pointer-events-none"
-                                                muted
-                                                playsInline
-                                                preload="metadata"
-                                                onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                            />
-                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                                <Icons.Play className="w-4 h-4 text-white/80" />
+                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
-                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" />
+                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" alt="" />
                                     )
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
@@ -1307,7 +1319,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                     {isFounder && (
                                         <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
                                             <FounderBadge className="w-5 h-5" />
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                         </div>
                                     )}
 
@@ -1417,7 +1429,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                         </div>
                         <div className="space-y-6">
                             {(post.comments || []).map(c => (
-                                <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} lang="en" />
+                                <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
                             ))}
                         </div>
                     </div>
@@ -2250,7 +2262,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {displayUser?.role === 'Founder' && (
                                         <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit shadow-[0_0_15px_rgba(255,215,0,0.2)]">
                                             <FounderBadge className="w-5 h-5" />
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -3910,7 +3922,7 @@ const App = () => {
                                                                 {u.role === 'Founder' && (
                                                                     <div className="flex items-center gap-1 animate-fade-in group/badge">
                                                                         <FounderBadge className="w-3 h-3" />
-                                                                        <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE')}</div>
+                                                                        <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</div>
                                                                     </div>
                                                                 )}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
