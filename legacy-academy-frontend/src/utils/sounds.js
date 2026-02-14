@@ -327,12 +327,12 @@ export const explodeEffect = () => {
 export const cyberDeleteEffect = () => {
     if (typeof document === 'undefined') return;
 
-    // REPLACEMENT: Gold Wave Ripple (Kima)
-    const ripple = document.createElement('div');
-    ripple.className = 'fx-ripple-gold';
-    document.body.appendChild(ripple);
+    // REPLACEMENT: Red Vignette Pulse (Edges Only - No Motion)
+    const vignette = document.createElement('div');
+    vignette.className = 'fx-vignette-red';
+    document.body.appendChild(vignette);
 
     setTimeout(() => {
-        ripple.remove();
-    }, 800);
+        vignette.remove();
+    }, 600);
 };

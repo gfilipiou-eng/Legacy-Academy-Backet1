@@ -108,23 +108,19 @@ if (typeof document !== 'undefined') {
             animation: fx-flash-red 0.5s ease-out;
         }
         
-        /* --- GOLD WAVE RIPPLE (KIMA) --- */
-        @keyframes fx-ripple-expand {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; border-width: 10px; }
-            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; border-width: 0px; }
+        /* --- RED VIGNETTE PULSE (NO MOTION) --- */
+        @keyframes fx-vignette-fade {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            100% { opacity: 0; }
         }
-        .fx-ripple-gold {
+        .fx-vignette-red {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100vmax;
-            height: 100vmax;
-            border: 4px solid var(--gold-primary);
-            border-radius: 50%;
+            inset: 0;
             z-index: 99999;
             pointer-events: none;
-            box-shadow: 0 0 50px var(--gold-primary), inset 0 0 50px var(--gold-primary);
-            animation: fx-ripple-expand 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background: radial-gradient(circle, transparent 40%, rgba(220, 38, 38, 0.6) 100%);
+            animation: fx-vignette-fade 0.5s ease-out forwards;
         }
 
         @keyframes ghost-pulse {
@@ -1759,7 +1755,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                         }}
                                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
-                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
+                                        className={`w-full bg-transparent py-3 text-base sm:text-sm text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
