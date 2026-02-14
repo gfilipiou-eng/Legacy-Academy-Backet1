@@ -327,12 +327,6 @@ export const explodeEffect = () => {
 export const cyberDeleteEffect = () => {
     if (typeof document === 'undefined') return;
 
-    // REPLACEMENT: Red Vignette Pulse (Edges Only - No Motion)
-    const vignette = document.createElement('div');
-    vignette.className = 'fx-vignette-red';
-    document.body.appendChild(vignette);
-
-    setTimeout(() => {
-        vignette.remove();
-    }, 600);
+    // REPLACEMENT: No Visual Effect (Just Sound)
+    // Removed vignette as per user request ("dizzying")
 };
