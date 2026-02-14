@@ -150,10 +150,17 @@ const getYouTubeEmbedUrl = (url) => {
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
     if (!u || !u.lastSeen) return false;
-    // Rule: Removed follower restriction - online status is now visible to all for better connectivity
     try {
-        // 60 seconds threshold for "Online"
-        return (Date.now() - new Date(u.lastSeen).getTime()) < 60000;
+        const lastSeenDate = new Date(u.lastSeen);
+        if (isNaN(lastSeenDate.getTime())) return false;
+
+        const diff = Date.now() - lastSeenDate.getTime();
+
+        // Fix: If lastSeen is in the future (clock skew), treat as online only if within 5 seconds
+        if (diff < -5000) return false;
+
+        // Rule: Tighter threshold (35s) to reflect "Offline" state faster (Heartbeat is 30s)
+        return diff < 35000;
     } catch (e) { return false; }
 };
 
