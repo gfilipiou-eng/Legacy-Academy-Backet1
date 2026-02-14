@@ -1876,9 +1876,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
                     <div className="flex flex-col">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-[var(--gold-primary)]/10 rounded-xl">
-                                <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
-                            </div>
+                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
                             <div>
                                 <h2 className="font-black uppercase tracking-[0.2em] text-sm text-white leading-none">{t('SETTINGS')}</h2>
                                 <div className="text-[10px] font-medium text-gray-500 mt-1 tracking-wide">Customize your experience</div>
