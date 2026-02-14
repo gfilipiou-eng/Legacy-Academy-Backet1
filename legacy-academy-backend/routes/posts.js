@@ -84,13 +84,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
 
         const savedPost = await newPost.save();
-        await savedPost.populate("author", "username profilePic role isPrivate isFollowersOnly followers");
-
-        const io = req.app.get("io");
-        if (io) {
-            io.emit("new_post", savedPost.toObject());
-        }
-
+        await savedPost.populate("author", "username profilePic role");
         res.status(200).json(savedPost);
     } catch (err) {
         res.status(500).json(err);
@@ -107,20 +101,12 @@ router.put("/:id/like", verifyToken, async (req, res) => {
 
         if (!post.likes.includes(userId)) {
             await post.updateOne({ $push: { likes: userId }, $pull: { dislikes: userId } });
+            // Add Notification call here if needed
+            res.status(200).json({ message: "Liked", likes: [...post.likes, userId], dislikes: post.dislikes.filter(id => id !== userId) });
         } else {
             await post.updateOne({ $pull: { likes: userId } });
+            res.status(200).json({ message: "Unliked", likes: post.likes.filter(id => id !== userId), dislikes: post.dislikes });
         }
-
-        const io = req.app.get("io");
-        if (io) {
-            const updatedPost = await Post.findById(req.params.id)
-                .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
-                .populate("comments.user", "username profilePic role")
-                .lean();
-            io.emit("post_updated", updatedPost);
-        }
-
-        res.status(200).json({ message: "Update Success" });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -136,20 +122,11 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
 
         if (!post.dislikes.includes(userId)) {
             await post.updateOne({ $push: { dislikes: userId }, $pull: { likes: userId } });
+            res.status(200).json({ message: "Disliked", likes: post.likes.filter(id => id !== userId), dislikes: [...post.dislikes, userId] });
         } else {
             await post.updateOne({ $pull: { dislikes: userId } });
+            res.status(200).json({ message: "Undisliked", likes: post.likes, dislikes: post.dislikes.filter(id => id !== userId) });
         }
-
-        const io = req.app.get("io");
-        if (io) {
-            const updatedPost = await Post.findById(req.params.id)
-                .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
-                .populate("comments.user", "username profilePic role")
-                .lean();
-            io.emit("post_updated", updatedPost);
-        }
-
-        res.status(200).json({ message: "Update Success" });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -176,16 +153,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
         await post.updateOne({ $push: { comments: comment } });
 
         // Return updated comments with population
-        const updatedPost = await Post.findById(req.params.id)
-            .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
-            .populate("comments.user", "username profilePic role");
-
-        const io = req.app.get("io");
-        if (io) {
-            io.emit("post_updated", updatedPost.toObject());
-            io.emit("new_comment", { postId: req.params.id, comments: updatedPost.comments });
-        }
-
+        const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
         res.status(200).json(updatedPost.comments);
     } catch (err) {
         console.error("Comment Error:", err);
@@ -244,14 +212,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
         if (post.author.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
-            const postId = post._id;
             await post.deleteOne();
-
-            const io = req.app.get("io");
-            if (io) {
-                io.emit("post_deleted", postId);
-            }
-
             res.status(200).json("Post deleted");
         } else {
             res.status(403).json("You can delete only your post");

@@ -4,18 +4,12 @@ import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
-import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
+import { playSound, explodeEffect } from './utils/sounds';
 import CommentView from './CommentView';
-import { io } from 'socket.io-client';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
-const socket = io(BASE_URL, {
-    autoConnect: true,
-    reconnection: true,
-    reconnectionDelay: 5000
-});
 
 const GREEK_PHONETIC = {
     'a': 'α', 'b': 'β', 'c': 'ψ', 'd': 'δ', 'e': 'ε', 'f': 'φ', 'g': 'γ', 'h': 'η', 'i': 'ι', 'j': 'ξ', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'o': 'ο', 'p': 'π', 'q': 'θ', 'r': 'ρ', 's': 'σ', 't': 'τ', 'u': 'υ', 'v': 'ω', 'w': 'ς', 'x': 'χ', 'y': 'υ', 'z': 'ζ',
@@ -104,37 +98,6 @@ if (typeof document !== 'undefined') {
         }
         .animate-heart-beat {
             animation: heart-beat 0.3s ease-in-out;
-        }
-        
-        .fx-overlay-red {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            pointer-events: none;
-            animation: fx-flash-red 0.5s ease-out;
-        }
-        
-        /* --- RED VIGNETTE PULSE (NO MOTION) --- */
-        @keyframes fx-vignette-fade {
-            0% { opacity: 0; }
-            20% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-        .fx-vignette-red {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            pointer-events: none;
-            background: radial-gradient(circle, transparent 40%, rgba(220, 38, 38, 0.6) 100%);
-            animation: fx-vignette-fade 0.5s ease-out forwards;
-        }
-
-        @keyframes ghost-pulse {
-            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 5px var(--gold-glow)); transform: scale(1); }
-            50% { opacity: 1; filter: drop-shadow(0 0 15px var(--gold-glow)); transform: scale(1.05); }
-        }
-        .animate-ghost-pulse {
-            animation: ghost-pulse 2s ease-in-out infinite;
         }
     `;
     document.head.appendChild(style);
@@ -347,16 +310,17 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 };
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
-    <div className={`relative flex items-center justify-center ${className}`}>
-        <Icons.Crown className="w-full h-full text-[var(--gold-primary)]" />
+    <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]`}>
+        <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
     </div>
 );
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
     const color = isFounder ? "#FFD700" : "#1D9BF0";
+    const shadow = isFounder ? "drop-shadow-[0_0_6px_rgba(255,215,0,0.7)]" : "drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]";
 
     return (
-        <svg viewBox="0 0 22 22" className={`${className} shrink-0`}>
+        <svg viewBox="0 0 22 22" className={`${className} shrink-0 ${shadow}`}>
             <path fill={color} d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
         </svg>
     );
@@ -401,7 +365,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         {isFounder && (
                             <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)] animate-fade-in group/badge">
                                 <FounderBadge className="w-4 h-4" />
-                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                             </div>
                         )}
                     </div>
@@ -536,13 +500,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
 
     return (
 
-        <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden landscape:overflow-y-auto transition-all duration-300">
+        <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl active:scale-90 transition-all group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] landscape:h-auto landscape:min-h-screen bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
-                {/* Image Section - Balanced for mobile to show full videos/photos */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full landscape:h-64 shrink-0">
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
+                {/* Image Section - Smaller on mobile for more comment space */}
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[35vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
                             <NeuralVideoPlayer
@@ -565,7 +529,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full overflow-hidden landscape:overflow-visible relative">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full overflow-hidden relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
@@ -579,7 +543,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 {author?.role === 'Founder' ? (
                                     <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
                                         <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                     </div>
                                 ) : (
                                     <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
@@ -588,7 +552,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                         </div>
                         <div className="flex gap-1 relative">
                             <div className="relative">
-                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                                         <circle cx="12" cy="12" r="1" />
                                         <circle cx="12" cy="5" r="1" />
@@ -610,7 +574,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 </button>
                                             )}
                                             {(isOwner || isFounder) && (
-                                                <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); onClose(); setShowMenu(false); playSound('cyber_delete'); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
                                                     <Icons.Trash className="w-4 h-4 text-red-500" />
                                                     <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
                                                 </button>
@@ -1004,8 +968,8 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                    {/* Ghost Layer - Precision masking (115% zoom instead of 170%) to avoid cutting content */}
-                    <div className="absolute top-[-7.5%] left-[-7.5%] w-[115%] h-[115%] pointer-events-none select-none transform-gpu backface-hidden">
+                    {/* Ghost Layer to hide YT branding by pushing it way off-screen */}
+                    <div className="absolute top-[-35%] left-[-35%] w-[170%] h-[170%] pointer-events-none select-none transform-gpu backface-hidden">
                         <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
                 </div>
@@ -1187,42 +1151,30 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
             </div>
 
             {stories && stories.map((s, i) => {
-                const isYT = isYouTubeUrl(s.videoUrl);
-                const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
+                const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
                 const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
-                let ytThumb = null;
-                if (isYT) {
-                    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(s.videoUrl || '');
-                    if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
-                }
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                         <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
                             <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
                                 {hasMedia ? (
-                                    isNativeVideo ? (
-                                        <video
-                                            src={resolveMediaUrl(s.videoUrl || s.image)}
-                                            className="w-full h-full object-cover pointer-events-none"
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                            preload="auto"
-                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                        />
-                                    ) : isYT ? (
+                                    isVideo ? (
                                         <div className="w-full h-full relative">
-                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
-                                                </div>
+                                            <video
+                                                src={resolveMediaUrl(s.videoUrl || s.image)}
+                                                className="w-full h-full object-cover pointer-events-none"
+                                                muted
+                                                playsInline
+                                                preload="metadata"
+                                                onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                <Icons.Play className="w-4 h-4 text-white/80" />
                                             </div>
                                         </div>
                                     ) : (
-                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" alt="" />
+                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" />
                                     )
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
@@ -1304,7 +1256,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
-    const [showMenu, setShowMenu] = useState(false);
 
     const handleDoubleTap = (e) => {
         e.preventDefault();
@@ -1349,52 +1300,34 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                 <VerifiedBadge isFounder={isFounder} className="w-4 h-4" />
                             </div>
 
-                            {/* FOUNDER SECTION BELOW NAME */}
-                            {isFounder && (
+                            {/* FOUNDER & DELETE SECTION BELOW NAME */}
+                            {(isFounder || canDelete) && (
                                 <div className="flex items-center gap-3 mt-1">
-                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
-                                        <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
-                                    </div>
+                                    {/* FOUNDER BADGE */}
+                                    {isFounder && (
+                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                            <FounderBadge className="w-5 h-5" />
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
+                                        </div>
+                                    )}
+
+                                    {/* DELETE ICON / BUTTON */}
+                                    {canDelete && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onDelete(post._id); }}
+                                            className="hover:bg-red-500/10 rounded-full p-1 transition-colors"
+                                            title="Delete Post"
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-red-500">
+                                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    )}
                                 </div>
                             )}
 
                             <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, t, lang)}</span>
                         </div>
-                    </div>
-
-                    {/* MORE MENU */}
-                    <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                <circle cx="12" cy="12" r="1" />
-                                <circle cx="12" cy="5" r="1" />
-                                <circle cx="12" cy="19" r="1" />
-                            </svg>
-                        </button>
-                        {showMenu && (
-                            <>
-                                <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
-                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                        <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
-                                    </button>
-                                    {isOwner && (
-                                        <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
-                                        </button>
-                                    )}
-                                    {canDelete && (
-                                        <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
-                                        </button>
-                                    )}
-                                </div>
-                            </>
-                        )}
                     </div>
                 </div>
 
@@ -1484,7 +1417,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                         </div>
                         <div className="space-y-6">
                             {(post.comments || []).map(c => (
-                                <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                                <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} lang="en" />
                             ))}
                         </div>
                     </div>
@@ -1506,7 +1439,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
     const scrollRef = useRef();
-    const lastInitUser = useRef(null);
 
     const fetchMessages = async (otherUserId) => {
         try {
@@ -1532,61 +1464,23 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     };
 
     useEffect(() => {
-        if (!isOpen) {
-            setActiveChat(null);
-            lastInitUser.current = null;
-            return;
-        }
-
-        if (initialChatUser) {
-            const initId = String(initialChatUser._id || initialChatUser);
-            // Only force open chat if it's a NEW request we haven't handled yet
-            if (lastInitUser.current !== initId) {
-                if (typeof initialChatUser === 'string') {
-                    const found = allUsers.find(u => String(u._id) === String(initialChatUser));
-                    if (found) {
-                        setActiveChat(found);
-                        lastInitUser.current = initId;
-                    }
-                } else if (initialChatUser._id || initialChatUser.id) {
-                    setActiveChat(initialChatUser);
-                    lastInitUser.current = initId;
-                }
+        if (isOpen && initialChatUser) {
+            if (typeof initialChatUser === 'string') {
+                const found = allUsers.find(u => String(u._id) === String(initialChatUser));
+                if (found) setActiveChat(found);
+            } else if (initialChatUser._id || initialChatUser.id) {
+                setActiveChat(initialChatUser);
             }
         }
     }, [isOpen, initialChatUser, allUsers]);
 
     useEffect(() => {
-        if (!isOpen || !activeChat?._id || !user?._id) return;
-
+        if (!isOpen || !activeChat?._id) return;
         const targetId = activeChat._id;
         fetchMessages(targetId);
-
-        // Join the private channel for this user to receive real-time updates
-        socket.emit("join", user._id);
-
-        // Listen for new messages
-        const handleNewMessage = (msg) => {
-            if (String(msg.sender) === String(targetId) || String(msg.recipient) === String(targetId)) {
-                setMessages(prev => {
-                    const currentMsgs = prev[targetId] || [];
-                    if (currentMsgs.some(m => m._id === msg._id)) return prev;
-                    return { ...prev, [targetId]: [...currentMsgs, msg] };
-                });
-
-                // If it's an incoming message in the active chat, mark as read immediately
-                if (String(msg.recipient) === String(user._id)) {
-                    axios.patch(`/messages/${msg._id}/read`).catch(() => { });
-                }
-            }
-        };
-
-        socket.on("new_message", handleNewMessage);
-
-        return () => {
-            socket.off("new_message", handleNewMessage);
-        };
-    }, [isOpen, activeChat?._id, user?._id]);
+        const interval = setInterval(() => fetchMessages(targetId), 4000);
+        return () => clearInterval(interval);
+    }, [isOpen, activeChat?._id]);
 
     // WHISPERS: Improved Auto-Scroll Logic
     useEffect(() => {
@@ -1710,7 +1604,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.Ghost className="w-8 h-8" />
+                                    <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
                                     {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
@@ -1799,7 +1693,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                         }}
                                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
-                                        className={`w-full bg-transparent py-3 text-base sm:text-sm text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
+                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
@@ -1831,15 +1725,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                             </div>
                         </>
                     ) : (
-                        <div className="flex-1 flex items-center justify-center text-center px-4">
-                            <div className="flex flex-col items-center">
-                                <button className="mb-6 bg-transparent border-none p-0 transition-all active:scale-95 group">
-                                    <Icons.Ghost className="w-24 h-24 group-hover:scale-105 transition-all duration-500" />
-                                </button>
-                                <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
-                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
-                            </div>
-                        </div>
+                        <div className="flex-1 flex items-center justify-center text-center"><div><Icons.MessageCircle className="w-16 h-16 text-gray-800 mx-auto mb-4" /><h3 className="font-black italic text-2xl tracking-tighter">{t('MESSAGES')}</h3><p className="text-gray-500 text-sm mt-2">{t('SECURE_COMMS')}</p></div></div>
                     )}
                 </div>
             </div>
@@ -1905,7 +1791,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
                     <div className="flex flex-col">
                         <div className="flex items-center gap-3">
-                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
+                            <div className="p-2 bg-[var(--gold-primary)]/10 rounded-xl">
+                                <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
+                            </div>
                             <div>
                                 <h2 className="font-black uppercase tracking-[0.2em] text-sm text-white leading-none">{t('SETTINGS')}</h2>
                                 <div className="text-[10px] font-medium text-gray-500 mt-1 tracking-wide">Customize your experience</div>
@@ -2061,7 +1949,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat, onDeletePost, lastDeletedPostId }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat }) => {
     const { t, lang } = useTranslation(currentUser);
     const [userData, setUserData] = useState(null);
     const [activeList, setActiveList] = useState(null);
@@ -2073,7 +1961,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
     const fileRef = useRef(null);
-
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
@@ -2137,13 +2025,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             fetchUserPosts();
         }
     }, [isOpen, profileUser?._id]);
-
-    // LIVE SYNC: React to global deletions if the profile is open
-    useEffect(() => {
-        if (lastDeletedPostId) {
-            setUserSpecificPosts(prev => prev.filter(p => p._id !== lastDeletedPostId));
-        }
-    }, [lastDeletedPostId]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         // Strict exclusion of stories from the main grid
@@ -2293,7 +2174,52 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" />
                                     </div>
-
+                                    {!isMe && (
+                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-50">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setShowProfileMenu(!showProfileMenu); }}
+                                                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                                    <circle cx="12" cy="12" r="1" />
+                                                    <circle cx="12" cy="5" r="1" />
+                                                    <circle cx="12" cy="19" r="1" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    )}
+                                    {showProfileMenu && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                                            <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); navigator.share ? navigator.share({ title: displayUser?.username, url: window.location.href }) : navigator.clipboard.writeText(window.location.href); setShowProfileMenu(false); }}
+                                                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                                >
+                                                    <Icons.Share className="w-4 h-4 text-gray-400" />
+                                                    <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                                </button>
+                                                {currentUser?.role === 'Founder' && (
+                                                    <button
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
+                                                            if (!targetId) return;
+                                                            if (!window.confirm(t('CONFIRM_BAN'))) return;
+                                                            try {
+                                                                await axios.post(`/users/${targetId}/ban`, { days: 3 });
+                                                                setShowProfileMenu(false);
+                                                            } catch (e) { }
+                                                        }}
+                                                        className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left"
+                                                    >
+                                                        <Icons.Shield className="w-4 h-4 text-red-500" />
+                                                        <span className="text-xs font-bold text-red-500">{t('BAN')}</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
                                     <div className="flex flex-col items-center">
@@ -2324,7 +2250,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {displayUser?.role === 'Founder' && (
                                         <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit shadow-[0_0_15px_rgba(255,215,0,0.2)]">
                                             <FounderBadge className="w-5 h-5" />
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -2353,7 +2279,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             }}
                                             className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : ''}`} />
+                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_5px_var(--gold-glow)]'}`} />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -2406,37 +2332,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {userStories.map(s => {
-                                                    const isYT = isYouTubeUrl(s.videoUrl);
-                                                    const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
+                                                    const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
                                                     const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
-                                                    let ytThumb = null;
-                                                    if (isYT) {
-                                                        const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(s.videoUrl || '');
-                                                        if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
-                                                    }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                             <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                                 {hasMedia ? (
-                                                                    isNativeVideo ? (
-                                                                        <video
-                                                                            src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
-                                                                            autoPlay
-                                                                            muted
-                                                                            loop
-                                                                            playsInline
-                                                                            preload="auto"
-                                                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                                                        />
-                                                                    ) : isYT ? (
-                                                                        <div className="w-full h-full relative">
-                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
-                                                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
-                                                                                </div>
-                                                                            </div>
+                                                                    isVideo ? (
+                                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative shadow-inner">
+                                                                            <img src={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)} className="absolute inset-0 w-full h-full object-cover rounded-full opacity-60" />
+                                                                            <Icons.Play className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
                                                                         </div>
                                                                     ) : (
                                                                         <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
@@ -2949,7 +2854,6 @@ const App = () => {
         setFormData(prev => ({ ...prev, [key]: value }));
     };
     const [posts, setPosts] = useState([]);
-    const [lastDeletedPostId, setLastDeletedPostId] = useState(null);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('home');
     const [searchQuery, setSearchQuery] = useState('');
@@ -2972,82 +2876,6 @@ const App = () => {
     const [expandedDates, setExpandedDates] = useState({});
     const [showScrollTop, setShowScrollTop] = useState(false);
     const mainScrollRef = useRef(null);
-
-    // --- SOCKET REAL-TIME SYNC ---
-    useEffect(() => {
-        if (!user?._id) return;
-
-        // Join personal room for notifications and general sync
-        socket.emit("join", user._id);
-
-        const handleNotification = (note) => {
-            console.log("📡 [REAL-TIME] New notification received:", note);
-            playSound('cyber_notification');
-
-            // Re-fetch or update local state
-            setAlerts(prev => [note, ...prev]);
-            setUser(prev => {
-                const currentNotes = prev?.notifications || [];
-                const updated = {
-                    ...prev,
-                    notifications: [note, ...currentNotes]
-                };
-                localStorage.setItem('user', JSON.stringify(updated));
-                return updated;
-            });
-        };
-
-        const handlePostUpdated = (updatedPost) => {
-            console.log("📡 [REAL-TIME] Post updated:", updatedPost._id);
-            setPosts(prev => prev.map(p => p._id === updatedPost._id ? updatedPost : p));
-        };
-
-        const handlePostDeleted = (postId) => {
-            console.log("📡 [REAL-TIME] Post deleted:", postId);
-            setPosts(prev => prev.filter(p => p._id !== postId));
-            if (selectedPost?._id === postId) setSelectedPost(null);
-        };
-
-        const handleNewComment = ({ postId, comments }) => {
-            console.log("📡 [REAL-TIME] New comments for post:", postId);
-            setPosts(prev => prev.map(p => {
-                if (p._id === postId) {
-                    return { ...p, comments };
-                }
-                return p;
-            }));
-
-            // Update selected post if open
-            setSelectedPost(prev => {
-                if (prev?._id === postId) {
-                    return { ...prev, comments };
-                }
-                return prev;
-            });
-        };
-
-        const handleNewPost = (post) => {
-            console.log("📡 [REAL-TIME] New post received:", post._id);
-            setPosts(prev => {
-                if (prev.some(p => p._id === post._id)) return prev;
-                return [post, ...prev];
-            });
-        };
-
-        socket.on("notification", handleNotification);
-        socket.on("post_updated", handlePostUpdated);
-        socket.on("post_deleted", handlePostDeleted);
-        socket.on("new_comment", handleNewComment);
-        socket.on("new_post", handleNewPost);
-
-        return () => {
-            socket.off("notification", handleNotification);
-            socket.off("post_updated", handlePostUpdated);
-            socket.off("post_deleted", handlePostDeleted);
-            socket.off("new_comment", handleNewComment);
-            socket.off("new_post", handleNewPost);
-        };
-    }, [user?._id]);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
 
@@ -3190,9 +3018,9 @@ const App = () => {
             fetchUsers();
             startHeartbeat();
             startUserPoll();
-            // startPostPoll(); // REPLACED BY SOCKET.IO
+            startPostPoll();
             fetchNotifications();
-            // startNotificationPoll(); // REPLACED BY SOCKET.IO
+            startNotificationPoll();
         } else if (!user) {
             lastInitializedId.current = null;
             stopHeartbeat();
@@ -3386,13 +3214,6 @@ const App = () => {
         const userId = user?._id;
         if (!userId) return;
 
-        // SNAPSHOT: Capture current state for rollback
-        const pIndex = posts.findIndex(p => String(p._id) === String(postId));
-        if (pIndex === -1) return;
-        const originalPost = posts[pIndex];
-        const originalLikes = [...(originalPost.likes || [])];
-        const originalDislikes = [...(originalPost.dislikes || [])];
-
         // 1. OPTIMISTIC UPDATE (Instant Feedback)
         const updateFn = (p) => {
             if (String(p._id) !== String(postId)) return p;
@@ -3407,7 +3228,11 @@ const App = () => {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        // Removed effects for speed
+        const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
+
+        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        if (navigator.vibrate) navigator.vibrate(50);
+        playSound('cyber_like');
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
@@ -3421,14 +3246,8 @@ const App = () => {
             }
         } catch (e) {
             console.error('Like failed', e);
-            // ROLLBACK to original state
-            const rollbackFn = (p) => String(p._id) === String(postId) ? { ...p, likes: originalLikes, dislikes: originalDislikes } : p;
-            setPosts(prev => prev.map(rollbackFn));
-            if (selectedPost && String(selectedPost._id) === String(postId)) {
-                setSelectedPost(prev => ({ ...prev, likes: originalLikes, dislikes: originalDislikes }));
-            }
         } finally {
-            // No loading to clear
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
     };
 
@@ -3442,13 +3261,6 @@ const App = () => {
     const handleDislike = async (postId) => {
         const userId = user?._id;
         if (!userId) return;
-
-        // SNAPSHOT: Capture current state for rollback
-        const pIndex = posts.findIndex(p => String(p._id) === String(postId));
-        if (pIndex === -1) return;
-        const originalPost = posts[pIndex];
-        const originalLikes = [...(originalPost.likes || [])];
-        const originalDislikes = [...(originalPost.dislikes || [])];
 
         // 1. OPTIMISTIC UPDATE
         const updateFn = (p) => {
@@ -3464,7 +3276,11 @@ const App = () => {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        // Removed effects for speed
+        const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
+
+        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        if (navigator.vibrate) navigator.vibrate(50);
+        playSound('cyber_dislike');
 
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
@@ -3478,14 +3294,8 @@ const App = () => {
             }
         } catch (e) {
             console.error('Dislike failed', e);
-            // ROLLBACK to original state
-            const rollbackFn = (p) => String(p._id) === String(postId) ? { ...p, likes: originalLikes, dislikes: originalDislikes } : p;
-            setPosts(prev => prev.map(rollbackFn));
-            if (selectedPost && String(selectedPost._id) === String(postId)) {
-                setSelectedPost(prev => ({ ...prev, likes: originalLikes, dislikes: originalDislikes }));
-            }
         } finally {
-            // No loading to clear
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
     };
 
@@ -3759,14 +3569,6 @@ const App = () => {
             return p;
         }));
 
-        // CRITICAL SYNC: Update the open Zoom view immediately
-        if (selectedPost?._id === postId) {
-            setSelectedPost(prev => ({
-                ...prev,
-                comments: prev.comments.filter(c => c._id !== commentId)
-            }));
-        }
-
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
             playSound('cyber_delete');
@@ -3778,40 +3580,24 @@ const App = () => {
     };
 
     const handleEditComment = async (postId, commentId, text) => {
-        // OPTIMISTIC SYNC
-        const syncUpdate = (postsArray) => postsArray.map(p => {
-            if (p._id === postId) {
-                const updatedComments = p.comments.map(c => c._id === commentId ? { ...c, text } : c);
-                return { ...p, comments: updatedComments };
-            }
-            return p;
-        });
-
-        setPosts(prev => syncUpdate(prev));
-        if (selectedPost?._id === postId) {
-            setSelectedPost(prev => ({
-                ...prev,
-                comments: prev.comments.map(c => c._id === commentId ? { ...c, text } : c)
-            }));
-        }
-
         try {
             const res = await axios.put(`/posts/${postId}/comment/${commentId}`, { text });
-            const finalComments = res.data;
-
-            // Final sync with backend data
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: finalComments } : p));
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: finalComments }));
+            const updatedComments = res.data;
+            setPosts(prev => prev.map(p => {
+                if (p._id === postId) {
+                    if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
+                    return { ...p, comments: updatedComments };
+                }
+                return p;
+            }));
         } catch (e) {
             console.error("Failed to edit comment", e);
-            fetchPosts(); // Rollback to server state
         }
     };
 
     const handleDeletePost = async (postId) => {
         // OPTIMISTIC SHATTER
         setPosts(prev => prev.filter(p => p._id !== postId));
-        setLastDeletedPostId(postId); // Propagate to modals
         try {
             await axios.delete(`/posts/${postId}`);
             playSound('cyber_delete');
@@ -4041,8 +3827,9 @@ const App = () => {
                                     <img src="/logo.png" alt="Legacy Academy" className="h-32 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
-                                        <Icons.Ghost className="w-5 h-5" />
+
+                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
+                                        <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)]" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
@@ -4123,7 +3910,7 @@ const App = () => {
                                                                 {u.role === 'Founder' && (
                                                                     <div className="flex items-center gap-1 animate-fade-in group/badge">
                                                                         <FounderBadge className="w-3 h-3" />
-                                                                        <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</div>
+                                                                        <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE')}</div>
                                                                     </div>
                                                                 )}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
@@ -4240,17 +4027,11 @@ const App = () => {
 
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} onDeletePost={handleDeletePost} lastDeletedPostId={lastDeletedPostId} />
+                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
-                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={(pid) => {
-                            handleDeletePost(pid);
-                            // Also trigger manual refresh for profile if open
-                            if (isProfileOpen) {
-                                // fetchUserPosts is inside ProfileModal, so we should actually pass the delete handler in
-                            }
-                        }} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
+                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={handleDeletePost} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
                             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
                             setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
                         }} />
