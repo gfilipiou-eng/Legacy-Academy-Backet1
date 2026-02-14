@@ -68,57 +68,56 @@ export const playSound = (type) => {
         filter.connect(gain);
         gain.connect(ctx.destination);
         noise.start();
-    } else if (type === 'delete' || type === 'strike') {
+    } else if (type === 'delete' || type === 'strike' || type === 'cyber_delete' || type === 'premium_delete') {
+        // Premium "Liquid Digital" drip + splash sound
         const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(50, ctx.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
-    } else if (type === 'premium_delete' || type === 'cyber_delete' || type === 'digital_shatter') {
-        // High-end digital "shatter" sound
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
+        const bubble = ctx.createOscillator();
         const gain = ctx.createGain();
         const filter = ctx.createBiquadFilter();
-        const noise = ctx.createBufferSource();
 
-        const bufferSize = ctx.sampleRate * 0.15;
+        // Add a subtle white noise "splash"
+        const bufferSize = ctx.sampleRate * 0.05;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
-
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+        const noise = ctx.createBufferSource();
         noise.buffer = buffer;
-        osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(600, ctx.currentTime);
-        osc1.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
-        osc2.type = 'square';
-        osc2.frequency.setValueAtTime(200, ctx.currentTime);
-        osc2.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.12);
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.setValueAtTime(3000, ctx.currentTime);
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.04, ctx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
 
-        filter.type = 'highpass';
-        filter.frequency.setValueAtTime(1000, ctx.currentTime);
-        filter.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.2);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
 
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        bubble.type = 'sine';
+        bubble.frequency.setValueAtTime(100, ctx.currentTime);
+        bubble.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.08);
 
-        noise.connect(filter);
-        osc1.connect(filter);
-        osc2.connect(filter);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2000, ctx.currentTime);
+        filter.Q.setValueAtTime(10, ctx.currentTime);
+
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+
+        osc.connect(filter);
+        bubble.connect(filter);
         filter.connect(gain);
         gain.connect(ctx.destination);
 
         noise.start();
-        osc1.start();
-        osc2.start();
-        osc1.stop(ctx.currentTime + 0.2);
-        osc2.stop(ctx.currentTime + 0.2);
+        osc.start();
+        bubble.start();
+        osc.stop(ctx.currentTime + 0.15);
+        bubble.stop(ctx.currentTime + 0.15);
     } else if (type === 'cyber_scroll') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -286,65 +285,64 @@ export const playSound = (type) => {
 };
 
 export const explodeEffect = () => confetti({
-    particleCount: 80,
-    spread: 100,
+    particleCount: 100,
+    spread: 70,
     origin: { y: 0.6 },
-    colors: ['#ff0000', '#ffffff', '#222222'],
-    gravity: 2,
-    scalar: 0.7,
-    shapes: ['square'],
-    ticks: 150,
+    colors: ['#3b82f6', '#60a5fa', '#ffffff'],
+    gravity: 1.2,
+    scalar: 1,
+    shapes: ['circle'],
+    ticks: 200,
     zIndex: 2000
 });
 
 export const cyberDeleteEffect = () => {
-    // Stage 1: The Shatter (Fast, high velocity)
+    // Stage 1: The Primary Splash (Rich droplets)
     confetti({
-        particleCount: 60,
-        spread: 120,
+        particleCount: 120,
+        spread: 100,
         origin: { y: 0.5 },
-        colors: ['#ff0000', '#ffffff'],
-        startVelocity: 45,
-        gravity: 1.5,
-        scalar: 0.8,
-        shapes: ['square'],
-        ticks: 50,
+        colors: ['#3b82f6', '#60a5fa', '#93c5fd', '#2563eb', '#ffffff'],
+        startVelocity: 40,
+        gravity: 0.9,
+        scalar: 1.3,
+        shapes: ['circle'],
+        ticks: 120,
         disableForReducedMotion: true,
         zIndex: 2000
     });
 
-    // Stage 2: The Cyber Dust (Slow, drift, gold/cyan)
+    // Stage 2: Mist/Bubbles (Small, fast rising)
     setTimeout(() => {
         confetti({
-            particleCount: 100,
-            spread: 160,
-            origin: { y: 0.5 },
-            colors: ['#ffd700', '#00ffff', '#000000'],
+            particleCount: 60,
+            spread: 180,
+            origin: { y: 0.55 },
+            colors: ['#ffffff', '#e0f2fe'],
+            startVelocity: 18,
+            gravity: -0.15, // Faster float up
+            scalar: 0.6,
+            shapes: ['circle'],
+            ticks: 100,
+            disableForReducedMotion: true,
+            zIndex: 2000
+        });
+    }, 40);
+
+    // Stage 3: Dynamic Droplets (Focused secondary splash)
+    setTimeout(() => {
+        confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.48 },
+            colors: ['#2563eb', '#1e40af'],
             startVelocity: 30,
-            gravity: 0.5,
-            scalar: 1.2,
-            shapes: ['circle', 'square'],
-            drift: 0.5,
+            gravity: 1.6,
+            scalar: 0.9,
+            shapes: ['circle'],
             ticks: 150,
             disableForReducedMotion: true,
             zIndex: 2000
         });
-    }, 100);
-
-    // Stage 3: The Void (Implosion feel - dark particles)
-    setTimeout(() => {
-        confetti({
-            particleCount: 40,
-            spread: 60,
-            origin: { y: 0.5 },
-            colors: ['#111111', '#333333'],
-            startVelocity: 20,
-            gravity: 2,
-            scalar: 1.5,
-            shapes: ['square'],
-            ticks: 30,
-            disableForReducedMotion: true,
-            zIndex: 2000
-        });
-    }, 250);
+    }, 120);
 };
