@@ -6,6 +6,7 @@ import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
+import { io } from 'socket.io-client';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
@@ -391,7 +392,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl border transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-[#1a1a1a] border-white/10 rounded-tl-none hover:bg-white/10'}`}>
+                <div className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
                     <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
                         <div className="flex items-center gap-1">
                             <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
@@ -1873,8 +1874,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-2xl will-change-transform outline-none focus:outline-none"
-                tabIndex="-1"
+                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-2xl will-change-transform"
             >
                 {/* CYBER BACKGROUND ELEMENTS - REFINED */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-30" />
@@ -1885,14 +1885,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
                     <div className="flex flex-col">
                         <div className="flex items-center gap-3">
-                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)] outline-none" />
+                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
                             <div>
                                 <h2 className="font-black uppercase tracking-[0.2em] text-sm text-white leading-none">{t('SETTINGS')}</h2>
                                 <div className="text-[10px] font-medium text-gray-500 mt-1 tracking-wide">Customize your experience</div>
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 group border border-white/5 shadow-lg outline-none focus:outline-none">
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 group border border-white/5 shadow-lg">
                         <Icons.X className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
                     </button>
                 </div>
@@ -2384,7 +2384,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                            <div className="flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory scroll-pl-2">
                                                 {userStories.map(s => {
                                                     const isYT = isYouTubeUrl(s.videoUrl);
                                                     const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
@@ -2395,7 +2395,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
                                                     }
                                                     return (
-                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer snap-start">
                                                             <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
@@ -2956,6 +2956,7 @@ const App = () => {
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
     const scrollRafLock = useRef(false);
+    const socketRef = useRef(null);
 
     const handleScroll = (e) => {
         if (scrollRafLock.current) return;
@@ -3109,6 +3110,51 @@ const App = () => {
         }
         return () => { }; // Cleanup handled by functions
     }, [user]);
+
+    // --- REALTIME SOCKET.IO ---
+    useEffect(() => {
+        if (socketRef.current) return;
+        const BASE_URL = axios.defaults.baseURL.replace('/api', '');
+        const socket = io(BASE_URL, { transports: ['websocket', 'polling'] });
+        socketRef.current = socket;
+
+        // Posts created
+        socket.on('post.created', (post) => {
+            setPosts(prev => {
+                if (!Array.isArray(prev)) return [post];
+                if (prev.some(p => p._id === post._id)) return prev;
+                // Client-side privacy guard (approximate)
+                const a = post.author || {};
+                const currentUserId = String(user?._id || '');
+                const isOwner = String(a?._id || a) === currentUserId;
+                const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+                const isFounder = user?.role === 'Founder';
+                const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+                if (isPrivate && !isOwner && !isFollower && !isFounder) return prev;
+                return [post, ...prev];
+            });
+        });
+        // Posts deleted
+        socket.on('post.deleted', ({ postId }) => {
+            setPosts(prev => prev.filter(p => p._id !== postId));
+            if (selectedPostRef.current?._id === postId) setSelectedPost(null);
+        });
+        // Comments sync (added/updated/deleted)
+        const syncComments = ({ postId, comments }) => {
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments } : p));
+            if (selectedPostRef.current?._id === postId) {
+                setSelectedPost(prev => prev ? { ...prev, comments } : prev);
+            }
+        };
+        socket.on('comment.added', syncComments);
+        socket.on('comment.updated', syncComments);
+        socket.on('comment.deleted', syncComments);
+
+        return () => {
+            try { socket.disconnect(); } catch { }
+            socketRef.current = null;
+        };
+    }, [user?._id, user?.role]);
 
 
     // FIX: Optimized search filtering with useMemo
