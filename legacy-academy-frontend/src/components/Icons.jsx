@@ -56,11 +56,8 @@ export const Icons = {
             <img
                 src="/ghost_logo_1771069362755.jpg"
                 alt="Ghost"
-                className="w-full h-full object-contain scale-[1.85]"
-                style={{
-                    filter: 'contrast(1.25) brightness(1.1)',
-                    imageRendering: '-webkit-optimize-contrast'
-                }}
+                className="w-full h-full object-contain scale-[1.6] transform-gpu"
+                style={{ backfaceVisibility: 'hidden' }}
                 {...p}
             />
         </div>
