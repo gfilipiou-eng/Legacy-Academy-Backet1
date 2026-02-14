@@ -3815,7 +3815,7 @@ const App = () => {
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-80 w-auto object-contain mb-4" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-[450px] w-auto object-contain mb-4" />
                                 </div>
                             </div>
                             <div className="space-y-4">
@@ -3991,7 +3991,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-32 w-auto object-contain" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-44 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
