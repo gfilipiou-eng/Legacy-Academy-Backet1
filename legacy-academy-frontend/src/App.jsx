@@ -99,6 +99,13 @@ if (typeof document !== 'undefined') {
         .animate-heart-beat {
             animation: heart-beat 0.3s ease-in-out;
         }
+        @keyframes ghost-pulse {
+            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 5px var(--gold-glow)); transform: scale(1); }
+            50% { opacity: 1; filter: drop-shadow(0 0 15px var(--gold-glow)); transform: scale(1.05); }
+        }
+        .animate-ghost-pulse {
+            animation: ghost-pulse 2s ease-in-out infinite;
+        }
     `;
     document.head.appendChild(style);
 }
@@ -1759,7 +1766,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
                                 <button className="mb-6 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group shadow-lg shadow-[var(--gold-primary)]/5">
-                                    <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_10px_var(--gold-glow)] transition-all duration-500" />
+                                    <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_10px_var(--gold-glow)] transition-all duration-500 animate-ghost-pulse" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
                                 <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
@@ -3921,7 +3928,7 @@ const App = () => {
                                 <div className="flex items-center gap-4">
 
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative rounded-full border-2 border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)] hover:shadow-glow-gold">
-                                        <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)]" />
+                                        <Icons.Ghost className="w-5 h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_var(--gold-glow)] animate-ghost-pulse" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
