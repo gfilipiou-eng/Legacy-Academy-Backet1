@@ -52,11 +52,11 @@ export const Icons = {
     Maximize: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>,
     Broom: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 2L4 16h6l-3 6 12-10h-6l5-10h-6z" transform="scale(0.8) translate(4,4)" opacity="0" /><path d="m19 2-8.5 8.5" /><path d="m14 6.5 3 3" /><path d="M9.5 12.5C7 15 5 13.5 3 15.5c-2 2-1 4 0 5s4 1 6-1c2-2 .5-4 3-6.5" /><path d="M5 16s2 2 4 0" /></svg>,
     Ghost: ({ className, ...p }) => (
-        <div className={`overflow-hidden flex items-center justify-center ${className || 'w-5 h-5'}`}>
+        <div className={`overflow-hidden flex items-center justify-center rounded-full ${className || 'w-5 h-5'}`}>
             <img
                 src="/ghost_logo_1771069362755.jpg"
                 alt="Ghost"
-                className="w-full h-full object-contain scale-[2.2] transform-gpu transition-transform"
+                className="w-full h-full object-contain scale-[2.1] transform-gpu"
                 {...p}
             />
         </div>
