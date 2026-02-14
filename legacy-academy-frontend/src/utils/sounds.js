@@ -293,7 +293,8 @@ export const explodeEffect = () => confetti({
     gravity: 2,
     scalar: 0.7,
     shapes: ['square'],
-    ticks: 150
+    ticks: 150,
+    zIndex: 2000
 });
 
 export const cyberDeleteEffect = () => {
@@ -308,7 +309,8 @@ export const cyberDeleteEffect = () => {
         scalar: 0.8,
         shapes: ['square'],
         ticks: 50,
-        disableForReducedMotion: true
+        disableForReducedMotion: true,
+        zIndex: 2000
     });
 
     // Stage 2: The Cyber Dust (Slow, drift, gold/cyan)
@@ -324,7 +326,8 @@ export const cyberDeleteEffect = () => {
             shapes: ['circle', 'square'],
             drift: 0.5,
             ticks: 150,
-            disableForReducedMotion: true
+            disableForReducedMotion: true,
+            zIndex: 2000
         });
     }, 100);
 
@@ -340,7 +343,8 @@ export const cyberDeleteEffect = () => {
             scalar: 1.5,
             shapes: ['square'],
             ticks: 30,
-            disableForReducedMotion: true
+            disableForReducedMotion: true,
+            zIndex: 2000
         });
     }, 250);
 };
