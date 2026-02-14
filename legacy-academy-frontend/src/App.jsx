@@ -127,26 +127,6 @@ if (typeof document !== 'undefined') {
             animation: fx-ripple-expand 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* --- MOBILE LANDSCAPE SOFT LOCK (SCROLLABLE) --- */
-        @media screen and (orientation: landscape) and (max-width: 950px) {
-            #root {
-                display: flex !important;
-                flex-direction: column;
-                align-items: center;
-                max-width: 480px; 
-                margin: 0 auto;
-                min-height: 100vh;
-                height: auto; /* Allow scrolling if content overflows */
-                background: #000;
-                border-left: 1px solid #222;
-                border-right: 1px solid #222;
-                overflow-y: auto; /* Ensure vertical scroll */
-            }
-            body {
-                background-color: #050505;
-                overflow-y: auto; /* Allow body scroll */
-            }
-        }
         @keyframes ghost-pulse {
             0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 5px var(--gold-glow)); transform: scale(1); }
             50% { opacity: 1; filter: drop-shadow(0 0 15px var(--gold-glow)); transform: scale(1.05); }
