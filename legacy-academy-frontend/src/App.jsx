@@ -100,28 +100,21 @@ if (typeof document !== 'undefined') {
             animation: heart-beat 0.3s ease-in-out;
         }
         
-        /* --- MOBILE LANDSCAPE LOCK --- */
+        /* --- MOBILE LANDSCAPE SOFT LOCK --- */
         @media screen and (orientation: landscape) and (max-width: 950px) {
-            body::after {
-                content: "SYSTEM LOCKED\\A\\A ROTATION DETECTED \\A RETURN TO PORTRAIT";
-                white-space: pre;
-                position: fixed;
-                inset: 0;
-                z-index: 99999;
-                background: #000;
-                color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-family: 'Inter', sans-serif;
-                font-weight: 900;
-                font-size: 12px;
-                letter-spacing: 0.2em;
-                text-align: center;
-                backdrop-filter: blur(20px);
-            }
             #root {
-                display: none;
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                max-width: 480px; 
+                margin: 0 auto;
+                height: 100vh;
+                background: #000;
+                border-left: 1px solid #222;
+                border-right: 1px solid #222;
+            }
+            body {
+                background-color: #050505; /* Dark background for empty space */
             }
         }
         @keyframes ghost-pulse {
