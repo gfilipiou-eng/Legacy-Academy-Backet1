@@ -2370,16 +2370,37 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {userStories.map(s => {
-                                                    const isVideo = isYouTubeUrl(s.videoUrl) || (s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm)$/i));
+                                                    const isYT = isYouTubeUrl(s.videoUrl);
+                                                    const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
                                                     const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
+                                                    let ytThumb = null;
+                                                    if (isYT) {
+                                                        const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(s.videoUrl || '');
+                                                        if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+                                                    }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                             <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                                 {hasMedia ? (
-                                                                    isVideo ? (
-                                                                        <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center relative shadow-inner">
-                                                                            <img src={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)} className="absolute inset-0 w-full h-full object-cover rounded-full opacity-60" />
-                                                                            <Icons.Play className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+                                                                    isNativeVideo ? (
+                                                                        <video
+                                                                            src={resolveMediaUrl(s.videoUrl || s.image)}
+                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
+                                                                            autoPlay
+                                                                            muted
+                                                                            loop
+                                                                            playsInline
+                                                                            preload="auto"
+                                                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                                                        />
+                                                                    ) : isYT ? (
+                                                                        <div className="w-full h-full relative">
+                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     ) : (
                                                                         <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
