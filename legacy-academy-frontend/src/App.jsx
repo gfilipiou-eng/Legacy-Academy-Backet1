@@ -1174,12 +1174,10 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
-                    <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
-                        <ProfileAvatar user={user} className="opacity-80" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
-                        </div>
+                <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
+                    <ProfileAvatar user={user} className="w-full h-full object-cover opacity-80" />
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <Icons.Plus className="w-7 h-7 text-white drop-shadow-lg" />
                     </div>
                 </div>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
@@ -1197,41 +1195,39 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                        <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
-                            <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
-                                {hasMedia ? (
-                                    isNativeVideo ? (
-                                        <video
-                                            src={resolveMediaUrl(s.videoUrl || s.image)}
-                                            className="w-full h-full object-cover pointer-events-none"
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                            preload="metadata"
-                                            poster={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)}
-                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                        />
-                                    ) : isYT ? (
-                                        <div className="w-full h-full relative">
-                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
-                                                </div>
+                        <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
+                            {hasMedia ? (
+                                isNativeVideo ? (
+                                    <video
+                                        src={resolveMediaUrl(s.videoUrl || s.image)}
+                                        className="w-full h-full object-cover pointer-events-none"
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        preload="metadata"
+                                        poster={resolveMediaUrl(s.thumbnailUrl || s.videoUrl || s.image, null, false, true)}
+                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                    />
+                                ) : isYT ? (
+                                    <div className="w-full h-full relative">
+                                        <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-7 h-7 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                <Icons.Play className="w-4 h-4 text-white -ml-0.5" />
                                             </div>
                                         </div>
-                                    ) : (
-                                        <img src={resolveMediaUrl(s.image)} loading="lazy" className="w-full h-full object-cover" alt="" />
-                                    )
-                                ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
-                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
-                                            {s.desc}
-                                        </span>
                                     </div>
-                                )}
-                            </div>
+                                ) : (
+                                    <img src={resolveMediaUrl(s.image)} loading="lazy" className="w-full h-full object-cover" alt="" />
+                                )
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
+                                    <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
+                                        {s.desc}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{s.author?.username}</span>
                     </div>
@@ -2392,12 +2388,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-full border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                            <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
                                                                             src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
+                                                                            className="w-full h-full object-cover pointer-events-none"
                                                                             autoPlay
                                                                             muted
                                                                             loop
@@ -2408,18 +2404,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                                         />
                                                                     ) : isYT ? (
                                                                         <div className="w-full h-full relative">
-                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
                                                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
+                                                                                <div className="w-7 h-7 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                                                    <Icons.Play className="w-4 h-4 text-white -ml-0.5" />
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     ) : (
-                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} loading="lazy" className="w-full h-full object-cover rounded-full" />
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} loading="lazy" className="w-full h-full object-cover" />
                                                                     )
                                                                 ) : (
-                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
+                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
                                                                         <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
                                                                             {s.desc}
                                                                         </span>
