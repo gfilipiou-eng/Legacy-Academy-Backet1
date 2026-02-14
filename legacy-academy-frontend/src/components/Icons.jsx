@@ -53,14 +53,14 @@ export const Icons = {
     Broom: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 2L4 16h6l-3 6 12-10h-6l5-10h-6z" transform="scale(0.8) translate(4,4)" opacity="0" /><path d="m19 2-8.5 8.5" /><path d="m14 6.5 3 3" /><path d="M9.5 12.5C7 15 5 13.5 3 15.5c-2 2-1 4 0 5s4 1 6-1c2-2 .5-4 3-6.5" /><path d="M5 16s2 2 4 0" /></svg>,
     Ghost: p => (
         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-            {/* Ghost Outline Body */}
+            {/* Ghost Body (Solid White Outline) */}
             <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z" />
-            {/* Eyes - Solid White */}
-            <circle cx="9" cy="10" r="1.2" fill="white" />
-            <circle cx="15" cy="10" r="1.2" fill="white" />
-            {/* Shushing Hand/Finger Gesture - Exactly as image */}
-            <path d="M5 19c1-1.5 3-2 4.5-2s3 1.5 3 3" />
-            <path d="M12.5 17v-5" strokeWidth="2" />
+            {/* Eyes (Solid White) */}
+            <circle cx="9" cy="9" r="1.2" fill="white" />
+            <circle cx="15" cy="9" r="1.2" fill="white" />
+            {/* Shushing Finger/Hand Gesture */}
+            <path d="M12 16v-4" stroke="white" strokeWidth="2" />
+            <path d="M9 18c0-1.5 1.5-2 3-2s3 .5 3 2" stroke="white" strokeWidth="1.5" />
         </svg>
     ),
     AlertTriangle: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
