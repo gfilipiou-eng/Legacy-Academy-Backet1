@@ -574,7 +574,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                                 </button>
                                             )}
                                             {(isOwner || isFounder) && (
-                                                <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); onClose(); } setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); onClose(); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
                                                     <Icons.Trash className="w-4 h-4 text-red-500" />
                                                     <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
                                                 </button>
@@ -1351,7 +1351,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                         </button>
                                     )}
                                     {canDelete && (
-                                        <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                        <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
                                             <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
                                             <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
                                         </button>
