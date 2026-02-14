@@ -3334,9 +3334,7 @@ const App = () => {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        setLoadingActions(prev => ({ ...prev, [postId]: true }));
-        if (navigator.vibrate) navigator.vibrate(50);
-        playSound('cyber_like');
+        // Removed effects for speed
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
@@ -3357,7 +3355,7 @@ const App = () => {
                 setSelectedPost(prev => ({ ...prev, likes: originalLikes, dislikes: originalDislikes }));
             }
         } finally {
-            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+            // No loading to clear
         }
     };
 
@@ -3393,9 +3391,7 @@ const App = () => {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        setLoadingActions(prev => ({ ...prev, [postId]: true }));
-        if (navigator.vibrate) navigator.vibrate(50);
-        playSound('cyber_dislike');
+        // Removed effects for speed
 
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
@@ -3416,7 +3412,7 @@ const App = () => {
                 setSelectedPost(prev => ({ ...prev, likes: originalLikes, dislikes: originalDislikes }));
             }
         } finally {
-            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+            // No loading to clear
         }
     };
 
