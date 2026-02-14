@@ -53,7 +53,7 @@ export const Icons = {
     Broom: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 2L4 16h6l-3 6 12-10h-6l5-10h-6z" transform="scale(0.8) translate(4,4)" opacity="0" /><path d="m19 2-8.5 8.5" /><path d="m14 6.5 3 3" /><path d="M9.5 12.5C7 15 5 13.5 3 15.5c-2 2-1 4 0 5s4 1 6-1c2-2 .5-4 3-6.5" /><path d="M5 16s2 2 4 0" /></svg>,
     Ghost: ({ className, ...p }) => (
         <div
-            className={`bg-black bg-[url('/ghost_logo_1771069362755.jpg')] bg-[length:160%] bg-center bg-no-repeat flex-shrink-0 rounded-full ${className || 'w-5 h-5'}`}
+            className={`bg-black bg-[url('/ghost_logo_1771069362755.jpg')] bg-[length:150%] bg-center bg-no-repeat flex-shrink-0 ${className || 'w-5 h-5'}`}
             {...p}
         />
     ),
