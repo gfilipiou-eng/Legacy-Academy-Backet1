@@ -2332,7 +2332,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                             }}
                                             className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : 'text-[var(--gold-primary)] group-hover:scale-110 drop-shadow-[0_0_5px_var(--gold-glow)]'}`} />
+                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : ''}`} />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
