@@ -11,6 +11,9 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import http from 'http';
+import { Server } from 'socket.io';
+
 // Load env vars
 dotenv.config();
 
@@ -24,6 +27,35 @@ const app = express();
 app.use(express.json()); // Essential for parsing JSON bodies
 app.use(cors());
 
+// --- SOCKET.IO SETUP ---
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['polling', 'websocket'],
+  allowEIO3: true,
+  pingTimeout: 60000,
+  pingInterval: 25000
+});
+
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log(`🔌 [SOCKET] New client connected: ${socket.id}`);
+
+  socket.on('join', (room) => {
+    socket.join(room);
+    console.log(`📡 [SOCKET] Client joined room: ${room}`);
+  });
+
+  socket.on('disconnect', (reason) => {
+    console.log(`🔌 [SOCKET] Client disconnected: ${socket.id} Reason: ${reason}`);
+  });
+});
+
 // DB Connection
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to MongoDB"))
@@ -32,7 +64,7 @@ mongoose.connect(process.env.MONGO_URL)
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "healthy",
-    deployed: "V6 (Paranoid Fixes)",
+    deployed: "V7 (Socket IO Active)",
     timestamp: new Date(),
     uptime: process.uptime()
   });
@@ -44,15 +76,9 @@ app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/messages", messageRoute);
 
-// Serve static assets if in production
-// app.use(express.static(path.join(__dirname, "/client/build")));
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "/client/build", "index.html"));
-// });
-
-app.listen(process.env.PORT || 8800, () => {
+const PORT = process.env.PORT || 8800;
+server.listen(PORT, () => {
   console.log("🟢 Server initialization started...");
-  console.log("🚀 DEPLOYMENT VERSION: V6.2 (Deploy Kick)");
-  console.log("Environment: ", process.env.NODE_ENV || 'production');
-  console.log("Backend server is running! V5-LEGACY-SYNC");
+  console.log(`🚀 DEPLOYMENT VERSION: V7 (Socket.io)`);
+  console.log(`Backend server is running on port ${PORT}!`);
 });

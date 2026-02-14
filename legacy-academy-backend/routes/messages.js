@@ -76,20 +76,16 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
         const savedMessage = await newMessage.save();
 
-        // Notify Recipient
-        const sender = await User.findById(currentUserId);
-        await User.findByIdAndUpdate(recipientId, {
-            $push: {
-                notifications: {
-                    type: 'message',
-                    from: currentUserId,
-                    fromUsername: sender.username,
-                    fromProfilePic: sender.profilePic,
-                    read: false,
-                    createdAt: new Date()
-                }
-            }
-        });
+        // 🔥 REAL-TIME EMIT
+        const io = req.app.get('io');
+        if (io) {
+            io.to(String(recipientId)).emit('message.received', savedMessage);
+            io.to(String(recipientId)).emit('notification.received', {
+                type: 'message',
+                fromUsername: sender.username,
+                fromProfilePic: sender.profilePic
+            });
+        }
 
         res.status(200).json(savedMessage);
     } catch (err) {

@@ -154,6 +154,23 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
         // Return updated comments with population
         const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+
+        // 🔥 REAL-TIME EMIT
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('comment.added', { postId: req.params.id, comments: updatedPost.comments });
+
+            // NOTIFY AUTHOR (Real-time)
+            if (String(post.author) !== String(req.user.id)) {
+                io.to(String(post.author)).emit('notification.received', {
+                    type: 'comment',
+                    fromUsername: req.user.username || 'Someone',
+                    fromProfilePic: req.user.profilePic || '',
+                    postId: post._id
+                });
+            }
+        }
+
         res.status(200).json(updatedPost.comments);
     } catch (err) {
         console.error("Comment Error:", err);
@@ -172,6 +189,14 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
 
         if (comment.user.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
             await post.updateOne({ $pull: { comments: { _id: req.params.commentId } } });
+
+            // 🔥 REAL-TIME EMIT
+            const io = req.app.get('io');
+            if (io) {
+                const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+                io.emit('comment.deleted', { postId: req.params.id, comments: updated?.comments || [] });
+            }
+
             res.status(200).json("Comment deleted");
         } else {
             res.status(403).json("You can delete only your comment");
@@ -197,6 +222,14 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
                 { _id: req.params.id, "comments._id": req.params.commentId },
                 { $set: { "comments.$.text": req.body.text } }
             );
+
+            // 🔥 REAL-TIME EMIT
+            const io = req.app.get('io');
+            if (io) {
+                const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+                io.emit('comment.updated', { postId: req.params.id, comments: updated?.comments || [] });
+            }
+
             res.status(200).json("Comment updated");
         } else {
             res.status(403).json("You can update only your comment");
@@ -213,6 +246,13 @@ router.delete("/:id", verifyToken, async (req, res) => {
         const post = await Post.findById(req.params.id);
         if (post.author.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
             await post.deleteOne();
+
+            // 🔥 REAL-TIME EMIT
+            const io = req.app.get('io');
+            if (io) {
+                io.emit('post.deleted', { postId: req.params.id });
+            }
+
             res.status(200).json("Post deleted");
         } else {
             res.status(403).json("You can delete only your post");

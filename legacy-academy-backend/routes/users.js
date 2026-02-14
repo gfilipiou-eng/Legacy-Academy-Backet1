@@ -95,6 +95,7 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         const targetId = req.params.id;
         const currentId = req.user.id;
+        const io = req.app.get('io');
 
         // 1. UNFOLLOW IF ALREADY FOLLOWING
         if (targetUser.followers.map(id => id.toString()).includes(currentId)) {
@@ -127,6 +128,15 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                         }
                     }
                 });
+
+                // 🔥 REAL-TIME NOTIF
+                if (io) {
+                    io.to(String(targetId)).emit('notification.received', {
+                        type: 'follow_request',
+                        fromUsername: currentUser.username,
+                        fromProfilePic: currentUser.profilePic
+                    });
+                }
             }
             return res.status(200).json({ message: "Request sent", requested: true, followers: targetUser.followers });
         }
@@ -148,6 +158,15 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                 }
             }
         });
+
+        // 🔥 REAL-TIME NOTIF
+        if (io) {
+            io.to(String(targetId)).emit('notification.received', {
+                type: 'follow',
+                fromUsername: currentUser.username,
+                fromProfilePic: currentUser.profilePic
+            });
+        }
         await currentUser.updateOne({ $addToSet: { following: targetId } });
         return res.status(200).json({ message: "Followed", following: [...currentUser.following, targetId] });
     } catch (err) {
@@ -172,7 +191,6 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
         if (!user) return res.status(404).json("Agent not found.");
 
         // Force cleanup regardless of request existence (to fix stuck notifications)
-        // 1. AGGRESSIVE CLEANUP: Core DB Pull (Removes all occurrences)
         await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
@@ -206,6 +224,16 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
                 }
             }
         });
+
+        // 🔥 REAL-TIME NOTIF
+        const io = req.app.get('io');
+        if (io) {
+            io.to(String(requesterId)).emit('notification.received', {
+                type: 'follow_accepted',
+                fromUsername: user.username,
+                fromProfilePic: user.profilePic
+            });
+        }
 
         res.status(200).json("Request Accepted");
     } catch (err) {
