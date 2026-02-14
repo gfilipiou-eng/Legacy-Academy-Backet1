@@ -1717,7 +1717,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
                                 <div className="flex items-center gap-3">
-                                    <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
+                                    {/* Back button removed */}
                                     <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
                                     <div>
                                         <div className="font-bold text-sm flex items-center gap-2">
