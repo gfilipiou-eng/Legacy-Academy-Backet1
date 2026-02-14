@@ -1268,6 +1268,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
+    const [showMenu, setShowMenu] = useState(false);
 
     const handleDoubleTap = (e) => {
         e.preventDefault();
@@ -1312,34 +1313,52 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                 <VerifiedBadge isFounder={isFounder} className="w-4 h-4" />
                             </div>
 
-                            {/* FOUNDER & DELETE SECTION BELOW NAME */}
-                            {(isFounder || canDelete) && (
+                            {/* FOUNDER SECTION BELOW NAME */}
+                            {isFounder && (
                                 <div className="flex items-center gap-3 mt-1">
-                                    {/* FOUNDER BADGE */}
-                                    {isFounder && (
-                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
-                                            <FounderBadge className="w-5 h-5" />
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
-                                        </div>
-                                    )}
-
-                                    {/* DELETE ICON / BUTTON */}
-                                    {canDelete && (
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); onDelete(post._id); }}
-                                            className="hover:bg-red-500/10 rounded-full p-1 transition-colors"
-                                            title="Delete Post"
-                                        >
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-red-500">
-                                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                        </button>
-                                    )}
+                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                        <FounderBadge className="w-5 h-5" />
+                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                    </div>
                                 </div>
                             )}
 
                             <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, t, lang)}</span>
                         </div>
+                    </div>
+
+                    {/* MORE MENU */}
+                    <div className="relative">
+                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                                <circle cx="12" cy="12" r="1" />
+                                <circle cx="12" cy="5" r="1" />
+                                <circle cx="12" cy="19" r="1" />
+                            </svg>
+                        </button>
+                        {showMenu && (
+                            <>
+                                <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
+                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                        <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
+                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
+                                    </button>
+                                    {isOwner && (
+                                        <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                            <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
+                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
+                                        </button>
+                                    )}
+                                    {canDelete && (
+                                        <button onClick={(e) => { e.stopPropagation(); if (window.confirm(t('CONFIRM_DELETE'))) { onDelete(post._id); } setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                            <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
+                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
+                                        </button>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 
