@@ -4,7 +4,7 @@ import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
-import { playSound, explodeEffect } from './utils/sounds';
+import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 
 // --- CONFIG ---
