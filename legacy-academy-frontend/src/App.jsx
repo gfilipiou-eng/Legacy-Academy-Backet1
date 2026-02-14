@@ -1874,7 +1874,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-2xl will-change-transform"
+                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-2xl will-change-transform outline-none focus:outline-none"
+                tabIndex="-1"
             >
                 {/* CYBER BACKGROUND ELEMENTS - REFINED */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-30" />
@@ -1885,14 +1886,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
                     <div className="flex flex-col">
                         <div className="flex items-center gap-3">
-                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
+                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)] outline-none" />
                             <div>
                                 <h2 className="font-black uppercase tracking-[0.2em] text-sm text-white leading-none">{t('SETTINGS')}</h2>
                                 <div className="text-[10px] font-medium text-gray-500 mt-1 tracking-wide">Customize your experience</div>
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 group border border-white/5 shadow-lg">
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 group border border-white/5 shadow-lg outline-none focus:outline-none">
                         <Icons.X className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
                     </button>
                 </div>
@@ -3151,7 +3152,7 @@ const App = () => {
         socket.on('comment.deleted', syncComments);
 
         return () => {
-            try { socket.disconnect(); } catch {}
+            try { socket.disconnect(); } catch { }
             socketRef.current = null;
         };
     }, [user?._id, user?.role]);
