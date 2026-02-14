@@ -2087,6 +2087,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const userStories = React.useMemo(() => (posts || []).filter(p => {
         const pId = String(p.author?._id || p.author);
         const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
+        // Hide YouTube links from profile highlights
+        if (isYouTubeUrl(p.videoUrl)) return false;
         return pId === uId && p.isStory;
     }), [posts, profileUser]);
 
@@ -3140,13 +3142,17 @@ const App = () => {
     }, [groupedPosts.length, groupedPosts[0]?.key]);
 
     const stories = React.useMemo(() => {
-        return posts.filter(p => {
-            const isStory = p.isStory === true || String(p.isStory) === 'true';
-            if (!isStory) return false;
-            // Filter only last 24h
-            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return false;
-            return true;
-        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        return posts
+            .filter(p => {
+                const isStory = p.isStory === true || String(p.isStory) === 'true';
+                if (!isStory) return false;
+                // Hide YouTube links from story circles
+                if (isYouTubeUrl(p.videoUrl)) return false;
+                // Filter only last 24h
+                if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return false;
+                return true;
+            })
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }, [posts]);
 
     const trendingHashtags = React.useMemo(() => {
