@@ -1357,40 +1357,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, t, lang)}</span>
                         </div>
                     </div>
-
-                    {/* MORE MENU */}
-                    <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                <circle cx="12" cy="12" r="1" />
-                                <circle cx="12" cy="5" r="1" />
-                                <circle cx="12" cy="19" r="1" />
-                            </svg>
-                        </button>
-                        {showMenu && (
-                            <>
-                                <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
-                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                        <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
-                                    </button>
-                                    {isOwner && (
-                                        <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
-                                        </button>
-                                    )}
-                                    {canDelete && (
-                                        <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
-                                        </button>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </div>
                 </div>
 
                 <div className="space-y-4">
@@ -1424,7 +1390,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                         {/* DISLIKE */}
                         <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
                             <div className="relative">
-                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''} transition-transform`} />
+                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''}`} />
                             </div>
                             <span className="text-xs font-black">{post.dislikes?.length || 0}</span>
                         </button>
