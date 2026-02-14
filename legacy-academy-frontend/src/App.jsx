@@ -957,6 +957,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             const initPlayer = () => {
                 if (window.YT && window.YT.Player) {
                     new window.YT.Player(playerUniqueId, {
+                        host: 'https://www.youtube-nocookie.com',
                         videoId: ytId,
                         playerVars: {
                             autoplay: 1,
@@ -967,7 +968,8 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             disablekb: 1,
                             fs: 0,
                             playsinline: 1,
-                            widget_referrer: window.location.origin
+                            widget_referrer: window.location.origin,
+                            origin: window.location.origin
                         },
                         events: {
                             onReady: onYTReady,
@@ -998,10 +1000,13 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                    {/* Ghost Layer - Precision masking (115% zoom instead of 170%) to avoid cutting content */}
-                    <div className="absolute top-[-7.5%] left-[-7.5%] w-[115%] h-[115%] pointer-events-none select-none transform-gpu backface-hidden">
-                        <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
+                    {/* Ghost Layer - Deeper crop to hide YouTube UI edges */}
+                    <div className="absolute top-[-15%] left-[-15%] w-[130%] h-[130%] pointer-events-none select-none transform-gpu backface-hidden">
+                        <div id={playerUniqueId} className="w-full h-full pointer-events-none" />
                     </div>
+                    {/* Soft bars to hide any residual overlays */}
+                    <div className="absolute top-0 left-0 right-0 h-[14%] bg-gradient-to-b from-black via-black/70 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[16%] bg-gradient-to-t from-black via-black/70 to-transparent" />
                 </div>
             )}
 
@@ -2087,8 +2092,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const userStories = React.useMemo(() => (posts || []).filter(p => {
         const pId = String(p.author?._id || p.author);
         const uId = String(profileUser?._id || (typeof profileUser === 'string' ? profileUser : ''));
-        // Hide YouTube links from profile highlights
-        if (isYouTubeUrl(p.videoUrl)) return false;
         return pId === uId && p.isStory;
     }), [posts, profileUser]);
 
@@ -3142,17 +3145,13 @@ const App = () => {
     }, [groupedPosts.length, groupedPosts[0]?.key]);
 
     const stories = React.useMemo(() => {
-        return posts
-            .filter(p => {
-                const isStory = p.isStory === true || String(p.isStory) === 'true';
-                if (!isStory) return false;
-                // Hide YouTube links from story circles
-                if (isYouTubeUrl(p.videoUrl)) return false;
-                // Filter only last 24h
-                if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return false;
-                return true;
-            })
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        return posts.filter(p => {
+            const isStory = p.isStory === true || String(p.isStory) === 'true';
+            if (!isStory) return false;
+            // Filter only last 24h
+            if ((Date.now() - new Date(p.createdAt).getTime()) > 24 * 60 * 60 * 1000) return false;
+            return true;
+        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }, [posts]);
 
     const trendingHashtags = React.useMemo(() => {
