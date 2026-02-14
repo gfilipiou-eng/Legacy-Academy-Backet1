@@ -327,15 +327,12 @@ export const explodeEffect = () => {
 export const cyberDeleteEffect = () => {
     if (typeof document === 'undefined') return;
 
-    // REPLACEMENT: Screen Shake + Red Flash
-    const flash = document.createElement('div');
-    flash.className = 'fx-overlay-red';
-    document.body.appendChild(flash);
-
-    document.body.classList.add('fx-shake-active');
+    // REPLACEMENT: Gold Wave Ripple (Kima)
+    const ripple = document.createElement('div');
+    ripple.className = 'fx-ripple-gold';
+    document.body.appendChild(ripple);
 
     setTimeout(() => {
-        flash.remove();
-        document.body.classList.remove('fx-shake-active');
-    }, 500);
+        ripple.remove();
+    }, 800);
 };

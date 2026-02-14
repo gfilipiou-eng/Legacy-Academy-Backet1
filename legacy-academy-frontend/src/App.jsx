@@ -100,7 +100,34 @@ if (typeof document !== 'undefined') {
             animation: heart-beat 0.3s ease-in-out;
         }
         
-        /* --- MOBILE LANDSCAPE SOFT LOCK --- */
+        .fx-overlay-red {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            animation: fx-flash-red 0.5s ease-out;
+        }
+        
+        /* --- GOLD WAVE RIPPLE (KIMA) --- */
+        @keyframes fx-ripple-expand {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; border-width: 10px; }
+            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; border-width: 0px; }
+        }
+        .fx-ripple-gold {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vmax;
+            height: 100vmax;
+            border: 4px solid var(--gold-primary);
+            border-radius: 50%;
+            z-index: 99999;
+            pointer-events: none;
+            box-shadow: 0 0 50px var(--gold-primary), inset 0 0 50px var(--gold-primary);
+            animation: fx-ripple-expand 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* --- MOBILE LANDSCAPE SOFT LOCK (SCROLLABLE) --- */
         @media screen and (orientation: landscape) and (max-width: 950px) {
             #root {
                 display: flex !important;
@@ -108,13 +135,16 @@ if (typeof document !== 'undefined') {
                 align-items: center;
                 max-width: 480px; 
                 margin: 0 auto;
-                height: 100vh;
+                min-height: 100vh;
+                height: auto; /* Allow scrolling if content overflows */
                 background: #000;
                 border-left: 1px solid #222;
                 border-right: 1px solid #222;
+                overflow-y: auto; /* Ensure vertical scroll */
             }
             body {
-                background-color: #050505; /* Dark background for empty space */
+                background-color: #050505;
+                overflow-y: auto; /* Allow body scroll */
             }
         }
         @keyframes ghost-pulse {
