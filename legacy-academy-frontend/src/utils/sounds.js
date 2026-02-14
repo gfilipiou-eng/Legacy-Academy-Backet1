@@ -1,8 +1,55 @@
-import confetti from 'canvas-confetti';
+// Remove confetti import
+// import confetti from 'canvas-confetti';
 
 // Initialize sound enabled from localStorage
 if (typeof window !== 'undefined') {
     window.SOUND_ENABLED = localStorage.getItem('soundEnabled') !== 'false';
+
+    // Inject Custom FX Styles
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes fx-flash-gold {
+            0% { opacity: 0; }
+            10% { opacity: 0.15; background-color: var(--gold-primary); }
+            100% { opacity: 0; }
+        }
+        @keyframes fx-flash-red {
+            0% { opacity: 0; }
+            10% { opacity: 0.15; background-color: #ef4444; }
+            100% { opacity: 0; }
+        }
+        .fx-overlay-gold {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            animation: fx-flash-gold 0.5s ease-out;
+        }
+        .fx-overlay-red {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            animation: fx-flash-red 0.5s ease-out;
+        }
+        @keyframes fx-shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .fx-shake-active {
+            animation: fx-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Shared AudioContext to avoid overhead and limit issues
@@ -67,6 +114,7 @@ export const playSound = (type) => {
         noise.connect(filter);
         filter.connect(gain);
         gain.connect(ctx.destination);
+        noise.start();
         noise.start();
     } else if (type === 'delete' || type === 'strike' || type === 'cyber_delete' || type === 'premium_delete') {
         // Premium "Glitch Digital" dissolve sound
@@ -267,91 +315,27 @@ export const playSound = (type) => {
 };
 
 export const explodeEffect = () => {
-    try {
-        const ghost = confetti.shapeFromPath({ path: 'M9 22v-2c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v2M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z' });
-        confetti({
-            particleCount: 60,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#3b82f6', '#ffffff', '#e0f2fe'],
-            gravity: 1,
-            scalar: 1.5,
-            shapes: [ghost, 'circle'],
-            ticks: 200,
-            zIndex: 2000
-        });
-    } catch (e) {
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#3b82f6', '#ffffff'],
-            zIndex: 2000
-        });
-    }
+    if (typeof document === 'undefined') return;
+
+    // REPLACEMENT: Subtle Gold Flash Screen
+    const flash = document.createElement('div');
+    flash.className = 'fx-overlay-gold';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 600);
 };
 
 export const cyberDeleteEffect = () => {
-    // Stage 1: The Ghost Whisper (Custom Ghost Shapes)
-    // We use a high-fidelity path for the ghost
-    const ghostPath = 'M9 22v-2c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v2M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z';
+    if (typeof document === 'undefined') return;
 
-    try {
-        const ghost = confetti.shapeFromPath({ path: ghostPath });
+    // REPLACEMENT: Screen Shake + Red Flash
+    const flash = document.createElement('div');
+    flash.className = 'fx-overlay-red';
+    document.body.appendChild(flash);
 
-        confetti({
-            particleCount: 50,
-            spread: 80,
-            origin: { y: 0.5 },
-            colors: ['#ffffff', '#e0f2fe', '#3b82f6'],
-            startVelocity: 30,
-            gravity: 0.5,
-            scalar: 2.5, // Large ghosts
-            shapes: [ghost],
-            ticks: 150,
-            zIndex: 2000
-        });
+    document.body.classList.add('fx-shake-active');
 
-        // Stage 2: Digital Remnants (Glitches)
-        setTimeout(() => {
-            confetti({
-                particleCount: 80,
-                spread: 120,
-                origin: { y: 0.52 },
-                colors: ['#3b82f6', '#2563eb', '#ffffff'],
-                startVelocity: 45,
-                gravity: 1.2,
-                scalar: 0.8,
-                shapes: ['square'], // Blocky digital glitches
-                ticks: 100,
-                zIndex: 2000
-            });
-        }, 50);
-
-        // Stage 3: Ethereal Mist
-        setTimeout(() => {
-            confetti({
-                particleCount: 100,
-                spread: 180,
-                origin: { y: 0.55 },
-                colors: ['#ffffff', '#60a5fa'],
-                startVelocity: 15,
-                gravity: -0.2, // Float UP
-                scalar: 1,
-                shapes: ['circle'],
-                ticks: 200,
-                zIndex: 2000
-            });
-        }, 150);
-    } catch (e) {
-        // Fallback if shapeFromPath is not supported in this version
-        confetti({
-            particleCount: 150,
-            spread: 100,
-            origin: { y: 0.5 },
-            colors: ['#ffffff', '#3b82f6'],
-            shapes: ['circle', 'square'],
-            zIndex: 2000
-        });
-    }
+    setTimeout(() => {
+        flash.remove();
+        document.body.classList.remove('fx-shake-active');
+    }, 500);
 };
