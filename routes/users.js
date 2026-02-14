@@ -128,6 +128,16 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                             }
                         }
                     });
+
+                    // 🔥 REAL-TIME NOTIF
+                    const io = req.app.get('io');
+                    if (io) {
+                        io.to(targetId).emit('notification.received', {
+                            type: 'follow_request',
+                            fromUsername: currentUser.username,
+                            fromProfilePic: currentUser.profilePic || ''
+                        });
+                    }
                 }
 
                 return res.status(200).json({
@@ -153,6 +163,16 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                 }
             }
         }, { new: true });
+
+        // 🔥 REAL-TIME NOTIF
+        const io = req.app.get('io');
+        if (io) {
+            io.to(targetId).emit('notification.received', {
+                type: 'follow',
+                fromUsername: currentUser.username,
+                fromProfilePic: currentUser.profilePic || ''
+            });
+        }
 
         const updatedSelf = await User.findByIdAndUpdate(currentUserId, { $push: { following: targetId } }, { new: true });
         res.status(200).json({
@@ -305,6 +325,16 @@ router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
                     }
                 }
             });
+
+            // 🔥 REAL-TIME NOTIF
+            const io = req.app.get('io');
+            if (io) {
+                io.to(requesterId).emit('notification.received', {
+                    type: 'follow_accepted',
+                    fromUsername: updatedSelf.username,
+                    fromProfilePic: updatedSelf.profilePic || ''
+                });
+            }
         } catch (e) { console.error("Sender update failed:", e.message); }
 
         const transformedNotifs = (updatedSelf.notifications || []).map(n => ({

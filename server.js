@@ -7,6 +7,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import http from 'http';
+import { Server } from 'socket.io';
 import Message from "./models/Message.js";
 import { verifyToken } from "./middleware/auth.js";
 
@@ -25,8 +27,8 @@ if (process.env.REQUEST_DUMP_AUTO === 'true') {
 
 const SERVER_VERSION = "V6.2 (Deploy Kick)";
 console.log("🟢 Server initialization started...");
-  console.log("🚀 DEPLOYMENT VERSION:", SERVER_VERSION);
-  console.log("Environment: ", process.env.NODE_ENV || 'production');
+console.log("🚀 DEPLOYMENT VERSION:", SERVER_VERSION);
+console.log("Environment: ", process.env.NODE_ENV || 'production');
 console.log("Port: ", process.env.PORT || 5000);
 
 // Verify Cloudinary Config
@@ -57,6 +59,40 @@ if (!fs.existsSync(uploadsPath)) {
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// --- SOCKET.IO SETUP ---
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow all for now to avoid CORS errors during transition
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['polling', 'websocket'], // Try polling first for better compatibility on Render
+  allowEIO3: true,
+  pingTimeout: 60000,
+  pingInterval: 25000
+});
+
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log(`🔌 [SOCKET] New client connected: ${socket.id} (Transport: ${socket.conn.transport.name})`);
+
+  socket.on('join', (room) => {
+    socket.join(room);
+    console.log(`📡 [SOCKET] Client ${socket.id} joined room: ${room}`);
+  });
+
+  socket.on('disconnect', (reason) => {
+    console.log(`🔌 [SOCKET] Client disconnected: ${socket.id} Reason: ${reason}`);
+  });
+
+  // LOG TRANSPORT UPGRADES
+  socket.conn.on('upgrade', (transport) => {
+    console.log(`🚀 [SOCKET] Transport upgraded to ${transport.name} for ${socket.id}`);
+  });
+});
 
 // CACHE CONTROL - Prevent Cloudflare caching of API responses
 app.use((req, res, next) => {
@@ -262,15 +298,19 @@ const PORT = process.env.PORT || 5000;
 console.log("🟡 Starting Express server on port", PORT);
 
 try {
-  const server = app.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, "0.0.0.0", () => {
     console.log(`✅ Server running on port ${PORT} 🚀`);
-    console.log(`📡 Deployment Version: v5-robust-follow-sync`);
+    console.log(`📡 Deployment Version: ${SERVER_VERSION}`);
     console.log(`🔍 Registered API Bases: /api/auth, /api/posts, /api/users, /api/messages`);
 
     // Keep-alive ping mechanism (for Render free tier)
     setInterval(() => {
       const selfUrl = `https://legacy-academy-backet1.onrender.com/api/health`;
-      axios.get(selfUrl).then(() => console.log("💓 Keep-alive pulse sent.")).catch(() => { });
+      axios.get(selfUrl).then(() => {
+        // Optional: emit a heart-beat via socket too to keep them alive
+        io.emit('heartbeat', { time: new Date() });
+        console.log("💓 Keep-alive pulse sent.");
+      }).catch(() => { });
     }, 14 * 60 * 1000); // 14 minutes
   });
 

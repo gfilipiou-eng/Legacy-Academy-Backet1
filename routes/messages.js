@@ -96,7 +96,7 @@ console.log("🔥 WHISPERS AUTO-DELETE activated. Messages self-destruct 5 secon
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
     const logPrefix = `[${reqId}] [WHISPER_SEND_V5]`;
-    
+
     // Debug logging for FormData/Body issues
     console.log(`${logPrefix} Start. Content-Type:`, req.headers['content-type']);
     console.log(`${logPrefix} Body keys:`, Object.keys(req.body || {}));
@@ -216,6 +216,13 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         } catch (notifErr) {
             // Non-fatal - log but don't fail the request
             console.warn(`${logPrefix} Notification failed (non-fatal):`, notifErr && notifErr.message);
+        }
+
+        // 🔥 REAL-TIME EMIT
+        const io = req.app.get('io');
+        if (io) {
+            io.to(String(recipientOid)).emit('message.received', savedMessage);
+            console.log(`${logPrefix} Broadcast 'message.received' to recipient ${recipientOid}`);
         }
 
         res.status(201).json(savedMessage);

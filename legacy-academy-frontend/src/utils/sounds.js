@@ -327,6 +327,15 @@ export const explodeEffect = () => {
 export const cyberDeleteEffect = () => {
     if (typeof document === 'undefined') return;
 
-    // REPLACEMENT: No Visual Effect (Just Sound)
-    // Removed vignette as per user request ("dizzying")
+    // REPLACEMENT: Screen Shake + Red Flash
+    const flash = document.createElement('div');
+    flash.className = 'fx-overlay-red';
+    document.body.appendChild(flash);
+
+    document.body.classList.add('fx-shake-active');
+
+    setTimeout(() => {
+        flash.remove();
+        document.body.classList.remove('fx-shake-active');
+    }, 500);
 };

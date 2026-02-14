@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from './api';
+import socket from './socket';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound } from './utils/sounds';
-import { io } from 'socket.io-client';
 
-const API_URL = axios.defaults.baseURL;
-const BASE_URL = API_URL.replace('/api', '');
-const socket = io(BASE_URL);
+const BASE_URL = axios.defaults.baseURL.replace('/api', '');
 
 const resolveMediaUrl = (path, width = null, isAvatar = false) => {
     if (!path) return '';
@@ -88,28 +86,39 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
     };
 
     useEffect(() => {
+        if (!postId) return;
         fetchPost();
 
-        const handlePostUpdate = (updatedPost) => {
-            if (String(updatedPost._id) === String(postId)) {
-                setPost(updatedPost);
+        // Join room for this post
+        socket.emit('join', postId);
+
+        const handleCommentAdded = (data) => {
+            if (String(data.postId) === String(postId)) {
+                console.log("📡 [SOCKET] New comment added");
+                setPost(prev => prev ? { ...prev, comments: data.comments } : null);
             }
         };
 
-        const handleNewComment = ({ postId: updatedPostId, comments }) => {
-            if (String(updatedPostId) === String(postId)) {
-                setPost(prev => prev ? { ...prev, comments } : null);
-                playSound('pop');
-                setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+        const handleCommentUpdated = (data) => {
+            if (String(data.postId) === String(postId)) {
+                setPost(prev => prev ? { ...prev, comments: data.comments } : null);
             }
         };
 
-        socket.on("post_updated", handlePostUpdate);
-        socket.on("new_comment", handleNewComment);
+        const handleCommentDeleted = (data) => {
+            if (String(data.postId) === String(postId)) {
+                setPost(prev => prev ? { ...prev, comments: data.comments } : null);
+            }
+        };
+
+        socket.on('comment.added', handleCommentAdded);
+        socket.on('comment.updated', handleCommentUpdated);
+        socket.on('comment.deleted', handleCommentDeleted);
 
         return () => {
-            socket.off("post_updated", handlePostUpdate);
-            socket.off("new_comment", handleNewComment);
+            socket.off('comment.added', handleCommentAdded);
+            socket.off('comment.updated', handleCommentUpdated);
+            socket.off('comment.deleted', handleCommentDeleted);
         };
     }, [postId]);
 

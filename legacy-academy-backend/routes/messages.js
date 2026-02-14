@@ -14,13 +14,13 @@ const markMessageRead = async (req, res) => {
         const msg = await Message.findById(messageId);
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
-        
+
         // WHISPER PROTOCOL: Burn after 1 minute
         // We set readAt now. Cleanup happens on GET.
         msg.isRead = true;
         msg.readAt = new Date();
         await msg.save();
-        
+
         res.status(200).json({ success: true, isRead: true });
     } catch (err) {
         res.status(500).json(err);
@@ -45,9 +45,9 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         const body = req.body || {};
         const recipientId = body.recipient;
         const text = body.text;
-        
+
         console.log(`[MESSAGE] Processing send request. Recipient: ${recipientId}, HasFile: ${!!req.file}`);
-        
+
         if (!req.user) return res.status(401).json("Auth failed");
         const currentUserId = req.user.id;
 
@@ -106,7 +106,7 @@ const getConversation = async (req, res) => {
 
         // WHISPER CLEANUP: Delete messages read > 1 minute ago
         const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
-        
+
         // Clean up messages in this specific conversation
         await Message.deleteMany({
             $or: [

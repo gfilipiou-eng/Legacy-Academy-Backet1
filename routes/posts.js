@@ -246,6 +246,17 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
             }
           });
           console.log(`📡 [${reqId}] Notification sent to author`);
+
+          // 🔥 REAL-TIME NOTIF
+          const io = req.app.get('io');
+          if (io) {
+            io.to(String(targetAuthorId)).emit('notification.received', {
+              type: 'comment',
+              fromUsername: fromName,
+              fromProfilePic: currentUser?.profilePic || '',
+              postId: post._id
+            });
+          }
         }
 
         // HANDLE MENTIONS
@@ -271,6 +282,17 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
                   }
                 }
               });
+
+              // 🔥 REAL-TIME NOTIF
+              const io = req.app.get('io');
+              if (io) {
+                io.to(String(mentionedUser._id)).emit('notification.received', {
+                  type: 'mention',
+                  fromUsername: req.user.username || currentUser.username || "Someone",
+                  fromProfilePic: currentUser?.profilePic || '',
+                  postId: post._id
+                });
+              }
             }
           }
         }
@@ -285,6 +307,14 @@ router.post("/:id/comment", safeCommentUpload, verifyToken, async (req, res) => 
     console.log(`✅ [${reqId}] Comment DEPLOYED. Returning comments. Count: ${updatedPost?.comments?.length || 0}`);
 
     const finalData = (updatedPost && updatedPost.comments) ? updatedPost.comments : [];
+
+    // 🔥 REAL-TIME EMIT
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('comment.added', { postId: req.params.id, comments: finalData });
+      console.log(`📡 [SOCKET] Broadcast 'comment.added' for post ${req.params.id}`);
+    }
+
     return res.status(200).json(finalData);
   } catch (e) {
     const errorId = req.requestId || 'err-' + Date.now().toString(36);
@@ -316,6 +346,13 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
 
     comment.text = req.body.text;
     await post.save();
+
+    // 🔥 REAL-TIME EMIT
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('comment.updated', { postId: req.params.id, comments: post.comments });
+    }
+
     res.status(200).json(post.comments);
   } catch (e) { res.status(500).json(e); }
 });
@@ -340,6 +377,13 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
     }
     post.comments.pull(req.params.commentId);
     await post.save();
+
+    // 🔥 REAL-TIME EMIT
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('comment.deleted', { postId: req.params.id, comments: post.comments });
+    }
+
     res.status(200).json("Deleted");
   } catch (e) { res.status(500).json(e); }
 });
@@ -355,6 +399,13 @@ router.delete("/:id/comments", verifyToken, async (req, res) => {
     }
     post.comments = [];
     await post.save();
+
+    // 🔥 REAL-TIME EMIT
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('comment.deleted', { postId: req.params.id, comments: [] });
+    }
+
     res.status(200).json([]);
   } catch (e) { res.status(500).json(e); }
 });
@@ -510,6 +561,17 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
               }
             }
           });
+
+          // 🔥 REAL-TIME NOTIF
+          const io = req.app.get('io');
+          if (io) {
+            io.to(String(mentionedUser._id)).emit('notification.received', {
+              type: 'mention',
+              fromUsername: req.user.username,
+              fromProfilePic: author?.profilePic || '',
+              postId: savedPost._id
+            });
+          }
         }
       }
     }
@@ -635,6 +697,13 @@ router.delete("/:id", verifyToken, async (req, res) => {
     // Allow Founder or Author to delete
     if (post.author.toString() !== (req.user.id || req.user.userId) && req.user.role !== "Founder") return res.status(403).json("Forbidden");
     await post.deleteOne();
+
+    // 🔥 REAL-TIME EMIT
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('post.deleted', { postId: req.params.id });
+    }
+
     res.status(200).json("Deleted");
   } catch (e) { res.status(500).json(e); }
 });
