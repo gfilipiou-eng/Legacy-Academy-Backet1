@@ -310,8 +310,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 };
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
-    <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_12px_rgba(255,215,0,0.6)]`}>
-        <Icons.Crown className="w-full h-full text-[var(--gold-primary)]" />
+    <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]`}>
+        <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
     </div>
 );
 
@@ -363,9 +363,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
                         </div>
                         {isFounder && (
-                            <div className="flex items-center gap-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent pl-1 pr-2 py-0.5 rounded-md border-l-2 border-[var(--gold-primary)] shadow-lg shadow-[var(--gold-primary)]/10 animate-fade-in group/badge">
-                                <FounderBadge className="w-3.5 h-3.5 group-hover/badge:scale-110 transition-transform" />
-                                <span className="text-[7.5px] text-[var(--gold-primary)] font-black tracking-[0.2em] uppercase">{t('FOUNDER_BADGE')}</span>
+                            <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)] animate-fade-in group/badge">
+                                <FounderBadge className="w-4 h-4" />
+                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                             </div>
                         )}
                     </div>
@@ -541,7 +541,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4" />
                                 </div>
                                 {author?.role === 'Founder' ? (
-                                    <div className="flex items-center gap-1.5 mt-1 bg-[var(--gold-primary)]/10 px-2 py-1 rounded-lg border border-[var(--gold-primary)]/20 shadow-[0_0_15px_rgba(255,215,0,0.1)]">
+                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
                                         <FounderBadge className="w-5 h-5" />
                                         <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                     </div>
@@ -1306,10 +1306,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                     {/* FOUNDER BADGE */}
                                     {isFounder && (
                                         <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
-                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]">
-                                                <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
-                                            </div>
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
+                                            <FounderBadge className="w-5 h-5" />
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                         </div>
                                     )}
 
@@ -2251,10 +2249,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     </div>
                                     {displayUser?.role === 'Founder' && (
                                         <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit shadow-[0_0_15px_rgba(255,215,0,0.2)]">
-                                            <div className="relative flex items-center justify-center w-5 h-5 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]">
-                                                <Icons.Crown className="w-full h-full text-[var(--gold-primary)] animate-pulse" />
-                                            </div>
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
+                                            <FounderBadge className="w-5 h-5" />
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE')}</span>
                                         </div>
                                     )}
                                 </div>
