@@ -3926,8 +3926,8 @@ const App = () => {
                                     <img src="/logo.png" alt="Legacy Academy" className="h-32 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn relative bg-transparent border-none p-0 overflow-hidden flex items-center justify-center">
-                                        <Icons.Ghost className="w-6 h-6" />
+                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
+                                        <Icons.Ghost className="w-5 h-5" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
