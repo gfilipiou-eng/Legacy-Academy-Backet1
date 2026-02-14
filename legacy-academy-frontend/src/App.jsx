@@ -3313,6 +3313,13 @@ const App = () => {
         const userId = user?._id;
         if (!userId) return;
 
+        // SNAPSHOT: Capture current state for rollback
+        const pIndex = posts.findIndex(p => String(p._id) === String(postId));
+        if (pIndex === -1) return;
+        const originalPost = posts[pIndex];
+        const originalLikes = [...(originalPost.likes || [])];
+        const originalDislikes = [...(originalPost.dislikes || [])];
+
         // 1. OPTIMISTIC UPDATE (Instant Feedback)
         const updateFn = (p) => {
             if (String(p._id) !== String(postId)) return p;
@@ -3326,8 +3333,6 @@ const App = () => {
         if (selectedPost && String(selectedPost._id) === String(postId)) {
             setSelectedPost(prev => updateFn(prev));
         }
-
-        const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
@@ -3345,6 +3350,12 @@ const App = () => {
             }
         } catch (e) {
             console.error('Like failed', e);
+            // ROLLBACK to original state
+            const rollbackFn = (p) => String(p._id) === String(postId) ? { ...p, likes: originalLikes, dislikes: originalDislikes } : p;
+            setPosts(prev => prev.map(rollbackFn));
+            if (selectedPost && String(selectedPost._id) === String(postId)) {
+                setSelectedPost(prev => ({ ...prev, likes: originalLikes, dislikes: originalDislikes }));
+            }
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
@@ -3361,6 +3372,13 @@ const App = () => {
         const userId = user?._id;
         if (!userId) return;
 
+        // SNAPSHOT: Capture current state for rollback
+        const pIndex = posts.findIndex(p => String(p._id) === String(postId));
+        if (pIndex === -1) return;
+        const originalPost = posts[pIndex];
+        const originalLikes = [...(originalPost.likes || [])];
+        const originalDislikes = [...(originalPost.dislikes || [])];
+
         // 1. OPTIMISTIC UPDATE
         const updateFn = (p) => {
             if (String(p._id) !== String(postId)) return p;
@@ -3374,8 +3392,6 @@ const App = () => {
         if (selectedPost && String(selectedPost._id) === String(postId)) {
             setSelectedPost(prev => updateFn(prev));
         }
-
-        const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
@@ -3393,6 +3409,12 @@ const App = () => {
             }
         } catch (e) {
             console.error('Dislike failed', e);
+            // ROLLBACK to original state
+            const rollbackFn = (p) => String(p._id) === String(postId) ? { ...p, likes: originalLikes, dislikes: originalDislikes } : p;
+            setPosts(prev => prev.map(rollbackFn));
+            if (selectedPost && String(selectedPost._id) === String(postId)) {
+                setSelectedPost(prev => ({ ...prev, likes: originalLikes, dislikes: originalDislikes }));
+            }
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
         }
