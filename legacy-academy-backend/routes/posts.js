@@ -84,7 +84,9 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
 
         const savedPost = await newPost.save();
-        await savedPost.populate("author", "username profilePic role");
+        await savedPost.populate("author", "username profilePic role isPrivate isFollowersOnly followers");
+        // Emit realtime event
+        try { req.app.get('io')?.emit('post.created', savedPost.toObject()); } catch (e) { /* noop */ }
         res.status(200).json(savedPost);
     } catch (err) {
         res.status(500).json(err);
@@ -154,6 +156,8 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
         // Return updated comments with population
         const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+        // Emit realtime event for comments
+        try { req.app.get('io')?.emit('comment.added', { postId: req.params.id, comments: updatedPost.comments }); } catch (e) { /* noop */ }
         res.status(200).json(updatedPost.comments);
     } catch (err) {
         console.error("Comment Error:", err);
@@ -172,6 +176,9 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
 
         if (comment.user.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
             await post.updateOne({ $pull: { comments: { _id: req.params.commentId } } });
+            // Emit after deletion
+            const refreshed = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+            try { req.app.get('io')?.emit('comment.deleted', { postId: req.params.id, commentId: req.params.commentId, comments: refreshed.comments }); } catch (e) { /* noop */ }
             res.status(200).json("Comment deleted");
         } else {
             res.status(403).json("You can delete only your comment");
@@ -197,6 +204,8 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
                 { _id: req.params.id, "comments._id": req.params.commentId },
                 { $set: { "comments.$.text": req.body.text } }
             );
+            const refreshed = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+            try { req.app.get('io')?.emit('comment.updated', { postId: req.params.id, comments: refreshed.comments }); } catch (e) { /* noop */ }
             res.status(200).json("Comment updated");
         } else {
             res.status(403).json("You can update only your comment");
@@ -213,6 +222,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
         const post = await Post.findById(req.params.id);
         if (post.author.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
             await post.deleteOne();
+            try { req.app.get('io')?.emit('post.deleted', { postId: req.params.id }); } catch (e) { /* noop */ }
             res.status(200).json("Post deleted");
         } else {
             res.status(403).json("You can delete only your post");

@@ -6,6 +6,7 @@ import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
+import { io } from 'socket.io-client';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
@@ -2383,7 +2384,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     {userStories.length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                            <div className="flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory scroll-pl-2">
                                                 {userStories.map(s => {
                                                     const isYT = isYouTubeUrl(s.videoUrl);
                                                     const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
@@ -2394,7 +2395,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                                         if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
                                                     }
                                                     return (
-                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer snap-start">
                                                             <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 border-[var(--gold-primary)] relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
@@ -2955,6 +2956,7 @@ const App = () => {
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
     const scrollRafLock = useRef(false);
+    const socketRef = useRef(null);
 
     const handleScroll = (e) => {
         if (scrollRafLock.current) return;
@@ -3108,6 +3110,51 @@ const App = () => {
         }
         return () => { }; // Cleanup handled by functions
     }, [user]);
+
+    // --- REALTIME SOCKET.IO ---
+    useEffect(() => {
+        if (socketRef.current) return;
+        const BASE_URL = axios.defaults.baseURL.replace('/api', '');
+        const socket = io(BASE_URL, { transports: ['websocket', 'polling'] });
+        socketRef.current = socket;
+
+        // Posts created
+        socket.on('post.created', (post) => {
+            setPosts(prev => {
+                if (!Array.isArray(prev)) return [post];
+                if (prev.some(p => p._id === post._id)) return prev;
+                // Client-side privacy guard (approximate)
+                const a = post.author || {};
+                const currentUserId = String(user?._id || '');
+                const isOwner = String(a?._id || a) === currentUserId;
+                const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+                const isFounder = user?.role === 'Founder';
+                const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+                if (isPrivate && !isOwner && !isFollower && !isFounder) return prev;
+                return [post, ...prev];
+            });
+        });
+        // Posts deleted
+        socket.on('post.deleted', ({ postId }) => {
+            setPosts(prev => prev.filter(p => p._id !== postId));
+            if (selectedPostRef.current?._id === postId) setSelectedPost(null);
+        });
+        // Comments sync (added/updated/deleted)
+        const syncComments = ({ postId, comments }) => {
+            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments } : p));
+            if (selectedPostRef.current?._id === postId) {
+                setSelectedPost(prev => prev ? { ...prev, comments } : prev);
+            }
+        };
+        socket.on('comment.added', syncComments);
+        socket.on('comment.updated', syncComments);
+        socket.on('comment.deleted', syncComments);
+
+        return () => {
+            try { socket.disconnect(); } catch {}
+            socketRef.current = null;
+        };
+    }, [user?._id, user?.role]);
 
 
     // FIX: Optimized search filtering with useMemo

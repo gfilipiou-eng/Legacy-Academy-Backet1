@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { useTranslation } from './translations';
 import { playSound } from './utils/sounds';
+import { io } from 'socket.io-client';
 
 const BASE_URL = axios.defaults.baseURL.replace('/api', '');
 
@@ -84,10 +85,30 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
         }
     };
 
+    const socketRef = useRef(null);
     useEffect(() => {
         fetchPost();
-        const interval = setInterval(fetchPost, 5000);
-        return () => clearInterval(interval);
+        const BASE = axios.defaults.baseURL.replace('/api', '');
+        const socket = io(BASE, { transports: ['websocket', 'polling'] });
+        socketRef.current = socket;
+
+        const sync = ({ postId: pid, comments }) => {
+            if (String(pid) !== String(postId)) return;
+            setPost(prev => prev ? { ...prev, comments } : prev);
+        };
+        socket.on('comment.added', sync);
+        socket.on('comment.updated', sync);
+        socket.on('comment.deleted', sync);
+        socket.on('post.deleted', ({ postId: pid }) => {
+            if (String(pid) === String(postId)) {
+                setPost(null);
+            }
+        });
+
+        return () => {
+            try { socket.disconnect(); } catch {}
+            socketRef.current = null;
+        };
     }, [postId]);
 
     const handleSubmit = async (e) => {
@@ -96,11 +117,20 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
         setIsSubmitting(true);
         try {
-            await axios.post(`/posts/${postId}/comment`, { text: commentText });
+            const tempId = 'temp-' + Date.now();
+            const temp = {
+                _id: tempId,
+                text: commentText,
+                createdAt: new Date().toISOString(),
+                user: { _id: currentUser?._id, username: currentUser?.username, profilePic: currentUser?.profilePic },
+                authorName: currentUser?.username,
+                authorProfilePic: currentUser?.profilePic
+            };
+            setPost(prev => prev ? { ...prev, comments: [...(prev.comments || []), temp] } : prev);
             setCommentText('');
-            fetchPost();
+            setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+            await axios.post(`/posts/${postId}/comment`, { text: temp.text });
             playSound('pop');
-            setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
         } catch (e) {
             alert(t('ERROR_POSTING') || "Connectivity failure.");
         } finally {

@@ -1,4 +1,6 @@
 import express from "express";
+import { createServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoute from "./routes/users.js";
@@ -19,6 +21,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  }
+});
+app.set("io", io);
 
 // Middleware
 app.use(express.json()); // Essential for parsing JSON bodies
@@ -50,9 +60,16 @@ app.use("/api/messages", messageRoute);
 //     res.sendFile(path.join(__dirname, "/client/build", "index.html"));
 // });
 
-app.listen(process.env.PORT || 8800, () => {
-    console.log("🟢 Server initialization started...");
-  console.log("🚀 DEPLOYMENT VERSION: V6.2 (Deploy Kick)");
+io.on("connection", (socket) => {
+  console.log("🔌 Client connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("🔌 Client disconnected:", socket.id);
+  });
+});
+
+httpServer.listen(process.env.PORT || 8800, () => {
+  console.log("🟢 Server initialization started...");
+  console.log("🚀 DEPLOYMENT VERSION: V6.3 (Realtime)");
   console.log("Environment: ", process.env.NODE_ENV || 'production');
-    console.log("Backend server is running! V5-LEGACY-SYNC");
+  console.log("Backend server is running with Socket.IO");
 });
