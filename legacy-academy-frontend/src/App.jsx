@@ -365,6 +365,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
 };
 
 const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang }) => {
+    // Force rebuild fix
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
 
