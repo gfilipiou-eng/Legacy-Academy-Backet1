@@ -336,26 +336,23 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 };
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
-    <div className={`relative flex items-center justify-center ${className} animate-ghost-pulse`}>
-        <div className="absolute inset-0 bg-[var(--gold-primary)]/20 blur-md rounded-full pointer-events-none" />
-        <Icons.Crown className="w-full h-full drop-shadow-[0_0_8px_var(--gold-glow)]" style={{ color: '#FFD700', fill: '#FFD700' }} />
+    <div className={`relative flex items-center justify-center ${className}`}>
+        <Icons.Crown className="w-full h-full" style={{ color: '#FFD700', stroke: '#FFD700' }} />
     </div>
 );
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
     const color = isFounder ? "#FFD700" : "#1D9BF0";
-    const glow = isFounder ? "var(--gold-glow)" : "rgba(29, 155, 240, 0.4)";
 
     return (
-        <div className={`relative flex items-center justify-center ${className} shrink-0`}>
-            <div className="absolute inset-0 blur-[6px] rounded-full pointer-events-none" style={{ backgroundColor: `${color}20` }} />
-            <svg viewBox="0 0 22 22" className="w-full h-full" style={{ overflow: 'visible', filter: `drop-shadow(0 0 4px ${glow})` }}>
-                <path
-                    fill={color}
-                    d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
-                />
-            </svg>
-        </div>
+        <svg viewBox="0 0 22 22" className={`${className} shrink-0`} style={{ overflow: 'visible' }}>
+            <path
+                fill={color}
+                stroke="none"
+                style={{ fill: color, stroke: 'none' }}
+                d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
+            />
+        </svg>
     );
 };
 
@@ -1063,17 +1060,16 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                     </button>
                                 )}
                             </div>
-                            {/* Premium Controls */}
-                            <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 transition-opacity duration-300 ${isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <button
-                                        onClick={togglePlay}
-                                        className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white scale-100 hover:scale-110 active:scale-90 transition-all shadow-[0_0_30px_rgba(0,0,0,0.5)]"
-                                    >
-                                        {isPlaying ? <Icons.Pause className="w-8 h-8 fill-current" /> : <Icons.Play className="w-8 h-8 fill-current translate-x-1" />}
-                                    </button>
-                                </div>
-                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-center">
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                            >
+                                {isPlaying ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
+                            </motion.div>
                         </div>
 
                         <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
@@ -1102,7 +1098,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 });
 
@@ -1120,11 +1116,9 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            whileHover={{ scale: 1.01, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
-            className="flex items-center gap-3 p-4 hover:bg-white/5 rounded-[1.5rem] transition-all cursor-pointer border-b border-white/5 group relative overflow-hidden"
+            className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-pointer border-b border-white/5 group"
             onClick={handleClick}
         >
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/0 via-[var(--gold-primary)]/0 to-[var(--gold-primary)]/0 group-hover:via-[var(--gold-primary)]/[0.03] transition-all duration-500" />
             <div className="relative">
                 <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
@@ -1315,14 +1309,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className="premium-card group relative p-5 sm:p-7 mb-8 overflow-hidden"
+            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-3xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl overflow-hidden`}
         >
             {/* AMBIENT BACKGROUND GLOW */}
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-[var(--gold-primary)]/5 blur-[120px] pointer-events-none rounded-full animate-float" />
-            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-[var(--f1-red)]/5 blur-[120px] pointer-events-none rounded-full animate-float" style={{ animationDelay: '-3s' }} />
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
+            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
 
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
@@ -3965,21 +3959,20 @@ const App = () => {
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[40] bg-black/60 backdrop-blur-3xl border-b border-white/10 shrink-0 transition-all duration-500">
+                        <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,215,0,0.2)]" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-xl bg-white/5 border border-white/10 hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all active:scale-90">
-                                        <Icons.Ghost className="w-7 h-7" />
+                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
+                                        <Icons.Ghost className="w-8 h-8" />
                                     </button>
-                                    <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-xl bg-white/5 border border-white/10 hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all active:scale-90">
-                                        <Icons.Settings className="w-7 h-7" />
+                                    <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
+                                        <Icons.Settings className="w-8 h-8" />
                                     </button>
                                 </div>
                             </div>
-                            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--f1-red)]/50 to-transparent"></div>
                         </header>
                         <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
                             {activeTab === 'alerts' ? (
