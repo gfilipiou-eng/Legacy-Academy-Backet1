@@ -441,7 +441,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     );
 });
 
-const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onShare, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
     if (!post) return null;
     const { t, lang } = useTranslation(user);
 
@@ -593,9 +593,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                                         <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
-                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
-                                                <Icons.Share className="w-4 h-4 text-gray-400" />
-                                                <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
+                                            <button onClick={(e) => { e.stopPropagation(); onOpenChat(author); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <Icons.Ghost className="w-4 h-4 text-gray-400" />
+                                                <span className="text-xs font-bold text-gray-200">{t('DIRECT_MESSAGE', 'MESSAGE')}</span>
                                             </button>
                                             {isOwner && (
                                                 <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
@@ -688,6 +688,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                             >
                                 <Icons.MessageSquare className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
                                 <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => onOpenChat(author)}
+                                className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
+                                title="MESSAGES SECURE COMMS"
+                            >
+                                <Icons.Ghost className="w-6 h-6 text-gray-500 group-hover:text-[var(--gold-primary)] transition-colors" />
                             </button>
                         </div>
 
@@ -1235,7 +1244,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onShare, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -1370,9 +1379,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             <>
                                 <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                 <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
-                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                        <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
+                                    <button onClick={(e) => { e.stopPropagation(); onOpenChat(post.author); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                        <Icons.Ghost className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
+                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('DIRECT_MESSAGE', 'MESSAGE')}</span>
                                     </button>
                                     {isOwner && (
                                         <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
@@ -1434,8 +1443,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             <span className="text-xs font-black">{post.comments?.length || 0}</span>
                         </button>
                     </div>
-                    <button onClick={() => onShare(post)} className="p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-500 hover:text-[var(--gold-primary)] transition-all">
-                        <Icons.Share className="w-5 h-5" />
+                    <button onClick={() => onOpenChat(post.author)} className="p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-500 hover:text-[var(--gold-primary)] transition-all" title="MESSAGES SECURE COMMS">
+                        <Icons.Ghost className="w-5 h-5 pointer-events-none" />
                     </button>
                 </div>
 
@@ -4091,7 +4100,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onShare={handleShare} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                         </motion.div>
                                                                     ))}
                                                                 </AnimatePresence>
@@ -4170,7 +4179,7 @@ const App = () => {
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
-                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onShare={handleShare} onComment={handleComment} onDelete={(pid) => {
+                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onOpenChat={handleOpenChat} onComment={handleComment} onDelete={(pid) => {
                             handleDeletePost(pid);
                             // Also trigger manual refresh for profile if open
                             if (isProfileOpen) {
