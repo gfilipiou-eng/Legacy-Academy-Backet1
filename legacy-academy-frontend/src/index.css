@@ -5,14 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --gold-primary: #1d9bf0;
-  --f1-red: #1d9bf0;
-  --f1-primary: #1d9bf0;
+  --gold-primary: #FFD700;
+  --f1-red: #ff3131;
+  --f1-primary: #FFD700;
   --carbon-black: #000000;
-  --gold-secondary: #71767b;
-  --gold-hover: #1a8cd8;
-  --gold-glow: rgba(29, 155, 240, 0.35);
-  --gold-glow-soft: rgba(29, 155, 240, 0.2);
+  --gold-secondary: #FFD700;
+  --gold-hover: #e6c200;
+  --gold-glow: rgba(255, 215, 0, 0.35);
+  --gold-glow-soft: rgba(255, 215, 0, 0.2);
+  --twitter-blue: #1d9bf0;
   --glass-bg: rgba(0, 0, 0, 0.9);
   --glass-border: #2f3336;
 }
