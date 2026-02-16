@@ -138,8 +138,8 @@ img {
 
 .header-icon-btn {
   padding: 0.75rem;
-  background-color: #000;
-  border: 1px solid #2f3336;
+  background-color: transparent;
+  border: 1px solid transparent;
   border-radius: 1rem;
   color: #e7e9ea;
   transition: all 0.15s;
@@ -151,8 +151,7 @@ img {
 
 .header-icon-btn:hover {
   color: white;
-  border-color: #3f4348;
-  background: #0a0a0a;
+  background: rgba(255, 255, 255, 0.05);
   transform: translateY(-1px);
 }
 
@@ -476,10 +475,16 @@ img {
 }
 
 .premium-post-card {
+  contain: paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 600px;
   background: #000;
   border: 1px solid #2f3336;
   box-shadow: none;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
 }
 
 .liquid-folder {

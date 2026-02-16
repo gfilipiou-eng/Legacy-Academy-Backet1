@@ -1407,7 +1407,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                 <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
                             ) : post.image && (
-                                <img src={resolveMediaUrl(post.image)} alt="Media" className="w-full h-auto object-contain bg-[#050505]" onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} />
+                                <img src={resolveMediaUrl(post.image)} alt="Media" className="w-full h-auto object-contain bg-[#050505]" loading="lazy" decoding="async" onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} />
                             )}
                         </div>
                     )}
@@ -3001,7 +3001,12 @@ const App = () => {
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
 
+    const lastScrollTime = useRef(0);
     const handleScroll = (e) => {
+        const now = Date.now();
+        if (now - lastScrollTime.current < 100) return; // Throttle to 10fps
+        lastScrollTime.current = now;
+
         if (e.target.scrollTop > 500) {
             setShowScrollTop(true);
         } else {
@@ -4014,7 +4019,7 @@ const App = () => {
                                         <Icons.Ghost className="w-8 h-8" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
-                                        <Icons.Settings className="w-5 h-5 text-gray-400" />
+                                        <Icons.Settings className="w-8 h-8" />
                                     </button>
                                 </div>
                             </div>
@@ -4122,9 +4127,9 @@ const App = () => {
                                                                     {group.posts.map(p => (
                                                                         <motion.div
                                                                             key={p._id}
-                                                                            layout
-                                                                            initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-                                                                            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                                                                            initial={{ opacity: 0, y: 30 }}
+                                                                            animate={{ opacity: 1, y: 0 }}
+                                                                            viewport={{ once: true, margin: "-50px" }}
                                                                             exit={{
                                                                                 opacity: 0,
                                                                                 scale: 1.1,
