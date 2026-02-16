@@ -244,7 +244,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
                             return (
                                 <div key={i} className="flex gap-3 group animate-slide-down">
-                                    <div className="shrink-0 w-10 h-10 rounded-full overflow-visible relative shadow-lg">
+                                    <div className="shrink-0 w-10 h-10 rounded-xl overflow-visible relative shadow-lg">
                                         <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
                                     </div>
                                     <div className="flex-1 min-w-0">

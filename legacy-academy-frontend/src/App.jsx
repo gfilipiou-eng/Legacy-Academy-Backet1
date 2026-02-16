@@ -333,9 +333,9 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     return (
         <div className={`relative ${className || ''}`} onClick={onClick}>
             {isFounder && (
-                <div className="absolute -inset-[3px] rounded-full bg-gradient-to-tr from-[var(--gold-primary)] via-transparent to-[var(--f1-red)] animate-spin-slow opacity-80" />
+                <div className="absolute -inset-[3px] rounded-2xl bg-gradient-to-tr from-[var(--gold-primary)] via-transparent to-[var(--f1-red)] animate-spin-slow opacity-80" />
             )}
-            <div className={`w-full h-full rounded-full overflow-hidden relative z-10 border ${isFounder ? 'border-[var(--gold-primary)]/40' : 'border-white/10'} bg-gray-900 shadow-xl`}>
+            <div className={`w-full h-full rounded-2xl overflow-hidden relative z-10 border ${isFounder ? 'border-[var(--gold-primary)]/40' : 'border-white/10'} bg-gray-900 shadow-xl`}>
                 {mediaUrl ? (
                     <img src={mediaUrl} className="w-full h-full object-cover" loading="lazy" alt="" />
                 ) : (
@@ -394,7 +394,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
     return (
         <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
-            <div className="w-10 h-10 rounded-full overflow-visible shrink-0 shadow-2xl relative">
+            <div className="w-10 h-10 rounded-xl overflow-visible shrink-0 shadow-xl relative">
                 <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
             </div>
 
@@ -577,7 +577,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full overflow-hidden relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full overflow-visible shadow-2xl relative">
+                            <div className="w-12 h-12 rounded-2xl overflow-visible shadow-2xl relative">
                                 <ProfileAvatar user={author} />
                             </div>
                             <div className="flex flex-col">
@@ -1138,7 +1138,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         >
             <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/0 via-[var(--gold-primary)]/0 to-[var(--gold-primary)]/0 group-hover:via-[var(--gold-primary)]/[0.03] transition-all duration-500" />
             <div className="relative">
-                <div className="w-12 h-12 rounded-full overflow-visible group-hover:scale-105 transition-all shadow-lg relative">
+                <div className="w-12 h-12 rounded-2xl overflow-visible group-hover:scale-105 transition-all shadow-lg relative">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
@@ -1351,7 +1351,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4 sm:mb-6">
                     <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full p-[1.5px] shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-visible relative" onClick={() => onViewProfile(post.author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl p-[1.5px] shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-visible relative" onClick={() => onViewProfile(post.author)}>
                             <ProfileAvatar user={post.author} />
                         </div>
                         <div className="flex flex-col">
@@ -2287,7 +2287,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full cursor-pointer shadow-[0_0_40px_rgba(0,0,0,0.5)] shrink-0 overflow-visible relative">
+                                    <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl cursor-pointer shadow-[0_0_40px_rgba(0,0,0,0.5)] shrink-0 overflow-visible relative">
                                         <ProfileAvatar user={displayUser} className="w-full h-full" />
                                     </div>
                                 </div>
@@ -4064,7 +4064,7 @@ const App = () => {
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
-                                                            <div className="w-10 h-10 rounded-full overflow-visible relative">
+                                                            <div className="w-10 h-10 rounded-xl overflow-visible relative">
                                                                 <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
@@ -4180,8 +4180,8 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('cyber_click'); }} className={`p-0.5 rounded-full border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 rounded-full overflow-visible relative">
+                                <button onClick={() => { viewProfile(user); playSound('cyber_click'); }} className={`p-0.5 rounded-2xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-10 h-10 rounded-2xl overflow-visible relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
