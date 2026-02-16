@@ -32,21 +32,13 @@ if (typeof window !== 'undefined') {
             pointer-events: none;
             animation: fx-flash-red 0.5s ease-out;
         }
-        @keyframes fx-shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        @keyframes fx-vaporize {
+            0% { transform: scale(1); filter: blur(0px) brightness(1); }
+            50% { transform: scale(1.02); filter: blur(2px) brightness(1.5); }
+            100% { transform: scale(1); filter: blur(0px) brightness(1); }
         }
-        .fx-shake-active {
-            animation: fx-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        .fx-vaporize-active {
+            animation: fx-vaporize 0.4s ease-out both;
         }
     `;
     document.head.appendChild(style);
@@ -332,10 +324,10 @@ export const cyberDeleteEffect = () => {
     flash.className = 'fx-overlay-red';
     document.body.appendChild(flash);
 
-    document.body.classList.add('fx-shake-active');
+    document.body.classList.add('fx-vaporize-active');
 
     setTimeout(() => {
         flash.remove();
-        document.body.classList.remove('fx-shake-active');
+        document.body.classList.remove('fx-vaporize-active');
     }, 500);
 };

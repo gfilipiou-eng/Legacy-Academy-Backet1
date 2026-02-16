@@ -54,7 +54,7 @@ export const Icons = {
     Ghost: ({ className, ...p }) => (
         <div className={`flex items-center justify-center overflow-hidden ${className || 'w-5 h-5'}`}>
             <img
-                src="/ghost_logo_1771069362755.jpg"
+                src="/l6o0hvfvnpkbkpn1bub3.png"
                 alt="Ghost"
                 className="w-full h-full object-contain scale-[1.6] transform-gpu"
                 style={{ backfaceVisibility: 'hidden' }}
