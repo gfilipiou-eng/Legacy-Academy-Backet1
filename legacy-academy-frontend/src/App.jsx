@@ -593,9 +593,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                                         <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
-                                            <button onClick={(e) => { e.stopPropagation(); onOpenChat(author); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
-                                                <Icons.Ghost className="w-4 h-4 text-gray-400" />
-                                                <span className="text-xs font-bold text-gray-200">{t('DIRECT_MESSAGE', 'MESSAGE')}</span>
+                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
+                                                <Icons.Share className="w-4 h-4 text-gray-400" />
+                                                <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
                                             </button>
                                             {isOwner && (
                                                 <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
@@ -690,14 +690,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                                 <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button
-                                type="button"
-                                onClick={() => onOpenChat(author)}
-                                className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
-                                title="MESSAGES SECURE COMMS"
-                            >
-                                <Icons.Ghost className="w-6 h-6 text-gray-500 group-hover:text-[var(--gold-primary)] transition-colors" />
-                            </button>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -1379,9 +1371,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             <>
                                 <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
                                 <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
-                                    <button onClick={(e) => { e.stopPropagation(); onOpenChat(post.author); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                        <Icons.Ghost className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('DIRECT_MESSAGE', 'MESSAGE')}</span>
+                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                        <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
+                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
                                     </button>
                                     {isOwner && (
                                         <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
@@ -1443,9 +1435,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             <span className="text-xs font-black">{post.comments?.length || 0}</span>
                         </button>
                     </div>
-                    <button onClick={() => onOpenChat(post.author)} className="p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-500 hover:text-[var(--gold-primary)] transition-all" title="MESSAGES SECURE COMMS">
-                        <Icons.Ghost className="w-5 h-5 pointer-events-none" />
-                    </button>
                 </div>
 
                 {showComments && (
