@@ -4006,7 +4006,7 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
-                                        <Icons.Ghost className="w-5 h-5" />
+                                        <Icons.Ghost className="w-8 h-8" />
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-5 h-5 text-gray-400" />
