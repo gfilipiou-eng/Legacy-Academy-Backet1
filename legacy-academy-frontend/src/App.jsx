@@ -336,17 +336,16 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 };
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
-    <div className={`relative flex items-center justify-center ${className} drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]`}>
-        <Icons.Crown className="w-full h-full animate-pulse" style={{ color: '#FFD700', stroke: '#FFD700' }} />
+    <div className={`relative flex items-center justify-center ${className}`}>
+        <Icons.Crown className="w-full h-full" style={{ color: '#FFD700', stroke: '#FFD700' }} />
     </div>
 );
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
     const color = isFounder ? "#FFD700" : "#1D9BF0";
-    const shadow = isFounder ? "drop-shadow-[0_0_6px_rgba(255,215,0,0.7)]" : "drop-shadow-[0_0_4px_rgba(29,155,240,0.6)]";
 
     return (
-        <svg viewBox="0 0 22 22" className={`${className} shrink-0 ${shadow}`} style={{ overflow: 'visible' }}>
+        <svg viewBox="0 0 22 22" className={`${className} shrink-0`} style={{ overflow: 'visible' }}>
             <path
                 fill={color}
                 stroke="none"
@@ -394,9 +393,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
                         </div>
                         {isFounder && (
-                            <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)] animate-fade-in group/badge">
+                            <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 group/badge">
                                 <FounderBadge className="w-4 h-4" />
-                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                             </div>
                         )}
                     </div>
@@ -572,9 +571,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                     <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4" />
                                 </div>
                                 {author?.role === 'Founder' ? (
-                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40">
                                         <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                     </div>
                                 ) : (
                                     <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
@@ -673,7 +672,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onS
                                 type="button"
                                 disabled={loadingActions?.[post._id]}
                                 onClick={() => onDislike(post._id)}
-                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}
+                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}
                             >
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current scale-110' : 'group-hover:scale-110'}`}>
                                     <path d="M17 14V2"></path>
@@ -1347,9 +1346,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             {/* FOUNDER SECTION BELOW NAME */}
                             {isFounder && (
                                 <div className="flex items-center gap-3 mt-1">
-                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40">
                                         <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                     </div>
                                 </div>
                             )}
@@ -2348,9 +2347,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className={`ml-2 w-3 h-3 rounded-full border-2 border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                     {displayUser?.role === 'Founder' && (
-                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit">
                                             <FounderBadge className="w-5 h-5" />
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest drop-shadow-sm">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                         </div>
                                     )}
                                 </div>
