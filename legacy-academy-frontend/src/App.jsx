@@ -328,31 +328,17 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
         );
     }
 
-    const isFounder = user?.role === 'Founder';
-
-    return (
-        <div className={`relative ${className || ''}`} onClick={onClick}>
-            {isFounder && (
-                <div className="absolute -inset-[3px] rounded-2xl bg-gradient-to-tr from-[var(--gold-primary)] via-transparent to-[var(--f1-red)] animate-spin-slow opacity-80" />
-            )}
-            <div className={`w-full h-full rounded-2xl overflow-hidden relative z-10 border ${isFounder ? 'border-[var(--gold-primary)]/40' : 'border-white/10'} bg-gray-900 shadow-xl`}>
-                {mediaUrl ? (
-                    <img src={mediaUrl} className="w-full h-full object-cover" loading="lazy" alt="" />
-                ) : (
-                    <DefaultAvatar name={name} size={size} />
-                )}
-            </div>
-            {isFounder && <div className="absolute -bottom-1 -right-1 z-20"><FounderBadge className="w-4 h-4" /></div>}
-        </div>
+    return mediaUrl ? (
+        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" alt="" />
+    ) : (
+        <DefaultAvatar name={name} size={size} />
     );
 };
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
     <div className={`relative flex items-center justify-center ${className} animate-ghost-pulse`}>
-        <div className="absolute inset-0 bg-[var(--gold-primary)]/10 blur-sm rounded-full pointer-events-none" />
-        <div className="w-[85%] h-[85%] relative z-10">
-            <Icons.Crown className="w-full h-full drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" style={{ color: '#FFD700', fill: '#FFD700' }} />
-        </div>
+        <div className="absolute inset-0 bg-[var(--gold-primary)]/20 blur-md rounded-full pointer-events-none" />
+        <Icons.Crown className="w-full h-full drop-shadow-[0_0_8px_var(--gold-glow)]" style={{ color: '#FFD700', fill: '#FFD700' }} />
     </div>
 );
 
@@ -396,7 +382,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
     return (
         <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
-            <div className="w-10 h-10 rounded-xl overflow-visible shrink-0 shadow-xl relative">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
                 <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
             </div>
 
@@ -579,7 +565,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full overflow-hidden relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl overflow-visible shadow-2xl relative">
+                            <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
                                 <ProfileAvatar user={author} />
                             </div>
                             <div className="flex flex-col">
@@ -1140,7 +1126,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         >
             <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/0 via-[var(--gold-primary)]/0 to-[var(--gold-primary)]/0 group-hover:via-[var(--gold-primary)]/[0.03] transition-all duration-500" />
             <div className="relative">
-                <div className="w-12 h-12 rounded-2xl overflow-visible group-hover:scale-105 transition-all shadow-lg relative">
+                <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
@@ -1187,7 +1173,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
     const { t } = useTranslation(user);
     return (
-        <div className="flex gap-5 overflow-x-auto no-scrollbar py-6 px-4 sm:px-6 border-b border-white/5 bg-black/60 backdrop-blur-3xl shadow-[inset_0_-10px_20px_rgba(0,0,0,0.5)]">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
@@ -1353,8 +1339,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4 sm:mb-6">
                     <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl p-[1.5px] shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-visible relative" onClick={() => onViewProfile(post.author)}>
-                            <ProfileAvatar user={post.author} />
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-gray-800 to-black p-[1.5px] shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
+                            <div className="w-full h-full rounded-[0.9rem] overflow-hidden">
+                                <ProfileAvatar user={post.author} />
+                            </div>
                         </div>
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -1431,30 +1419,26 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                     )}
                 </div>
 
-                <div className="flex items-center justify-between mt-8 pt-8 border-t border-white/10">
-                    <div className="flex items-center gap-4 xs:gap-8 sm:gap-12">
+                <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
+                    <div className="flex items-center gap-2 xs:gap-6 sm:gap-10">
                         {/* LIKE */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-3 group transition-all active:scale-150 ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-                            <div className="relative">
-                                {post.likes?.includes(user?._id) && <div className="absolute inset-0 bg-red-500/20 blur-md rounded-full scale-150 animate-pulse" />}
-                                <Icons.Heart className={`w-6 h-6 ${post.likes?.includes(user?._id) ? 'fill-current animate-heart-beat' : 'group-hover:scale-110 transition-transform'}`} />
-                            </div>
-                            <span className="text-[14px] font-black italic">{post.likes?.length || 0}</span>
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                            <Icons.Heart className={`w-6 h-6 ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} />
+                            <span className="text-xs font-black">{post.likes?.length || 0}</span>
                         </button>
 
                         {/* DISLIKE */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-3 group transition-all active:scale-150 ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
                             <div className="relative">
-                                {post.dislikes?.includes(user?._id) && <div className="absolute inset-0 bg-[var(--gold-primary)]/20 blur-md rounded-full scale-150 animate-pulse" />}
-                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`} />
+                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''} transition-transform`} />
                             </div>
-                            <span className="text-[14px] font-black italic">{post.dislikes?.length || 0}</span>
+                            <span className="text-xs font-black">{post.dislikes?.length || 0}</span>
                         </button>
 
                         {/* COMMENTS */}
-                        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-3 text-gray-500 hover:text-sky-400 transition-all active:scale-125 group">
-                            <Icons.MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                            <span className="text-[14px] font-black italic">{post.comments?.length || 0}</span>
+                        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2.5 text-gray-500 hover:text-sky-400 transition-all">
+                            <Icons.MessageSquare className="w-6 h-6" />
+                            <span className="text-xs font-black">{post.comments?.length || 0}</span>
                         </button>
                     </div>
                 </div>
@@ -2289,8 +2273,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-2xl cursor-pointer shadow-[0_0_40px_rgba(0,0,0,0.5)] shrink-0 overflow-visible relative">
-                                        <ProfileAvatar user={displayUser} className="w-full h-full" />
+                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
+                                        <ProfileAvatar user={displayUser} size="large" />
                                     </div>
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
@@ -2345,15 +2329,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <button
                                             onClick={() => {
                                                 if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
-                                                    playSound('cyber_denied');
                                                     return;
                                                 }
                                                 onOpenChat(displayUser);
                                             }}
-                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all active:scale-95 group relative overflow-hidden"
+                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
                                         >
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/0 via-[var(--gold-primary)]/5 to-[var(--gold-primary)]/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                            <Icons.Ghost className={`w-6 h-6 transition-all duration-500 scale-100 group-hover:scale-110 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-700' : 'animate-ghost-pulse'}`} />
+                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : ''}`} />
                                         </button>
 
                                         {currentUser?.role === 'Founder' && (
@@ -4034,11 +4016,7 @@ const App = () => {
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative group/search">
-                                                    <div className="absolute -inset-1 bg-gradient-to-r from-[var(--gold-primary)]/20 via-white/5 to-[var(--gold-primary)]/20 rounded-2xl blur-lg opacity-0 group-focus-within/search:opacity-100 transition-opacity duration-500" />
-                                                    <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within/search:text-[var(--gold-primary)] transition-colors" />
-                                                    <input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="relative w-full bg-black/40 backdrop-blur-3xl border border-white/5 rounded-2xl py-4 pl-12 pr-4 font-black italic uppercase tracking-widest text-sm outline-none focus:border-[var(--gold-primary)]/40 transition-all shadow-inner" />
-                                                </div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
@@ -4066,7 +4044,7 @@ const App = () => {
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
-                                                            <div className="w-10 h-10 rounded-xl overflow-visible relative">
+                                                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
                                                                 <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
@@ -4182,8 +4160,8 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('cyber_click'); }} className={`p-0.5 rounded-2xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 rounded-2xl overflow-visible relative">
+                                <button onClick={() => { viewProfile(user); playSound('cyber_click'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
