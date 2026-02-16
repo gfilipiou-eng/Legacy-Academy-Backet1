@@ -37,6 +37,26 @@ const resolveMediaUrl = (path, width = null, isAvatar = false) => {
     return url;
 };
 
+const formatDate = (dateString, t, lang) => {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+
+        if (diffInSeconds < 60) return 'Just now';
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        if (diffInMinutes < 60) return `${diffInMinutes}m`;
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) return `${diffInHours}h`;
+        const diffInDays = Math.floor(diffInHours / 24);
+        if (diffInDays < 7) return `${diffInDays}d`;
+
+        const locale = (lang === 'el') ? 'el-GR' : (lang === 'de') ? 'de-DE' : 'en-US';
+        return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+    } catch (e) { return ''; }
+};
+
 const ProfileAvatar = ({ user }) => {
     if (!user) return <div className="w-full h-full bg-gray-800" />;
     const url = user.profilePic;
@@ -240,7 +260,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <span className="text-[9px] text-gray-600 font-bold uppercase">{new Date(c.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-[9px] text-gray-600 font-bold uppercase">{formatDate(c.createdAt, t, lang)}</span>
                                         </div>
                                         <div className="bg-white/[0.05] rounded-2xl rounded-tl-none p-3 border border-white/5 shadow-sm group-hover:border-white/10 transition-all">
                                             {editingCommentId === c._id ? (

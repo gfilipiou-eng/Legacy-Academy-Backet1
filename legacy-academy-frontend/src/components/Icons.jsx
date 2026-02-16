@@ -56,10 +56,10 @@ export const Icons = {
             <img
                 src="/l6o0hvfvnpkbkpn1bub3.png"
                 alt="Ghost"
-                className="w-full h-full object-contain scale-[1.3] transform-gpu transition-transform"
+                className="w-full h-full object-contain transform-gpu transition-transform"
                 style={{
                     backfaceVisibility: 'hidden',
-                    imageRendering: 'crisp-edges'
+                    imageRendering: 'auto'
                 }}
                 {...p}
             />
