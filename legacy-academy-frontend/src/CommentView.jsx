@@ -252,11 +252,8 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[11px] font-black text-white hover:text-[var(--gold-primary)] transition-colors cursor-pointer uppercase tracking-tight">{c.authorName}</span>
                                                 {(c.user?.role === 'Founder') && (
-                                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFD700]/10 via-[#FFD700]/5 to-transparent px-2.5 py-0.5 rounded-lg border border-[#FFD700]/20 ml-1 animate-ghost-pulse">
-                                                        <div className="relative flex items-center justify-center w-3 h-3">
-                                                            <div className="absolute inset-0 bg-[#FFD700]/20 blur-sm rounded-full" />
-                                                            <Icons.Crown className="w-full h-full drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]" style={{ color: '#FFD700', fill: '#FFD700' }} />
-                                                        </div>
+                                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFD700]/10 via-[#FFD700]/5 to-transparent px-2.5 py-1 rounded-lg border border-[#FFD700]/20 ml-1">
+                                                        <FounderBadge className="w-3.5 h-3.5" />
                                                         <span className="text-[8px] sm:text-[9px] text-[#FFD700] uppercase font-black tracking-widest drop-shadow-[0_0_3px_rgba(255,215,0,0.3)]">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
                                                     </div>
                                                 )}

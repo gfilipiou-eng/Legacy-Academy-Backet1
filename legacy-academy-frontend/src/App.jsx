@@ -349,8 +349,10 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 
 const FounderBadge = ({ className = "w-5 h-5" }) => (
     <div className={`relative flex items-center justify-center ${className} animate-ghost-pulse`}>
-        <div className="absolute inset-0 bg-[var(--gold-primary)]/20 blur-md rounded-full pointer-events-none" />
-        <Icons.Crown className="w-full h-full drop-shadow-[0_0_8px_var(--gold-glow)]" style={{ color: '#FFD700', fill: '#FFD700' }} />
+        <div className="absolute inset-0 bg-[var(--gold-primary)]/10 blur-sm rounded-full pointer-events-none" />
+        <div className="w-[85%] h-[85%] relative z-10">
+            <Icons.Crown className="w-full h-full drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" style={{ color: '#FFD700', fill: '#FFD700' }} />
+        </div>
     </div>
 );
 
