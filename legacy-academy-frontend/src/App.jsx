@@ -299,14 +299,21 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
 };
 
 const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
+    const [imgError, setImgError] = useState(false);
+
     if (!user) return <DefaultAvatar size={size} />;
-    const url = user.profilePic || user.fromProfilePic; // Handle user obj or notification obj
+
+    const url = user.profilePic || user.fromProfilePic;
     const name = user.username || user.fromUsername;
-    // Detect video from ORIGINAL url so we don't convert to webp (avatar transform breaks video on desktop)
+
+    // Reset error state if url changes (basic check)
+    useEffect(() => { setImgError(false); }, [url]);
+
     const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
     const mediaUrl = url ? (rawIsVideo ? resolveMediaUrl(url, 250, false) : resolveMediaUrl(url, 150, true)) : null;
-    const isAnimatedImage = mediaUrl && !rawIsVideo && mediaUrl.match(/\.(gif|webp)($|\?)/i);
     const isVideo = rawIsVideo && mediaUrl;
+
+    if (imgError) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
@@ -321,6 +328,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
                         playsInline
                         preload="metadata"
                         disableRemotePlayback
+                        onError={() => setImgError(true)}
                         onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                     />
                 </div>
@@ -329,7 +337,15 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     }
 
     return mediaUrl ? (
-        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" decoding="async" alt="" />
+        <img
+            src={mediaUrl}
+            className={`w-full h-full object-cover ${className || ''}`}
+            onClick={onClick}
+            loading="lazy"
+            decoding="async"
+            alt=""
+            onError={() => setImgError(true)}
+        />
     ) : (
         <DefaultAvatar name={name} size={size} />
     );
@@ -1245,6 +1261,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
     const commentRecorderRef = useRef(null);
     const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
+    const [imgError, setImgError] = useState(false); // Handle broken images
 
     const isFounder = post.author?.role === 'Founder';
     const isCurrentUserFounder = user?.role === 'Founder';
@@ -1408,7 +1425,23 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                             ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                 <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
                             ) : post.image && (
-                                <img src={resolveMediaUrl(post.image)} alt="Media" className="w-full h-auto object-contain bg-[#050505]" loading="lazy" decoding="async" onClick={() => onOpenDetail(post)} onDoubleClick={handleDoubleTap} />
+                                imgError ? (
+                                    <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
+                                        <Icons.Image className="w-8 h-8 opacity-20" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={resolveMediaUrl(post.image)}
+                                        alt="Media"
+                                        className="w-full h-auto object-contain bg-[#050505]"
+                                        loading="lazy"
+                                        decoding="async"
+                                        onClick={() => onOpenDetail(post)}
+                                        onDoubleClick={handleDoubleTap}
+                                        onError={() => setImgError(true)}
+                                    />
+                                )
                             )}
                         </div>
                     )}
