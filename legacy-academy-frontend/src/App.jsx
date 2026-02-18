@@ -2170,7 +2170,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     useEffect(() => {
         if (activeList) {
             setClickLock(true);
-            const timer = setTimeout(() => setClickLock(false), 600);
+            const timer = setTimeout(() => setClickLock(false), 1000); // 1s lock for absolute safety
             return () => clearTimeout(timer);
         }
     }, [activeList]);
@@ -2203,9 +2203,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
                     {activeList ? (
-                        <div className={`p-2 space-y-2 transition-all duration-500 ${clickLock ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}`}>
-                            {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
-                            {getListUsers().map(u => (
+                        <div className={`p-2 space-y-2 transition-all duration-500 ${clickLock ? 'opacity-0' : 'opacity-100'}`}>
+                            {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
+                            {!clickLock && getListUsers().map(u => (
                                 <div key={u._id} onClick={(e) => {
                                     if (clickLock) return;
                                     e.stopPropagation();
@@ -2298,13 +2298,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={(e) => { e.stopPropagation(); setActiveList('followers'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                    <div onClick={(e) => { e.stopPropagation(); setClickLock(true); setActiveList('followers'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={(e) => { e.stopPropagation(); setActiveList('following'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                    <div onClick={(e) => { e.stopPropagation(); setClickLock(true); setActiveList('following'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
                                             {displayUser?.following?.length || 0}
                                         </span>
