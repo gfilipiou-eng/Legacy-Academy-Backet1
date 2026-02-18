@@ -442,16 +442,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 });
 
 const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
-    if (!post) return null;
     const { t, lang } = useTranslation(user);
-
-    // Resolve author object if it's just an ID or missing details
-    const author = (post.author && typeof post.author === 'object' && post.author.username)
-        ? post.author
-        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
-
-    const isOwner = String(author?._id) === String(user?._id);
-    const isFounder = user?.role === 'Founder';
 
     // Audio Comment State
     const [commentText, setCommentText] = useState('');
@@ -464,6 +455,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
     const discardRef = useRef(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+
+    if (!post) return null;
+
+    // Resolve author object if it's just an ID or missing details
+    const author = (post.author && typeof post.author === 'object' && post.author.username)
+        ? post.author
+        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
+
+    const isOwner = String(author?._id) === String(user?._id);
+    const isFounder = user?.role === 'Founder';
 
     const handleClearComments = async () => {
         if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
@@ -1686,7 +1687,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.Ghost className="w-8 h-8" />
+                                    <Icons.Whisper className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
@@ -1810,7 +1811,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
                                 <button className="mb-6 bg-transparent border-none p-0 transition-all active:scale-95 group">
-                                    <Icons.Ghost className="w-24 h-24 group-hover:scale-105 transition-all duration-500" />
+                                    <Icons.Whisper className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105 transition-all duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
                                 <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
