@@ -20,6 +20,10 @@ const MessageSchema = new mongoose.Schema(
             type: String, // URL for audio
             default: "",
         },
+        image: {
+            type: String, // URL for image attachment
+            default: "",
+        },
         isRead: {
             type: Boolean,
             default: false,

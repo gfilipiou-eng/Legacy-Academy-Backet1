@@ -1497,9 +1497,30 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
     const [searchQuery, setSearchQuery] = useState('');
     const [isPhonetic, setIsPhonetic] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
     const scrollRef = useRef();
+    const imageInputRef = useRef(null);
+
+    const handleImageSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        // Max 10MB for images in chat
+        if (file.size > 10 * 1024 * 1024) {
+            alert("Image must be under 10MB");
+            return;
+        }
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+    };
+
+    const clearImage = () => {
+        setImageFile(null);
+        setImagePreview(null);
+        if (imageInputRef.current) imageInputRef.current.value = '';
+    };
 
     const fetchMessages = async (otherUserId) => {
         try {
@@ -1606,15 +1627,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
             return;
         }
 
-        if (!inputText.trim() && !audioBlob) return;
+        if (!inputText.trim() && !audioBlob && !imageFile) return;
 
         const fd = new FormData();
         fd.append('recipient', targetId);
         if (inputText.trim()) fd.append('text', inputText.trim());
         if (audioBlob) fd.append('file', audioBlob, 'voice.webm');
+        if (imageFile) fd.append('file', imageFile, imageFile.name);
 
         const tempText = inputText;
         setInputText('');
+        clearImage();
 
         try {
             const res = await axios.post('/messages', fd);
@@ -1739,17 +1762,30 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 {(messages[activeChat._id] || []).map((m, i) => (
                                     <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
                                         <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
-                                            {m.audioUrl ? (
+                                            {/* IMAGE ATTACHMENT */}
+                                            {(m.image) && (
+                                                <div className="mb-2">
+                                                    <img
+                                                        src={resolveMediaUrl(m.image)}
+                                                        alt=""
+                                                        className="max-w-full max-h-[300px] rounded-xl object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10"
+                                                        onClick={() => window.open(resolveMediaUrl(m.image), '_blank')}
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                            )}
+                                            {/* AUDIO ATTACHMENT */}
+                                            {(m.audio || m.audioUrl) ? (
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2">
                                                         <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
                                                         <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
                                                     </div>
-                                                    <audio src={resolveMediaUrl(m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
+                                                    <audio src={resolveMediaUrl(m.audio || m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
                                                     {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
                                                 </div>
                                             ) : (
-                                                m.text
+                                                m.text && !m.image ? m.text : (m.text && m.image ? <p className="mt-1">{m.text}</p> : null)
                                             )}
                                             <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
                                         </div>
@@ -1757,6 +1793,21 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 ))}
                                 <div ref={scrollRef} />
                             </div>
+                            {/* Hidden image input */}
+                            <input type="file" ref={imageInputRef} hidden accept="image/*" onChange={handleImageSelect} />
+
+                            {/* IMAGE PREVIEW STRIP */}
+                            {imagePreview && (
+                                <div className="absolute bottom-full left-0 right-0 p-3 bg-black/90 backdrop-blur-xl border-t border-white/10">
+                                    <div className="relative inline-block">
+                                        <img src={imagePreview} alt="" className="h-24 max-w-[200px] rounded-xl object-cover border border-white/10 shadow-xl" />
+                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-400 active:scale-90 transition-all">
+                                            <Icons.X className="w-3 h-3 text-white" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="p-2 bg-[#050505] border-t border-white/10 flex items-center gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
@@ -1792,6 +1843,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 >
                                     <Icons.Translate className="w-5 h-5" />
                                 </button>
+                                {/* IMAGE UPLOAD BUTTON */}
+                                <button
+                                    type="button"
+                                    onClick={() => imageInputRef.current?.click()}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] active:scale-90'}`}
+                                    title="Send Image"
+                                >
+                                    <Icons.Image className="w-5 h-5" />
+                                </button>
                                 <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); toggleRecording(); }}
@@ -1801,7 +1861,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 </button>
                                 <button
                                     onClick={() => handleSend()}
-                                    disabled={!inputText.trim()}
+                                    disabled={!inputText.trim() && !imageFile}
                                     className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                 >
                                     <Icons.Send className="w-5 h-5" />

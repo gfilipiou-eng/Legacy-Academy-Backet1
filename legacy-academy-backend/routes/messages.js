@@ -51,8 +51,18 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         if (!req.user) return res.status(401).json("Auth failed");
         const currentUserId = req.user.id;
 
-        // Audio handling
-        const audioUrl = req.file ? req.file.path : null;
+        // File handling - detect type from mimetype
+        let audioUrl = "";
+        let imageUrl = "";
+        if (req.file) {
+            const filePath = req.file.path || req.file.secure_url || req.file.url || "";
+            const mime = req.file.mimetype || "";
+            if (mime.startsWith("image")) {
+                imageUrl = filePath;
+            } else {
+                audioUrl = filePath;
+            }
+        }
 
         if (!recipientId) return res.status(400).json("Recipient is required");
 
@@ -71,7 +81,8 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             sender: currentUserId,
             recipient: recipientId,
             text: text || "",
-            audio: audioUrl || ""
+            audio: audioUrl,
+            image: imageUrl
         });
 
         const savedMessage = await newMessage.save();
@@ -79,12 +90,15 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         // 🔥 REAL-TIME EMIT
         const io = req.app.get('io');
         if (io) {
+            const senderUser = await User.findById(currentUserId).select('username profilePic');
             io.to(String(recipientId)).emit('message.received', savedMessage);
-            io.to(String(recipientId)).emit('notification.received', {
-                type: 'message',
-                fromUsername: sender.username,
-                fromProfilePic: sender.profilePic
-            });
+            if (senderUser) {
+                io.to(String(recipientId)).emit('notification.received', {
+                    type: 'message',
+                    fromUsername: senderUser.username,
+                    fromProfilePic: senderUser.profilePic
+                });
+            }
         }
 
         res.status(200).json(savedMessage);
