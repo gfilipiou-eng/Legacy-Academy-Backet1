@@ -3561,7 +3561,8 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
-        playSound('cyber_dislike');
+        // Sound removed as requested
+
 
         try {
             const res = await axios.put(`/posts/${postId}/dislike`);
