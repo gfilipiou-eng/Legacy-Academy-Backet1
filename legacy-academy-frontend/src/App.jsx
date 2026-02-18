@@ -441,7 +441,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     );
 });
 
-const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, loadingActions, onClearComments }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments }) => {
     const { t, lang } = useTranslation(user);
 
     // Audio Comment State
@@ -455,31 +455,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
     const discardRef = useRef(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-
-    if (!post) return null;
-
-    // Resolve author object if it's just an ID or missing details
-    const author = (post.author && typeof post.author === 'object' && post.author.username)
-        ? post.author
-        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
-
-    const isOwner = String(author?._id) === String(user?._id);
-    const isFounder = user?.role === 'Founder';
-
-    const handleClearComments = async () => {
-        if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
-        try {
-            const url = `/posts/${post._id}/comments`;
-            console.log(`📡 [DEBUG] Clearing comments: ${url}`);
-            await axios.delete(url);
-            // Optimistically clear
-            post.comments = [];
-            if (onClearComments) onClearComments(post._id);
-        } catch (e) {
-            console.error("Failed to clear comments", e);
-            alert("Failed to clear comments.");
-        }
-    };
 
     const stopRecording = (shouldDiscard = false) => {
         discardRef.current = shouldDiscard;
@@ -526,6 +501,32 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
             stopRecording();
         } else {
             startCommentRecording();
+        }
+    };
+
+    // Late return to protect hook order
+    if (!post) return null;
+
+    // Resolve author object if it's just an ID or missing details
+    const author = (post.author && typeof post.author === 'object' && post.author.username)
+        ? post.author
+        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
+
+    const isOwner = String(author?._id) === String(user?._id);
+    const isFounder = user?.role === 'Founder';
+
+    const handleClearComments = async () => {
+        if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
+        try {
+            const url = `/posts/${post._id}/comments`;
+            console.log(`📡 [DEBUG] Clearing comments: ${url}`);
+            await axios.delete(url);
+            // Optimistically clear
+            post.comments = [];
+            if (onClearComments) onClearComments(post._id);
+        } catch (e) {
+            console.error("Failed to clear comments", e);
+            alert("Failed to clear comments.");
         }
     };
 
@@ -1237,7 +1238,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onHashtagClick, loadingActions }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -1687,7 +1688,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2">
-                                    <Icons.Whisper className="w-8 h-8 text-[var(--gold-primary)]" />
+                                    <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('CHAT')}
                                 </h2>
                                 <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
@@ -1811,7 +1812,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
                                 <button className="mb-6 bg-transparent border-none p-0 transition-all active:scale-95 group">
-                                    <Icons.Whisper className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105 transition-all duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
+                                    <Icons.Ghost className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105 transition-all duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
                                 <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
@@ -3996,7 +3997,7 @@ const App = () => {
                                         className="flex items-center gap-2.5 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl"
                                     >
                                         <div className="relative flex items-center justify-center">
-                                            <Icons.Whisper className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                            <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
                                             {user?.notifications?.some(n => n.type === 'message' && !n.read) && (
                                                 <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] animate-pulse" />
                                             )}
@@ -4124,7 +4125,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                         </motion.div>
                                                                     ))}
                                                                 </AnimatePresence>
@@ -4208,8 +4209,9 @@ const App = () => {
                             // Also trigger manual refresh for profile if open
                             if (isProfileOpen) {
                                 // fetchUserPosts is inside ProfileModal, so we should actually pass the delete handler in
+                                // for now the useEffect dependency might catch it or manual re-fetch
                             }
-                        }} onEdit={(p) => { setSelectedPost(null); setPostToEdit(p); setIsEditOpen(true); }} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} loadingActions={loadingActions} onClearComments={(postId) => {
+                        }} onEdit={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onShare={handleShare} loadingActions={loadingActions} onClearComments={(postId) => {
                             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
                             setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
                         }} />

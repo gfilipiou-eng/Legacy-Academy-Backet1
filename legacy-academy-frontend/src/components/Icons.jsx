@@ -52,18 +52,10 @@ export const Icons = {
     Maximize: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>,
     Broom: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 2L4 16h6l-3 6 12-10h-6l5-10h-6z" transform="scale(0.8) translate(4,4)" opacity="0" /><path d="m19 2-8.5 8.5" /><path d="m14 6.5 3 3" /><path d="M9.5 12.5C7 15 5 13.5 3 15.5c-2 2-1 4 0 5s4 1 6-1c2-2 .5-4 3-6.5" /><path d="M5 16s2 2 4 0" /></svg>,
     Ghost: ({ className, ...p }) => (
-        <div className={`flex items-center justify-center pointer-events-none ${className || 'w-8 h-8'}`}>
-            <img
-                src="/l6o0hvfvnpkbkpn1bub3.png"
-                alt="Ghost"
-                className="w-full h-full object-contain transform-gpu transition-transform"
-                style={{
-                    backfaceVisibility: 'hidden',
-                    imageRendering: 'auto'
-                }}
-                {...p}
-            />
-        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className || 'w-8 h-8'} {...p}>
+            <path d="M9 10h.01m6 0h.01" strokeWidth="2" />
+            <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z" />
+        </svg>
     ),
     AlertTriangle: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
     Crown: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" /></svg>,
