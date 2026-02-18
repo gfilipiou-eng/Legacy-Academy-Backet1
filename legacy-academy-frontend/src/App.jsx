@@ -1172,7 +1172,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory }) => {
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
                     <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
-                        <ProfileAvatar user={user} className="opacity-80" />
+                        <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
                         </div>
@@ -1870,12 +1870,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-2xl will-change-transform"
+                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-xl will-change-transform"
             >
                 {/* CYBER BACKGROUND ELEMENTS - REFINED */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-30" />
-                <div className="absolute -top-[200px] -right-[200px] w-[400px] h-[400px] bg-[var(--gold-primary)]/5 rounded-full blur-[120px] pointer-events-none" />
-                <div className="absolute -bottom-[200px] -left-[200px] w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-20" />
+                <div className="absolute -top-[100px] -right-[100px] w-[300px] h-[300px] bg-[var(--gold-primary)]/[0.03] rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute -bottom-[100px] -left-[100px] w-[300px] h-[300px] bg-blue-500/[0.03] rounded-full blur-[80px] pointer-events-none" />
 
                 {/* HEADER */}
                 <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
@@ -1896,7 +1896,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 space-y-8 scroll-smooth relative z-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 space-y-8 relative z-10">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
                         {/* LEFT COLUMN: MODES & IDENTITY */}
                         <div className="space-y-8">
@@ -2050,6 +2050,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [userSpecificPosts, setUserSpecificPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
+    const [clickLock, setClickLock] = useState(false);
     const fileRef = useRef(null);
 
     useEffect(() => {
@@ -2072,7 +2073,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         // CRITICAL SYNC: Merge live data (online status) with base data (bio, username)
         // If it's ME, prioritize currentUser object which is the most fresh
         if (isMe) {
-            return { ...base, ...live, bio: currentUser?.bio || base?.bio || live?.bio };
+            return {
+                ...base,
+                ...live,
+                ...currentUser, // Full merge of currentUser to ensure bio/profilePic are fresh
+                bio: currentUser?.bio ?? live?.bio ?? base?.bio
+            };
         }
         return live || base;
     }, [profileUser, currentUser, userData, allUsers]);
@@ -2163,8 +2169,17 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const getListUsers = () => {
         if (!activeList || !displayUser) return [];
         const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
-        return allUsers.filter(u => ids?.includes(u._id));
+        return (allUsers || []).filter(u => ids?.some(id => String(id) === String(u._id)));
     };
+
+    // Prevent immediate clicks on list items to avoid ghost-touch from the count button
+    useEffect(() => {
+        if (activeList) {
+            setClickLock(true);
+            const timer = setTimeout(() => setClickLock(false), 400);
+            return () => clearTimeout(timer);
+        }
+    }, [activeList]);
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
     const hasRequested = displayUser?.followRequests?.some(id => String(id) === String(currentUser?._id));
@@ -2189,7 +2204,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         <div className="p-2 space-y-2">
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                             {getListUsers().map(u => (
-                                <div key={u._id} onClick={() => { onViewProfile(u); setActiveList(null); }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer">
+                                <div key={u._id} onClick={(e) => {
+                                    if (clickLock) return;
+                                    e.stopPropagation();
+                                    onViewProfile(u);
+                                    setActiveList(null);
+                                }} className={`flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer transition-opacity ${clickLock ? 'opacity-50' : 'opacity-100'}`}>
                                     <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
                                         <ProfileAvatar user={u} />
                                     </div>
@@ -2268,7 +2288,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
                                     <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
-                                        <ProfileAvatar user={displayUser} size="large" />
+                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} />
                                     </div>
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
@@ -3010,6 +3030,12 @@ const App = () => {
     };
 
     const handleUpdateUser = (updatedUser) => {
+        // Force cache-breaker on profilePic for immediate refresh
+        if (updatedUser.profilePic && !updatedUser.profilePic.includes('t=')) {
+            const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
+            updatedUser.profilePic += `${sep}t=${Date.now()}`;
+        }
+
         // 1. Update primary user state
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -3306,23 +3332,21 @@ const App = () => {
 
 
 
-    // Scroll lock removed to prevent jumps
-    /*
+    // Unified Scroll Lock for Modals
     useEffect(() => {
         const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
         if (anyModalOpen) {
             document.body.style.overflow = 'hidden';
-            // document.body.style.height = '100vh'; // CAUSES SCROLL JUMP
+            document.body.style.touchAction = 'none'; // Mobile specific
         } else {
-            document.body.style.overflow = 'auto';
-            // document.body.style.height = 'auto';
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
         }
         return () => {
-            document.body.style.overflow = 'auto';
-            document.body.style.height = 'auto';
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
-    */
 
     const handleLike = async (postId) => {
         const userId = user?._id;
@@ -3965,8 +3989,18 @@ const App = () => {
                                     <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain" />
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => setIsChatOpen(true)} title="MESSAGES SECURE COMMS" className="header-icon-btn rounded-full">
-                                        <Icons.Ghost className="w-8 h-8" />
+                                    <button
+                                        onClick={() => setIsChatOpen(true)}
+                                        title={t('MESSAGES_SUBTITLE')}
+                                        className="flex items-center gap-2.5 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl"
+                                    >
+                                        <div className="relative flex items-center justify-center">
+                                            <Icons.Whisper className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                            {user?.notifications?.some(n => n.type === 'message' && !n.read) && (
+                                                <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] animate-pulse" />
+                                            )}
+                                        </div>
+                                        <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.25em] transition-colors">{t('CHAT')}</span>
                                     </button>
                                     <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
                                         <Icons.Settings className="w-8 h-8" />
