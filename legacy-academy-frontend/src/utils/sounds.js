@@ -109,37 +109,21 @@ export const playSound = (type) => {
         noise.start();
         noise.start();
     } else if (type === 'delete' || type === 'strike' || type === 'cyber_delete' || type === 'premium_delete') {
-        // Premium "Glitch Digital" dissolve sound
-        const osc = ctx.createOscillator();
-        const glitch = ctx.createOscillator();
+        // Simple light delete sound (no heavy FX)
+        const bufferSize = ctx.sampleRate * 0.1;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
         const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.2);
-
-        glitch.type = 'square';
-        glitch.frequency.setValueAtTime(2000, ctx.currentTime);
-        glitch.frequency.setValueAtTime(100, ctx.currentTime + 0.05);
-        glitch.frequency.setValueAtTime(1500, ctx.currentTime + 0.1);
-
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(1000, ctx.currentTime);
-        filter.Q.setValueAtTime(15, ctx.currentTime);
-
         gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-
-        osc.connect(filter);
-        glitch.connect(filter);
-        filter.connect(gain);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        noise.connect(gain);
         gain.connect(ctx.destination);
-
-        osc.start();
-        glitch.start();
-        osc.stop(ctx.currentTime + 0.2);
-        glitch.stop(ctx.currentTime + 0.2);
+        noise.start();
     } else if (type === 'cyber_scroll') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -326,27 +310,9 @@ export const playSound = (type) => {
 };
 
 export const explodeEffect = () => {
-    if (typeof document === 'undefined') return;
-
-    // REPLACEMENT: Subtle Gold Flash Screen
-    const flash = document.createElement('div');
-    flash.className = 'fx-overlay-gold';
-    document.body.appendChild(flash);
-    setTimeout(() => flash.remove(), 600);
+    // Disabled for performance
 };
 
 export const cyberDeleteEffect = () => {
-    if (typeof document === 'undefined') return;
-
-    // REPLACEMENT: Screen Shake + Red Flash
-    const flash = document.createElement('div');
-    flash.className = 'fx-overlay-red';
-    document.body.appendChild(flash);
-
-    document.body.classList.add('fx-vaporize-active');
-
-    setTimeout(() => {
-        flash.remove();
-        document.body.classList.remove('fx-vaporize-active');
-    }, 500);
+    // Disabled for performance
 };
