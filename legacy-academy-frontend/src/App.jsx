@@ -579,7 +579,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                                     src={resolveMediaUrl(post.image || post.thumbnailUrl)}
                                     className="max-w-full max-h-full object-contain"
                                     decoding="async"
-                                    onError={() => setImgError(true)}
+                                    onError={() => {
+                                        setImgError(true);
+                                        // Auto-cleanup broken link
+                                        const isOwner = String(post.author?._id || post.author) === String(user?._id);
+                                        const canDelete = isOwner || user?.role === 'Founder';
+                                        if (canDelete && post.image) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                    }}
                                 />
                             ) : (
                                 <div className="flex flex-col items-center justify-center p-10 text-gray-500">
@@ -1455,7 +1461,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                         decoding="async"
                                         onClick={() => onOpenDetail(post)}
                                         onDoubleClick={handleDoubleTap}
-                                        onError={() => setImgError(true)}
+                                        onError={() => {
+                                            setImgError(true);
+                                            // Auto-cleanup broken link (Only for Author/Founder)
+                                            if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                        }}
                                     />
                                 )
                             )}
