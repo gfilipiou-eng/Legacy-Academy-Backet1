@@ -2375,13 +2375,15 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                                         {/* COMMS BUTTON (Protected by Guard Chat) */}
                                         <button
-                                            onClick={() => {
+                                            onPointerDown={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
                                                     return;
                                                 }
                                                 onOpenChat(displayUser);
                                             }}
-                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group"
+                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group touch-manipulation"
                                         >
                                             <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : ''}`} />
                                         </button>
