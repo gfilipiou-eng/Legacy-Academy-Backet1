@@ -288,39 +288,7 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
     }
 });
 
-// UPDATE USER
-router.put("/:id", verifyToken, async (req, res) => {
-    if (req.user.id === req.params.id) {
-        try {
-            const updatedUser = await User.findByIdAndUpdate(
-                req.params.id,
-                { $set: req.body },
-                { new: true }
-            );
-
-            // SYNC ACROSS POSTS & COMMENTS
-            const userId = req.params.id;
-            const { username, profilePic } = req.body;
-            if (username || profilePic) {
-                const postUpdate = {};
-                if (username) postUpdate["comments.$[elem].authorName"] = username;
-                if (profilePic) postUpdate["comments.$[elem].authorProfilePic"] = profilePic;
-
-                await Post.updateMany(
-                    { "comments.authorId": userId },
-                    { $set: postUpdate },
-                    { arrayFilters: [{ "elem.authorId": userId }] }
-                );
-            }
-
-            res.status(200).json(updatedUser);
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    } else {
-        return res.status(403).json("You can update only your account!");
-    }
-});
+// Route moved below to fix conflict
 
 // UPDATE USER SETTINGS (Privacy, Theme, Language)
 router.put("/settings", verifyToken, async (req, res) => {
@@ -378,6 +346,40 @@ router.put("/settings", verifyToken, async (req, res) => {
     } catch (err) {
         console.error("Settings Update Error:", err);
         res.status(500).json(err);
+    }
+});
+
+// UPDATE USER (Moved here to avoid conflict with /settings)
+router.put("/:id", verifyToken, async (req, res) => {
+    if (req.user.id === req.params.id) {
+        try {
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.id,
+                { $set: req.body },
+                { new: true }
+            );
+
+            // SYNC ACROSS POSTS & COMMENTS
+            const userId = req.params.id;
+            const { username, profilePic } = req.body;
+            if (username || profilePic) {
+                const postUpdate = {};
+                if (username) postUpdate["comments.$[elem].authorName"] = username;
+                if (profilePic) postUpdate["comments.$[elem].authorProfilePic"] = profilePic;
+
+                await Post.updateMany(
+                    { "comments.authorId": userId },
+                    { $set: postUpdate },
+                    { arrayFilters: [{ "elem.authorId": userId }] }
+                );
+            }
+
+            res.status(200).json(updatedUser);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    } else {
+        return res.status(403).json("You can update only your account!");
     }
 });
 
