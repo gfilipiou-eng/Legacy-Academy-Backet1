@@ -2078,11 +2078,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             return {
                 ...base,
                 ...live,
-                ...currentUser, // Full merge of currentUser to ensure bio/profilePic are fresh
-                bio: currentUser?.bio ?? live?.bio ?? base?.bio
+                ...currentUser,
+                bio: currentUser?.bio ?? base?.bio ?? live?.bio
             };
         }
-        return live || base;
+        // FOR OTHERS: Merge detailed base (from /find/:id) with fresh live status (from App users list)
+        return live ? { ...base, ...live, bio: base?.bio || live?.bio } : base;
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
@@ -2203,21 +2204,26 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
                     {activeList ? (
-                        <div className={`p-2 space-y-2 transition-all duration-500 ${clickLock ? 'opacity-0' : 'opacity-100'}`}>
-                            {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
-                            {!clickLock && getListUsers().map(u => (
-                                <div key={u._id} onClick={(e) => {
-                                    if (clickLock) return;
-                                    e.stopPropagation();
-                                    onViewProfile(u);
-                                    setActiveList(null);
-                                }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all active:scale-95">
-                                    <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
-                                        <ProfileAvatar user={u} />
+                        <div className="relative flex-1 flex flex-col min-h-0">
+                            {/* SACRIFICIAL OVERLAY: Swallows all ghost touches for 1s */}
+                            {clickLock && <div className="absolute inset-0 z-[100] bg-transparent pointer-events-auto" />}
+
+                            <div className={`p-2 space-y-2 transition-all duration-500 ${clickLock ? 'opacity-0 blur-sm' : 'opacity-100 blur-0'}`}>
+                                {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
+                                {getListUsers().map(u => (
+                                    <div key={u._id} onClick={(e) => {
+                                        if (clickLock) return;
+                                        e.stopPropagation();
+                                        onViewProfile(u);
+                                        setActiveList(null);
+                                    }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all active:scale-95">
+                                        <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
+                                            <ProfileAvatar user={u} />
+                                        </div>
+                                        <div className="font-bold text-white text-sm">{u?.username}</div>
                                     </div>
-                                    <div className="font-bold text-white text-sm">{u?.username}</div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
@@ -2298,13 +2304,24 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={(e) => { e.stopPropagation(); setClickLock(true); setActiveList('followers'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation();
+                                        setClickLock(true);
+                                        playSound('cyber_click');
+                                        // DELAY the state change to allow touch events to "finish" elsewhere
+                                        setTimeout(() => setActiveList('followers'), 100);
+                                    }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={(e) => { e.stopPropagation(); setClickLock(true); setActiveList('following'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation();
+                                        setClickLock(true);
+                                        playSound('cyber_click');
+                                        setTimeout(() => setActiveList('following'), 100);
+                                    }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
                                             {displayUser?.following?.length || 0}
                                         </span>
@@ -2533,8 +2550,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                         </div>
                     )}
                 </div>
-            </motion.div >
-        </div >
+            </motion.div>
+        </div>
     );
 };
 
@@ -3042,6 +3059,8 @@ const App = () => {
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setImgKey(Date.now());
+        // Sync with global users list so others/searches see it immediately too
+        setUsers(prev => prev.map(u => String(u._id) === String(updatedUser._id) ? updatedUser : u));
 
         // 2. Synchronize across all local state arrays for immediate UI update
         const userId = String(updatedUser._id || updatedUser.id);
