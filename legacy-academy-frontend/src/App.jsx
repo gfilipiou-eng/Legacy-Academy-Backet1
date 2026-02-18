@@ -2166,14 +2166,6 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         return groups;
     }, [userPosts, currentUser, lang]);
 
-    if (!isOpen || !profileUser) return null;
-
-    const getListUsers = () => {
-        if (!activeList || !displayUser) return [];
-        const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
-        return (allUsers || []).filter(u => ids?.some(id => String(id) === String(u._id)));
-    };
-
     // Prevent immediate clicks on list items to avoid ghost-touch from the count button
     useEffect(() => {
         if (activeList) {
@@ -2182,6 +2174,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             return () => clearTimeout(timer);
         }
     }, [activeList]);
+
+    const getListUsers = () => {
+        if (!activeList || !displayUser) return [];
+        const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
+        return (allUsers || []).filter(u => ids?.some(id => String(id) === String(u._id)));
+    };
+
+    if (!isOpen || !profileUser) return null;
 
     const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
     const hasRequested = displayUser?.followRequests?.some(id => String(id) === String(currentUser?._id));
