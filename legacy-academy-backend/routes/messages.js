@@ -51,13 +51,22 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         if (!req.user) return res.status(401).json("Auth failed");
         const currentUserId = req.user.id;
 
-        // File handling - detect type from mimetype
+        // File handling - ROBUST type detection (mimetype + extension + cloudinary URL)
         let audioUrl = "";
         let imageUrl = "";
         if (req.file) {
             const filePath = req.file.path || req.file.secure_url || req.file.url || "";
-            const mime = req.file.mimetype || "";
-            if (mime.startsWith("image")) {
+            const mime = (req.file.mimetype || "").toLowerCase();
+            const origName = (req.file.originalname || "").toLowerCase();
+
+            // Triple-check: mimetype OR file extension OR cloudinary URL pattern
+            const isImage = mime.startsWith("image")
+                || /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|heif|avif)$/i.test(origName)
+                || filePath.includes("/image/upload/");
+
+            console.log(`[MESSAGE FILE] mime=${mime}, name=${origName}, path=${filePath}, isImage=${isImage}`);
+
+            if (isImage) {
                 imageUrl = filePath;
             } else {
                 audioUrl = filePath;

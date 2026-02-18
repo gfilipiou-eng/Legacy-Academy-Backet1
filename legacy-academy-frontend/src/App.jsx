@@ -1759,38 +1759,46 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast 
                                 </div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                {(messages[activeChat._id] || []).map((m, i) => (
-                                    <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
-                                            {/* IMAGE ATTACHMENT */}
-                                            {(m.image) && (
-                                                <div className="mb-2">
-                                                    <img
-                                                        src={resolveMediaUrl(m.image)}
-                                                        alt=""
-                                                        className="max-w-full max-h-[300px] rounded-xl object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10"
-                                                        onClick={() => window.open(resolveMediaUrl(m.image), '_blank')}
-                                                        loading="lazy"
-                                                    />
-                                                </div>
-                                            )}
-                                            {/* AUDIO ATTACHMENT */}
-                                            {(m.audio || m.audioUrl) ? (
-                                                <div className="flex flex-col gap-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
+                                {(messages[activeChat._id] || []).map((m, i) => {
+                                    // SMART DETECTION: check if 'audio' field actually holds an image (old bug fallback)
+                                    const audioVal = m.audio || m.audioUrl || "";
+                                    const isAudioActuallyImage = audioVal && /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|avif)/i.test(audioVal.split('?')[0]);
+                                    const imageUrl = m.image || (isAudioActuallyImage ? audioVal : "");
+                                    const realAudio = isAudioActuallyImage ? "" : audioVal;
+
+                                    return (
+                                        <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
+                                                {/* IMAGE ATTACHMENT */}
+                                                {imageUrl && (
+                                                    <div className="mb-2">
+                                                        <img
+                                                            src={resolveMediaUrl(imageUrl)}
+                                                            alt=""
+                                                            className="max-w-full max-h-[300px] rounded-xl object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10"
+                                                            onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
+                                                            loading="lazy"
+                                                        />
                                                     </div>
-                                                    <audio src={resolveMediaUrl(m.audio || m.audioUrl)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                    {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
-                                                </div>
-                                            ) : (
-                                                m.text && !m.image ? m.text : (m.text && m.image ? <p className="mt-1">{m.text}</p> : null)
-                                            )}
-                                            <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
+                                                )}
+                                                {/* AUDIO ATTACHMENT */}
+                                                {realAudio ? (
+                                                    <div className="flex flex-col gap-2">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
+                                                        </div>
+                                                        <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
+                                                        {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
+                                                    </div>
+                                                ) : (
+                                                    m.text && !imageUrl ? m.text : (m.text && imageUrl ? <p className="mt-1">{m.text}</p> : null)
+                                                )}
+                                                <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                                 <div ref={scrollRef} />
                             </div>
                             {/* Hidden image input */}
