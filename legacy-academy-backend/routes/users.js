@@ -349,6 +349,17 @@ router.put("/settings", verifyToken, async (req, res) => {
     }
 });
 
+// HEARTBEAT (Online Status Update)
+router.put("/heartbeat", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
+        res.status(200).json("Heartbeat ACK");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // UPDATE USER (Moved here to avoid conflict with /settings)
 router.put("/:id", verifyToken, async (req, res) => {
     if (req.user.id === req.params.id) {
