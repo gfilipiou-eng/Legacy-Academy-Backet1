@@ -67,14 +67,17 @@ export const playSound = (type) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(2200, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.03);
-        gain.gain.setValueAtTime(0.06, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+        // Premium "Tick" (Up-Chirp) - High-end feel
+        osc.frequency.setValueAtTime(2400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(3200, ctx.currentTime + 0.02);
+
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.03);
+        osc.stop(ctx.currentTime + 0.04);
     } else if (type === 'sweep' || type === 'soft_tap') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
