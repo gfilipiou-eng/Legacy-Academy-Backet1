@@ -2172,7 +2172,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     useEffect(() => {
         if (activeList) {
             setClickLock(true);
-            const timer = setTimeout(() => setClickLock(false), 1200);
+            const timer = setTimeout(() => setClickLock(false), 1500); // 1.5s lock
             return () => clearTimeout(timer);
         }
     }, [activeList]);
@@ -2209,11 +2209,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                             {/* SACRIFICIAL OVERLAY: Swallows all ghost touches for 1.2s */}
                             {clickLock && <div className="absolute inset-0 z-[100] bg-transparent pointer-events-auto" />}
 
-                            <div className="p-2 space-y-2">
+                            <div
+                                className={`p-2 space-y-2 ${clickLock ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                                onPointerDownCapture={e => clickLock && e.stopPropagation()}
+                            >
+                                {/* THE SAFE BUFFER: Takes the hit of any ghost clicks */}
+                                <div className="h-20 sm:h-24 w-full flex items-center justify-center border-b border-white/5 mb-2 opacity-50">
+                                    <Icons.Users className="w-5 h-5 text-gray-500 mr-2" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">
+                                        {activeList === 'followers' ? t('FOLLOWERS_LIST') : t('FOLLOWING_LIST')}
+                                    </span>
+                                </div>
+
                                 {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                                 {getListUsers().map(u => (
                                     <div key={u._id} onClick={(e) => {
-                                        if (Date.now() - lastOpenedAt.current < 1200) return; // Nuclear block: ignore rapid taps from transition
+                                        if (Date.now() - lastOpenedAt.current < 1500) return; // Nuclear block: ignore rapid taps from transition
                                         e.stopPropagation();
                                         onViewProfile(u);
                                         setActiveList(null);
@@ -2305,7 +2316,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={(e) => {
+                                    <div onPointerDown={(e) => {
+                                        e.preventDefault(); // STOP GHOST CLICK GENERATION
                                         e.stopPropagation();
                                         setClickLock(true);
                                         lastOpenedAt.current = Date.now();
@@ -2317,7 +2329,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={(e) => {
+                                    <div onPointerDown={(e) => {
+                                        e.preventDefault(); // STOP GHOST CLICK GENERATION
                                         e.stopPropagation();
                                         setClickLock(true);
                                         lastOpenedAt.current = Date.now();
