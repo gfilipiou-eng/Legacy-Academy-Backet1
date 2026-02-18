@@ -3297,12 +3297,32 @@ const App = () => {
                 const me = res.data.find(u => String(u._id) === String(user._id));
                 if (me) {
                     setUser(prev => {
-                        const isDiff = JSON.stringify(prev.following) !== JSON.stringify(me.following) ||
+                        if (!prev) return prev;
+                        // CLEAN URL COMPARISON (Ignore local timestamps)
+                        const clean = (url) => url ? url.split('?')[0] : '';
+                        const isDiff =
+                            JSON.stringify(prev.following) !== JSON.stringify(me.following) ||
                             JSON.stringify(prev.followers) !== JSON.stringify(me.followers) ||
-                            JSON.stringify(prev.followRequests) !== JSON.stringify(me.followRequests);
+                            JSON.stringify(prev.followRequests) !== JSON.stringify(me.followRequests) ||
+                            clean(prev.profilePic) !== clean(me.profilePic) ||
+                            prev.username !== me.username ||
+                            prev.bio !== me.bio;
 
                         if (isDiff) {
-                            const updated = { ...prev, following: me.following, followers: me.followers, followRequests: me.followRequests };
+                            console.log("🔄 [SYNC] Self-profile updated from network poll");
+
+                            // If picture changed, force new timestamp
+                            let nextPic = me.profilePic;
+                            if (clean(prev.profilePic) !== clean(me.profilePic)) {
+                                const sep = nextPic.includes('?') ? '&' : '?';
+                                nextPic = `${clean(nextPic)}${sep}t=${Date.now()}`;
+                                setImgKey(Date.now());
+                            } else {
+                                // Keep existing timestamp if pic is same (prevent flickering)
+                                nextPic = prev.profilePic;
+                            }
+
+                            const updated = { ...prev, ...me, profilePic: nextPic };
                             localStorage.setItem('user', JSON.stringify(updated));
                             return updated;
                         }
@@ -3361,7 +3381,7 @@ const App = () => {
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
     let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 10000); };
+    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 4000); };
     const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
 
     let _postInterval = null;
