@@ -209,5 +209,7 @@
     "INTEL_COUNT_DEPLOYED": "{{count}} ΔΗΜΟΣΙΕΥΣΕΙΣ ΠΑΡΑΤΑΧΘΗΚΑΝ",
     "WELCOME_FOUNDER": "Καλωσόρισες Founder/CEO",
     "READ_MORE": "...ΔΙΑΒΑΣΤΕ ΠΕΡΙΣΣΟΤΕΡΑ",
-    "READ_LESS": "ΛΙΓΟΤΕΡΑ"
+    "READ_LESS": "ΛΙΓΟΤΕΡΑ",
+    "ENCRYPTING_DATA": "ΚΡΥΠΤΟΓΡΑΦΗΣΗ ΠΑΚΕΤΩΝ ΔΕΔΟΜΕΝΩΝ",
+    "TRANSMITTING_PERCENT": "ΜΕΤΑΔΟΣΗ {{percent}}%"
 }

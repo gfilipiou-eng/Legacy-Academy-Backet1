@@ -1325,9 +1325,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                 <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-[2.5rem] animate-fade-in pointer-events-none">
                     <div className="w-16 h-16 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_20px_var(--gold-glow)]" />
                     <div className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] animate-pulse text-lg drop-shadow-md">
-                        TRANSMITTING {post.uploadProgress || 0}%
+                        {t('TRANSMITTING_PERCENT', { percent: post.uploadProgress || 0 })}
                     </div>
-                    <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">ENCRYPTING DATA PACKETS</div>
+                    <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">{t('ENCRYPTING_DATA')}</div>
                 </div>
             )}
 
@@ -3468,15 +3468,27 @@ const App = () => {
     useEffect(() => {
         const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
         if (anyModalOpen) {
+            const scrollY = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
             document.body.style.overflow = 'hidden';
-            document.body.style.touchAction = 'none'; // Mobile specific
         } else {
+            const scrollY = document.body.style.top;
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
             document.body.style.overflow = '';
-            document.body.style.touchAction = '';
+            if (scrollY) window.scrollTo(0, parseInt(scrollY || '0') * -1);
         }
         return () => {
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
             document.body.style.overflow = '';
-            document.body.style.touchAction = '';
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
 
