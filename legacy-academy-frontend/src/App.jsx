@@ -2171,7 +2171,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     useEffect(() => {
         if (activeList) {
             setClickLock(true);
-            const timer = setTimeout(() => setClickLock(false), 1000); // 1s lock for absolute safety
+            const timer = setTimeout(() => setClickLock(false), 1200);
             return () => clearTimeout(timer);
         }
     }, [activeList]);
@@ -2191,9 +2191,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
         <div className="fixed inset-0 z-[1200] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl">
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl" style={{ touchAction: 'manipulation' }}>
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
-                    <button onClick={() => {
+                    <button onPointerDown={(e) => {
+                        e.preventDefault();
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
                         else onClose();
@@ -2205,10 +2206,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
                     {activeList ? (
                         <div className="relative flex-1 flex flex-col min-h-0">
-                            {/* SACRIFICIAL OVERLAY: Swallows all ghost touches for 1s */}
+                            {/* SACRIFICIAL OVERLAY: Swallows all ghost touches for 1.2s */}
                             {clickLock && <div className="absolute inset-0 z-[100] bg-transparent pointer-events-auto" />}
 
-                            <div className={`p-2 space-y-2 transition-all duration-500 ${clickLock ? 'opacity-0 blur-sm' : 'opacity-100 blur-0'}`}>
+                            <div className="p-2 space-y-2">
                                 {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                                 {getListUsers().map(u => (
                                     <div key={u._id} onClick={(e) => {
@@ -2304,23 +2305,24 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={(e) => {
+                                    <div onPointerDown={(e) => {
+                                        e.preventDefault();
                                         e.stopPropagation();
                                         setClickLock(true);
                                         playSound('cyber_click');
-                                        // DELAY the state change to allow touch events to "finish" elsewhere
-                                        setTimeout(() => setActiveList('followers'), 100);
+                                        setActiveList('followers');
                                     }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={(e) => {
+                                    <div onPointerDown={(e) => {
+                                        e.preventDefault();
                                         e.stopPropagation();
                                         setClickLock(true);
                                         playSound('cyber_click');
-                                        setTimeout(() => setActiveList('following'), 100);
+                                        setActiveList('following');
                                     }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
                                             {displayUser?.following?.length || 0}
