@@ -26,6 +26,7 @@ const PostSchema = new mongoose.Schema({
   shares: { type: Array, default: [] },     // IDs of users who shared
   likesUsers: { type: Array, default: [] },
   comments: [{
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     text: { type: String, required: false }, // Text optional if audio present
     audioUrl: String, // Audio comment support
     authorName: String,
