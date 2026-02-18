@@ -1942,6 +1942,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const handleSave = async (key, val) => {
         setSaving(true);
         try {
+            // FIX: Use direct ID update for privacy flags to avoid /settings 403 conflict (Deployment Lag Workaround)
+            if (key === 'isPrivate' || key === 'isFollowersOnly') {
+                const res = await axios.put(`/users/${user._id || user.userId}`, { [key]: val });
+                onUpdateUser(res.data);
+                if (key === 'isPrivate') setIsPrivate(val);
+                if (key === 'isFollowersOnly') setIsFollowersOnly(val);
+                playSound('cyber_scroll');
+                setSaving(false);
+                return;
+            }
+
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } }; // Language nested exception
             const res = await axios.put('/users/settings', payload);
@@ -1950,21 +1961,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
             playSound('cyber_scroll');
         } catch (e) {
-            // RETRY LOGIC: If 403 Forbidden (old backend), try legacy endpoint
-            if (e.response && e.response.status === 403 && (key === 'isPrivate' || key === 'isFollowersOnly')) {
-                try {
-                    console.warn("Deploy lag detected, using fallback endpoint...");
-                    const fallbackRes = await axios.put(`/users/${user._id || user.userId}`, { [key]: val });
-                    onUpdateUser(fallbackRes.data);
-                    if (key === 'isPrivate') setIsPrivate(val);
-                    if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-                    playSound('cyber_scroll');
-                    return; // Success on fallback
-                } catch (fallbackError) {
-                    console.error("Fallback update also failed", fallbackError);
-                }
-            }
-
             console.error("Settings update failed", e);
             // Revert state on failure
             if (key === 'isPrivate') setIsPrivate(!val);
