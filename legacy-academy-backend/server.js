@@ -64,7 +64,7 @@ mongoose.connect(process.env.MONGO_URL)
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "healthy",
-    deployed: "V7 (Socket IO Active)",
+    deployed: "V8 (Cloudinary Cleanup)",
     timestamp: new Date(),
     uptime: process.uptime()
   });
@@ -79,6 +79,6 @@ app.use("/api/messages", messageRoute);
 const PORT = process.env.PORT || 8800;
 server.listen(PORT, () => {
   console.log("🟢 Server initialization started...");
-  console.log(`🚀 DEPLOYMENT VERSION: V7 (Socket.io)`);
+  console.log(`🚀 DEPLOYMENT VERSION: V8 (Cloudinary Cleanup)`);
   console.log(`Backend server is running on port ${PORT}!`);
 });
