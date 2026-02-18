@@ -2,7 +2,8 @@ import express from "express";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
-import upload from "../middleware/upload.js"; // Needed for FormData
+import upload from "../middleware/upload.js";
+import { deleteCloudinaryFiles } from "../utils/cloudinaryCleanup.js";
 
 const router = express.Router();
 
@@ -126,8 +127,8 @@ const getConversation = async (req, res) => {
         // WHISPER CLEANUP: Delete messages read > 1 minute ago
         const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
 
-        // Clean up messages in this specific conversation
-        await Message.deleteMany({
+        // Find messages to delete FIRST (to get their media URLs)
+        const expiredMessages = await Message.find({
             $or: [
                 { sender: currentUserId, recipient: otherUserId },
                 { sender: otherUserId, recipient: currentUserId }
@@ -135,6 +136,19 @@ const getConversation = async (req, res) => {
             isRead: true,
             readAt: { $lt: oneMinuteAgo }
         });
+
+        // 🗑️ CLOUDINARY CLEANUP: Delete media from expired messages
+        if (expiredMessages.length > 0) {
+            const mediaToDelete = [];
+            expiredMessages.forEach(m => {
+                if (m.audio) mediaToDelete.push(m.audio);
+                if (m.image) mediaToDelete.push(m.image);
+            });
+            deleteCloudinaryFiles(mediaToDelete).catch(() => { });
+
+            // Now delete the messages
+            await Message.deleteMany({ _id: { $in: expiredMessages.map(m => m._id) } });
+        }
 
         const messages = await Message.find({
             $or: [

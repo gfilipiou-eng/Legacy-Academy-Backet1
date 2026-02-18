@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
+import { deleteCloudinaryFile } from "../utils/cloudinaryCleanup.js";
 
 const router = express.Router();
 
@@ -13,6 +14,9 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
         const userId = req.user.id || req.user.userId;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json("Agent not found.");
+
+        // 🗑️ CLOUDINARY CLEANUP: Delete OLD profile pic before setting new one
+        const oldPic = user.profilePic;
 
         let profilePic = user.profilePic;
         if (req.file) {
@@ -26,6 +30,11 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
             { $set: { profilePic } },
             { new: true }
         ).select("-password");
+
+        // Delete old pic AFTER successful update (so if update fails, we don't lose the old pic)
+        if (oldPic && oldPic !== profilePic) {
+            deleteCloudinaryFile(oldPic).catch(() => { });
+        }
 
         res.status(200).json(updatedUser);
     } catch (err) {

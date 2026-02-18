@@ -2,8 +2,9 @@ import express from "express";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
-import upload from "../middleware/upload.js"; // Assuming upload middleware exists
+import upload from "../middleware/upload.js";
 import mongoose from "mongoose";
+import { deleteCloudinaryFile, deleteCloudinaryFiles } from "../utils/cloudinaryCleanup.js";
 
 const router = express.Router();
 
@@ -188,6 +189,11 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
         if (!comment) return res.status(404).json("Comment not found");
 
         if (comment.user.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
+            // 🗑️ CLOUDINARY CLEANUP: Delete comment audio if exists
+            if (comment.audioUrl) {
+                deleteCloudinaryFile(comment.audioUrl).catch(() => { });
+            }
+
             await post.updateOne({ $pull: { comments: { _id: req.params.commentId } } });
 
             // 🔥 REAL-TIME EMIT
@@ -244,7 +250,19 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Post not found");
         if (post.author.toString() === req.user.id || req.user.role === "Admin" || req.user.role === "Founder") {
+            // 🗑️ CLOUDINARY CLEANUP: Delete post media + all comment audio
+            const mediaToDelete = [];
+            if (post.image) mediaToDelete.push(post.image);
+            if (post.videoUrl && post.videoUrl !== post.image) mediaToDelete.push(post.videoUrl);
+            // Collect all comment audio files
+            (post.comments || []).forEach(c => {
+                if (c.audioUrl) mediaToDelete.push(c.audioUrl);
+            });
+            // Fire-and-forget cleanup
+            deleteCloudinaryFiles(mediaToDelete).catch(() => { });
+
             await post.deleteOne();
 
             // 🔥 REAL-TIME EMIT
