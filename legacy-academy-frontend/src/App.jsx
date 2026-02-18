@@ -2311,7 +2311,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     useEffect(() => {
         if (activeList) {
             setClickLock(true);
-            const timer = setTimeout(() => setClickLock(false), 1500); // 1.5s lock
+            const timer = setTimeout(() => setClickLock(false), 300); // reduced to 300ms for better UX
             return () => clearTimeout(timer);
         }
     }, [activeList]);
@@ -2363,7 +2363,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                                 {getListUsers().map(u => (
                                     <div key={u._id} onClick={(e) => {
-                                        if (Date.now() - lastOpenedAt.current < 1500) return; // Nuclear block: ignore rapid taps from transition
+                                        if (Date.now() - lastOpenedAt.current < 300) return; // Reduced block time
                                         e.stopPropagation();
                                         onViewProfile(u);
                                         setActiveList(null);
