@@ -3582,6 +3582,7 @@ const App = () => {
 
     const handleComment = async (postId, input) => {
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        playSound('cyber_comment');
         const textValue = (input instanceof FormData) ? null : (typeof input === 'string' ? input : (input?.text || ""));
         let tempId = 'temp-' + Date.now();
 
@@ -3617,7 +3618,6 @@ const App = () => {
             console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment with FormData`);
             res = await axios.post(`/posts/${postId}/comment`, formData);
             const updatedComments = res.data;
-            playSound('cyber_scroll');
             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
             if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
         } catch (e) {
