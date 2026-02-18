@@ -50,6 +50,10 @@ const UserSchema = new mongoose.Schema(
             max: 500,
             default: "Entrepreneur. Legacy Member."
         },
+        lastSeen: {
+            type: Date,
+            default: Date.now
+        },
         isPrivate: {
             type: Boolean,
             default: false
