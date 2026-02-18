@@ -291,18 +291,21 @@ export const playSound = (type) => {
         osc.start();
         osc.stop(ctx.currentTime + 0.2);
     } else if (type === 'cyber_dislike') {
-        // "Power Down" sound
-        const osc = ctx.createOscillator();
+        // Short Static Interrupt (Lighter)
+        const bufferSize = ctx.sampleRate * 0.05; // Very short (50ms)
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * 0.5; // White noise
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
         const gain = ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(400, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.2);
         gain.gain.setValueAtTime(0.05, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-        osc.connect(gain);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        noise.connect(gain);
         gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
+        noise.start();
     } else if (type === 'cyber_comment') {
         // High-tech tiny data packet sound
         const osc = ctx.createOscillator();

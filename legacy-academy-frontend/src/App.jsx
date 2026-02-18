@@ -3561,7 +3561,7 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
-        // Sound removed as requested
+        playSound('cyber_dislike');
 
 
         try {
