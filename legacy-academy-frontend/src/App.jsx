@@ -2054,6 +2054,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     const [expandedDates, setExpandedDates] = useState({});
     const [clickLock, setClickLock] = useState(false);
     const fileRef = useRef(null);
+    const lastOpenedAt = useRef(0);
 
     useEffect(() => {
         if (profileUser?._id === currentUser?._id) {
@@ -2193,8 +2194,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl" style={{ touchAction: 'manipulation' }}>
                 <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
-                    <button onPointerDown={(e) => {
-                        e.preventDefault();
+                    <button onClick={() => {
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
                         else onClose();
@@ -2213,7 +2213,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                 {getListUsers().length === 0 && !clickLock && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                                 {getListUsers().map(u => (
                                     <div key={u._id} onClick={(e) => {
-                                        if (clickLock) return;
+                                        if (Date.now() - lastOpenedAt.current < 1200) return; // Nuclear block: ignore rapid taps from transition
                                         e.stopPropagation();
                                         onViewProfile(u);
                                         setActiveList(null);
@@ -2305,10 +2305,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onPointerDown={(e) => {
-                                        e.preventDefault();
+                                    <div onClick={(e) => {
                                         e.stopPropagation();
                                         setClickLock(true);
+                                        lastOpenedAt.current = Date.now();
                                         playSound('cyber_click');
                                         setActiveList('followers');
                                     }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
@@ -2317,10 +2317,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onPointerDown={(e) => {
-                                        e.preventDefault();
+                                    <div onClick={(e) => {
                                         e.stopPropagation();
                                         setClickLock(true);
+                                        lastOpenedAt.current = Date.now();
                                         playSound('cyber_click');
                                         setActiveList('following');
                                     }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
