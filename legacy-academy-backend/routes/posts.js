@@ -256,12 +256,17 @@ router.delete("/:id", verifyToken, async (req, res) => {
             const mediaToDelete = [];
             if (post.image) mediaToDelete.push(post.image);
             if (post.videoUrl && post.videoUrl !== post.image) mediaToDelete.push(post.videoUrl);
+            if (post.audioUrl) mediaToDelete.push(post.audioUrl);
+            if (post.thumbnailUrl) mediaToDelete.push(post.thumbnailUrl);
             // Collect all comment audio files
             (post.comments || []).forEach(c => {
                 if (c.audioUrl) mediaToDelete.push(c.audioUrl);
             });
-            // Fire-and-forget cleanup
-            deleteCloudinaryFiles(mediaToDelete).catch(() => { });
+
+            console.log(`🗑️ [POST DELETE] Post ${req.params.id} has ${mediaToDelete.length} media files to clean:`, mediaToDelete);
+
+            // AWAIT cleanup before deleting post
+            try { await deleteCloudinaryFiles(mediaToDelete); } catch (e) { console.warn("Cloudinary cleanup partial fail:", e.message); }
 
             await post.deleteOne();
 
