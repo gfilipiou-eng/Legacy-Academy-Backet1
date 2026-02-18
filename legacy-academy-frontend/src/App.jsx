@@ -1900,11 +1900,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showDanger, setShowDanger] = useState(false);
 
     useEffect(() => {
-        if (user) {
+        if (user && !saving) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
         }
-    }, [user]);
+    }, [user, saving]);
 
     const handleSave = async (key, val) => {
         setSaving(true);
