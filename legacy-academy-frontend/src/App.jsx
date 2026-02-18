@@ -3130,10 +3130,16 @@ const App = () => {
         const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
 
-        // SYNC THEME LIVE ACROSS TABS
+        // SYNC USER DATA & THEME LIVE ACROSS TABS
         const handleStorageChange = (e) => {
             if (e.key === 'themeColor' && e.newValue) {
                 applyTheme(e.newValue);
+            }
+            if (e.key === 'user' && e.newValue) {
+                console.log("🔄 [SYNC] User data changed in another tab, updating...");
+                const updatedUser = JSON.parse(e.newValue);
+                setUser(updatedUser);
+                setImgKey(Date.now()); // Force refresh all avatars
             }
         };
         window.addEventListener('storage', handleStorageChange);
