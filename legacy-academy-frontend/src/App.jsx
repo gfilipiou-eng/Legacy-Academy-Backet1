@@ -2170,7 +2170,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
     useEffect(() => {
         if (activeList) {
             setClickLock(true);
-            const timer = setTimeout(() => setClickLock(false), 400);
+            const timer = setTimeout(() => setClickLock(false), 600);
             return () => clearTimeout(timer);
         }
     }, [activeList]);
@@ -2203,7 +2203,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
                     {activeList ? (
-                        <div className="p-2 space-y-2">
+                        <div className={`p-2 space-y-2 transition-all duration-500 ${clickLock ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}`}>
                             {getListUsers().length === 0 && <div className="p-4 text-center text-gray-500">{t('NO_AGENTS_FOUND')}</div>}
                             {getListUsers().map(u => (
                                 <div key={u._id} onClick={(e) => {
@@ -2211,7 +2211,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                     e.stopPropagation();
                                     onViewProfile(u);
                                     setActiveList(null);
-                                }} className={`flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer transition-opacity ${clickLock ? 'opacity-50' : 'opacity-100'}`}>
+                                }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all active:scale-95">
                                     <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
                                         <ProfileAvatar user={u} />
                                     </div>
@@ -2298,13 +2298,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                                         <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
                                         <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
                                     </div>
-                                    <div onClick={() => setActiveList('followers')} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                    <div onClick={(e) => { e.stopPropagation(); setActiveList('followers'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
                                         <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                                     </div>
-                                    <div onClick={() => setActiveList('following')} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
+                                    <div onClick={(e) => { e.stopPropagation(); setActiveList('following'); playSound('cyber_click'); }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
                                         <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
                                             {displayUser?.following?.length || 0}
                                         </span>
