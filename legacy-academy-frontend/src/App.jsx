@@ -329,7 +329,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     }
 
     return mediaUrl ? (
-        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" alt="" />
+        <img src={mediaUrl} className={`w-full h-full object-cover ${className || ''}`} onClick={onClick} loading="lazy" decoding="async" alt="" />
     ) : (
         <DefaultAvatar name={name} size={size} />
     );
@@ -554,7 +554,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                                 forcePause={isWritingComment}
                             />
                         ) : (
-                            <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" />
+                            <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" decoding="async" />
                         )
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--gold-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
 
@@ -1310,11 +1310,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 
     return (
         <motion.div
-            layout
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-3xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl overflow-hidden`}
+            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl overflow-hidden will-change-transform`}
         >
             {/* AMBIENT BACKGROUND GLOW */}
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
