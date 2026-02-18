@@ -144,6 +144,9 @@ const getYouTubeEmbedUrl = (url) => {
 
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
+    // Rule: You are always online to yourself (instant feedback)
+    if (currentUser && (u._id === currentUser._id || u === currentUser._id || String(u._id) === String(currentUser._id))) return true;
+
     if (!u || !u.lastSeen) return false;
     // Rule: Removed follower restriction - online status is now visible to all for better connectivity
     try {
@@ -3504,7 +3507,16 @@ const App = () => {
     const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
 
     let _hbInterval = null;
-    const startHeartbeat = () => { stopHeartbeat(); /* axios.put('/users/heartbeat').catch(() => { }); _hbInterval = setInterval(() => { axios.put('/users/heartbeat').catch(() => { }); }, 30000); */ };
+    const startHeartbeat = () => {
+        stopHeartbeat();
+        const doHb = () => {
+            if (!user) return;
+            // Use ID endpoint as safe fallback for instant online status
+            axios.put(`/users/${user._id || user.userId}`, { lastSeen: new Date() }).catch(() => { });
+        };
+        doHb(); // Immediate
+        _hbInterval = setInterval(doHb, 30000);
+    };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
     let _userInterval = null;
