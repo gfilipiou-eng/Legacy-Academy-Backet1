@@ -471,6 +471,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
     const discardRef = useRef(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [imgError, setImgError] = useState(false); // Handle detail image error
 
     const stopRecording = (shouldDiscard = false) => {
         discardRef.current = shouldDiscard;
@@ -570,7 +571,19 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                                 forcePause={isWritingComment}
                             />
                         ) : (
-                            <img src={resolveMediaUrl(post.image || post.thumbnailUrl)} className="max-w-full max-h-full object-contain" decoding="async" />
+                            !imgError ? (
+                                <img
+                                    src={resolveMediaUrl(post.image || post.thumbnailUrl)}
+                                    className="max-w-full max-h-full object-contain"
+                                    decoding="async"
+                                    onError={() => setImgError(true)}
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center justify-center p-10 text-gray-500">
+                                    <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
+                                    <span className="text-xs font-black uppercase tracking-widest opacity-50">Image unavailable</span>
+                                </div>
+                            )
                         )
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--gold-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
 
