@@ -148,10 +148,9 @@ const isUserOnline = (u, currentUser) => {
     if (currentUser && (u._id === currentUser._id || u === currentUser._id || String(u._id) === String(currentUser._id))) return true;
 
     if (!u || !u.lastSeen) return false;
-    // Rule: Removed follower restriction - online status is now visible to all for better connectivity
     try {
-        // 60 seconds threshold for "Online"
-        return (Date.now() - new Date(u.lastSeen).getTime()) < 60000;
+        // Robust Threshold: 5 minutes (300,000ms) to account for clock skew/distributed systems
+        return (Date.now() - new Date(u.lastSeen).getTime()) < 300000;
     } catch (e) { return false; }
 };
 
@@ -1820,7 +1819,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             {activeChat?.username}
                                             <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4" />
                                         </div>
-                                        <div className={`text-[10px] ${isUserOnline(activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>{isUserOnline(activeChat, user) ? t('ONLINE') : t('OFFLINE')}</div>
+                                        <div className={`text-[10px] ${isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
+                                            {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3451,7 +3452,7 @@ const App = () => {
         try {
             if (specificId) {
                 // Targeted refresh for instant online status
-                const res = await axios.get(`/users/find/${specificId}`);
+                const res = await axios.get(`/users/find/${specificId}?t=${Date.now()}`);
                 if (res.data) {
                     setUsers(prev => {
                         const exists = prev.find(u => String(u._id) === String(specificId));
@@ -3468,7 +3469,7 @@ const App = () => {
                 }
                 return;
             }
-            const res = await axios.get('/users');
+            const res = await axios.get(`/users?t=${Date.now()}`);
             // Sync self (fix for "Follow" button state not updating without reload)
             if (user) {
                 const me = res.data.find(u => String(u._id) === String(user._id));
@@ -3562,7 +3563,7 @@ const App = () => {
             axios.put(`/users/${user._id || user.userId}`, { lastSeen: new Date() }).catch(() => { });
         };
         doHb(); // Immediate
-        _hbInterval = setInterval(doHb, 30000);
+        _hbInterval = setInterval(doHb, 20000);
     };
     const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
 
