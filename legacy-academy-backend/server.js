@@ -6,6 +6,7 @@ import authRoute from "./routes/auth.js";
 import postRoute from "./routes/posts.js";
 import messageRoute from "./routes/messages.js"; // New route file needed
 import Message from "./models/Message.js";
+import User from "./models/User.js";
 import { verifyToken } from "./middleware/auth.js";
 import cors from "cors";
 import path from "path";
@@ -41,17 +42,39 @@ const io = new Server(server, {
   pingInterval: 25000
 });
 
+// Map to track user status by socket ID
+const userSocketMap = new Map(); // socket.id -> userId
+
 app.set('io', io);
 
 io.on('connection', (socket) => {
   console.log(`🔌 [SOCKET] New client connected: ${socket.id}`);
 
-  socket.on('join', (room) => {
-    socket.join(room);
-    console.log(`📡 [SOCKET] Client joined room: ${room}`);
+  socket.on('join', (userId) => {
+    socket.join(userId);
+    userSocketMap.set(socket.id, userId);
+    console.log(`📡 [SOCKET] User ${userId} joined room: ${userId}`);
+
+    // Broadcast they are online
+    io.emit('user.status', { userId, status: 'online', lastSeen: new Date() });
   });
 
-  socket.on('disconnect', (reason) => {
+  socket.on('logout', async (userId) => {
+    if (userId) {
+      await User.findByIdAndUpdate(userId, { lastSeen: new Date(Date.now() - 600000) }); // Set to 10 mins ago
+      io.emit('user.status', { userId, status: 'offline', lastSeen: new Date(Date.now() - 600000) });
+    }
+  });
+
+  socket.on('disconnect', async (reason) => {
+    const userId = userSocketMap.get(socket.id);
+    if (userId) {
+      // Set to 1 minute ago to show offline (since threshold is 5 mins, maybe better to set it further back)
+      const offlineTime = new Date(Date.now() - 600000); // 10 mins ago guaranteed offline
+      await User.findByIdAndUpdate(userId, { lastSeen: offlineTime });
+      io.emit('user.status', { userId, status: 'offline', lastSeen: offlineTime });
+      userSocketMap.delete(socket.id);
+    }
     console.log(`🔌 [SOCKET] Client disconnected: ${socket.id} Reason: ${reason}`);
   });
 });

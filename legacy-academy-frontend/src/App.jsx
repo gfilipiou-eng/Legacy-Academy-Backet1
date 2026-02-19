@@ -3391,12 +3391,24 @@ const App = () => {
             });
         };
 
+        const onUserStatus = (data) => {
+            console.log("📡 [SOCKET] User status change:", data);
+            setUsers(prev => prev.map(u => String(u._id) === String(data.userId) ? { ...u, lastSeen: data.lastSeen } : u));
+            setProfileUser(prev => {
+                if (prev && String(prev._id) === String(data.userId)) {
+                    return { ...prev, lastSeen: data.lastSeen };
+                }
+                return prev;
+            });
+        };
+
         socket.on('notification.received', onNotificationRecv);
         socket.on('post.deleted', onPostDeleted);
         socket.on('post.liked', onPostLiked);
         socket.on('comment.added', onCommentSync);
         socket.on('comment.deleted', onCommentSync);
         socket.on('comment.updated', onCommentSync);
+        socket.on('user.status', onUserStatus);
 
         return () => {
             socket.off('notification.received', onNotificationRecv);
@@ -3405,6 +3417,7 @@ const App = () => {
             socket.off('comment.added', onCommentSync);
             socket.off('comment.deleted', onCommentSync);
             socket.off('comment.updated', onCommentSync);
+            socket.off('user.status', onUserStatus);
         };
     }, [user, selectedPost?._id]);
 
@@ -4094,6 +4107,9 @@ const App = () => {
     }, [user?.settings?.language]);
 
     const logout = () => {
+        if (user) {
+            socket.emit('logout', user._id);
+        }
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
