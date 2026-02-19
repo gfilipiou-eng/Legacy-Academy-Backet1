@@ -3559,8 +3559,7 @@ const App = () => {
         stopHeartbeat();
         const doHb = () => {
             if (!user) return;
-            // Use ID endpoint as safe fallback for instant online status
-            axios.put(`/users/${user._id || user.userId}`, { lastSeen: new Date() }).catch(() => { });
+            axios.put('/users/heartbeat').catch(() => { });
         };
         doHb(); // Immediate
         _hbInterval = setInterval(doHb, 20000);

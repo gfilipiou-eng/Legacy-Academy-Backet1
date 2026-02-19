@@ -46,7 +46,7 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
 // GET ALL USERS (Search)
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate followers following followRequests bio');
+        const users = await User.find().select('username role profilePic isPrivate followers following followRequests bio lastSeen');
         const mappedUsers = users.map(u => ({
             ...u._doc,
             followRequests: u.followRequests || []
