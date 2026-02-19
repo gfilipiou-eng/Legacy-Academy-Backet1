@@ -1547,9 +1547,17 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 });
 
 
-const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast }) => {
+const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast, fetchSpecificUser }) => {
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
+
+    // 🔥 INSTANT STATUS REFRESH: Fetch latest data for target user on mount/change
+    useEffect(() => {
+        if (isOpen && activeChat?._id && fetchSpecificUser) {
+            fetchSpecificUser(activeChat._id);
+        }
+    }, [isOpen, activeChat?._id]);
+
     const [messages, setMessages] = useState({});
     const [inputText, setInputText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -2180,28 +2188,27 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUsers = [], onViewProfile, onOpenDetail, onFollow, followLoading = {}, onUpdateUser, addToast, onOpenChat, onDeletePost, lastDeletedPostId, imgKey }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, userPosts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser }) => {
     const { t, lang } = useTranslation(currentUser);
-    const [userData, setUserData] = useState(null);
-    const [activeList, setActiveList] = useState(null);
+    // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
+    useEffect(() => {
+        if (isOpen && profileUser?._id && fetchSpecificUser) {
+            fetchSpecificUser(profileUser._id);
+        }
+    }, [isOpen, profileUser?._id, fetchSpecificUser]);
+
     const [isEditing, setIsEditing] = useState(false);
-    const [bio, setBio] = useState(currentUser?.bio || "");
-    const [editUsername, setEditUsername] = useState(currentUser?.username || "");
-    const [activeTab, setActiveTab] = useState('ALL'); // ALL, POSTS, VIDEO
+    const [userData, setUserData] = useState(profileUser);
+    const [activeList, setActiveList] = useState(null);
+    const [clickLock, setClickLock] = useState(false);
+    const lastOpenedAt = useRef(Date.now());
+    const [bio, setBio] = useState(profileUser?.bio || "");
+    const [editUsername, setEditUsername] = useState(profileUser?.username || "");
+    const [activeTab, setActiveTab] = useState('ALL');
     const [userSpecificPosts, setUserSpecificPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
-    const [clickLock, setClickLock] = useState(false);
     const fileRef = useRef(null);
-    const lastOpenedAt = useRef(0);
-
-    useEffect(() => {
-        if (profileUser?._id === currentUser?._id) {
-            setUserData(currentUser);
-        } else if (profileUser?._id) {
-            axios.get(`/users/find/${profileUser._id || profileUser}`).then(res => setUserData(res.data)).catch(() => setUserData(profileUser));
-        }
-    }, [profileUser, currentUser]);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -2209,6 +2216,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
         const currentUserId = String(currentUser?._id || '');
         const isMe = profileUserId === currentUserId;
 
+        // Prioritize userData (fetched specifically for this profile)
+        // If it's 'me', currentUser is the most up-to-date source
         const base = isMe ? currentUser : (userData || profileUser);
         const live = allUsers.find(u => String(u._id) === String(base?._id));
 
@@ -2379,7 +2388,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, posts, allUse
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
                             <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-[2.5rem] bg-gray-800 overflow-hidden border-4 border-[var(--gold-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--gold-primary)]/10">
-                                <ProfileAvatar user={displayUser} size="large" />
+                                <ProfileAvatar user={displayUser} size="large" key={imgKey} />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
                             <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
@@ -3119,7 +3128,11 @@ const App = () => {
         const key = id.replace('l-', '').replace('r-', '').replace('f-', '');
         setFormData(prev => ({ ...prev, [key]: value }));
     };
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState(() => {
+        // FAST HYDRATION: Return cached posts instantly while fetching new ones
+        const cached = typeof localStorage !== 'undefined' ? localStorage.getItem('cached_posts') : null;
+        try { return cached ? JSON.parse(cached) : []; } catch (e) { return []; }
+    });
     const [lastDeletedPostId, setLastDeletedPostId] = useState(null);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('home');
@@ -3421,17 +3434,38 @@ const App = () => {
     }, [posts]);
 
     const fetchPosts = async () => {
-        if (selectedPostRef.current) return; // Prevent scroll jumps while viewing a post
+        if (selectedPostRef.current) return;
         try {
-            const res = await axios.get('/posts?limit=20');
-            // Simple check to avoid redundant re-renders if nothing changed
+            const res = await axios.get('/posts?limit=30'); // Slightly more posts
             const currentPosts = postsRef.current;
             if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
+
             setPosts(res.data);
+            // Cache posts for instant load next time
+            localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
         } catch (e) { }
     };
-    const fetchUsers = async () => {
+    const fetchUsers = async (specificId = null) => {
         try {
+            if (specificId) {
+                // Targeted refresh for instant online status
+                const res = await axios.get(`/users/find/${specificId}`);
+                if (res.data) {
+                    setUsers(prev => {
+                        const exists = prev.find(u => String(u._id) === String(specificId));
+                        if (exists) return prev.map(u => String(u._id) === String(specificId) ? res.data : u);
+                        return [...prev, res.data];
+                    });
+                    // Also update profileUser if the profile modal is open for this user
+                    setProfileUser(prev => {
+                        if (prev && String(prev._id) === String(specificId)) {
+                            return { ...prev, ...res.data };
+                        }
+                        return prev;
+                    });
+                }
+                return;
+            }
             const res = await axios.get('/users');
             // Sync self (fix for "Follow" button state not updating without reload)
             if (user) {
@@ -3905,6 +3939,7 @@ const App = () => {
     const handleOpenChat = (targetUser) => {
         setChatTarget(targetUser);
         setIsChatOpen(true);
+        playSound('cyber_open');
     };
 
     // FIX: Real Share Functionality
@@ -4421,9 +4456,23 @@ const App = () => {
                         )}
                     </div>
 
-                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} />
+                    <ProfileModal
+                        isOpen={isProfileOpen}
+                        onClose={() => { setIsProfileOpen(false); playSound('cyber_back'); }}
+                        profileUser={profileUser}
+                        currentUser={user}
+                        allUsers={users}
+                        userPosts={posts.filter(p => String(p.author?._id || p.author) === String(profileUser?._id || profileUser?.userId || profileUser))}
+                        onFollow={handleFollow}
+                        onUpdateUser={handleUpdateUser}
+                        onViewProfile={viewProfile}
+                        onOpenChat={handleOpenChat}
+                        onOpenDetail={setSelectedPost}
+                        imgKey={imgKey}
+                        fetchSpecificUser={fetchUsers}
+                    />
+                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
-                    <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} profileUser={profileUser} currentUser={user} posts={posts} allUsers={users} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onFollow={handleFollow} onOpenChat={handleOpenChat} followLoading={followLoading} onUpdateUser={handleUpdateUser} addToast={addToast} onDeletePost={handleDeletePost} lastDeletedPostId={lastDeletedPostId} imgKey={imgKey} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {

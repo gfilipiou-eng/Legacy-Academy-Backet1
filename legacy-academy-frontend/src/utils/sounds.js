@@ -317,6 +317,37 @@ export const playSound = (type) => {
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + 0.1);
+    } else if (type === 'cyber_open') {
+        // High-end digital "Whoosh-Ping"
+        const osc = ctx.createOscillator();
+        const noiseGain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1500, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(2500, ctx.currentTime + 0.1);
+
+        noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+        noiseGain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.05);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+        osc.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+    } else if (type === 'cyber_back' || type === 'cyber_close') {
+        // Subtle futuristic "De-click"
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(300, ctx.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
     }
 };
 
