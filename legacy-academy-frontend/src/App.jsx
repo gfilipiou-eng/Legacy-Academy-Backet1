@@ -3477,10 +3477,7 @@ const App = () => {
     const fetchPosts = async () => {
         if (selectedPostRef.current) return;
         try {
-            const res = await axios.get('/posts?limit=30'); // Slightly more posts
-            const currentPosts = postsRef.current;
-            if (currentPosts.length > 0 && res.data.length === currentPosts.length && res.data[0]?._id === currentPosts[0]?._id) return;
-
+            const res = await axios.get(`/posts?limit=30&t=${Date.now()}`);
             setPosts(res.data);
             // Cache posts for instant load next time
             localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
@@ -3675,7 +3672,12 @@ const App = () => {
             // 2. SERVER SYNC (Only if valid arrays returned)
             const { likes, dislikes } = res.data;
             if (Array.isArray(likes) && Array.isArray(dislikes)) {
-                setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
+                setPosts(prev => {
+                    const next = prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p);
+                    // Update cache immediately so it persists on reload
+                    localStorage.setItem('cached_posts', JSON.stringify(next.slice(0, 20)));
+                    return next;
+                });
                 if (selectedPost && String(selectedPost._id) === String(postId)) {
                     setSelectedPost(prev => ({ ...prev, likes, dislikes }));
                 }
@@ -3724,7 +3726,11 @@ const App = () => {
             // 2. SERVER SYNC (Validate Data First)
             const { likes, dislikes } = res.data;
             if (Array.isArray(likes) && Array.isArray(dislikes)) {
-                setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p));
+                setPosts(prev => {
+                    const next = prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p);
+                    localStorage.setItem('cached_posts', JSON.stringify(next.slice(0, 20)));
+                    return next;
+                });
                 if (selectedPost && String(selectedPost._id) === String(postId)) {
                     setSelectedPost(prev => ({ ...prev, likes, dislikes }));
                 }

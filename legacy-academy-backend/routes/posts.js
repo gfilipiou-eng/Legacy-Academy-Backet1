@@ -98,8 +98,8 @@ router.put("/:id/like", verifyToken, async (req, res) => {
         const currentPost = await Post.findById(req.params.id);
         if (!currentPost) return res.status(404).json("Post not found");
 
-        const userId = req.user.id; // Define userId here
-        const isLiking = !currentPost.likes.includes(userId);
+        const userId = String(req.user.id); // Define userId here
+        const isLiking = !currentPost.likes.some(id => String(id) === userId);
         const update = isLiking
             ? { $addToSet: { likes: userId }, $pull: { dislikes: userId } }
             : { $pull: { likes: userId } };
@@ -144,8 +144,8 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
         const currentPost = await Post.findById(req.params.id);
         if (!currentPost) return res.status(404).json("Post not found");
 
-        const userId = req.user.id;
-        const isDisliking = !currentPost.dislikes.includes(userId);
+        const userId = String(req.user.id);
+        const isDisliking = !currentPost.dislikes.some(id => String(id) === userId);
 
         const update = isDisliking
             ? { $addToSet: { dislikes: userId }, $pull: { likes: userId } }
