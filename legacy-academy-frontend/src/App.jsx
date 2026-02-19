@@ -3361,12 +3361,50 @@ const App = () => {
             }
         };
 
+        const onPostLiked = (data) => {
+            console.log("📡 [SOCKET] Post like updated real-time:", data.postId);
+            const updateFn = (p) => {
+                if (String(p._id) !== String(data.postId)) return p;
+                return { ...p, likes: data.likes, dislikes: data.dislikes };
+            };
+            setPosts(prev => prev.map(updateFn));
+            setSelectedPost(prev => {
+                if (prev && String(prev._id) === String(data.postId)) {
+                    return updateFn(prev);
+                }
+                return prev;
+            });
+        };
+
+        const onCommentSync = (data) => {
+            console.log("📡 [SOCKET] Comments updated real-time:", data.postId);
+            const updateFn = (p) => {
+                if (String(p._id) !== String(data.postId)) return p;
+                return { ...p, comments: data.comments };
+            };
+            setPosts(prev => prev.map(updateFn));
+            setSelectedPost(prev => {
+                if (prev && String(prev._id) === String(data.postId)) {
+                    return updateFn(prev);
+                }
+                return prev;
+            });
+        };
+
         socket.on('notification.received', onNotificationRecv);
         socket.on('post.deleted', onPostDeleted);
+        socket.on('post.liked', onPostLiked);
+        socket.on('comment.added', onCommentSync);
+        socket.on('comment.deleted', onCommentSync);
+        socket.on('comment.updated', onCommentSync);
 
         return () => {
             socket.off('notification.received', onNotificationRecv);
             socket.off('post.deleted', onPostDeleted);
+            socket.off('post.liked', onPostLiked);
+            socket.off('comment.added', onCommentSync);
+            socket.off('comment.deleted', onCommentSync);
+            socket.off('comment.updated', onCommentSync);
         };
     }, [user, selectedPost?._id]);
 

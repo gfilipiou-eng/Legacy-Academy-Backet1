@@ -95,19 +95,44 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 // LIKE POST
 router.put("/:id/like", verifyToken, async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json("Post not found");
+        const currentPost = await Post.findById(req.params.id);
+        if (!currentPost) return res.status(404).json("Post not found");
 
-        const userId = req.user.id;
+        const userId = req.user.id; // Define userId here
+        const isLiking = !currentPost.likes.includes(userId);
+        const update = isLiking
+            ? { $addToSet: { likes: userId }, $pull: { dislikes: userId } }
+            : { $pull: { likes: userId } };
 
-        if (!post.likes.includes(userId)) {
-            await post.updateOne({ $push: { likes: userId }, $pull: { dislikes: userId } });
-            // Add Notification call here if needed
-            res.status(200).json({ message: "Liked", likes: [...post.likes, userId], dislikes: post.dislikes.filter(id => id !== userId) });
-        } else {
-            await post.updateOne({ $pull: { likes: userId } });
-            res.status(200).json({ message: "Unliked", likes: post.likes.filter(id => id !== userId), dislikes: post.dislikes });
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.id,
+            update,
+            { new: true }
+        );
+
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('post.liked', {
+                postId: req.params.id,
+                likes: updatedPost.likes,
+                dislikes: updatedPost.dislikes
+            });
+
+            if (isLiking && String(updatedPost.author) !== String(userId)) {
+                io.to(String(updatedPost.author)).emit('notification.received', {
+                    type: 'like',
+                    fromUsername: req.user.username || 'Someone',
+                    fromProfilePic: req.user.profilePic || '',
+                    postId: updatedPost._id
+                });
+            }
         }
+
+        res.status(200).json({
+            message: isLiking ? "Liked" : "Unliked",
+            likes: updatedPost.likes,
+            dislikes: updatedPost.dislikes
+        });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -116,18 +141,36 @@ router.put("/:id/like", verifyToken, async (req, res) => {
 // DISLIKE POST
 router.put("/:id/dislike", verifyToken, async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json("Post not found");
+        const currentPost = await Post.findById(req.params.id);
+        if (!currentPost) return res.status(404).json("Post not found");
 
         const userId = req.user.id;
+        const isDisliking = !currentPost.dislikes.includes(userId);
 
-        if (!post.dislikes.includes(userId)) {
-            await post.updateOne({ $push: { dislikes: userId }, $pull: { likes: userId } });
-            res.status(200).json({ message: "Disliked", likes: post.likes.filter(id => id !== userId), dislikes: [...post.dislikes, userId] });
-        } else {
-            await post.updateOne({ $pull: { dislikes: userId } });
-            res.status(200).json({ message: "Undisliked", likes: post.likes, dislikes: post.dislikes.filter(id => id !== userId) });
+        const update = isDisliking
+            ? { $addToSet: { dislikes: userId }, $pull: { likes: userId } }
+            : { $pull: { dislikes: userId } };
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.id,
+            update,
+            { new: true }
+        );
+
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('post.liked', {
+                postId: req.params.id,
+                likes: updatedPost.likes,
+                dislikes: updatedPost.dislikes
+            });
         }
+
+        res.status(200).json({
+            message: isDisliking ? "Disliked" : "Undisliked",
+            likes: updatedPost.likes,
+            dislikes: updatedPost.dislikes
+        });
     } catch (err) {
         res.status(500).json(err);
     }
