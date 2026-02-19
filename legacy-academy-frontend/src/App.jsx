@@ -2188,7 +2188,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser, lastDeletedPostId }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -4471,6 +4471,7 @@ const App = () => {
                         onOpenDetail={setSelectedPost}
                         imgKey={imgKey}
                         fetchSpecificUser={fetchUsers}
+                        lastDeletedPostId={lastDeletedPostId}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
