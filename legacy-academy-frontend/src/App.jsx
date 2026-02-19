@@ -2188,7 +2188,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, userPosts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -2205,7 +2205,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, use
     const [bio, setBio] = useState(profileUser?.bio || "");
     const [editUsername, setEditUsername] = useState(profileUser?.username || "");
     const [activeTab, setActiveTab] = useState('ALL');
-    const [userSpecificPosts, setUserSpecificPosts] = useState([]);
+    const [userSpecificPosts, setUserSpecificPosts] = useState(preloadedPosts || []);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
     const fileRef = useRef(null);
@@ -4462,7 +4462,8 @@ const App = () => {
                         profileUser={profileUser}
                         currentUser={user}
                         allUsers={users}
-                        userPosts={posts.filter(p => String(p.author?._id || p.author) === String(profileUser?._id || profileUser?.userId || profileUser))}
+                        preloadedPosts={posts.filter(p => String(p.author?._id || p.author) === String(profileUser?._id || profileUser?.userId || profileUser))}
+                        posts={posts}
                         onFollow={handleFollow}
                         onUpdateUser={handleUpdateUser}
                         onViewProfile={viewProfile}
