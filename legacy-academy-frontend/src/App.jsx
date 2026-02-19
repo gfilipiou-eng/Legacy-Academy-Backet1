@@ -2188,7 +2188,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser, lastDeletedPostId }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -2443,11 +2443,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                     if (res.data) {
                                         localStorage.setItem('user', JSON.stringify(res.data));
                                         if (onUpdateUser) onUpdateUser(res.data);
+                                        if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
                                     }
                                     setIsEditing(false);
                                 } catch (e) {
                                     console.error(e);
-                                    alert(e.response?.data?.message || e.response?.data || "Update failed.");
+                                    if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
+                                    else alert("Update failed.");
                                 }
                             }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
@@ -4472,6 +4474,9 @@ const App = () => {
                         imgKey={imgKey}
                         fetchSpecificUser={fetchUsers}
                         lastDeletedPostId={lastDeletedPostId}
+                        followLoading={followLoading}
+                        addToast={addToast}
+                        onDeletePost={handleDeletePost}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
