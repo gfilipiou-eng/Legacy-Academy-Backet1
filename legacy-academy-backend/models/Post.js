@@ -21,9 +21,9 @@ const PostSchema = new mongoose.Schema({
   role: String,   // User Role at creation
 
   // ENGAGEMENT
-  likes: { type: Array, default: [] },      // IDs of users who liked
-  dislikes: { type: Array, default: [] },   // IDs of users who disliked
-  shares: { type: Array, default: [] },     // IDs of users who shared
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],      // IDs of users who liked
+  dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],   // IDs of users who disliked
+  shares: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],     // IDs of users who shared
   likesUsers: { type: Array, default: [] },
   comments: [{
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
