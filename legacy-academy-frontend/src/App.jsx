@@ -3678,7 +3678,6 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
-        playSound('cyber_like');
 
         try {
             const res = await axios.put(`/posts/${postId}/like`);
@@ -3731,7 +3730,6 @@ const App = () => {
 
         setLoadingActions(prev => ({ ...prev, [postId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
-        playSound('cyber_dislike');
 
 
         try {
