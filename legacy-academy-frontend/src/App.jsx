@@ -2014,6 +2014,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } }; // Language nested exception
+            if (key === 'theme') payload = { settings: { theme: val } }; // Theme nested exception
+
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
@@ -2146,7 +2148,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                             const isActive = currentTheme === c;
                                             return (
-                                                <button key={c} onClick={() => { applyTheme(c); handleSave('settings', { theme: c }); }}
+                                                <button key={c} onClick={() => { applyTheme(c); handleSave('theme', c); }}
                                                     className={`w-10 h-10 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'opacity-40 hover:opacity-100 hover:scale-110'}`}
                                                 >
                                                     <div className="w-full h-full rounded-full" style={{ backgroundColor: c, boxShadow: isActive ? `0 0 15px ${c}` : 'none' }} />
@@ -3201,7 +3203,7 @@ const App = () => {
     const viewPostId = searchParams.get('postId');
     const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
-    const { t, i18n, lang } = useTranslation(user);
+    const { t, i18n, lang } = useTranslation();
     const [uploadProgress, setUploadProgress] = useState(0);
     const [toasts, setToasts] = useState([]);
     const addToast = (text, type = 'info') => {
