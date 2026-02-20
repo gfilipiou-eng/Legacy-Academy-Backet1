@@ -1557,7 +1557,24 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         }
     }, [isOpen, activeChat?._id]);
 
-    const [messages, setMessages] = useState({});
+    const [messages, setMessages] = useState(() => {
+        try {
+            const cached = localStorage.getItem('cached_messages');
+            return cached ? JSON.parse(cached) : {};
+        } catch { return {}; }
+    });
+
+    useEffect(() => {
+        if (Object.keys(messages).length > 0) {
+            try {
+                // Ensure we don't blow up localStorage quota (keep only recent 10 chats)
+                const trimmed = {};
+                Object.keys(messages).slice(-10).forEach(k => trimmed[k] = messages[k].slice(-50));
+                localStorage.setItem('cached_messages', JSON.stringify(trimmed));
+            } catch (e) { }
+        }
+    }, [messages]);
+
     const [inputText, setInputText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [isPhonetic, setIsPhonetic] = useState(false);
@@ -2210,6 +2227,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
     const fileRef = useRef(null);
+    const coverFileRef = useRef(null);
+    const [coverUploading, setCoverUploading] = useState(false);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -2270,6 +2289,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
 
     useEffect(() => {
         if (isOpen) {
+            // INSTANT HYDRATION: prefill posts from global index before server responds
+            if (preloadedPosts && preloadedPosts.length > 0) {
+                setUserSpecificPosts(preloadedPosts);
+            }
             fetchUserPosts();
         }
     }, [isOpen, profileUser?._id]);
@@ -2341,8 +2364,20 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
 
         <div className="fixed inset-0 z-[1200] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="relative bg-[#0a0a0a] w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl" style={{ touchAction: 'manipulation' }}>
-                <div className="flex-none p-4 flex items-center justify-between border-b border-white/10 bg-[#0a0a0a] z-50">
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl ${displayUser?.coverPic ? 'bg-black' : 'bg-[#0a0a0a]'}`} style={{ touchAction: 'manipulation' }}>
+
+                {displayUser?.coverPic && (
+                    <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
+                        {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
+                            <video src={resolveMediaUrl(displayUser.coverPic)} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-30 mix-blend-screen" />
+                        ) : (
+                            <img src={resolveMediaUrl(displayUser.coverPic)} className="w-full h-full object-cover opacity-20 blur-[2px] mix-blend-screen" alt="" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                    </div>
+                )}
+
+                <div className={`flex-none p-4 flex items-center justify-between border-b border-white/10 z-10 relative ${displayUser?.coverPic ? 'bg-transparent backdrop-blur-md' : 'bg-[#0a0a0a]'}`}>
                     <button onClick={() => {
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
@@ -2352,7 +2387,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                     <div className="w-10" />
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#050505] overscroll-y-contain pb-32">
+                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-32 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-[#050505]'}`}>
                     {activeList ? (
                         <div className="relative flex-1 flex flex-col min-h-0">
                             {/* SACRIFICIAL OVERLAY: Swallows all ghost touches for 1.2s */}
@@ -2414,6 +2449,31 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
                                     } catch (e) { alert("Failed to update."); }
+                                }
+                            }} />
+
+                            <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading} className="mt-4 w-full py-3 border border-white/20 rounded-2xl text-[10px] text-white font-black uppercase tracking-widest cursor-pointer hover:bg-white/5 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_4px_20px_rgba(0,0,0,0.4)] bg-black/40 backdrop-blur-md">
+                                {coverUploading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 text-[var(--gold-primary)]" />}
+                                {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE LUXURY BACKGROUND')}
+                            </button>
+                            <input type="file" ref={coverFileRef} hidden accept="image/*,video/*" onChange={async (e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    if (file.size > 20 * 1024 * 1024) { alert("File too large. Max 20MB"); return e.target.value = ''; }
+                                    setCoverUploading(true);
+                                    const fd = new FormData(); fd.append('image', file);
+                                    try {
+                                        const res = await axios.post('/users/cover-pic', fd);
+                                        const updatedUser = res.data;
+                                        if (updatedUser.coverPic) {
+                                            const sep = updatedUser.coverPic.includes('?') ? '&' : '?';
+                                            updatedUser.coverPic += `${sep}t=${Date.now()}`;
+                                        }
+                                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                                        if (onUpdateUser) onUpdateUser(updatedUser);
+                                        if (addToast) addToast(t('PROFILE_UPDATED') || 'Luxury background updated!', 'success');
+                                    } catch (err) { alert("Failed to update luxury background."); }
+                                    finally { setCoverUploading(false); e.target.value = ''; }
                                 }
                             }} />
 
@@ -4490,15 +4550,15 @@ const App = () => {
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                             <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('tap'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('home'); playSound('water_drop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('tap'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('search'); playSound('water_drop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Search className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('tap'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('water_drop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative z-10">
                                         <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
@@ -4507,7 +4567,7 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('tap'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                <button onClick={() => { viewProfile(user); playSound('water_drop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>

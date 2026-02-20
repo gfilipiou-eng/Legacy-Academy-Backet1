@@ -43,10 +43,41 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
     }
 });
 
+// UPDATE COVER PICTURE (Premium Background)
+router.post("/cover-pic", verifyToken, upload.single("image"), async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
+
+        const oldPic = user.coverPic;
+        let coverPic = user.coverPic;
+
+        if (req.file) {
+            coverPic = req.file.path || `/uploads/${req.file.filename}`;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { coverPic } },
+            { new: true }
+        ).select("-password");
+
+        if (oldPic && oldPic !== coverPic) {
+            deleteCloudinaryFile(oldPic).catch(() => { });
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Cover Pic Update Error:", err);
+        res.status(500).json(err);
+    }
+});
+
 // GET ALL USERS (Search)
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate followers following followRequests bio lastSeen');
+        const users = await User.find().select('username role profilePic coverPic isPrivate followers following followRequests bio lastSeen');
         const mappedUsers = users.map(u => ({
             ...u._doc,
             followRequests: u.followRequests || []

@@ -63,7 +63,23 @@ export const playSound = (type) => {
 
     const ctx = getCtx();
 
-    if (type === 'pop' || type === 'click' || type === 'tap') {
+    if (type === 'water_drop') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+    } else if (type === 'pop' || type === 'click' || type === 'tap') {
         // Premium "Mechanical Click" (Solid Switch)
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
