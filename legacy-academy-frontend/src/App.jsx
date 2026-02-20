@@ -3490,6 +3490,27 @@ const App = () => {
             });
         };
 
+        const onUserUpdated = (data) => {
+            console.log("📡 [SOCKET] User updated real-time:", data._id);
+
+            setUsers(prev => prev.map(u => String(u._id) === String(data._id) ? { ...u, ...data } : u));
+
+            setProfileUser(prev => {
+                if (prev && String(prev._id) === String(data._id)) {
+                    return { ...prev, ...data };
+                }
+                return prev;
+            });
+
+            if (user && String(user._id) === String(data._id)) {
+                setUserData(prev => {
+                    const updated = { ...prev, ...data };
+                    localStorage.setItem('user', JSON.stringify(updated));
+                    return updated;
+                });
+            }
+        };
+
         socket.on('notification.received', onNotificationRecv);
         socket.on('post.deleted', onPostDeleted);
         socket.on('post.liked', onPostLiked);
@@ -3497,6 +3518,7 @@ const App = () => {
         socket.on('comment.deleted', onCommentSync);
         socket.on('comment.updated', onCommentSync);
         socket.on('user.status', onUserStatus);
+        socket.on('user.updated', onUserUpdated);
 
         return () => {
             socket.off('notification.received', onNotificationRecv);
@@ -3506,6 +3528,7 @@ const App = () => {
             socket.off('comment.deleted', onCommentSync);
             socket.off('comment.updated', onCommentSync);
             socket.off('user.status', onUserStatus);
+            socket.off('user.updated', onUserUpdated);
         };
     }, [user, selectedPost?._id]);
 

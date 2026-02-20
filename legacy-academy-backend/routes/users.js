@@ -36,6 +36,10 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
             deleteCloudinaryFile(oldPic).catch(() => { });
         }
 
+        // Broadcast real-time update
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("Profile Pic Update Error:", err);
@@ -67,6 +71,10 @@ router.post("/cover-pic", verifyToken, upload.single("image"), async (req, res) 
             deleteCloudinaryFile(oldPic).catch(() => { });
         }
 
+        // Broadcast real-time update
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("Cover Pic Update Error:", err);
@@ -92,6 +100,10 @@ router.delete("/cover-pic", verifyToken, async (req, res) => {
         if (oldPic) {
             deleteCloudinaryFile(oldPic).catch(() => { });
         }
+
+        // Broadcast real-time update
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
 
         res.status(200).json(updatedUser);
     } catch (err) {
