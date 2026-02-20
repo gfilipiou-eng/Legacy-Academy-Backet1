@@ -4434,7 +4434,7 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-10 w-auto object-contain" />
+                                    {/* Logo removed from header as requested */}
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button
@@ -4493,7 +4493,7 @@ const App = () => {
                                             <div className="w-full max-w-2xl relative group mb-4">
                                                 <div className="absolute -inset-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
                                                 <div className="relative">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white group-focus-within:text-[var(--gold-primary)] transition-colors">
                                                         <circle cx="11" cy="11" r="8"></circle>
                                                         <path d="m21 21-4.3-4.3"></path>
                                                     </svg>
