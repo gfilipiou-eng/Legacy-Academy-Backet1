@@ -411,6 +411,10 @@ router.put("/settings", verifyToken, async (req, res) => {
             await Post.updateMany({ author: req.user.id }, { $set: pUpdate });
         }
 
+        // Broadcast real-time update
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("Settings Update Error:", err);
@@ -453,6 +457,10 @@ router.put("/:id", verifyToken, async (req, res) => {
                     { arrayFilters: [{ "elem.authorId": userId }] }
                 );
             }
+
+            // Broadcast real-time update
+            const io = req.app.get('io');
+            if (io) io.emit('user.updated', updatedUser);
 
             res.status(200).json(updatedUser);
         } catch (err) {

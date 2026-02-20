@@ -3316,6 +3316,10 @@ const App = () => {
             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
             updatedUser.profilePic += `${sep}t=${Date.now()}`;
         }
+        if (updatedUser.coverPic && !updatedUser.coverPic.includes('t=')) {
+            const sep = updatedUser.coverPic.includes('?') ? '&' : '?';
+            updatedUser.coverPic += `${sep}t=${Date.now()}`;
+        }
 
         // 1. Update primary user state
         setUser(updatedUser);
@@ -3506,7 +3510,18 @@ const App = () => {
 
             if (user && String(user._id) === String(data._id)) {
                 setUser(prev => {
-                    const updated = { ...prev, ...data };
+                    const nextData = { ...data };
+                    // Force cache-break for other devices
+                    const timestamp = Date.now();
+                    if (nextData.profilePic) {
+                        const sep = nextData.profilePic.includes('?') ? '&' : '?';
+                        nextData.profilePic += `${sep}t=${timestamp}`;
+                    }
+                    if (nextData.coverPic) {
+                        const sep = nextData.coverPic.includes('?') ? '&' : '?';
+                        nextData.coverPic += `${sep}t=${timestamp}`;
+                    }
+                    const updated = { ...prev, ...nextData };
                     localStorage.setItem('user', JSON.stringify(updated));
                     return updated;
                 });
