@@ -2550,7 +2550,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className={`w-16 h-16 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
+                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} />
                                     </div>
                                 </div>
@@ -4648,7 +4648,7 @@ const App = () => {
                             </button>
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                            <div className="liquid-glass-nav h-[72px] sm:h-[80px] w-full max-w-lg rounded-[2.2rem] sm:rounded-[2.5rem] px-5 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.8)] bg-black/90 backdrop-blur-3xl relative mx-auto mb-6 sm:mb-0">
+                            <div className="liquid-glass-nav h-[75px] sm:h-[80px] w-full max-w-lg rounded-[2.2rem] sm:rounded-[2.5rem] px-5 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.8)] bg-black/90 backdrop-blur-3xl relative mx-auto mb-6 sm:mb-0">
                                 <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-white hover:text-[var(--gold-primary)]'}`}>
                                     <Icons.Home className="w-6 h-6 relative z-10" />
                                 </button>
@@ -4667,7 +4667,7 @@ const App = () => {
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-white hover:text-red-500 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-6 h-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" /></button>
 
                                 <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-white/10 relative">
+                                    <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
