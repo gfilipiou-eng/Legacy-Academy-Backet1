@@ -4648,7 +4648,7 @@ const App = () => {
                             </button>
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                            <div className="liquid-glass-nav h-[62px] sm:h-[75px] w-[94%] sm:w-full max-w-lg rounded-[2rem] sm:rounded-[2.5rem] px-4 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-black/80 backdrop-blur-3xl relative mx-auto mb-6 sm:mb-0">
+                            <div className="liquid-glass-nav h-[72px] sm:h-[80px] w-full max-w-lg rounded-[2.2rem] sm:rounded-[2.5rem] px-5 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.8)] bg-black/90 backdrop-blur-3xl relative mx-auto mb-6 sm:mb-0">
                                 <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-white hover:text-[var(--gold-primary)]'}`}>
                                     <Icons.Home className="w-6 h-6 relative z-10" />
                                 </button>
@@ -4667,7 +4667,7 @@ const App = () => {
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-white hover:text-red-500 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-6 h-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" /></button>
 
                                 <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-white/10 relative">
+                                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
