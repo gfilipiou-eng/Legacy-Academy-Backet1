@@ -17,7 +17,7 @@ const GREEK_PHONETIC = {
     'A': 'Α', 'B': 'Β', 'C': 'Ψ', 'D': 'Δ', 'E': 'Ε', 'F': 'Φ', 'G': 'Γ', 'H': 'Η', 'I': 'Ι', 'J': 'Ξ', 'K': 'Κ', 'L': 'Λ', 'M': 'Μ', 'N': 'Ν', 'O': 'Ο', 'P': 'Π', 'Q': 'Θ', 'R': 'Ρ', 'S': 'Σ', 'T': 'Τ', 'U': 'Υ', 'V': 'Ω', 'W': 'Σ', 'X': 'Χ', 'Y': 'Υ', 'Z': 'Ζ'
 };
 
-const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false) => {
+const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false, isCover = false) => {
     if (!path) return '';
     let url = path;
     if (!path.startsWith('http') && !path.startsWith('blob:')) {
@@ -30,6 +30,12 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
         // Only inject if not already transformed
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_') && !parts[1].startsWith('so_')) {
             const isVideo = url.includes('/video/upload/');
+
+            if (isCover && isVideo) {
+                // DO NOT add q_auto or vc_auto which trigger sync processing of 90MB videos and cause 404s
+                return url;
+            }
+
             let transform = '';
 
             if (isPoster && isVideo) {
@@ -2369,9 +2375,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
                         {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
-                            <video src={resolveMediaUrl(displayUser.coverPic)} autoPlay loop muted playsInline webkit-playsinline="true" disablePictureInPicture disableRemotePlayback preload="auto" className="w-full h-full object-cover opacity-[0.85]" />
+                            <video src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} autoPlay loop muted playsInline webkit-playsinline="true" disablePictureInPicture disableRemotePlayback preload="auto" className="w-full h-full object-cover opacity-[0.85]" />
                         ) : (
-                            <img src={resolveMediaUrl(displayUser.coverPic)} className="w-full h-full object-cover opacity-[0.85] blur-[1px]" alt="" />
+                            <img src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} className="w-full h-full object-cover opacity-[0.85] blur-[1px]" alt="" />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
                     </div>
@@ -2474,7 +2480,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                         }
                                     }} disabled={coverUploading}
                                         className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-2xl text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 active:scale-[0.98]">
-                                        <Icons.Close className="w-5 h-5" />
+                                        <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
                             </div>
