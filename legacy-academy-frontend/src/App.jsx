@@ -1378,10 +1378,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4 sm:mb-6">
                     <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 p-0.5 shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border-2 border-[var(--gold-primary)]" onClick={() => onViewProfile(post.author)}>
-                            <div className="w-full h-full rounded-[0.9rem] overflow-hidden">
-                                <ProfileAvatar user={post.author} />
-                            </div>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border-2 border-[var(--gold-primary)]" onClick={() => onViewProfile(post.author)}>
+                            <ProfileAvatar user={post.author} />
                         </div>
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -2691,7 +2689,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-2xl border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                            <div className="w-16 h-16 rounded-2xl border-2 border-[var(--gold-primary)] shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
