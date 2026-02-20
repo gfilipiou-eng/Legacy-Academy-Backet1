@@ -211,5 +211,6 @@
     "READ_MORE": "...ΔΙΑΒΑΣΤΕ ΠΕΡΙΣΣΟΤΕΡΑ",
     "READ_LESS": "ΛΙΓΟΤΕΡΑ",
     "ENCRYPTING_DATA": "ΚΡΥΠΤΟΓΡΑΦΗΣΗ ΠΑΚΕΤΩΝ ΔΕΔΟΜΕΝΩΝ",
-    "TRANSMITTING_PERCENT": "ΜΕΤΑΔΟΣΗ {{percent}}%"
+    "TRANSMITTING_PERCENT": "ΜΕΤΑΔΟΣΗ {{percent}}%",
+    "CHANGE_COVER": "ΑΛΛΑΓΗ ΦΟΝΤΟΥ"
 }

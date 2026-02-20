@@ -2452,14 +2452,16 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                 }
                             }} />
 
-                            <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading} className="mt-4 w-full py-3 border border-white/20 rounded-2xl text-[10px] text-white font-black uppercase tracking-widest cursor-pointer hover:bg-white/5 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_4px_20px_rgba(0,0,0,0.4)] bg-black/40 backdrop-blur-md">
-                                {coverUploading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 text-[var(--gold-primary)]" />}
-                                {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE LUXURY BACKGROUND')}
+                            <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
+                                className="mt-6 w-full py-4 bg-gradient-to-r from-[var(--gold-primary)]/20 via-black/60 to-[var(--gold-primary)]/20 border border-[var(--gold-primary)]/40 rounded-2xl text-xs text-white font-black uppercase tracking-[0.2em] cursor-pointer hover:bg-white/10 hover:border-[var(--gold-primary)] hover:shadow-[0_0_25px_rgba(255,215,0,0.3)] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg active:scale-95 relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                                {coverUploading ? <div className="w-5 h-5 border-2 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 text-[var(--gold-primary)] group-hover:scale-110 transition-transform" />}
+                                {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                             </button>
                             <input type="file" ref={coverFileRef} hidden accept="image/*,video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
-                                    if (file.size > 20 * 1024 * 1024) { alert("File too large. Max 20MB"); return e.target.value = ''; }
+                                    if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
                                     setCoverUploading(true);
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
