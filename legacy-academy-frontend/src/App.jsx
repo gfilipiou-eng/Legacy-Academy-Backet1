@@ -4493,7 +4493,7 @@ const App = () => {
                                             <div className="w-full max-w-2xl relative group mb-4">
                                                 <div className="absolute -inset-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
                                                 <div className="relative">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors z-20 pointer-events-none">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 transition-colors z-20 pointer-events-none">
                                                         <circle cx="11" cy="11" r="8"></circle>
                                                         <path d="m21 21-4.3-4.3"></path>
                                                     </svg>
