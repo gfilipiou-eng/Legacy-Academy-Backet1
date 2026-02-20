@@ -99,19 +99,21 @@ router.put("/:id/like", verifyToken, async (req, res) => {
         if (!currentPost) return res.status(404).json("Post not found");
 
         const userId = String(req.user.id);
-        let objId;
-        try { objId = new mongoose.Types.ObjectId(userId); } catch (e) { }
-        const pullArray = objId ? [userId, objId] : [userId];
-
         const isLiking = !currentPost.likes.some(id => String(id) === userId);
 
-        const update = isLiking
-            ? { $addToSet: { likes: userId }, $pullAll: { dislikes: pullArray } }
-            : { $pullAll: { likes: pullArray } };
+        let newLikes = currentPost.likes.map(id => String(id));
+        let newDislikes = currentPost.dislikes.map(id => String(id));
+
+        if (isLiking) {
+            newLikes.push(userId);
+            newDislikes = newDislikes.filter(id => id !== userId);
+        } else {
+            newLikes = newLikes.filter(id => id !== userId);
+        }
 
         const updatedPost = await Post.findByIdAndUpdate(
             req.params.id,
-            update,
+            { $set: { likes: [...new Set(newLikes)], dislikes: [...new Set(newDislikes)] } },
             { new: true }
         );
 
@@ -150,19 +152,21 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
         if (!currentPost) return res.status(404).json("Post not found");
 
         const userId = String(req.user.id);
-        let objId;
-        try { objId = new mongoose.Types.ObjectId(userId); } catch (e) { }
-        const pullArray = objId ? [userId, objId] : [userId];
-
         const isDisliking = !currentPost.dislikes.some(id => String(id) === userId);
 
-        const update = isDisliking
-            ? { $addToSet: { dislikes: userId }, $pullAll: { likes: pullArray } }
-            : { $pullAll: { dislikes: pullArray } };
+        let newLikes = currentPost.likes.map(id => String(id));
+        let newDislikes = currentPost.dislikes.map(id => String(id));
+
+        if (isDisliking) {
+            newDislikes.push(userId);
+            newLikes = newLikes.filter(id => id !== userId);
+        } else {
+            newDislikes = newDislikes.filter(id => id !== userId);
+        }
 
         const updatedPost = await Post.findByIdAndUpdate(
             req.params.id,
-            update,
+            { $set: { likes: [...new Set(newLikes)], dislikes: [...new Set(newDislikes)] } },
             { new: true }
         );
 
