@@ -2479,7 +2479,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                             finally { setCoverUploading(false); }
                                         }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-2xl text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 active:scale-[0.98]">
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-full text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 active:scale-[0.98]">
                                         <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
@@ -3503,7 +3503,7 @@ const App = () => {
             });
 
             if (user && String(user._id) === String(data._id)) {
-                setUserData(prev => {
+                setUser(prev => {
                     const updated = { ...prev, ...data };
                     localStorage.setItem('user', JSON.stringify(updated));
                     return updated;

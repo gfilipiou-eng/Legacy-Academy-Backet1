@@ -47,6 +47,36 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
     }
 });
 
+// REMOVE COVER PICTURE (Premium Background)
+router.delete("/cover-pic", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
+
+        const oldPic = user.coverPic;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $unset: { coverPic: "" } },
+            { new: true }
+        ).select("-password");
+
+        if (oldPic) {
+            deleteCloudinaryFile(oldPic).catch(() => { });
+        }
+
+        // Broadcast real-time update
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Cover Pic Delete Error:", err);
+        res.status(500).json(err);
+    }
+});
+
 // UPDATE COVER PICTURE (Premium Background)
 router.post("/cover-pic", verifyToken, upload.single("image"), async (req, res) => {
     try {
@@ -78,36 +108,6 @@ router.post("/cover-pic", verifyToken, upload.single("image"), async (req, res) 
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("Cover Pic Update Error:", err);
-        res.status(500).json(err);
-    }
-});
-
-// REMOVE COVER PICTURE (Premium Background)
-router.delete("/cover-pic", verifyToken, async (req, res) => {
-    try {
-        const userId = req.user.id || req.user.userId;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("Agent not found.");
-
-        const oldPic = user.coverPic;
-
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { $unset: { coverPic: "" } },
-            { new: true }
-        ).select("-password");
-
-        if (oldPic) {
-            deleteCloudinaryFile(oldPic).catch(() => { });
-        }
-
-        // Broadcast real-time update
-        const io = req.app.get('io');
-        if (io) io.emit('user.updated', updatedUser);
-
-        res.status(200).json(updatedUser);
-    } catch (err) {
-        console.error("Cover Pic Delete Error:", err);
         res.status(500).json(err);
     }
 });
