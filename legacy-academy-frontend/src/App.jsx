@@ -4146,7 +4146,7 @@ const App = () => {
         }
     };
 
-    const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); playSound('cyber_click'); };
+    const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); playSound('cyber_nav'); };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
         if (user?.settings?.language) {
@@ -4550,15 +4550,15 @@ const App = () => {
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                             <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('water_drop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('water_drop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Search className="w-5 h-5 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('water_drop'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative z-10">
                                         <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
@@ -4567,7 +4567,7 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); playSound('water_drop'); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
                                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>

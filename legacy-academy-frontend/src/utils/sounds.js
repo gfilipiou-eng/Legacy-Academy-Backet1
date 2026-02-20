@@ -63,22 +63,39 @@ export const playSound = (type) => {
 
     const ctx = getCtx();
 
-    if (type === 'water_drop') {
+    if (type === 'cyber_nav') {
+        // High-end Cybernetic "Glass/Titanium Click"
         const osc = ctx.createOscillator();
+        const fmOsc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
-        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.15);
+        const fmGain = ctx.createGain();
 
+        // High frequency transient for crispness
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(4000, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.05);
+
+        // FM Modulation for metallic tone
+        fmOsc.type = 'triangle';
+        fmOsc.frequency.setValueAtTime(2000, ctx.currentTime);
+        fmGain.gain.setValueAtTime(500, ctx.currentTime); // Frequency Mod depth
+
+        fmOsc.connect(fmGain);
+        fmGain.connect(osc.frequency);
+
+        // Tight envelope
         gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.15);
+
+        fmOsc.start(ctx.currentTime);
+        osc.start(ctx.currentTime);
+        fmOsc.stop(ctx.currentTime + 0.1);
+        osc.stop(ctx.currentTime + 0.1);
+
     } else if (type === 'pop' || type === 'click' || type === 'tap') {
         // Premium "Mechanical Click" (Solid Switch)
         const osc = ctx.createOscillator();
