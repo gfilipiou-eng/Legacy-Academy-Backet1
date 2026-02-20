@@ -1405,11 +1405,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 
                     {/* MORE MENU */}
                     <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
-                                <circle cx="12" cy="12" r="1" />
-                                <circle cx="12" cy="5" r="1" />
-                                <circle cx="12" cy="19" r="1" />
+                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity">
+                                <circle cx="12" cy="12" r="2" />
+                                <circle cx="12" cy="5" r="2" />
+                                <circle cx="12" cy="19" r="2" />
                             </svg>
                         </button>
                         {showMenu && (
@@ -4646,7 +4646,7 @@ const App = () => {
                             </button>
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                            <div className="liquid-glass-nav h-[65px] sm:h-[75px] w-[92%] sm:w-full max-w-lg rounded-[2rem] sm:rounded-[2.5rem] px-3 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-black/40 backdrop-blur-3xl relative mx-auto mb-4 sm:mb-0">
+                            <div className="liquid-glass-nav h-[65px] sm:h-[75px] w-full max-w-lg rounded-[2rem] sm:rounded-[2.5rem] px-4 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-black/40 backdrop-blur-3xl relative mx-auto mb-4 sm:mb-0">
                                 <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
@@ -4665,7 +4665,7 @@ const App = () => {
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
 
                                 <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/10 relative">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-white/10 relative">
                                         <ProfileAvatar user={user} key={imgKey} />
                                     </div>
                                 </button>
