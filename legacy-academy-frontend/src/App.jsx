@@ -2452,11 +2452,32 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                 }
                             }} />
 
-                            <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
-                                className="mt-6 w-full py-4 bg-[#121212] hover:bg-[#1a1a1a] border border-white/10 hover:border-white/30 rounded-2xl text-[11px] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98] group">
-                                {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />}
-                                {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
-                            </button>
+                            <div className="flex gap-2 w-full mt-6">
+                                <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
+                                    className="flex-1 py-4 bg-[#121212] hover:bg-[#1a1a1a] border border-white/10 hover:border-white/30 rounded-2xl text-[11px] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98] group">
+                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />}
+                                    {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
+                                </button>
+                                {displayUser?.coverPic && (
+                                    <button onClick={async (e) => {
+                                        e.preventDefault();
+                                        if (window.confirm("Remove background?")) {
+                                            setCoverUploading(true);
+                                            try {
+                                                const res = await axios.delete('/users/cover-pic');
+                                                const updatedUser = res.data;
+                                                localStorage.setItem('user', JSON.stringify(updatedUser));
+                                                if (onUpdateUser) onUpdateUser(updatedUser);
+                                                if (addToast) addToast('Background removed', 'success');
+                                            } catch (err) { alert("Failed to remove background."); }
+                                            finally { setCoverUploading(false); }
+                                        }
+                                    }} disabled={coverUploading}
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-2xl text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 active:scale-[0.98]">
+                                        <Icons.Close className="w-5 h-5" />
+                                    </button>
+                                )}
+                            </div>
                             <input type="file" ref={coverFileRef} hidden accept="image/*,video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
