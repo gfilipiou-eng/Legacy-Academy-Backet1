@@ -109,6 +109,7 @@ router.put("/:id/like", verifyToken, async (req, res) => {
             newDislikes = newDislikes.filter(id => id !== userId);
         } else {
             newLikes = newLikes.filter(id => id !== userId);
+            newDislikes = newDislikes.filter(id => id !== userId); // Force clear corrupted state
         }
 
         const updatedPost = await Post.findByIdAndUpdate(
@@ -162,6 +163,7 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
             newLikes = newLikes.filter(id => id !== userId);
         } else {
             newDislikes = newDislikes.filter(id => id !== userId);
+            newLikes = newLikes.filter(id => id !== userId); // Force clear corrupted state
         }
 
         const updatedPost = await Post.findByIdAndUpdate(
