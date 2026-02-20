@@ -1406,10 +1406,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                     {/* MORE MENU */}
                     <div className="relative">
                         <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-white hover:text-[var(--gold-primary)] transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
-                                <circle cx="12" cy="12" r="2.2" />
-                                <circle cx="12" cy="5" r="2.2" />
-                                <circle cx="12" cy="19" r="2.2" />
+                            <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6 drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]">
+                                <circle cx="12" cy="12" r="2.5" />
+                                <circle cx="12" cy="5" r="2.5" />
+                                <circle cx="12" cy="19" r="2.5" />
                             </svg>
                         </button>
                         {showMenu && (
@@ -2045,7 +2045,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-full max-w-[350px] sm:max-w-[700px] max-h-[85vh] sm:max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-xl will-change-transform"
+                className="relative w-[95%] sm:w-full max-w-[400px] sm:max-w-[700px] max-h-[85vh] sm:max-h-[90vh] bg-[#0d0d0d] border border-white/20 rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col backdrop-blur-3xl will-change-transform"
             >
                 {/* CYBER BACKGROUND ELEMENTS - REFINED */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-20" />
@@ -2065,8 +2065,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-all active:scale-90 group border border-white/20 shadow-xl">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full transition-all active:scale-90 group border border-white/30 shadow-2xl">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">
                             <path d="M18 6 6 18M6 6l12 12"></path>
                         </svg>
                     </button>
@@ -2550,7 +2550,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
+                                    <div className={`w-16 h-16 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} />
                                     </div>
                                 </div>
@@ -4648,23 +4648,23 @@ const App = () => {
                             </button>
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                            <div className="liquid-glass-nav h-[65px] sm:h-[75px] w-full max-w-lg rounded-[2rem] sm:rounded-[2.5rem] px-4 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-black/40 backdrop-blur-3xl relative mx-auto mb-4 sm:mb-0">
-                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Home className="w-5 h-5 relative z-10" />
+                            <div className="liquid-glass-nav h-[62px] sm:h-[75px] w-[94%] sm:w-full max-w-lg rounded-[2rem] sm:rounded-[2.5rem] px-4 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-black/80 backdrop-blur-3xl relative mx-auto mb-6 sm:mb-0">
+                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-white hover:text-[var(--gold-primary)]'}`}>
+                                    <Icons.Home className="w-6 h-6 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Search className="w-5 h-5 relative z-10" />
+                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'search' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-white hover:text-[var(--gold-primary)]'}`}>
+                                    <Icons.Search className="w-6 h-6 relative z-10" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-500 z-10 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]' : 'text-white hover:text-[var(--gold-primary)]'}`}>
                                     <div className="relative z-10">
-                                        <Icons.Bell className={`w-5 h-5 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
+                                        <Icons.Bell className={`w-6 h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] fill-[var(--gold-primary)] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute top-1 right-1.5 w-2 h-2 bg-red-600 rounded-full border border-black shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-ping-slow" />}
                                     </div>
                                 </button>
 
-                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-red-500 hover:text-red-600 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-5 h-5 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" /></button>
+                                <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-white hover:text-red-500 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-6 h-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" /></button>
 
                                 <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
                                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-white/10 relative">
