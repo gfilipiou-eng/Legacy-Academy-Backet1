@@ -1405,11 +1405,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
 
                     {/* MORE MENU */}
                     <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity">
-                                <circle cx="12" cy="12" r="2" />
-                                <circle cx="12" cy="5" r="2" />
-                                <circle cx="12" cy="19" r="2" />
+                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-white hover:text-[var(--gold-primary)] transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                            <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+                                <circle cx="12" cy="12" r="2.2" />
+                                <circle cx="12" cy="5" r="2.2" />
+                                <circle cx="12" cy="19" r="2.2" />
                             </svg>
                         </button>
                         {showMenu && (
@@ -2045,7 +2045,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-full max-w-[340px] sm:max-w-[700px] max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-xl will-change-transform"
+                className="relative w-full max-w-[350px] sm:max-w-[700px] max-h-[85vh] sm:max-h-[90vh] bg-neutral-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col backdrop-blur-xl will-change-transform"
             >
                 {/* CYBER BACKGROUND ELEMENTS - REFINED */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-20" />
@@ -2065,8 +2065,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 group border border-white/5 shadow-lg">
-                        <Icons.X className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-all active:scale-90 group border border-white/20 shadow-xl">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+                            <path d="M18 6 6 18M6 6l12 12"></path>
+                        </svg>
                     </button>
                 </div>
 
