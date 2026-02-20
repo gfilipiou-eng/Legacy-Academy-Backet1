@@ -4434,7 +4434,9 @@ const App = () => {
                         <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
                             <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain" />
+                                    <div className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-xl">
+                                        <Icons.Search className="w-5 h-5 text-gray-500" />
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <button
@@ -4487,6 +4489,50 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
+                                    {activeTab === 'home' && (
+                                        <div className="px-4 mb-2 flex flex-col items-center animate-fade-in relative z-10 scale-90 sm:scale-100">
+                                            {/* SEARCH BAR - TOP */}
+                                            <div className="w-full max-w-2xl relative group mb-4">
+                                                <div className="absolute -inset-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                                                <div className="relative">
+                                                    <Icons.Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                                                    <input
+                                                        value={searchQuery}
+                                                        onChange={(e) => {
+                                                            setSearchQuery(e.target.value);
+                                                            if (e.target.value) setActiveTab('search');
+                                                        }}
+                                                        placeholder={t('SEARCH_PH') || "Search intelligence..."}
+                                                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold text-white outline-none focus:border-[var(--gold-primary)]/40 focus:bg-white/[0.08] transition-all shadow-2xl backdrop-blur-xl"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* LOGO - MIDDLE */}
+                                            <div className="flex justify-center -my-10 relative pointer-events-none select-none">
+                                                <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.15)]" />
+                                            </div>
+
+                                            {/* HASHTAGS - BOTTOM */}
+                                            <div className="w-full max-w-2xl flex gap-2 p-1 overflow-x-auto no-scrollbar justify-start sm:justify-center mt-4">
+                                                {(trendingHashtags.length > 0 ? trendingHashtags : ['#legacy', '#hustle', '#crypto', '#boxing']).slice(0, 6).map(tag => (
+                                                    <span
+                                                        key={tag}
+                                                        onClick={() => {
+                                                            setSearchQuery(tag);
+                                                            setActiveTab('search');
+                                                            playSound('pop');
+                                                        }}
+                                                        className="px-4 py-2.5 bg-white/[0.02] hover:bg-white/[0.08] border border-white/5 hover:border-[var(--gold-primary)]/30 rounded-xl text-[10px] font-black text-gray-400 hover:text-[var(--gold-primary)] transition-all whitespace-nowrap active:scale-95 shadow-lg flex items-center gap-2 group"
+                                                    >
+                                                        <span className="text-[var(--gold-primary)] opacity-40 group-hover:opacity-100 transition-opacity">#</span>
+                                                        {tag.replace('#', '').toUpperCase()}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} imgKey={imgKey} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
