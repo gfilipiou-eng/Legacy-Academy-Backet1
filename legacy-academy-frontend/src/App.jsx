@@ -4493,7 +4493,7 @@ const App = () => {
                                             <div className="w-full max-w-2xl relative group mb-4">
                                                 <div className="absolute -inset-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
                                                 <div className="relative">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white group-focus-within:text-[var(--gold-primary)] transition-colors">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/90 group-focus-within:text-[var(--gold-primary)] transition-colors z-20 pointer-events-none">
                                                         <circle cx="11" cy="11" r="8"></circle>
                                                         <path d="m21 21-4.3-4.3"></path>
                                                     </svg>
@@ -4503,8 +4503,8 @@ const App = () => {
                                                             setSearchQuery(e.target.value);
                                                             if (e.target.value) setActiveTab('search');
                                                         }}
-                                                        placeholder={t('SEARCH_PH') || "Search intelligence..."}
-                                                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold text-white outline-none focus:border-[var(--gold-primary)]/40 focus:bg-white/[0.08] transition-all shadow-2xl backdrop-blur-xl"
+                                                        placeholder={t('SEARCH_PH') || "Search..."}
+                                                        className="w-full bg-white/[0.05] border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold text-white outline-none focus:border-[var(--gold-primary)]/40 focus:bg-white/[0.1] transition-all shadow-2xl backdrop-blur-xl placeholder:text-white/30 placeholder:text-xs sm:placeholder:text-sm"
                                                     />
                                                 </div>
                                             </div>
