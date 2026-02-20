@@ -99,15 +99,11 @@ router.put("/:id/like", verifyToken, async (req, res) => {
         if (!currentPost) return res.status(404).json("Post not found");
 
         const userId = req.user.id;
-        const userObjectId = new mongoose.Types.ObjectId(userId);
         const isLiking = !currentPost.likes.some(id => String(id) === userId);
 
-        // Robust Pull: Clean up both String and ObjectId versions
-        const pullValues = [userId, userObjectId];
-
         const update = isLiking
-            ? { $addToSet: { likes: userObjectId }, $pull: { dislikes: { $in: pullValues } } }
-            : { $pull: { likes: { $in: pullValues } } };
+            ? { $addToSet: { likes: userId }, $pull: { dislikes: userId } }
+            : { $pull: { likes: userId } };
 
         const updatedPost = await Post.findByIdAndUpdate(
             req.params.id,
@@ -150,15 +146,11 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
         if (!currentPost) return res.status(404).json("Post not found");
 
         const userId = req.user.id;
-        const userObjectId = new mongoose.Types.ObjectId(userId);
         const isDisliking = !currentPost.dislikes.some(id => String(id) === userId);
 
-        // Robust Pull: Clean up both String and ObjectId versions
-        const pullValues = [userId, userObjectId];
-
         const update = isDisliking
-            ? { $addToSet: { dislikes: userObjectId }, $pull: { likes: { $in: pullValues } } }
-            : { $pull: { dislikes: { $in: pullValues } } };
+            ? { $addToSet: { dislikes: userId }, $pull: { likes: userId } }
+            : { $pull: { dislikes: userId } };
 
         const updatedPost = await Post.findByIdAndUpdate(
             req.params.id,
