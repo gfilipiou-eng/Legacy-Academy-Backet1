@@ -1406,7 +1406,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                     {/* MORE MENU */}
                     <div className="relative">
                         <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity">
                                 <circle cx="12" cy="12" r="1" />
                                 <circle cx="12" cy="5" r="1" />
                                 <circle cx="12" cy="19" r="1" />
@@ -4646,7 +4646,7 @@ const App = () => {
                             </button>
                         </div>
                         {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                            <div className="liquid-glass-nav h-[75px] w-full max-w-lg rounded-[2.5rem] px-6 flex items-center justify-between pointer-events-auto border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] bg-black/30 backdrop-blur-3xl relative">
+                            <div className="liquid-glass-nav h-[65px] sm:h-[75px] w-[92%] sm:w-full max-w-lg rounded-[2rem] sm:rounded-[2.5rem] px-3 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-black/40 backdrop-blur-3xl relative mx-auto mb-4 sm:mb-0">
                                 <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`nav-item-btn relative transition-all duration-300 z-10 ${activeTab === 'home' ? 'text-[var(--gold-primary)] scale-110 drop-shadow-[0_0_8px_var(--gold-glow)]' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-5 h-5 relative z-10" />
                                 </button>
