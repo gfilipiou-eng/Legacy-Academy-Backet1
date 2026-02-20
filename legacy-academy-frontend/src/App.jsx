@@ -45,8 +45,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false)
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                // CRYSTAL 8K / 4K TARGETING
-                transform = `c_limit,w_3840,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                // Remove aggressive 4k transform for generic delivery to prevent ERR_CACHE_READ_FAILURE timeouts
+                transform = `q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             }
 
             url = `${parts[0]}/upload/${transform}/${parts[1]}`;
