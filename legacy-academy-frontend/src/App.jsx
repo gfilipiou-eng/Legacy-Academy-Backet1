@@ -1215,11 +1215,14 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-2xl p-[2px] ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
+                <div className={`w-16 h-16 rounded-2xl ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'bg-gradient-to-tr from-[var(--gold-primary)] to-red-600' : 'bg-white/10 group hover:bg-[var(--gold-primary)]'} transition-colors`}>
                     <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
                         <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg" />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
                         </div>
                     </div>
                 </div>
@@ -1238,13 +1241,13 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                        <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
-                            <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[var(--gold-primary)] to-red-600">
+                            <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 shadow-xl relative">
                                 {hasMedia ? (
                                     isNativeVideo ? (
                                         <video
                                             src={resolveMediaUrl(s.videoUrl || s.image)}
-                                            className="w-full h-full object-cover pointer-events-none"
+                                            className="w-full h-full object-cover rounded-2xl pointer-events-none"
                                             autoPlay
                                             muted
                                             loop
@@ -1254,18 +1257,18 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                                         />
                                     ) : isYT ? (
                                         <div className="w-full h-full relative">
-                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-2xl" alt="" />
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                <div className="w-6 h-6 rounded-2xl bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
                                                     <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
                                                 </div>
                                             </div>
                                         </div>
                                     ) : (
-                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover" alt="" />
+                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover rounded-2xl" alt="" />
                                     )
                                 ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
+                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-2xl">
                                         <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
                                             {s.desc}
                                         </span>
@@ -2684,7 +2687,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                             <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
                                                                 <ProfileAvatar user={currentUser} className="opacity-80" />
                                                                 <div className="absolute inset-0 flex items-center justify-center">
-                                                                    <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform" />
+                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
+                                                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                    </svg>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -2702,7 +2708,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-2xl border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                            <div className="w-16 h-16 rounded-2xl border-2 border-[var(--gold-primary)] shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
