@@ -2674,10 +2674,23 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                 </div>
                             ) : (
                                 <>
-                                    {userStories.length > 0 && (
+                                    {(isMe || userStories.length > 0) && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                                {isMe && (
+                                                    <div onClick={() => setIsCreateOpen(true)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                        <div className="w-16 h-16 rounded-2xl p-[2px] bg-white/10 group hover:bg-[var(--gold-primary)] transition-colors active:scale-95 duration-300">
+                                                            <div className="w-full h-full rounded-2xl border-2 border-black overflow-hidden bg-gray-900 relative">
+                                                                <ProfileAvatar user={currentUser} className="opacity-80" />
+                                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                                    <Icons.Plus className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">{t('ADD_STORY')}</span>
+                                                    </div>
+                                                )}
                                                 {userStories.map(s => {
                                                     const isYT = isYouTubeUrl(s.videoUrl);
                                                     const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
@@ -2689,12 +2702,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-2xl border-2 border-[var(--gold-primary)] shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
+                                                            <div className="w-16 h-16 rounded-2xl border-2 border-[var(--gold-primary)] p-0.5 shadow-lg shadow-[var(--gold-primary)]/10 bg-black overflow-hidden relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
                                                                             src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
+                                                                            className="w-full h-full object-cover rounded-2xl pointer-events-none"
                                                                             autoPlay
                                                                             muted
                                                                             loop
@@ -2704,18 +2717,18 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                                         />
                                                                     ) : isYT ? (
                                                                         <div className="w-full h-full relative">
-                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-2xl" alt="" />
                                                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                                                <div className="w-6 h-6 rounded-2xl bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
                                                                                     <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     ) : (
-                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-2xl" />
                                                                     )
                                                                 ) : (
-                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
+                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-2xl">
                                                                         <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
                                                                             {s.desc}
                                                                         </span>
