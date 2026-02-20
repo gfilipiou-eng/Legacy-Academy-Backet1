@@ -32,8 +32,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
             const isVideo = url.includes('/video/upload/');
 
             if (isCover && isVideo) {
-                // DO NOT add q_auto or vc_auto which trigger sync processing of 90MB videos and cause 404s
-                return url;
+                // Aggressively strip any cached synchronous transformations to prevent 404s on large MP4s
+                return url.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/$1');
             }
 
             let transform = '';
