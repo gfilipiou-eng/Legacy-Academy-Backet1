@@ -2453,9 +2453,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                             }} />
 
                             <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
-                                className="mt-6 w-full py-4 bg-gradient-to-r from-[var(--gold-primary)]/20 via-black/60 to-[var(--gold-primary)]/20 border border-[var(--gold-primary)]/40 rounded-2xl text-xs text-white font-black uppercase tracking-[0.2em] cursor-pointer hover:bg-white/10 hover:border-[var(--gold-primary)] hover:shadow-[0_0_25px_rgba(255,215,0,0.3)] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg active:scale-95 relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                                {coverUploading ? <div className="w-5 h-5 border-2 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 text-[var(--gold-primary)] group-hover:scale-110 transition-transform" />}
+                                className="mt-6 w-full py-4 bg-[#121212] hover:bg-[#1a1a1a] border border-white/10 hover:border-white/30 rounded-2xl text-[11px] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98] group">
+                                {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />}
                                 {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                             </button>
                             <input type="file" ref={coverFileRef} hidden accept="image/*,video/*" onChange={async (e) => {
