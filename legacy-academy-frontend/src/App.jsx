@@ -2369,11 +2369,11 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
                         {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
-                            <video src={resolveMediaUrl(displayUser.coverPic)} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-30 mix-blend-screen" />
+                            <video src={resolveMediaUrl(displayUser.coverPic)} autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover opacity-60" />
                         ) : (
-                            <img src={resolveMediaUrl(displayUser.coverPic)} className="w-full h-full object-cover opacity-20 blur-[2px] mix-blend-screen" alt="" />
+                            <img src={resolveMediaUrl(displayUser.coverPic)} className="w-full h-full object-cover opacity-40 blur-[2px]" alt="" />
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
                     </div>
                 )}
 
