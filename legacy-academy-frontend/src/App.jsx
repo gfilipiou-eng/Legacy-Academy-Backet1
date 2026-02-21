@@ -4857,14 +4857,25 @@ const App = () => {
                                                                 <ProfileAvatar user={u} className="rounded-full" />
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="font-bold text-white text-sm">
-                                                                    {u.username}
-                                                                </div>
-                                                                {u.role === 'Founder' && (
-                                                                    <div className="flex items-center mt-1 text-[10px] text-[var(--gold-primary)] font-black uppercase tracking-[0.18em]">
-                                                                        FOUNDER
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <div className="font-bold text-white text-xs sm:text-sm">
+                                                                        {u.username}
                                                                     </div>
-                                                                )}
+                                                                    {u.role === 'Founder' && (
+                                                                        <div className="flex items-center">
+                                                                            <svg
+                                                                                aria-label="Verified Founder"
+                                                                                viewBox="0 0 24 24"
+                                                                                className="w-3.5 h-3.5 text-[#1d9bf0]"
+                                                                            >
+                                                                                <path
+                                                                                    fill="currentColor"
+                                                                                    d="M22 12c0-1.05-.62-1.95-1.52-2.35.27-.96.12-2.03-.57-2.87-.7-.85-1.76-1.26-2.8-1.18A2.96 2.96 0 0 0 14.5 4c-.74-1.02-1.9-1.67-3.21-1.67S8.82 2.98 8.08 4a2.96 2.96 0 0 0-2.61 1.6c-1.04-.08-2.1.33-2.8 1.18-.69.84-.84 1.91-.57 2.87A2.99 2.99 0 0 0 2 12c0 1.05.62 1.95 1.52 2.35-.27.96-.12 2.03.57 2.87.7.85 1.76 1.26 2.8 1.18.55 1.02 1.61 1.73 2.81 1.73 1.2 0 2.26-.71 2.81-1.73 1.04.08 2.1-.33 2.8-1.18.69-.84.84-1.91.57-2.87A2.99 2.99 0 0 0 22 12zM11 16.25 7.75 13l1.06-1.06L11 13.44l4.19-4.19L16.25 10 11 16.25z"
+                                                                                />
+                                                                            </svg>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>
