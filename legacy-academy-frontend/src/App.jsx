@@ -1377,175 +1377,177 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
             )}
 
             {/* CARD CONTENT */}
-            <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4 sm:mb-6">
-                    <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
-                            <ProfileAvatar user={post.author} className="rounded-full" />
-                        </div>
+            <div className="relative z-10 flex gap-3 sm:gap-4">
+                {/* LEFT COL: AVATAR */}
+                <div className="shrink-0 flex flex-col items-center">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
+                        <ProfileAvatar user={post.author} className="rounded-full" />
+                    </div>
+                </div>
+
+                {/* RIGHT COL: CONTENT */}
+                <div className="flex-1 flex flex-col min-w-0">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-1 sm:mb-2 -mt-1 sm:-mt-0.5">
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="font-black text-white text-sm sm:text-base uppercase tracking-tighter hover:text-[var(--gold-primary)] transition-colors cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
-                                <VerifiedBadge isFounder={isFounder} className="w-4 h-4" />
+                            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none">
+                                <span className="font-bold text-white text-[15px] sm:text-base hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
+                                <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
+                                {isFounder && <FounderBadge className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0 -ml-0.5" />}
+                                <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{post.author?.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                                <span className="text-gray-600 text-[13px] mx-1">·</span>
+                                <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
                             </div>
+                        </div>
 
-                            {/* FOUNDER SECTION BELOW NAME */}
-                            {isFounder && (
-                                <div className="flex items-center gap-3 mt-1">
-                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40">
-                                        <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
+                        {/* MORE MENU */}
+                        <div className="relative">
+                            <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-white hover:text-[var(--gold-primary)] transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
+                                <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6 drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]">
+                                    <circle cx="12" cy="12" r="2.5" />
+                                    <circle cx="12" cy="5" r="2.5" />
+                                    <circle cx="12" cy="19" r="2.5" />
+                                </svg>
+                            </button>
+                            {showMenu && (
+                                <>
+                                    <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                    <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
+                                        <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                            <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
+                                            <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
+                                        </button>
+                                        {isOwner && (
+                                            <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                                <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
+                                                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
+                                            </button>
+                                        )}
+                                        {canDelete && (
+                                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                                <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
+                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
+                                            </button>
+                                        )}
                                     </div>
-                                </div>
+                                </>
                             )}
-
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{formatDate(post.createdAt, t, lang)}</span>
                         </div>
                     </div>
 
-                    {/* MORE MENU */}
-                    <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-white hover:text-[var(--gold-primary)] transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                            <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6 drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]">
-                                <circle cx="12" cy="12" r="2.5" />
-                                <circle cx="12" cy="5" r="2.5" />
-                                <circle cx="12" cy="19" r="2.5" />
-                            </svg>
-                        </button>
-                        {showMenu && (
-                            <>
-                                <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
-                                    <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                        <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                                        <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
-                                    </button>
-                                    {isOwner && (
-                                        <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
-                                        </button>
-                                    )}
-                                    {canDelete && (
-                                        <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
-                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
-                                        </button>
-                                    )}
-                                </div>
-                            </>
+                    <div className="space-y-3 mt-1">
+                        {post.desc && (
+                            <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2">
+                                {parseHashtags(post.desc, (tag) => onHashtagClick(tag))}
+                            </p>
+                        )}
+
+                        {(post.image || post.videoUrl) && (
+                            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.01] transition-transform duration-700 shadow-md h-auto min-h-[100px] mt-2">
+                                {isYouTubeUrl(post.videoUrl) ? (
+                                    <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} />
+                                ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                    <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
+                                ) : post.image && (
+                                    imgError ? (
+                                        <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
+                                            <Icons.Image className="w-8 h-8 opacity-20" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
+                                        </div>
+                                    ) : (
+                                        <img
+                                            src={resolveMediaUrl(post.image)}
+                                            alt="Media"
+                                            className="w-full h-auto object-contain bg-[#050505]"
+                                            loading="lazy"
+                                            decoding="async"
+                                            onClick={() => onOpenDetail(post)}
+                                            onDoubleClick={handleDoubleTap}
+                                            onError={() => {
+                                                setImgError(true);
+                                                // Auto-cleanup broken link (Only for Author/Founder)
+                                                if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                            }}
+                                        />
+                                    )
+                                )}
+                            </div>
                         )}
                     </div>
-                </div>
 
-                <div className="space-y-4">
-                    {post.desc && (
-                        <p className="text-[15px] sm:text-[17px] text-white/90 leading-[1.6] font-medium whitespace-pre-wrap break-words px-1">
-                            {parseHashtags(post.desc, (tag) => onHashtagClick(tag))}
-                        </p>
-                    )}
+                    <div className="flex items-center justify-between mt-4 text-gray-400 w-full sm:w-[90%] max-w-sm ml-[-8px]">
+                        {/* COMMENTS */}
+                        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1 group hover:text-sky-400 transition-colors">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-sky-400/10 transition-colors">
+                                <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                            </div>
+                            <span className="text-xs font-medium">{post.comments?.length || 0}</span>
+                        </button>
 
-                    {(post.image || post.videoUrl) && (
-                        <div className="rounded-[2.5rem] overflow-hidden border border-white/5 bg-black/60 relative group-hover/media:scale-[1.01] transition-transform duration-700 shadow-2xl h-auto min-h-[100px]">
-                            {isYouTubeUrl(post.videoUrl) ? (
-                                <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} />
-                            ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
-                            ) : post.image && (
-                                imgError ? (
-                                    <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
-                                        <Icons.Image className="w-8 h-8 opacity-20" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
-                                    </div>
-                                ) : (
-                                    <img
-                                        src={resolveMediaUrl(post.image)}
-                                        alt="Media"
-                                        className="w-full h-auto object-contain bg-[#050505]"
-                                        loading="lazy"
-                                        decoding="async"
-                                        onClick={() => onOpenDetail(post)}
-                                        onDoubleClick={handleDoubleTap}
-                                        onError={() => {
-                                            setImgError(true);
-                                            // Auto-cleanup broken link (Only for Author/Founder)
-                                            if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
-                                        }}
-                                    />
-                                )
-                            )}
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
-                    <div className="flex items-center gap-2 xs:gap-6 sm:gap-10">
                         {/* LIKE */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.likes?.includes(user?._id) ? 'text-red-500' : 'text-gray-500 hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                            <Icons.Heart className={`w-6 h-6 ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} />
-                            <span className="text-xs font-black">{post.likes?.length || 0}</span>
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-red-500/10 transition-colors`}>
+                                <Icons.Heart className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.likes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                            </div>
+                            <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                         </button>
 
                         {/* DISLIKE */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-2.5 group transition-all ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                            <div className="relative">
-                                <Icons.ThumbsDown className={`w-6 h-6 ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''} transition-transform`} />
-                            </div>
-                            <span className="text-xs font-black">{post.dislikes?.length || 0}</span>
-                        </button>
-
-                        {/* COMMENTS */}
-                        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2.5 text-gray-500 hover:text-sky-400 transition-all">
-                            <Icons.MessageSquare className="w-6 h-6" />
-                            <span className="text-xs font-black">{post.comments?.length || 0}</span>
-                        </button>
-                    </div>
-                </div>
-
-                {showComments && (
-                    <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
-                        <div className="flex gap-4">
-                            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
-                                <ProfileAvatar user={user} className="rounded-full" />
-                            </div>
-                            <div className="flex-1 flex flex-col gap-3">
-                                <div className="relative">
-                                    <textarea
-                                        value={commentText}
-                                        onChange={(e) => setCommentText(e.target.value)}
-                                        placeholder={t('WRITE_COMMENT')}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
-                                    />
-                                    <div className="absolute bottom-2 left-2 flex gap-2">
-                                        <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
-                                            <Icons.Mic className="w-5 h-5" />
-                                        </button>
-                                        <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90 active:scale-95 transition-all">
-                                            <Icons.Send className="w-5 h-5" />
-                                        </button>
-                                    </div>
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[var(--gold-primary)]/10 transition-colors`}>
+                                <div className="relative mt-0.5">
+                                    <Icons.ThumbsDown className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.dislikes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
                                 </div>
-                                {commentAudio && (
-                                    <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
-                                            <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button onClick={() => setCommentAudio(null)} className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
-                                            <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-[var(--gold-primary)] text-black font-black text-[10px] rounded-lg">SEND</button>
+                            </div>
+                            <span className="text-xs font-medium">{post.dislikes?.length || 0}</span>
+                        </button>
+                    </div>
+
+                    {showComments && (
+                        <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
+                            <div className="flex gap-4">
+                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
+                                    <ProfileAvatar user={user} className="rounded-full" />
+                                </div>
+                                <div className="flex-1 flex flex-col gap-3">
+                                    <div className="relative">
+                                        <textarea
+                                            value={commentText}
+                                            onChange={(e) => setCommentText(e.target.value)}
+                                            placeholder={t('WRITE_COMMENT')}
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
+                                        />
+                                        <div className="absolute bottom-2 left-2 flex gap-2">
+                                            <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
+                                                <Icons.Mic className="w-5 h-5" />
+                                            </button>
+                                            <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90 active:scale-95 transition-all">
+                                                <Icons.Send className="w-5 h-5" />
+                                            </button>
                                         </div>
                                     </div>
-                                )}
+                                    {commentAudio && (
+                                        <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
+                                                <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => setCommentAudio(null)} className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
+                                                <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-[var(--gold-primary)] text-black font-black text-[10px] rounded-lg">SEND</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="space-y-6">
+                                {(post.comments || []).map(c => (
+                                    <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                                ))}
                             </div>
                         </div>
-                        <div className="space-y-6">
-                            {(post.comments || []).map(c => (
-                                <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
-                            ))}
-                        </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </motion.div>
     );
