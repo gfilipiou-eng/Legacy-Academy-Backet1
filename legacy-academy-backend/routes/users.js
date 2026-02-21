@@ -126,7 +126,7 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
-// GET NOTIFICATIONS
+// GET NOTIFICATIONS (with auto-heal for 'Someone' usernames)
 router.get("/notifications", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
@@ -135,9 +135,34 @@ router.get("/notifications", verifyToken, async (req, res) => {
 
         const followers = (user.followers || []).map(id => String(id));
 
-        // SAFETY FILTER: Only hide if they are ALREADY followers
-        // This fixes "stuck" notifications for requests already accepted
-        const filteredNotifications = (user.notifications || []).filter(n => {
+        // Collect IDs that need healing (stored as 'Someone' or blank)
+        const needsHeal = (user.notifications || []).filter(n =>
+            n.from && (!n.fromUsername || n.fromUsername === 'Someone' || n.fromUsername === 'Unknown')
+        );
+
+        // Heal in background: look up real usernames and patch DB
+        if (needsHeal.length > 0) {
+            const uniqueIds = [...new Set(needsHeal.map(n => String(n.from)))];
+            const actors = await User.find({ _id: { $in: uniqueIds } }).select('_id username profilePic').lean();
+            const actorMap = {};
+            actors.forEach(a => { actorMap[String(a._id)] = a; });
+
+            // Patch each broken notification in DB
+            for (const n of needsHeal) {
+                const actor = actorMap[String(n.from)];
+                if (actor) {
+                    await User.updateOne(
+                        { _id: userId, "notifications._id": n._id },
+                        { $set: { "notifications.$.fromUsername": actor.username, "notifications.$.fromProfilePic": actor.profilePic || '' } }
+                    );
+                }
+            }
+        }
+
+        // Re-fetch after potential healing
+        const freshUser = needsHeal.length > 0 ? await User.findById(userId).lean() : user;
+
+        const filteredNotifications = (freshUser.notifications || []).filter(n => {
             if (n.type === 'follow_request') {
                 const fId = String(n.from);
                 if (followers.includes(fId)) return false;
