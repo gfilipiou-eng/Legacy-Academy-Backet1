@@ -49,7 +49,12 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
         if (isPrivate && !isOwner && !isFollower && !isFounder) {
             return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
         }
-        const posts = await Post.find({ author: targetUserId })
+        const posts = await Post.find({
+            $or: [
+                { author: targetUserId },
+                { reposts: targetUserId }
+            ]
+        })
             .populate("author", "username profilePic role")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 });
@@ -185,6 +190,56 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
             message: isDisliking ? "Disliked" : "Undisliked",
             likes: updatedPost.likes,
             dislikes: updatedPost.dislikes
+        });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// REPOST POST
+router.put("/:id/repost", verifyToken, async (req, res) => {
+    try {
+        const currentPost = await Post.findById(req.params.id);
+        if (!currentPost) return res.status(404).json("Post not found");
+
+        const userId = String(req.user.id);
+        const isReposting = !(currentPost.reposts || []).some(id => String(id) === userId);
+
+        let newReposts = (currentPost.reposts || []).map(id => String(id));
+
+        if (isReposting) {
+            newReposts.push(userId);
+        } else {
+            newReposts = newReposts.filter(id => id !== userId);
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.id,
+            { $set: { reposts: [...new Set(newReposts)] } },
+            { new: true }
+        );
+
+        const io = req.app.get('io');
+        if (io) {
+            // Can use post.liked event or create a new one. We'll reuse/add post.reposted
+            io.emit('post.reposted', {
+                postId: req.params.id,
+                reposts: updatedPost.reposts
+            });
+
+            if (isReposting && String(updatedPost.author) !== String(userId)) {
+                io.to(String(updatedPost.author)).emit('notification.received', {
+                    type: 'repost',
+                    fromUsername: req.user.username || 'Someone',
+                    fromProfilePic: req.user.profilePic || '',
+                    postId: updatedPost._id
+                });
+            }
+        }
+
+        res.status(200).json({
+            message: isReposting ? "Reposted" : "Unreposted",
+            reposts: updatedPost.reposts
         });
     } catch (err) {
         res.status(500).json(err);

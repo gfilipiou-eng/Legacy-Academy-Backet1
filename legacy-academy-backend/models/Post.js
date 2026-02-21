@@ -23,6 +23,7 @@ const PostSchema = new mongoose.Schema({
   // ENGAGEMENT
   likes: { type: Array, default: [] },
   dislikes: { type: Array, default: [] },
+  reposts: { type: Array, default: [] },
   shares: { type: Array, default: [] },
   likesUsers: { type: Array, default: [] },
   comments: [{
