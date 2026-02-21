@@ -361,7 +361,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 
 const FounderBadge = ({ className = "w-5 h-5", title }) => (
     <div className={`relative flex items-center justify-center ${className} shrink-0`} title={title || "LEGACY FOUNDER"}>
-        <svg viewBox="0 0 24 24" className="w-full h-full drop-shadow-[0_1px_3px_rgba(245,195,44,0.3)]" fill="none">
+        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none">
             <polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" />
             <path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -2549,9 +2549,9 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                             }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
-                        <div className="p-4 sm:p-6 pb-20 mt-2 sm:mt-4">
+                        <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-start justify-between mb-3 sm:mb-4">
-                                <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-10 sm:-mt-16' : ''}`}>
+                                <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
                                     <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                     </div>
