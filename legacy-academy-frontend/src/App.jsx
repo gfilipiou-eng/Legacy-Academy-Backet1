@@ -2901,9 +2901,9 @@ const ProfileModal = ({
                                         <div
                                             className="mb-6"
                                             style={
-                                                zoomLevel !== 1
+                                                currentZoom !== 1
                                                     ? {
-                                                          transform: `scale(${1 / zoomLevel})`,
+                                                          transform: `scale(${1 / currentZoom})`,
                                                           transformOrigin: 'top left',
                                                       }
                                                     : undefined
@@ -3467,6 +3467,7 @@ const App = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+    const currentZoom = Number(localStorage.getItem('uiZoom') || '1') || 1;
 
     const handleAuthInputChange = (e) => {
         const { id, value } = e.target;
@@ -4810,9 +4811,9 @@ const App = () => {
                             <div
                                 className="w-full px-3 sm:px-6 py-2 flex items-center justify-between"
                                 style={
-                                    zoomLevel !== 1
+                                        currentZoom !== 1
                                         ? {
-                                              transform: `scale(${1 / zoomLevel})`,
+                                              transform: `scale(${1 / currentZoom})`,
                                               transformOrigin: 'top center',
                                           }
                                         : undefined
