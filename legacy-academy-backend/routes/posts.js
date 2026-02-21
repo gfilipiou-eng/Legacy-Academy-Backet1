@@ -65,6 +65,25 @@ router.put("/:id/repost", verifyToken, async (req, res) => {
             });
 
             if (isReposting && String(updatedPost.author) !== String(userId)) {
+                // Save to DB
+                await User.findByIdAndUpdate(updatedPost.author, {
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'repost',
+                                from: userId,
+                                fromUsername: req.user.username || 'Someone',
+                                fromProfilePic: req.user.profilePic || '',
+                                post: updatedPost._id,
+                                read: false,
+                                createdAt: new Date()
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+
+                // Emit real-time
                 io.to(String(updatedPost.author)).emit('notification.received', {
                     type: 'repost',
                     fromUsername: req.user.username || 'Someone',
@@ -181,6 +200,25 @@ router.put("/:id/like", verifyToken, async (req, res) => {
             });
 
             if (isLiking && String(updatedPost.author) !== String(userId)) {
+                // Save to DB
+                await User.findByIdAndUpdate(updatedPost.author, {
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'like',
+                                from: userId,
+                                fromUsername: req.user.username || 'Someone',
+                                fromProfilePic: req.user.profilePic || '',
+                                post: updatedPost._id,
+                                read: false,
+                                createdAt: new Date()
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+
+                // Emit real-time
                 io.to(String(updatedPost.author)).emit('notification.received', {
                     type: 'like',
                     fromUsername: req.user.username || 'Someone',
@@ -235,6 +273,25 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
             });
 
             if (isDisliking && String(updatedPost.author) !== String(userId)) {
+                // Save to DB
+                await User.findByIdAndUpdate(updatedPost.author, {
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'dislike',
+                                from: userId,
+                                fromUsername: req.user.username || 'Someone',
+                                fromProfilePic: req.user.profilePic || '',
+                                post: updatedPost._id,
+                                read: false,
+                                createdAt: new Date()
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+
+                // Emit real-time
                 io.to(String(updatedPost.author)).emit('notification.received', {
                     type: 'dislike',
                     fromUsername: req.user.username || 'Someone',
@@ -285,6 +342,25 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
             // NOTIFY AUTHOR (Real-time)
             if (String(post.author) !== String(req.user.id)) {
+                // Save to DB
+                await User.findByIdAndUpdate(post.author, {
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'comment',
+                                from: req.user.id,
+                                fromUsername: req.user.username || 'Someone',
+                                fromProfilePic: req.user.profilePic || '',
+                                post: post._id,
+                                read: false,
+                                createdAt: new Date()
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+
+                // Emit real-time
                 io.to(String(post.author)).emit('notification.received', {
                     type: 'comment',
                     fromUsername: req.user.username || 'Someone',

@@ -97,12 +97,30 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
         const savedMessage = await newMessage.save();
 
-        // 🔥 REAL-TIME EMIT
+        // 🔥 REAL-TIME EMIT & PERSISTENCE
         const io = req.app.get('io');
         if (io) {
             const senderUser = await User.findById(currentUserId).select('username profilePic');
             io.to(String(recipientId)).emit('message.received', savedMessage);
             if (senderUser) {
+                // Save to DB for historical/offline access
+                await User.findByIdAndUpdate(recipientId, {
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'message',
+                                from: currentUserId,
+                                fromUsername: senderUser.username,
+                                fromProfilePic: senderUser.profilePic,
+                                read: false,
+                                createdAt: new Date()
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+
+                // Emit real-time signal
                 io.to(String(recipientId)).emit('notification.received', {
                     type: 'message',
                     fromUsername: senderUser.username,

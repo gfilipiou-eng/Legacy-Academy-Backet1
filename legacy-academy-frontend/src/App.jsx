@@ -2539,10 +2539,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
 
                             <div className="mb-6 px-2">
                                 <div className="flex flex-col mb-4">
-                                    <div className="font-black text-white text-2xl sm:text-3xl flex items-center gap-2 leading-none uppercase tracking-tighter">
+                                    <div className="font-black text-white text-xl sm:text-2xl flex items-center gap-2 leading-none uppercase tracking-tighter flex-wrap">
                                         {displayUser?.username || "Unknown Agent"}
-                                        <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
-                                        {displayUser?.role === 'Founder' && <FounderBadge className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 ml-1" />}
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-5 h-5 sm:w-6 sm:h-6" />
+                                            {displayUser?.role === 'Founder' && <FounderBadge className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />}
+                                        </div>
                                     </div>
                                     <div className="text-gray-400 text-sm font-bold mt-1.5 flex items-center gap-2">
                                         @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
@@ -2554,22 +2556,22 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                     {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                 </div>
 
-                                <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-medium flex-wrap">
-                                    <div className="flex items-center gap-1.5 hover:opacity-80 transition-opacity whitespace-nowrap">
-                                        <span className="font-bold text-white text-base">{(userPosts || []).length}</span>
-                                        <span className="text-gray-400">{t('POSTS') || 'Posts'}</span>
+                                <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium flex-wrap">
+                                    <div className="flex flex-col items-start gap-0.5 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-2xl min-w-[80px] hover:bg-white/[0.06] transition-all">
+                                        <span className="font-black text-white text-base">{(userPosts || []).length}</span>
+                                        <span className="text-gray-500 text-[9px] font-black uppercase tracking-wider">{t('POSTS') || 'Posts'}</span>
                                     </div>
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap">
-                                        <span className="font-bold text-white text-base">{displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}</span>
-                                        <span className="text-gray-400">{t('FOLLOWERS') || 'Followers'}</span>
+                                    }} className="flex flex-col items-start gap-0.5 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-2xl min-w-[80px] cursor-pointer hover:bg-white/[0.06] transition-all active:scale-95 group">
+                                        <span className="font-black text-white text-base group-hover:text-[var(--gold-primary)] transition-colors">{displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}</span>
+                                        <span className="text-gray-500 text-[9px] font-black uppercase tracking-wider">{t('FOLLOWERS') || 'Followers'}</span>
                                     </div>
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap">
-                                        <span className="font-bold text-white text-base">{displayUser?.following?.length || 0}</span>
-                                        <span className="text-gray-400">{t('FOLLOWING') || 'Following'}</span>
+                                    }} className="flex flex-col items-start gap-0.5 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-2xl min-w-[80px] cursor-pointer hover:bg-white/[0.06] transition-all active:scale-95 group">
+                                        <span className="font-black text-white text-base group-hover:text-[var(--gold-primary)] transition-colors">{displayUser?.following?.length || 0}</span>
+                                        <span className="text-gray-500 text-[9px] font-black uppercase tracking-wider">{t('FOLLOWING') || 'Following'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2585,8 +2587,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${isFollowing ? 'bg-white/5 border border-white/10 text-white' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'}`}>
                                             {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                         </button>
-                                        <button onClick={() => onOpenChat(displayUser)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all active:scale-95 group">
-                                            <Icons.Ghost className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                        <button onClick={() => onOpenChat(displayUser)} className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all active:scale-95 group">
+                                            <Icons.Ghost className="w-4.5 h-4.5 group-hover:scale-110 transition-transform" />
                                         </button>
                                         {currentUser?.role === 'Founder' && (
                                             <button onClick={() => window.confirm(t('CONFIRM_BAN')) && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95">

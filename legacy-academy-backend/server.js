@@ -87,7 +87,7 @@ mongoose.connect(process.env.MONGO_URL)
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "healthy",
-    deployed: "V11 (Repost + Badge fixes)",
+    deployed: "V13 (Persistent Notifications + Repost 404 Fix)",
     timestamp: new Date(),
     uptime: process.uptime()
   });
