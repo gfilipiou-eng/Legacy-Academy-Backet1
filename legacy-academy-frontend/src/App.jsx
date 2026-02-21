@@ -2898,17 +2898,7 @@ const ProfileModal = ({
                             ) : (
                                 <>
                                     {(isMe || userStories.length > 0) && (
-                                        <div
-                                            className="mb-6"
-                                            style={
-                                                currentZoom !== 1
-                                                    ? {
-                                                          transform: `scale(${1 / currentZoom})`,
-                                                          transformOrigin: 'top left',
-                                                      }
-                                                    : undefined
-                                            }
-                                        >
+                                        <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
@@ -3467,7 +3457,6 @@ const App = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
-    const currentZoom = Number(localStorage.getItem('uiZoom') || '1') || 1;
 
     const handleAuthInputChange = (e) => {
         const { id, value } = e.target;
@@ -4811,9 +4800,9 @@ const App = () => {
                             <div
                                 className="w-full px-3 sm:px-6 py-2 flex items-center justify-between"
                                 style={
-                                        currentZoom !== 1
+                                    zoomLevel !== 1
                                         ? {
-                                              transform: `scale(${1 / currentZoom})`,
+                                              transform: `scale(${1 / zoomLevel})`,
                                               transformOrigin: 'top center',
                                           }
                                         : undefined
