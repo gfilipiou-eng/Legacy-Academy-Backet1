@@ -2089,7 +2089,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh] bg-[#0d0d0d] border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col backdrop-blur-3xl will-change-transform"
+                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh] border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col backdrop-blur-3xl will-change-transform"
+                style={{ backgroundColor: 'var(--glass-bg)' }}
             >
                 {/* Ambient glows */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-20" />
@@ -2133,13 +2134,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between gap-4">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                                            {t('DISPLAY_MODE_TITLE', 'Display Mode')}
-                                        </div>
-                                        <div className="text-[10px] text-gray-500 mt-0.5">
-                                            {t('DISPLAY_MODE_DESC', 'Light / Dark background, κρατάει το χρώμα που διάλεξες')}
-                                        </div>
+                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em]">
+                                        MODE
                                     </div>
                                     <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex items-center">
                                         <button
@@ -2195,7 +2191,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     ))}
                                 </div>
                                 <div className="sm:hidden space-y-2">
-                                    <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">THEME</div>
+                                    <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
+                                        THEME
+                                    </div>
                                     <select
                                         value={user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000'}
                                         onChange={(e) => {
@@ -2203,7 +2201,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             applyTheme(color);
                                             handleSave('theme', color);
                                         }}
-                                        className="w-full bg-black border border-white/20 rounded-xl py-3.5 px-3 text-white text-sm font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none h-[52px]"
+                                        className="w-full bg-[var(--app-bg)] border border-white/40 rounded-2xl py-3.5 px-4 text-[15px] font-black text-[var(--app-text)] outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-all appearance-none h-[56px]"
                                     >
                                         <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
                                         <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
@@ -4700,8 +4698,8 @@ const App = () => {
                     </div>
                 </div>
             ) : (
-                <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0 bg-black"></div>
+                <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                    <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">

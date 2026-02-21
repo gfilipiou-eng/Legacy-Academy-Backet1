@@ -183,6 +183,24 @@ const getConversation = async (req, res) => {
 };
 
 router.get("/conversation/:userId", verifyToken, getConversation);
+
+router.get("/:messageId/lock", verifyToken, async (req, res) => {
+    try {
+        const messageId = req.params.messageId;
+        const userId = req.user.id;
+        const msg = await Message.findById(messageId);
+        if (!msg) return res.status(404).json("Message not found");
+
+        if (String(msg.sender) !== String(userId) && String(msg.recipient) !== String(userId)) {
+            return res.status(403).json("Not authorized to view this message");
+        }
+
+        res.status(200).json({ success: true, isLocked: !!msg.isLocked });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 router.get("/:userId", verifyToken, getConversation);
 
 router.patch("/:messageId/lock", verifyToken, async (req, res) => {
