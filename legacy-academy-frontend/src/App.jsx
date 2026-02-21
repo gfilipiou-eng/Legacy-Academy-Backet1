@@ -453,12 +453,11 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const postAuthorId = post.author?._id || post.author;
     const isPostAuthor = String(postAuthorId) === String(user?._id);
 
-    // Improved role detection handling string vs object IDs and denormalized data
     const foundUserInList = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
     const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
-    const canDelete = isCommentAuthor || user?.role === 'Founder'; // Only own or Founder can delete
+    const canDelete = isCommentAuthor || user?.role === 'Founder';
 
     const handleSave = () => {
         if (typeof onEdit === 'function') onEdit(post._id, comment._id, editText);
@@ -466,55 +465,91 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     };
 
     return (
-        <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
-                <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} className="rounded-full" />
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
+        >
+            <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/10 bg-black">
+                <ProfileAvatar
+                    user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })}
+                    className="rounded-full"
+                />
             </div>
 
-            <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
-                <div className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-xl border backdrop-blur-3xl transition-all duration-300 ${isCommentAuthor ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)]/30 rounded-tr-none' : 'bg-white/[0.04] border-white/10 rounded-tl-none hover:bg-white/[0.07] hover:border-white/20'}`}>
-                    <div className="flex items-center gap-3 mb-1 justify-between flex-wrap overflow-hidden min-w-[140px]">
-                        <div className="flex items-center gap-1">
-                            <span className={`font-black text-[9px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
-                                {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
-                            </span>
-                            <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
-                            {isFounder && <FounderBadge className="w-3.5 h-3.5 -ml-0.5" />}
-                        </div>
-                    </div>
-
-                    {isEditing ? (
-                        <div className="mt-1 min-w-[200px]">
-                            <textarea autoFocus value={editText} onChange={e => setEditText(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-[var(--gold-primary)]/50 min-h-[60px] resize-none" />
-                            <div className="flex gap-2">
-                                <button onClick={handleSave} className="bg-[var(--gold-primary)] px-3 py-1 rounded-lg text-[9px] font-black text-black hover:opacity-90 transition-colors uppercase">{t('SAVE')}</button>
-                                <button onClick={() => setIsEditing(false)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 hover:bg-white/10 transition-colors uppercase">{t('CANCEL')}</button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col gap-2">
-                            {comment.text && <span className="text-[14px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere">{comment.text}</span>}
-                            {comment.audioUrl && (
-                                <div className="flex flex-col gap-1.5 mt-1">
-                                    <div className="flex items-center gap-1.5 text-[8px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 w-fit px-2 py-0.5 rounded border border-[var(--gold-primary)]/20">
-                                        <div className="w-1 h-1 rounded-full bg-[var(--gold-primary)] animate-pulse" /> {t('VOICE_NOTE')}
-                                    </div>
-                                    <VoiceNotePlayer src={resolveMediaUrl(comment.audioUrl)} t={t} />
-                                </div>
-                            )}
-                        </div>
-                    )}
+            <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end text-right' : 'items-start'}`}>
+                <div className="flex items-center gap-2 mb-1 max-w-full">
+                    <span className={`font-black text-[10px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-white'}`}>
+                        {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
+                    </span>
+                    <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
+                    {isFounder && <FounderBadge className="w-3.5 h-3.5 -ml-0.5" />}
                 </div>
 
-                <div className="flex flex-wrap gap-2 mt-2 px-1 items-center">
-                    <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">{formatDate(comment.createdAt, t, lang)}</span>
+                {isEditing ? (
+                    <div className="w-full mt-1">
+                        <textarea
+                            autoFocus
+                            value={editText}
+                            onChange={e => setEditText(e.target.value)}
+                            className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-[var(--gold-primary)]/60 min-h-[60px] resize-none"
+                        />
+                        <div className="flex gap-2 mt-2 justify-end">
+                            <button
+                                onClick={handleSave}
+                                className="px-3 py-1.5 rounded-full bg-[var(--gold-primary)] text-[10px] font-black text-black hover:brightness-110 transition-colors uppercase tracking-wider"
+                            >
+                                {t('SAVE')}
+                            </button>
+                            <button
+                                onClick={() => setIsEditing(false)}
+                                className="px-3 py-1.5 rounded-full bg-white/5 text-[10px] font-black text-gray-400 hover:bg-white/10 transition-colors uppercase tracking-wider"
+                            >
+                                {t('CANCEL')}
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-1 w-full">
+                        {comment.text && (
+                            <span className="text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words">
+                                {comment.text}
+                            </span>
+                        )}
+                        {comment.audioUrl && (
+                            <div className="flex flex-col gap-1 mt-1">
+                                <div className="flex items-center gap-1 text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-[0.18em]">
+                                    <div className="w-1 h-1 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
+                                </div>
+                                <VoiceNotePlayer src={resolveMediaUrl(comment.audioUrl)} t={t} />
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <div className="flex flex-wrap gap-3 mt-2 items-center text-[10px] text-gray-500">
+                    <span className="font-bold uppercase tracking-tight">
+                        {formatDate(comment.createdAt, t, lang)}
+                    </span>
                     {canEdit && !isEditing && (
-                        <button type="button" onClick={() => setIsEditing(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(59,130,246,0.5)] hover:shadow-[0_0_15px_rgba(59,130,246,0.8)] transition-all active:scale-95" title={t('EDIT')}>
+                        <button
+                            type="button"
+                            onClick={() => setIsEditing(true)}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                            title={t('EDIT')}
+                        >
                             <Icons.Edit className="w-3 h-3" /> <span className="hidden sm:inline">{t('EDIT')}</span>
                         </button>
                     )}
                     {canDelete && (
-                        <button type="button" onClick={() => onDelete?.(post._id, comment._id)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(220,38,38,0.5)] hover:shadow-[0_0_15px_rgba(220,38,38,0.8)] transition-all active:scale-95" title={t('DELETE')}>
+                        <button
+                            type="button"
+                            onClick={() => onDelete?.(post._id, comment._id)}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                            title={t('DELETE')}
+                        >
                             <Icons.Trash className="w-3 h-3" /> <span className="hidden sm:inline">{t('DELETE')}</span>
                         </button>
                     )}
@@ -709,7 +744,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             {/* COMMENTS */}
                             <button
                                 onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 active:scale-90 transition-all">
+                                className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 transition-all">
                                 <Icons.MessageSquare className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
                             </button>
@@ -717,7 +752,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             {/* REPOSTS */}
                             <button
                                 onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl active:scale-90 transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500 hover:text-green-400'}`}>
+                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500 hover:text-green-400'}`}>
                                 <Icons.RefreshCcw className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                             </button>
@@ -725,16 +760,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             {/* LIKE */}
                             <button
                                 onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl active:scale-90 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}>
-                                <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_rgba(248,113,113,0.8)]' : ''}`} />
+                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}>
+                                <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
                             {/* DISLIKE */}
                             <button
                                 onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl active:scale-90 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_var(--gold-glow)]' : ''}`} />
+                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
@@ -1419,30 +1454,38 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="flex items-center justify-around mt-3 w-full border-t border-white/5 pt-3">
 
                         {/* COMMENTS */}
-                        <button onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${showComments ? 'text-sky-400' : 'text-gray-600 hover:text-sky-400'}`}>
+                        <button
+                            onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${showComments ? 'text-sky-400' : 'text-gray-600 hover:text-sky-400'}`}
+                        >
                             <Icons.MessageSquare className="w-5 h-5" />
                             <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
                         </button>
 
                         {/* REPOSTS */}
-                        <button onPointerDown={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-600 hover:text-green-400'}`}>
+                        <button
+                            onPointerDown={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-600 hover:text-green-400'}`}
+                        >
                             <Icons.RefreshCcw className="w-5 h-5" />
                             <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                         </button>
 
                         {/* LIKE */}
-                        <button onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}`}>
-                            <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_rgba(248,113,113,0.8)]' : ''}`} />
+                        <button
+                            onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}`}
+                        >
+                            <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                             <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                         </button>
 
                         {/* DISLIKE */}
-                        <button onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-600 hover:text-[var(--gold-primary)]'}`}>
-                            <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_var(--gold-glow)]' : ''}`} />
+                        <button
+                            onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-600 hover:text-[var(--gold-primary)]'}`}
+                        >
+                            <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                             <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                         </button>
 
