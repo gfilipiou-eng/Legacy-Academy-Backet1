@@ -152,7 +152,8 @@ const getConversation = async (req, res) => {
                 { sender: otherUserId, recipient: currentUserId }
             ],
             isRead: true,
-            readAt: { $lt: oneMinuteAgo }
+            readAt: { $lt: oneMinuteAgo },
+            isLocked: { $ne: true }
         });
 
         // 🗑️ CLOUDINARY CLEANUP: Delete media from expired messages
@@ -183,5 +184,27 @@ const getConversation = async (req, res) => {
 
 router.get("/conversation/:userId", verifyToken, getConversation);
 router.get("/:userId", verifyToken, getConversation);
+
+router.patch("/:messageId/lock", verifyToken, async (req, res) => {
+    try {
+        const messageId = req.params.messageId;
+        const userId = req.user.id;
+        const locked = !!req.body.locked;
+
+        const msg = await Message.findById(messageId);
+        if (!msg) return res.status(404).json("Message not found");
+
+        if (String(msg.sender) !== String(userId) && String(msg.recipient) !== String(userId)) {
+            return res.status(403).json("Not authorized to modify this message");
+        }
+
+        msg.isLocked = locked;
+        await msg.save();
+
+        res.status(200).json({ success: true, isLocked: msg.isLocked });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
 
 export default router;

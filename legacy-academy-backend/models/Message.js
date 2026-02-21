@@ -24,6 +24,10 @@ const MessageSchema = new mongoose.Schema(
             type: String, // URL for image attachment
             default: "",
         },
+        isLocked: {
+            type: Boolean,
+            default: false,
+        },
         isRead: {
             type: Boolean,
             default: false,

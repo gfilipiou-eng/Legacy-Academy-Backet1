@@ -1160,6 +1160,8 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         playSound('pop');
     };
 
+    const isFounderSender = note?.sender?.role === 'Founder';
+
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -1180,7 +1182,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
                     <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{note.fromUsername}</span>
-                    <VerifiedBadge isFounder={note.sender?.role === 'Founder'} className="w-3.5 h-3.5 ml-1" />
+                    <VerifiedBadge isFounder={isFounderSender} className="w-3.5 h-3.5 ml-1" />
                     <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
                             note.type === 'like' ? t('NOTIF_LIKE') :
@@ -1836,15 +1838,41 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => {
-                                    // SMART DETECTION: check if 'audio' field actually holds an image (old bug fallback)
                                     const audioVal = m.audio || m.audioUrl || "";
                                     const isAudioActuallyImage = audioVal && /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|avif)/i.test(audioVal.split('?')[0]);
                                     const imageUrl = m.image || (isAudioActuallyImage ? audioVal : "");
                                     const realAudio = isAudioActuallyImage ? "" : audioVal;
+                                    const isOwn = String(m.sender) === String(user?._id);
+
+                                    const toggleLockMessage = async () => {
+                                        if (!m._id) return;
+                                        try {
+                                            await axios.patch(`/messages/${m._id}/lock`, { locked: !m.isLocked });
+                                            const targetId = activeChat._id;
+                                            setMessages(prev => ({
+                                                ...prev,
+                                                [targetId]: (prev[targetId] || []).map(msg =>
+                                                    msg._id === m._id ? { ...msg, isLocked: !m.isLocked } : msg
+                                                )
+                                            }));
+                                        } catch (e) {
+                                            console.error('Failed to toggle lock state', e);
+                                        }
+                                    };
 
                                     return (
-                                        <div key={i} className={`flex ${String(m.sender) === String(user?._id) ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative ${String(m.sender) === String(user?._id) ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1a1a1a] text-white rounded-bl-none'}`}>
+                                        <div key={i} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative border ${isOwn ? 'bg-blue-600 text-white rounded-br-none border-blue-400/40' : 'bg-[#1a1a1a] text-white rounded-bl-none border-white/5'} ${m.isLocked ? 'ring-1 ring-[var(--gold-primary)]/70' : ''}`}>
+                                                {isOwn && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
+                                                        className={`absolute -top-2 right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-md ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)]' : 'bg-black/70 text-gray-400 border-white/20 hover:bg-white/10 hover:text-white'}`}
+                                                        title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
+                                                    >
+                                                        <Icons.Lock className="w-3 h-3" />
+                                                    </button>
+                                                )}
                                                 {/* IMAGE ATTACHMENT */}
                                                 {imageUrl && (
                                                     <div className="mb-2">
@@ -2099,8 +2127,37 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {/* ── ΑΙΣΘΗΤΙΚΗ ── */}
                     <section>
                         <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
-                        <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
-                            <div className="space-y-4">
+                                <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                                <div className="space-y-4">
+                                    {(() => {
+                                        const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
+                                        const isDark = currentTheme === '#ffd700';
+                                        const isBlueDark = currentTheme === '#3b82f6';
+                                        return (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <button
+                                                    onClick={() => { applyTheme('#ffd700'); handleSave('theme', '#ffd700'); }}
+                                                    className={`py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${
+                                                        isDark
+                                                            ? 'bg-white/10 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(255,215,0,0.25)]'
+                                                            : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/5 hover:text-white'
+                                                    }`}
+                                                >
+                                                    Dark Mode
+                                                </button>
+                                                <button
+                                                    onClick={() => { applyTheme('#3b82f6'); handleSave('theme', '#3b82f6'); }}
+                                                    className={`py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${
+                                                        isBlueDark
+                                                            ? 'bg-blue-600/30 border-blue-400 text-blue-300 shadow-[0_0_15px_rgba(37,99,235,0.35)]'
+                                                            : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/5 hover:text-white'
+                                                    }`}
+                                                >
+                                                    Blue Dark
+                                                </button>
+                                            </div>
+                                        );
+                                    })()}
                                 <div className="hidden sm:flex items-center justify-center gap-2">
                                     {[
                                         { id: 'primary', label: t('CATEGORY_PRIMARY') },
@@ -4802,6 +4859,15 @@ const App = () => {
                             )}
                         </div>
                     </main>
+
+                    {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
+                        <button
+                            onClick={scrollToTop}
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-8 z-[950] w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-all active:scale-95"
+                        >
+                            <Icons.ArrowUp className="w-5 h-5" />
+                        </button>
+                    )}
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pb-4 sm:pb-6 pointer-events-none px-3 sm:px-4">
