@@ -4470,15 +4470,15 @@ const App = () => {
                                     <button
                                         onClick={() => setIsChatOpen(true)}
                                         title={t('MESSAGES_SUBTITLE')}
-                                        className="flex items-center gap-2 px-3 py-2 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-[var(--gold-primary)]/40 transition-colors"
+                                        className="flex items-center gap-2.5 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0"
                                     >
                                         <div className="relative flex items-center justify-center">
-                                            <Icons.Ghost className="w-5 h-5 text-gray-300" />
+                                            <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
                                             {user?.notifications?.some(n => n.type === 'message' && !n.read) && (
-                                                <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+                                                <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] animate-pulse" />
                                             )}
                                         </div>
-                                        <span className="hidden sm:inline text-[10px] font-black text-gray-300 uppercase tracking-[0.22em]">
+                                        <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">
                                             {t('CHAT')}
                                         </span>
                                     </button>
