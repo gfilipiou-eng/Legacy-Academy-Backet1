@@ -418,13 +418,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                 {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
                             </span>
                             <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
+                            {isFounder && <FounderBadge className="w-3.5 h-3.5 -ml-0.5" />}
                         </div>
-                        {isFounder && (
-                            <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 group/badge">
-                                <FounderBadge className="w-4 h-4" />
-                                <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
-                            </div>
-                        )}
                     </div>
 
                     {isEditing ? (
@@ -1283,7 +1278,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -1482,6 +1477,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                                 <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
                             </div>
                             <span className="text-xs font-medium">{post.comments?.length || 0}</span>
+                        </button>
+
+                        {/* REPOSTS */}
+                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onRepost(post._id)} className={`flex items-center gap-1 group transition-colors ${post.reposts?.includes(user?._id) ? 'text-green-500' : 'hover:text-green-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
+                                <Icons.RefreshCcw className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.reposts?.includes(user?._id) ? 'scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                            </div>
+                            <span className="text-xs font-medium">{post.reposts?.length || 0}</span>
                         </button>
 
                         {/* LIKE */}
@@ -3778,6 +3781,42 @@ const App = () => {
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
 
+    const handleRepost = async (postId) => {
+        const userId = user?._id;
+        if (!userId) return;
+
+        // 1. OPTIMISTIC UPDATE
+        const updateFn = (p) => {
+            if (String(p._id) !== String(postId)) return p;
+            const reposts = Array.isArray(p.reposts) ? [...p.reposts] : [];
+            const hasReposted = reposts.some(id => String(id) === String(userId));
+            const newReposts = hasReposted ? reposts.filter(id => String(id) !== String(userId)) : [...reposts, userId];
+            return { ...p, reposts: newReposts };
+        };
+        setPosts(prev => prev.map(updateFn));
+        if (selectedPost && String(selectedPost._id) === String(postId)) {
+            setSelectedPost(prev => updateFn(prev));
+        }
+
+        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        if (navigator.vibrate) navigator.vibrate(50);
+
+        try {
+            const res = await axios.put(`/posts/${postId}/repost`);
+            const { reposts } = res.data;
+            if (Array.isArray(reposts)) {
+                setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, reposts } : p));
+                if (selectedPost && String(selectedPost._id) === String(postId)) {
+                    setSelectedPost(prev => ({ ...prev, reposts }));
+                }
+            }
+        } catch (e) {
+            console.error('Repost failed', e);
+        } finally {
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+        }
+    };
+
     const handleLike = async (postId) => {
         const userId = user?._id;
         if (!userId) return;
@@ -4594,7 +4633,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
                                                                         </motion.div>
                                                                     ))}
                                                                 </AnimatePresence>

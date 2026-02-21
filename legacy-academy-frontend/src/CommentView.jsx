@@ -220,11 +220,74 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32 custom-scrollbar">
-                {/* Post Summary */}
-                <div className="p-4 bg-white/[0.03] rounded-3xl border border-white/5 shadow-inner">
-                    <p className="text-white text-sm font-medium leading-relaxed italic">
-                        {post.desc || post.text || 'No description provided.'}
-                    </p>
+                {/* Post Summary (Bluesky Style) */}
+                <div className="px-4 py-2 border-b border-white/10 mb-2">
+                    <div className="flex gap-3 sm:gap-4">
+                        <div className="shrink-0 flex flex-col items-center">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shadow-lg">
+                                <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+                            </div>
+                        </div>
+                        <div className="flex-1 flex flex-col min-w-0">
+                            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none mb-2">
+                                <span className="font-bold text-white text-[15px] sm:text-base">{post.author?.username || post.authorName}</span>
+                                {post.author?.role === 'Founder' && (
+                                    <>
+                                        <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 text-[#FFD700] fill-current" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
+                                        <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 -ml-0.5" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                    </>
+                                )}
+                                <span className="text-gray-500 text-[13px] ml-1 truncate">@{post.author?.username?.toLowerCase().replace(/\s+/g, '') || post.authorName?.toLowerCase()}</span>
+                                <span className="text-gray-600 text-[13px] mx-1">·</span>
+                                <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
+                            </div>
+                            <p className="text-white text-[15px] sm:text-[16px] font-medium leading-relaxed whitespace-pre-wrap break-words pr-2">
+                                {post.desc || post.text || 'No description provided.'}
+                            </p>
+                            {(post.image || post.videoUrl) && (
+                                <div className="mt-3 rounded-2xl overflow-hidden border border-white/10">
+                                    {post.videoUrl ? (
+                                        <video src={resolveMediaUrl(post.videoUrl)} controls className="w-full h-auto bg-black" />
+                                    ) : (
+                                        <img src={resolveMediaUrl(post.image)} alt="Post media" className="w-full h-auto max-h-[400px] object-contain bg-[#050505]" />
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center justify-between mt-4 text-gray-500 w-[90%] max-w-sm ml-[-8px]">
+                                <div className="flex items-center gap-1 hover:text-sky-400 transition-colors cursor-pointer">
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-sky-400/10">
+                                        <Icons.MessageSquare className="w-[18px] h-[18px]" />
+                                    </div>
+                                    <span className="text-xs">{post.comments?.length || 0}</span>
+                                </div>
+                                <div className="flex items-center gap-1 hover:text-green-500 transition-colors cursor-pointer" onClick={async () => {
+                                    try {
+                                        await axios.put(`/posts/${post._id}/repost`);
+                                        fetchPost();
+                                    } catch (e) { }
+                                }}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-500/10 ${post.reposts?.includes(currentUser?._id) ? 'text-green-500' : ''}`}>
+                                        <Icons.RefreshCcw className="w-[18px] h-[18px]" />
+                                    </div>
+                                    <span className={`text-xs ${post.reposts?.includes(currentUser?._id) ? 'text-green-500' : ''}`}>{post.reposts?.length || 0}</span>
+                                </div>
+                                <div className="flex items-center gap-1 hover:text-red-500 transition-colors cursor-pointer">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500/10 ${post.likes?.includes(currentUser?._id) ? 'text-red-500' : ''}`}>
+                                        <Icons.Heart className={`w-[18px] h-[18px] ${post.likes?.includes(currentUser?._id) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className={`text-xs ${post.likes?.includes(currentUser?._id) ? 'text-red-500' : ''}`}>{post.likes?.length || 0}</span>
+                                </div>
+                                <div className="flex items-center gap-1 hover:text-[var(--gold-primary)] transition-colors cursor-pointer">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--gold-primary)]/10 ${post.dislikes?.includes(currentUser?._id) ? 'text-[var(--gold-primary)]' : ''}`}>
+                                        <Icons.ThumbsDown className={`w-[18px] h-[18px] ${post.dislikes?.includes(currentUser?._id) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className={`text-xs ${post.dislikes?.includes(currentUser?._id) ? 'text-[var(--gold-primary)]' : ''}`}>{post.dislikes?.length || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="space-y-4">
@@ -252,12 +315,10 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[11px] font-black text-white hover:text-[var(--gold-primary)] transition-colors cursor-pointer uppercase tracking-tight">{c.authorName}</span>
                                                 {(c.user?.role === 'Founder') && (
-                                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFD700]/20 to-[#FFD700]/5 px-2.5 py-0.5 rounded-lg border border-[#FFD700]/40 ml-1">
-                                                        <div className="relative flex items-center justify-center w-3 h-3">
-                                                            <Icons.Crown className="w-full h-full" style={{ color: '#FFD700', stroke: '#FFD700' }} />
-                                                        </div>
-                                                        <span className="text-[8px] sm:text-[9px] text-[#FFD700] uppercase font-black tracking-widest">LEGACY {lang === 'el' ? 'ΙΔΡΥΤΗΣ' : 'FOUNDER'}</span>
-                                                    </div>
+                                                    <>
+                                                        <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0 text-[#FFD700] fill-current -ml-0.5" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
+                                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0 -ml-1 border-white" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                                    </>
                                                 )}
                                             </div>
                                             <span className="text-[9px] text-gray-600 font-bold uppercase">{formatDate(c.createdAt, t, lang)}</span>
