@@ -2583,13 +2583,13 @@ const ProfileModal = ({
                                 <div className="grid grid-cols-4 gap-1.5 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
-                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('POSTS')}</span>
+                                        <Icons.Grid className="w-3.5 h-3.5 text-gray-500" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
                                         <span className="font-black text-[var(--gold-primary)] text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = String(displayUser?._id || '');
@@ -2599,27 +2599,27 @@ const ProfileModal = ({
                                                 ).length;
                                             })()}
                                         </span>
-                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('REPOSTS')}</span>
+                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-500" />
                                     </div>
 
                                     {/* FOLLOWERS */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
-                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
+                                        <Icons.Users className="w-3.5 h-3.5 text-gray-500" />
                                     </div>
 
                                     {/* FOLLOWING */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
                                             {displayUser?.following?.length || 0}
                                         </span>
-                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
+                                        <Icons.User className="w-3.5 h-3.5 text-gray-500" />
                                     </div>
 
                                 </div>
