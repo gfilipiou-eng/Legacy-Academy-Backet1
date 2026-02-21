@@ -16,11 +16,13 @@
   --twitter-blue: #1d9bf0;
   --glass-bg: rgba(0, 0, 0, 0.9);
   --glass-border: #2f3336;
+  --app-bg: #000000;
+  --app-text: #e7e9ea;
 }
 
 body {
-  background-color: #000;
-  color: #e7e9ea;
+  background-color: var(--app-bg);
+  color: var(--app-text);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
   min-height: 100vh;

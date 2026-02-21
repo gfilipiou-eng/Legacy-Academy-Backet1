@@ -2038,11 +2038,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
+    const [displayMode, setDisplayMode] = useState(user?.settings?.displayMode || 'dark');
 
     useEffect(() => {
         if (user && !saving) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
+            setDisplayMode(user.settings?.displayMode || 'dark');
         }
     }, [user, saving]);
 
@@ -2061,6 +2063,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
             if (key === 'theme') payload = { settings: { theme: val } };
+            if (key === 'displayMode') payload = { settings: { displayMode: val } };
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
@@ -2127,37 +2130,52 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {/* ── ΑΙΣΘΗΤΙΚΗ ── */}
                     <section>
                         <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
-                                <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
-                                <div className="space-y-4">
-                                    {(() => {
-                                        const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
-                                        const isDark = currentTheme === '#ffd700';
-                                        const isBlueDark = currentTheme === '#3b82f6';
-                                        return (
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <button
-                                                    onClick={() => { applyTheme('#ffd700'); handleSave('theme', '#ffd700'); }}
-                                                    className={`py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${
-                                                        isDark
-                                                            ? 'bg-white/10 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(255,215,0,0.25)]'
-                                                            : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/5 hover:text-white'
-                                                    }`}
-                                                >
-                                                    Dark Mode
-                                                </button>
-                                                <button
-                                                    onClick={() => { applyTheme('#3b82f6'); handleSave('theme', '#3b82f6'); }}
-                                                    className={`py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${
-                                                        isBlueDark
-                                                            ? 'bg-blue-600/30 border-blue-400 text-blue-300 shadow-[0_0_15px_rgba(37,99,235,0.35)]'
-                                                            : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/5 hover:text-white'
-                                                    }`}
-                                                >
-                                                    Blue Dark
-                                                </button>
-                                            </div>
-                                        );
-                                    })()}
+                        <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+                                            {t('DISPLAY_MODE_TITLE', 'Display Mode')}
+                                        </div>
+                                        <div className="text-[10px] text-gray-500 mt-0.5">
+                                            {t('DISPLAY_MODE_DESC', 'Light / Dark background, κρατάει το χρώμα που διάλεξες')}
+                                        </div>
+                                    </div>
+                                    <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex items-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const mode = 'dark';
+                                                setDisplayMode(mode);
+                                                applyDisplayMode(mode);
+                                                handleSave('displayMode', mode);
+                                            }}
+                                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                                (displayMode || 'dark') === 'dark'
+                                                    ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
+                                                    : 'text-gray-400 hover:text-white'
+                                            }`}
+                                        >
+                                            Dark
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const mode = 'light';
+                                                setDisplayMode(mode);
+                                                applyDisplayMode(mode);
+                                                handleSave('displayMode', mode);
+                                            }}
+                                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                                displayMode === 'light'
+                                                    ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
+                                                    : 'text-gray-400 hover:text-white'
+                                            }`}
+                                        >
+                                            Light
+                                        </button>
+                                    </div>
+                                </div>
                                 <div className="hidden sm:flex items-center justify-center gap-2">
                                     {[
                                         { id: 'primary', label: t('CATEGORY_PRIMARY') },
@@ -3322,6 +3340,21 @@ const applyTheme = (color) => {
     localStorage.setItem('themeGlowSoft', glowSoft);
 };
 
+const applyDisplayMode = (mode) => {
+    const isLight = mode === 'light';
+    const bg = isLight ? '#f9fafb' : '#000000';
+    const text = isLight ? '#0f172a' : '#e7e9ea';
+    const glassBg = isLight ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.9)';
+    const glassBorder = isLight ? '#e5e7eb' : '#2f3336';
+
+    document.documentElement.style.setProperty('--app-bg', bg);
+    document.documentElement.style.setProperty('--app-text', text);
+    document.documentElement.style.setProperty('--glass-bg', glassBg);
+    document.documentElement.style.setProperty('--glass-border', glassBorder);
+
+    localStorage.setItem('displayMode', mode);
+};
+
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
     // Profile Sync Logic
@@ -3505,6 +3538,8 @@ const App = () => {
 
         const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
+        const savedMode = JSON.parse(localStorage.getItem('user'))?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark';
+        applyDisplayMode(savedMode);
 
         // SYNC USER DATA & THEME LIVE ACROSS TABS
         const handleStorageChange = (e) => {
@@ -3528,6 +3563,12 @@ const App = () => {
             applyTheme(user.settings.theme);
         }
     }, [user?.settings?.theme]);
+
+    useEffect(() => {
+        if (user?.settings?.displayMode) {
+            applyDisplayMode(user.settings.displayMode);
+        }
+    }, [user?.settings?.displayMode]);
 
     // Use a ref to track the last user ID we initialized for, to avoid loops
     const lastInitializedId = useRef(null);
