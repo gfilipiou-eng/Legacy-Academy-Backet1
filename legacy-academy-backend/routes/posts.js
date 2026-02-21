@@ -196,7 +196,7 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
     }
 });
 
-// REPOST POST
+// REPOST POST (Toggle repost status for a specific post)
 router.put("/:id/repost", verifyToken, async (req, res) => {
     try {
         const currentPost = await Post.findById(req.params.id);
