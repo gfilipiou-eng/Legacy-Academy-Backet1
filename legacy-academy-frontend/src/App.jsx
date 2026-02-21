@@ -2038,13 +2038,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
-    const [displayMode, setDisplayMode] = useState(user?.settings?.displayMode || 'dark');
+    const [displayMode, setDisplayMode] = useState(
+        user?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
+    );
 
     useEffect(() => {
         if (user && !saving) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
-            setDisplayMode(user.settings?.displayMode || 'dark');
+            setDisplayMode(
+                user.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
+            );
         }
     }, [user, saving]);
 
@@ -2169,6 +2173,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             }`}
                                         >
                                             Light
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const mode = 'blue-dark';
+                                                setDisplayMode(mode);
+                                                applyDisplayMode(mode);
+                                                handleSave('displayMode', mode);
+                                            }}
+                                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                                displayMode === 'blue-dark'
+                                                    ? 'bg-[#15202b] text-white shadow-[0_0_16px_rgba(15,23,42,0.9)]'
+                                                    : 'text-gray-400 hover:text-white'
+                                            }`}
+                                        >
+                                            Blue
                                         </button>
                                     </div>
                                 </div>
@@ -3340,15 +3360,22 @@ const applyTheme = (color) => {
 
 const applyDisplayMode = (mode) => {
     const isLight = mode === 'light';
-    const bg = isLight ? '#f9fafb' : '#000000';
-    const text = isLight ? '#0f172a' : '#e7e9ea';
-    const glassBg = isLight ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.9)';
-    const glassBorder = isLight ? '#e5e7eb' : '#2f3336';
+    const isBlueDark = mode === 'blue-dark';
+
+    const bg = isLight ? '#f9fafb' : isBlueDark ? '#15202b' : '#000000';
+    const text = isLight ? '#0b1120' : '#e7e9ea';
+    const glassBg = isLight ? 'rgba(255,255,255,0.96)' : isBlueDark ? 'rgba(21,32,43,0.96)' : 'rgba(0,0,0,0.9)';
+    const glassBorder = isLight ? '#e5e7eb' : isBlueDark ? '#38444d' : '#2f3336';
 
     document.documentElement.style.setProperty('--app-bg', bg);
     document.documentElement.style.setProperty('--app-text', text);
     document.documentElement.style.setProperty('--glass-bg', glassBg);
     document.documentElement.style.setProperty('--glass-border', glassBorder);
+
+    document.body.classList.remove('light-mode', 'dark-mode', 'blue-dark-mode');
+    if (isLight) document.body.classList.add('light-mode');
+    else if (isBlueDark) document.body.classList.add('blue-dark-mode');
+    else document.body.classList.add('dark-mode');
 
     localStorage.setItem('displayMode', mode);
 };

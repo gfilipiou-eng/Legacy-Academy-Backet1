@@ -31,6 +31,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.dark-mode {
+  color: #e7e9ea;
+}
+
+body.light-mode {
+  color: #0b1120;
+}
+
+body.light-mode .text-white,
+body.light-mode .text-gray-400,
+body.light-mode .text-gray-500 {
+  color: #0b1120 !important;
+}
+
 img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
