@@ -2255,6 +2255,30 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
         }
     }, [lastDeletedPostId]);
 
+    // LIVE SYNC: React to repost changes - remove un-reposted posts from profile immediately
+    useEffect(() => {
+        if (!isOpen || !profileUser?._id) return;
+        const profileUserId = String(profileUser._id);
+
+        const handleReposted = ({ postId, reposts }) => {
+            setUserSpecificPosts(prev => prev.map(p => {
+                if (String(p._id) !== String(postId)) return p;
+                // Update the reposts array on the post
+                return { ...p, reposts };
+            }).filter(p => {
+                // If this post's author is NOT the profile user, it only appears
+                // because the profile user reposted it. Remove it if they no longer have.
+                const isOwn = String(p.author?._id || p.author) === profileUserId;
+                if (isOwn) return true;
+                const newReposts = (p._id === String(postId) ? reposts : p.reposts) || [];
+                return newReposts.some(id => String(id) === profileUserId);
+            }));
+        };
+
+        socket.on('post.reposted', handleReposted);
+        return () => socket.off('post.reposted', handleReposted);
+    }, [isOpen, profileUser?._id]);
+
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         // Strict exclusion of stories from the main grid
         if (p.isStory === true || String(p.isStory) === 'true') return false;

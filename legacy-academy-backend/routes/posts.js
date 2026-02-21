@@ -35,7 +35,6 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // REPOST POST (Toggle repost status) - PROMOTED FOR MATCHING
-// Explicitly handling PUT/POST/GET to avoid browser/middleware quirks
 router.route("/:id/repost").all(verifyToken, async (req, res) => {
     try {
         const targetId = String(req.params.id).trim();
@@ -46,7 +45,6 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
         const isReposting = !(currentPost.reposts || []).some(id => String(id) === userId);
 
         let newReposts = (currentPost.reposts || []).map(id => String(id));
-
         if (isReposting) {
             newReposts.push(userId);
         } else {
@@ -54,51 +52,34 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
         }
 
         const updatedPost = await Post.findByIdAndUpdate(
-            req.params.id,
+            targetId,
             { $set: { reposts: [...new Set(newReposts)] } },
             { new: true }
         );
 
         const io = req.app.get('io');
         if (io) {
-            io.emit('post.reposted', {
-                postId: req.params.id,
-                reposts: updatedPost.reposts
-            });
+            io.emit('post.reposted', { postId: targetId, reposts: updatedPost.reposts });
 
-            if (isReposting && String(updatedPost.author) !== String(userId)) {
-                // Save to DB
+            if (isReposting && String(updatedPost.author) !== userId) {
+                // Fetch real actor info (JWT only has id+role)
+                const actor = await User.findById(userId).select('username profilePic').lean();
+                const fromUsername = actor?.username || 'Unknown';
+                const fromProfilePic = actor?.profilePic || '';
+
                 await User.findByIdAndUpdate(updatedPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{
-                                type: 'repost',
-                                from: userId,
-                                fromUsername: req.user.username || 'Someone',
-                                fromProfilePic: req.user.profilePic || '',
-                                post: updatedPost._id,
-                                read: false,
-                                createdAt: new Date()
-                            }],
+                            $each: [{ type: 'repost', from: userId, fromUsername, fromProfilePic, post: updatedPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-
-                // Emit real-time
-                io.to(String(updatedPost.author)).emit('notification.received', {
-                    type: 'repost',
-                    fromUsername: req.user.username || 'Someone',
-                    fromProfilePic: req.user.profilePic || '',
-                    postId: updatedPost._id
-                });
+                io.to(String(updatedPost.author)).emit('notification.received', { type: 'repost', fromUsername, fromProfilePic, postId: updatedPost._id });
             }
         }
 
-        res.status(200).json({
-            message: isReposting ? "Reposted" : "Unreposted",
-            reposts: updatedPost.reposts
-        });
+        res.status(200).json({ message: isReposting ? "Reposted" : "Unreposted", reposts: updatedPost.reposts });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -184,7 +165,7 @@ router.put("/:id/like", verifyToken, async (req, res) => {
             newDislikes = newDislikes.filter(id => id !== userId);
         } else {
             newLikes = newLikes.filter(id => id !== userId);
-            newDislikes = newDislikes.filter(id => id !== userId); // Force clear corrupted state
+            newDislikes = newDislikes.filter(id => id !== userId);
         }
 
         const updatedPost = await Post.findByIdAndUpdate(
@@ -195,46 +176,27 @@ router.put("/:id/like", verifyToken, async (req, res) => {
 
         const io = req.app.get('io');
         if (io) {
-            io.emit('post.liked', {
-                postId: req.params.id,
-                likes: updatedPost.likes,
-                dislikes: updatedPost.dislikes
-            });
+            io.emit('post.liked', { postId: req.params.id, likes: updatedPost.likes, dislikes: updatedPost.dislikes });
 
-            if (isLiking && String(updatedPost.author) !== String(userId)) {
-                // Save to DB
+            if (isLiking && String(updatedPost.author) !== userId) {
+                // Fetch real actor info
+                const actor = await User.findById(userId).select('username profilePic').lean();
+                const fromUsername = actor?.username || 'Unknown';
+                const fromProfilePic = actor?.profilePic || '';
+
                 await User.findByIdAndUpdate(updatedPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{
-                                type: 'like',
-                                from: userId,
-                                fromUsername: req.user.username || 'Someone',
-                                fromProfilePic: req.user.profilePic || '',
-                                post: updatedPost._id,
-                                read: false,
-                                createdAt: new Date()
-                            }],
+                            $each: [{ type: 'like', from: userId, fromUsername, fromProfilePic, post: updatedPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-
-                // Emit real-time
-                io.to(String(updatedPost.author)).emit('notification.received', {
-                    type: 'like',
-                    fromUsername: req.user.username || 'Someone',
-                    fromProfilePic: req.user.profilePic || '',
-                    postId: updatedPost._id
-                });
+                io.to(String(updatedPost.author)).emit('notification.received', { type: 'like', fromUsername, fromProfilePic, postId: updatedPost._id });
             }
         }
 
-        res.status(200).json({
-            message: isLiking ? "Liked" : "Unliked",
-            likes: updatedPost.likes,
-            dislikes: updatedPost.dislikes
-        });
+        res.status(200).json({ message: isLiking ? "Liked" : "Unliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -257,7 +219,7 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
             newLikes = newLikes.filter(id => id !== userId);
         } else {
             newDislikes = newDislikes.filter(id => id !== userId);
-            newLikes = newLikes.filter(id => id !== userId); // Force clear corrupted state
+            newLikes = newLikes.filter(id => id !== userId);
         }
 
         const updatedPost = await Post.findByIdAndUpdate(
@@ -268,46 +230,27 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
 
         const io = req.app.get('io');
         if (io) {
-            io.emit('post.liked', {
-                postId: req.params.id,
-                likes: updatedPost.likes,
-                dislikes: updatedPost.dislikes
-            });
+            io.emit('post.liked', { postId: req.params.id, likes: updatedPost.likes, dislikes: updatedPost.dislikes });
 
-            if (isDisliking && String(updatedPost.author) !== String(userId)) {
-                // Save to DB
+            if (isDisliking && String(updatedPost.author) !== userId) {
+                // Fetch real actor info
+                const actor = await User.findById(userId).select('username profilePic').lean();
+                const fromUsername = actor?.username || 'Unknown';
+                const fromProfilePic = actor?.profilePic || '';
+
                 await User.findByIdAndUpdate(updatedPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{
-                                type: 'dislike',
-                                from: userId,
-                                fromUsername: req.user.username || 'Someone',
-                                fromProfilePic: req.user.profilePic || '',
-                                post: updatedPost._id,
-                                read: false,
-                                createdAt: new Date()
-                            }],
+                            $each: [{ type: 'dislike', from: userId, fromUsername, fromProfilePic, post: updatedPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-
-                // Emit real-time
-                io.to(String(updatedPost.author)).emit('notification.received', {
-                    type: 'dislike',
-                    fromUsername: req.user.username || 'Someone',
-                    fromProfilePic: req.user.profilePic || '',
-                    postId: updatedPost._id
-                });
+                io.to(String(updatedPost.author)).emit('notification.received', { type: 'dislike', fromUsername, fromProfilePic, postId: updatedPost._id });
             }
         }
 
-        res.status(200).json({
-            message: isDisliking ? "Disliked" : "Undisliked",
-            likes: updatedPost.likes,
-            dislikes: updatedPost.dislikes
-        });
+        res.status(200).json({ message: isDisliking ? "Disliked" : "Undisliked", likes: updatedPost.likes, dislikes: updatedPost.dislikes });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -321,54 +264,32 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
         if (!post) return res.status(404).json("Post not found");
 
         let audioUrl = "";
-        if (req.file) {
-            audioUrl = req.file.path; // Cloudinary path from upload middleware
-        }
+        if (req.file) { audioUrl = req.file.path; }
 
-        const comment = {
-            user: req.user.id,
-            text: req.body.text || "",
-            audioUrl: audioUrl,
-            createdAt: new Date()
-        };
-
+        const comment = { user: req.user.id, text: req.body.text || "", audioUrl, createdAt: new Date() };
         await post.updateOne({ $push: { comments: comment } });
 
-        // Return updated comments with population
         const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
 
-        // 🔥 REAL-TIME EMIT
         const io = req.app.get('io');
         if (io) {
             io.emit('comment.added', { postId: req.params.id, comments: updatedPost.comments });
 
-            // NOTIFY AUTHOR (Real-time)
             if (String(post.author) !== String(req.user.id)) {
-                // Save to DB
+                // Fetch real actor info
+                const actor = await User.findById(req.user.id).select('username profilePic').lean();
+                const fromUsername = actor?.username || 'Unknown';
+                const fromProfilePic = actor?.profilePic || '';
+
                 await User.findByIdAndUpdate(post.author, {
                     $push: {
                         notifications: {
-                            $each: [{
-                                type: 'comment',
-                                from: req.user.id,
-                                fromUsername: req.user.username || 'Someone',
-                                fromProfilePic: req.user.profilePic || '',
-                                post: post._id,
-                                read: false,
-                                createdAt: new Date()
-                            }],
+                            $each: [{ type: 'comment', from: req.user.id, fromUsername, fromProfilePic, post: post._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-
-                // Emit real-time
-                io.to(String(post.author)).emit('notification.received', {
-                    type: 'comment',
-                    fromUsername: req.user.username || 'Someone',
-                    fromProfilePic: req.user.profilePic || '',
-                    postId: post._id
-                });
+                io.to(String(post.author)).emit('notification.received', { type: 'comment', fromUsername, fromProfilePic, postId: post._id });
             }
         }
 
