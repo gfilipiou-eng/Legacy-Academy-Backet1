@@ -34,6 +34,55 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
+// REPOST POST (Toggle repost status for a specific post) - PROMOTED FOR MATCHING
+router.put("/:id/repost", verifyToken, async (req, res) => {
+    try {
+        const currentPost = await Post.findById(req.params.id);
+        if (!currentPost) return res.status(404).json("Post not found");
+
+        const userId = String(req.user.id);
+        const isReposting = !(currentPost.reposts || []).some(id => String(id) === userId);
+
+        let newReposts = (currentPost.reposts || []).map(id => String(id));
+
+        if (isReposting) {
+            newReposts.push(userId);
+        } else {
+            newReposts = newReposts.filter(id => id !== userId);
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.id,
+            { $set: { reposts: [...new Set(newReposts)] } },
+            { new: true }
+        );
+
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('post.reposted', {
+                postId: req.params.id,
+                reposts: updatedPost.reposts
+            });
+
+            if (isReposting && String(updatedPost.author) !== String(userId)) {
+                io.to(String(updatedPost.author)).emit('notification.received', {
+                    type: 'repost',
+                    fromUsername: req.user.username || 'Someone',
+                    fromProfilePic: req.user.profilePic || '',
+                    postId: updatedPost._id
+                });
+            }
+        }
+
+        res.status(200).json({
+            message: isReposting ? "Reposted" : "Unreposted",
+            reposts: updatedPost.reposts
+        });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // GET USER POSTS (Profile)
 // CRITICAL FIX: Respect Privacy Settings
 router.get("/user/:userId", verifyToken, async (req, res) => {
@@ -205,55 +254,6 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
     }
 });
 
-// REPOST POST (Toggle repost status for a specific post)
-router.put("/:id/repost", verifyToken, async (req, res) => {
-    try {
-        const currentPost = await Post.findById(req.params.id);
-        if (!currentPost) return res.status(404).json("Post not found");
-
-        const userId = String(req.user.id);
-        const isReposting = !(currentPost.reposts || []).some(id => String(id) === userId);
-
-        let newReposts = (currentPost.reposts || []).map(id => String(id));
-
-        if (isReposting) {
-            newReposts.push(userId);
-        } else {
-            newReposts = newReposts.filter(id => id !== userId);
-        }
-
-        const updatedPost = await Post.findByIdAndUpdate(
-            req.params.id,
-            { $set: { reposts: [...new Set(newReposts)] } },
-            { new: true }
-        );
-
-        const io = req.app.get('io');
-        if (io) {
-            // Can use post.liked event or create a new one. We'll reuse/add post.reposted
-            io.emit('post.reposted', {
-                postId: req.params.id,
-                reposts: updatedPost.reposts
-            });
-
-            if (isReposting && String(updatedPost.author) !== String(userId)) {
-                io.to(String(updatedPost.author)).emit('notification.received', {
-                    type: 'repost',
-                    fromUsername: req.user.username || 'Someone',
-                    fromProfilePic: req.user.profilePic || '',
-                    postId: updatedPost._id
-                });
-            }
-        }
-
-        res.status(200).json({
-            message: isReposting ? "Reposted" : "Unreposted",
-            reposts: updatedPost.reposts
-        });
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
 
 // COMMENT ON POST
 router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res) => {

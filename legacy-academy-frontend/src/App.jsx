@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+// DEPLOYMENT_VERSION: V12_PORTAL_FIX
+
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
@@ -628,8 +630,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                                 {showMenu && (
                                     <>
-                                        <div className="fixed inset-0 z-[1000]" onClick={() => setShowMenu(false)} />
-                                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[1100] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
+                                        <div className="fixed inset-0 z-[9000]" onClick={() => setShowMenu(false)} />
+                                        <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[9001] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
                                             <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
                                                 <Icons.Share className="w-4 h-4 text-gray-400" />
                                                 <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
@@ -1397,8 +1399,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             </button>
                             {showMenu && (
                                 <>
-                                    <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                    <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
+                                    <div className="fixed inset-0 z-[9000]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
+                                    <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[9001] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
                                         <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
                                             <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
                                             <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
