@@ -2157,7 +2157,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -2521,30 +2521,32 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                 </div>
                             </div>
 
-                            {/* ACTION BUTTONS: Now below stats */}
-                            <div className="flex items-center gap-3 px-2 mb-4">
-                                {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-white/5 border border-white/10 hover:border-white/20 rounded-full text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">
-                                        {t('EDIT_PROFILE')}
-                                    </button>
-                                ) : (
-                                    <>
-                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${isFollowing ? 'bg-white/5 border border-white/10 text-white' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'}`}>
-                                            {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
+                            {/* ACTION BUTTONS: Enhanced layout */}
+                            <div className="px-2 mb-4 space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {isMe ? (
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-white/5 border border-white/10 hover:border-white/20 rounded-full text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">
+                                            {t('EDIT_PROFILE')}
                                         </button>
-                                        <button onClick={() => onOpenChat(displayUser)} title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
-                                            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0">
-                                            <div className="relative flex items-center justify-center">
-                                                <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
-                                            </div>
-                                            <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS') || 'ΨΙΘΥΡΟΙ'}</span>
-                                        </button>
-                                        {currentUser?.role === 'Founder' && (
-                                            <button onClick={() => window.confirm(t('CONFIRM_BAN')) && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95">
-                                                {t('BAN')}
+                                    ) : (
+                                        <>
+                                            <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${isFollowing ? 'bg-white/5 border border-white/10 text-white' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'}`}>
+                                                {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
-                                        )}
-                                    </>
+                                            <button onClick={() => onOpenChat(displayUser)} title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
+                                                className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0">
+                                                <div className="relative flex items-center justify-center">
+                                                    <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                                </div>
+                                                <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS')}</span>
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                                {!isMe && currentUser?.role === 'Founder' && (
+                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95">
+                                        {t('BAN_3_DAYS') || 'BAN 3 ΗΜΕΡΕΣ'}
+                                    </button>
                                 )}
                             </div>
 
@@ -2577,7 +2579,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
-                                                    <div onClick={() => setIsCreateOpen(true)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                                    <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
                                                             <ProfileAvatar user={currentUser} className="opacity-80 rounded-full" />
                                                             <div className="absolute inset-0 flex items-center justify-center">
@@ -3666,8 +3668,8 @@ const App = () => {
 
     const handleRepost = async (postId) => {
         if (!postId || !user?._id) return;
-        const targetId = String(postId);
-        const userId = String(user._id);
+        const targetId = String(postId).trim();
+        const userId = String(user._id).trim();
 
         // 1. OPTIMISTIC UPDATE
         const updateFn = (p) => {
@@ -4613,6 +4615,7 @@ const App = () => {
                         onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }}
                         onShare={handleShare}
                         onHashtagClick={handleHashtagClick}
+                        onOpenCreate={() => { setCreateModeStory(true); setIsCreateOpen(true); }}
                         loadingActions={loadingActions}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
