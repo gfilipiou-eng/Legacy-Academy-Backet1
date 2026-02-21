@@ -359,9 +359,24 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     );
 };
 
-const FounderBadge = ({ className = "w-5 h-5" }) => (
-    <div className={`relative flex items-center justify-center ${className}`}>
-        <Icons.Crown className="w-full h-full" style={{ color: '#FFD700', stroke: '#FFD700' }} />
+const FounderBadge = ({ className = "w-5 h-5", title }) => (
+    <div className={`relative flex items-center justify-center ${className} shrink-0 z-10 group`} title={title || "LEGACY FOUNDER"}>
+        <div className="absolute -inset-1 bg-gradient-to-tr from-[#FFD700] to-[#FF4500] rounded-full blur-[4px] opacity-40 group-hover:opacity-70 transition-opacity animate-pulse-subtle"></div>
+        <svg viewBox="0 0 24 24" className="w-full h-full relative z-10 drop-shadow-md" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1.5l10.5 4.5v6c0 6.6-4.6 12.9-10.5 14.5C6.1 24.9 1.5 18.6 1.5 12V6L12 1.5z" fill="url(#founderShieldGrad)" />
+            <path d="M12 4.5l8 3.4v4.6c0 5.1-3.5 10.1-8 11.4-4.5-1.3-8-6.3-8-11.4V7.9l8-3.4z" fill="#050505" />
+            <path d="M6 14.5L5 9l3.5 2 L12 7l3.5 4 L19 9l-1 5.5H6z" fill="url(#founderShieldGrad)" />
+            <circle cx="5" cy="7.5" r="1.2" fill="#FFD700" />
+            <circle cx="12" cy="5.5" r="1.8" fill="#FFD700" />
+            <circle cx="19" cy="7.5" r="1.2" fill="#FFD700" />
+            <defs>
+                <linearGradient id="founderShieldGrad" x1="1" y1="1" x2="23" y2="23" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#FFD700" />
+                    <stop offset="0.5" stopColor="#FFA500" />
+                    <stop offset="1" stopColor="#FF4500" />
+                </linearGradient>
+            </defs>
+        </svg>
     </div>
 );
 
@@ -2544,109 +2559,85 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                             }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
-                        <div className="p-4 sm:p-6 pb-20">
-                            <div className="flex items-center gap-4 sm:gap-8 mb-6">
-                                <div className="relative">
-                                    <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border border-white/10 cursor-pointer shadow-md shrink-0">
+                        <div className="p-4 sm:p-6 pb-20 mt-2 sm:mt-4">
+                            <div className="flex items-start justify-between mb-3 sm:mb-4">
+                                <div className="relative -mt-10 sm:-mt-16 z-20">
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                     </div>
                                 </div>
-                                <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
-                                    <div className="flex flex-col items-center">
-                                        <div className="font-black text-white text-base sm:text-2xl leading-none">{(userPosts || []).length}</div>
-                                        <div className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest font-bold mt-1 text-center">{t('POSTS') || 'POSTS'}</div>
-                                    </div>
-                                    <div onPointerDown={(e) => {
-                                        e.preventDefault(); // STOP GHOST CLICK GENERATION
-                                        e.stopPropagation();
-                                        setClickLock(true);
-                                        lastOpenedAt.current = Date.now();
-                                        playSound('cyber_click');
-                                        setActiveList('followers');
-                                    }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
-                                        <span className="text-base sm:text-2xl font-black text-[var(--gold-primary)] group-hover:text-white transition-colors leading-none">
-                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
-                                        </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
-                                    </div>
-                                    <div onPointerDown={(e) => {
-                                        e.preventDefault(); // STOP GHOST CLICK GENERATION
-                                        e.stopPropagation();
-                                        setClickLock(true);
-                                        lastOpenedAt.current = Date.now();
-                                        playSound('cyber_click');
-                                        setActiveList('following');
-                                    }} className="flex flex-col items-center cursor-pointer group px-1 sm:px-2">
-                                        <span className="text-base sm:text-2xl font-black text-white group-hover:text-[var(--gold-primary)] transition-colors leading-none">
-                                            {displayUser?.following?.length || 0}
-                                        </span>
-                                        <span className="text-[9px] sm:text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 text-center">{t('FOLLOWING') || 'FOLLOWING'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-6 px-1">
-                                <div className="flex flex-col gap-1">
-                                    <div className="font-black text-white text-xl flex items-center gap-2">
-                                        {displayUser?.username || "Unknown Agent"}
-                                        <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-5 h-5" />
-                                        <div className={`ml-2 w-3 h-3 rounded-full border-2 border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
-                                    </div>
-                                    {displayUser?.role === 'Founder' && (
-                                        <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40 w-fit">
-                                            <FounderBadge className="w-5 h-5" />
-                                            <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="mb-4">
-                                    <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">{t('DESCRIPTION')}</div>
-                                    <div className="text-sm text-gray-300 leading-relaxed max-w-sm whitespace-pre-wrap font-medium">
-                                        {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
-                                    </div>
-                                </div>
-
-                                {isMe ? (
-                                    <button onClick={() => setIsEditing(true)} className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black tracking-wider hover:bg-white/10 transition-all uppercase px-2 truncate min-h-[48px]">{t('EDIT_PROFILE')}</button>
-                                ) : (
-                                    <div className="flex-1 flex gap-2">
-                                        <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 ${isFollowing ? 'bg-white/5 border border-white/10 text-gray-400' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'} rounded-2xl text-[10px] font-black tracking-widest hover:scale-[0.98] transition-all uppercase disabled:opacity-50`}>
-                                            {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
+                                <div className="flex items-center gap-2 pt-2">
+                                    {isMe ? (
+                                        <button onClick={() => setIsEditing(true)} className="px-5 py-2 sm:px-6 sm:py-2.5 bg-transparent border border-white/20 hover:border-white/40 rounded-full text-white text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                                            {t('EDIT_PROFILE') || 'EDIT PROFILE'}
                                         </button>
-
-                                        {/* COMMS BUTTON (Protected by Guard Chat) */}
-                                        <button
-                                            onPointerDown={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                if (displayUser?.isFollowersOnly && !isFollowing && !isMe) {
-                                                    return;
-                                                }
-                                                onOpenChat(displayUser);
-                                            }}
-                                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 group touch-manipulation"
-                                        >
-                                            <Icons.Ghost className={`w-5 h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : ''}`} />
-                                        </button>
-
-                                        {currentUser?.role === 'Founder' && (
+                                    ) : (
+                                        <>
                                             <button
-                                                onClick={async (e) => {
+                                                onPointerDown={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    if (displayUser?.isFollowersOnly && !isFollowing && !isMe) return;
+                                                    onOpenChat(displayUser);
+                                                }}
+                                                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 border border-transparent hover:border-white/10 rounded-full text-white transition-all active:scale-95 touch-manipulation"
+                                            >
+                                                <Icons.Ghost className={`w-4 h-4 sm:w-5 sm:h-5 ${displayUser?.isFollowersOnly && !isFollowing && !isMe ? 'text-gray-600' : ''}`} />
+                                            </button>
+                                            <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 ${isFollowing ? 'bg-transparent border border-white/20 text-white hover:bg-white/10' : 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/20'}`}>
+                                                {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
+                                            </button>
+                                            {currentUser?.role === 'Founder' && (
+                                                <button onClick={async (e) => {
                                                     e.stopPropagation();
                                                     const targetId = displayUser?._id || displayUser?.id || (typeof displayUser === 'string' ? displayUser : null);
                                                     if (!targetId) return;
                                                     if (!window.confirm(t('CONFIRM_BAN'))) return;
-                                                    try {
-                                                        await axios.post(`/users/${targetId}/ban`, { days: 3 });
-                                                    } catch (e) { }
-                                                }}
-                                                className="px-3 py-3 bg-red-600/20 border border-red-500/40 rounded-2xl text-red-500 font-black text-[9px] tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95 leading-none flex items-center justify-center min-w-[70px]"
-                                            >
-                                                {t('BAN')}
-                                            </button>
-                                        )}
+                                                    try { await axios.post(`/users/${targetId}/ban`, { days: 3 }); } catch (e) { }
+                                                }} className="px-4 py-2 sm:py-2.5 bg-red-600/20 border border-red-500/40 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95 shrink-0 flex items-center justify-center">
+                                                    {t('BAN')}
+                                                </button>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
 
+                            <div className="mb-6 px-2">
+                                <div className="flex flex-col mb-4">
+                                    <div className="font-black text-white text-2xl sm:text-3xl flex items-center gap-2 leading-none">
+                                        {displayUser?.username || "Unknown Agent"}
+                                        <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
+                                        {displayUser?.role === 'Founder' && <FounderBadge className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 ml-1" />}
                                     </div>
-                                )}
+                                    <div className="text-gray-400 text-sm font-medium mt-1.5 flex items-center gap-2">
+                                        @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
+                                        <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
+                                    </div>
+                                </div>
+
+                                <div className="text-[14px] sm:text-[15px] text-white/90 leading-relaxed max-w-[90%] whitespace-pre-wrap font-medium mb-5 break-words">
+                                    {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
+                                </div>
+
+                                <div className="flex items-center gap-6 text-sm font-medium">
+                                    <div className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                                        <span className="font-bold text-white text-base">{(userPosts || []).length}</span>
+                                        <span className="text-gray-400">{t('POSTS') || 'Posts'}</span>
+                                    </div>
+                                    <div onPointerDown={(e) => {
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
+                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
+                                        <span className="font-bold text-white text-base">{displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}</span>
+                                        <span className="text-gray-400">{t('FOLLOWERS') || 'Followers'}</span>
+                                    </div>
+                                    <div onPointerDown={(e) => {
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
+                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
+                                        <span className="font-bold text-white text-base">{displayUser?.following?.length || 0}</span>
+                                        <span className="text-gray-400">{t('FOLLOWING') || 'Following'}</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4">
