@@ -2087,31 +2087,34 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                             <div className="grid grid-cols-6 gap-3 place-items-center">
                                 {[
-                                    { hex: '#ffd700', glow: '#ffd700' },
-                                    { hex: '#3b82f6', glow: '#3b82f6' },
-                                    { hex: '#cc0000', glow: '#ff0000' },   // Blood Red (was generic #ef4444)
-                                    { hex: '#10b981', glow: '#10b981' },
-                                    { hex: '#ffffff', glow: '#ffffff' },
-                                    { hex: '#a855f7', glow: '#a855f7' },
-                                    { hex: '#ff8c00', glow: '#ff8c00' },
-                                    { hex: '#ff69b4', glow: '#ff69b4' },
-                                    { hex: '#00ffff', glow: '#00ffff' },
-                                    { hex: '#7cfc00', glow: '#7cfc00' },
-                                    { hex: '#ff00ff', glow: '#ff00ff' },
-                                    { hex: '#ffa500', glow: '#ffa500' },
-                                ].map(({ hex: c, glow }) => {
+                                    { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
+                                    { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
+                                    { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
+                                    { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
+                                    { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
+                                    { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
+                                    { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
+                                    { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
+                                    { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
+                                    { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
+                                    { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
+                                    { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
+                                ].map(({ hex: c, glow, label }) => {
                                     const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                     const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
                                     return (
-                                        <button key={c} onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                            className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
-                                        >
-                                            <div className="w-full h-full rounded-full" style={{
-                                                backgroundColor: c,
-                                                boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
-                                            }} />
-                                            {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
-                                        </button>
+                                        <div key={c} className="flex flex-col items-center justify-center">
+                                            <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
+                                                className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                            >
+                                                <div className="w-full h-full rounded-full" style={{
+                                                    backgroundColor: c,
+                                                    boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
+                                                }} />
+                                                {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
+                                            </button>
+                                            <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>{label}</span>
+                                        </div>
                                     );
                                 })}
                             </div>
