@@ -484,6 +484,10 @@ img {
   box-shadow: 0 0 12px rgba(29, 155, 240, 0.25);
 }
 
+.shadow-glow-gold {
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
+}
+
 .premium-post-card {
   contain: paint;
   content-visibility: auto;
