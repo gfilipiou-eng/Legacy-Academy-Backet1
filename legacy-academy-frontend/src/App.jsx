@@ -702,37 +702,48 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     </div>
 
                     {/* Social Stats and Comment Input */}
-                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[env(safe-area-inset-bottom,75px)] md:pb-2 shrink-0">
-                        {/* ACTION BAR */}
-                        <div className="flex items-center justify-between mb-2 w-full">
+                    <div className="px-2 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[env(safe-area-inset-bottom,75px)] md:pb-2 shrink-0">
+                        {/* ── ACTION BAR ── */}
+                        <div className="flex items-center justify-around w-full py-1">
 
-                            <button onClick={() => document.getElementById(`comment-input-${post._id}`)?.focus()}
-                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-gray-500 hover:text-sky-400 hover:bg-sky-400/10 transition-all active:scale-90">
-                                <Icons.MessageSquare className="w-4 h-4 shrink-0" />
-                                <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                            {/* COMMENTS */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 active:scale-90 transition-all">
+                                <Icons.MessageSquare className="w-5 h-5" />
+                                <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button disabled={!!loadingActions?.[post._id]} onClick={() => onRepost?.(post._id)}
-                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 bg-green-400/10' : 'text-gray-500 hover:text-green-400 hover:bg-green-400/10'}`}>
-                                <Icons.RefreshCcw className="w-4 h-4 shrink-0" />
-                                <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                            {/* REPOSTS */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
+                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl active:scale-90 transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500 hover:text-green-400'}`}>
+                                <Icons.RefreshCcw className="w-5 h-5" />
+                                <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                             </button>
 
-                            <button disabled={!!loadingActions?.[post._id]} onClick={() => onLike(post._id)}
-                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 bg-red-400/10' : 'text-gray-500 hover:text-red-400 hover:bg-red-400/10'}`}>
-                                <Icons.Heart className={`w-4 h-4 shrink-0 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                            {/* LIKE */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl active:scale-90 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}>
+                                <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_rgba(248,113,113,0.8)]' : ''}`} />
+                                <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button disabled={!!loadingActions?.[post._id]} onClick={() => onDislike(post._id)}
-                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10' : 'text-gray-500 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10'}`}>
-                                <Icons.ThumbsDown className={`w-4 h-4 shrink-0 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                            {/* DISLIKE */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl active:scale-90 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_var(--gold-glow)]' : ''}`} />
+                                <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
-                            <button onClick={() => onShare?.(post)}
-                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-gray-500 hover:text-white hover:bg-white/10 transition-all active:scale-90">
-                                <Icons.Share className="w-4 h-4 shrink-0" />
+                            {/* SHARE */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onShare?.(post); }}
+                                className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-white active:text-white active:scale-90 transition-all">
+                                <Icons.Share className="w-5 h-5" />
+                                <span className="text-[10px] font-black opacity-0">·</span>
                             </button>
 
                         </div>
@@ -1413,43 +1424,41 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     </div>
 
                     {/* ── POST ACTIONS BAR ── */}
-                    <div className="flex items-center justify-between mt-3 px-1 w-full">
+                    <div className="flex items-center justify-around mt-3 w-full border-t border-white/5 pt-3">
 
                         {/* COMMENTS */}
-                        <button onClick={() => setShowComments(!showComments)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${showComments ? 'text-sky-400 bg-sky-400/10' : 'text-gray-500 hover:text-sky-400 hover:bg-sky-400/8'}`}>
-                            <Icons.MessageSquare className="w-4 h-4 shrink-0" />
-                            <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                        <button onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${showComments ? 'text-sky-400' : 'text-gray-600 hover:text-sky-400'}`}>
+                            <Icons.MessageSquare className="w-5 h-5" />
+                            <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
                         </button>
 
                         {/* REPOSTS */}
-                        <button disabled={!!loadingActions?.[post._id]}
-                            onClick={() => !loadingActions?.[post._id] && onRepost(post._id)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 bg-green-400/10' : 'text-gray-500 hover:text-green-400 hover:bg-green-400/8'} ${loadingActions?.[post._id] ? 'opacity-40 cursor-not-allowed' : ''}`}>
-                            <Icons.RefreshCcw className="w-4 h-4 shrink-0" />
-                            <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                        <button onPointerDown={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-600 hover:text-green-400'}`}>
+                            <Icons.RefreshCcw className="w-5 h-5" />
+                            <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                         </button>
 
                         {/* LIKE */}
-                        <button disabled={!!loadingActions?.[post._id]}
-                            onClick={() => !loadingActions?.[post._id] && onLike(post._id)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 bg-red-400/10' : 'text-gray-500 hover:text-red-400 hover:bg-red-400/8'} ${loadingActions?.[post._id] ? 'opacity-40 cursor-not-allowed' : ''}`}>
-                            <Icons.Heart className={`w-4 h-4 shrink-0 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                            <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                        <button onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}`}>
+                            <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_rgba(248,113,113,0.8)]' : ''}`} />
+                            <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                         </button>
 
                         {/* DISLIKE */}
-                        <button disabled={!!loadingActions?.[post._id]}
-                            onClick={() => !loadingActions?.[post._id] && onDislike(post._id)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10' : 'text-gray-500 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/8'} ${loadingActions?.[post._id] ? 'opacity-40 cursor-not-allowed' : ''}`}>
-                            <Icons.ThumbsDown className={`w-4 h-4 shrink-0 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                            <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                        <button onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl active:scale-90 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-600 hover:text-[var(--gold-primary)]'}`}>
+                            <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current drop-shadow-[0_0_6px_var(--gold-glow)]' : ''}`} />
+                            <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                         </button>
 
                         {/* SHARE */}
-                        <button onClick={() => onShare?.(post)}
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-gray-500 hover:text-white hover:bg-white/8 transition-all active:scale-90">
-                            <Icons.Share className="w-4 h-4 shrink-0" />
+                        <button onPointerDown={(e) => { e.stopPropagation(); onShare?.(post); }}
+                            className="flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl text-gray-600 hover:text-white active:text-white active:scale-90 transition-all">
+                            <Icons.Share className="w-5 h-5" />
+                            <span className="text-[10px] font-black opacity-0">·</span>
                         </button>
 
                     </div>
