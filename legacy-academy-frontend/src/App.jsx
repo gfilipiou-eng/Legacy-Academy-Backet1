@@ -733,53 +733,53 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
+                        <div className="flex items-center gap-2 w-full">
+                            <div className="w-9 h-9 rounded-full bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
                                 <ProfileAvatar user={user} className="rounded-full" />
                             </div>
                             {isRecordingComment ? (
-                                <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 sm:p-3 flex items-center justify-between">
+                                <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 flex items-center justify-between">
                                     <div className="flex items-center gap-2 pl-1 shrink-0">
                                         <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
                                         <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-xl text-white"><Icons.X className="w-4 h-4" /></button>
-                                        <button onClick={() => stopRecording(false)} className="px-4 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest">{t('STOP')}</button>
+                                        <button onClick={() => stopRecording(false)} className="px-3 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest">{t('STOP')}</button>
                                     </div>
                                 </div>
                             ) : commentAudio ? (
                                 <div className="flex-1 min-w-0 flex items-center justify-between px-2 bg-black/60 border border-[var(--gold-primary)]/40 rounded-2xl p-1">
-                                    <div className="flex items-center gap-3 pl-2">
-                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
-                                        <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                    <div className="flex items-center gap-2 pl-2 min-w-0">
+                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shrink-0" />
+                                        <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-500"><Icons.Trash className="w-4 h-4" /></button>
+                                    <div className="flex items-center gap-1 shrink-0">
+                                        <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-500"><Icons.Trash className="w-4 h-4" /></button>
                                         <button onClick={() => {
                                             const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
                                             if (commentText.trim()) fd.append('text', commentText.trim());
                                             onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black">
+                                        }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black">
                                             <Icons.Send className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </div>
                             ) : (
-                                <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl p-1">
+                                <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[46px]">
                                     <input
                                         id={`comment-input-${post._id}`}
                                         placeholder={t('FOUNDER_PLACEHOLDER')}
                                         value={commentText}
                                         onChange={(e) => setCommentText(e.target.value)}
-                                        className="flex-1 bg-transparent py-3 px-4 text-sm text-white outline-none placeholder-gray-600 font-bold"
+                                        className="flex-1 min-w-0 bg-transparent py-3 px-3 text-sm text-white outline-none placeholder-gray-600 font-bold"
                                     />
-                                    <div className="flex gap-1 pr-1">
-                                        <button type="button" onClick={toggleCommentRecording} className={`w-10 h-10 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                            <Icons.Mic className="w-5 h-5" />
+                                    <div className="flex gap-1 pr-1 shrink-0">
+                                        <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                            <Icons.Mic className="w-4 h-4" />
                                         </button>
-                                        <button type="submit" disabled={!commentText.trim()} className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-20 transition-all">
-                                            <Icons.Send className="w-5 h-5" />
+                                        <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25 transition-all active:scale-90 shrink-0">
+                                            <Icons.Send className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </form>
@@ -2057,15 +2057,31 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                             <div className="grid grid-cols-6 gap-3 place-items-center">
-                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
+                                {[
+                                    { hex: '#ffd700', glow: '#ffd700' },
+                                    { hex: '#3b82f6', glow: '#3b82f6' },
+                                    { hex: '#cc0000', glow: '#ff0000' },   // Blood Red (was generic #ef4444)
+                                    { hex: '#10b981', glow: '#10b981' },
+                                    { hex: '#ffffff', glow: '#ffffff' },
+                                    { hex: '#a855f7', glow: '#a855f7' },
+                                    { hex: '#ff8c00', glow: '#ff8c00' },
+                                    { hex: '#ff69b4', glow: '#ff69b4' },
+                                    { hex: '#00ffff', glow: '#00ffff' },
+                                    { hex: '#7cfc00', glow: '#7cfc00' },
+                                    { hex: '#ff00ff', glow: '#ff00ff' },
+                                    { hex: '#ffa500', glow: '#ffa500' },
+                                ].map(({ hex: c, glow }) => {
                                     const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
-                                    const isActive = currentTheme === c;
+                                    const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
                                     return (
                                         <button key={c} onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                            className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125 shadow-lg' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                            className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
                                         >
-                                            <div className="w-full h-full rounded-full" style={{ backgroundColor: c, boxShadow: isActive ? `0 0 14px ${c}` : 'none' }} />
-                                            {isActive && <div className="absolute inset-0 ring-2 ring-white ring-offset-2 ring-offset-black rounded-full" />}
+                                            <div className="w-full h-full rounded-full" style={{
+                                                backgroundColor: c,
+                                                boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
+                                            }} />
+                                            {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
                                         </button>
                                     );
                                 })}
