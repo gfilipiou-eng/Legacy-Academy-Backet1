@@ -3534,9 +3534,8 @@ const App = () => {
     const fetchPosts = async () => {
         if (selectedPostRef.current) return;
         try {
-            const res = await axios.get(`/posts?limit=30&t=${Date.now()}`);
+            const res = await axios.get(`/posts?limit=30`);
             setPosts(res.data);
-            // Cache posts for instant load next time
             localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
         } catch (e) { }
     };
@@ -3606,18 +3605,13 @@ const App = () => {
 
     // Notifications
     const fetchNotifications = async () => {
-        if (!user || isProcessingRequest.current) return;
+        if (!user) return;
         try {
-            // CACHE BUSTER + Strict Processing Lock
-            const res = await axios.get(`/users/notifications?t=${Date.now()}`);
-            if (isProcessingRequest.current) return; // Post-await safety check
-
-            // CYBER NOTIFICATION SOUND CHECK
+            const res = await axios.get(`/users/notifications`);
             if (res.data.length > (user.notifications?.length || 0)) {
                 const latest = res.data[0];
                 if (latest && !latest.read) playSound('cyber_notification');
             }
-
             setAlerts(res.data);
             setUser(prev => {
                 if (!prev) return prev;
@@ -3625,7 +3619,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-        } catch (e) { console.error('Fetch notifications failed', e); }
+        } catch (e) { }
     };
 
     const markAllNotificationsRead = async () => {
@@ -3641,30 +3635,37 @@ const App = () => {
         } catch (e) { console.error('Mark read failed', e); }
     };
 
-    // Polling Intervals - Optimized to reduce lag
-    let _notifInterval = null;
-    const startNotificationPoll = () => { stopNotificationPoll(); _notifInterval = setInterval(fetchNotifications, 60000); }; // Reduced to 60s fallback
-    const stopNotificationPoll = () => { if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; } };
+    // Polling intervals stored in refs to avoid re-creation on renders
+    const _notifInterval = useRef(null);
+    const _hbInterval = useRef(null);
+    const _userInterval = useRef(null);
+    const _postInterval = useRef(null);
 
-    let _hbInterval = null;
+    const startNotificationPoll = () => {
+        if (_notifInterval.current) clearInterval(_notifInterval.current);
+        _notifInterval.current = setInterval(fetchNotifications, 90000); // 90s fallback
+    };
+    const stopNotificationPoll = () => { if (_notifInterval.current) { clearInterval(_notifInterval.current); _notifInterval.current = null; } };
+
     const startHeartbeat = () => {
         stopHeartbeat();
-        const doHb = () => {
-            if (!user) return;
-            axios.put('/users/heartbeat').catch(() => { });
-        };
-        doHb(); // Immediate
-        _hbInterval = setInterval(doHb, 20000);
+        const doHb = () => { if (!user) return; axios.put('/users/heartbeat').catch(() => { }); };
+        doHb();
+        _hbInterval.current = setInterval(doHb, 25000); // 25s heartbeat
     };
-    const stopHeartbeat = () => { if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; } };
+    const stopHeartbeat = () => { if (_hbInterval.current) { clearInterval(_hbInterval.current); _hbInterval.current = null; } };
 
-    let _userInterval = null;
-    const startUserPoll = () => { stopUserPoll(); _userInterval = setInterval(fetchUsers, 4000); };
-    const stopUserPoll = () => { if (_userInterval) { clearInterval(_userInterval); _userInterval = null; } };
+    const startUserPoll = () => {
+        if (_userInterval.current) clearInterval(_userInterval.current);
+        _userInterval.current = setInterval(fetchUsers, 30000); // 30s — was 4s (too aggressive!)
+    };
+    const stopUserPoll = () => { if (_userInterval.current) { clearInterval(_userInterval.current); _userInterval.current = null; } };
 
-    let _postInterval = null;
-    const startPostPoll = () => { stopPostPoll(); _postInterval = setInterval(fetchPosts, 30000); }; // Reduced to 30s fallback
-    const stopPostPoll = () => { if (_postInterval) { clearInterval(_postInterval); _postInterval = null; } };
+    const startPostPoll = () => {
+        if (_postInterval.current) clearInterval(_postInterval.current);
+        _postInterval.current = setInterval(fetchPosts, 60000); // 60s fallback
+    };
+    const stopPostPoll = () => { if (_postInterval.current) { clearInterval(_postInterval.current); _postInterval.current = null; } };
 
 
     // Scroll behavior removed as requested (keep position)
