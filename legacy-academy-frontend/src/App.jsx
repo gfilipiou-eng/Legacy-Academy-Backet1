@@ -2234,7 +2234,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             onClick={() => setThemeCategory(opt.id)}
                                             className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all ${
                                                 themeCategory === opt.id
-                                                    ? 'bg-[var(--gold-primary)]/15 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(255,215,0,0.25)]'
+                                                    ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)] text-[var(--gold-primary)]'
                                                     : 'bg-white/[0.03] border-white/10 text-gray-500 hover:bg-white/10 hover:text-white'
                                             }`}
                                         >
@@ -2265,14 +2265,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </div>
                                 {themeCategory === 'primary' && (
                                     <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
-                                        {[
-                                            { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
-                                            { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
-                                            { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
-                                            { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
-                                            { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
-                                            { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
-                                        ].map(({ hex: c, glow, label }) => {
+                                            {[
+                                                { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
+                                                { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
+                                                { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
+                                                { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
+                                                { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
+                                                { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
+                                            ].map(({ hex: c, glow, label }) => {
                                             const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                             const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
                                             return (
@@ -2282,7 +2282,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     >
                                                         <div className="w-full h-full rounded-full" style={{
                                                             backgroundColor: c,
-                                                            boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
+                                                            boxShadow: 'none'
                                                         }} />
                                                         {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
                                                     </button>
@@ -2294,14 +2294,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 )}
                                 {themeCategory === 'neons' && (
                                     <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
-                                        {[
-                                            { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
-                                            { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
-                                            { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
-                                            { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
-                                            { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
-                                            { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
-                                        ].map(({ hex: c, glow, label }) => {
+                                            {[
+                                                { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
+                                                { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
+                                                { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
+                                                { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
+                                                { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
+                                                { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
+                                            ].map(({ hex: c, glow, label }) => {
                                             const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                             const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
                                             return (
@@ -2311,7 +2311,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     >
                                                         <div className="w-full h-full rounded-full" style={{
                                                             backgroundColor: c,
-                                                            boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
+                                                            boxShadow: 'none'
                                                         }} />
                                                         {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
                                                     </button>
@@ -3410,6 +3410,10 @@ const applyDisplayMode = (mode) => {
     document.documentElement.style.setProperty('--app-text', text);
     document.documentElement.style.setProperty('--glass-bg', glassBg);
     document.documentElement.style.setProperty('--glass-border', glassBorder);
+    document.documentElement.style.setProperty(
+        '--f1-primary',
+        isBlueDark ? 'var(--twitter-blue)' : 'var(--gold-primary)'
+    );
 
     document.body.classList.remove('light-mode', 'dark-mode', 'blue-dark-mode');
     if (isBlueDark) document.body.classList.add('blue-dark-mode');
@@ -4607,7 +4611,7 @@ const App = () => {
     return (
         <div className="app-container">
             {!user ? (
-                <div className="min-h-full bg-black flex items-center justify-center p-6 relative overflow-hidden">
+                <div className="min-h-full bg-[var(--app-bg)] flex items-center justify-center p-6 relative overflow-hidden">
                     <div className="w-full max-w-sm glass-panel p-8 rounded-[2rem] text-center shadow-2xl">
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
