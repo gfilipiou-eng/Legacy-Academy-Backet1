@@ -184,6 +184,15 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
                 likes: updatedPost.likes,
                 dislikes: updatedPost.dislikes
             });
+
+            if (isDisliking && String(updatedPost.author) !== String(userId)) {
+                io.to(String(updatedPost.author)).emit('notification.received', {
+                    type: 'dislike',
+                    fromUsername: req.user.username || 'Someone',
+                    fromProfilePic: req.user.profilePic || '',
+                    postId: updatedPost._id
+                });
+            }
         }
 
         res.status(200).json({
