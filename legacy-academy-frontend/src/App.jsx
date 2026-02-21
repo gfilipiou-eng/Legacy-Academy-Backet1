@@ -2792,9 +2792,9 @@ const ProfileModal = ({
                                 <div className="grid grid-cols-4 gap-1.5 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl hover:bg-black transition-all">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
-                                        <Icons.Grid className="w-3.5 h-3.5 text-gray-500" />
+                                        <Icons.Grid className="w-3.5 h-3.5 text-white" />
                                     </div>
 
                                     {/* REPOSTS */}
@@ -2843,15 +2843,22 @@ const ProfileModal = ({
                                         </button>
                                     ) : (
                                         <>
-                                            <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${isFollowing ? 'bg-white/5 border border-white/10 text-white' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'}`}>
+                                            <button
+                                                disabled={followLoading[displayUser?._id]}
+                                                onClick={() => onFollow(displayUser)}
+                                                className="flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 bg-black border border-white/10 text-white"
+                                            >
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
-                                            <button onClick={() => onOpenChat(displayUser)} title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
-                                                className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0">
+                                            <button
+                                                onClick={() => onOpenChat(displayUser)}
+                                                title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
+                                                className="flex items-center gap-2 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 shrink-0"
+                                            >
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-white transition-all duration-300" />
                                                 </div>
-                                                <span className="text-[10px] font-black whispers-label text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS')}</span>
+                                                <span className="whispers-label">{t('WHISPERS')}</span>
                                             </button>
                                         </>
                                     )}
