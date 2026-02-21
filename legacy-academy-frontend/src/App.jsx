@@ -1379,7 +1379,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="flex items-start justify-between mb-1 sm:mb-2 -mt-1 sm:-mt-0.5">
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none">
-                                <span className="font-bold text-white text-[15px] sm:text-base hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
+                                <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
                                 <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
                                 <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{post.author?.username?.toLowerCase().replace(/\s+/g, '')}</span>
                                 <span className="text-gray-600 text-[13px] mx-1">·</span>
