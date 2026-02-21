@@ -2087,7 +2087,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                             <div className="space-y-4">
-                                <div className="flex items-center justify-center gap-2">
+                                <div className="hidden sm:flex items-center justify-center gap-2">
                                     {[
                                         { id: 'primary', label: t('CATEGORY_PRIMARY') },
                                         { id: 'neons', label: t('CATEGORY_NEONS') }
@@ -2105,8 +2105,33 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         </button>
                                     ))}
                                 </div>
+                                <div className="sm:hidden space-y-2">
+                                    <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">THEME</div>
+                                    <select
+                                        value={user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700'}
+                                        onChange={(e) => {
+                                            const color = e.target.value;
+                                            applyTheme(color);
+                                            handleSave('theme', color);
+                                        }}
+                                        className="w-full bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none h-[44px]"
+                                    >
+                                        <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
+                                        <option value="#3b82f6" className="bg-black text-white">{t('COLOR_BLUE')}</option>
+                                        <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
+                                        <option value="#10b981" className="bg-black text-white">{t('COLOR_GREEN')}</option>
+                                        <option value="#ffffff" className="bg-black text-white">{t('COLOR_WHITE')}</option>
+                                        <option value="#a855f7" className="bg-black text-white">{t('COLOR_PURPLE')}</option>
+                                        <option value="#ff8c00" className="bg-black text-white">{t('COLOR_ORANGE')}</option>
+                                        <option value="#ff69b4" className="bg-black text-white">{t('COLOR_PINK')}</option>
+                                        <option value="#00ffff" className="bg-black text-white">{t('COLOR_CYAN')}</option>
+                                        <option value="#7cfc00" className="bg-black text-white">{t('COLOR_LIME')}</option>
+                                        <option value="#ff00ff" className="bg-black text-white">{t('COLOR_MAGENTA')}</option>
+                                        <option value="#ffa500" className="bg-black text-white">{t('COLOR_TANGERINE')}</option>
+                                    </select>
+                                </div>
                                 {themeCategory === 'primary' && (
-                                    <div className="grid grid-cols-6 gap-3 place-items-center">
+                                    <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
                                         {[
                                             { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
                                             { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
@@ -2135,7 +2160,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     </div>
                                 )}
                                 {themeCategory === 'neons' && (
-                                    <div className="grid grid-cols-6 gap-3 place-items-center">
+                                    <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
                                         {[
                                             { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
                                             { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
@@ -4708,31 +4733,31 @@ const App = () => {
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pb-4 sm:pb-6 pointer-events-none px-3 sm:px-4">
-                            <div className="h-[58px] sm:h-[68px] w-full max-w-[340px] sm:max-w-sm rounded-[2rem] sm:rounded-[2.5rem] px-3 sm:px-5 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] bg-black/85 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Home className="w-5 h-5 sm:w-6 sm:h-6" />
+                            <div className="liquid-glass-nav h-[64px] sm:h-[72px] w-full max-w-[360px] sm:max-w-sm rounded-[2rem] sm:rounded-[2.5rem] px-4 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] bg-black/85 backdrop-blur-3xl relative">
+                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2.5 sm:p-3.5 relative transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
+                                    <Icons.Home className="w-6 h-6 sm:w-7 sm:h-7" />
                                     {activeTab === 'home' && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Search className="w-5 h-5 sm:w-6 sm:h-6" />
+                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2.5 sm:p-3.5 relative transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
+                                    <Icons.Search className="w-6 h-6 sm:w-7 sm:h-7" />
                                     {activeTab === 'search' && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                 </button>
 
-                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-2.5 sm:p-3 bg-[var(--gold-primary)] text-black rounded-full shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all -mt-6 sm:-mt-8 border-[3px] sm:border-4 border-[#050505]">
-                                    <Icons.Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-3 sm:p-3.5 bg-[var(--gold-primary)] text-black rounded-full shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all -mt-6 sm:-mt-8 border-[3px] sm:border-4 border-[#050505]">
+                                    <Icons.Plus className="w-6 h-6 sm:w-7 sm:h-7" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2.5 sm:p-3.5 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
                                     <div className="relative">
-                                        <Icons.Bell className={`w-5 h-5 sm:w-6 sm:h-6 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
+                                        <Icons.Bell className={`w-6 h-6 sm:w-7 sm:h-7 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
                                         {user?.notifications?.some(n => !n.read) && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[var(--gold-primary)] rounded-full border-2 border-black" />}
                                     </div>
                                     {activeTab === 'alerts' && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                 </button>
 
                                 <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all duration-300 ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
-                                    <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-white/10">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white/10">
                                         <ProfileAvatar user={user} key={imgKey} className="rounded-full" />
                                     </div>
                                 </button>
