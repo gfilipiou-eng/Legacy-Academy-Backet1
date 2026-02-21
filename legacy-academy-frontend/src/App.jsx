@@ -2798,8 +2798,8 @@ const ProfileModal = ({
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
-                                        <span className="font-black text-[var(--gold-primary)] text-base leading-none tabular-nums">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl hover:bg-black transition-all">
+                                        <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = String(displayUser?._id || '');
                                                 return (userSpecificPosts || []).filter(p =>
@@ -2808,27 +2808,27 @@ const ProfileModal = ({
                                                 ).length;
                                             })()}
                                         </span>
-                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-500" />
+                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-white" />
                                     </div>
 
                                     {/* FOLLOWERS */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
-                                        <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
+                                        <span className="font-black text-white text-base leading-none tabular-nums">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
-                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
+                                        <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
                                     </div>
 
                                     {/* FOLLOWING */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
-                                        <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
+                                        <span className="font-black text-white text-base leading-none tabular-nums">
                                             {displayUser?.following?.length || 0}
                                         </span>
-                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
+                                        <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
 
                                 </div>
@@ -2838,7 +2838,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-4 space-y-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-white/5 border border-white/10 hover:border-white/20 rounded-full text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest transition-all active:scale-95">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -2863,9 +2863,9 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4">
+                            <div className="flex gap-2 p-1 bg-black rounded-2xl mb-4 border border-white/10">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20' : 'text-gray-500 hover:text-white'}`}>{t('TAB_' + tab)}</button>
+                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'text-white' : 'text-gray-400 hover:text-white'}`}>{t('TAB_' + tab)}</button>
                                 ))}
                             </div>
 
