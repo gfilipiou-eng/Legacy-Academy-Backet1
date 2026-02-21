@@ -715,10 +715,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                     </div>
 
-                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
+                            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
                         {/* ── STICKY COMMENT/ACTIONS BAR ── */}
                         <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
-                            <div className="flex items-center justify-around w-full py-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2 w-full py-1">
                                 <button
                                     onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
                                     className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 transition-all">
@@ -2147,8 +2147,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                             <div className="space-y-4">
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-                                    <div className="hidden sm:block text-[10px] font-black text-gray-400 uppercase tracking-[0.25em]">
-                                        ΛΕΙΤΟΥΡΓΙΑ
+                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
+                                        <span>ΛΕΙΤΟΥΡΓΙΑ</span>
+                                        <span className="text-[9px] text-gray-500 tracking-[0.2em]">MODE</span>
                                     </div>
                                     <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 sm:gap-0 w-full sm:w-auto">
                                         <button
@@ -2159,13 +2160,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center flex flex-col leading-tight ${
                                                 (displayMode || 'dark') === 'dark'
                                                     ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
                                                     : 'text-gray-400 hover:text-white'
                                             }`}
                                         >
-                                            ΣΚΟΤΕΙΝΟ
+                                            <span>ΣΚΟΤΕΙΝΟ</span>
+                                            <span className="text-[8px] tracking-[0.2em] opacity-70">DARK</span>
                                         </button>
                                         <button
                                             type="button"
@@ -2175,13 +2177,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center flex flex-col leading-tight ${
                                                 displayMode === 'light'
                                                     ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
                                                     : 'text-gray-400 hover:text-white'
                                             }`}
                                         >
-                                            ΦΩΤΕΙΝΟ
+                                            <span>ΦΩΤΕΙΝΟ</span>
+                                            <span className="text-[8px] tracking-[0.2em] opacity-70">LIGHT</span>
                                         </button>
                                         <button
                                             type="button"
@@ -2191,20 +2194,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center flex flex-col leading-tight ${
                                                 displayMode === 'blue-dark'
                                                     ? 'bg-[#15202b] text-white shadow-[0_0_16px_rgba(15,23,42,0.9)]'
                                                     : 'text-gray-400 hover:text-white'
                                             }`}
                                         >
-                                            ΜΠΛΕ
+                                            <span>ΜΠΛΕ</span>
+                                            <span className="text-[8px] tracking-[0.2em] opacity-70">BLUE</span>
                                         </button>
                                     </div>
                                 </div>
                                 <div className="space-y-2 mt-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em]">
-                                            ΜΕΓΕΘΥΝΣΗ UI
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
+                                            <span>ΜΕΓΕΘΥΝΣΗ UI</span>
+                                            <span className="text-[9px] text-gray-500 tracking-[0.2em]">UI ZOOM</span>
                                         </span>
                                         <span className="text-[10px] font-black text-gray-400">
                                             {Math.round(zoomLevel * 100)}%
@@ -2850,9 +2855,9 @@ const ProfileModal = ({
                                             <button onClick={() => onOpenChat(displayUser)} title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
                                                 className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0">
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.Ghost className="w-5 h-5 text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
                                                 </div>
-                                                <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS')}</span>
+                                                <span className="text-[10px] font-black whispers-label text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS')}</span>
                                             </button>
                                         </>
                                     )}
@@ -2884,6 +2889,9 @@ const ProfileModal = ({
                                     </div>
                                     <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 transition-all uppercase shadow-lg shadow-[var(--gold-primary)]/20">
                                         {hasRequested ? t('REQUESTED') : t('FOLLOW_TO_VIEW')}
+                                    </button>
+                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all">
+                                        {t('CLOSE', 'ΚΛΕΙΣΙΜΟ')}
                                     </button>
                                 </div>
                             ) : (
@@ -4792,12 +4800,12 @@ const App = () => {
                                         className="flex items-center gap-2.5 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0"
                                     >
                                         <div className="relative flex items-center justify-center">
-                                            <Icons.Ghost className="w-5 h-5 text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                            <Icons.Ghost className="w-5 h-5 whispers-icon text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
                                             {user?.notifications?.some(n => n.type === 'message' && !n.read) && (
                                                 <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] animate-pulse" />
                                             )}
                                         </div>
-                                        <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] transition-colors">
+                                        <span className="text-[10px] font-black whispers-label text-white uppercase tracking-[0.2em] transition-colors">
                                             {t('CHAT')}
                                         </span>
                                     </button>
