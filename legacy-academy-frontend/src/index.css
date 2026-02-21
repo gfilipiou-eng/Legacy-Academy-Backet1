@@ -35,39 +35,8 @@ body.dark-mode {
   color: #e7e9ea;
 }
 
-body.light-mode {
-  color: #0b1120;
-}
-
-body.light-mode .text-white,
-body.light-mode .text-gray-400,
-body.light-mode .text-gray-500,
-body.light-mode .text-white\/95,
-body.light-mode .text-white\/90,
-body.light-mode .text-white\/80,
-body.light-mode .text-white\/70,
-body.light-mode .text-white\/60,
-body.light-mode .text-white\/40 {
-  color: #0b1120 !important;
-}
-
 .chat-shell {
   color: #e7e9ea;
-}
-
-body.light-mode .chat-shell {
-  color: #e7e9ea !important;
-}
-
-body.light-mode .chat-shell .text-white,
-body.light-mode .chat-shell .text-gray-400,
-body.light-mode .chat-shell .text-gray-500 {
-  color: #e7e9ea !important;
-}
-
-body.light-mode .whispers-icon,
-body.light-mode .whispers-label {
-  color: #e7e9ea !important;
 }
 
 img {

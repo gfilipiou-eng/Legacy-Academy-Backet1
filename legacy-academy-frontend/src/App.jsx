@@ -2044,7 +2044,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         user?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
     );
     const [zoomLevel, setZoomLevel] = useState(
-        user?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
+        Math.min(
+            1,
+            Math.max(
+                0.8,
+                user?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
+            )
+        )
     );
 
     useEffect(() => {
@@ -2055,7 +2061,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 user.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
             );
             setZoomLevel(
-                user.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
+                Math.min(
+                    1,
+                    Math.max(
+                        0.8,
+                        user.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
+                    )
+                )
             );
         }
     }, [user, saving]);
@@ -2172,23 +2184,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         <button
                                             type="button"
                                             onClick={() => {
-                                                const mode = 'light';
-                                                setDisplayMode(mode);
-                                                applyDisplayMode(mode);
-                                                handleSave('displayMode', mode);
-                                            }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center flex flex-col leading-tight ${
-                                                displayMode === 'light'
-                                                    ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
-                                                    : 'text-gray-400 hover:text-white'
-                                            }`}
-                                        >
-                                            <span>ΦΩΤΕΙΝΟ</span>
-                                            <span className="text-[8px] tracking-[0.2em] opacity-70">LIGHT</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
                                                 const mode = 'blue-dark';
                                                 setDisplayMode(mode);
                                                 applyDisplayMode(mode);
@@ -2201,7 +2196,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             }`}
                                         >
                                             <span>ΜΠΛΕ</span>
-                                            <span className="text-[8px] tracking-[0.2em] opacity-70">BLUE</span>
                                         </button>
                                     </div>
                                 </div>
@@ -2217,8 +2211,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     </div>
                                     <input
                                         type="range"
-                                        min="0.9"
-                                        max="1.15"
+                                        min="0.8"
+                                        max="1"
                                         step="0.05"
                                         value={zoomLevel}
                                         onChange={(e) => {
@@ -3402,13 +3396,15 @@ const applyTheme = (color) => {
 };
 
 const applyDisplayMode = (mode) => {
-    const isLight = mode === 'light';
+    if (mode === 'light') {
+        mode = 'dark';
+    }
     const isBlueDark = mode === 'blue-dark';
 
-    const bg = isLight ? '#f9fafb' : isBlueDark ? '#15202b' : '#000000';
-    const text = isLight ? '#0b1120' : '#e7e9ea';
-    const glassBg = isLight ? 'rgba(255,255,255,0.96)' : isBlueDark ? 'rgba(21,32,43,0.96)' : 'rgba(0,0,0,0.9)';
-    const glassBorder = isLight ? '#e5e7eb' : isBlueDark ? '#38444d' : '#2f3336';
+    const bg = isBlueDark ? '#15202b' : '#000000';
+    const text = '#e7e9ea';
+    const glassBg = isBlueDark ? 'rgba(21,32,43,0.96)' : 'rgba(0,0,0,0.9)';
+    const glassBorder = isBlueDark ? '#38444d' : '#2f3336';
 
     document.documentElement.style.setProperty('--app-bg', bg);
     document.documentElement.style.setProperty('--app-text', text);
@@ -3416,8 +3412,7 @@ const applyDisplayMode = (mode) => {
     document.documentElement.style.setProperty('--glass-border', glassBorder);
 
     document.body.classList.remove('light-mode', 'dark-mode', 'blue-dark-mode');
-    if (isLight) document.body.classList.add('light-mode');
-    else if (isBlueDark) document.body.classList.add('blue-dark-mode');
+    if (isBlueDark) document.body.classList.add('blue-dark-mode');
     else document.body.classList.add('dark-mode');
 
     localStorage.setItem('displayMode', mode);
@@ -3425,7 +3420,7 @@ const applyDisplayMode = (mode) => {
 
 const applyZoom = (zoom) => {
     const root = document.getElementById('root') || document.body;
-    const z = Math.max(0.8, Math.min(1.2, Number(zoom) || 1));
+    const z = Math.max(0.8, Math.min(1, Number(zoom) || 1));
     if (root) {
         root.style.transformOrigin = 'top center';
         root.style.transform = z === 1 ? '' : `scale(${z})`;
