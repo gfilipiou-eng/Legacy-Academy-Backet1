@@ -421,12 +421,6 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
     );
 };
 
-const FounderBadge = ({ className = "w-5 h-5", title }) => (
-    <div className={`relative flex items-center justify-center ${className} shrink-0 text-[#FFD700]`} title={title || "LEGACY FOUNDER"}>
-        <Icons.Crown className="w-full h-full fill-current" />
-    </div>
-);
-
 const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
@@ -485,7 +479,6 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
                     </span>
                     <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
-                    {isFounder && <FounderBadge className="w-3.5 h-3.5 -ml-0.5" />}
                 </div>
 
                 {isEditing ? (
@@ -700,7 +693,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <div className="flex items-center gap-1.5 flex-wrap">
                                     <span className="font-bold text-white leading-none whitespace-nowrap">{author?.username}</span>
                                     <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4" />
-                                    {author?.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5 -ml-0.5" />}
                                 </div>
                             </div>
                         </div>
@@ -1400,7 +1392,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none">
                                 <span className="font-bold text-white text-[15px] sm:text-base hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
                                 <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                {isFounder && <FounderBadge className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0 -ml-0.5" />}
                                 <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{post.author?.username?.toLowerCase().replace(/\s+/g, '')}</span>
                                 <span className="text-gray-600 text-[13px] mx-1">·</span>
                                 <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
@@ -2576,7 +2567,6 @@ const ProfileModal = ({
                                         <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
                                             <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-4 h-4 sm:w-5 sm:h-5" />
-                                            {displayUser?.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />}
                                         </div>
                                     </div>
                                     <div className="text-gray-400 text-sm font-bold mt-1 flex items-center gap-2">
@@ -4473,27 +4463,30 @@ const App = () => {
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[40] bg-transparent backdrop-blur-md border-b border-white/5 shrink-0 transition-all duration-500">
-                            <div className="w-full px-2 sm:px-6 py-2 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    {/* Logo removed from header as requested */}
-                                </div>
-                                <div className="flex items-center gap-4">
+                        <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
+                            <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
+                                <div className="flex items-center gap-2" />
+                                <div className="flex items-center gap-2 sm:gap-3">
                                     <button
                                         onClick={() => setIsChatOpen(true)}
                                         title={t('MESSAGES_SUBTITLE')}
-                                        className="flex items-center gap-2.5 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl"
+                                        className="flex items-center gap-2 px-3 py-2 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-[var(--gold-primary)]/40 transition-colors"
                                     >
                                         <div className="relative flex items-center justify-center">
-                                            <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                            <Icons.Ghost className="w-5 h-5 text-gray-300" />
                                             {user?.notifications?.some(n => n.type === 'message' && !n.read) && (
-                                                <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] animate-pulse" />
+                                                <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full" />
                                             )}
                                         </div>
-                                        <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.25em] transition-colors">{t('CHAT')}</span>
+                                        <span className="hidden sm:inline text-[10px] font-black text-gray-300 uppercase tracking-[0.22em]">
+                                            {t('CHAT')}
+                                        </span>
                                     </button>
-                                    <button onClick={() => setIsSettingsOpen(true)} className="header-icon-btn rounded-full">
-                                        <Icons.Settings className="w-8 h-8" />
+                                    <button
+                                        onClick={() => setIsSettingsOpen(true)}
+                                        className="w-9 h-9 flex items-center justify-center rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white transition-colors"
+                                    >
+                                        <Icons.Settings className="w-5 h-5" />
                                     </button>
                                 </div>
                             </div>
@@ -4603,8 +4596,8 @@ const App = () => {
                                                                     {u.username}
                                                                 </div>
                                                                 {u.role === 'Founder' && (
-                                                                    <div className="flex items-center mt-1 animate-fade-in group/badge">
-                                                                        <FounderBadge className="w-3.5 h-3.5" />
+                                                                    <div className="flex items-center mt-1 text-[10px] text-[var(--gold-primary)] font-black uppercase tracking-[0.18em]">
+                                                                        FOUNDER
                                                                     </div>
                                                                 )}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
