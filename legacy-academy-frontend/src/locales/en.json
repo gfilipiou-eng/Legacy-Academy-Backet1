@@ -226,6 +226,8 @@
     "TRANSMITTING_PERCENT": "TRANSMITTING {{percent}}%",
     "CHANGE_COVER": "CHANGE BACKGROUND",
     "AESTHETICS": "AESTHETICS",
+    "CATEGORY_PRIMARY": "Primary",
+    "CATEGORY_NEONS": "Neons",
     "SETTINGS_SUBTITLE": "Customize your legacy",
     "OPERATIONS": "OPERATIONS",
     "BAN_3_DAYS": "BAN 3 DAYS",

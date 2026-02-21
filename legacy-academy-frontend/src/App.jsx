@@ -2060,7 +2060,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 border border-white/10">
+                    <button onClick={onClose} className="p-0">
                         <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
@@ -2085,38 +2085,63 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <section>
                         <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
-                            <div className="grid grid-cols-6 gap-3 place-items-center">
-                                {[
-                                    { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
-                                    { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
-                                    { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
-                                    { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
-                                    { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
-                                    { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
-                                    { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
-                                    { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
-                                    { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
-                                    { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
-                                    { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
-                                    { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
-                                ].map(({ hex: c, glow, label }) => {
-                                    const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
-                                    const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
-                                    return (
-                                        <div key={c} className="flex flex-col items-center justify-center">
-                                            <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                                className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
-                                            >
-                                                <div className="w-full h-full rounded-full" style={{
-                                                    backgroundColor: c,
-                                                    boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
-                                                }} />
-                                                {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
-                                            </button>
-                                            <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>{label}</span>
-                                        </div>
-                                    );
-                                })}
+                            <div className="space-y-4">
+                                <div className="text-[9px] font-black uppercase tracking-wider text-gray-500 pl-1">{t('CATEGORY_PRIMARY')}</div>
+                                <div className="grid grid-cols-6 gap-3 place-items-center">
+                                    {[
+                                        { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
+                                        { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
+                                        { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
+                                        { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
+                                        { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
+                                        { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
+                                    ].map(({ hex: c, glow, label }) => {
+                                        const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
+                                        const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
+                                        return (
+                                            <div key={c} className="flex flex-col items-center justify-center">
+                                                <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
+                                                    className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                                >
+                                                    <div className="w-full h-full rounded-full" style={{
+                                                        backgroundColor: c,
+                                                        boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
+                                                    }} />
+                                                    {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
+                                                </button>
+                                                <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>{label}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <div className="text-[9px] font-black uppercase tracking-wider text-gray-500 pl-1">{t('CATEGORY_NEONS')}</div>
+                                <div className="grid grid-cols-6 gap-3 place-items-center">
+                                    {[
+                                        { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
+                                        { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
+                                        { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
+                                        { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
+                                        { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
+                                        { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
+                                    ].map(({ hex: c, glow, label }) => {
+                                        const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
+                                        const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
+                                        return (
+                                            <div key={c} className="flex flex-col items-center justify-center">
+                                                <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
+                                                    className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                                >
+                                                    <div className="w-full h-full rounded-full" style={{
+                                                        backgroundColor: c,
+                                                        boxShadow: isActive ? `0 0 18px 4px ${glow}` : 'none'
+                                                    }} />
+                                                    {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
+                                                </button>
+                                                <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>{label}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -4530,58 +4555,7 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
-                                    {activeTab === 'home' && (
-                                        <div className="px-4 mb-2 flex flex-col items-center animate-fade-in relative z-10 scale-90 sm:scale-100">
-                                            {/* SEARCH BAR - TOP */}
-                                            <div className="w-full max-w-2xl relative group mb-4">
-                                                <div className="absolute -inset-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-transparent rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                                                <div className="relative">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 transition-colors z-20 pointer-events-none">
-                                                        <circle cx="11" cy="11" r="8"></circle>
-                                                        <path d="m21 21-4.3-4.3"></path>
-                                                    </svg>
-                                                    <input
-                                                        value={searchQuery}
-                                                        onChange={(e) => {
-                                                            setSearchQuery(e.target.value);
-                                                            if (e.target.value) setActiveTab('search');
-                                                        }}
-                                                        placeholder={t('SEARCH_PH') || "Search..."}
-                                                        className="w-full bg-white/[0.05] border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold text-white outline-none focus:border-[var(--gold-primary)]/40 focus:bg-white/[0.1] transition-all shadow-2xl backdrop-blur-xl placeholder:text-white/30 placeholder:text-xs sm:placeholder:text-sm"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* LOGO - MIDDLE */}
-                                            <div className="flex justify-center -my-10 relative pointer-events-none select-none">
-                                                <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.15)]" />
-                                            </div>
-                                            
-                                            {/* TWITTER-STYLE TOP PILL */}
-                                            <div className="mt-12 w-full flex justify-center pointer-events-auto">
-                                                <div className="h-[58px] sm:h-[68px] w-full max-w-[340px] sm:max-w-sm rounded-[2rem] sm:rounded-[2.5rem] px-3 sm:px-5 flex items-center justify-between border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] bg-black/85 backdrop-blur-3xl relative">
-                                                    <button onClick={() => setActiveTab('home')} className="p-2 sm:p-3 relative transition-all duration-300 text-[var(--gold-primary)]">
-                                                        <Icons.Home className="w-5 h-5 sm:w-6 sm:h-6" />
-                                                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />
-                                                    </button>
-                                                    <button onClick={() => { setActiveTab('search'); setTimeout(() => document.getElementById('main-search')?.focus(), 0); }} className="p-2 sm:p-3 relative transition-all duration-300 text-gray-400 hover:text-white">
-                                                        <Icons.Search className="w-5 h-5 sm:w-6 sm:h-6" />
-                                                    </button>
-                                                    <button onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); }} className="p-2.5 sm:p-3 bg-[var(--gold-primary)] text-black rounded-full shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all -mt-6 sm:-mt-8 border-[3px] sm:border-4 border-[#050505]">
-                                                        <Icons.Plus className="w-5 h-5 sm:w-6 sm:h-6" />
-                                                    </button>
-                                                    <button onClick={() => setActiveTab('alerts')} className="p-2 sm:p-3 relative transition-all duration-300 text-gray-400 hover:text-white">
-                                                        <Icons.Bell className="w-5 h-5 sm:w-6 sm:h-6" />
-                                                    </button>
-                                                    <button onClick={() => viewProfile(user)} className="p-0.5 rounded-full border-2 transition-all duration-300 border-transparent hover:border-white/30">
-                                                        <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-white/10">
-                                                            <ProfileAvatar user={user} className="rounded-full" />
-                                                        </div>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
+                                    {activeTab === 'home' && null}
 
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} imgKey={imgKey} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="px-2 py-4 sm:p-8">
