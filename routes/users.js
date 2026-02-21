@@ -473,7 +473,7 @@ router.delete("/notifications", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         await User.findByIdAndUpdate(userId, { $set: { notifications: [] } });
-        res.status(200).json("Notifications cleared");
+        res.status(200).json("Οι ειδοποιήσεις διαγράφηκαν");
     } catch (err) { res.status(500).json(err); }
 });
 
