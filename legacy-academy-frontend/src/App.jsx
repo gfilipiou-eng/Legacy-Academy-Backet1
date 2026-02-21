@@ -2870,9 +2870,17 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-black rounded-2xl mb-4 border border-white/10">
+                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4 border border-white/10 backdrop-blur-xl">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab ? 'text-white' : 'text-gray-400 hover:text-white'}`}>{t('TAB_' + tab)}</button>
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${
+                                            activeTab === tab ? 'text-white' : 'text-white/70 hover:text-white'
+                                        }`}
+                                    >
+                                        {t('TAB_' + tab)}
+                                    </button>
                                 ))}
                             </div>
 
