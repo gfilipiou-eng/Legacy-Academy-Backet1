@@ -116,9 +116,6 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
     }
 });
 
-// CREATE POST
-
-// CREATE POST
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
         let mediaUrl = "";
@@ -141,7 +138,13 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
 
         const savedPost = await newPost.save();
-        await savedPost.populate("author", "username profilePic role");
+        await savedPost.populate("author", "username profilePic role isPrivate isFollowersOnly followers");
+
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('post.created', savedPost);
+        }
+
         res.status(200).json(savedPost);
     } catch (err) {
         res.status(500).json(err);

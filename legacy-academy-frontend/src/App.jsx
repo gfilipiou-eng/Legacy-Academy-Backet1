@@ -3556,6 +3556,26 @@ const App = () => {
             });
         };
 
+        const onPostCreated = (data) => {
+            console.log("📡 [SOCKET] Post created real-time:", data._id);
+            if (!data || !data.author) return;
+            setPosts(prev => {
+                if (!prev) return [data];
+                if (prev.some(p => String(p._id) === String(data._id))) return prev;
+
+                const author = data.author || {};
+                const currentUserId = String(user?._id || "");
+                const isOwner = String(author._id || author) === currentUserId;
+                const isFollower = Array.isArray(author.followers) && author.followers.some(id => String(id) === currentUserId);
+                const isFounder = user?.role === 'Founder';
+                const isPrivate = !!(author.isPrivate || author.isFollowersOnly);
+                const allowed = !isPrivate || isOwner || isFollower || isFounder;
+                if (!allowed) return prev;
+
+                return [data, ...prev];
+            });
+        };
+
         const onUserUpdated = (data) => {
             console.log("📡 [SOCKET] User updated real-time:", data._id);
 
@@ -3571,7 +3591,6 @@ const App = () => {
             if (user && String(user._id) === String(data._id)) {
                 setUser(prev => {
                     const nextData = { ...data };
-                    // Force cache-break for other devices
                     const timestamp = Date.now();
                     if (nextData.profilePic) {
                         const sep = nextData.profilePic.includes('?') ? '&' : '?';
@@ -3585,12 +3604,41 @@ const App = () => {
                     localStorage.setItem('user', JSON.stringify(updated));
                     return updated;
                 });
+                setImgKey(Date.now());
+            }
+
+            setPosts(prev => {
+                if (!prev) return prev;
+                return prev.map(p => {
+                    const userId = String(data._id);
+                    let updatedPost = p;
+                    if (String(p.author?._id || p.author) === userId) {
+                        const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...data } : p.author;
+                        updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: data.profilePic || updatedPost.profilePic };
+                    }
+                    if (p.comments?.some(c => String(c.authorId) === userId)) {
+                        updatedPost = {
+                            ...updatedPost,
+                            comments: p.comments.map(c => String(c.authorId) === userId ? { ...c, authorProfilePic: data.profilePic || c.authorProfilePic, authorName: data.username || c.authorName } : c)
+                        };
+                    }
+                    return updatedPost;
+                });
+            });
+
+            if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === String(data._id)) {
+                setSelectedPost(prev => {
+                    if (!prev) return prev;
+                    const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...data } : prev.author;
+                    return { ...prev, author: updatedAuthor, profilePic: data.profilePic || prev.profilePic };
+                });
             }
         };
 
         socket.on('notification.received', onNotificationRecv);
         socket.on('post.deleted', onPostDeleted);
         socket.on('post.liked', onPostLiked);
+        socket.on('post.created', onPostCreated);
         socket.on('comment.added', onCommentSync);
         socket.on('comment.deleted', onCommentSync);
         socket.on('comment.updated', onCommentSync);
@@ -3601,6 +3649,7 @@ const App = () => {
             socket.off('notification.received', onNotificationRecv);
             socket.off('post.deleted', onPostDeleted);
             socket.off('post.liked', onPostLiked);
+            socket.off('post.created', onPostCreated);
             socket.off('comment.added', onCommentSync);
             socket.off('comment.deleted', onCommentSync);
             socket.off('comment.updated', onCommentSync);
