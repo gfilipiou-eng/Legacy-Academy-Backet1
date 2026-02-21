@@ -4797,27 +4797,37 @@ const App = () => {
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
-                            <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
+                            <div
+                                className="w-full px-3 sm:px-6 py-2 flex items-center justify-between"
+                                style={
+                                    zoomLevel !== 1
+                                        ? {
+                                              transform: `scale(${1 / zoomLevel})`,
+                                              transformOrigin: 'top center',
+                                          }
+                                        : undefined
+                                }
+                            >
                                 <div className="flex items-center gap-2" />
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <button
                                         onClick={() => setIsChatOpen(true)}
                                         title={t('MESSAGES_SUBTITLE')}
-                                        className="flex items-center gap-2.5 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0"
+                                        className="flex items-center gap-2.5 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 shrink-0"
                                     >
                                         <div className="relative flex items-center justify-center">
-                                            <Icons.Ghost className="w-5 h-5 whispers-icon text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                            <Icons.Ghost className="w-5 h-5 whispers-icon text-white transition-all duration-300" />
                                             {user?.notifications?.some(n => n.type === 'message' && !n.read) && (
                                                 <div className="absolute -top-1.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] animate-pulse" />
                                             )}
                                         </div>
-                                        <span className="text-[10px] font-black whispers-label text-white uppercase tracking-[0.2em] transition-colors">
+                                        <span className="whispers-label">
                                             {t('CHAT')}
                                         </span>
                                     </button>
                                     <button
                                         onClick={() => setIsSettingsOpen(true)}
-                                        className="w-9 h-9 flex items-center justify-center rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white transition-colors"
+                                        className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 bg-black text-white transition-colors"
                                     >
                                         <Icons.Settings className="w-5 h-5" />
                                     </button>
