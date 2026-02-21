@@ -702,35 +702,39 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     </div>
 
                     {/* Social Stats and Comment Input */}
-                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2 shrink-0">
-                        <div className="flex items-center justify-between mt-2 mb-2 text-gray-400 w-full sm:w-[90%] max-w-sm px-2">
-                            <button onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }} className="flex items-center gap-1 group hover:text-sky-400 transition-colors">
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-sky-400/10 transition-colors">
-                                    <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
-                                </div>
-                                <span className="text-xs font-medium">{post.comments?.length || 0}</span>
+                    <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[env(safe-area-inset-bottom,75px)] md:pb-2 shrink-0">
+                        {/* ACTION BAR */}
+                        <div className="flex items-center justify-between mb-2 w-full">
+
+                            <button onClick={() => document.getElementById(`comment-input-${post._id}`)?.focus()}
+                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-gray-500 hover:text-sky-400 hover:bg-sky-400/10 transition-all active:scale-90">
+                                <Icons.MessageSquare className="w-4 h-4 shrink-0" />
+                                <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions?.[post._id]} onClick={() => onRepost?.(post._id)} className={`flex items-center gap-1 group transition-colors ${post.reposts?.includes(user?._id) ? 'text-green-500' : 'hover:text-green-500'}`}>
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                                    <Icons.RefreshCcw className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-                                </div>
-                                <span className="text-xs font-medium">{post.reposts?.length || 0}</span>
+                            <button disabled={!!loadingActions?.[post._id]} onClick={() => onRepost?.(post._id)}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 bg-green-400/10' : 'text-gray-500 hover:text-green-400 hover:bg-green-400/10'}`}>
+                                <Icons.RefreshCcw className="w-4 h-4 shrink-0" />
+                                <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'hover:text-red-500'}`}>
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-red-500/10 transition-colors">
-                                    <Icons.Heart className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} />
-                                </div>
-                                <span className="text-xs font-medium">{post.likes?.length || 0}</span>
+                            <button disabled={!!loadingActions?.[post._id]} onClick={() => onLike(post._id)}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 bg-red-400/10' : 'text-gray-500 hover:text-red-400 hover:bg-red-400/10'}`}>
+                                <Icons.Heart className={`w-4 h-4 shrink-0 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
-                            <button disabled={loadingActions?.[post._id]} onClick={() => onDislike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'hover:text-[var(--gold-primary)]'}`}>
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[var(--gold-primary)]/10 transition-colors">
-                                    <Icons.ThumbsDown className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''}`} />
-                                </div>
-                                <span className="text-xs font-medium">{post.dislikes?.length || 0}</span>
+                            <button disabled={!!loadingActions?.[post._id]} onClick={() => onDislike(post._id)}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10' : 'text-gray-500 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/10'}`}>
+                                <Icons.ThumbsDown className={`w-4 h-4 shrink-0 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
+
+                            <button onClick={() => onShare?.(post)}
+                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-gray-500 hover:text-white hover:bg-white/10 transition-all active:scale-90">
+                                <Icons.Share className="w-4 h-4 shrink-0" />
+                            </button>
+
                         </div>
 
                         <div className="flex items-center gap-2 w-full">
@@ -1408,40 +1412,46 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         )}
                     </div>
 
-                    <div className="flex items-center justify-between mt-4 text-gray-400 w-full sm:w-[90%] max-w-sm ml-[-8px]">
+                    {/* ── POST ACTIONS BAR ── */}
+                    <div className="flex items-center justify-between mt-3 px-1 w-full">
+
                         {/* COMMENTS */}
-                        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1 group hover:text-sky-400 transition-colors">
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-sky-400/10 transition-colors">
-                                <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
-                            </div>
-                            <span className="text-xs font-medium">{post.comments?.length || 0}</span>
+                        <button onClick={() => setShowComments(!showComments)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${showComments ? 'text-sky-400 bg-sky-400/10' : 'text-gray-500 hover:text-sky-400 hover:bg-sky-400/8'}`}>
+                            <Icons.MessageSquare className="w-4 h-4 shrink-0" />
+                            <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
                         </button>
 
                         {/* REPOSTS */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onRepost(post._id)} className={`flex items-center gap-1 group transition-colors ${post.reposts?.includes(user?._id) ? 'text-green-500' : 'hover:text-green-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                                <Icons.RefreshCcw className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.reposts?.includes(user?._id) ? 'scale-110' : 'group-hover:scale-110 transition-transform'}`} />
-                            </div>
-                            <span className="text-xs font-medium">{post.reposts?.length || 0}</span>
+                        <button disabled={!!loadingActions?.[post._id]}
+                            onClick={() => !loadingActions?.[post._id] && onRepost(post._id)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 bg-green-400/10' : 'text-gray-500 hover:text-green-400 hover:bg-green-400/8'} ${loadingActions?.[post._id] ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                            <Icons.RefreshCcw className="w-4 h-4 shrink-0" />
+                            <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                         </button>
 
                         {/* LIKE */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-red-500/10 transition-colors`}>
-                                <Icons.Heart className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.likes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
-                            </div>
-                            <span className="text-xs font-medium">{post.likes?.length || 0}</span>
+                        <button disabled={!!loadingActions?.[post._id]}
+                            onClick={() => !loadingActions?.[post._id] && onLike(post._id)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 bg-red-400/10' : 'text-gray-500 hover:text-red-400 hover:bg-red-400/8'} ${loadingActions?.[post._id] ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                            <Icons.Heart className={`w-4 h-4 shrink-0 ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                            <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                         </button>
 
                         {/* DISLIKE */}
-                        <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[var(--gold-primary)]/10 transition-colors`}>
-                                <div className="relative mt-0.5">
-                                    <Icons.ThumbsDown className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.dislikes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
-                                </div>
-                            </div>
-                            <span className="text-xs font-medium">{post.dislikes?.length || 0}</span>
+                        <button disabled={!!loadingActions?.[post._id]}
+                            onClick={() => !loadingActions?.[post._id] && onDislike(post._id)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all active:scale-90 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10' : 'text-gray-500 hover:text-[var(--gold-primary)] hover:bg-[var(--gold-primary)]/8'} ${loadingActions?.[post._id] ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                            <Icons.ThumbsDown className={`w-4 h-4 shrink-0 ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                            <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                         </button>
+
+                        {/* SHARE */}
+                        <button onClick={() => onShare?.(post)}
+                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-gray-500 hover:text-white hover:bg-white/8 transition-all active:scale-90">
+                            <Icons.Share className="w-4 h-4 shrink-0" />
+                        </button>
+
                     </div>
 
                     {showComments && (
