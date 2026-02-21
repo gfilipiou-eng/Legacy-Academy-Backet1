@@ -212,5 +212,10 @@
     "READ_LESS": "ΛΙΓΟΤΕΡΑ",
     "ENCRYPTING_DATA": "ΚΡΥΠΤΟΓΡΑΦΗΣΗ ΠΑΚΕΤΩΝ ΔΕΔΟΜΕΝΩΝ",
     "TRANSMITTING_PERCENT": "ΜΕΤΑΔΟΣΗ {{percent}}%",
-    "CHANGE_COVER": "ΑΛΛΑΓΗ ΦΟΝΤΟΥ"
+    "CHANGE_COVER": "ΑΛΛΑΓΗ ΦΟΝΤΟΥ",
+    "AESTHETICS": "ΑΙΣΘΗΤΙΚΗ",
+    "SETTINGS_SUBTITLE": "Προσωποποίησε το legacy σου",
+    "OPERATIONS": "ΛΕΙΤΟΥΡΓΙΕΣ",
+    "BAN_3_DAYS": "BAN 3 ΗΜΕΡΕΣ",
+    "WHISPERS": "ΨΙΘΥΡΟΙ"
 }

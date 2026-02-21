@@ -1927,6 +1927,39 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     );
 };
 
+const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
+    const colors = {
+        gold: { on: 'bg-[var(--gold-primary)] border-[var(--gold-primary)]', dot: '' },
+        blue: { on: 'bg-blue-600 border-blue-500', dot: '' },
+    };
+    const c = colors[color] || colors.gold;
+    return (
+        <div
+            onClick={() => !saving && onToggle()}
+            className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black/40 border-white/20'}`}
+        >
+            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+        </div>
+    );
+};
+
+const SectionHeader = ({ color, label }) => (
+    <div className="flex items-center gap-3 mb-4">
+        <div className={`w-1 h-4 rounded-full shadow-[0_0_10px_currentColor] ${color}`} />
+        <h3 className="text-[10px] font-black text-white/50 uppercase tracking-[0.25em]">{label}</h3>
+    </div>
+);
+
+const SettingRow = ({ label, desc, children, hoverColor = 'hover:border-[var(--gold-primary)]/30' }) => (
+    <div className={`flex items-center justify-between gap-4 p-4 bg-white/[0.03] rounded-2xl border border-white/5 ${hoverColor} hover:bg-white/[0.05] transition-all group`}>
+        <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors truncate">{label}</div>
+            {desc && <div className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">{desc}</div>}
+        </div>
+        {children}
+    </div>
+);
+
 const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const { t, i18n, lang } = useTranslation(user);
     const [saving, setSaving] = useState(false);
@@ -1944,7 +1977,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const handleSave = async (key, val) => {
         setSaving(true);
         try {
-            // FIX: Use direct ID update for privacy flags to avoid /settings 403 conflict (Deployment Lag Workaround)
             if (key === 'isPrivate' || key === 'isFollowersOnly') {
                 const res = await axios.put(`/users/${user._id || user.userId}`, { [key]: val });
                 onUpdateUser(res.data);
@@ -1954,11 +1986,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 setSaving(false);
                 return;
             }
-
             let payload = { [key]: val };
-            if (key === 'language') payload = { settings: { language: val } }; // Language nested exception
-            if (key === 'theme') payload = { settings: { theme: val } }; // Theme nested exception
-
+            if (key === 'language') payload = { settings: { language: val } };
+            if (key === 'theme') payload = { settings: { theme: val } };
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
@@ -1966,7 +1996,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             playSound('cyber_scroll');
         } catch (e) {
             console.error("Settings update failed", e);
-            // Revert state on failure
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
         } finally { setSaving(false); }
@@ -1976,11 +2005,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     return (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 overflow-hidden">
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/60"
-                onClick={onClose}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose}
             />
 
             <motion.div
@@ -1988,176 +2014,136 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-[95%] sm:w-full max-w-[400px] sm:max-w-[700px] max-h-[85vh] sm:max-h-[90vh] bg-[#0d0d0d] border border-white/20 rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col backdrop-blur-3xl will-change-transform"
+                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh] bg-[#0d0d0d] border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col backdrop-blur-3xl will-change-transform"
             >
-                {/* CYBER BACKGROUND ELEMENTS - REFINED */}
+                {/* Ambient glows */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-20" />
-                <div className="absolute -top-[100px] -right-[100px] w-[300px] h-[300px] bg-[var(--gold-primary)]/[0.03] rounded-full blur-[80px] pointer-events-none" />
-                <div className="absolute -bottom-[100px] -left-[100px] w-[300px] h-[300px] bg-blue-500/[0.03] rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute -top-[100px] -right-[100px] w-[250px] h-[250px] bg-[var(--gold-primary)]/[0.04] rounded-full blur-[80px] pointer-events-none" />
 
                 {/* HEADER */}
-                <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative shrink-0 z-10">
-                    <div className="flex flex-col">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-[var(--gold-primary)]/10 rounded-xl">
-                                <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
-                            </div>
-                            <div>
-                                <h2 className="font-black uppercase tracking-[0.2em] text-sm text-white leading-none">{t('SETTINGS')}</h2>
-                                <div className="text-[10px] font-medium text-gray-500 mt-1 tracking-wide">Customize your experience</div>
-                            </div>
+                <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-[var(--gold-primary)]/10 rounded-xl">
+                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
+                        </div>
+                        <div>
+                            <h2 className="font-black uppercase tracking-[0.2em] text-[13px] text-white leading-none">{t('SETTINGS')}</h2>
+                            <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-all active:scale-90 group border border-white/10 shadow-xl">
-                        <Icons.X className="w-5 h-5 text-white" />
+                    <button onClick={onClose} className="w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-all active:scale-90 border border-white/10">
+                        <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 space-y-8 relative z-10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
-                        {/* LEFT COLUMN: MODES & IDENTITY */}
-                        <div className="space-y-8">
-                            {/* PRIVACY SECTION */}
-                            <section className="space-y-4">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-1 h-4 bg-[var(--gold-primary)] rounded-full shadow-[0_0_10px_var(--gold-primary)]" />
-                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{t('PRIVACY') || "PRIVACY"}</h3>
-                                </div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-7 relative z-10">
 
-                                <div className="space-y-4">
-                                    <div className="p-5 bg-white/[0.03] rounded-3xl border border-white/5 hover:border-[var(--gold-primary)]/30 transition-all group hover:bg-white/[0.05]">
-                                        <div className="flex items-center justify-between gap-4">
-                                            <div className="flex-1">
-                                                <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('PRIVATE_TITLE')}</div>
-                                                <div className="text-[11px] text-gray-500 mt-1 leading-relaxed">{t('PRIVATE_DESC_SHORT')}</div>
-                                            </div>
-                                            <div onClick={() => { if (!saving) { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); } }}
-                                                className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border ${isPrivate ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'bg-black/40 border-white/20'}`}>
-                                                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${isPrivate ? 'translate-x-5' : 'translate-x-0'}`} />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-5 bg-white/[0.03] rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all group hover:bg-white/[0.05]">
-                                        <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap w-full">
-                                            <div className="flex-1 min-w-[200px]">
-                                                <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{t('GUARD_TITLE')}</div>
-                                                <div className="text-[10px] text-gray-500 mt-1 leading-relaxed font-bold uppercase tracking-widest">{t('GUARD_DESC_SHORT')}</div>
-                                            </div>
-                                            <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); } }}
-                                                className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border shrink-0 ${isFollowersOnly ? 'bg-blue-600 border-blue-500' : 'bg-black/40 border-white/20'}`}>
-                                                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${isFollowersOnly ? 'translate-x-5' : 'translate-x-0'}`} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-
-                            {/* LANGUAGE SECTION */}
-                            <section className="space-y-4">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{t('COGNITION')}</h3>
-                                </div>
-                                <div className="grid grid-cols-4 gap-3">
-                                    {[
-                                        { id: 'en', flag: '🇺🇸', label: 'EN' }, { id: 'el', flag: '🇬🇷', label: 'EL' },
-                                        { id: 'de', flag: '🇩🇪', label: 'DE' }, { id: 'ru', flag: '🇷🇺', label: 'RU' },
-                                        { id: 'cy', flag: '🇨🇾', label: 'CY' }, { id: 'es', flag: '🇪🇸', label: 'ES' },
-                                        { id: 'tr', flag: '🇹🇷', label: 'TR' }, { id: 'fr', flag: '🇫🇷', label: 'FR' }
-                                    ].map(l => (
-                                        <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
-                                            className={`aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center gap-2 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_20px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/20'}`}>
-                                            <div className="text-2xl group-hover:scale-110 transition-transform duration-300 drop-shadow-lg">{l.flag}</div>
-                                            <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500 group-hover:text-gray-300'}`}>{l.label}</div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </section>
+                    {/* ── ΙΔΙΩΤΙΚΟΤΗΤΑ ── */}
+                    <section>
+                        <SectionHeader color="bg-[var(--gold-primary)]" label={t('PRIVACY')} />
+                        <div className="space-y-2">
+                            <SettingRow label={t('PRIVATE_TITLE')} desc={t('PRIVATE_DESC_SHORT')}>
+                                <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
+                            </SettingRow>
+                            <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="hover:border-blue-500/30">
+                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
+                            </SettingRow>
                         </div>
+                    </section>
 
-                        {/* RIGHT COLUMN: AESTHETICS & ACTIONS */}
-                        <div className="space-y-8">
-                            {/* THEME SECTION */}
-                            <section className="space-y-4">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-1 h-4 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">AESTHETICS</h3>
-                                </div>
-                                <div className="p-6 bg-white/[0.02] rounded-3xl border border-white/5 shadow-inner">
-                                    <div className="grid grid-cols-4 gap-5 place-items-center">
-                                        {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
-                                            const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
-                                            const isActive = currentTheme === c;
-                                            return (
-                                                <button key={c} onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                                    className={`w-10 h-10 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'opacity-40 hover:opacity-100 hover:scale-110'}`}
-                                                >
-                                                    <div className="w-full h-full rounded-full" style={{ backgroundColor: c, boxShadow: isActive ? `0 0 15px ${c}` : 'none' }} />
-                                                    {isActive && <div className="absolute inset-0 ring-2 ring-white ring-offset-2 ring-offset-black rounded-full" />}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </section>
-
-                            {/* OPERATIONS SECTION */}
-                            <section className="pt-4 border-t border-white/5 space-y-4">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-1 h-4 bg-red-600 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                                    <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">OPERATIONS</h3>
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-                                    {showDanger ? (
-                                        <div className="p-5 bg-red-950/20 rounded-3xl border border-red-500/20 text-center shadow-2xl animate-pop-in">
-                                            <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
-                                                <Icons.AlertTriangle className="w-3 h-3" />
-                                                {t('DANGER_ZONE')}
-                                            </div>
-                                            <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                                className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-lg active:scale-95 uppercase">
-                                                {t('DELETE_FOREVER')}
-                                            </button>
-                                            <button onClick={() => setShowDanger(false)} className="mt-4 text-[9px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">{t('CANCEL')}</button>
-                                        </div>
-                                    ) : (
-                                        <button onClick={() => setShowDanger(true)} className="w-full py-5 bg-white/[0.02] hover:bg-red-500/10 rounded-3xl border border-white/5 text-gray-500 hover:text-red-400 transition-all text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3 group">
-                                            {t('UNCOVER_RESTRICTED_OPS')}
+                    {/* ── ΑΙΣΘΗΤΙΚΗ ── */}
+                    <section>
+                        <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
+                        <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                            <div className="grid grid-cols-6 gap-3 place-items-center">
+                                {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => {
+                                    const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
+                                    const isActive = currentTheme === c;
+                                    return (
+                                        <button key={c} onClick={() => { applyTheme(c); handleSave('theme', c); }}
+                                            className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125 shadow-lg' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                        >
+                                            <div className="w-full h-full rounded-full" style={{ backgroundColor: c, boxShadow: isActive ? `0 0 14px ${c}` : 'none' }} />
+                                            {isActive && <div className="absolute inset-0 ring-2 ring-white ring-offset-2 ring-offset-black rounded-full" />}
                                         </button>
-                                    )}
-
-                                    <button onClick={logout} className="w-full flex items-center justify-between p-5 bg-white/[0.04] hover:bg-red-500/20 rounded-3xl border border-white/5 hover:border-red-500/30 transition-all group active:scale-95 shadow-xl">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-2xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
-                                                <Icons.Logout className="w-5 h-5 text-red-500" />
-                                            </div>
-                                            <span className="text-xs font-black text-white/80 group-hover:text-red-400 transition-colors uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
-                                        </div>
-                                        <Icons.ArrowRight className="w-4 h-4 text-white/10 group-hover:text-red-500 transition-transform group-hover:translate-x-1" />
-                                    </button>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
-
-                    {saving && (
-                        <div className="absolute top-6 right-8 pointer-events-none">
-                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 backdrop-blur-md">
-                                <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full animate-ping" />
-                                <span className="text-[9px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">{t('SYNCING')}</span>
+                                    );
+                                })}
                             </div>
                         </div>
-                    )}
+                    </section>
+
+                    {/* ── ΓΝΩΣΗ (Language) ── */}
+                    <section>
+                        <SectionHeader color="bg-blue-500" label={t('COGNITION')} />
+                        <div className="grid grid-cols-4 gap-2">
+                            {[
+                                { id: 'en', flag: '🇺🇸', label: 'EN' }, { id: 'el', flag: '🇬🇷', label: 'EL' },
+                                { id: 'de', flag: '🇩🇪', label: 'DE' }, { id: 'ru', flag: '🇷🇺', label: 'RU' },
+                                { id: 'cy', flag: '🇨🇾', label: 'CY' }, { id: 'es', flag: '🇪🇸', label: 'ES' },
+                                { id: 'tr', flag: '🇹🇷', label: 'TR' }, { id: 'fr', flag: '🇫🇷', label: 'FR' }
+                            ].map(l => (
+                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
+                                    className={`py-3 rounded-2xl border transition-all flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_14px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/20'}`}
+                                >
+                                    <div className="text-xl group-hover:scale-110 transition-transform drop-shadow">{l.flag}</div>
+                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500 group-hover:text-gray-300'}`}>{l.label}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* ── ΛΕΙΤΟΥΡΓΙΕΣ ── */}
+                    <section className="pt-2 border-t border-white/5">
+                        <SectionHeader color="bg-red-600" label={t('OPERATIONS')} />
+                        <div className="space-y-2">
+                            {showDanger ? (
+                                <div className="p-5 bg-red-950/20 rounded-2xl border border-red-500/20 text-center animate-pop-in">
+                                    <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+                                        <Icons.AlertTriangle className="w-3 h-3" />
+                                        {t('DANGER_ZONE')}
+                                    </div>
+                                    <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
+                                        className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-lg active:scale-95 uppercase">
+                                        {t('DELETE_FOREVER')}
+                                    </button>
+                                    <button onClick={() => setShowDanger(false)} className="mt-3 text-[9px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">{t('CANCEL')}</button>
+                                </div>
+                            ) : (
+                                <button onClick={() => setShowDanger(true)} className="w-full py-4 bg-white/[0.02] hover:bg-red-500/10 rounded-2xl border border-white/5 text-gray-500 hover:text-red-400 transition-all text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3">
+                                    {t('UNCOVER_RESTRICTED_OPS')}
+                                </button>
+                            )}
+
+                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03] hover:bg-red-500/10 rounded-2xl border border-white/5 hover:border-red-500/20 transition-all group active:scale-95">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
+                                        <Icons.Logout className="w-4 h-4 text-red-500" />
+                                    </div>
+                                    <span className="text-xs font-black text-white/80 group-hover:text-red-400 transition-colors uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
+                                </div>
+                                <Icons.ArrowRight className="w-4 h-4 text-white/10 group-hover:text-red-500 transition-all group-hover:translate-x-1" />
+                            </button>
+                        </div>
+                    </section>
+
                 </div>
+
+                {saving && (
+                    <div className="absolute top-5 right-16 pointer-events-none">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 backdrop-blur-md">
+                            <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full animate-ping" />
+                            <span className="text-[9px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">{t('SYNCING')}</span>
+                        </div>
+                    </div>
+                )}
             </motion.div>
         </div>
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
+const ProfileModal = ({
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
