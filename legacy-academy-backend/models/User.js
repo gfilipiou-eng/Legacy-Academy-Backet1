@@ -70,7 +70,8 @@ const UserSchema = new mongoose.Schema(
             theme: { type: String, default: '#ffd700' },
             language: { type: String, default: 'en' },
             dmFollowersOnly: { type: Boolean, default: false },
-            displayMode: { type: String, default: 'dark' }
+            displayMode: { type: String, default: 'dark' },
+            zoom: { type: Number, default: 1 }
         },
         notifications: [
             {

@@ -2043,6 +2043,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [displayMode, setDisplayMode] = useState(
         user?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
     );
+    const [zoomLevel, setZoomLevel] = useState(
+        user?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
+    );
 
     useEffect(() => {
         if (user && !saving) {
@@ -2050,6 +2053,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setIsFollowersOnly(user.isFollowersOnly || false);
             setDisplayMode(
                 user.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
+            );
+            setZoomLevel(
+                user.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
             );
         }
     }, [user, saving]);
@@ -2070,6 +2076,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'language') payload = { settings: { language: val } };
             if (key === 'theme') payload = { settings: { theme: val } };
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
+            if (key === 'zoom') payload = { settings: { zoom: val } };
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
@@ -2143,7 +2150,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <div className="hidden sm:block text-[10px] font-black text-gray-400 uppercase tracking-[0.25em]">
                                         ΛΕΙΤΟΥΡΓΙΑ
                                     </div>
-                                    <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex items-center justify-between sm:justify-start w-full sm:w-auto">
+                                    <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 sm:gap-0 w-full sm:w-auto">
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -2152,7 +2159,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center ${
                                                 (displayMode || 'dark') === 'dark'
                                                     ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
                                                     : 'text-gray-400 hover:text-white'
@@ -2168,7 +2175,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center ${
                                                 displayMode === 'light'
                                                     ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
                                                     : 'text-gray-400 hover:text-white'
@@ -2184,7 +2191,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center ${
                                                 displayMode === 'blue-dark'
                                                     ? 'bg-[#15202b] text-white shadow-[0_0_16px_rgba(15,23,42,0.9)]'
                                                     : 'text-gray-400 hover:text-white'
@@ -2193,6 +2200,30 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             ΜΠΛΕ
                                         </button>
                                     </div>
+                                </div>
+                                <div className="space-y-2 mt-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em]">
+                                            ΜΕΓΕΘΥΝΣΗ UI
+                                        </span>
+                                        <span className="text-[10px] font-black text-gray-400">
+                                            {Math.round(zoomLevel * 100)}%
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0.9"
+                                        max="1.15"
+                                        step="0.05"
+                                        value={zoomLevel}
+                                        onChange={(e) => {
+                                            const val = parseFloat(e.target.value);
+                                            setZoomLevel(val);
+                                            applyZoom(val);
+                                            handleSave('zoom', val);
+                                        }}
+                                        className="w-full accent-[var(--gold-primary)]"
+                                    />
                                 </div>
                                 <div className="hidden sm:flex items-center justify-center gap-2">
                                     {[
@@ -2819,9 +2850,9 @@ const ProfileModal = ({
                                             <button onClick={() => onOpenChat(displayUser)} title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
                                                 className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0">
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                                    <Icons.Ghost className="w-5 h-5 text-white group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
                                                 </div>
-                                                <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS')}</span>
+                                                <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS')}</span>
                                             </button>
                                         </>
                                     )}
@@ -3384,6 +3415,16 @@ const applyDisplayMode = (mode) => {
     localStorage.setItem('displayMode', mode);
 };
 
+const applyZoom = (zoom) => {
+    const root = document.getElementById('root') || document.body;
+    const z = Math.max(0.8, Math.min(1.2, Number(zoom) || 1));
+    if (root) {
+        root.style.transformOrigin = 'top center';
+        root.style.transform = z === 1 ? '' : `scale(${z})`;
+    }
+    localStorage.setItem('uiZoom', String(z));
+};
+
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
     // Profile Sync Logic
@@ -3567,8 +3608,11 @@ const App = () => {
 
         const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
-        const savedMode = JSON.parse(localStorage.getItem('user'))?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark';
+        const userData = JSON.parse(localStorage.getItem('user') || 'null');
+        const savedMode = userData?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark';
         applyDisplayMode(savedMode);
+        const savedZoom = userData?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
+        applyZoom(savedZoom);
 
         // SYNC USER DATA & THEME LIVE ACROSS TABS
         const handleStorageChange = (e) => {
@@ -3598,6 +3642,12 @@ const App = () => {
             applyDisplayMode(user.settings.displayMode);
         }
     }, [user?.settings?.displayMode]);
+
+    useEffect(() => {
+        if (user?.settings?.zoom) {
+            applyZoom(user.settings.zoom);
+        }
+    }, [user?.settings?.zoom]);
 
     // Use a ref to track the last user ID we initialized for, to avoid loops
     const lastInitializedId = useRef(null);
