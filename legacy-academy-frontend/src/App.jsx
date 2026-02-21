@@ -464,7 +464,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     );
 });
 
-const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onRepost, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments }) => {
     const { t, lang } = useTranslation(user);
 
     // Audio Comment State
@@ -603,7 +603,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                 </div>
 
                 {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full overflow-hidden relative">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10 shadow-md">
@@ -699,41 +699,40 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
 
 
                     <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2 shrink-0">
-                        <div className="flex items-center gap-6 sm:gap-8">
-                            <button
-                                type="button"
-                                disabled={loadingActions?.[post._id]}
-                                onClick={() => onLike(post._id)}
-                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'text-pink-500' : 'text-gray-500'}`}
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none ${(Array.isArray(post.likes) && post.likes.includes(user?._id)) ? 'fill-current animate-heart-beat' : ''}`}>
-                                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 0 0-7.7 7.8l1.1 1 7.7 7.8 7.7-7.8 1.1-1a5.5 5.5 0 0 0 0-7.8z"></path>
-                                </svg>
-                                <span className="text-[12px] font-bold transition-colors">{post.likes?.length || 0}</span>
+                        <div className="flex items-center justify-between mt-2 mb-2 text-gray-400 w-full sm:w-[90%] max-w-sm">
+                            {/* COMMENTS */}
+                            <button onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }} className="flex items-center gap-1 group hover:text-sky-400 transition-colors">
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-sky-400/10 transition-colors">
+                                    <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                                </div>
+                                <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            <button
-                                type="button"
-                                disabled={loadingActions?.[post._id]}
-                                onClick={() => onDislike(post._id)}
-                                className={`flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className={`w-5 h-5 pointer-events-none transition-all ${(Array.isArray(post.dislikes) && post.dislikes.includes(user?._id)) ? 'fill-current scale-110' : 'group-hover:scale-110'}`}>
-                                    <path d="M17 14V2"></path>
-                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path>
-                                </svg>
-                                <span className="text-[12px] font-bold transition-colors">{post.dislikes?.length || 0}</span>
+                            {/* REPOSTS */}
+                            <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onRepost?.(post._id)} className={`flex items-center gap-1 group transition-colors ${post.reposts?.includes(user?._id) ? 'text-green-500' : 'hover:text-green-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
+                                    <Icons.RefreshCcw className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.reposts?.includes(user?._id) ? 'scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                                </div>
+                                <span className="text-xs font-medium">{post.reposts?.length || 0}</span>
                             </button>
 
-                            <button
-                                type="button"
-                                onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex items-center gap-2.5 group transition-all cursor-pointer active:scale-125 p-1 rounded-xl"
-                            >
-                                <Icons.MessageSquare className="w-5 h-5 text-gray-500 group-hover:text-sky-400 transition-colors" />
-                                <span className="text-[12px] font-bold text-gray-500 group-hover:text-sky-400 transition-colors">{post.comments?.length || 0}</span>
+                            {/* LIKE */}
+                            <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-red-500/10 transition-colors`}>
+                                    <Icons.Heart className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.likes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                                </div>
+                                <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
+                            {/* DISLIKE */}
+                            <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[var(--gold-primary)]/10 transition-colors`}>
+                                    <div className="relative mt-0.5">
+                                        <Icons.ThumbsDown className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.dislikes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                                    </div>
+                                </div>
+                                <span className="text-xs font-medium">{post.dislikes?.length || 0}</span>
+                            </button>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -4712,12 +4711,11 @@ const App = () => {
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {
-                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onOpenChat={handleOpenChat} onComment={handleComment} onDelete={(pid) => {
+                        selectedPost && <PostDetailModal post={selectedPost} user={user} allUsers={users} onClose={() => setSelectedPost(null)} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onOpenChat={handleOpenChat} onComment={handleComment} onDelete={(pid) => {
                             handleDeletePost(pid);
                             // Also trigger manual refresh for profile if open
                             if (isProfileOpen) {
                                 // fetchUserPosts is inside ProfileModal, so we should actually pass the delete handler in
-                                // for now the useEffect dependency might catch it or manual re-fetch
                             }
                         }} onEdit={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onShare={handleShare} loadingActions={loadingActions} onClearComments={(postId) => {
                             setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
