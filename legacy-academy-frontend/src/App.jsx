@@ -2120,28 +2120,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     ))}
                                 </div>
                                 <div className="sm:hidden space-y-2">
-                                    <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">THEME</div>
+                                    <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">THEME</div>
                                     <select
-                                        value={user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700'}
+                                        value={user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000'}
                                         onChange={(e) => {
                                             const color = e.target.value;
                                             applyTheme(color);
                                             handleSave('theme', color);
                                         }}
-                                        className="w-full bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none h-[44px]"
+                                        className="w-full bg-black border border-white/20 rounded-xl py-3.5 px-3 text-white text-sm font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none h-[52px]"
                                     >
+                                        <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
                                         <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
                                         <option value="#3b82f6" className="bg-black text-white">{t('COLOR_BLUE')}</option>
-                                        <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
                                         <option value="#10b981" className="bg-black text-white">{t('COLOR_GREEN')}</option>
                                         <option value="#ffffff" className="bg-black text-white">{t('COLOR_WHITE')}</option>
                                         <option value="#a855f7" className="bg-black text-white">{t('COLOR_PURPLE')}</option>
-                                        <option value="#ff8c00" className="bg-black text-white">{t('COLOR_ORANGE')}</option>
-                                        <option value="#ff69b4" className="bg-black text-white">{t('COLOR_PINK')}</option>
-                                        <option value="#00ffff" className="bg-black text-white">{t('COLOR_CYAN')}</option>
-                                        <option value="#7cfc00" className="bg-black text-white">{t('COLOR_LIME')}</option>
-                                        <option value="#ff00ff" className="bg-black text-white">{t('COLOR_MAGENTA')}</option>
-                                        <option value="#ffa500" className="bg-black text-white">{t('COLOR_TANGERINE')}</option>
                                     </select>
                                 </div>
                                 {themeCategory === 'primary' && (
