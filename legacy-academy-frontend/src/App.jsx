@@ -729,7 +729,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     </div>
 
                     {/* Social Stats and Comment Input */}
-                    <div className="px-2 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[env(safe-area-inset-bottom,75px)] md:pb-2 shrink-0">
+                    <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
                         {/* ── ACTION BAR ── */}
                         <div className="flex items-center justify-around w-full py-1">
 
@@ -2605,21 +2605,21 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
-                                        <Icons.Users className="w-3.5 h-3.5 text-gray-500" />
+                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
                                     </div>
 
                                     {/* FOLLOWING */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
                                             {displayUser?.following?.length || 0}
                                         </span>
-                                        <Icons.User className="w-3.5 h-3.5 text-gray-500" />
+                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
 
                                 </div>
