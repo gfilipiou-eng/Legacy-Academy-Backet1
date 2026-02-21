@@ -2876,7 +2876,9 @@ const ProfileModal = ({
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
                                         className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${
-                                            activeTab === tab ? 'text-white' : 'text-white/70 hover:text-white'
+                                            activeTab === tab
+                                                ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
+                                                : 'text-white/60 hover:text-white hover:bg-white/5'
                                         }`}
                                     >
                                         {t('TAB_' + tab)}
