@@ -4677,9 +4677,9 @@ const App = () => {
 
                                 <button onClick={() => { logout(); playSound('sword'); }} className="nav-logout-btn text-white hover:text-red-500 transition-all z-10 hover:scale-110 active:scale-95"><Icons.Logout className="w-6 h-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" /></button>
 
-                                <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-xl border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
-                                    <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl overflow-hidden bg-white/10 relative">
-                                        <ProfileAvatar user={user} key={imgKey} />
+                                <button onClick={() => { viewProfile(user); }} className={`p-0.5 rounded-full border-2 transition-all duration-300 z-10 ${activeTab === 'profile' ? 'border-[var(--gold-primary)] scale-110 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'border-transparent'}`}>
+                                    <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-full overflow-hidden bg-white/10 relative">
+                                        <ProfileAvatar user={user} key={imgKey} className="rounded-full" />
                                     </div>
                                 </button>
                             </div>
