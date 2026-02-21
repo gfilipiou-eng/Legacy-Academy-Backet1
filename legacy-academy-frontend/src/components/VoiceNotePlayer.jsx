@@ -93,7 +93,7 @@ export const VoiceNotePlayer = ({ src, t = (k) => k }) => {
                         ) : (
                             <Icons.Whisper className="w-3 h-3" />
                         )}
-                        <span>{formatTime(duration - currentTime)}</span>
+                        <span className={`text-[10px] font-black ${isPlaying ? 'text-[var(--gold-primary)] animate-pulse' : 'text-gray-500'}`}>-{formatTime(duration - currentTime)}</span>
                     </div>
                 </div>
             </div>

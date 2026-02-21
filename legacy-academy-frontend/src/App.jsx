@@ -360,14 +360,14 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     );
 };
 
+
 const FounderBadge = ({ className = "w-5 h-5", title }) => (
-    <div className={`relative flex items-center justify-center ${className} shrink-0`} title={title || "LEGACY FOUNDER"}>
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none">
-            <polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" />
-            <path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+    <div className={`relative flex items-center justify-center ${className} shrink-0 text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)] animate-pulse-slow`} title={title || "LEGACY FOUNDER"}>
+        <Icons.Crown className="w-full h-full fill-current" />
     </div>
 );
+
+const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
     const color = isFounder ? "#FFD700" : "#1D9BF0";
@@ -636,7 +636,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 {showMenu && (
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-                                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1">
+                                        <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
                                             <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
                                                 <Icons.Share className="w-4 h-4 text-gray-400" />
                                                 <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
@@ -1409,7 +1409,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {showMenu && (
                                 <>
                                     <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                    <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in">
+                                    <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[110] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
                                         <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
                                             <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
                                             <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
@@ -1532,7 +1532,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         </div>
                                     </div>
                                     {commentAudio && (
-                                        <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between">
+                                        <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between mt-3">
                                             <div className="flex items-center gap-3">
                                                 <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
                                                 <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
@@ -1545,8 +1545,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     )}
                                 </div>
                             </div>
-                            <div className="space-y-6">
-                                {(post.comments || []).map(c => (
+                            <div className="space-y-6 pt-4">
+                                {(post.comments || []).slice().reverse().map(c => (
                                     <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
                                 ))}
                             </div>
@@ -2072,10 +2072,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full transition-all active:scale-90 group border border-white/30 shadow-2xl">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">
-                            <path d="M18 6 6 18M6 6l12 12"></path>
-                        </svg>
+                    <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-all active:scale-90 group border border-white/10 shadow-xl">
+                        <Icons.X className="w-5 h-5 text-white" />
                     </button>
                 </div>
 
@@ -2106,13 +2104,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     </div>
 
                                     <div className="p-5 bg-white/[0.03] rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all group hover:bg-white/[0.05]">
-                                        <div className="flex items-center justify-between gap-4">
-                                            <div className="flex-1">
-                                                <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{t('GUARD_TITLE')}</div>
-                                                <div className="text-[11px] text-gray-500 mt-1 leading-relaxed">{t('GUARD_DESC_SHORT')}</div>
+                                        <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap w-full">
+                                            <div className="flex-1 min-w-[200px]">
+                                                <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{t('GUARD_TITLE')}</div>
+                                                <div className="text-[10px] text-gray-500 mt-1 leading-relaxed font-bold uppercase tracking-widest">{t('GUARD_DESC_SHORT')}</div>
                                             </div>
                                             <div onClick={() => { if (!saving) { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); } }}
-                                                className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border ${isFollowersOnly ? 'bg-blue-600 border-blue-500' : 'bg-black/40 border-white/20'}`}>
+                                                className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border shrink-0 ${isFollowersOnly ? 'bg-blue-600 border-blue-500' : 'bg-black/40 border-white/20'}`}>
                                                 <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${isFollowersOnly ? 'translate-x-5' : 'translate-x-0'}`} />
                                             </div>
                                         </div>
@@ -4463,12 +4461,17 @@ const App = () => {
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
-                                        <h2 className="text-xl font-bold text-white/90">{t('NOTIFICATIONS_TITLE')}</h2>
-                                        {alerts.length > 0 && (
-                                            <button onClick={deleteNotifications} className="p-3 bg-white/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all active:scale-90 border border-red-500/20">
-                                                <Icons.Trash className="w-5 h-5" />
-                                            </button>
-                                        )}
+                                        <div className="flex flex-col">
+                                            <h2 className="text-xl font-black text-white uppercase tracking-widest">{t('NOTIFICATIONS_TITLE')}</h2>
+                                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Intelligence Alerts</div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            {alerts.length > 0 && (
+                                                <button onClick={deleteNotifications} className="px-5 py-2.5 bg-red-500/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center gap-2 group shadow-lg active:scale-95">
+                                                    <Icons.Trash className="w-4 h-4 group-hover:scale-110 transition-transform" /> {t('CLEAR_ALL') || 'PURGE ALL'}
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                     {alerts.length === 0 ? (
                                         <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div>
@@ -4682,7 +4685,7 @@ const App = () => {
                         profileUser={profileUser}
                         currentUser={user}
                         allUsers={users}
-                        preloadedPosts={posts.filter(p => String(p.author?._id || p.author) === String(profileUser?._id || profileUser?.userId || profileUser))}
+                        preloadedPosts={posts.filter(p => String(p.author?._id || p.author) === String(profileUser?._id || profileUser?.userId || profileUser) || (Array.isArray(p.reposts) && p.reposts.some(id => String(id) === String(profileUser?._id || profileUser))))}
                         posts={posts}
                         onFollow={handleFollow}
                         onUpdateUser={handleUpdateUser}
