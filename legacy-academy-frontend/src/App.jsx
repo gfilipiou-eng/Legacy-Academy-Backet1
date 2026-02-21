@@ -2898,7 +2898,17 @@ const ProfileModal = ({
                             ) : (
                                 <>
                                     {(isMe || userStories.length > 0) && (
-                                        <div className="mb-6">
+                                        <div
+                                            className="mb-6"
+                                            style={
+                                                zoomLevel !== 1
+                                                    ? {
+                                                          transform: `scale(${1 / zoomLevel})`,
+                                                          transformOrigin: 'top left',
+                                                      }
+                                                    : undefined
+                                            }
+                                        >
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
