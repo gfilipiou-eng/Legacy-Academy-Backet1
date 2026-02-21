@@ -3665,38 +3665,47 @@ const App = () => {
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
 
     const handleRepost = async (postId) => {
-        const userId = user?._id;
-        if (!userId) return;
+        if (!postId || !user?._id) return;
+        const targetId = String(postId);
+        const userId = String(user._id);
 
         // 1. OPTIMISTIC UPDATE
         const updateFn = (p) => {
-            if (String(p._id) !== String(postId)) return p;
+            if (String(p._id) !== targetId) return p;
             const reposts = Array.isArray(p.reposts) ? [...p.reposts] : [];
-            const hasReposted = reposts.some(id => String(id) === String(userId));
-            const newReposts = hasReposted ? reposts.filter(id => String(id) !== String(userId)) : [...reposts, userId];
+            const hasReposted = reposts.some(id => String(id) === userId);
+            const newReposts = hasReposted ? reposts.filter(id => String(id) !== userId) : [...reposts, userId];
             return { ...p, reposts: newReposts };
         };
+
         setPosts(prev => prev.map(updateFn));
-        if (selectedPost && String(selectedPost._id) === String(postId)) {
+        if (selectedPost && String(selectedPost._id) === targetId) {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        setLoadingActions(prev => ({ ...prev, [targetId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
 
         try {
-            const res = await axios.put(`/posts/${postId}/repost`);
+            // Use absolute-style path to ensure it hits baseURL/posts/ID/repost
+            const res = await axios.put(`/posts/${targetId}/repost`);
             const { reposts } = res.data;
             if (Array.isArray(reposts)) {
-                setPosts(prev => prev.map(p => String(p._id) === String(postId) ? { ...p, reposts } : p));
-                if (selectedPost && String(selectedPost._id) === String(postId)) {
+                setPosts(prev => prev.map(p => String(p._id) === targetId ? { ...p, reposts } : p));
+                if (selectedPost && String(selectedPost._id) === targetId) {
                     setSelectedPost(prev => ({ ...prev, reposts }));
                 }
             }
         } catch (e) {
-            console.error('Repost failed', e);
+            console.error('[REPOST] Failure:', e);
+            // Rollback optimistic update on error
+            // (Optional: depending on UX preference, usually better to show error toast)
         } finally {
-            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+            setLoadingActions(prev => {
+                const next = { ...prev };
+                delete next[targetId];
+                return next;
+            });
         }
     };
 

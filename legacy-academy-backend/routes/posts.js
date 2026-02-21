@@ -35,8 +35,12 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // REPOST POST (Toggle repost status for a specific post) - PROMOTED FOR MATCHING
-router.put("/:id/repost", verifyToken, async (req, res) => {
+// Changed to .all to handle accidental GETs or redirects while maintaining PUT as primary
+router.all("/:id/repost", verifyToken, async (req, res) => {
     try {
+        if (req.method !== 'PUT' && req.method !== 'POST' && req.method !== 'GET') {
+            return res.status(405).json("Method not allowed");
+        }
         const currentPost = await Post.findById(req.params.id);
         if (!currentPost) return res.status(404).json("Post not found");
 
