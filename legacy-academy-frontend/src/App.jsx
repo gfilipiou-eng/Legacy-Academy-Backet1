@@ -738,14 +738,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
-                            {/* SHARE */}
-                            <button
-                                onPointerDown={(e) => { e.stopPropagation(); onShare?.(post); }}
-                                className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-white active:text-white active:scale-90 transition-all">
-                                <Icons.Share className="w-5 h-5" />
-                                <span className="text-[10px] font-black opacity-0">·</span>
-                            </button>
-
                         </div>
 
                         <div className="flex items-center gap-2 w-full">
@@ -1455,11 +1447,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         </button>
 
                         {/* SHARE */}
-                        <button onPointerDown={(e) => { e.stopPropagation(); onShare?.(post); }}
-                            className="flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl text-gray-600 hover:text-white active:text-white active:scale-90 transition-all">
-                            <Icons.Share className="w-5 h-5" />
-                            <span className="text-[10px] font-black opacity-0">·</span>
-                        </button>
 
                     </div>
 
@@ -2284,11 +2271,8 @@ const ProfileModal = ({
         const handleReposted = ({ postId, reposts }) => {
             setUserSpecificPosts(prev => prev.map(p => {
                 if (String(p._id) !== String(postId)) return p;
-                // Update the reposts array on the post
                 return { ...p, reposts };
             }).filter(p => {
-                // If this post's author is NOT the profile user, it only appears
-                // because the profile user reposted it. Remove it if they no longer have.
                 const isOwn = String(p.author?._id || p.author) === profileUserId;
                 if (isOwn) return true;
                 const newReposts = (p._id === String(postId) ? reposts : p.reposts) || [];
@@ -2299,6 +2283,22 @@ const ProfileModal = ({
         socket.on('post.reposted', handleReposted);
         return () => socket.off('post.reposted', handleReposted);
     }, [isOpen, profileUser?._id]);
+
+    // 🔥 KEY FIX: Sync likes/dislikes/comments from global posts into userSpecificPosts
+    useEffect(() => {
+        if (!isOpen || !posts?.length) return;
+        setUserSpecificPosts(prev => prev.map(localPost => {
+            const globalPost = posts.find(p => String(p._id) === String(localPost._id));
+            if (!globalPost) return localPost;
+            return {
+                ...localPost,
+                likes: globalPost.likes,
+                dislikes: globalPost.dislikes,
+                reposts: globalPost.reposts,
+                comments: globalPost.comments,
+            };
+        }));
+    }, [posts, isOpen]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
         // Strict exclusion of stories from the main grid
