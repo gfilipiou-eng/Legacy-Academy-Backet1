@@ -363,6 +363,64 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 };
 
 
+const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
+    const [showMenu, setShowMenu] = useState(false);
+    const [coords, setCoords] = useState({ top: 0, left: 0 });
+    const btnRef = useRef(null);
+    const isOwner = String(post.author?._id || post.author) === String(user?._id);
+    const canDelete = isOwner || user?.role === 'Founder';
+
+    const toggle = (e) => {
+        e.stopPropagation();
+        if (!showMenu) {
+            const rect = btnRef.current.getBoundingClientRect();
+            setCoords({ top: rect.top, left: rect.left });
+        }
+        setShowMenu(!showMenu);
+        playSound('cyber_click');
+    };
+
+    return (
+        <div className="relative shrink-0">
+            <button ref={btnRef} onClick={toggle} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90">
+                <Icons.MoreHorizontal className="w-5 h-5" />
+            </button>
+            {showMenu && createPortal(
+                <>
+                    <div className="fixed inset-0 z-[10000]" onClick={() => setShowMenu(false)} />
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: `${coords.top - 8}px`,
+                            left: `${coords.left - 160}px`,
+                            zIndex: 10001
+                        }}
+                        className="w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in -translate-y-full"
+                    >
+                        <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                            <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
+                            <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
+                        </button>
+                        {isOwner && (
+                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
+                                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
+                            </button>
+                        )}
+                        {canDelete && (
+                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
+                                <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
+                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
+                            </button>
+                        )}
+                    </div>
+                </>,
+                document.body
+            )}
+        </div>
+    );
+};
+
 const FounderBadge = ({ className = "w-5 h-5", title }) => (
     <div className={`relative flex items-center justify-center ${className} shrink-0 text-[#FFD700]`} title={title || "LEGACY FOUNDER"}>
         <Icons.Crown className="w-full h-full fill-current" />
@@ -557,21 +615,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-
         <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl active:scale-90 transition-all group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
-                {/* Image Section - Balanced for mobile to show full videos/photos */}
+                {/* Image Section */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
-                            <NeuralVideoPlayer
-                                src={post.videoUrl || post.thumbnailUrl || post.image}
-                                className="w-full h-full"
-                                forcePause={isWritingComment}
-                            />
+                            <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} />
                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                             <NeuralVideoPlayer
                                 src={resolveMediaUrl(post.videoUrl || post.image)}
@@ -587,8 +640,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     decoding="async"
                                     onError={() => {
                                         setImgError(true);
-                                        // Auto-cleanup broken link
-                                        const isOwner = String(post.author?._id || post.author) === String(user?._id);
                                         const canDelete = isOwner || user?.role === 'Founder';
                                         if (canDelete && post.image) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
                                     }}
@@ -601,57 +652,25 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             )
                         )
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-gradient-to-br from-[var(--gold-primary)]/20 to-black w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
-
                 </div>
 
-                {/* Info Section - Fixed height or scrolling */}
-                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full relative">
+                {/* Info Section */}
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10 shadow-md">
                                 <ProfileAvatar user={author} className="rounded-full" />
                             </div>
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="font-bold text-white leading-none">{author?.username}</span>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-bold text-white leading-none whitespace-nowrap">{author?.username}</span>
                                     <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4" />
+                                    {author?.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5 -ml-0.5" />}
                                 </div>
-                                {author?.role === 'Founder' && (
-                                    <div className="mt-1">
-                                        <FounderBadge className="w-5 h-5" />
-                                    </div>
-                                )}
                             </div>
                         </div>
-                        <div className="flex gap-1 relative">
-                            <div className="relative">
-                                <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                                    <Icons.MoreHorizontal className="w-5 h-5" />
-                                </button>
-                                {showMenu && (
-                                    <>
-                                        <div className="fixed inset-0 z-[9000]" onClick={() => setShowMenu(false)} />
-                                        <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[9001] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
-                                            <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
-                                                <Icons.Share className="w-4 h-4 text-gray-400" />
-                                                <span className="text-xs font-bold text-gray-200">{t('SHARE')}</span>
-                                            </button>
-                                            {isOwner && (
-                                                <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
-                                                    <Icons.Edit className="w-4 h-4 text-blue-400" />
-                                                    <span className="text-xs font-bold text-blue-400">{t('EDIT')}</span>
-                                                </button>
-                                            )}
-                                            {(isOwner || isFounder) && (
-                                                <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); onClose(); setShowMenu(false); playSound('cyber_delete'); }} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors w-full text-left">
-                                                    <Icons.Trash className="w-4 h-4 text-red-500" />
-                                                    <span className="text-xs font-bold text-red-500">{t('DELETE')}</span>
-                                                </button>
-                                            )}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
+                        <div className="relative">
+                            <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
                         </div>
                     </div>
 
@@ -675,56 +694,40 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                                 ) : (
                                     post.comments.slice().reverse().slice(0, 50).reverse().map((c, idx) => (
-                                        <CommentItem
-                                            key={c._id || idx}
-                                            comment={c}
-                                            post={post}
-                                            user={user}
-                                            allUsers={allUsers}
-                                            onEdit={onEditComment}
-                                            onDelete={onDeleteComment}
-                                            t={t}
-                                            lang={lang}
-                                        />
+                                        <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
                                     ))
                                 )}
                             </div>
                         </div>
                     </div>
 
-
+                    {/* Social Stats and Comment Input */}
                     <div className="px-3 py-2 border-t border-white/10 bg-black/95 backdrop-blur-xl z-[100] pb-[75px] md:pb-2 shrink-0">
-                        <div className="flex items-center justify-between mt-2 mb-2 text-gray-400 w-full sm:w-[90%] max-w-sm">
-                            {/* COMMENTS */}
+                        <div className="flex items-center justify-between mt-2 mb-2 text-gray-400 w-full sm:w-[90%] max-w-sm px-2">
                             <button onClick={() => { document.getElementById(`comment-input-${post._id}`)?.focus(); }} className="flex items-center gap-1 group hover:text-sky-400 transition-colors">
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-sky-400/10 transition-colors">
-                                    <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                                    <Icons.MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <span className="text-xs font-medium">{post.comments?.length || 0}</span>
                             </button>
 
-                            {/* REPOSTS */}
-                            <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onRepost?.(post._id)} className={`flex items-center gap-1 group transition-colors ${post.reposts?.includes(user?._id) ? 'text-green-500' : 'hover:text-green-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
+                            <button disabled={loadingActions?.[post._id]} onClick={() => onRepost?.(post._id)} className={`flex items-center gap-1 group transition-colors ${post.reposts?.includes(user?._id) ? 'text-green-500' : 'hover:text-green-500'}`}>
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                                    <Icons.RefreshCcw className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.reposts?.includes(user?._id) ? 'scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                                    <Icons.RefreshCcw className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                                 </div>
                                 <span className="text-xs font-medium">{post.reposts?.length || 0}</span>
                             </button>
 
-                            {/* LIKE */}
-                            <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onLike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'hover:text-red-500'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-red-500/10 transition-colors`}>
-                                    <Icons.Heart className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.likes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                            <button disabled={loadingActions?.[post._id]} onClick={() => onLike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.likes?.includes(user?._id) ? 'text-red-500' : 'hover:text-red-500'}`}>
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-red-500/10 transition-colors">
+                                    <Icons.Heart className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.likes?.includes(user?._id) ? 'fill-current' : ''}`} />
                                 </div>
                                 <span className="text-xs font-medium">{post.likes?.length || 0}</span>
                             </button>
 
-                            {/* DISLIKE */}
-                            <button disabled={loadingActions?.[post._id]} onClick={() => !loadingActions?.[post._id] && onDislike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'hover:text-[var(--gold-primary)]'} ${loadingActions?.[post._id] ? 'opacity-50' : ''}`}>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[var(--gold-primary)]/10 transition-colors`}>
-                                    <div className="relative mt-0.5">
-                                        <Icons.ThumbsDown className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.dislikes?.includes(user?._id) ? 'fill-current scale-110' : 'group-hover:scale-110 transition-transform'}`} />
-                                    </div>
+                            <button disabled={loadingActions?.[post._id]} onClick={() => onDislike(post._id)} className={`flex items-center gap-1 group transition-colors ${post.dislikes?.includes(user?._id) ? 'text-[var(--gold-primary)]' : 'hover:text-[var(--gold-primary)]'}`}>
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[var(--gold-primary)]/10 transition-colors">
+                                    <Icons.ThumbsDown className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${post.dislikes?.includes(user?._id) ? 'fill-current' : ''}`} />
                                 </div>
                                 <span className="text-xs font-medium">{post.dislikes?.length || 0}</span>
                             </button>
@@ -735,81 +738,51 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <ProfileAvatar user={user} className="rounded-full" />
                             </div>
                             {isRecordingComment ? (
-                                <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 sm:p-3 flex items-center justify-between animate-pop-in">
+                                <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 sm:p-3 flex items-center justify-between">
                                     <div className="flex items-center gap-2 pl-1 shrink-0">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
                                         <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
                                     </div>
-                                    <div className="flex gap-2 shrink-0">
-                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(true); }} className="p-2 bg-white/5 rounded-xl text-white hover:bg-white/10 transition-all"><Icons.X className="w-4 h-4" /></button>
-                                        <button type="button" onClick={(e) => { e.stopPropagation(); stopRecording(false); }} className="px-4 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40 active:scale-95 transition-all">{t('STOP')}</button>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-xl text-white"><Icons.X className="w-4 h-4" /></button>
+                                        <button onClick={() => stopRecording(false)} className="px-4 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest">{t('STOP')}</button>
                                     </div>
                                 </div>
                             ) : commentAudio ? (
-                                <div className="flex-1 min-w-0 flex items-center justify-between gap-2 min-h-[52px] px-2 bg-black/60 border border-[var(--gold-primary)]/40 rounded-2xl p-1 animate-pulse-subtle">
-                                    <div className="flex items-center gap-3 pl-2 shrink-0">
-                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-glow)]" />
+                                <div className="flex-1 min-w-0 flex items-center justify-between px-2 bg-black/60 border border-[var(--gold-primary)]/40 rounded-2xl p-1">
+                                    <div className="flex items-center gap-3 pl-2">
+                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
                                         <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 shrink-0">
-                                        <button type="button" onClick={(e) => { e.stopPropagation(); setCommentAudio(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-colors"><Icons.Trash className="w-4 h-4" /></button>
-                                        <button type="button" onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            const fd = new FormData();
-                                            fd.append('file', commentAudio, 'voice.webm');
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-500"><Icons.Trash className="w-4 h-4" /></button>
+                                        <button onClick={() => {
+                                            const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
                                             if (commentText.trim()) fd.append('text', commentText.trim());
-                                            onComment(post._id, fd);
-                                            setCommentAudio(null);
-                                            setCommentText('');
-                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all">
-                                            <Icons.Send className="w-4 h-4 fill-black" />
+                                            onComment(post._id, fd); setCommentAudio(null); setCommentText('');
+                                        }} className="w-10 h-10 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black">
+                                            <Icons.Send className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex-1 min-w-0">
-                                    <form
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            if (commentText.trim()) {
-                                                onComment(post._id, commentText);
-                                                setCommentText('');
-                                            }
-                                        }}
-                                        className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl px-1 py-1 group focus-within:border-[var(--gold-primary)]/40 focus-within:bg-white/10 transition-all duration-300"
-                                    >
-                                        <input
-                                            id={`comment-input-${post._id}`}
-                                            placeholder={t('FOUNDER_PLACEHOLDER')}
-                                            value={commentText}
-                                            onChange={(e) => { e.stopPropagation(); setCommentText(e.target.value); }}
-                                            className="flex-1 min-w-0 bg-transparent py-3 px-4 text-[14px] text-white outline-none placeholder-gray-600 font-bold"
-                                        />
-                                        <div className="flex gap-1.5 pr-1.5 shrink-0">
-                                            <button
-                                                type="button"
-                                                onClick={(e) => { e.stopPropagation(); toggleCommentRecording(); }}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all active:scale-90 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)]'}`}
-                                            >
-                                                <Icons.Mic className="w-5 h-5" />
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={!commentText.trim() || loadingActions?.[post._id]}
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 disabled:opacity-20 active:scale-95 transition-all"
-                                            >
-                                                {loadingActions?.[post._id] ? (
-                                                    <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                                ) : (
-                                                    <Icons.Send className="w-5 h-5" />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
+                                <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl p-1">
+                                    <input
+                                        id={`comment-input-${post._id}`}
+                                        placeholder={t('FOUNDER_PLACEHOLDER')}
+                                        value={commentText}
+                                        onChange={(e) => setCommentText(e.target.value)}
+                                        className="flex-1 bg-transparent py-3 px-4 text-sm text-white outline-none placeholder-gray-600 font-bold"
+                                    />
+                                    <div className="flex gap-1 pr-1">
+                                        <button type="button" onClick={toggleCommentRecording} className={`w-10 h-10 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                            <Icons.Mic className="w-5 h-5" />
+                                        </button>
+                                        <button type="submit" disabled={!commentText.trim()} className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-20 transition-all">
+                                            <Icons.Send className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </form>
                             )}
                         </div>
                     </div>
@@ -1392,35 +1365,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             </div>
                         </div>
 
-                        {/* MORE MENU */}
-                        <div className="relative">
-                            <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); playSound('cyber_click'); }} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90 shrink-0">
-                                <Icons.MoreHorizontal className="w-5 h-5" />
-                            </button>
-                            {showMenu && (
-                                <>
-                                    <div className="fixed inset-0 z-[9000]" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
-                                    <div className="absolute bottom-full right-0 mb-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-[9001] overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in translate-y-0">
-                                        <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                            <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                                            <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
-                                        </button>
-                                        {isOwner && (
-                                            <button onClick={(e) => { e.stopPropagation(); onEditPost(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                                <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
-                                                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
-                                            </button>
-                                        )}
-                                        {canDelete && (
-                                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                                <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
-                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
-                                            </button>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                        <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />
                     </div>
 
                     <div className="space-y-3 mt-1">
@@ -1545,7 +1490,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     )}
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     );
 });
 
@@ -2539,14 +2484,14 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
 
                             <div className="mb-6 px-2">
                                 <div className="flex flex-col mb-4">
-                                    <div className="font-black text-white text-xl sm:text-2xl flex items-center gap-2 leading-none uppercase tracking-tighter flex-wrap">
-                                        {displayUser?.username || "Unknown Agent"}
+                                    <div className="font-black text-white text-lg sm:text-xl flex items-center gap-2 leading-none uppercase tracking-tighter">
+                                        <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-5 h-5 sm:w-6 sm:h-6" />
-                                            {displayUser?.role === 'Founder' && <FounderBadge className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />}
+                                            <VerifiedBadge isFounder={displayUser?.role === 'Founder'} className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            {displayUser?.role === 'Founder' && <FounderBadge className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />}
                                         </div>
                                     </div>
-                                    <div className="text-gray-400 text-sm font-bold mt-1.5 flex items-center gap-2">
+                                    <div className="text-gray-400 text-sm font-bold mt-1 flex items-center gap-2">
                                         @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
                                         <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
@@ -2557,21 +2502,21 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                 </div>
 
                                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium flex-wrap">
-                                    <div className="flex flex-col items-start gap-0.5 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-2xl min-w-[80px] hover:bg-white/[0.06] transition-all">
-                                        <span className="font-black text-white text-base">{(userPosts || []).length}</span>
-                                        <span className="text-gray-500 text-[9px] font-black uppercase tracking-wider">{t('POSTS') || 'Posts'}</span>
+                                    <div className="flex flex-col items-start gap-0.5 px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl min-w-[90px] hover:bg-white/20 transition-all shadow-xl shadow-black/20">
+                                        <span className="font-black text-white text-lg leading-none">{(userPosts || []).length}</span>
+                                        <span className="text-gray-400 text-[9px] font-black uppercase tracking-wider">{t('POSTS') || 'Posts'}</span>
                                     </div>
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex flex-col items-start gap-0.5 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-2xl min-w-[80px] cursor-pointer hover:bg-white/[0.06] transition-all active:scale-95 group">
-                                        <span className="font-black text-white text-base group-hover:text-[var(--gold-primary)] transition-colors">{displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}</span>
-                                        <span className="text-gray-500 text-[9px] font-black uppercase tracking-wider">{t('FOLLOWERS') || 'Followers'}</span>
+                                    }} className="flex flex-col items-start gap-0.5 px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl min-w-[90px] cursor-pointer hover:bg-white/20 transition-all shadow-xl shadow-black/20 active:scale-95 group">
+                                        <span className="font-black text-white text-lg leading-none group-hover:text-[var(--gold-primary)] transition-colors">{displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}</span>
+                                        <span className="text-gray-400 text-[9px] font-black uppercase tracking-wider">{t('FOLLOWERS') || 'Followers'}</span>
                                     </div>
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex flex-col items-start gap-0.5 px-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-2xl min-w-[80px] cursor-pointer hover:bg-white/[0.06] transition-all active:scale-95 group">
-                                        <span className="font-black text-white text-base group-hover:text-[var(--gold-primary)] transition-colors">{displayUser?.following?.length || 0}</span>
-                                        <span className="text-gray-500 text-[9px] font-black uppercase tracking-wider">{t('FOLLOWING') || 'Following'}</span>
+                                    }} className="flex flex-col items-start gap-0.5 px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl min-w-[90px] cursor-pointer hover:bg-white/20 transition-all shadow-xl shadow-black/20 active:scale-95 group">
+                                        <span className="font-black text-white text-lg leading-none group-hover:text-[var(--gold-primary)] transition-colors">{displayUser?.following?.length || 0}</span>
+                                        <span className="text-gray-400 text-[9px] font-black uppercase tracking-wider">{t('FOLLOWING') || 'Following'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2587,8 +2532,12 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                         <button disabled={followLoading[displayUser?._id]} onClick={() => onFollow(displayUser)} className={`flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${isFollowing ? 'bg-white/5 border border-white/10 text-white' : 'bg-[var(--gold-primary)] text-black shadow-lg shadow-[var(--gold-primary)]/20'}`}>
                                             {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                         </button>
-                                        <button onClick={() => onOpenChat(displayUser)} className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all active:scale-95 group">
-                                            <Icons.Ghost className="w-4.5 h-4.5 group-hover:scale-110 transition-transform" />
+                                        <button onClick={() => onOpenChat(displayUser)} title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
+                                            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group shadow-xl shadow-black/40 backdrop-blur-xl shrink-0">
+                                            <div className="relative flex items-center justify-center">
+                                                <Icons.Ghost className="w-5 h-5 text-gray-400 group-hover:text-[var(--gold-primary)] transition-all duration-300 group-hover:scale-110" />
+                                            </div>
+                                            <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">{t('WHISPERS') || 'ΨΙΘΥΡΟΙ'}</span>
                                         </button>
                                         {currentUser?.role === 'Founder' && (
                                             <button onClick={() => window.confirm(t('CONFIRM_BAN')) && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95">
