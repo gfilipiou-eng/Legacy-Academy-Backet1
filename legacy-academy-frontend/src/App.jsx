@@ -2537,17 +2537,18 @@ const ProfileModal = ({
                                     {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                 </div>
 
-                                {/* STATS ROW */}
-                                <div className="flex items-stretch gap-2 overflow-x-auto no-scrollbar pb-1">
+                                {/* STATS GRID — 4 equal columns, no scroll */}
+                                <div className="grid grid-cols-4 gap-1.5 w-full">
+
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-start gap-0.5 px-3 py-2.5 bg-white/[0.07] backdrop-blur-md border border-white/10 rounded-2xl shrink-0 min-w-[72px] hover:bg-white/[0.12] transition-all shadow-lg shadow-black/20">
-                                        <span className="font-black text-white text-base sm:text-lg leading-none">{(userPosts || []).length}</span>
-                                        <span className="text-gray-500 text-[8px] font-black uppercase tracking-wider mt-0.5">{t('POSTS')}</span>
+                                    <div className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
+                                        <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
+                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('POSTS')}</span>
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-start gap-0.5 px-3 py-2.5 bg-white/[0.07] backdrop-blur-md border border-white/10 rounded-2xl shrink-0 min-w-[72px] hover:bg-white/[0.12] transition-all shadow-lg shadow-black/20">
-                                        <span className="font-black text-[var(--gold-primary)] text-base sm:text-lg leading-none">
+                                    <div className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl hover:bg-white/[0.12] transition-all">
+                                        <span className="font-black text-[var(--gold-primary)] text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = String(displayUser?._id || '');
                                                 return (userSpecificPosts || []).filter(p =>
@@ -2556,28 +2557,29 @@ const ProfileModal = ({
                                                 ).length;
                                             })()}
                                         </span>
-                                        <span className="text-gray-500 text-[8px] font-black uppercase tracking-wider mt-0.5">{t('REPOSTS')}</span>
+                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('REPOSTS')}</span>
                                     </div>
 
                                     {/* FOLLOWERS */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex flex-col items-start gap-0.5 px-3 py-2.5 bg-white/[0.07] backdrop-blur-md border border-white/10 rounded-2xl shrink-0 min-w-[72px] cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all shadow-lg shadow-black/20 active:scale-95 group">
-                                        <span className="font-black text-white text-base sm:text-lg leading-none group-hover:text-[var(--gold-primary)] transition-colors">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
+                                        <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
                                             {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
                                         </span>
-                                        <span className="text-gray-500 text-[8px] font-black uppercase tracking-wider mt-0.5">{t('FOLLOWERS')}</span>
+                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
                                     </div>
 
                                     {/* FOLLOWING */}
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex flex-col items-start gap-0.5 px-3 py-2.5 bg-white/[0.07] backdrop-blur-md border border-white/10 rounded-2xl shrink-0 min-w-[72px] cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all shadow-lg shadow-black/20 active:scale-95 group">
-                                        <span className="font-black text-white text-base sm:text-lg leading-none group-hover:text-[var(--gold-primary)] transition-colors">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer hover:bg-white/[0.15] hover:border-[var(--gold-primary)]/30 transition-all active:scale-95 group">
+                                        <span className="font-black text-white text-base leading-none group-hover:text-[var(--gold-primary)] transition-colors tabular-nums">
                                             {displayUser?.following?.length || 0}
                                         </span>
-                                        <span className="text-gray-500 text-[8px] font-black uppercase tracking-wider mt-0.5">{t('FOLLOWING')}</span>
+                                        <span className="text-gray-500 text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
+
                                 </div>
                             </div>
 
