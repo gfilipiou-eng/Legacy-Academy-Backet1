@@ -438,7 +438,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
-    const color = "#1D9BF0";
+    const color = isFounder ? "#FFD700" : "#1D9BF0";
 
     return (
         <svg viewBox="0 0 22 22" className={`${className} shrink-0`} style={{ overflow: 'visible' }}>
@@ -1818,7 +1818,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         })}
                     </div>
                 </div>
-                <div className={`flex-1 flex flex-col bg-[#050505] ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
+                <div className={`flex-1 flex flex-col bg-[#050505] chat-shell ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     {activeChat ? (
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
@@ -2141,7 +2141,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="space-y-4">
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
                                     <div className="hidden sm:block text-[10px] font-black text-gray-400 uppercase tracking-[0.25em]">
-                                        MODE
+                                        ΛΕΙΤΟΥΡΓΙΑ
                                     </div>
                                     <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex items-center justify-between sm:justify-start w-full sm:w-auto">
                                         <button
@@ -2152,13 +2152,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all ${
                                                 (displayMode || 'dark') === 'dark'
                                                     ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
                                                     : 'text-gray-400 hover:text-white'
                                             }`}
                                         >
-                                            Dark
+                                            ΣΚΟΤΕΙΝΟ
                                         </button>
                                         <button
                                             type="button"
@@ -2168,13 +2168,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all ${
                                                 displayMode === 'light'
                                                     ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
                                                     : 'text-gray-400 hover:text-white'
                                             }`}
                                         >
-                                            Light
+                                            ΦΩΤΕΙΝΟ
                                         </button>
                                         <button
                                             type="button"
@@ -2184,13 +2184,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 applyDisplayMode(mode);
                                                 handleSave('displayMode', mode);
                                             }}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all ${
                                                 displayMode === 'blue-dark'
                                                     ? 'bg-[#15202b] text-white shadow-[0_0_16px_rgba(15,23,42,0.9)]'
                                                     : 'text-gray-400 hover:text-white'
                                             }`}
                                         >
-                                            Blue
+                                            ΜΠΛΕ
                                         </button>
                                     </div>
                                 </div>

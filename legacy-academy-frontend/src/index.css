@@ -45,6 +45,20 @@ body.light-mode .text-gray-500 {
   color: #0b1120 !important;
 }
 
+.chat-shell {
+  color: #e7e9ea;
+}
+
+body.light-mode .chat-shell {
+  color: #e7e9ea !important;
+}
+
+body.light-mode .chat-shell .text-white,
+body.light-mode .chat-shell .text-gray-400,
+body.light-mode .chat-shell .text-gray-500 {
+  color: #e7e9ea !important;
+}
+
 img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
