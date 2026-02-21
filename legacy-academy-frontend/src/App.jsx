@@ -326,7 +326,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     if (isVideo) {
         return (
             <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick}>
-                <div className="w-full h-full relative overflow-hidden rounded-xl bg-black">
+                <div className="w-full h-full relative overflow-hidden rounded-full bg-black">
                     <video
                         src={mediaUrl}
                         className="w-full h-full object-cover pointer-events-none"
@@ -403,8 +403,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
     return (
         <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -10 }} className={`flex gap-3 items-start relative mb-5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
-                <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} />
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden shrink-0 border border-white/5 shadow-xl">
+                <ProfileAvatar user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })} className="rounded-full" />
             </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end' : 'items-start'}`}>
@@ -1215,15 +1215,13 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`w-16 h-16 rounded-2xl shadow-lg transition-all ${stories?.some(s => String(s.author?._id || s.author) === String(user?._id)) ? 'p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 shadow-[var(--gold-primary)]/20' : 'border-2 border-white/10 hover:border-[var(--gold-primary)] bg-white/5'}`}>
-                    <div className="w-full h-full rounded-2xl overflow-hidden bg-gray-900 relative">
-                        <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </div>
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
+                    <ProfileAvatar user={user} className="opacity-80 rounded-full" key={imgKey} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
                     </div>
                 </div>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
@@ -1241,40 +1239,38 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                        <div className="w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 shadow-lg shadow-[var(--gold-primary)]/20">
-                            <div className="w-full h-full rounded-2xl overflow-hidden bg-black relative">
-                                {hasMedia ? (
-                                    isNativeVideo ? (
-                                        <video
-                                            src={resolveMediaUrl(s.videoUrl || s.image)}
-                                            className="w-full h-full object-cover rounded-2xl pointer-events-none"
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                            preload="auto"
-                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                        />
-                                    ) : isYT ? (
-                                        <div className="w-full h-full relative">
-                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-2xl" alt="" />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-6 h-6 rounded-2xl bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
-                                                </div>
+                        <div className="w-16 h-16 rounded-full overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
+                            {hasMedia ? (
+                                isNativeVideo ? (
+                                    <video
+                                        src={resolveMediaUrl(s.videoUrl || s.image)}
+                                        className="w-full h-full object-cover rounded-full pointer-events-none"
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        preload="auto"
+                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                    />
+                                ) : isYT ? (
+                                    <div className="w-full h-full relative">
+                                        <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
                                             </div>
                                         </div>
-                                    ) : (
-                                        <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover rounded-2xl" alt="" />
-                                    )
-                                ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-2xl">
-                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
-                                            {s.desc}
-                                        </span>
                                     </div>
-                                )}
-                            </div>
+                                ) : (
+                                    <img src={resolveMediaUrl(s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                )
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
+                                    <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
+                                        {s.desc}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide max-w-[60px] truncate">{s.author?.username}</span>
                     </div>
@@ -1381,8 +1377,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4 sm:mb-6">
                     <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border-2 border-[var(--gold-primary)]" onClick={() => onViewProfile(post.author)}>
-                            <ProfileAvatar user={post.author} />
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
+                            <ProfileAvatar user={post.author} className="rounded-full" />
                         </div>
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -2424,8 +2420,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                         onViewProfile(u);
                                         setActiveList(null);
                                     }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all active:scale-95">
-                                        <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden border border-white/10">
-                                            <ProfileAvatar user={u} />
+                                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
+                                            <ProfileAvatar user={u} className="rounded-full" />
                                         </div>
                                         <div className="font-bold text-white text-sm">{u?.username}</div>
                                     </div>
@@ -2434,8 +2430,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 text-center space-y-8 animate-fade-in">
-                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-[2.5rem] bg-gray-800 overflow-hidden border-4 border-[var(--gold-primary)] cursor-pointer relative group shadow-2xl shadow-[var(--gold-primary)]/10">
-                                <ProfileAvatar user={displayUser} size="large" key={imgKey} />
+                            <div onClick={() => fileRef.current.click()} className="w-32 h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-white/10 cursor-pointer relative group shadow-md shadow-white/5">
+                                <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-10 h-10 text-white" /></div>
                             </div>
                             <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
@@ -2551,8 +2547,8 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                         <div className="p-4 sm:p-6 pb-20">
                             <div className="flex items-center gap-4 sm:gap-8 mb-6">
                                 <div className="relative">
-                                    <div className={`w-20 h-20 sm:w-32 sm:h-32 rounded-2xl bg-gray-800 overflow-hidden border-2 cursor-pointer shadow-xl shrink-0 ${displayUser?.role === 'Founder' ? 'border-[var(--gold-primary)]' : 'border-[var(--gold-primary)] shadow-[var(--gold-primary)]/20'}`}>
-                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} />
+                                    <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gray-800 overflow-hidden border border-white/10 cursor-pointer shadow-md shrink-0">
+                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                     </div>
                                 </div>
                                 <div className="flex-1 flex justify-around items-center bg-white/5 p-2 sm:p-4 rounded-2xl border border-white/5">
@@ -2683,15 +2679,13 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
                                                     <div onClick={() => setIsCreateOpen(true)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className={`w-16 h-16 rounded-2xl shadow-lg transition-all ${userStories.length > 0 ? 'p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 shadow-[var(--gold-primary)]/20' : 'border-2 border-white/10 hover:border-[var(--gold-primary)] bg-white/5'}`}>
-                                                            <div className="w-full h-full rounded-2xl overflow-hidden bg-gray-900 relative">
-                                                                <ProfileAvatar user={currentUser} className="opacity-80" />
-                                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
-                                                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                                    </svg>
-                                                                </div>
+                                                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
+                                                            <ProfileAvatar user={currentUser} className="opacity-80 rounded-full" />
+                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
+                                                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                </svg>
                                                             </div>
                                                         </div>
                                                         <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">{t('ADD_STORY')}</span>
@@ -2708,40 +2702,38 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-red-600 shadow-lg shadow-[var(--gold-primary)]/20">
-                                                                <div className="w-full h-full rounded-2xl overflow-hidden bg-black relative">
-                                                                    {hasMedia ? (
-                                                                        isNativeVideo ? (
-                                                                            <video
-                                                                                src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                                className="w-full h-full object-cover rounded-2xl pointer-events-none"
-                                                                                autoPlay
-                                                                                muted
-                                                                                loop
-                                                                                playsInline
-                                                                                preload="auto"
-                                                                                onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                                                            />
-                                                                        ) : isYT ? (
-                                                                            <div className="w-full h-full relative">
-                                                                                <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-2xl" alt="" />
-                                                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                                                    <div className="w-6 h-6 rounded-2xl bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
-                                                                                        <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
-                                                                                    </div>
+                                                            <div className="w-16 h-16 rounded-full overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
+                                                                {hasMedia ? (
+                                                                    isNativeVideo ? (
+                                                                        <video
+                                                                            src={resolveMediaUrl(s.videoUrl || s.image)}
+                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
+                                                                            autoPlay
+                                                                            muted
+                                                                            loop
+                                                                            playsInline
+                                                                            preload="auto"
+                                                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                                                        />
+                                                                    ) : isYT ? (
+                                                                        <div className="w-full h-full relative">
+                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
                                                                                 </div>
                                                                             </div>
-                                                                        ) : (
-                                                                            <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-2xl" />
-                                                                        )
-                                                                    ) : (
-                                                                        <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-2xl">
-                                                                            <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
-                                                                                {s.desc}
-                                                                            </span>
                                                                         </div>
-                                                                    )}
-                                                                </div>
+                                                                    ) : (
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                                    )
+                                                                ) : (
+                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
+                                                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
+                                                                            {s.desc}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
                                                         </div>
