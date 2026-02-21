@@ -170,13 +170,27 @@ const formatDate = (dateString, t, lang) => {
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
 
-        if (diffInSeconds < 60) return 'Just now';
+        const isGreek = lang === 'el';
+
+        if (diffInSeconds < 60) return isGreek ? 'Μόλις τώρα' : 'Just now';
+
         const diffInMinutes = Math.floor(diffInSeconds / 60);
-        if (diffInMinutes < 60) return `${diffInMinutes}m`;
+        if (diffInMinutes < 60) {
+            if (isGreek) return `${diffInMinutes} λεπτά`;
+            return diffInMinutes === 1 ? '1 min' : `${diffInMinutes} mins`;
+        }
+
         const diffInHours = Math.floor(diffInMinutes / 60);
-        if (diffInHours < 24) return `${diffInHours}h`;
+        if (diffInHours < 24) {
+            if (isGreek) return `${diffInHours} ώρες`;
+            return diffInHours === 1 ? '1 hour' : `${diffInHours} hours`;
+        }
+
         const diffInDays = Math.floor(diffInHours / 24);
-        if (diffInDays < 7) return `${diffInDays}d`;
+        if (diffInDays < 7) {
+            if (isGreek) return `${diffInDays} μέρες`;
+            return diffInDays === 1 ? '1 day' : `${diffInDays} days`;
+        }
 
         const locale = (lang === 'el') ? 'el-GR' : (lang === 'de') ? 'de-DE' : 'en-US';
         return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
@@ -4596,7 +4610,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-black text-white relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0 bg-black"></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-60 scroll-smooth relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2" />

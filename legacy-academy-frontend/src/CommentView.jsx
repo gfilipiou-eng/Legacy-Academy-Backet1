@@ -45,13 +45,27 @@ const formatDate = (dateString, t, lang) => {
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
 
-        if (diffInSeconds < 60) return 'Just now';
+        const isGreek = lang === 'el';
+
+        if (diffInSeconds < 60) return isGreek ? 'Μόλις τώρα' : 'Just now';
+
         const diffInMinutes = Math.floor(diffInSeconds / 60);
-        if (diffInMinutes < 60) return `${diffInMinutes}m`;
+        if (diffInMinutes < 60) {
+            if (isGreek) return `${diffInMinutes} λεπτά`;
+            return diffInMinutes === 1 ? '1 min' : `${diffInMinutes} mins`;
+        }
+
         const diffInHours = Math.floor(diffInMinutes / 60);
-        if (diffInHours < 24) return `${diffInHours}h`;
+        if (diffInHours < 24) {
+            if (isGreek) return `${diffInHours} ώρες`;
+            return diffInHours === 1 ? '1 hour' : `${diffInHours} hours`;
+        }
+
         const diffInDays = Math.floor(diffInHours / 24);
-        if (diffInDays < 7) return `${diffInDays}d`;
+        if (diffInDays < 7) {
+            if (isGreek) return `${diffInDays} μέρες`;
+            return diffInDays === 1 ? '1 day' : `${diffInDays} days`;
+        }
 
         const locale = (lang === 'el') ? 'el-GR' : (lang === 'de') ? 'de-DE' : 'en-US';
         return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
