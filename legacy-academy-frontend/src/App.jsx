@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
+import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
@@ -438,7 +439,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                     <div className="flex items-center gap-1.5 text-[8px] font-black text-[var(--gold-primary)] uppercase tracking-widest bg-[var(--gold-primary)]/10 w-fit px-2 py-0.5 rounded border border-[var(--gold-primary)]/20">
                                         <div className="w-1 h-1 rounded-full bg-[var(--gold-primary)] animate-pulse" /> {t('VOICE_NOTE')}
                                     </div>
-                                    <audio controls src={resolveMediaUrl(comment.audioUrl)} className="w-full h-8 opacity-90 max-w-[220px]" />
+                                    <VoiceNotePlayer src={resolveMediaUrl(comment.audioUrl)} t={t} />
                                 </div>
                             )}
                         </div>
@@ -1354,11 +1355,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl overflow-hidden will-change-transform`}
+            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl will-change-transform`}
         >
             {/* AMBIENT BACKGROUND GLOW */}
-            <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
-            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] pointer-events-none rounded-full" />
+            <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] rounded-full" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] rounded-full" />
+            </div>
 
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
@@ -2221,7 +2224,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost }) => {
+const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -2754,42 +2757,10 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                                         </div>
                                                         <AnimatePresence>
                                                             <div className="overflow-hidden">
-                                                                <div className="grid grid-cols-3 gap-1 sm:gap-1.5 pt-2 mb-8">
+                                                                <div className="flex flex-col mb-8">
                                                                     {groupedUserPosts[dateKey].map(p => (
-                                                                        <div
-                                                                            key={p._id}
-                                                                            onClick={() => onOpenDetail(p)}
-                                                                            className="aspect-square bg-gray-900 border border-white/5 rounded-xl overflow-hidden relative cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center group/card shadow-2xl"
-                                                                        >
-                                                                            {(isYouTubeUrl(p.videoUrl) || p.thumbnailUrl) ? (
-                                                                                <img src={p.thumbnailUrl ? resolveMediaUrl(p.thumbnailUrl) : `https://img.youtube.com/vi/${(p.videoUrl || '').match(/^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i)?.[1]}/hqdefault.jpg`} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (p.videoUrl || (p.image && p.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                                                                <div className="relative w-full h-full">
-                                                                                    <video
-                                                                                        src={resolveMediaUrl(p.videoUrl || p.image)}
-                                                                                        muted
-                                                                                        playsInline
-                                                                                        preload="metadata"
-                                                                                        poster={resolveMediaUrl(p.thumbnailUrl || p.videoUrl || p.image, null, false, true)}
-                                                                                        className="w-full h-full object-cover bg-gray-900 group-hover/card:scale-110 transition-transform duration-500"
-                                                                                    />
-                                                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                                                                                        <Icons.Play className="w-6 h-6 text-white/80" />
-                                                                                    </div>
-                                                                                </div>
-                                                                            ) : p.image ? (
-                                                                                <img src={resolveMediaUrl(p.image)} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500" />
-                                                                            ) : (
-                                                                                <div className="p-2 text-center break-words w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-black group-hover/card:scale-110 transition-transform duration-500">
-                                                                                    <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold leading-tight">{p.desc?.substring(0, 25)}...</span>
-                                                                                </div>
-                                                                            )}
-
-                                                                            {/* STATS OVERLAY on hover */}
-                                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.Heart className="w-3 h-3 text-[var(--gold-primary)]" /> {p.likes?.length || 0}</div>
-                                                                                <div className="flex items-center gap-1 text-[10px] font-bold text-white"><Icons.MessageSquare className="w-3 h-3 text-[var(--gold-primary)]" /> {p.comments?.length || 0}</div>
-                                                                            </div>
+                                                                        <div key={p._id} className="relative">
+                                                                            <PostCard post={p} user={currentUser} allUsers={allUsers} onLike={onLike} onDislike={onDislike} onRepost={onRepost} onComment={onComment} onDelete={onDeletePost} onViewProfile={onViewProfile} onOpenDetail={onOpenDetail} onOpenChat={onOpenChat} onEditComment={onEditComment} onDeleteComment={onDeleteComment} onEditPost={onEditPost} onShare={onShare} onHashtagClick={onHashtagClick} loadingActions={loadingActions} />
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -4725,6 +4696,16 @@ const App = () => {
                         followLoading={followLoading}
                         addToast={addToast}
                         onDeletePost={handleDeletePost}
+                        onLike={handleLike}
+                        onDislike={handleDislike}
+                        onRepost={handleRepost}
+                        onComment={handleComment}
+                        onEditComment={handleEditComment}
+                        onDeleteComment={handleDeleteComment}
+                        onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }}
+                        onShare={handleShare}
+                        onHashtagClick={handleHashtagClick}
+                        loadingActions={loadingActions}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />

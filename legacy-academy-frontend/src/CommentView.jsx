@@ -3,6 +3,7 @@ import axios from './api';
 import socket from './socket';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
+import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
 import { playSound } from './utils/sounds';
 
@@ -341,9 +342,8 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                                 <>
                                                     {c.text && <p className="text-white text-sm leading-snug break-words whitespace-pre-wrap">{c.text}</p>}
                                                     {c.audioUrl && (
-                                                        <div className="mt-2 flex items-center gap-3 bg-white/5 p-2 rounded-xl border border-white/10">
-                                                            <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
-                                                            <audio src={resolveMediaUrl(c.audioUrl)} controls className="h-8 max-w-full" />
+                                                        <div className="mt-2 flex items-center justify-start max-w-[280px]">
+                                                            <VoiceNotePlayer src={resolveMediaUrl(c.audioUrl)} t={t} />
                                                         </div>
                                                     )}
 
