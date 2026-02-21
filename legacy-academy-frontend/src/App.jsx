@@ -2047,7 +2047,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         Math.min(
             1,
             Math.max(
-                0.8,
+                0.95,
                 user?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
             )
         )
@@ -2064,7 +2064,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 Math.min(
                     1,
                     Math.max(
-                        0.8,
+                        0.95,
                         user.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1
                     )
                 )
@@ -2202,7 +2202,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <div className="space-y-2 mt-2">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
-                                            <span>ΜΕΓΕΘΥΝΣΗ UI</span>
+                                            <span>ΣΜΙΚΡΥΝΣΗ UI</span>
                                             <span className="text-[9px] text-gray-500 tracking-[0.2em]">UI ZOOM</span>
                                         </span>
                                         <span className="text-[10px] font-black text-gray-400">
@@ -2211,9 +2211,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     </div>
                                     <input
                                         type="range"
-                                        min="0.8"
+                                        min="0.95"
                                         max="1"
-                                        step="0.05"
+                                        step="0.01"
                                         value={zoomLevel}
                                         onChange={(e) => {
                                             const val = parseFloat(e.target.value);
@@ -3420,7 +3420,7 @@ const applyDisplayMode = (mode) => {
 
 const applyZoom = (zoom) => {
     const root = document.getElementById('root') || document.body;
-    const z = Math.max(0.8, Math.min(1, Number(zoom) || 1));
+    const z = Math.max(0.95, Math.min(1, Number(zoom) || 1));
     if (root) {
         root.style.transformOrigin = 'top center';
         root.style.transform = z === 1 ? '' : `scale(${z})`;
