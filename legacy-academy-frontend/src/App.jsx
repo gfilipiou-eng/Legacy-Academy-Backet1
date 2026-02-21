@@ -607,8 +607,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full overflow-hidden relative">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 shadow-xl">
-                                <ProfileAvatar user={author} />
+                            <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10 shadow-md">
+                                <ProfileAvatar user={author} className="rounded-full" />
                             </div>
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1.5">
@@ -738,8 +738,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onO
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
-                                <ProfileAvatar user={user} />
+                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
+                                <ProfileAvatar user={user} className="rounded-full" />
                             </div>
                             {isRecordingComment ? (
                                 <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 sm:p-3 flex items-center justify-between animate-pop-in">
@@ -1165,8 +1165,8 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             onClick={handleClick}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gray-800 overflow-hidden border-2 border-white/10 group-hover:border-[var(--gold-primary)]/50 transition-all shadow-lg">
-                    <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
+                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10 transition-all shadow-md">
+                    <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} className="rounded-full" />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageSquare className="w-3 h-3 text-white fill-current" /></div>}
@@ -1502,8 +1502,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onComment, onD
                 {showComments && (
                     <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
                         <div className="flex gap-4">
-                            <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-white/10">
-                                <ProfileAvatar user={user} />
+                            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
+                                <ProfileAvatar user={user} className="rounded-full" />
                             </div>
                             <div className="flex-1 flex flex-col gap-3">
                                 <div className="relative">
@@ -1820,7 +1820,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                    <div className="relative"><div className={`w-12 h-12 rounded-2xl bg-gray-900 border border-white/10 overflow-hidden shadow-md`}><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-sm`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4" /></div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
@@ -1833,7 +1833,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                    <div className="w-10 h-10 rounded-xl border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} /></div>
+                                    <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} className="rounded-full" /></div>
                                     <div>
                                         <div className="font-bold text-sm flex items-center gap-2">
                                             {activeChat?.username}
@@ -2908,7 +2908,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex gap-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                            <ProfileAvatar user={user} />
+                            <ProfileAvatar user={user} className="rounded-full" />
                         </div>
                         <div className="flex-1 flex flex-col gap-2">
                             <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-base outline-none text-white resize-none h-24 placeholder-gray-500 font-bold" />
@@ -4562,7 +4562,7 @@ const App = () => {
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                                                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                                                <ProfileAvatar user={u} />
+                                                                <ProfileAvatar user={u} className="rounded-full" />
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="font-bold text-white text-sm">
