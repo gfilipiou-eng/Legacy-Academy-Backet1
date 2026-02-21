@@ -362,7 +362,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 
 
 const FounderBadge = ({ className = "w-5 h-5", title }) => (
-    <div className={`relative flex items-center justify-center ${className} shrink-0 text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)] animate-pulse-slow`} title={title || "LEGACY FOUNDER"}>
+    <div className={`relative flex items-center justify-center ${className} shrink-0 text-[#FFD700]`} title={title || "LEGACY FOUNDER"}>
         <Icons.Crown className="w-full h-full fill-current" />
     </div>
 );
@@ -614,13 +614,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     <span className="font-bold text-white leading-none">{author?.username}</span>
                                     <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4" />
                                 </div>
-                                {author?.role === 'Founder' ? (
-                                    <div className="flex items-center gap-1.5 mt-1 bg-gradient-to-r from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 px-2.5 py-1 rounded-lg border border-[var(--gold-primary)]/40">
+                                {author?.role === 'Founder' && (
+                                    <div className="mt-1">
                                         <FounderBadge className="w-5 h-5" />
-                                        <span className="text-[10px] text-[var(--gold-primary)] uppercase font-black tracking-widest">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</span>
                                     </div>
-                                ) : (
-                                    <span className="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-widest">{t('MEMBER_BADGE')}</span>
                                 )}
                             </div>
                         </div>
@@ -4527,9 +4524,8 @@ const App = () => {
                                                                     {u.username}
                                                                 </div>
                                                                 {u.role === 'Founder' && (
-                                                                    <div className="flex items-center gap-1 animate-fade-in group/badge">
-                                                                        <FounderBadge className="w-3 h-3" />
-                                                                        <div className="text-[var(--gold-primary)] text-[9px] font-black tracking-wider uppercase">{t('FOUNDER_BADGE', 'LEGACY FOUNDER')}</div>
+                                                                    <div className="flex items-center mt-1 animate-fade-in group/badge">
+                                                                        <FounderBadge className="w-3.5 h-3.5" />
                                                                     </div>
                                                                 )}
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
