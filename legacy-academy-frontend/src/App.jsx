@@ -801,7 +801,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 {!post.comments?.length ? (
                                     <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                                 ) : (
-                                    post.comments.slice().reverse().slice(0, 50).reverse().map((c, idx) => (
+                                    (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
                                         <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
                                     ))
                                 )}
@@ -3763,14 +3763,21 @@ const App = () => {
         };
     }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
 
+    const isValidObjectId = (id) => typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id);
+    const sanitizeObjectId = (id) => {
+        const s = String(id || '').trim().replace(/\u2026/g, '');
+        return /^[a-fA-F0-9]{24}$/.test(s) ? s : '';
+    };
+
     const handleRepost = async (postId) => {
         if (!postId || !user?._id) return;
-        const targetId = String(postId).trim();
         const userId = String(user._id).trim();
+        const safeId = sanitizeObjectId(postId);
+        if (!isValidObjectId(safeId)) return;
 
         // 1. OPTIMISTIC UPDATE
         const updateFn = (p) => {
-            if (String(p._id) !== targetId) return p;
+            if (String(p._id) !== safeId) return p;
             const reposts = Array.isArray(p.reposts) ? [...p.reposts] : [];
             const hasReposted = reposts.some(id => String(id) === userId);
             const newReposts = hasReposted ? reposts.filter(id => String(id) !== userId) : [...reposts, userId];
@@ -3778,20 +3785,19 @@ const App = () => {
         };
 
         setPosts(prev => prev.map(updateFn));
-        if (selectedPost && String(selectedPost._id) === targetId) {
+        if (selectedPost && String(selectedPost._id) === safeId) {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        setLoadingActions(prev => ({ ...prev, [targetId]: true }));
+        setLoadingActions(prev => ({ ...prev, [safeId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
 
         try {
-            // Use absolute-style path to ensure it hits baseURL/posts/ID/repost
-            const res = await axios.put(`/posts/${targetId}/repost`);
+            const res = await axios.put(`/posts/${safeId}/repost`);
             const { reposts } = res.data;
             if (Array.isArray(reposts)) {
-                setPosts(prev => prev.map(p => String(p._id) === targetId ? { ...p, reposts } : p));
-                if (selectedPost && String(selectedPost._id) === targetId) {
+                setPosts(prev => prev.map(p => String(p._id) === safeId ? { ...p, reposts } : p));
+                if (selectedPost && String(selectedPost._id) === safeId) {
                     setSelectedPost(prev => ({ ...prev, reposts }));
                 }
             }
@@ -3802,7 +3808,7 @@ const App = () => {
         } finally {
             setLoadingActions(prev => {
                 const next = { ...prev };
-                delete next[targetId];
+                delete next[safeId];
                 return next;
             });
         }
@@ -3811,10 +3817,12 @@ const App = () => {
     const handleLike = async (postId) => {
         const userId = user?._id;
         if (!userId) return;
+        const safeId = sanitizeObjectId(postId);
+        if (!isValidObjectId(safeId)) return;
 
         // 1. OPTIMISTIC UPDATE (Instant Feedback)
         const updateFn = (p) => {
-            if (String(p._id) !== String(postId)) return p;
+            if (String(p._id) !== String(safeId)) return p;
             const likes = Array.isArray(p.likes) ? [...p.likes] : [];
             const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => String(id) !== String(userId)) : [];
             const hasLiked = likes.some(id => String(id) === String(userId));
@@ -3822,34 +3830,34 @@ const App = () => {
             return { ...p, likes: newLikes, dislikes };
         };
         setPosts(prev => prev.map(updateFn));
-        if (selectedPost && String(selectedPost._id) === String(postId)) {
+        if (selectedPost && String(selectedPost._id) === String(safeId)) {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        const isLiking = posts.find(p => String(p._id) === String(postId))?.likes?.includes(userId) === false;
+        const isLiking = posts.find(p => String(p._id) === String(safeId))?.likes?.includes(userId) === false;
 
-        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        setLoadingActions(prev => ({ ...prev, [safeId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
 
         try {
-            const res = await axios.put(`/posts/${postId}/like`);
+            const res = await axios.put(`/posts/${safeId}/like`);
             // 2. SERVER SYNC (Only if valid arrays returned)
             const { likes, dislikes } = res.data;
             if (Array.isArray(likes) && Array.isArray(dislikes)) {
                 setPosts(prev => {
-                    const next = prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p);
+                    const next = prev.map(p => String(p._id) === String(safeId) ? { ...p, likes, dislikes } : p);
                     // Update cache immediately so it persists on reload
                     localStorage.setItem('cached_posts', JSON.stringify(next.slice(0, 20)));
                     return next;
                 });
-                if (selectedPost && String(selectedPost._id) === String(postId)) {
+                if (selectedPost && String(selectedPost._id) === String(safeId)) {
                     setSelectedPost(prev => ({ ...prev, likes, dislikes }));
                 }
             }
         } catch (e) {
             console.error('Like failed', e);
         } finally {
-            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[safeId]; return copy; });
         }
     };
 
@@ -3863,10 +3871,12 @@ const App = () => {
     const handleDislike = async (postId) => {
         const userId = user?._id;
         if (!userId) return;
+        const safeId = sanitizeObjectId(postId);
+        if (!isValidObjectId(safeId)) return;
 
         // 1. OPTIMISTIC UPDATE
         const updateFn = (p) => {
-            if (String(p._id) !== String(postId)) return p;
+            if (String(p._id) !== String(safeId)) return p;
             const dislikes = Array.isArray(p.dislikes) ? [...p.dislikes] : [];
             const likes = Array.isArray(p.likes) ? p.likes.filter(id => String(id) !== String(userId)) : [];
             const hasDisliked = dislikes.some(id => String(id) === String(userId));
@@ -3874,39 +3884,40 @@ const App = () => {
             return { ...p, likes, dislikes: newDislikes };
         };
         setPosts(prev => prev.map(updateFn));
-        if (selectedPost && String(selectedPost._id) === String(postId)) {
+        if (selectedPost && String(selectedPost._id) === String(safeId)) {
             setSelectedPost(prev => updateFn(prev));
         }
 
-        const isDisliking = posts.find(p => String(p._id) === String(postId))?.dislikes?.includes(userId) === false;
+        const isDisliking = posts.find(p => String(p._id) === String(safeId))?.dislikes?.includes(userId) === false;
 
-        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        setLoadingActions(prev => ({ ...prev, [safeId]: true }));
         if (navigator.vibrate) navigator.vibrate(50);
 
-
         try {
-            const res = await axios.put(`/posts/${postId}/dislike`);
+            const res = await axios.put(`/posts/${safeId}/dislike`);
             // 2. SERVER SYNC (Validate Data First)
             const { likes, dislikes } = res.data;
             if (Array.isArray(likes) && Array.isArray(dislikes)) {
                 setPosts(prev => {
-                    const next = prev.map(p => String(p._id) === String(postId) ? { ...p, likes, dislikes } : p);
+                    const next = prev.map(p => String(p._id) === String(safeId) ? { ...p, likes, dislikes } : p);
                     localStorage.setItem('cached_posts', JSON.stringify(next.slice(0, 20)));
                     return next;
                 });
-                if (selectedPost && String(selectedPost._id) === String(postId)) {
+                if (selectedPost && String(selectedPost._id) === String(safeId)) {
                     setSelectedPost(prev => ({ ...prev, likes, dislikes }));
                 }
             }
         } catch (e) {
             console.error('Dislike failed', e);
         } finally {
-            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[safeId]; return copy; });
         }
     };
 
     const handleComment = async (postId, input) => {
-        setLoadingActions(prev => ({ ...prev, [postId]: true }));
+        const safeId = sanitizeObjectId(postId);
+        if (!isValidObjectId(safeId)) return;
+        setLoadingActions(prev => ({ ...prev, [safeId]: true }));
         playSound('cyber_comment');
         const textValue = (input instanceof FormData) ? null : (typeof input === 'string' ? input : (input?.text || ""));
         let tempId = 'temp-' + Date.now();
@@ -3923,8 +3934,8 @@ const App = () => {
                 createdAt: new Date().toISOString(),
                 isOptimistic: true
             };
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [...(p.comments || []), tempComment] } : p));
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: [...(prev.comments || []), tempComment] }));
+            setPosts(prev => prev.map(p => String(p._id) === String(safeId) ? { ...p, comments: [...(p.comments || []), tempComment] } : p));
+            if (selectedPost?._id === safeId) setSelectedPost(prev => ({ ...prev, comments: [...(prev.comments || []), tempComment] }));
         }
 
         try {
@@ -3940,21 +3951,21 @@ const App = () => {
             // Append explicit user ID for redundancy if needed, though token is primary
             // Remove 'user' object to prevent JSON parsing issues, rely on token
 
-            console.log(`📡 [DEBUG] Sending comment to /posts/${postId}/comment with FormData`);
-            res = await axios.post(`/posts/${postId}/comment`, formData);
+            console.log(`📡 [DEBUG] Sending comment to /posts/${safeId}/comment with FormData`);
+            res = await axios.post(`/posts/${safeId}/comment`, formData);
             const updatedComments = res.data;
-            setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: updatedComments } : p));
-            if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
+            setPosts(prev => prev.map(p => String(p._id) === String(safeId) ? { ...p, comments: updatedComments } : p));
+            if (selectedPost?._id === safeId) setSelectedPost(prev => ({ ...prev, comments: updatedComments }));
         } catch (e) {
             // ROLLBACK OPTIMISTIC UPDATE ON ERROR
             if (textValue) {
-                setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: p.comments.filter(c => c._id !== tempId) } : p));
-                if (selectedPost?._id === postId) setSelectedPost(prev => ({ ...prev, comments: prev.comments.filter(c => c._id !== tempId) }));
+                setPosts(prev => prev.map(p => String(p._id) === String(safeId) ? { ...p, comments: (p.comments || []).filter(c => c._id !== tempId) } : p));
+                if (selectedPost?._id === safeId) setSelectedPost(prev => ({ ...prev, comments: (prev.comments || []).filter(c => c._id !== tempId) }));
             }
             console.error("Add comment error:", e);
             const errorMsg = e.response?.data?.message || e.response?.data?.error || "Transmission failed";
         } finally {
-            setLoadingActions(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
+            setLoadingActions(prev => { const copy = { ...prev }; delete copy[safeId]; return copy; });
         }
     };
 
@@ -4544,6 +4555,30 @@ const App = () => {
                                             {/* LOGO - MIDDLE */}
                                             <div className="flex justify-center -my-10 relative pointer-events-none select-none">
                                                 <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.15)]" />
+                                            </div>
+                                            
+                                            {/* TWITTER-STYLE TOP PILL */}
+                                            <div className="mt-12 w-full flex justify-center pointer-events-auto">
+                                                <div className="h-[58px] sm:h-[68px] w-full max-w-[340px] sm:max-w-sm rounded-[2rem] sm:rounded-[2.5rem] px-3 sm:px-5 flex items-center justify-between border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] bg-black/85 backdrop-blur-3xl relative">
+                                                    <button onClick={() => setActiveTab('home')} className="p-2 sm:p-3 relative transition-all duration-300 text-[var(--gold-primary)]">
+                                                        <Icons.Home className="w-5 h-5 sm:w-6 sm:h-6" />
+                                                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />
+                                                    </button>
+                                                    <button onClick={() => { setActiveTab('search'); setTimeout(() => document.getElementById('main-search')?.focus(), 0); }} className="p-2 sm:p-3 relative transition-all duration-300 text-gray-400 hover:text-white">
+                                                        <Icons.Search className="w-5 h-5 sm:w-6 sm:h-6" />
+                                                    </button>
+                                                    <button onClick={() => { setCreateModeStory(false); setIsCreateOpen(true); }} className="p-2.5 sm:p-3 bg-[var(--gold-primary)] text-black rounded-full shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all -mt-6 sm:-mt-8 border-[3px] sm:border-4 border-[#050505]">
+                                                        <Icons.Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+                                                    </button>
+                                                    <button onClick={() => setActiveTab('alerts')} className="p-2 sm:p-3 relative transition-all duration-300 text-gray-400 hover:text-white">
+                                                        <Icons.Bell className="w-5 h-5 sm:w-6 sm:h-6" />
+                                                    </button>
+                                                    <button onClick={() => viewProfile(user)} className="p-0.5 rounded-full border-2 transition-all duration-300 border-transparent hover:border-white/30">
+                                                        <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-white/10">
+                                                            <ProfileAvatar user={user} className="rounded-full" />
+                                                        </div>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
