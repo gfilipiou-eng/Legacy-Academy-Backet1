@@ -360,22 +360,10 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
 };
 
 const FounderBadge = ({ className = "w-5 h-5", title }) => (
-    <div className={`relative flex items-center justify-center ${className} shrink-0 z-10 group`} title={title || "LEGACY FOUNDER"}>
-        <div className="absolute -inset-1 bg-gradient-to-tr from-[#FFD700] to-[#FF4500] rounded-full blur-[4px] opacity-40 group-hover:opacity-70 transition-opacity animate-pulse-subtle"></div>
-        <svg viewBox="0 0 24 24" className="w-full h-full relative z-10 drop-shadow-md" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 1.5l10.5 4.5v6c0 6.6-4.6 12.9-10.5 14.5C6.1 24.9 1.5 18.6 1.5 12V6L12 1.5z" fill="url(#founderShieldGrad)" />
-            <path d="M12 4.5l8 3.4v4.6c0 5.1-3.5 10.1-8 11.4-4.5-1.3-8-6.3-8-11.4V7.9l8-3.4z" fill="#050505" />
-            <path d="M6 14.5L5 9l3.5 2 L12 7l3.5 4 L19 9l-1 5.5H6z" fill="url(#founderShieldGrad)" />
-            <circle cx="5" cy="7.5" r="1.2" fill="#FFD700" />
-            <circle cx="12" cy="5.5" r="1.8" fill="#FFD700" />
-            <circle cx="19" cy="7.5" r="1.2" fill="#FFD700" />
-            <defs>
-                <linearGradient id="founderShieldGrad" x1="1" y1="1" x2="23" y2="23" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#FFD700" />
-                    <stop offset="0.5" stopColor="#FFA500" />
-                    <stop offset="1" stopColor="#FF4500" />
-                </linearGradient>
-            </defs>
+    <div className={`relative flex items-center justify-center ${className} shrink-0`} title={title || "LEGACY FOUNDER"}>
+        <svg viewBox="0 0 24 24" className="w-full h-full drop-shadow-[0_1px_3px_rgba(245,195,44,0.3)]" fill="none">
+            <polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" />
+            <path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     </div>
 );
@@ -2561,7 +2549,7 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                     ) : (
                         <div className="p-4 sm:p-6 pb-20 mt-2 sm:mt-4">
                             <div className="flex items-start justify-between mb-3 sm:mb-4">
-                                <div className="relative -mt-10 sm:-mt-16 z-20">
+                                <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-10 sm:-mt-16' : ''}`}>
                                     <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                     </div>
@@ -2620,20 +2608,20 @@ const ProfileModal = ({ isOpen, onClose, profileUser, currentUser, allUsers, pre
                                     {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                 </div>
 
-                                <div className="flex items-center gap-6 text-sm font-medium">
-                                    <div className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                                <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-medium flex-wrap">
+                                    <div className="flex items-center gap-1.5 hover:opacity-80 transition-opacity whitespace-nowrap">
                                         <span className="font-bold text-white text-base">{(userPosts || []).length}</span>
                                         <span className="text-gray-400">{t('POSTS') || 'Posts'}</span>
                                     </div>
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
+                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap">
                                         <span className="font-bold text-white text-base">{displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}</span>
                                         <span className="text-gray-400">{t('FOLLOWERS') || 'Followers'}</span>
                                     </div>
                                     <div onPointerDown={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
+                                    }} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap">
                                         <span className="font-bold text-white text-base">{displayUser?.following?.length || 0}</span>
                                         <span className="text-gray-400">{t('FOLLOWING') || 'Following'}</span>
                                     </div>
