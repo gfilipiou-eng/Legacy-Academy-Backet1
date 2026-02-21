@@ -702,6 +702,87 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     </div>
 
                     <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
+                        {/* ── STICKY COMMENT/ACTIONS BAR ── */}
+                        <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
+                            <div className="flex items-center justify-around w-full py-1">
+                                <button
+                                    onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                    className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 transition-all">
+                                    <Icons.MessageSquare className="w-5 h-5" />
+                                    <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                                </button>
+                                <button
+                                    onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500 hover:text-green-400'}`}>
+                                    <Icons.RefreshCcw className="w-5 h-5" />
+                                    <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                                </button>
+                                <button
+                                    onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}>
+                                    <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                    <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                                </button>
+                                <button
+                                    onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                    <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                    <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                                </button>
+                            </div>
+                            <div className="flex items-center gap-2 w-full">
+                                <div className="w-9 h-9 rounded-full bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
+                                    <ProfileAvatar user={user} className="rounded-full" />
+                                </div>
+                                {isRecordingComment ? (
+                                    <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 flex items-center justify-between">
+                                        <div className="flex items-center gap-2 pl-1 shrink-0">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-xl text-white"><Icons.X className="w-4 h-4" /></button>
+                                            <button onClick={() => stopRecording(false)} className="px-3 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest">{t('STOP')}</button>
+                                        </div>
+                                    </div>
+                                ) : commentAudio ? (
+                                    <div className="flex-1 min-w-0 flex items-center justify-between px-2 bg-black/60 border border-[var(--gold-primary)]/40 rounded-2xl p-1">
+                                        <div className="flex items-center gap-2 pl-2 min-w-0">
+                                            <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shrink-0" />
+                                            <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-500"><Icons.Trash className="w-4 h-4" /></button>
+                                            <button onClick={() => {
+                                                const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
+                                                if (commentText.trim()) fd.append('text', commentText.trim());
+                                                onComment(post._id, fd); setCommentAudio(null); setCommentText('');
+                                            }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black">
+                                                <Icons.Send className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[46px]">
+                                        <input
+                                            id={`comment-input-${post._id}`}
+                                            placeholder={t('FOUNDER_PLACEHOLDER')}
+                                            value={commentText}
+                                            onChange={(e) => setCommentText(e.target.value)}
+                                            className="flex-1 min-w-0 bg-transparent py-3 px-3 text-sm text-white outline-none placeholder-gray-600 font-bold"
+                                        />
+                                        <div className="flex gap-1 pr-1 shrink-0">
+                                            <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                                <Icons.Mic className="w-4 h-4" />
+                                            </button>
+                                            <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25 transition-all active:scale-90 shrink-0">
+                                                <Icons.Send className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </form>
+                                )}
+                            </div>
+                        </div>
                         {/* Description Section */}
                         <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
                             <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
@@ -728,98 +809,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                     </div>
 
-                    {/* Social Stats and Comment Input */}
-                    <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
-                        {/* ── ACTION BAR ── */}
-                        <div className="flex items-center justify-around w-full py-1">
-
-                            {/* COMMENTS */}
-                            <button
-                                onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 transition-all">
-                                <Icons.MessageSquare className="w-5 h-5" />
-                                <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
-                            </button>
-
-                            {/* REPOSTS */}
-                            <button
-                                onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500 hover:text-green-400'}`}>
-                                <Icons.RefreshCcw className="w-5 h-5" />
-                                <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
-                            </button>
-
-                            {/* LIKE */}
-                            <button
-                                onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}>
-                                <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
-                            </button>
-
-                            {/* DISLIKE */}
-                            <button
-                                onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
-                            </button>
-
-                        </div>
-
-                        <div className="flex items-center gap-2 w-full">
-                            <div className="w-9 h-9 rounded-full bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
-                                <ProfileAvatar user={user} className="rounded-full" />
-                            </div>
-                            {isRecordingComment ? (
-                                <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 flex items-center justify-between">
-                                    <div className="flex items-center gap-2 pl-1 shrink-0">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('TRANSMITTING')}</span>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button onClick={() => stopRecording(true)} className="p-2 bg-white/5 rounded-xl text-white"><Icons.X className="w-4 h-4" /></button>
-                                        <button onClick={() => stopRecording(false)} className="px-3 py-2 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase tracking-widest">{t('STOP')}</button>
-                                    </div>
-                                </div>
-                            ) : commentAudio ? (
-                                <div className="flex-1 min-w-0 flex items-center justify-between px-2 bg-black/60 border border-[var(--gold-primary)]/40 rounded-2xl p-1">
-                                    <div className="flex items-center gap-2 pl-2 min-w-0">
-                                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shrink-0" />
-                                        <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 shrink-0">
-                                        <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-500"><Icons.Trash className="w-4 h-4" /></button>
-                                        <button onClick={() => {
-                                            const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
-                                            if (commentText.trim()) fd.append('text', commentText.trim());
-                                            onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                        }} className="w-9 h-9 flex items-center justify-center bg-[var(--gold-primary)] rounded-xl text-black">
-                                            <Icons.Send className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[46px]">
-                                    <input
-                                        id={`comment-input-${post._id}`}
-                                        placeholder={t('FOUNDER_PLACEHOLDER')}
-                                        value={commentText}
-                                        onChange={(e) => setCommentText(e.target.value)}
-                                        className="flex-1 min-w-0 bg-transparent py-3 px-3 text-sm text-white outline-none placeholder-gray-600 font-bold"
-                                    />
-                                    <div className="flex gap-1 pr-1 shrink-0">
-                                        <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                            <Icons.Mic className="w-4 h-4" />
-                                        </button>
-                                        <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25 transition-all active:scale-90 shrink-0">
-                                            <Icons.Send className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </form>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
