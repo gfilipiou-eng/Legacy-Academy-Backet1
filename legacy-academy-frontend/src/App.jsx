@@ -4643,8 +4643,12 @@ const App = () => {
                                         </div>
                                         <div className="flex gap-2">
                                             {alerts.length > 0 && (
-                                                <button onClick={deleteNotifications} className="px-5 py-2.5 bg-red-500/10 rounded-xl hover:bg-red-500/20 text-red-500 transition-all text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center gap-2 group shadow-lg active:scale-95">
-                                                    <Icons.Trash className="w-4 h-4 group-hover:scale-110 transition-transform" /> {t('CLEAR_ALL') || 'PURGE ALL'}
+                                                <button
+                                                    onClick={deleteNotifications}
+                                                    title={t('CLEAR_ALL')}
+                                                    className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full hover:bg-red-500/20 text-red-500 transition-all text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg active:scale-95"
+                                                >
+                                                    <Icons.Trash className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                                 </button>
                                             )}
                                         </div>
