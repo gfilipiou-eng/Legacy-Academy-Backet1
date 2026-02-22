@@ -2040,9 +2040,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
-    const [displayMode, setDisplayMode] = useState(
-        user?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
-    );
     const [zoomLevel, setZoomLevel] = useState(
         Math.min(
             1,
@@ -2057,9 +2054,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         if (user && !saving) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
-            setDisplayMode(
-                user.settings?.displayMode || localStorage.getItem('displayMode') || 'dark'
-            );
             setZoomLevel(
                 Math.min(
                     1,
@@ -2158,47 +2152,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
                         <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
                             <div className="space-y-4">
-                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
-                                        <span>ΛΕΙΤΟΥΡΓΙΑ</span>
-                                        <span className="text-[9px] text-gray-500 tracking-[0.2em]">MODE</span>
-                                    </div>
-                                    <div className="shrink-0 px-1 py-1 rounded-full bg-black/40 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start gap-2 sm:gap-0 w-full sm:w-auto">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                const mode = 'dark';
-                                                setDisplayMode(mode);
-                                                applyDisplayMode(mode);
-                                                handleSave('displayMode', mode);
-                                            }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center flex flex-col leading-tight ${
-                                                (displayMode || 'dark') === 'dark'
-                                                    ? 'bg-white text-black shadow-[0_0_12px_rgba(0,0,0,0.8)]'
-                                                    : 'text-gray-400 hover:text-white'
-                                            }`}
-                                        >
-                                            <span>ΣΚΟΤΕΙΝΟ</span>
-                                            <span className="text-[8px] tracking-[0.2em] opacity-70">DARK</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                const mode = 'blue-dark';
-                                                setDisplayMode(mode);
-                                                applyDisplayMode(mode);
-                                                handleSave('displayMode', mode);
-                                            }}
-                                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] transition-all text-center flex flex-col leading-tight ${
-                                                displayMode === 'blue-dark'
-                                                    ? 'bg-[#15202b] text-white shadow-[0_0_16px_rgba(15,23,42,0.9)]'
-                                                    : 'text-gray-400 hover:text-white'
-                                            }`}
-                                        >
-                                            <span>ΜΠΛΕ</span>
-                                        </button>
-                                    </div>
-                                </div>
                                 <div className="space-y-2 mt-2">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
@@ -3630,11 +3583,9 @@ const App = () => {
             setUser(JSON.parse(saved));
         }
 
-        const savedTheme = JSON.parse(localStorage.getItem('user'))?.settings?.theme || localStorage.getItem('themeColor');
+        const savedTheme = JSON.parse(localStorage.getItem('user') || 'null')?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
-        const userData = JSON.parse(localStorage.getItem('user') || 'null');
-        const savedMode = userData?.settings?.displayMode || localStorage.getItem('displayMode') || 'dark';
-        applyDisplayMode(savedMode);
+        applyDisplayMode('dark');
         const savedZoom = userData?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
         applyZoom(savedZoom);
 
@@ -3662,9 +3613,7 @@ const App = () => {
     }, [user?.settings?.theme]);
 
     useEffect(() => {
-        if (user?.settings?.displayMode) {
-            applyDisplayMode(user.settings.displayMode);
-        }
+        applyDisplayMode('dark');
     }, [user?.settings?.displayMode]);
 
     useEffect(() => {
