@@ -4933,7 +4933,7 @@ const App = () => {
                                     </button>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <h1 className="text-sm font-black text-white uppercase tracking-[0.3em] pl-10 sm:pl-0">LEGACY ACADEMY</h1>
+                                    <img src="/Applogo.png" alt="Legacy Academy" className="h-8 w-auto object-contain" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
