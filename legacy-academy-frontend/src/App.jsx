@@ -2351,6 +2351,108 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
+const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, onOpenSettings, t }) => {
+    if (!isOpen) return null;
+
+    const handleLink = (tab) => {
+        onNavigate(tab);
+        onClose();
+        playSound('cyber_nav');
+    };
+
+    return (
+        <div className="fixed inset-0 z-[2000] flex pointer-events-none">
+            {/* BACKDROP */}
+            <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-auto animate-fade-in"
+                onClick={onClose}
+            />
+
+            {/* DRAWER CONTAINER */}
+            <div className={`
+                relative w-[85%] max-w-[300px] h-full bg-[#050505] border-r border-white/10 flex flex-col pointer-events-auto
+                animate-slide-right shadow-[10px_0_50px_rgba(0,0,0,0.8)]
+            `}>
+                <div className="flex-1 overflow-y-auto no-scrollbar">
+                    {/* PROFILE SECTION */}
+                    <div
+                        className="p-5 pt-8 flex flex-col gap-4 cursor-pointer"
+                        onClick={() => { onViewProfile(user); onClose(); }}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-[52px] h-[52px] rounded-full overflow-hidden border border-white/10">
+                                <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                                <div className="flex items-center gap-1">
+                                    <span className="font-bold text-[19px] text-white truncate">{user?.username}</span>
+                                    <VerifiedBadge isFounder={user?.role === 'Founder'} className="w-4 h-4 shrink-0" />
+                                </div>
+                                <span className="text-gray-400 text-[15px] truncate">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-[15px]">
+                            <div className="flex items-center gap-1">
+                                <span className="font-bold text-white tabular-nums">{user?.followers?.length || 0}</span>
+                                <span className="text-gray-400">followers</span>
+                            </div>
+                            <span className="text-gray-700">·</span>
+                            <div className="flex items-center gap-1">
+                                <span className="font-bold text-white tabular-nums">{user?.following?.length || 0}</span>
+                                <span className="text-gray-400">following</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-px bg-white/5 mx-5 mb-2" />
+
+                    {/* NAV ITEMS */}
+                    <div className="px-2 space-y-1">
+                        <button onClick={() => handleLink('home')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                            <Icons.Home className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Home</span>
+                        </button>
+
+                        <button onClick={() => handleLink('search')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                            <Icons.Search className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Explore</span>
+                        </button>
+
+                        <button onClick={() => { onNavigate('chat'); onClose(); playSound('cyber_nav'); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                            <Icons.MessageCircle className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Chat</span>
+                        </button>
+
+                        <button onClick={() => handleLink('alerts')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                            <Icons.Bell className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Notifications</span>
+                        </button>
+
+                        <button onClick={() => { onViewProfile(user); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                            <Icons.User className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Profile</span>
+                        </button>
+
+                        <button onClick={() => { onOpenSettings(); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                            <Icons.Settings className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Settings</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* FOOTER */}
+                <div className="p-6 pb-12 flex flex-col gap-4 border-t border-white/5">
+                    <div className="flex gap-4">
+                        <a href="https://bsky.social/about/support/tos" target="_blank" className="text-blue-500 font-medium hover:underline text-[15px]">Terms of Service</a>
+                        <a href="https://bsky.social/about/support/privacy-policy" target="_blank" className="text-blue-500 font-medium hover:underline text-[15px]">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ProfileModal = ({
     isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
     const { t, lang } = useTranslation(currentUser);
@@ -4792,18 +4894,18 @@ const App = () => {
                     </div>
                 </div>
             ) : (
-                <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans flex flex-col">
+                <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 p-0 pb-32 sm:pb-36 relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 sm:gap-2">
                                     <button
-                                        onClick={() => setIsDrawerOpen(true)}
-                                        className="w-9 h-9 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-colors"
+                                        onClick={() => { setIsDrawerOpen(true); playSound('cyber_nav'); }}
+                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
                                         aria-label="Open menu"
                                     >
-                                        <svg fill="none" width="24" viewBox="0 0 24 24" height="24" className="text-gray-400 pointer-events-none">
+                                        <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-gray-400 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z" />
                                         </svg>
                                     </button>
@@ -5025,91 +5127,17 @@ const App = () => {
                         </button>
                     )}
 
+                    {/* BOTTOM NAV REMOVED IN FAVOR OF DRAWER */}
+
+                    {/* CREATE FAB (Bluesky Style) */}
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pb-4 sm:pb-6 pointer-events-none px-3 sm:px-4">
-                            <div className="liquid-glass-nav h-[64px] sm:h-[72px] w-full max-w-[360px] sm:max-w-sm rounded-[2rem] sm:rounded-[2.5rem] px-4 sm:px-6 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] bg-black/85 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2.5 sm:p-3.5 relative transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Home className="w-6 h-6 sm:w-7 sm:h-7" />
-                                    {activeTab === 'home' && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
-                                </button>
-
-                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2.5 sm:p-3.5 relative transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Search className="w-6 h-6 sm:w-7 sm:h-7" />
-                                    {activeTab === 'search' && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
-                                </button>
-
-                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-3 sm:p-3.5 bg-[var(--gold-primary)] text-black rounded-full shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all -mt-6 sm:-mt-8 border-[3px] sm:border-4 border-[#050505]">
-                                    <Icons.Plus className="w-6 h-6 sm:w-7 sm:h-7" />
-                                </button>
-
-                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2.5 sm:p-3.5 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <div className="relative">
-                                        <Icons.Bell className={`w-6 h-6 sm:w-7 sm:h-7 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[var(--gold-primary)] rounded-full border-2 border-black" />}
-                                    </div>
-                                    {activeTab === 'alerts' && <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
-                                </button>
-
-                                <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all duration-300 ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white/10">
-                                        <ProfileAvatar user={user} key={imgKey} className="rounded-full" />
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
+                        <button
+                            onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
+                            className="fixed bottom-6 right-6 z-[1000] w-14 h-14 bg-white text-black rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(255,255,255,0.4)] active:scale-90 transition-all border border-white/20 hover:bg-gray-100"
+                        >
+                            <Icons.Plus className="w-8 h-8" />
+                        </button>
                     )}
-                    {/* SIDE DRAWER MENU (Bluesky Style) */}
-                    <div className={`fixed inset-0 z-[1100] pointer-events-none transition-opacity duration-300 ${isDrawerOpen ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setIsDrawerOpen(false)} />
-                        <div className={`absolute top-0 left-0 bottom-0 w-[280px] bg-[#161e27] shadow-[20px_0_50px_rgba(0,0,0,0.5)] pointer-events-auto transform transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                            <div className="flex-1 overflow-y-auto pb-5 flex flex-col pt-[calc(env(safe-area-inset-top,20px)+20px)]">
-                                <div className="px-5 shrink-0">
-                                    <div onClick={() => { viewProfile(user); setIsDrawerOpen(false); }} className="cursor-pointer group">
-                                        <div className="w-[52px] h-[52px] rounded-full overflow-hidden mb-2 border border-[#485B75] opacity-90 group-hover:opacity-100 transition-opacity">
-                                            <ProfileAvatar user={user} className="rounded-full" />
-                                        </div>
-                                        <div className="flex flex-col gap-[2px]">
-                                            <div className="text-[18.8px] font-[700] text-white leading-[22px] tracking-tight">{user?.username || 'User'}</div>
-                                            <div className="text-[15px] text-[#8D9DB4] leading-[17px]">@{user?.username?.toLowerCase().replace(/\s+/g, '')}.legacy</div>
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-2 text-[15px] text-[#8D9DB4] leading-[15px]">
-                                            <span><strong className="text-white font-[600]">{user?.followers?.length || 0}</strong> followers</span>
-                                            <span>·</span>
-                                            <span><strong className="text-white font-[600]">{user?.following?.length || 0}</strong> following</span>
-                                        </div>
-                                    </div>
-                                    <div className="w-full h-px bg-[#2C3A4E] mt-[20px] mb-[8px]"></div>
-                                </div>
-
-                                <div className="flex flex-col w-full shrink-0">
-                                    {[
-                                        { id: 'profile', icon: Icons.User, label: 'Profile', action: () => { viewProfile(user); setIsDrawerOpen(false); } },
-                                        { id: 'home', icon: Icons.Home, label: 'Home', action: () => { setActiveTab('home'); setIsDrawerOpen(false); } },
-                                        { id: 'search', icon: Icons.Search, label: 'Explore', action: () => { setActiveTab('search'); setIsDrawerOpen(false); } },
-                                        { id: 'alerts', icon: Icons.Bell, label: 'Notifications', badge: user?.notifications?.some(n => !n.read), action: () => { setActiveTab('alerts'); setIsDrawerOpen(false); } },
-                                        { id: 'chat', icon: Icons.MessageCircle, label: 'Chat', action: () => { setIsChatOpen(true); setIsDrawerOpen(false); } },
-                                        { id: 'settings', icon: Icons.Settings, label: 'Settings', action: () => { setIsSettingsOpen(true); setIsDrawerOpen(false); } }
-                                    ].map(item => (
-                                        <button key={item.id} onClick={item.action} className="flex items-center gap-[12px] px-5 py-[12px] hover:bg-white/5 transition-colors text-white w-full text-left active:bg-white/10">
-                                            <div className="relative">
-                                                <item.icon className="w-[26px] h-[26px] text-white" strokeWidth="2" />
-                                                {item.badge && <div className="absolute top-0 right-0 w-2 h-2 bg-[#0085FF] rounded-full border-2 border-[#161e27]" />}
-                                            </div>
-                                            <span className="text-[20.6px] font-[600] leading-[27px]">{item.label}</span>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                <div className="mt-auto px-5 shrink-0 pt-4">
-                                    <div className="w-full h-px bg-[#2C3A4E] mb-[20px] mt-[8px]"></div>
-                                    <div className="flex flex-col gap-[12px]">
-                                        <a href="#" className="text-[15px] text-[#0F73FF] hover:underline font-medium">Terms of Service</a>
-                                        <a href="#" className="text-[15px] text-[#0F73FF] hover:underline font-medium">Privacy Policy</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <ProfileModal
                         isOpen={isProfileOpen}
@@ -5143,6 +5171,21 @@ const App = () => {
                         loadingActions={loadingActions}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
+                    <NavigationDrawer
+                        isOpen={isDrawerOpen}
+                        onClose={() => setIsDrawerOpen(false)}
+                        user={user}
+                        onNavigate={(tab) => {
+                            if (tab === 'chat') {
+                                setIsChatOpen(true);
+                            } else {
+                                setActiveTab(tab);
+                            }
+                        }}
+                        onViewProfile={viewProfile}
+                        onOpenSettings={() => setIsSettingsOpen(true)}
+                        t={t}
+                    />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
