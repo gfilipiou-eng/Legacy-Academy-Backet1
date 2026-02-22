@@ -4281,6 +4281,7 @@ const App = () => {
             _id: tempId,
             desc: formData.get('desc'),
             image: previewUrl, // Use local blob
+            videoUrl: formData.get('videoUrl') || "", // Explicitly add youtube URL tracking
             user: user,
             author: user,
             createdAt: new Date().toISOString(),

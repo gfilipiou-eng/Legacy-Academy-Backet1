@@ -130,7 +130,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             author: req.user.id,
             desc: req.body.desc,
             image: mediaUrl,
-            videoUrl: mediaType === "video" ? mediaUrl : "",
+            videoUrl: req.file && mediaType === "video" ? mediaUrl : (req.body.videoUrl || ""),
             likes: [],
             dislikes: [],
             comments: [],
