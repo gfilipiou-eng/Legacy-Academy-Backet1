@@ -2502,7 +2502,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, selectedPost }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -5011,7 +5011,7 @@ const App = () => {
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
                         </header>
-                        <div className="pt-0 sm:pt-4 max-w-4xl mx-auto">
+                        <div className="pt-0 sm:pt-4 max-w-2xl mx-auto">
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
@@ -5173,9 +5173,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-16 sm:h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
                         >
-                            <Icons.ArrowUp className="w-8 h-8" />
+                            <Icons.ArrowUp className="w-8 h-8 sm:w-7 sm:h-7" />
                         </button>
                     )}
 
@@ -5185,9 +5185,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-16 sm:h-16 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
                         >
-                            <Icons.Compose className="w-9 h-9" />
+                            <Icons.Compose className="w-9 h-9 sm:w-7 sm:h-7" />
                         </button>
                     )}
 
@@ -5204,6 +5204,7 @@ const App = () => {
                         onViewProfile={viewProfile}
                         onOpenChat={handleOpenChat}
                         onOpenDetail={setSelectedPost}
+                        selectedPost={selectedPost}
                         imgKey={imgKey}
                         fetchSpecificUser={fetchUsers}
                         lastDeletedPostId={lastDeletedPostId}
