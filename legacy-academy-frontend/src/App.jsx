@@ -1777,10 +1777,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         }
     };
 
-    const filteredUsers = allUsers.filter(u =>
-        u._id !== user?._id &&
-        u.username.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredUsers = allUsers.filter(u => {
+        if (u._id === user?._id) return false;
+        const isSearchEmpty = searchQuery.trim() === '';
+        const matchesSearch = u.username.toLowerCase().includes(searchQuery.toLowerCase());
+        const isFollowing = user?.following?.some(id => String(id) === String(u._id));
+
+        if (isSearchEmpty) {
+            return isFollowing;
+        }
+        return matchesSearch;
+    });
 
     if (!isOpen) return null;
     return (
