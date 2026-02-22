@@ -1816,7 +1816,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             const online = isUserOnline(u, user);
                             return (
                                 <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 border border-white/10 overflow-hidden shadow-sm`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4" /></div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </div>
                             )
@@ -1829,7 +1829,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
                                 <div className="flex items-center gap-3">
                                     <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                    <div className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/30 overflow-hidden"><ProfileAvatar user={activeChat} className="rounded-full" /></div>
+                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0"><ProfileAvatar user={activeChat} className="rounded-full" /></div>
                                     <div>
                                         <div className="font-bold text-sm flex items-center gap-2">
                                             {activeChat?.username}
