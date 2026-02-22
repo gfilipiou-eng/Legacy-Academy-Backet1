@@ -347,22 +347,60 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
 
         if (comment.user.toString() === req.user.id || req.user.role === "Founder") {
             // We need to update a specific item in the array. 
-            // Mongoose array update: "comments.$.text"
             await Post.updateOne(
                 { _id: req.params.id, "comments._id": req.params.commentId },
                 { $set: { "comments.$.text": req.body.text } }
             );
 
+            // Fetch the updated post to return correct comments array
+            const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+
             // 🔥 REAL-TIME EMIT
             const io = req.app.get('io');
             if (io) {
-                const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
                 io.emit('comment.updated', { postId: req.params.id, comments: updated?.comments || [] });
             }
 
-            res.status(200).json("Comment updated");
+            // Return the updated comments array to the frontend
+            res.status(200).json(updated.comments);
         } else {
             res.status(403).json("You can update only your comment");
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// EDIT POST
+router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Post not found");
+
+        if (post.author.toString() === req.user.id || req.user.role === "Founder" || req.user.role === "Admin") {
+            let updateData = { desc: req.body.desc };
+
+            // Handle Media Update if provided
+            if (req.file) {
+                const mediaUrl = req.file.path;
+                const mediaType = req.file.mimetype.startsWith("video") ? "video" : "image";
+                updateData.image = mediaUrl;
+                updateData.videoUrl = mediaType === "video" ? mediaUrl : "";
+            } else if (req.body.videoUrl) {
+                // For YouTube URLs
+                updateData.videoUrl = req.body.videoUrl;
+                updateData.image = ""; // Clear existing image
+            }
+
+            const updatedPost = await Post.findByIdAndUpdate(
+                req.params.id,
+                { $set: updateData },
+                { new: true }
+            ).populate("author", "username profilePic role isPrivate isFollowersOnly followers");
+
+            res.status(200).json(updatedPost);
+        } else {
+            res.status(403).json("You can update only your post");
         }
     } catch (err) {
         res.status(500).json(err);

@@ -142,7 +142,7 @@ if (typeof document !== 'undefined') {
 // Helpers for Youtube detection/embed
 const getYouTubeId = (url) => {
     if (!url) return null;
-    const m = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
+    const m = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:shorts\/|[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
     return m ? m[1] : null;
 };
 const isYouTubeUrl = (url) => !!getYouTubeId(url);
@@ -715,7 +715,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                     </div>
 
-                            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
+                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
                         {/* ── STICKY COMMENT/ACTIONS BAR ── */}
                         <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
                             <div className="flex flex-wrap items-center justify-between gap-2 w-full py-1">
@@ -1238,8 +1238,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
                 let ytThumb = null;
                 if (isYT) {
-                    const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(s.videoUrl || '');
-                    if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+                    const yid = getYouTubeId(s.videoUrl);
+                    if (yid) ytThumb = `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
                 }
 
                 return (
@@ -2185,11 +2185,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         <button
                                             key={opt.id}
                                             onClick={() => setThemeCategory(opt.id)}
-                                            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all ${
-                                                themeCategory === opt.id
+                                            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all ${themeCategory === opt.id
                                                     ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)] text-[var(--gold-primary)]'
                                                     : 'bg-white/[0.03] border-white/10 text-gray-500 hover:bg-white/10 hover:text-white'
-                                            }`}
+                                                }`}
                                         >
                                             {opt.label}
                                         </button>
@@ -2218,14 +2217,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </div>
                                 {themeCategory === 'primary' && (
                                     <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
-                                            {[
-                                                { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
-                                                { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
-                                                { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
-                                                { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
-                                                { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
-                                                { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
-                                            ].map(({ hex: c, glow, label }) => {
+                                        {[
+                                            { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
+                                            { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
+                                            { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
+                                            { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
+                                            { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
+                                            { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
+                                        ].map(({ hex: c, glow, label }) => {
                                             const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                             const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
                                             return (
@@ -2247,14 +2246,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 )}
                                 {themeCategory === 'neons' && (
                                     <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
-                                            {[
-                                                { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
-                                                { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
-                                                { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
-                                                { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
-                                                { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
-                                                { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
-                                            ].map(({ hex: c, glow, label }) => {
+                                        {[
+                                            { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
+                                            { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
+                                            { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
+                                            { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
+                                            { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
+                                            { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
+                                        ].map(({ hex: c, glow, label }) => {
                                             const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
                                             const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
                                             return (
@@ -2828,11 +2827,10 @@ const ProfileModal = ({
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${
-                                            activeTab === tab
+                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab
                                                 ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
                                                 : 'text-white/60 hover:text-white hover:bg-white/5'
-                                        }`}
+                                            }`}
                                     >
                                         {t('TAB_' + tab)}
                                     </button>
@@ -2884,8 +2882,8 @@ const ProfileModal = ({
                                                     const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
                                                     let ytThumb = null;
                                                     if (isYT) {
-                                                        const m = /^\s*(?:https?:)?\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/i.exec(s.videoUrl || '');
-                                                        if (m) ytThumb = `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+                                                        const yid = getYouTubeId(s.videoUrl);
+                                                        if (yid) ytThumb = `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
@@ -2987,6 +2985,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
     const [isAudio, setIsAudio] = useState(false);
     const [audioName, setAudioName] = useState('');
     const [isStory, setIsStory] = useState(forceStory);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -3130,11 +3129,14 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
 
                     <div className="flex gap-4">
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                        <button onClick={() => {
+                        <button disabled={isSubmitting} onClick={async () => {
+                            if (isSubmitting) return;
                             const desc = document.getElementById('c-desc').value;
                             const youtube = document.getElementById('c-youtube').value;
-                            const file = fileRef.current.files[0];
+                            const file = fileRef.current?.files?.[0];
                             if (!desc && !file && !youtube) return;
+
+                            setIsSubmitting(true);
                             const fd = new FormData();
                             fd.append('desc', desc);
                             if (youtube) fd.append('videoUrl', youtube.trim());
@@ -3142,7 +3144,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             fd.append('isStory', isStory);
 
                             // Trigger optimistic upload
-                            onCreatePost(fd, preview, isStory);
+                            await onCreatePost(fd, preview, isStory);
 
                             // Reset logic
                             document.getElementById('c-desc').value = '';
@@ -3150,8 +3152,9 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             setPreview(null);
                             if (fileRef.current) fileRef.current.value = '';
                             setIsStory(false);
-                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform`}>
-                            {isStory ? t('POST_STORY') : t('POST')}
+                            setIsSubmitting(false);
+                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform disabled:opacity-50`}>
+                            {isSubmitting ? (isStory ? t('UPLOADING') || '...' : '...') : (isStory ? t('POST_STORY') : t('POST'))}
                         </button>
                     </div>
                 </div>
@@ -3396,8 +3399,9 @@ const applyZoom = (zoom) => {
     const root = document.getElementById('root') || document.body;
     const z = Math.max(0.95, Math.min(1, Number(zoom) || 1));
     if (root) {
-        root.style.transformOrigin = 'top center';
-        root.style.transform = z === 1 ? '' : `scale(${z})`;
+        root.style.transformOrigin = '';
+        root.style.transform = '';
+        root.style.zoom = z === 1 ? '' : String(z);
     }
     localStorage.setItem('uiZoom', String(z));
 };
@@ -4298,8 +4302,15 @@ const App = () => {
             });
             const createdPost = res.data;
             playSound('success');
-            // Replace temp post with real one
-            setPosts(prev => prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p));
+            // Safely resolve the temporary post with the real one, avoiding duplication with socket events
+            setPosts(prev => {
+                const alreadyAddedBySocket = prev.some(p => p._id === createdPost._id);
+                if (alreadyAddedBySocket) {
+                    return prev.filter(p => String(p._id) !== tempId);
+                } else {
+                    return prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p);
+                }
+            });
         } catch (e) {
             console.error("Upload failed", e);
             playSound('error');
