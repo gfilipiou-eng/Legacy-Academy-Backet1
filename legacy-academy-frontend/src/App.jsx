@@ -3888,7 +3888,7 @@ const App = () => {
 
         const onNotificationRecv = (data) => {
             console.log("📡 [SOCKET] Real-time notification received", data);
-            playSound('cyber_notification');
+            playSound('notification_arrive');
             fetchNotifications(); // Refresh list
         };
 
@@ -4189,7 +4189,7 @@ const App = () => {
             const res = await axios.get(`/users/notifications`);
             if (res.data.length > (user.notifications?.length || 0)) {
                 const latest = res.data[0];
-                if (latest && !latest.read) playSound('cyber_notification');
+                if (latest && !latest.read) playSound('notification_arrive');
             }
             setAlerts(res.data);
             setUser(prev => {
@@ -4996,7 +4996,7 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
-                                        onClick={() => { setIsDrawerOpen(true); playSound('cyber_nav'); }}
+                                        onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
                                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
                                         aria-label="Open menu"
                                     >

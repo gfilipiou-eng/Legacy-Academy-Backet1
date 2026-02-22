@@ -381,6 +381,83 @@ export const playSound = (type) => {
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + 0.1);
+    } else if (type === 'notification_arrive') {
+        // PREMIUM LUXURY: Crystal Chime Arrival — 3-note ascending arpeggio with warm harmonic pad
+        const notes = [1318.5, 1661.2, 1975.5]; // E6, G#6, B6 — Major triad
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const harmonic = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+            const harmGain = ctx.createGain();
+            const t0 = ctx.currentTime + i * 0.09;
+
+            // Primary crystal tone
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, t0);
+            oscGain.gain.setValueAtTime(0, t0);
+            oscGain.gain.linearRampToValueAtTime(0.06, t0 + 0.01);
+            oscGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.5);
+
+            // Harmonic shimmer (octave above, quieter)
+            harmonic.type = 'sine';
+            harmonic.frequency.setValueAtTime(freq * 2, t0);
+            harmGain.gain.setValueAtTime(0, t0);
+            harmGain.gain.linearRampToValueAtTime(0.015, t0 + 0.01);
+            harmGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.35);
+
+            osc.connect(oscGain);
+            harmonic.connect(harmGain);
+            oscGain.connect(ctx.destination);
+            harmGain.connect(ctx.destination);
+
+            osc.start(t0);
+            harmonic.start(t0);
+            osc.stop(t0 + 0.5);
+            harmonic.stop(t0 + 0.35);
+        });
+
+        // Warm sub-pad underneath
+        const pad = ctx.createOscillator();
+        const padGain = ctx.createGain();
+        pad.type = 'sine';
+        pad.frequency.setValueAtTime(330, ctx.currentTime); // E4 root
+        padGain.gain.setValueAtTime(0, ctx.currentTime);
+        padGain.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 0.05);
+        padGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+        pad.connect(padGain);
+        padGain.connect(ctx.destination);
+        pad.start();
+        pad.stop(ctx.currentTime + 0.7);
+    } else if (type === 'premium_tap') {
+        // PREMIUM LUXURY: Refined glass-haptic tap — crystal transient + warm sub resonance
+        const crystal = ctx.createOscillator();
+        const sub = ctx.createOscillator();
+        const cGain = ctx.createGain();
+        const sGain = ctx.createGain();
+
+        // Crystal layer — crisp high transient
+        crystal.type = 'sine';
+        crystal.frequency.setValueAtTime(4200, ctx.currentTime);
+        crystal.frequency.exponentialRampToValueAtTime(2800, ctx.currentTime + 0.02);
+        cGain.gain.setValueAtTime(0.04, ctx.currentTime);
+        cGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
+        // Sub resonance — warm body
+        sub.type = 'sine';
+        sub.frequency.setValueAtTime(180, ctx.currentTime);
+        sub.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.06);
+        sGain.gain.setValueAtTime(0.06, ctx.currentTime);
+        sGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+
+        crystal.connect(cGain);
+        sub.connect(sGain);
+        cGain.connect(ctx.destination);
+        sGain.connect(ctx.destination);
+
+        crystal.start();
+        sub.start();
+        crystal.stop(ctx.currentTime + 0.04);
+        sub.stop(ctx.currentTime + 0.08);
     }
 };
 
