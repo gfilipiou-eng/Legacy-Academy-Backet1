@@ -47,10 +47,10 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
             } else if (isAvatar && isVideo) {
                 // USE ANIMATED WEBP FOR AVATARS (HIGH QUALITY)
-                transform = `w_250,h_250,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
+                transform = `w_500,h_500,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
-                transform = `w_300,h_300,c_fill,g_face,q_auto:best,f_auto`;
+                transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
                 transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
