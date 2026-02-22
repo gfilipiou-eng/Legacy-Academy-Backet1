@@ -2482,9 +2482,9 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
             <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
-                <div className="p-6 border-b border-white/10 flex items-center justify-between">
-                    <h2 className="text-xl font-black text-white uppercase tracking-widest">{title}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+                <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
+                    <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0">
                         <Icons.X className="w-6 h-6" />
                     </button>
                 </div>
