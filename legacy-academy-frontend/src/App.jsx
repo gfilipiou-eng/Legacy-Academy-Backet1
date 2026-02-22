@@ -174,21 +174,21 @@ const formatDate = (dateString, t, lang) => {
 
         if (diffInSeconds < 60) return isGreek ? 'Μόλις τώρα' : 'Just now';
 
-        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        const diffInMinutes = Math.round(diffInSeconds / 60);
         if (diffInMinutes < 60) {
-            if (isGreek) return `${diffInMinutes} λεπτά`;
+            if (isGreek) return diffInMinutes === 1 ? '1 λεπτό' : `${diffInMinutes} λεπτά`;
             return diffInMinutes === 1 ? '1 min' : `${diffInMinutes} mins`;
         }
 
-        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInHours = Math.round(diffInSeconds / 3600);
         if (diffInHours < 24) {
-            if (isGreek) return `${diffInHours} ώρες`;
+            if (isGreek) return diffInHours === 1 ? '1 ώρα' : `${diffInHours} ώρες`;
             return diffInHours === 1 ? '1 hour' : `${diffInHours} hours`;
         }
 
-        const diffInDays = Math.floor(diffInHours / 24);
+        const diffInDays = Math.round(diffInSeconds / 86400);
         if (diffInDays < 7) {
-            if (isGreek) return `${diffInDays} μέρες`;
+            if (isGreek) return diffInDays === 1 ? '1 μέρα' : `${diffInDays} μέρες`;
             return diffInDays === 1 ? '1 day' : `${diffInDays} days`;
         }
 
