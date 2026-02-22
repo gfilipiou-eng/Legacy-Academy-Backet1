@@ -2351,7 +2351,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, onOpenSettings, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, t }) => {
     if (!isOpen) return null;
 
     const handleLink = (tab) => {
@@ -2420,8 +2420,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                         </button>
 
                         <button onClick={() => { onNavigate('chat'); onClose(); playSound('cyber_nav'); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.MessageCircle className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Chat</span>
+                            <Icons.Ghost className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Whispers</span>
                         </button>
 
                         <button onClick={() => handleLink('alerts')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
@@ -2439,9 +2439,32 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-4 border-t border-white/5">
                     <div className="flex gap-4">
-                        <button onClick={() => alert('Terms of Service coming soon.')} className="text-blue-500 font-medium hover:underline text-[15px]">Terms of Service</button>
-                        <button onClick={() => alert('Privacy Policy coming soon.')} className="text-blue-500 font-medium hover:underline text-[15px]">Privacy Policy</button>
+                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">Terms of Service</button>
+                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">Privacy Policy</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const LegalModal = ({ isOpen, onClose, title, content }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
+            <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
+                <div className="p-6 border-b border-white/10 flex items-center justify-between">
+                    <h2 className="text-xl font-black text-white uppercase tracking-widest">{title}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+                        <Icons.X className="w-6 h-6" />
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-6 text-gray-400 space-y-4 font-medium text-sm leading-relaxed no-scrollbar select-text">
+                    {content}
+                </div>
+                <div className="p-6 border-t border-white/10 flex justify-end">
+                    <button onClick={onClose} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105 active:scale-95 transition-all">GOT IT</button>
                 </div>
             </div>
         </div>
@@ -3568,6 +3591,8 @@ const App = () => {
     const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isTermsOpen, setIsTermsOpen] = useState(false);
+    const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [alerts, setAlerts] = useState([]);
@@ -5179,9 +5204,59 @@ const App = () => {
                         }}
                         onViewProfile={viewProfile}
                         onOpenSettings={() => setIsSettingsOpen(true)}
+                        onOpenTerms={() => setIsTermsOpen(true)}
+                        onOpenPrivacy={() => setIsPrivacyOpen(true)}
                         t={t}
                     />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
+
+                    <LegalModal
+                        isOpen={isTermsOpen}
+                        onClose={() => setIsTermsOpen(false)}
+                        title="Terms of Service"
+                        content={
+                            <div className="space-y-6">
+                                <p>Welcome to Legacy Academy. By entering this domain, you agree to the following protocols:</p>
+                                <section className="space-y-2">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">1. General Integrity</h3>
+                                    <p>Users must maintain a standard of excellence. Low-effort content or intellectual dishonesty is grounds for immediate termination of access. We operate on a meritocratic framework.</p>
+                                </section>
+                                <section className="space-y-2">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">2. Content Ownership</h3>
+                                    <p>Your data is yours, but by posting, you grant Legacy Academy a worldwide license to display your contributions to other members of the elite network.</p>
+                                </section>
+                                <section className="space-y-2">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">3. Code of Conduct</h3>
+                                    <p>Propaganda, spam, and malicious behavior are strictly prohibited. This is a sanctuary for growth and legacy building. Violators will be purged from the neural link.</p>
+                                </section>
+                                <p className="text-[10px] italic border-t border-white/5 pt-4">Subject to change without notice. Stay vigilant.</p>
+                            </div>
+                        }
+                    />
+
+                    <LegalModal
+                        isOpen={isPrivacyOpen}
+                        onClose={() => setIsPrivacyOpen(false)}
+                        title="Privacy Policy"
+                        content={
+                            <div className="space-y-6">
+                                <p>Legacy Academy values your digital sanctuary. Your data is encrypted and handled with extreme confidentiality.</p>
+                                <section className="space-y-2">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">Neural Data</h3>
+                                    <p>We collect only what is necessary to maintain your profile and feed. Your location, messages, and interactions are stored in secured offshore servers.</p>
+                                </section>
+                                <section className="space-y-2">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">Zero-Knowledge Protocols</h3>
+                                    <p>Your Whispers are private. We do not sell your personal data to traditional third-party advertisers. Our economy is built on value, not exploitation.</p>
+                                </section>
+                                <section className="space-y-2">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">Rights of Access</h3>
+                                    <p>You have the full right to delete your digital footprint at any time. Upon deletion, all related neural entries are wiped from our active matrix.</p>
+                                </section>
+                            </div>
+                        }
+                    />
+
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {selectedPost && (
