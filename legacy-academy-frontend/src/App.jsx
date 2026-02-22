@@ -2773,7 +2773,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {displayUser?.role === 'Founder' ? '236M' : (displayUser?.followers?.length || 0)}
+                                            {displayUser?.followers?.length || 0}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
                                     </div>
