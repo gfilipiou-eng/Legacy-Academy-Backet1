@@ -2429,11 +2429,6 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                             <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Notifications</span>
                         </button>
 
-                        <button onClick={() => { onViewProfile(user); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.User className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Profile</span>
-                        </button>
-
                         <button onClick={() => { onOpenSettings(); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Settings className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
                             <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Settings</span>
@@ -2444,8 +2439,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-4 border-t border-white/5">
                     <div className="flex gap-4">
-                        <a href="https://bsky.social/about/support/tos" target="_blank" className="text-blue-500 font-medium hover:underline text-[15px]">Terms of Service</a>
-                        <a href="https://bsky.social/about/support/privacy-policy" target="_blank" className="text-blue-500 font-medium hover:underline text-[15px]">Privacy Policy</a>
+                        <button onClick={() => alert('Terms of Service coming soon.')} className="text-blue-500 font-medium hover:underline text-[15px]">Terms of Service</button>
+                        <button onClick={() => alert('Privacy Policy coming soon.')} className="text-blue-500 font-medium hover:underline text-[15px]">Privacy Policy</button>
                     </div>
                 </div>
             </div>
