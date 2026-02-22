@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import axios from './api';
 import socket from './socket';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -72,7 +72,7 @@ const formatDate = (dateString, t, lang) => {
     } catch (e) { return ''; }
 };
 
-const ProfileAvatar = ({ user }) => {
+const ProfileAvatarBase = ({ user }) => {
     if (!user) return <div className="w-full h-full bg-gray-800" />;
     const url = user.profilePic;
     const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
@@ -98,6 +98,8 @@ const ProfileAvatar = ({ user }) => {
         />
     );
 };
+
+const ProfileAvatar = memo(ProfileAvatarBase);
 
 const CommentView = ({ postId, user: currentUser, onClose }) => {
     const { t, lang } = useTranslation();
