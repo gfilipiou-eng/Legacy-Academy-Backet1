@@ -23,6 +23,7 @@
     "DELETE": "DELETE",
     "CANCEL": "CANCEL",
     "SAVE": "SAVE",
+    "UI_ZOOM": "UI ZOOM",
     "THEME": "THEME",
     "NO_NOTIFS": "NO NEW DIRECTIVES",
     "CLEAR_ALL": "CLEAR ALL",

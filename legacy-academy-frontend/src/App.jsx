@@ -2167,8 +2167,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <div className="space-y-2 mt-2">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
-                                            <span>ΣΜΙΚΡΥΝΣΗ UI</span>
-                                            <span className="text-[9px] text-gray-500 tracking-[0.2em]">UI ZOOM</span>
+                                            <span>{t('UI_ZOOM')}</span>
                                         </span>
                                         <span className="text-[10px] font-black text-gray-400">
                                             {Math.round(zoomLevel * 100)}%
