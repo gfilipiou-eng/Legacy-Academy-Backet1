@@ -1101,7 +1101,16 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                 </button>
                                 {onExpand && (
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); onExpand(); playSound('cyber_click'); }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (isPlaying) {
+                                                if (ytId && ytPlayerRef.current) ytPlayerRef.current.pauseVideo();
+                                                else if (videoRef.current) videoRef.current.pause();
+                                                setIsPlaying(false);
+                                            }
+                                            onExpand();
+                                            playSound('cyber_click');
+                                        }}
                                         className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
                                     >
                                         <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
@@ -1285,7 +1294,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false }) => {
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -1381,158 +1390,168 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             )}
 
             {/* CARD CONTENT */}
-            <div className="relative z-10 flex gap-3 sm:gap-4">
-                {/* LEFT COL: AVATAR */}
-                <div className="shrink-0 flex flex-col items-center">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
-                        <ProfileAvatar user={post.author} className="rounded-full" />
+            <div className="relative z-10 flex flex-col">
+                {reposter && (
+                    <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
+                        <Icons.RefreshCcw className="w-3.5 h-3.5" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                            {reposter.username === user?.username ? t('YOU_REPOSTED', 'YOU REPOSTED') : `${reposter.username} ${t('REPOSTED', 'REPOSTED')}`}
+                        </span>
                     </div>
-                </div>
+                )}
+                <div className="flex gap-3 sm:gap-4">
+                    {/* LEFT COL: AVATAR */}
+                    <div className="shrink-0 flex flex-col items-center">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
+                            <ProfileAvatar user={post.author} className="rounded-full" />
+                        </div>
+                    </div>
 
-                {/* RIGHT COL: CONTENT */}
-                <div className="flex-1 flex flex-col min-w-0">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-1 sm:mb-2 -mt-1 sm:-mt-0.5">
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none">
-                                <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
-                                <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{post.author?.username?.toLowerCase().replace(/\s+/g, '')}</span>
-                                <span className="text-gray-600 text-[13px] mx-1">·</span>
-                                <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
+                    {/* RIGHT COL: CONTENT */}
+                    <div className="flex-1 flex flex-col min-w-0">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-1 sm:mb-2 -mt-1 sm:-mt-0.5">
+                            <div className="flex flex-col">
+                                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none">
+                                    <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
+                                    <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
+                                    <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{post.author?.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                                    <span className="text-gray-600 text-[13px] mx-1">·</span>
+                                    <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
+                                </div>
                             </div>
+
+                            <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />
                         </div>
 
-                        <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />
-                    </div>
+                        <div className="space-y-3 mt-1">
+                            {post.desc && (
+                                <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2">
+                                    {parseHashtags(post.desc, (tag) => onHashtagClick(tag))}
+                                </p>
+                            )}
 
-                    <div className="space-y-3 mt-1">
-                        {post.desc && (
-                            <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2">
-                                {parseHashtags(post.desc, (tag) => onHashtagClick(tag))}
-                            </p>
-                        )}
-
-                        {(post.image || post.videoUrl) && (
-                            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.01] transition-transform duration-700 shadow-md h-auto min-h-[100px] mt-2">
-                                {isYouTubeUrl(post.videoUrl) ? (
-                                    <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} />
-                                ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                    <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} />
-                                ) : post.image && (
-                                    imgError ? (
-                                        <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
-                                            <Icons.Image className="w-8 h-8 opacity-20" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
-                                        </div>
-                                    ) : (
-                                        <img
-                                            src={resolveMediaUrl(post.image)}
-                                            alt="Media"
-                                            className="w-full h-auto object-contain bg-[#050505]"
-                                            loading="lazy"
-                                            decoding="async"
-                                            onClick={() => onOpenDetail(post)}
-                                            onDoubleClick={handleDoubleTap}
-                                            onError={() => {
-                                                setImgError(true);
-                                                // Auto-cleanup broken link (Only for Author/Founder)
-                                                if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
-                                            }}
-                                        />
-                                    )
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* ── POST ACTIONS BAR ── */}
-                    <div className="flex items-center justify-around mt-3 w-full border-t border-white/5 pt-3">
-
-                        {/* COMMENTS */}
-                        <button
-                            onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${showComments ? 'text-sky-400' : 'text-gray-600 hover:text-sky-400'}`}
-                        >
-                            <Icons.MessageSquare className="w-5 h-5" />
-                            <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
-                        </button>
-
-                        {/* REPOSTS */}
-                        <button
-                            onPointerDown={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-600 hover:text-green-400'}`}
-                        >
-                            <Icons.RefreshCcw className="w-5 h-5" />
-                            <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
-                        </button>
-
-                        {/* LIKE */}
-                        <button
-                            onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}`}
-                        >
-                            <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                            <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
-                        </button>
-
-                        {/* DISLIKE */}
-                        <button
-                            onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                            className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-600 hover:text-[var(--gold-primary)]'}`}
-                        >
-                            <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
-                            <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
-                        </button>
-
-                        {/* SHARE */}
-
-                    </div>
-
-                    {showComments && (
-                        <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
-                            <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
-                                    <ProfileAvatar user={user} className="rounded-full" />
-                                </div>
-                                <div className="flex-1 flex flex-col gap-3">
-                                    <div className="relative">
-                                        <textarea
-                                            value={commentText}
-                                            onChange={(e) => setCommentText(e.target.value)}
-                                            placeholder={t('WRITE_COMMENT')}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
-                                        />
-                                        <div className="absolute bottom-2 left-2 flex gap-2">
-                                            <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
-                                                <Icons.Mic className="w-5 h-5" />
-                                            </button>
-                                            <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90 active:scale-95 transition-all">
-                                                <Icons.Send className="w-5 h-5" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {commentAudio && (
-                                        <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between mt-3">
-                                            <div className="flex items-center gap-3">
-                                                <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
-                                                <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
+                            {(post.image || post.videoUrl) && (
+                                <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.01] transition-transform duration-700 shadow-md h-auto min-h-[100px] mt-2">
+                                    {isYouTubeUrl(post.videoUrl) ? (
+                                        <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                    ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                    ) : post.image && (
+                                        imgError ? (
+                                            <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
+                                                <Icons.Image className="w-8 h-8 opacity-20" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => setCommentAudio(null)} className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
-                                                <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-[var(--gold-primary)] text-black font-black text-[10px] rounded-lg">SEND</button>
-                                            </div>
-                                        </div>
+                                        ) : (
+                                            <img
+                                                src={resolveMediaUrl(post.image)}
+                                                alt="Media"
+                                                className="w-full h-auto object-contain bg-[#050505]"
+                                                loading="lazy"
+                                                decoding="async"
+                                                onClick={() => onOpenDetail(post)}
+                                                onDoubleClick={handleDoubleTap}
+                                                onError={() => {
+                                                    setImgError(true);
+                                                    // Auto-cleanup broken link (Only for Author/Founder)
+                                                    if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                                }}
+                                            />
+                                        )
                                     )}
                                 </div>
-                            </div>
-                            <div className="space-y-6 pt-4">
-                                {(post.comments || []).slice().reverse().map(c => (
-                                    <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
-                                ))}
-                            </div>
+                            )}
                         </div>
-                    )}
+
+                        {/* ── POST ACTIONS BAR ── */}
+                        <div className="flex items-center justify-around mt-3 w-full border-t border-white/5 pt-3">
+
+                            {/* COMMENTS */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${showComments ? 'text-sky-400' : 'text-gray-600 hover:text-sky-400'}`}
+                            >
+                                <Icons.MessageSquare className="w-5 h-5" />
+                                <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                            </button>
+
+                            {/* REPOSTS */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-600 hover:text-green-400'}`}
+                            >
+                                <Icons.RefreshCcw className="w-5 h-5" />
+                                <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                            </button>
+
+                            {/* LIKE */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}`}
+                            >
+                                <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                            </button>
+
+                            {/* DISLIKE */}
+                            <button
+                                onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-600 hover:text-[var(--gold-primary)]'}`}
+                            >
+                                <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                            </button>
+
+                            {/* SHARE */}
+
+                        </div>
+
+                        {showComments && (
+                            <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
+                                <div className="flex gap-4">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
+                                        <ProfileAvatar user={user} className="rounded-full" />
+                                    </div>
+                                    <div className="flex-1 flex flex-col gap-3">
+                                        <div className="relative">
+                                            <textarea
+                                                value={commentText}
+                                                onChange={(e) => setCommentText(e.target.value)}
+                                                placeholder={t('WRITE_COMMENT')}
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
+                                            />
+                                            <div className="absolute bottom-2 left-2 flex gap-2">
+                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
+                                                    <Icons.Mic className="w-5 h-5" />
+                                                </button>
+                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90 active:scale-95 transition-all">
+                                                    <Icons.Send className="w-5 h-5" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {commentAudio && (
+                                            <div className="p-3 bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 rounded-2xl flex items-center justify-between mt-3">
+                                                <div className="flex items-center gap-3">
+                                                    <Icons.Mic className="w-4 h-4 text-[var(--gold-primary)]" />
+                                                    <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
+                                                    <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-[var(--gold-primary)] text-black font-black text-[10px] rounded-lg">SEND</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="space-y-6 pt-4">
+                                    {(post.comments || []).slice().reverse().map(c => (
+                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.div >
@@ -2619,8 +2638,11 @@ const ProfileModal = ({
     }, [posts, isOpen]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
-        // Strict exclusion of stories from the main grid
-        if (p.isStory === true || String(p.isStory) === 'true') return false;
+        // Strict exclusion of stories from the main grid, UNLESS it's a repost from someone else
+        if (p.isStory === true || String(p.isStory) === 'true') {
+            const isOriginalAuthor = String(p.author?._id || p.author) === String(profileUser?._id);
+            if (isOriginalAuthor) return false;
+        }
 
         const isVideo = isYouTubeUrl(p.videoUrl) || (p.videoUrl && p.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
         if (activeTab === 'VIDEO') return isVideo;
@@ -3094,7 +3116,27 @@ const ProfileModal = ({
                                                                 <div className="flex flex-col mb-8">
                                                                     {groupedUserPosts[dateKey].map(p => (
                                                                         <div key={p._id} className="relative">
-                                                                            <PostCard post={p} user={currentUser} allUsers={allUsers} onLike={onLike} onDislike={onDislike} onRepost={onRepost} onComment={onComment} onDelete={onDeletePost} onViewProfile={onViewProfile} onOpenDetail={onOpenDetail} onOpenChat={onOpenChat} onEditComment={onEditComment} onDeleteComment={onDeleteComment} onEditPost={onEditPost} onShare={onShare} onHashtagClick={onHashtagClick} loadingActions={loadingActions} />
+                                                                            <PostCard
+                                                                                post={p}
+                                                                                user={currentUser}
+                                                                                allUsers={allUsers}
+                                                                                onLike={onLike}
+                                                                                onDislike={onDislike}
+                                                                                onRepost={onRepost}
+                                                                                onComment={onComment}
+                                                                                onDelete={onDeletePost}
+                                                                                onViewProfile={onViewProfile}
+                                                                                onOpenDetail={onOpenDetail}
+                                                                                onOpenChat={onOpenChat}
+                                                                                onEditComment={onEditComment}
+                                                                                onDeleteComment={onDeleteComment}
+                                                                                onEditPost={onEditPost}
+                                                                                onShare={onShare}
+                                                                                onHashtagClick={onHashtagClick}
+                                                                                loadingActions={loadingActions}
+                                                                                reposter={String(p.author?._id || p.author) !== String(displayUser?._id) ? displayUser : null}
+                                                                                forcePause={!!selectedPost}
+                                                                            />
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -4211,9 +4253,10 @@ const App = () => {
 
 
     // Unified Scroll Lock for Modals
+    const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || !!selectedPost;
+
     useEffect(() => {
-        const anyModalOpen = selectedPost || isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen;
-        if (anyModalOpen) {
+        if (isAnyModalOpen) {
             const scrollY = window.scrollY;
             document.body.style.position = 'fixed';
             document.body.style.top = `-${scrollY}px`;
@@ -4236,7 +4279,7 @@ const App = () => {
             document.body.style.right = '';
             document.body.style.overflow = '';
         };
-    }, [selectedPost, isChatOpen, isProfileOpen, isSettingsOpen, isCreateOpen, isEditOpen]);
+    }, [isAnyModalOpen]);
 
     const isValidObjectId = (id) => typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id);
     const sanitizeObjectId = (id) => {
@@ -5105,7 +5148,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} />
                                                                         </motion.div>
                                                                     ))}
                                                                 </AnimatePresence>
@@ -5130,9 +5173,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-16 sm:h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
                         >
-                            <Icons.ArrowUp className="w-6 h-6" />
+                            <Icons.ArrowUp className="w-8 h-8" />
                         </button>
                     )}
 
@@ -5142,9 +5185,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-16 sm:h-16 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
                         >
-                            <Icons.Compose className="w-7 h-7" />
+                            <Icons.Compose className="w-9 h-9" />
                         </button>
                     )}
 
