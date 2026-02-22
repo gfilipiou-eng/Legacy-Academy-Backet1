@@ -388,7 +388,8 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
         e.stopPropagation();
         if (!showMenu) {
             const rect = btnRef.current.getBoundingClientRect();
-            setCoords({ top: rect.top, left: rect.left });
+            // Position exactly below the button (bottom + 8px gap) and align the right edge
+            setCoords({ top: rect.bottom + 8, left: rect.right - 192 });
         }
         setShowMenu(!showMenu);
         playSound('cyber_click');
@@ -405,16 +406,12 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                     <div
                         style={{
                             position: 'fixed',
-                            top: `${coords.top - 8}px`,
-                            left: `${coords.left - 160}px`,
+                            top: `${coords.top}px`,
+                            left: `${coords.left}px`,
                             zIndex: 10001
                         }}
-                        className="w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 transform-gpu animate-fade-in -translate-y-full"
+                        className="w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 animate-fade-in"
                     >
-                        <button onClick={(e) => { e.stopPropagation(); onShare(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                            <Icons.Share className="w-4 h-4 text-gray-400 group-hover/item:text-white transition-colors" />
-                            <span className="text-[10px] font-black text-gray-200 uppercase tracking-widest">{t('SHARE')}</span>
-                        </button>
                         {isOwner && (
                             <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
                                 <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
@@ -2186,8 +2183,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             key={opt.id}
                                             onClick={() => setThemeCategory(opt.id)}
                                             className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all ${themeCategory === opt.id
-                                                    ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)] text-[var(--gold-primary)]'
-                                                    : 'bg-white/[0.03] border-white/10 text-gray-500 hover:bg-white/10 hover:text-white'
+                                                ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)] text-[var(--gold-primary)]'
+                                                : 'bg-white/[0.03] border-white/10 text-gray-500 hover:bg-white/10 hover:text-white'
                                                 }`}
                                         >
                                             {opt.label}
@@ -2828,8 +2825,8 @@ const ProfileModal = ({
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
                                         className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab
-                                                ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
-                                                : 'text-white/60 hover:text-white hover:bg-white/5'
+                                            ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
+                                            : 'text-white/60 hover:text-white hover:bg-white/5'
                                             }`}
                                     >
                                         {t('TAB_' + tab)}
