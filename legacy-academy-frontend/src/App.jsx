@@ -3580,10 +3580,12 @@ const App = () => {
             localStorage.removeItem('user');
             setUser(null);
         } else if (saved) {
-            setUser(JSON.parse(saved));
+            const userData = JSON.parse(saved);
+            setUser(userData);
         }
 
-        const savedTheme = JSON.parse(localStorage.getItem('user') || 'null')?.settings?.theme || localStorage.getItem('themeColor');
+        const userData = saved ? JSON.parse(saved) : null;
+        const savedTheme = userData?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
         applyDisplayMode('dark');
         const savedZoom = userData?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
