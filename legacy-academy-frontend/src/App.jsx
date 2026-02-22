@@ -1229,7 +1229,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
                     <ProfileAvatar user={user} className="opacity-80 rounded-full" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
@@ -1253,7 +1253,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
                             {hasMedia ? (
                                 isNativeVideo ? (
                                     <video
@@ -4993,7 +4993,7 @@ const App = () => {
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
-                            <div className="w-full px-3 sm:px-6 py-10 flex items-center justify-between">
+                            <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => { setIsDrawerOpen(true); playSound('cyber_nav'); }}
@@ -5006,12 +5006,12 @@ const App = () => {
                                     </button>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.3)]" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-28 sm:h-20 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.3)]" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
                         </header>
-                        <div className="pt-0 sm:pt-4 max-w-2xl mx-auto">
+                        <div className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto">
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
@@ -5299,11 +5299,11 @@ const App = () => {
                         title={t('PRIVACY_POLICY')}
                         content={
                             <div className="space-y-8">
-                                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-5">
-                                    <div className="w-12 h-12 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center text-[var(--gold-primary)] shrink-0">
-                                        <Icons.Lock className="w-6 h-6" />
+                                <div className="p-3 sm:p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-3 sm:gap-5">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center text-[var(--gold-primary)] shrink-0">
+                                        <Icons.Lock className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
-                                    <p className="text-white font-medium leading-tight">{t('PRIVACY_WELCOME')}</p>
+                                    <p className="text-white font-medium leading-tight text-sm sm:text-base min-w-0 break-words">{t('PRIVACY_WELCOME')}</p>
                                 </div>
 
                                 <section className="space-y-3">
