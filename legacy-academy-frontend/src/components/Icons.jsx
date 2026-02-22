@@ -70,4 +70,8 @@ export const Icons = {
         </svg>
     ),
     ArrowUp: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 19V5" /><path d="m5 12 7-7 7 7" /></svg>,
+    ShieldCheck: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="m9 12 2 2 4-4" /></svg>,
+    Activity: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>,
+    HardDrive: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><rect width="20" height="8" x="2" y="3" rx="2" /><rect width="20" height="8" x="2" y="13" rx="2" /><line x1="6" x2="6" y1="7" y2="7" /><line x1="6" x2="6" y1="17" y2="17" /></svg>,
+    Fingerprint: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M2 12a10 10 0 0 1 13-9" /><path d="M6 12a6 6 0 0 1 7.3-5.7" /><path d="M10.2 12a2 2 0 1 1 3.5 1.5L11 17" /><path d="M15 12a4.9 4.9 0 0 1 2 4" /><path d="M8 12a8 8 0 0 1 10.3-7.6" /><path d="M12 17v4" /><path d="M8 21h8" /></svg>,
 };

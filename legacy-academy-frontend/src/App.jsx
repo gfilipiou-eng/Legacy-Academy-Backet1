@@ -2395,12 +2395,12 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                         <div className="flex items-center gap-3 text-[15px]">
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-white tabular-nums">{user?.followers?.length || 0}</span>
-                                <span className="text-gray-400">followers</span>
+                                <span className="text-gray-400">{t('FOLLOWERS').toLowerCase()}</span>
                             </div>
                             <span className="text-gray-700">·</span>
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-white tabular-nums">{user?.following?.length || 0}</span>
-                                <span className="text-gray-400">following</span>
+                                <span className="text-gray-400">{t('FOLLOWING').toLowerCase()}</span>
                             </div>
                         </div>
                     </div>
@@ -2411,27 +2411,27 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                     <div className="px-2 space-y-1">
                         <button onClick={() => handleLink('home')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Home className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Home</span>
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('HOME')}</span>
                         </button>
 
                         <button onClick={() => handleLink('search')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Search className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Explore</span>
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('EXPLORE')}</span>
                         </button>
 
                         <button onClick={() => { onNavigate('chat'); onClose(); playSound('cyber_nav'); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Ghost className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Whispers</span>
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('WHISPERS')}</span>
                         </button>
 
                         <button onClick={() => handleLink('alerts')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Bell className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Notifications</span>
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('NOTIFICATIONS_TITLE')}</span>
                         </button>
 
                         <button onClick={() => { onOpenSettings(); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Settings className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">Settings</span>
+                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('SETTINGS')}</span>
                         </button>
                     </div>
                 </div>
@@ -2439,8 +2439,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-4 border-t border-white/5">
                     <div className="flex gap-4">
-                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">Terms of Service</button>
-                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">Privacy Policy</button>
+                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">{t('PRIVACY_POLICY')}</button>
                     </div>
                 </div>
             </div>
@@ -2464,7 +2464,9 @@ const LegalModal = ({ isOpen, onClose, title, content }) => {
                     {content}
                 </div>
                 <div className="p-6 border-t border-white/10 flex justify-end">
-                    <button onClick={onClose} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105 active:scale-95 transition-all">GOT IT</button>
+                    <button onClick={onClose} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs">
+                        {t('GOT_IT')}
+                    </button>
                 </div>
             </div>
         </div>
@@ -5213,23 +5215,47 @@ const App = () => {
                     <LegalModal
                         isOpen={isTermsOpen}
                         onClose={() => setIsTermsOpen(false)}
-                        title="Terms of Service"
+                        title={t('TERMS_OF_SERVICE')}
                         content={
-                            <div className="space-y-6">
-                                <p>Welcome to Legacy Academy. By entering this domain, you agree to the following protocols:</p>
-                                <section className="space-y-2">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">1. General Integrity</h3>
-                                    <p>Users must maintain a standard of excellence. Low-effort content or intellectual dishonesty is grounds for immediate termination of access. We operate on a meritocratic framework.</p>
+                            <div className="space-y-8">
+                                <p className="text-lg text-white font-medium leading-relaxed border-l-2 border-[var(--gold-primary)] pl-4">
+                                    {t('TERMS_WELCOME')}
+                                </p>
+
+                                <section className="space-y-3 relative group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                            <Icons.ShieldCheck className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S1_TITLE')}</h3>
+                                    </div>
+                                    <div className="pl-[52px] text-gray-400 group-hover:text-gray-300 transition-colors">{t('TERMS_S1_DESC')}</div>
                                 </section>
-                                <section className="space-y-2">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">2. Content Ownership</h3>
-                                    <p>Your data is yours, but by posting, you grant Legacy Academy a worldwide license to display your contributions to other members of the elite network.</p>
+
+                                <section className="space-y-3 relative group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                            <Icons.Activity className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S2_TITLE')}</h3>
+                                    </div>
+                                    <div className="pl-[52px] text-gray-400 group-hover:text-gray-300 transition-colors">{t('TERMS_S2_DESC')}</div>
                                 </section>
-                                <section className="space-y-2">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">3. Code of Conduct</h3>
-                                    <p>Propaganda, spam, and malicious behavior are strictly prohibited. This is a sanctuary for growth and legacy building. Violators will be purged from the neural link.</p>
+
+                                <section className="space-y-3 relative group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                            <Icons.Zap className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S3_TITLE')}</h3>
+                                    </div>
+                                    <div className="pl-[52px] text-gray-400 group-hover:text-gray-300 transition-colors">{t('TERMS_S3_DESC')}</div>
                                 </section>
-                                <p className="text-[10px] italic border-t border-white/5 pt-4">Subject to change without notice. Stay vigilant.</p>
+
+                                <div className="pt-6 border-t border-white/5 flex items-center gap-3">
+                                    <Icons.Info className="w-4 h-4 text-red-500" />
+                                    <p className="text-[11px] text-red-500/80 font-black uppercase tracking-[0.2em]">{t('TERMS_FOOTER')}</p>
+                                </div>
                             </div>
                         }
                     />
@@ -5237,21 +5263,44 @@ const App = () => {
                     <LegalModal
                         isOpen={isPrivacyOpen}
                         onClose={() => setIsPrivacyOpen(false)}
-                        title="Privacy Policy"
+                        title={t('PRIVACY_POLICY')}
                         content={
-                            <div className="space-y-6">
-                                <p>Legacy Academy values your digital sanctuary. Your data is encrypted and handled with extreme confidentiality.</p>
-                                <section className="space-y-2">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">Neural Data</h3>
-                                    <p>We collect only what is necessary to maintain your profile and feed. Your location, messages, and interactions are stored in secured offshore servers.</p>
+                            <div className="space-y-8">
+                                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-5">
+                                    <div className="w-12 h-12 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center text-[var(--gold-primary)] shrink-0">
+                                        <Icons.Lock className="w-6 h-6" />
+                                    </div>
+                                    <p className="text-white font-medium leading-tight">{t('PRIVACY_WELCOME')}</p>
+                                </div>
+
+                                <section className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                            <Icons.HardDrive className="w-4 h-4" />
+                                        </div>
+                                        <h3 className="text-white font-black uppercase text-sm tracking-tighter">{t('PRIVACY_S1_TITLE')}</h3>
+                                    </div>
+                                    <p className="text-gray-400 leading-relaxed pl-11">{t('PRIVACY_S1_DESC')}</p>
                                 </section>
-                                <section className="space-y-2">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">Zero-Knowledge Protocols</h3>
-                                    <p>Your Whispers are private. We do not sell your personal data to traditional third-party advertisers. Our economy is built on value, not exploitation.</p>
+
+                                <section className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                            <Icons.Fingerprint className="w-4 h-4" />
+                                        </div>
+                                        <h3 className="text-white font-black uppercase text-sm tracking-tighter">{t('PRIVACY_S2_TITLE')}</h3>
+                                    </div>
+                                    <p className="text-gray-400 leading-relaxed pl-11">{t('PRIVACY_S2_DESC')}</p>
                                 </section>
-                                <section className="space-y-2">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-tighter">Rights of Access</h3>
-                                    <p>You have the full right to delete your digital footprint at any time. Upon deletion, all related neural entries are wiped from our active matrix.</p>
+
+                                <section className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                            <Icons.User className="w-4 h-4" />
+                                        </div>
+                                        <h3 className="text-white font-black uppercase text-sm tracking-tighter">{t('PRIVACY_S3_TITLE')}</h3>
+                                    </div>
+                                    <p className="text-gray-400 leading-relaxed pl-11">{t('PRIVACY_S3_DESC')}</p>
                                 </section>
                             </div>
                         }
