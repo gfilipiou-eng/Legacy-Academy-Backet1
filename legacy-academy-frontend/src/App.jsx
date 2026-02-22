@@ -5119,9 +5119,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-8 z-[1000] w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-8 z-[1000] w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-[0_10px_30px_rgba(15,115,255,0.4)] transition-all active:scale-95"
                         >
-                            <Icons.Plus className="w-5 h-5" />
+                            <Icons.Compose className="w-6 h-6" />
                         </button>
                     )}
 
