@@ -870,6 +870,12 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             setTimeout(() => setIsActuallyPlaying(true), 300);
         } else if (event.data === window.YT.PlayerState.PAUSED) {
             setIsPlaying(false);
+        } else if (event.data === window.YT.PlayerState.ENDED) {
+            // Force loop seamlessly, bypassing suggested videos
+            if (ytPlayerRef.current && ytPlayerRef.current.seekTo) {
+                ytPlayerRef.current.seekTo(0);
+                ytPlayerRef.current.playVideo();
+            }
         }
     };
 
@@ -1013,7 +1019,9 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             disablekb: 1,
                             fs: 0,
                             playsinline: 1,
-                            widget_referrer: window.location.origin
+                            widget_referrer: window.location.origin,
+                            loop: 1,
+                            playlist: ytId
                         },
                         events: {
                             onReady: onYTReady,
@@ -1044,8 +1052,8 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                    {/* Ghost Layer - Precision masking (115% zoom instead of 170%) to avoid cutting content */}
-                    <div className="absolute top-[-7.5%] left-[-7.5%] w-[115%] h-[115%] pointer-events-none select-none transform-gpu backface-hidden">
+                    {/* Ghost Layer - Precision masking (120% zoom instead of 115%) to avoid cutting content */}
+                    <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] pointer-events-none select-none transform-gpu backface-hidden">
                         <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
                 </div>
