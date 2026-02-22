@@ -2411,27 +2411,27 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                     <div className="px-2 space-y-1">
                         <button onClick={() => handleLink('home')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Home className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('HOME')}</span>
+                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('HOME')}</span>
                         </button>
 
                         <button onClick={() => handleLink('search')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Search className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('EXPLORE')}</span>
+                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('EXPLORE')}</span>
                         </button>
 
                         <button onClick={() => { onNavigate('chat'); onClose(); playSound('cyber_nav'); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Ghost className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('WHISPERS')}</span>
+                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('WHISPERS')}</span>
                         </button>
 
                         <button onClick={() => handleLink('alerts')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Bell className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('NOTIFICATIONS_TITLE')}</span>
+                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('NOTIFICATIONS_TITLE')}</span>
                         </button>
 
                         <button onClick={() => { onOpenSettings(); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Settings className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[20px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('SETTINGS')}</span>
+                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('SETTINGS')}</span>
                         </button>
                     </div>
                 </div>
