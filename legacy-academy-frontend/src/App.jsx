@@ -5006,7 +5006,7 @@ const App = () => {
                                     </button>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-28 sm:h-20 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.3)]" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.3)]" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
@@ -5173,9 +5173,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
                         >
-                            <Icons.ArrowUp className="w-8 h-8 sm:w-7 sm:h-7" />
+                            <Icons.ArrowUp className="w-8 h-8 sm:w-5 sm:h-5" />
                         </button>
                     )}
 
@@ -5185,9 +5185,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
                         >
-                            <Icons.Compose className="w-9 h-9 sm:w-7 sm:h-7" />
+                            <Icons.Compose className="w-9 h-9 sm:w-5 sm:h-5" />
                         </button>
                     )}
 
