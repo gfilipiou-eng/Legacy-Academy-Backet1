@@ -170,26 +170,21 @@ const formatDate = (dateString, t, lang) => {
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
 
-        const isGreek = lang === 'el';
-
-        if (diffInSeconds < 60) return isGreek ? 'Μόλις τώρα' : 'Just now';
+        if (diffInSeconds < 60) return t('JUST_NOW') || 'Just now';
 
         const diffInMinutes = Math.round(diffInSeconds / 60);
         if (diffInMinutes < 60) {
-            if (isGreek) return diffInMinutes === 1 ? '1 λεπτό' : `${diffInMinutes} λεπτά`;
-            return diffInMinutes === 1 ? '1 min' : `${diffInMinutes} mins`;
+            return `${diffInMinutes} ${t('UNIT_M')}`;
         }
 
         const diffInHours = Math.round(diffInSeconds / 3600);
         if (diffInHours < 24) {
-            if (isGreek) return diffInHours === 1 ? '1 ώρα' : `${diffInHours} ώρες`;
-            return diffInHours === 1 ? '1 hour' : `${diffInHours} hours`;
+            return `${diffInHours} ${t('UNIT_H')}`;
         }
 
         const diffInDays = Math.round(diffInSeconds / 86400);
         if (diffInDays < 7) {
-            if (isGreek) return diffInDays === 1 ? '1 μέρα' : `${diffInDays} μέρες`;
-            return diffInDays === 1 ? '1 day' : `${diffInDays} days`;
+            return `${diffInDays} ${t('UNIT_D')}`;
         }
 
         const locale = (lang === 'el') ? 'el-GR' : (lang === 'de') ? 'de-DE' : 'en-US';
@@ -3112,7 +3107,10 @@ const ProfileModal = ({
     );
 };
 
+
+
 const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }) => {
+    const [desc, setDesc] = useState('');
     const [preview, setPreview] = useState(null);
     const [isVideo, setIsVideo] = useState(false);
     const [isAudio, setIsAudio] = useState(false);
@@ -3122,6 +3120,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
 
     useEffect(() => {
         if (isOpen) {
+            setDesc('');
             setIsStory(forceStory);
             setIsSubmitting(false);
             setPreview(null);
@@ -3138,7 +3137,6 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
 
-    // Safety check: Moved after hooks to prevent React Invariant 310
     if (!isOpen) return null;
 
     const startRecording = async () => {
@@ -3165,7 +3163,6 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
         const file = e.target.files[0];
         if (!file) return;
 
-        // Video duration check (5 minutes = 300s)
         if (file.type.startsWith('video')) {
             const url = URL.createObjectURL(file);
             const vid = document.createElement('video');
@@ -3200,18 +3197,31 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-4">
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
-                    <div className="flex gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                            <ProfileAvatar user={user} className="rounded-full" />
-                        </div>
-                        <div className="flex-1 flex flex-col gap-2">
-                            <textarea id="c-desc" name="description" placeholder={t('DECRYPT_PH')} className="w-full bg-transparent text-base outline-none text-white resize-none h-24 placeholder-gray-500 font-bold" />
-                            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note">
-                                <Icons.Info className="w-4 h-4 text-red-500 shrink-0 group-hover/note:animate-pulse" />
-                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none">
-                                    {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
-                                </span>
+                    <div className="flex flex-col gap-4 mb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
+                                <ProfileAvatar user={user} className="rounded-full" />
                             </div>
+                            <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
+                        </div>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+                            <textarea
+                                value={desc}
+                                onChange={(e) => setDesc(e.target.value)}
+                                maxLength={300}
+                                placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
+                                className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner font-bold"
+                            />
+                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
+                                {desc.length} / 300
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note">
+                            <Icons.Info className="w-4 h-4 text-red-500 shrink-0 group-hover/note:animate-pulse" />
+                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none">
+                                {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
+                            </span>
                         </div>
                     </div>
 
@@ -3271,7 +3281,6 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
                         <button disabled={isSubmitting} onClick={async () => {
                             if (isSubmitting) return;
-                            const desc = document.getElementById('c-desc').value;
                             const rawYoutube = document.getElementById('c-youtube').value;
                             const file = fileRef.current?.files?.[0];
 
@@ -3292,8 +3301,6 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             await onCreatePost(fd, preview, isStory);
 
                             // Reset logic safely
-                            const descEl = document.getElementById('c-desc');
-                            if (descEl) descEl.value = '';
                             const ytEl = document.getElementById('c-youtube');
                             if (ytEl) ytEl.value = '';
 
@@ -3306,7 +3313,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         </button>
                     </div>
                 </div>
-            </motion.div>
+            </motion.div >
         </div>
     );
 };
@@ -3409,9 +3416,13 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 <textarea
                                     value={desc}
                                     onChange={e => setDesc(e.target.value)}
+                                    maxLength={300}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
                                     className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
                                 />
+                                <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
+                                    {desc.length} / 300
+                                </div>
                             </div>
                             <div className="flex items-center gap-2 px-1">
                                 <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note w-full">
@@ -5162,7 +5173,7 @@ const App = () => {
                         user={user}
                         onNavigate={(tab) => {
                             if (tab === 'chat') {
-                                setIsChatOpen(true);
+                                setTimeout(() => setIsChatOpen(true), 150);
                             } else {
                                 setActiveTab(tab);
                             }
