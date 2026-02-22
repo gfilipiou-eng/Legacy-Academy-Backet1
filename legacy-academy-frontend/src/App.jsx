@@ -1928,7 +1928,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="p-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-14 sm:pb-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                                 <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
                                     <input
                                         id="chat-input"
