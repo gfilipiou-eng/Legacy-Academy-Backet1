@@ -5016,31 +5016,31 @@ const App = () => {
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pointer-events-none">
-                            <div className="h-[52px] sm:h-[60px] w-full max-w-lg px-6 flex items-center justify-between pointer-events-auto border-t border-white/10 bg-black/95 backdrop-blur-3xl pb-[env(safe-area-inset-bottom,0px)]">
+                            <div className="h-[64px] sm:h-[70px] w-full max-w-lg px-6 flex items-center justify-between pointer-events-auto border-t border-white/10 bg-black/95 backdrop-blur-3xl pb-[calc(env(safe-area-inset-bottom,0px)+8px)] pt-1">
                                 <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'home' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Home className="w-6 h-6 sm:w-7 sm:h-7" />
-                                    {activeTab === 'home' && <div className="absolute top-0 right-1 w-1 h-1 bg-[var(--gold-primary)] rounded-full" />}
+                                    <Icons.Home className="w-7 h-7 sm:w-8 sm:h-8" />
+                                    {activeTab === 'home' && <div className="absolute top-1 right-2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
                                 </button>
 
                                 <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'search' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
-                                    <Icons.Search className="w-6 h-6 sm:w-7 sm:h-7" />
-                                    {activeTab === 'search' && <div className="absolute top-0 right-1 w-1 h-1 bg-[var(--gold-primary)] rounded-full" />}
+                                    <Icons.Search className="w-7 h-7 sm:w-8 sm:h-8" />
+                                    {activeTab === 'search' && <div className="absolute top-1 right-2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-2 sm:p-2.5 bg-white text-black rounded-full active:scale-90 transition-all shadow-[0_4px_14px_0_rgba(255,255,255,0.39)] border border-white/20 -translate-y-2 hover:bg-gray-100">
-                                    <Icons.Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-2 sm:p-2.5 bg-white text-black rounded-full active:scale-90 transition-all shadow-[0_4px_14px_0_rgba(255,255,255,0.39)] border border-white/20 -translate-y-1 hover:bg-gray-100">
+                                    <Icons.Plus className="w-6 h-6 sm:w-7 sm:h-7" />
                                 </button>
 
                                 <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative">
-                                        <Icons.Bell className={`w-6 h-6 sm:w-7 sm:h-7 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[var(--gold-primary)] rounded-full border-2 border-black" />}
+                                        <Icons.Bell className={`w-7 h-7 sm:w-8 sm:h-8 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
+                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--gold-primary)] rounded-full border-[2.5px] border-black" />}
                                     </div>
-                                    {activeTab === 'alerts' && <div className="absolute top-0 right-1 w-1 h-1 bg-[var(--gold-primary)] rounded-full" />}
+                                    {activeTab === 'alerts' && <div className="absolute top-1 right-2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
                                 </button>
 
                                 <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all duration-300 ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
-                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-white/10">
+                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-white/10">
                                         <ProfileAvatar user={user} key={imgKey} className="rounded-full" />
                                     </div>
                                 </button>
