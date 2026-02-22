@@ -4796,7 +4796,17 @@ const App = () => {
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
-                                <div className="flex items-center gap-2" />
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                                        className="w-9 h-9 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-colors"
+                                        aria-label="Open menu"
+                                    >
+                                        <svg fill="none" width="24" viewBox="0 0 24 24" height="24" className="text-gray-400 pointer-events-none">
+                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <button
                                         onClick={() => setIsChatOpen(true)}
