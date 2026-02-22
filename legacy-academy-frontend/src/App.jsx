@@ -4794,7 +4794,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-32 sm:pb-36 scroll-smooth relative z-10">
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -5026,7 +5026,7 @@ const App = () => {
                     )}
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 z-[1000] bg-black/95 backdrop-blur-3xl border-t border-[#2C3A4E]">
+                        <div className="fixed bottom-0 left-0 right-0 z-[1000] bg-black/95 backdrop-blur-3xl border-t border-[#2C3A4E] pointer-events-none">
                             <div className="h-[60px] sm:h-[68px] w-full max-w-lg mx-auto px-4 flex items-center justify-between pointer-events-auto pb-[env(safe-area-inset-bottom,0px)]">
                                 <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-3 relative transition-all duration-300 ${activeTab === 'home' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-7 h-7 sm:w-8 sm:h-8" />
