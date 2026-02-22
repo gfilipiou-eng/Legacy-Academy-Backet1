@@ -4746,7 +4746,7 @@ const App = () => {
                         <div className="flex flex-col items-center">
                             <div className="flex items-center gap-3 mb-8 px-2">
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-64 w-auto object-contain mb-4" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.15)]" />
                                 </div>
                             </div>
                             <div className="space-y-4">
@@ -4933,7 +4933,7 @@ const App = () => {
                                     </button>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="/Applogo.png" alt="Legacy Academy" className="h-8 w-auto object-contain" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.2)]" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
