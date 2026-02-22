@@ -3470,6 +3470,7 @@ const App = () => {
     const [createModeStory, setCreateModeStory] = useState(false);
     const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [profileUser, setProfileUser] = useState(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [alerts, setAlerts] = useState([]);
@@ -4798,7 +4799,7 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-2 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <button
-                                        onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                                        onClick={() => setIsDrawerOpen(true)}
                                         className="w-9 h-9 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-colors"
                                         aria-label="Open menu"
                                     >
@@ -5025,31 +5026,31 @@ const App = () => {
                     )}
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pointer-events-none">
-                            <div className="h-[64px] sm:h-[70px] w-full max-w-lg px-6 flex items-center justify-between pointer-events-auto border-t border-white/10 bg-black/95 backdrop-blur-3xl pb-[calc(env(safe-area-inset-bottom,0px)+8px)] pt-1">
-                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'home' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
+                        <div className="fixed bottom-0 left-0 right-0 z-[1000] bg-black/95 backdrop-blur-3xl border-t border-[#2C3A4E]">
+                            <div className="h-[60px] sm:h-[68px] w-full max-w-lg mx-auto px-4 flex items-center justify-between pointer-events-auto pb-[env(safe-area-inset-bottom,0px)]">
+                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-3 relative transition-all duration-300 ${activeTab === 'home' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Home className="w-7 h-7 sm:w-8 sm:h-8" />
-                                    {activeTab === 'home' && <div className="absolute top-1 right-2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
+                                    {activeTab === 'home' && <div className="absolute top-2 right-3 w-1.5 h-1.5 bg-[#0085FF] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'search' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-3 relative transition-all duration-300 ${activeTab === 'search' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
                                     <Icons.Search className="w-7 h-7 sm:w-8 sm:h-8" />
-                                    {activeTab === 'search' && <div className="absolute top-1 right-2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
+                                    {activeTab === 'search' && <div className="absolute top-2 right-3 w-1.5 h-1.5 bg-[#0085FF] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-2 sm:p-2.5 bg-white text-black rounded-full active:scale-90 transition-all shadow-[0_4px_14px_0_rgba(255,255,255,0.39)] border border-white/20 -translate-y-1 hover:bg-gray-100">
-                                    <Icons.Plus className="w-6 h-6 sm:w-7 sm:h-7" />
+                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-3 bg-transparent text-white active:scale-90 transition-all hover:bg-white/10 rounded-full">
+                                    <Icons.Edit className="w-7 h-7 sm:w-8 sm:h-8" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-3 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative">
-                                        <Icons.Bell className={`w-7 h-7 sm:w-8 sm:h-8 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--gold-primary)] rounded-full border-[2.5px] border-black" />}
+                                        <Icons.Bell className={`w-7 h-7 sm:w-8 sm:h-8 ${user?.notifications?.some(n => !n.read) ? 'text-[#0085FF] animate-pulse' : ''}`} />
+                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#0085FF] rounded-full border-[2.5px] border-black" />}
                                     </div>
-                                    {activeTab === 'alerts' && <div className="absolute top-1 right-2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
+                                    {activeTab === 'alerts' && <div className="absolute top-2 right-3 w-1.5 h-1.5 bg-[#0085FF] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all duration-300 ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
+                                <button onClick={() => viewProfile(user)} className={`p-1 rounded-full border-2 transition-all duration-300 focus:outline-none ${activeTab === 'profile' ? 'border-[#0085FF]' : 'border-transparent'}`}>
                                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-white/10">
                                         <ProfileAvatar user={user} key={imgKey} className="rounded-full" />
                                     </div>
@@ -5057,6 +5058,58 @@ const App = () => {
                             </div>
                         </div>
                     )}
+                    {/* SIDE DRAWER MENU (Bluesky Style) */}
+                    <div className={`fixed inset-0 z-[1100] pointer-events-none transition-opacity duration-300 ${isDrawerOpen ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setIsDrawerOpen(false)} />
+                        <div className={`absolute top-0 left-0 bottom-0 w-[280px] bg-[#161e27] shadow-[20px_0_50px_rgba(0,0,0,0.5)] pointer-events-auto transform transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                            <div className="flex-1 overflow-y-auto pb-5 flex flex-col pt-[calc(env(safe-area-inset-top,20px)+20px)]">
+                                <div className="px-5 shrink-0">
+                                    <div onClick={() => { viewProfile(user); setIsDrawerOpen(false); }} className="cursor-pointer group">
+                                        <div className="w-[52px] h-[52px] rounded-full overflow-hidden mb-2 border border-[#485B75] opacity-90 group-hover:opacity-100 transition-opacity">
+                                            <ProfileAvatar user={user} className="rounded-full" />
+                                        </div>
+                                        <div className="flex flex-col gap-[2px]">
+                                            <div className="text-[18.8px] font-[700] text-white leading-[22px] tracking-tight">{user?.username || 'User'}</div>
+                                            <div className="text-[15px] text-[#8D9DB4] leading-[17px]">@{user?.username?.toLowerCase().replace(/\s+/g, '')}.legacy</div>
+                                        </div>
+                                        <div className="flex items-center gap-2 mt-2 text-[15px] text-[#8D9DB4] leading-[15px]">
+                                            <span><strong className="text-white font-[600]">{user?.followers?.length || 0}</strong> followers</span>
+                                            <span>·</span>
+                                            <span><strong className="text-white font-[600]">{user?.following?.length || 0}</strong> following</span>
+                                        </div>
+                                    </div>
+                                    <div className="w-full h-px bg-[#2C3A4E] mt-[20px] mb-[8px]"></div>
+                                </div>
+
+                                <div className="flex flex-col w-full shrink-0">
+                                    {[
+                                        { id: 'profile', icon: Icons.User, label: 'Profile', action: () => { viewProfile(user); setIsDrawerOpen(false); } },
+                                        { id: 'home', icon: Icons.Home, label: 'Home', action: () => { setActiveTab('home'); setIsDrawerOpen(false); } },
+                                        { id: 'search', icon: Icons.Search, label: 'Explore', action: () => { setActiveTab('search'); setIsDrawerOpen(false); } },
+                                        { id: 'alerts', icon: Icons.Bell, label: 'Notifications', badge: user?.notifications?.some(n => !n.read), action: () => { setActiveTab('alerts'); setIsDrawerOpen(false); } },
+                                        { id: 'chat', icon: Icons.MessageCircle, label: 'Chat', action: () => { setIsChatOpen(true); setIsDrawerOpen(false); } },
+                                        { id: 'settings', icon: Icons.Settings, label: 'Settings', action: () => { setIsSettingsOpen(true); setIsDrawerOpen(false); } }
+                                    ].map(item => (
+                                        <button key={item.id} onClick={item.action} className="flex items-center gap-[12px] px-5 py-[12px] hover:bg-white/5 transition-colors text-white w-full text-left active:bg-white/10">
+                                            <div className="relative">
+                                                <item.icon className="w-[26px] h-[26px] text-white" strokeWidth="2" />
+                                                {item.badge && <div className="absolute top-0 right-0 w-2 h-2 bg-[#0085FF] rounded-full border-2 border-[#161e27]" />}
+                                            </div>
+                                            <span className="text-[20.6px] font-[600] leading-[27px]">{item.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="mt-auto px-5 shrink-0 pt-4">
+                                    <div className="w-full h-px bg-[#2C3A4E] mb-[20px] mt-[8px]"></div>
+                                    <div className="flex flex-col gap-[12px]">
+                                        <a href="#" className="text-[15px] text-[#0F73FF] hover:underline font-medium">Terms of Service</a>
+                                        <a href="#" className="text-[15px] text-[#0F73FF] hover:underline font-medium">Privacy Policy</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <ProfileModal
                         isOpen={isProfileOpen}
