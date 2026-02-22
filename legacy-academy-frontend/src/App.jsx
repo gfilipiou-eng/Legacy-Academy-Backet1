@@ -2987,6 +2987,13 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
     useEffect(() => {
         if (isOpen) {
             setIsStory(forceStory);
+            setIsSubmitting(false);
+            setPreview(null);
+            setIsVideo(false);
+            setIsAudio(false);
+            setAudioName('');
+            setAudioBlob(null);
+            if (fileRef.current) fileRef.current.value = '';
         }
     }, [isOpen, forceStory]);
     const fileRef = useRef(null);
@@ -3143,9 +3150,12 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             // Trigger optimistic upload
                             await onCreatePost(fd, preview, isStory);
 
-                            // Reset logic
-                            document.getElementById('c-desc').value = '';
-                            document.getElementById('c-youtube').value = '';
+                            // Reset logic safely
+                            const descEl = document.getElementById('c-desc');
+                            if (descEl) descEl.value = '';
+                            const ytEl = document.getElementById('c-youtube');
+                            if (ytEl) ytEl.value = '';
+
                             setPreview(null);
                             if (fileRef.current) fileRef.current.value = '';
                             setIsStory(false);
