@@ -2448,7 +2448,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
     );
 };
 
-const LegalModal = ({ isOpen, onClose, title, content }) => {
+const LegalModal = ({ isOpen, onClose, title, content, t }) => {
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
@@ -5258,6 +5258,7 @@ const App = () => {
                                 </div>
                             </div>
                         }
+                        t={t}
                     />
 
                     <LegalModal
@@ -5304,6 +5305,7 @@ const App = () => {
                                 </section>
                             </div>
                         }
+                        t={t}
                     />
 
                     <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
