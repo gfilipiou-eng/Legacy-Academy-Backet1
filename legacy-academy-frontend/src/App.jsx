@@ -3204,17 +3204,22 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             </div>
                             <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
                         </div>
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
-                            <textarea
-                                value={desc}
-                                onChange={(e) => setDesc(e.target.value)}
-                                maxLength={300}
-                                placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner font-bold"
-                            />
-                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
-                                {desc.length} / 300
+                        <div className="flex flex-col gap-2">
+                            <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
+                            </div>
+                            <div className="relative group">
+                                <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+                                <textarea
+                                    value={desc}
+                                    onChange={(e) => setDesc(e.target.value)}
+                                    maxLength={300}
+                                    placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner font-bold"
+                                />
+                                <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
+                                    {desc.length} / 300
+                                </div>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note">
