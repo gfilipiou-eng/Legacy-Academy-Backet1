@@ -3136,14 +3136,19 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         <button disabled={isSubmitting} onClick={async () => {
                             if (isSubmitting) return;
                             const desc = document.getElementById('c-desc').value;
-                            const youtube = document.getElementById('c-youtube').value;
+                            const rawYoutube = document.getElementById('c-youtube').value;
                             const file = fileRef.current?.files?.[0];
+
+                            // Auto-extract from description if they pasted it there instead of the dedicated box
+                            const ytMatch = getYouTubeId(desc);
+                            const youtube = rawYoutube ? rawYoutube.trim() : (ytMatch ? `https://youtube.com/watch?v=${ytMatch}` : '');
+
                             if (!desc && !file && !youtube) return;
 
                             setIsSubmitting(true);
                             const fd = new FormData();
                             fd.append('desc', desc);
-                            if (youtube) fd.append('videoUrl', youtube.trim());
+                            if (youtube) fd.append('videoUrl', youtube);
                             else if (file) fd.append('image', file);
                             fd.append('isStory', isStory);
 
@@ -3223,9 +3228,14 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         fd.append('desc', desc);
         const file = fileRef.current?.files[0];
 
-        // Use state instead of direct DOM access for consistency
-        if (typeof youtubeUrl === 'string') {
-            fd.append('videoUrl', youtubeUrl.trim());
+        // Auto-extract from description if they pasted it there
+        let finalYtUrl = youtubeUrl;
+        const ytMatch = getYouTubeId(desc);
+        if (!finalYtUrl && ytMatch) finalYtUrl = `https://youtube.com/watch?v=${ytMatch}`;
+
+        // Use state/extracted instead of direct DOM access for consistency
+        if (typeof finalYtUrl === 'string' && finalYtUrl.trim()) {
+            fd.append('videoUrl', finalYtUrl.trim());
         }
 
         if (file) {
