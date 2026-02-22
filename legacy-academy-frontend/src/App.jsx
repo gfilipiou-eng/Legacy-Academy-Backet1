@@ -5015,33 +5015,34 @@ const App = () => {
                     )}
 
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
-                        <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pb-4 sm:pb-6 pointer-events-none px-3 sm:px-4">
-                            <div className="liquid-glass-nav h-[72px] sm:h-[80px] w-full max-w-[390px] sm:max-w-md rounded-[2.2rem] sm:rounded-[2.5rem] px-5 sm:px-7 flex items-center justify-between pointer-events-auto border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] bg-black/85 backdrop-blur-3xl relative">
-                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Home className="w-7 h-7 sm:w-8 sm:h-8" />
-                                    {activeTab === 'home' && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                        <div className="fixed bottom-0 left-0 right-0 z-[1000] flex justify-center pointer-events-none">
+                            <div className="h-[52px] sm:h-[60px] w-full max-w-lg px-6 flex items-center justify-between pointer-events-auto border-t border-white/10 bg-black/95 backdrop-blur-3xl pb-[env(safe-area-inset-bottom,0px)]">
+                                <button onClick={() => { setActiveTab('home'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'home' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
+                                    <Icons.Home className="w-6 h-6 sm:w-7 sm:h-7" />
+                                    {activeTab === 'home' && <div className="absolute top-0 right-1 w-1 h-1 bg-[var(--gold-primary)] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Search className="w-7 h-7 sm:w-8 sm:h-8" />
-                                    {activeTab === 'search' && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                <button onClick={() => { setActiveTab('search'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'search' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
+                                    <Icons.Search className="w-6 h-6 sm:w-7 sm:h-7" />
+                                    {activeTab === 'search' && <div className="absolute top-0 right-1 w-1 h-1 bg-[var(--gold-primary)] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-3.5 sm:p-4 bg-[var(--gold-primary)] text-black rounded-full shadow-lg shadow-[var(--gold-primary)]/30 active:scale-95 transition-all -mt-8 sm:-mt-10 border-4 sm:border-4 border-[#050505]">
-                                    <Icons.Plus className="w-7 h-7 sm:w-8 sm:h-8" />
+                                <button onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }} className="p-2 sm:p-2.5 bg-white text-black rounded-full active:scale-90 transition-all shadow-[0_4px_14px_0_rgba(255,255,255,0.39)] border border-white/20 -translate-y-2 hover:bg-gray-100">
+                                    <Icons.Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                                 </button>
 
-                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
+                                <button onClick={() => { setActiveTab('alerts'); playSound('cyber_nav'); if (navigator.vibrate) navigator.vibrate(10); }} className={`p-2 relative transition-all duration-300 ${activeTab === 'alerts' ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
                                     <div className="relative">
-                                        <Icons.Bell className={`w-7 h-7 sm:w-8 sm:h-8 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
-                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-0.5 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[var(--gold-primary)] rounded-full border-2 border-black" />}
+                                        <Icons.Bell className={`w-6 h-6 sm:w-7 sm:h-7 ${user?.notifications?.some(n => !n.read) ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
+                                        {user?.notifications?.some(n => !n.read) && <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[var(--gold-primary)] rounded-full border-2 border-black" />}
                                     </div>
-                                    {activeTab === 'alerts' && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                    {activeTab === 'alerts' && <div className="absolute top-0 right-1 w-1 h-1 bg-[var(--gold-primary)] rounded-full" />}
                                 </button>
 
-                                <button onClick={() => viewProfile(user)} className={`p-2 sm:p-3 relative transition-all duration-300 ${activeTab === 'profile' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Menu className="w-7 h-7 sm:w-8 sm:h-8" />
-                                    {activeTab === 'profile' && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                <button onClick={() => viewProfile(user)} className={`p-0.5 rounded-full border-2 transition-all duration-300 ${activeTab === 'profile' ? 'border-[var(--gold-primary)]' : 'border-transparent'}`}>
+                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-white/10">
+                                        <ProfileAvatar user={user} key={imgKey} className="rounded-full" />
+                                    </div>
                                 </button>
                             </div>
                         </div>
