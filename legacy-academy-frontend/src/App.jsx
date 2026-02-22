@@ -2352,7 +2352,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, t }) => {
     if (!isOpen) return null;
 
     const handleLink = (tab) => {
@@ -2438,11 +2438,19 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                 </div>
 
                 {/* FOOTER */}
-                <div className="p-6 pb-12 flex flex-col gap-4 border-t border-white/5">
-                    <div className="flex gap-4">
-                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">{t('TERMS_OF_SERVICE')}</button>
-                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-blue-500 font-medium hover:underline text-[15px]">{t('PRIVACY_POLICY')}</button>
+                <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5">
+                    <div className="flex flex-wrap gap-4">
+                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-blue-500 font-bold hover:underline text-[14px] uppercase tracking-wider">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-blue-500 font-bold hover:underline text-[14px] uppercase tracking-wider">{t('PRIVACY_POLICY')}</button>
                     </div>
+
+                    <button
+                        onClick={() => { onLogout(); onClose(); }}
+                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/20 text-red-500 hover:text-white font-black text-sm uppercase tracking-[0.2em] rounded-2xl transition-all flex items-center justify-center gap-3 group"
+                    >
+                        <Icons.Logout className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        {t('LOGOUT')}
+                    </button>
                 </div>
             </div>
         </div>
@@ -3222,9 +3230,9 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 </div>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note">
-                            <Icons.Info className="w-4 h-4 text-red-500 shrink-0 group-hover/note:animate-pulse" />
-                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none">
+                        <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note">
+                            <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
+                            <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
                                 {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
                             </span>
                         </div>
@@ -3430,9 +3438,9 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-4 py-2 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.1)] group/note w-full">
+                                <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note w-full">
                                     <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
-                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest leading-none">
+                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
                                         {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
                                     </span>
                                 </div>
@@ -5187,6 +5195,7 @@ const App = () => {
                         onOpenSettings={() => setIsSettingsOpen(true)}
                         onOpenTerms={() => setIsTermsOpen(true)}
                         onOpenPrivacy={() => setIsPrivacyOpen(true)}
+                        onLogout={logout}
                         t={t}
                     />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
