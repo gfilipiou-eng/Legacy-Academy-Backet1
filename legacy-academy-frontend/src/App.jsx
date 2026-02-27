@@ -31,34 +31,35 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     if (url.includes('cloudinary.com') && url.includes('/upload/')) {
         const parts = url.split('/upload/');
         // Only inject if not already transformed
-        if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_') && !parts[1].startsWith('so_')) {
+        if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_') && !parts[1].startsWith('so_') && !parts[1].startsWith('q_')) {
             const isVideo = url.includes('/video/upload/');
 
             if (isCover && isVideo) {
-                // Aggressively strip any cached synchronous transformations to prevent 404s on large MP4s
+                // Strip cached transformations mapped to covers
                 return url.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/$1');
             }
 
             let transform = '';
 
+            // SAVE CREDITS: Use 'q_auto:eco' (Economy) to heavily compress bandwidth
+            // Downgraded w_1080 and w_600 to smaller sizes
             if (isPoster && isVideo) {
-                // GENERATE POSTER IMAGE FROM VIDEO
-                transform = `so_0.5,f_jpg,q_auto:best,w_1080,c_limit`;
+                transform = `so_0.0,f_auto,q_auto:eco,w_600,c_limit`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
             } else if (isAvatar && isVideo) {
-                // USE ANIMATED WEBP FOR AVATARS (HIGH QUALITY)
-                transform = `w_500,h_500,c_fill,so_0,eo_3,q_auto:best,f_webp,fl_animated`;
+                // Limit animated avatar duration and size
+                transform = `w_200,h_200,c_fill,so_0,eo_2,q_auto:eco,f_webp,fl_animated`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
-                transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
+                // 200px is more than enough for avatars
+                transform = `w_200,h_200,c_fill,g_face,q_auto:eco,f_auto`;
             } else if (width) {
-                transform = `w_${width},c_fill,g_face,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                transform = `w_${Math.min(width, 800)},c_limit,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                // Remove aggressive 4k transform for generic delivery to prevent ERR_CACHE_READ_FAILURE timeouts
-                transform = `q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                transform = `q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
             }
 
-            url = `${parts[0]}/upload/${transform}/${parts[1]}`;
+            return parts[0] + '/upload/' + transform + '/' + parts[1];
         }
     }
     return url;
