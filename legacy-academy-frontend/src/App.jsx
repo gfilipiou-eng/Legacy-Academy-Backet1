@@ -1478,8 +1478,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* REPOSTS */}
                             <button
-                                onPointerDown={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-600 hover:text-green-400'}`}
+                                onPointerDown={(e) => {
+                                    e.stopPropagation();
+                                    playSound('cyber_repost');
+                                    onRepost && onRepost(post._id);
+                                }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600 hover:text-green-400 active:scale-95'}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
@@ -1487,8 +1491,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* LIKE */}
                             <button
-                                onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-600 hover:text-red-400'}`}
+                                onPointerDown={(e) => {
+                                    e.stopPropagation();
+                                    const isLiked = post.likes?.some(id => String(id) === String(user?._id));
+                                    playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
+                                    onLike(post._id);
+                                    if (navigator.vibrate) navigator.vibrate(20);
+                                }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600 hover:text-red-400 active:scale-95'}`}
                             >
                                 <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
@@ -1496,8 +1506,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* DISLIKE */}
                             <button
-                                onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-600 hover:text-[var(--gold-primary)]'}`}
+                                onPointerDown={(e) => {
+                                    e.stopPropagation();
+                                    const isDisliked = post.dislikes?.some(id => String(id) === String(user?._id));
+                                    playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
+                                    onDislike(post._id);
+                                    if (navigator.vibrate) navigator.vibrate(20);
+                                }}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600 hover:text-[var(--gold-primary)] active:scale-95'}`}
                             >
                                 <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
@@ -4303,6 +4319,7 @@ const App = () => {
             const reposts = Array.isArray(p.reposts) ? [...p.reposts] : [];
             const hasReposted = reposts.some(id => String(id) === userId);
             const newReposts = hasReposted ? reposts.filter(id => String(id) !== userId) : [...reposts, userId];
+            playSound(hasReposted ? 'cyber_unlike' : 'cyber_repost');
             return { ...p, reposts: newReposts };
         };
 
@@ -4349,6 +4366,7 @@ const App = () => {
             const dislikes = Array.isArray(p.dislikes) ? p.dislikes.filter(id => String(id) !== String(userId)) : [];
             const hasLiked = likes.some(id => String(id) === String(userId));
             const newLikes = hasLiked ? likes.filter(id => String(id) !== String(userId)) : [...likes, userId];
+            playSound(hasLiked ? 'cyber_unlike' : 'cyber_like');
             return { ...p, likes: newLikes, dislikes };
         };
         setPosts(prev => prev.map(updateFn));
@@ -4403,6 +4421,7 @@ const App = () => {
             const likes = Array.isArray(p.likes) ? p.likes.filter(id => String(id) !== String(userId)) : [];
             const hasDisliked = dislikes.some(id => String(id) === String(userId));
             const newDislikes = hasDisliked ? dislikes.filter(id => String(id) !== String(userId)) : [...dislikes, userId];
+            playSound(hasDisliked ? 'cyber_unlike' : 'cyber_like');
             return { ...p, likes, dislikes: newDislikes };
         };
         setPosts(prev => prev.map(updateFn));
