@@ -164,6 +164,11 @@ const isUserOnline = (u, currentUser) => {
     } catch (e) { return false; }
 };
 
+const getLocaleForLang = (lang) => {
+    const map = { 'el': 'el-GR', 'cy': 'el-CY', 'de': 'de-DE', 'ru': 'ru-RU', 'es': 'es-ES', 'tr': 'tr-TR', 'fr': 'fr-FR' };
+    return map[lang] || 'en-US';
+};
+
 const formatDate = (dateString, t, lang) => {
     if (!dateString) return '';
     try {
@@ -188,7 +193,7 @@ const formatDate = (dateString, t, lang) => {
             return `${diffInDays} ${t('UNIT_D')}`;
         }
 
-        const locale = (lang === 'el') ? 'el-GR' : (lang === 'de') ? 'de-DE' : 'en-US';
+        const locale = getLocaleForLang(lang);
         return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
     } catch (e) { return ''; }
 };
@@ -4083,7 +4088,7 @@ const App = () => {
     const groupedPosts = React.useMemo(() => {
         const groups = {};
         const lang = user?.settings?.language || 'en';
-        const locale = lang === 'el' ? 'el-GR' : lang === 'de' ? 'de-DE' : 'en-US';
+        const locale = getLocaleForLang(lang);
         filteredPosts.forEach(p => {
             const date = new Date(p.createdAt);
             const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
