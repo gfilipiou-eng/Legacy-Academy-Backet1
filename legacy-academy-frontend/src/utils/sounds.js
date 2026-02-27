@@ -44,19 +44,32 @@ if (typeof window !== 'undefined') {
     document.head.appendChild(style);
 }
 
-// Shared AudioContext to avoid overhead and limit issues
 let audioCtx = null;
 
 const getCtx = () => {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    // Mobile/Modern browsers require resume() on user gesture
     if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
+        audioCtx.resume(); // Browsers require this to resolve but doing it sync triggers it
     }
     return audioCtx;
 };
+
+// Global audio unlocker: wakes up audioCtx automatically on first touch/click
+if (typeof window !== 'undefined') {
+    const unlockAudio = () => {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    };
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio, { passive: true });
+    window.addEventListener('touchstart', unlockAudio, { passive: true });
+}
 
 export const playSound = (type) => {
     if (typeof window === 'undefined' || !window.SOUND_ENABLED) return;

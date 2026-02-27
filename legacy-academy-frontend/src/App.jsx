@@ -2371,7 +2371,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, allUsers, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, t }) => {
     if (!isOpen) return null;
 
     const handleLink = (tab) => {
@@ -2400,7 +2400,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
                         onClick={() => { onViewProfile(user); onClose(); }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-[52px] h-[52px] rounded-full overflow-hidden border border-white/10">
+                            <div className="w-[52px] h-[52px] rounded-full overflow-hidden border border-white/10 shrink-0">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col min-w-0">
@@ -2414,12 +2414,16 @@ const NavigationDrawer = ({ isOpen, onClose, user, onNavigate, onViewProfile, on
 
                         <div className="flex items-center gap-3 text-[15px]">
                             <div className="flex items-center gap-1">
-                                <span className="font-bold text-white tabular-nums">{user?.followers?.length || 0}</span>
+                                <span className="font-bold text-white tabular-nums">
+                                    {(user?.followers || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
+                                </span>
                                 <span className="text-gray-400">{t('FOLLOWERS').toLowerCase()}</span>
                             </div>
                             <span className="text-gray-700">·</span>
                             <div className="flex items-center gap-1">
-                                <span className="font-bold text-white tabular-nums">{user?.following?.length || 0}</span>
+                                <span className="font-bold text-white tabular-nums">
+                                    {(user?.following || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
+                                </span>
                                 <span className="text-gray-400">{t('FOLLOWING').toLowerCase()}</span>
                             </div>
                         </div>
@@ -2926,7 +2930,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {displayUser?.followers?.length || 0}
+                                            {(displayUser?.followers || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
                                     </div>
@@ -2936,7 +2940,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {displayUser?.following?.length || 0}
+                                            {(displayUser?.following || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
@@ -4775,7 +4779,13 @@ const App = () => {
         }
     };
 
-    const viewProfile = (u) => { setProfileUser(u); setIsProfileOpen(true); playSound('cyber_nav'); };
+    const viewProfile = (u) => {
+        const targetId = u?._id || u;
+        const fullUser = users.find(x => String(x._id) === String(targetId)) || u;
+        setProfileUser(fullUser);
+        setIsProfileOpen(true);
+        playSound('cyber_nav');
+    };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
         if (user?.settings?.language) {
@@ -5228,6 +5238,7 @@ const App = () => {
                         isOpen={isDrawerOpen}
                         onClose={() => setIsDrawerOpen(false)}
                         user={user}
+                        allUsers={users}
                         onNavigate={(tab) => {
                             if (tab === 'chat') {
                                 setTimeout(() => setIsChatOpen(true), 150);
