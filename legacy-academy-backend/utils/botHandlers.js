@@ -94,16 +94,18 @@ export const handleBotMention = async (message, io) => {
 
         // HYBRID / DNA LOGIC
         // 1. Math / "Organic Calculator"
-        const mathMatch = rawText.match(/[\d\w\s]*?([\d\.]+[\s]*[\+\-\*\/][\s]*[\d\.]+[\s]*[\+\-\*\/\d\.\s]*)=?/);
-        if (mathMatch && mathMatch[1]) {
+        const mathMatch = rawText.match(/^[\d\s\(\)\.\+\-\*\/]+$/);
+        if (mathMatch) {
             try {
                 // Ensure safe evaulation of simple math
-                const cleanMath = mathMatch[1].replace(/[^-()\d/*+.]/g, '');
-                if (cleanMath.length > 2) {
+                const cleanMath = rawText.replace(/[^-()\d/*+.]/g, '');
+                if (cleanMath.length > 2 && /[\d]/.test(cleanMath)) {
                     const result = Number(new Function('return (' + cleanMath + ')')());
-                    responseText = lang === 'el'
-                        ? `ΤΟ ΝΕΥΡΙΚΟ ΜΟΥ ΣΥΣΤΗΜΑ ΥΠΟΛΟΓΙΣΕ ΤΟ ΑΠΟΤΕΛΕΣΜΑ: ${result}. ΤΑ ΜΑΘΗΜΑΤΙΚΑ ΕΙΝΑΙ Η ΓΛΩΣΣΑ ΤΗΣ ΦΥΣΗΣ.`
-                        : `MY NEURAL SYSTEM CALCULATED THE RESULT: ${result}. MATHEMATICS IS THE LANGUAGE OF NATURE.`;
+                    if (!isNaN(result)) {
+                        responseText = lang === 'el'
+                            ? `ΤΟ ΝΕΥΡΙΚΟ ΜΟΥ ΣΥΣΤΗΜΑ ΥΠΟΛΟΓΙΣΕ ΤΟ ΑΠΟΤΕΛΕΣΜΑ: ${result}. ΤΑ ΜΑΘΗΜΑΤΙΚΑ ΕΙΝΑΙ Η ΓΛΩΣΣΑ ΤΗΣ ΦΥΣΗΣ.`
+                            : `MY NEURAL SYSTEM CALCULATED THE RESULT: ${result}. MATHEMATICS IS THE LANGUAGE OF NATURE.`;
+                    }
                 }
             } catch (e) { }
         }
@@ -153,7 +155,7 @@ export const handleBotMention = async (message, io) => {
                 }
             }, 3000);
         }
-        else if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια")) {
+        else if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια") || text.includes("geia") || text.includes("καλημερα") || text.includes("καλησπερα")) {
             responseText = BOT_RESPONSES[lang].greeting[Math.floor(Math.random() * BOT_RESPONSES[lang].greeting.length)];
         } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
             responseText = BOT_RESPONSES[lang].security[Math.floor(Math.random() * BOT_RESPONSES[lang].security.length)];
