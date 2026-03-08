@@ -205,17 +205,19 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             await targetUser.updateOne({ $pull: { followers: currentId } });
             await currentUser.updateOne({ $pull: { following: targetId } });
 
+            const updatedTarget = await User.findById(targetId).select('-password');
+            const updatedCurrent = await User.findById(currentId).select('-password');
+
             // 🔥 REAL-TIME SYNC: Emit updates for both users
             if (io) {
-                const updatedTarget = await User.findById(targetId).select('-password');
-                const updatedCurrent = await User.findById(currentId).select('-password');
                 io.emit('user.updated', updatedTarget);
                 io.emit('user.updated', updatedCurrent);
             }
 
             return res.status(200).json({
                 message: "Unfollowed",
-                followers: targetUser.followers.filter(id => id.toString() !== currentId)
+                followers: updatedTarget.followers,
+                following: updatedCurrent.following
             });
         }
 
@@ -225,12 +227,12 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             const alreadyRequested = targetUser.followRequests?.some(id => String(id) === String(currentId));
             if (!alreadyRequested) {
                 await targetUser.updateOne({
-                    $addToSet: { followRequests: currentId },
+                    $addToSet: { followRequests: String(currentId) },
                     $push: {
                         notifications: {
                             $each: [{
                                 type: 'follow_request',
-                                from: currentId,
+                                from: String(currentId),
                                 fromUsername: currentUser.username,
                                 fromProfilePic: currentUser.profilePic,
                                 read: false,
@@ -255,12 +257,12 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
 
         // 3. PUBLIC FOLLOW (INSTANT)
         await targetUser.updateOne({
-            $addToSet: { followers: currentId },
+            $addToSet: { followers: String(currentId) },
             $push: {
                 notifications: {
                     $each: [{
                         type: 'follow',
-                        from: currentId,
+                        from: String(currentId),
                         fromUsername: currentUser.username,
                         fromProfilePic: currentUser.profilePic,
                         read: false,
@@ -279,17 +281,22 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                 fromProfilePic: currentUser.profilePic
             });
         }
-        await currentUser.updateOne({ $addToSet: { following: targetId } });
+        await currentUser.updateOne({ $addToSet: { following: String(targetId) } });
+
+        const updatedTarget = await User.findById(targetId).select('-password');
+        const updatedCurrent = await User.findById(currentId).select('-password');
 
         // 🔥 REAL-TIME SYNC: Emit updates for both users
         if (io) {
-            const updatedTarget = await User.findById(targetId).select('-password');
-            const updatedCurrent = await User.findById(currentId).select('-password');
             io.emit('user.updated', updatedTarget);
             io.emit('user.updated', updatedCurrent);
         }
 
-        return res.status(200).json({ message: "Followed", following: [...currentUser.following, targetId] });
+        return res.status(200).json({
+            message: "Followed",
+            following: updatedCurrent.following,
+            followers: updatedTarget.followers
+        });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -301,6 +308,7 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId;
         const { notificationId } = req.body || {};
+        const io = req.app.get('io');
 
         console.log(`[ACCEPT REQ] [LEGACY] User ${userId} processing acceptance of ${requesterId}`);
 
@@ -327,16 +335,16 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
 
         // Add follower if not already following
         if (!user.followers?.some(id => String(id) === String(requesterId))) {
-            await User.findByIdAndUpdate(userId, { $addToSet: { followers: requesterId } });
+            await User.findByIdAndUpdate(userId, { $addToSet: { followers: String(requesterId) } });
         }
 
         // Update requester
         await User.findByIdAndUpdate(requesterId, {
-            $addToSet: { following: userId },
+            $addToSet: { following: String(userId) },
             $push: {
                 notifications: {
                     type: 'follow_accepted',
-                    from: userId,
+                    from: String(userId),
                     fromUsername: user.username,
                     fromProfilePic: user.profilePic || '',
                     text: `Accepted your follow request.`,
@@ -359,7 +367,14 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
             io.emit('user.updated', updatedMe);
         }
 
-        res.status(200).json("Request Accepted");
+        const finalMe = await User.findById(userId).select('-password');
+        res.status(200).json({
+            message: "Request Accepted",
+            notifications: finalMe.notifications,
+            followers: finalMe.followers,
+            following: finalMe.following,
+            followRequests: finalMe.followRequests
+        });
     } catch (err) {
         console.error("Accept Error", err);
         // IDEMPOTENCY: If it fails, return 200 anyway to allow UI to update (assuming it was already done)
@@ -372,15 +387,23 @@ router.post("/requests/:requesterId/decline", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId;
+        const io = req.app.get('io');
 
         // Always try to cleanup, even if request missing
-        await User.findByIdAndUpdate(userId, {
+        const updatedMe = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
                 notifications: { from: requesterId, type: 'follow_request' }
             }
+        }, { new: true }).select('-password');
+
+        if (io) io.emit('user.updated', updatedMe);
+
+        res.status(200).json({
+            message: "Request Declined",
+            notifications: updatedMe.notifications,
+            followRequests: updatedMe.followRequests
         });
-        res.status(200).json("Request Declined");
     } catch (err) { res.status(500).json(err); }
 });
 
@@ -389,15 +412,23 @@ router.post("/requests/:requesterId/reject", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const requesterId = req.params.requesterId ? String(req.params.requesterId).trim() : null;
+        const io = req.app.get('io');
 
         // Always try to cleanup
-        await User.findByIdAndUpdate(userId, {
+        const updatedMe = await User.findByIdAndUpdate(userId, {
             $pull: {
                 followRequests: requesterId,
                 notifications: { from: requesterId, type: 'follow_request' }
             }
+        }, { new: true }).select('-password');
+
+        if (io) io.emit('user.updated', updatedMe);
+
+        res.status(200).json({
+            message: "Request Rejected",
+            notifications: updatedMe.notifications,
+            followRequests: updatedMe.followRequests
         });
-        res.status(200).json("Request Rejected");
     } catch (err) {
         res.status(200).json({ status: "ignored_error" });
     }

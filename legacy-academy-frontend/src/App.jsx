@@ -2452,16 +2452,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         </div>
 
                         <div className="flex items-center gap-4 px-1 mt-1">
-                            <div className="flex items-baseline gap-1.5">
+                            <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
                                 <span className="font-black text-white text-base tabular-nums">
-                                    {user?.followers?.length || 0}
+                                    {[...new Set(user?.followers || [])].length}
                                 </span>
-                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWERS')}</span>
+                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">
+                                    {[...new Set(user?.followers || [])].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                </span>
                             </div>
                             <div className="w-[3px] h-[3px] rounded-full bg-white/20" />
-                            <div className="flex items-baseline gap-1.5">
+                            <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
                                 <span className="font-black text-white text-base tabular-nums">
-                                    {user?.following?.length || 0}
+                                    {[...new Set(user?.following || [])].length}
                                 </span>
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWING')}</span>
                             </div>
