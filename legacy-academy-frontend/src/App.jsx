@@ -162,6 +162,10 @@ const getYouTubeEmbedUrl = (url) => {
 
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
+    // Rule: Bots are always online
+    const userObj = typeof u === 'object' ? u : {};
+    if (userObj.isBot || userObj.username?.includes('NOVA') || userObj.role?.includes('Guard')) return true;
+
     // Rule: You are always online to yourself (instant feedback)
     if (currentUser && (u._id === currentUser._id || u === currentUser._id || String(u._id) === String(currentUser._id))) return true;
 
@@ -5131,7 +5135,7 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
-                                        onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
+                                        onClick={() => { setIsDrawerOpen(true); playSound('soft_tap'); }}
                                         className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
                                         aria-label="Open menu"
                                     >
