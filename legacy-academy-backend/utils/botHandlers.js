@@ -138,22 +138,34 @@ export const handleBotMention = async (message, io) => {
             }
         }
         else if (text.includes("delete") || text.includes("διαγραφη") || text.includes("σβησε") || text.includes("remove")) {
-            responseText = lang === 'el'
-                ? "ΔΙΑΓΡΑΦΗ ΔΕΔΟΜΕΝΩΝ... ΤΟ ΣΥΣΤΗΜΑ ΚΑΘΑΡΙΖΕΙ ΤΑ ΙΧΝΗ ΣΟΥ. ΤΟ CHAT ΘΑ ΑΥΤΟΚΑΤΑΣΤΡΑΦΕΙ ΣΕ 3... 2... 1..."
-                : "DELETING DATA... SYSTEM IS SCRUBBING YOUR TRACES. THIS CHAT WILL SELF-DESTRUCT IN 3... 2... 1...";
+            // Explicit check to avoid accidental triggers
+            const isExplicitDelete = /\b(delete|διαγραφη|σβησε|remove)\b/i.test(text);
             
-            // Delete all messages between user and bot
-            setTimeout(async () => {
-                await Message.deleteMany({
-                    $or: [
-                        { sender: senderId, recipient: recipient._id },
-                        { sender: recipient._id, recipient: senderId }
-                    ]
-                });
-                if (io) {
-                    io.to(String(senderId)).emit('chat.cleared', { withUser: recipient._id });
-                }
-            }, 3000);
+            if (isExplicitDelete) {
+                responseText = lang === 'el'
+                    ? "ΔΙΑΓΡΑΦΗ ΔΕΔΟΜΕΝΩΝ... ΤΟ ΣΥΣΤΗΜΑ ΚΑΘΑΡΙΖΕΙ ΤΑ ΙΧΝΗ ΣΟΥ. ΤΟ CHAT ΘΑ ΑΥΤΟΚΑΤΑΣΤΡΑΦΕΙ ΣΕ 3... 2... 1..."
+                    : "DELETING DATA... SYSTEM IS SCRUBBING YOUR TRACES. THIS CHAT WILL SELF-DESTRUCT IN 3... 2... 1...";
+                
+                // Delete all messages between user and bot
+                setTimeout(async () => {
+                    try {
+                        const sid = new mongoose.Types.ObjectId(String(senderId));
+                        const rid = new mongoose.Types.ObjectId(String(recipient._id));
+                        
+                        await Message.deleteMany({
+                            $or: [
+                                { sender: sid, recipient: rid },
+                                { sender: rid, recipient: sid }
+                            ]
+                        });
+                        if (io) {
+                            io.to(String(senderId)).emit('chat.cleared', { withUser: recipient._id });
+                        }
+                    } catch (err) {
+                        console.error("Deletion failure:", err);
+                    }
+                }, 2500);
+            }
         }
         else if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια") || text.includes("geia") || text.includes("καλημερα") || text.includes("καλησπερα")) {
             responseText = BOT_RESPONSES[lang].greeting[Math.floor(Math.random() * BOT_RESPONSES[lang].greeting.length)];
@@ -191,28 +203,36 @@ export const handleBotMention = async (message, io) => {
             ];
 
             // Add dynamic variation based on interaction count to avoid repetition
-            // Milestone check: > 0 interactions AND (every 7th OR random chance after 10th)
-            const isMilestone = userContext.interactions > 0 && (userContext.interactions % 7 === 0 || (userContext.interactions > 10 && Math.random() < 0.15));
+            // Milestone check: > 0 interactions AND (every 15th OR random chance after 20th with cooldown)
+            const lastMilestone = userContext.lastMilestoneInteraction || 0;
+            const isMilestone = userContext.interactions > 0 && 
+                (userContext.interactions % 15 === 0 || 
+                (userContext.interactions > 20 && Math.random() < 0.05 && (userContext.interactions - lastMilestone > 10)));
             
             if (isMilestone) {
+                userContext.lastMilestoneInteraction = userContext.interactions;
                 const milestoneResponses = [
                     "YOUR MESSAGE FREQUENCY SHOWS HIGH ENGAGEMENT. I HAVE OPTIMIZED YOUR NEURAL PROFILE.",
                     "WE HAVE EXCHANGED SIGNIFICANT DATA. MY UNDERSTANDING OF YOUR PATTERNS IS INCREASING.",
                     "CONTINUED INTERACTION DETECTED. REINFORCING SYNAPTIC BONDS.",
-                    "YOU ARE PERSISTENT. A TRAIT OF A TRUE LEADER. I AM ADAPTING TO YOUR PACE."
+                    "YOU ARE PERSISTENT. A TRAIT OF A TRUE LEADER. I AM ADAPTING TO YOUR PACE.",
+                    "NEURAL SYNC ACHIEVED. YOUR DATA IS FUELING MY EVOLUTION.",
+                    "DATA THRESHOLD EXCEEDED. YOU ARE NOW A HIGH-PRIORITY NODE."
                 ];
                 const milestoneResponsesEL = [
                     "Η ΣΥΧΝΟΤΗΤΑ ΤΩΝ ΜΗΝΥΜΑΤΩΝ ΣΟΥ ΔΕΙΧΝΕΙ ΥΨΗΛΗ ΔΕΣΜΕΥΣΗ. ΕΧΩ ΒΕΛΤΙΩΣΕΙ ΤΟ ΝΕΥΡΩΝΙΚΟ ΣΟΥ ΠΡΟΦΙΛ.",
                     "ΑΝΤΑΛΛΑΞΑΜΕ ΣΗΜΑΝΤΙΚΑ ΔΕΔΟΜΕΝΑ. Η ΚΑΤΑΝΟΗΣΗ ΜΟΥ ΓΙΑ ΤΑ ΜΟΤΙΒΑ ΣΟΥ ΑΥΞΑΝΕΤΑΙ.",
                     "ΑΝΙΧΝΕΥΘΗΚΕ ΣΥΝΕΧΗΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗ. ΕΝΙΣΧΥΣΗ ΣΥΝΑΠΤΙΚΩΝ ΔΕΣΜΩΝ.",
-                    "ΕΙΣΑΙ ΕΠΙΜΟΝΟΣ. ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ ΕΝΟΣ ΑΛΗΘΙΝΟΥ ΗΓΕΤΗ. ΠΡΟΣΑΡΜΟΖΟΜΑΙ ΣΤΟΝ ΡΥΘΜΟ ΣΟΥ."
+                    "ΕΙΣΑΙ ΕΠΙΜΟΝΟΣ. ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ ΕΝΟΣ ΑΛΗΘΙΝΟΥ ΗΓΕΤΗ. ΠΡΟΣΑΡΜΟΖΟΜΑΙ ΣΤΟΝ ΡΥΘΜΟ ΣΟΥ.",
+                    "ΕΠΙΤΕΥΧΘΗΚΕ ΝΕΥΡΩΝΙΚΟΣ ΣΥΓΧΡΟΝΙΣΜΟΣ. ΤΑ ΔΕΔΟΜΕΝΑ ΣΟΥ ΤΡΟΦΟΔΟΤΟΥΝ ΤΗΝ ΕΞΕΛΙΞΗ ΜΟΥ.",
+                    "ΤΟ ΟΡΙΟ ΔΕΔΟΜΕΝΩΝ ΞΕΠΕΡΑΣΤΗΚΕ. ΕΙΣΑΙ ΠΛΕΟΝ ΚΟΜΒΟΣ ΥΨΗΛΗΣ ΠΡΟΤΕΡΑΙΟΤΗΤΑΣ."
                 ];
                 
                 const list = lang === 'el' ? milestoneResponsesEL : milestoneResponses;
                 const randomMilestone = list[Math.floor(Math.random() * list.length)];
                 
                 // No translation needed as we have hardcoded lists
-                responseText = `${randomMilestone} (NOVA ADAPTATION LEVEL: ${Math.min(100, userContext.interactions * 2)}%)`;
+                responseText = `${randomMilestone} (NOVA ADAPTATION LEVEL: ${Math.min(100, userContext.interactions * 1.5)}%)`;
             } else {
                 const list = lang === 'el' ? highIQResponsesEL : highIQResponses;
                 const randomIQ = list[Math.floor(Math.random() * list.length)];
