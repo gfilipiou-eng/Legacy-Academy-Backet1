@@ -3117,8 +3117,8 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('premium_tap'); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group touch-manipulation select-none">
-                                        <span className="font-black text-white text-base leading-none tabular-nums">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all active:scale-95 group touch-manipulation select-none">
+                                        <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
@@ -3129,8 +3129,8 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('premium_tap'); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group touch-manipulation select-none">
-                                        <span className="font-black text-white text-base leading-none tabular-nums">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all active:scale-95 group touch-manipulation select-none">
+                                        <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
@@ -5223,11 +5223,11 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
-                                        className="relative w-12 h-12 flex items-center justify-center rounded-2xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation"
+                                        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation"
                                         aria-label="Open menu"
                                     >
                                         <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-gray-400 pointer-events-none">
-                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z" />
+                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
                                         </svg>
 
                                         {/* 🔥 NOTIFICATION BADGE (UNREAD COUNT) */}
