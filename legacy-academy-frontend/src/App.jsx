@@ -372,7 +372,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     return mediaUrl ? (
         <img
             src={mediaUrl}
-            className={`w-full h-full object-cover ${className || ''}`}
+            className={`w-full h-full object-cover rounded-full ${className || ''}`}
             onClick={onClick}
             loading="lazy"
             decoding="async"
@@ -2428,7 +2428,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
             {/* DRAWER CONTAINER - PREMIUM LIQUID GLASS */}
             <div className={`
-                fixed top-0 left-0 bottom-0 w-[280px]
+                fixed top-0 left-0 bottom-0 w-[min(280px,85%)] sm:w-[280px]
                 liquid-glass-nav backdrop-blur-[25px] border-r border-white/10 flex flex-col pointer-events-auto
                 animate-slide-right shadow-[15px_0_60px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
             `}>
@@ -2547,10 +2547,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                     <button
                         onClick={() => { onLogout(); onClose(); }}
-                        className="w-full py-4.5 bg-white/[0.03] hover:bg-red-500/20 active:bg-red-500/30 border border-white/10 hover:border-red-500/40 text-gray-400 hover:text-red-500 font-black text-[11px] uppercase tracking-[0.3em] rounded-2xl transition-all duration-500 flex items-center justify-center gap-3 group shadow-2xl backdrop-blur-md relative overflow-hidden"
+                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20 active:scale-95 relative overflow-hidden"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                        <Icons.Logout className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                        <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                         {t('LOGOUT')}
                     </button>
 
