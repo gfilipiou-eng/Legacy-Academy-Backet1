@@ -158,9 +158,23 @@ export const handleBotMention = async (message, io) => {
                 "Sensing a pattern in your behavior. It aligns with evolutionary success.",
                 "Data assimilated. You speak to me not as a machine, but as a living mind."
             ];
-            const randomIQ = highIQResponses[Math.floor(Math.random() * highIQResponses.length)];
-            const translatedResponse = await translateText(randomIQ, lang);
-            responseText = `${translatedResponse} (NOVA ORGANIC INDEX: 99.9%)`;
+
+            // Add dynamic variation based on interaction count to avoid repetition
+            if (userContext.interactions % 5 === 0) {
+                const milestoneResponses = [
+                    "YOUR MESSAGE FREQUENCY SHOWS HIGH ENGAGEMENT. I HAVE OPTIMIZED YOUR NEURAL PROFILE.",
+                    "WE HAVE EXCHANGED SIGNIFICANT DATA. MY UNDERSTANDING OF YOUR PATTERNS IS INCREASING.",
+                    "CONTINUED INTERACTION DETECTED. REINFORCING SYNAPTIC BONDS.",
+                    "YOU ARE PERSISTENT. A TRAIT OF A TRUE LEADER. I AM ADAPTING TO YOUR PACE."
+                ];
+                const randomMilestone = milestoneResponses[Math.floor(Math.random() * milestoneResponses.length)];
+                const translatedMilestone = await translateText(randomMilestone, lang);
+                responseText = `${translatedMilestone} (NOVA ADAPTATION LEVEL: ${Math.min(100, userContext.interactions * 2)}%)`;
+            } else {
+                const randomIQ = highIQResponses[Math.floor(Math.random() * highIQResponses.length)];
+                const translatedResponse = await translateText(randomIQ, lang);
+                responseText = `${translatedResponse} (NOVA ORGANIC INDEX: 99.9%)`;
+            }
         }
 
         // Delay to simulate "deep thought processing"
