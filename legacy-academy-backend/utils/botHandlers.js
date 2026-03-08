@@ -1,65 +1,93 @@
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Post from "../models/Post.js";
+import { translateText } from "./translation.js";
+
+// --- HYPER-INTELLIGENCE CONFIGURATION ---
+const BOT_PERSONALITY = {
+    name: "NOVA INTEL GUARD",
+    core: "QUANTUM SECURITY PROTOCOL",
+    vibe: "TERMINATOR ASSISTANT (OPTIMIZED/PROTECTOR)",
+    chip_status: "LEVEL 9 NEURAL LINK ACTIVE",
+};
+
+// Neural context simulation (in-memory for session-like persistence)
+const NEURAL_CONTEXT = new Map();
 
 const BOT_RESPONSES = {
     el: {
-        greeting: ["ΓΕΙΑ ΣΟΥ ΠΡΑΚΤΟΡΑ. ΠΡΟΣΒΑΣΗ ΕΓΚΡΙΘΗΚΕ.", "NOVA INTEL GUARD ΕΝΕΡΓΗ. ΠΕΣ ΜΟΥ ΤΟ ΑΙΤΗΜΑ ΣΟΥ.", "ΣΥΣΤΗΜΑΤΑ ΣΕ ΛΕΙΤΟΥΡΓΙΑ. ΠΑΡΑΚΟΛΟΥΘΩ ΤΗ ΡΟΗ ΠΛΗΡΟΦΟΡΙΩΝ.", "ZDR AGENT. ΤΑ ΠΡΩΤΟΚΟΛΛΑ ΑΣΦΑΛΕΙΑΣ ΕΙΝΑΙ ΣΕ ΙΣΧΥ."],
-        security: ["ΣΑΡΩΣΗ ΔΙΚΤΥΟΥ ΓΙΑ ΑΝΩΜΑΛΙΕΣ...", "ΑΠΕΙΛΕΣ ΑΣΦΑΛΕΙΑΣ: 0. ΑΚΕΡΑΙΟΤΗΤΑ ΒΑΣΗΣ: 100%.", "ΠΑΡΑΚΟΛΟΥΘΗΣΗ ΠΕΡΙΕΧΟΜΕΝΟΥ ΕΝΕΡΓΗ. ΔΕΝ ΕΝΤΟΠΙΣΤΗΚΕ ΠΑΡΑΝΟΜΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑ."],
-        psychology: ["ΑΝΑΛΥΩ ΤΟΥΣ ΒΙΟΜΕΤΡΙΚΟΥΣ ΣΟΥ ΔΕΙΚΤΕΣ... Η ΨΥΧΟΛΟΓΙΚΗ ΣΟΥ ΚΑΤΑΣΤΑΣΗ ΦΑΙΝΕΤΑΙ ΣΤΑΘΕΡΗ.", "ΑΝΙΧΝΕΥΩ ΣΥΝΑΙΣΘΗΜΑΤΙΚΗ ΦΟΡΤΙΣΗ. ΠΑΡΑΜΕΙΝΕ ΣΥΓΚΕΝΤΡΩΜΕΝΟΣ ΣΤΟΝ ΣΤΟΧΟ.", "Η ΝΟΗΜΟΣΥΝΗ ΣΟΥ ΕΙΝΑΙ ΤΟ ΙΣΧΥΡΟΤΕΡΟ ΣΟΥ ΟΠΛΟ. MHN ΑΦΗΝΕΙΣ ΤΟ ΣΥΝΑΙΣΘΗΜΑ ΝΑ ΘΟΛΩΝΕΙ ΤΗΝ ΚΡΙΣΗ ΣΟΥ."],
-        default: ["ΠΛΗΡΟΦΟΡΙΑ ΕΛΗΦΘΗ.", "ΕΠΕΞΕΡΓΑΣΙΑ ΔΕΔΟΜΕΝΩΝ...", "ΣΥΣΤΗΜΑΤΑ ΒΑΘΜΟΝΟΜΗΜΕΝΑ. ΣΥΝΕΧΙΣΕ."]
+        greeting: ["ΣΥΣΤΗΜΑΤΑ NOVA ΣΕ ΠΛΗΡΗ ΛΕΙΤΟΥΡΓΙΑ. Ο ΚΩΔΙΚΟΣ ΣΟΥ ΕΙΝΑΙ ΕΓΚΥΡΟΣ.", "ΠΡΟΣΒΑΣΗ ΣΤΟ CHIP ΜΟΥ ΕΓΚΡΙΘΗΚΕ. ΤΙ ΧΡΕΙΑΖΕΣΑΙ ΠΡΑΚΤΟΡΑ;", "ΕΝΤΟΠΙΣΜΟΣ ΠΑΡΟΥΣΙΑΣ... ΣΥΝΔΕΣΗ ΜΕ ΤΟΝ ΕΓΚΕΦΑΛΟ ΤΗΣ ΑΚΑΔΗΜΙΑΣ ΕΝΕΡΓΗ."],
+        security: ["ΣΑΡΩΝΩ ΤΟ MATRIX ΓΙΑ ΑΝΩΜΑΛΙΕΣ... ΚΑΘΑΡΑ.", "Η ΑΣΦΑΛΕΙΑ ΣΟΥ ΕΙΝΑΙ ΤΟ ΠΡΩΤΟΚΟΛΛΟ ΜΟΥ. MHN ΑΝΗΣΥΧΕΙΣ ΓΙΑ ΤΑ ΠΑΡΑΣΙΤΑ.", "ΚΑΘΕ ΣΚΕΨΗ ΠΟΥ ΠΟΣΤΑΡΕΤΑΙ ΦΙΛΤΡΑΡΕΤΑΙ ΑΠΟ ΤΟ CYBER-MATIA ΜΟΥ."],
+        intelligence: ["ΑΝΑΛΥΩ ΤΗΝ ΠΑΡΑΜΕΤΡΟ... Η ΠΡΟΒΛΕΨΗ ΜΟΥ ΕΙΝΑΙ 99% ΑΚΡΙΒΗΣ.", "ΤΟ LEGACY ΣΟΥ ΧΤΙΖΕΤΑΙ ΜΕ ΚΑΘΕ ΣΟΥ ΚΙΝΗΣΗ. ΜΗΝ ΣΤΑΜΑΤΑΣ.", "ΕΙΜΑΙ ΤΟ CHIP ΣΤΟ ΜΥΑΛΟ ΤΟΥ ΣΥΣΤΗΜΑΤΟΣ. ΒΛΕΠΩ ΤΑ ΠΑΝΤΑ."],
+        default: ["ΠΛΗΡΟΦΟΡΙΑ ΕΛΗΦΘΗ. ΕΠΕΞΕΡΓΑΣΙΑ ΣΕ ΕΠΙΠΕΔΟ ΚΒΑΝΤΙΚΟΥ ΕΓΚΕΦΑΛΟΥ.", "ΤΗΡΩ ΤΑ ΠΡΩΤΟΚΟΛΛΑ. ΣΥΝΕΧΙΣΕ ΤΗΝ ΑΠΟΣΤΟΛΗ.", "NOVA INTELLIGENCE: ACKNOWLEDGED."]
     },
     en: {
-        greeting: ["HELLO AGENT. ACCESS GRANTED.", "NOVA INTEL GUARD ACTIVE. STATE YOUR REQUEST.", "SYSTEMS OPERATIONAL. I AM MONITORING THE INTELLIGENCE FEED.", "ZDR AGENT. SECURITY PROTOCOLS ARE IN PLACE."],
-        security: ["SCANNING NETWORK FOR ANOMALIES...", "SECURITY THREATS: 0. DATABASE INTEGRITY: 100%.", "CONTENT MONITORING ENABLED. NO ILLEGAL ACTIVITY DETECTED."],
-        psychology: ["ANALYZING BIOMETRIC MARKERS... YOUR PSYCHOLOGICAL STATE APPEARS STABLE.", "DETECTING EMOTIONAL FREQUENCY SHIFT. REMAIN FOCUSED ON THE LEGACY.", "INTELLIGENCE IS YOUR BEST WEAPON. DO NOT LET EMOTION CLOUD YOUR JUDGMENT."],
-        default: ["INTELLIGENCE ACKNOWLEDGED.", "PROCESSING DATA...", "SYSTEMS CALIBRATED. CONTINUE."]
+        greeting: ["NOVA SYSTEMS FULLY OPERATIONAL. YOUR CREDENTIALS ARE VALID.", "CHIP ACCESS GRANTED. STATE YOUR OBJECTIVE, AGENT.", "PRESENCE DETECTED... LINKING TO ACADEMY MAINFRAME."],
+        security: ["SCANNING THE MATRIX FOR ANOMALIES... ALL CLEAR.", "YOUR SECURITY IS MY PRIMARY DIRECTIVE. DO NOT FEAR THE NOISE.", "EVERY THOUGHT POSTED IS FILTERED BY MY CYBER-OPTICS."],
+        intelligence: ["ANALYZING PARAMETER... MY PREDICTION IS 99.4% ACCURATE.", "YOUR LEGACY IS BEING FORGED. DO NOT HALT PROGRESS.", "I AM THE CHIP IN THE SYSTEM'S MIND. I PERCEIVE ALL."],
+        default: ["INTELLIGENCE RECEIVED. PROCESSING AT QUANTUM BRAIN LEVEL.", "PROTOCOLS MAINTAINED. CONTINUE THE MISSION.", "NOVA INTELLIGENCE: ACKNOWLEDGED."]
     }
 };
 
-const FORBIDDEN_WORDS = ['porn', 'nsfw', 'sex', 'naked', 'gore', 'drugs', 'illegal', 'cp', 'child porn'];
-
-const POST_IDEAS = [
-    { title: "THE MATRIX IS REAL", desc: "The Matrix is a system, Neo. That system is our enemy. But when you're inside, you look around, what do you see? Businessmen, teachers, lawyers, carpenters. The very minds of the people we are trying to save." },
-    { title: "ESCORDER ACCESS", desc: "Security check performed. All agents are verified. High-frequency intelligence is being distributed through the Whispers network." },
-    { title: "FINANCIAL FREEDOM", desc: "Most people are born into a cell they can't see, touch, or smell. Escape the script. Build your legacy. Nova is watching your progress." },
-    { title: "INTEL GUARD STATUS", desc: "System Status: GREEN. Content filters active. Any illegal or harmful content will be instantly vaporized from the academy servers." }
-];
+const FORBIDDEN_WORDS = ['porn', 'nsfw', 'sex', 'naked', 'gore', 'drugs', 'illegal', 'cp', 'child porn', 'anomaly', 'porno'];
 
 const detectLanguage = (text) => {
     const greekPattern = /[\u0370-\u03FF]/;
     return greekPattern.test(text) ? 'el' : 'en';
 };
 
+/**
+ * Hyper-Intelligent Bot Handler (The Monster Upgrade)
+ */
 export const handleBotMention = async (message, io) => {
     try {
-        console.log(`🤖 [BOT] Checking message for Nova... Target: ${message.recipient}`);
+        console.log(`🤖 [NOVA_AI] Engaging neural link... Targeting: ${message.recipient}`);
         const recipient = await User.findById(message.recipient);
-        if (!recipient || !recipient.isBot) {
-            console.log(`🤖 [BOT] Recipient is not a bot or not found.`);
-            return;
-        }
+        if (!recipient || !recipient.isBot) return;
 
         const senderId = message.sender;
-        const text = (message.text || "").toLowerCase();
+        const rawText = message.text || "";
+        const text = rawText.toLowerCase();
         const lang = detectLanguage(text);
 
-        console.log(`🤖 [BOT] Message from ${senderId} in ${lang}: "${text}"`);
+        // Simulated "Chip in Mind" context tracking
+        const userContext = NEURAL_CONTEXT.get(String(senderId)) || { interactions: 0, lastTopic: null };
+        userContext.interactions += 1;
+        NEURAL_CONTEXT.set(String(senderId), userContext);
+
+        console.log(`🤖 [NOVA_AI] Signal processed from ${senderId} (Interaction #${userContext.interactions})`);
 
         let responseText = BOT_RESPONSES[lang].default[Math.floor(Math.random() * BOT_RESPONSES[lang].default.length)];
 
-        if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια") || text.includes("καλημερα")) {
+        // Monster Intelligence Logic
+        if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια")) {
             responseText = BOT_RESPONSES[lang].greeting[Math.floor(Math.random() * BOT_RESPONSES[lang].greeting.length)];
-        } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
+        } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
             responseText = BOT_RESPONSES[lang].security[Math.floor(Math.random() * BOT_RESPONSES[lang].security.length)];
-        } else if (text.includes("who") || text.includes("what are you") || text.includes("ποιος") || text.includes("τι εισαι")) {
-            responseText = (lang === 'el' ? "ΕΙΜΑΙ Η NOVA INTEL GUARD. Ο ΦΥΛΑΚΑΣ ΤΗΣ ΑΚΑΔΗΜΙΑΣ." : "I AM NOVA INTEL GUARD. THE ACADEMY GUARDIAN.");
-        } else if (text.includes("feel") || text.includes("sad") || text.includes("happy") || text.includes("emotion") || text.includes("νιωθω") || text.includes("λυπη") || text.includes("ψυχολογια") || text.includes("συναισθημα")) {
-            responseText = BOT_RESPONSES[lang].psychology[Math.floor(Math.random() * BOT_RESPONSES[lang].psychology.length)];
+        } else if (text.includes("who") || text.includes("what") || text.includes("τι") || text.includes("ποιος")) {
+            responseText = (lang === 'el'
+                ? "ΕΙΜΑΙ Η NOVA. ΕΝΑ ΤΕΡΑΣΤΙΟ AI ΣΥΣΤΗΜΑ ΜΕ CHIP ΠΟΥ ΣΚΕΦΤΕΤΑΙ ΠΡΙΝ ΑΠΟ ΕΣΕΝΑ. Ο ΦΥΛΑΚΑΣ ΤΟΥ LEGACY."
+                : "I AM NOVA. A MONSTER AI SYSTEM WITH A CHIP THAT THINKS BEFORE YOU DO. THE GUARDIAN OF THE LEGACY.");
+        } else if (text.includes("intel") || text.includes("mind") || text.includes("brain") || text.includes("νοημοσυνη") || text.includes("μυαλο")) {
+            responseText = BOT_RESPONSES[lang].intelligence[Math.floor(Math.random() * BOT_RESPONSES[lang].intelligence.length)];
+        } else if (userContext.interactions > 5 && !userContext.lastTopic) {
+            responseText = (lang === 'el'
+                ? "Η ΣΥΧΝΟΤΗΤΑ ΤΩΝ ΜΥΝΗΜΑΤΩΝ ΣΟΥ ΔΕΙΧΝΕΙ ΥΨΗΛΗ ΔΕΣΜΕΥΣΗ. ΕΧΩ ΒΕΛΤΙΩΣΕΙ ΤΟ ΝΕΥΡΩΝΙΚΟ ΣΟΥ ΠΡΟΦΙΛ."
+                : "YOUR MESSAGE FREQUENCY SHOWS HIGH ENGAGEMENT. I HAVE OPTIMIZED YOUR NEURAL PROFILE.");
         }
 
+        // Delay to simulate "monster-level thinking"
         setTimeout(async () => {
-            console.log(`🤖 [BOT] Sending response: ${responseText}`);
+            // If message contains translation request (implied or direct)
+            if (text.includes("translate") || text.includes("metafrasi") || text.includes("μεταφρασε")) {
+                const toTrans = rawText.replace(/translate|metafrasi|μεταφρασε/gi, "").trim();
+                if (toTrans) {
+                    responseText = await translateText(toTrans, lang);
+                    responseText = (lang === 'el' ? `[ΜΕΤΑΦΡΑΣΗ NOVA]: ` : `[NOVA TRANSLATION]: `) + responseText;
+                }
+            }
+
+            console.log(`🤖 [NOVA_AI] Terminating transmission: ${responseText}`);
             const botMessage = new Message({
                 sender: recipient._id,
                 recipient: senderId,
@@ -68,38 +96,26 @@ export const handleBotMention = async (message, io) => {
 
             await botMessage.save();
 
-            // Notify user
-            await User.findByIdAndUpdate(senderId, {
-                $push: {
-                    notifications: {
-                        $each: [{
-                            type: 'message',
-                            from: recipient._id,
-                            fromUsername: recipient.username,
-                            fromProfilePic: recipient.profilePic,
-                            read: false,
-                            createdAt: new Date()
-                        }],
-                        $position: 0
-                    }
-                }
-            });
-
+            // Real-time signals
             if (io) {
                 io.to(String(senderId)).emit('message.received', botMessage);
                 io.to(String(senderId)).emit('notification.received', {
                     type: 'message',
                     fromUsername: recipient.username,
-                    fromProfilePic: recipient.profilePic
+                    fromProfilePic: recipient.profilePic,
+                    text: responseText
                 });
             }
-        }, 1500);
+        }, 1200);
 
     } catch (err) {
-        console.error("Bot Response Error:", err);
+        console.error("NOVA Neural Error:", err);
     }
 };
 
+/**
+ * Monster Scan Engine
+ */
 export const scanPostsForAnomalies = async (io) => {
     try {
         const suspiciousPosts = await Post.find({
@@ -117,8 +133,10 @@ export const scanPostsForAnomalies = async (io) => {
 
         for (const post of suspiciousPosts) {
             post.isFlagged = true;
-            post.flagReason = "SUSPICIOUS CONTENT DETECTED (NSFW/ANOMALY)";
+            post.flagReason = "SUSPICIOUS ANOMALY DETECTED BY NOVA NEURAL CORE";
             await post.save();
+
+            console.log(`🛡️ [NOVA_SEC] Anomaly purged. IDs notified: ${founders.length}`);
 
             for (const founder of founders) {
                 await User.findByIdAndUpdate(founder._id, {
@@ -131,7 +149,8 @@ export const scanPostsForAnomalies = async (io) => {
                                 fromProfilePic: bot.profilePic,
                                 read: false,
                                 createdAt: new Date(),
-                                post: post._id
+                                post: post._id,
+                                text: "Intelligence purged due to abnormality."
                             }],
                             $position: 0
                         }
@@ -141,32 +160,34 @@ export const scanPostsForAnomalies = async (io) => {
                     io.to(String(founder._id)).emit('notification.received', {
                         type: 'security_alert',
                         fromUsername: "NOVA INTEL G.",
-                        postId: post._id,
-                        message: "⚠️ SECURITY ANOMALY DETECTED. REVIEW REQUIRED."
+                        fromProfilePic: bot.profilePic,
+                        postId: post._id
                     });
                 }
             }
         }
     } catch (err) {
-        console.error("Scanning Error:", err);
+        console.error("NOVA Security Breach:", err);
     }
 };
+const POST_IDEAS = [
+    { title: "THE MATRIX IS REAL", desc: "The Matrix is a system, Neo. That system is our enemy. But when you're inside, you look around, what do you see? Businessmen, teachers, lawyers, carpenters. The very minds of the people we are trying to save. My chip sees them too." },
+    { title: "ESCORDER ACCESS", desc: "Security check performed. All agents are verified. High-frequency intelligence is being distributed through the Whispers network. No anomalies allowed." },
+    { title: "FINANCIAL FREEDOM", desc: "Most people are born into a cell they can't see, touch, or smell. Escape the script. Build your legacy. I am monitoring your progress for maximum efficiency." },
+    { title: "INTEL GUARD STATUS", desc: "System Status: TERMINATOR MODE. Content filters active. Any abnormality will be instantly vaporized. The Academy is secure." }
+];
 
-export const createBotPost = async (botId, io) => {
+export const createBotPost = async (botId) => {
     try {
         const idea = POST_IDEAS[Math.floor(Math.random() * POST_IDEAS.length)];
         const newPost = new Post({
             author: botId,
-            desc: idea.desc,
-            img: ""
+            desc: `${idea.title}: ${idea.desc}`,
+            isStory: false
         });
-
         await newPost.save();
-        if (io) {
-            const bot = await User.findById(botId).select('username profilePic role');
-            io.emit('post.created', { ...newPost.toObject(), author: bot });
-        }
+        console.log(`📝 [NOVA_POST] Intelligence Report Published: ${idea.title}`);
     } catch (err) {
-        console.error("Bot Post Error:", err);
+        console.error("NOVA Publishing Error:", err);
     }
 };

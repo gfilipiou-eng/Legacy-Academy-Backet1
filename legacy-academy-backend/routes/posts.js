@@ -6,7 +6,26 @@ import upload from "../middleware/upload.js";
 import mongoose from "mongoose";
 import { deleteCloudinaryFile, deleteCloudinaryFiles } from "../utils/cloudinaryCleanup.js";
 
+import { translateText } from "../utils/translation.js";
+
 const router = express.Router();
+
+// TRANSLATE POST CONTENT
+router.get("/:id/translate", verifyToken, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json("Intelligence not found.");
+
+        const targetLang = req.query.lang || 'en';
+        const translatedContent = await translateText(post.desc, targetLang);
+
+        res.status(200).json({ translatedText: translatedContent });
+    } catch (err) {
+        console.error("Neural Translation Route Error:", err);
+        res.status(500).json(err);
+    }
+});
+
 
 // GET ALL POSTS (Feed)
 router.get("/", verifyToken, async (req, res) => {
