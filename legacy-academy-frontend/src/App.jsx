@@ -1805,8 +1805,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
         socket.on('message.received', handleMessageReceived);
 
+        socket.on('chat.cleared', ({ withUser }) => {
+            if (activeChat?._id === withUser) {
+                setMessages(prev => ({ ...prev, [withUser]: [] }));
+                onClose(); // Close the chat window automatically
+                playSound('premium_logout'); // Play a delete sound effect
+            }
+        });
+
         return () => {
             socket.off('message.received', handleMessageReceived);
+            socket.off('chat.cleared');
         };
     }, [isOpen, activeChat?._id]);
 

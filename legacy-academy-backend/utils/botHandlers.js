@@ -135,6 +135,24 @@ export const handleBotMention = async (message, io) => {
                 });
             }
         }
+        else if (text.includes("delete") || text.includes("διαγραφη") || text.includes("σβησε") || text.includes("remove")) {
+            responseText = lang === 'el'
+                ? "ΔΙΑΓΡΑΦΗ ΔΕΔΟΜΕΝΩΝ... ΤΟ ΣΥΣΤΗΜΑ ΚΑΘΑΡΙΖΕΙ ΤΑ ΙΧΝΗ ΣΟΥ. ΤΟ CHAT ΘΑ ΑΥΤΟΚΑΤΑΣΤΡΑΦΕΙ ΣΕ 3... 2... 1..."
+                : "DELETING DATA... SYSTEM IS SCRUBBING YOUR TRACES. THIS CHAT WILL SELF-DESTRUCT IN 3... 2... 1...";
+            
+            // Delete all messages between user and bot
+            setTimeout(async () => {
+                await Message.deleteMany({
+                    $or: [
+                        { sender: senderId, recipient: recipient._id },
+                        { sender: recipient._id, recipient: senderId }
+                    ]
+                });
+                if (io) {
+                    io.to(String(senderId)).emit('chat.cleared', { withUser: recipient._id });
+                }
+            }, 3000);
+        }
         else if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια")) {
             responseText = BOT_RESPONSES[lang].greeting[Math.floor(Math.random() * BOT_RESPONSES[lang].greeting.length)];
         } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
