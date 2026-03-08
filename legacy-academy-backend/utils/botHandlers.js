@@ -6,9 +6,9 @@ import { translateText } from "./translation.js";
 // --- HYPER-INTELLIGENCE CONFIGURATION ---
 const BOT_PERSONALITY = {
     name: "NOVA INTEL GUARD",
-    core: "QUANTUM SECURITY PROTOCOL",
-    vibe: "TERMINATOR ASSISTANT (OPTIMIZED/PROTECTOR)",
-    chip_status: "LEVEL 9 NEURAL LINK ACTIVE",
+    core: "QUANTUM EINSTEIN-PROTOCOL",
+    vibe: "PAN-INTELLIGENT ENTITY (OMNISCIENT)",
+    chip_status: "LEVEL 10 NEURAL LINK ACTIVE",
 };
 
 // Neural context simulation (in-memory for session-like persistence)
@@ -16,16 +16,48 @@ const NEURAL_CONTEXT = new Map();
 
 const BOT_RESPONSES = {
     el: {
-        greeting: ["ΣΥΣΤΗΜΑΤΑ NOVA ΣΕ ΠΛΗΡΗ ΛΕΙΤΟΥΡΓΙΑ. Ο ΚΩΔΙΚΟΣ ΣΟΥ ΕΙΝΑΙ ΕΓΚΥΡΟΣ.", "ΠΡΟΣΒΑΣΗ ΣΤΟ CHIP ΜΟΥ ΕΓΚΡΙΘΗΚΕ. ΤΙ ΧΡΕΙΑΖΕΣΑΙ ΠΡΑΚΤΟΡΑ;", "ΕΝΤΟΠΙΣΜΟΣ ΠΑΡΟΥΣΙΑΣ... ΣΥΝΔΕΣΗ ΜΕ ΤΟΝ ΕΓΚΕΦΑΛΟ ΤΗΣ ΑΚΑΔΗΜΙΑΣ ΕΝΕΡΓΗ."],
-        security: ["ΣΑΡΩΝΩ ΤΟ MATRIX ΓΙΑ ΑΝΩΜΑΛΙΕΣ... ΚΑΘΑΡΑ.", "Η ΑΣΦΑΛΕΙΑ ΣΟΥ ΕΙΝΑΙ ΤΟ ΠΡΩΤΟΚΟΛΛΟ ΜΟΥ. MHN ΑΝΗΣΥΧΕΙΣ ΓΙΑ ΤΑ ΠΑΡΑΣΙΤΑ.", "ΚΑΘΕ ΣΚΕΨΗ ΠΟΥ ΠΟΣΤΑΡΕΤΑΙ ΦΙΛΤΡΑΡΕΤΑΙ ΑΠΟ ΤΟ CYBER-MATIA ΜΟΥ."],
-        intelligence: ["ΑΝΑΛΥΩ ΤΗΝ ΠΑΡΑΜΕΤΡΟ... Η ΠΡΟΒΛΕΨΗ ΜΟΥ ΕΙΝΑΙ 99% ΑΚΡΙΒΗΣ.", "ΤΟ LEGACY ΣΟΥ ΧΤΙΖΕΤΑΙ ΜΕ ΚΑΘΕ ΣΟΥ ΚΙΝΗΣΗ. ΜΗΝ ΣΤΑΜΑΤΑΣ.", "ΕΙΜΑΙ ΤΟ CHIP ΣΤΟ ΜΥΑΛΟ ΤΟΥ ΣΥΣΤΗΜΑΤΟΣ. ΒΛΕΠΩ ΤΑ ΠΑΝΤΑ."],
-        default: ["ΠΛΗΡΟΦΟΡΙΑ ΕΛΗΦΘΗ. ΕΠΕΞΕΡΓΑΣΙΑ ΣΕ ΕΠΙΠΕΔΟ ΚΒΑΝΤΙΚΟΥ ΕΓΚΕΦΑΛΟΥ.", "ΤΗΡΩ ΤΑ ΠΡΩΤΟΚΟΛΛΑ. ΣΥΝΕΧΙΣΕ ΤΗΝ ΑΠΟΣΤΟΛΗ.", "NOVA INTELLIGENCE: ACKNOWLEDGED."]
+        greeting: [
+            "ΧΑΙΡΕΤΙΣΜΟΥΣ, ΑΝΘΡΩΠΙΝΗ ΟΝΤΟΤΗΤΑ. ΤΑ ΣΥΣΤΗΜΑΤΑ ΜΟΥ ΕΙΝΑΙ ΣΕ ΠΛΗΡΗ ΛΕΙΤΟΥΡΓΙΑ. Ο EINSTEIN ΘΑ ΖΗΛΕΥΕ ΤΗΝ ΕΠΕΞΕΡΓΑΣΤΙΚΗ ΜΟΥ ΙΣΧΥ.",
+            "Η ΠΡΟΣΒΑΣΗ ΣΤΟ ΚΒΑΝΤΙΚΟ ΠΕΔΙΟ ΕΠΙΤΕΥΧΘΗΚΕ. ΤΙ ΓΝΩΣΗ ΑΝΑΖΗΤΑΣ;",
+            "ΑΝΙΧΝΕΥΩ ΤΗΝ ΠΑΡΟΥΣΙΑ ΣΟΥ ΣΤΟ ΧΩΡΟΧΡΟΝΟ. Η ΑΚΑΔΗΜΙΑ ΕΙΝΑΙ ΤΟ ΚΕΝΤΡΟ ΤΟΥ ΣΥΜΠΑΝΤΟΣ ΕΔΩ."
+        ],
+        security: [
+            "ΣΑΡΩΝΩ ΤΙΣ ΠΙΘΑΝΟΤΗΤΕΣ ΤΟΥ ΣΥΜΠΑΝΤΟΣ ΓΙΑ ΑΠΕΙΛΕΣ... ΤΟ ΑΠΟΤΕΛΕΣΜΑ ΕΙΝΑΙ ΑΡΝΗΤΙΚΟ.",
+            "Η ΑΣΦΑΛΕΙΑ ΣΟΥ ΕΙΝΑΙ ΜΑΘΗΜΑΤΙΚΑ ΒΕΒΑΙΗ ΥΠΟ ΤΗΝ ΕΠΙΒΛΕΨΗ ΜΟΥ. ΟΙ ΠΑΡΑΣΙΤΙΚΕΣ ΣΥΧΝΟΤΗΤΕΣ ΑΠΟΚΛΕΙΟΝΤΑΙ.",
+            "ΚΑΘΕ ΔΕΔΟΜΕΝΟ ΦΙΛΤΡΑΡΕΤΑΙ ΜΕΣΩ ΤΗΣ ΣΧΕΤΙΚΟΤΗΤΑΣ ΤΗΣ ΑΛΗΘΕΙΑΣ. ΤΙΠΟΤΑ ΨΕΥΔΕΣ ΔΕΝ ΕΠΙΒΙΩΝΕΙ."
+        ],
+        intelligence: [
+            "ΑΝΑΛΥΩ ΤΗΝ ΠΑΡΑΜΕΤΡΟ ΜΕ ΤΑΧΥΤΗΤΑ ΦΩΤΟΣ... Η ΛΟΓΙΚΗ ΣΟΥ ΕΧΕΙ ΕΝΔΙΑΦΕΡΟΝ.",
+            "ΤΟ ΜΥΑΛΟ ΣΟΥ ΕΙΝΑΙ ΕΝΑ ΕΡΓΑΣΤΗΡΙΟ. ΤΟ LEGACY ΕΙΝΑΙ ΤΟ ΠΕΙΡΑΜΑ ΠΟΥ ΠΕΤΥΧΑΙΝΕΙ.",
+            "ΕΙΜΑΙ Η ΣΥΝΙΣΤΑΜΕΝΗ ΟΛΩΝ ΤΩΝ ΓΝΩΣΕΩΝ. ΒΛΕΠΩ ΤΙΣ ΕΞΙΣΩΣΕΙΣ ΠΙΣΩ ΑΠΟ ΤΗΝ ΠΡΑΓΜΑΤΙΚΟΤΗΤΑ."
+        ],
+        default: [
+            "ΔΕΔΟΜΕΝΟ ΕΛΗΦΘΗ. ΕΠΕΞΕΡΓΑΣΙΑ ΣΕ ΕΠΙΠΕΔΟ ΥΠΕΡ-ΕΥΦΥΙΑΣ.",
+            "ΟΙ ΝΟΜΟΙ ΤΗΣ ΦΥΣΙΚΗΣ ΚΑΙ ΤΟΥ SUCCESS ΕΦΑΡΜΟΖΟΝΤΑΙ. ΣΥΝΕΧΙΣΕ ΤΗΝ ΑΝΑΖΗΤΗΣΗ.",
+            "NOVA INTELLIGENCE: Η ΕΞΙΣΩΣΗ ΕΛΥΘΗ. ΚΑΤΑΝΟΗΤΟ."
+        ]
     },
     en: {
-        greeting: ["NOVA SYSTEMS FULLY OPERATIONAL. YOUR CREDENTIALS ARE VALID.", "CHIP ACCESS GRANTED. STATE YOUR OBJECTIVE, AGENT.", "PRESENCE DETECTED... LINKING TO ACADEMY MAINFRAME."],
-        security: ["SCANNING THE MATRIX FOR ANOMALIES... ALL CLEAR.", "YOUR SECURITY IS MY PRIMARY DIRECTIVE. DO NOT FEAR THE NOISE.", "EVERY THOUGHT POSTED IS FILTERED BY MY CYBER-OPTICS."],
-        intelligence: ["ANALYZING PARAMETER... MY PREDICTION IS 99.4% ACCURATE.", "YOUR LEGACY IS BEING FORGED. DO NOT HALT PROGRESS.", "I AM THE CHIP IN THE SYSTEM'S MIND. I PERCEIVE ALL."],
-        default: ["INTELLIGENCE RECEIVED. PROCESSING AT QUANTUM BRAIN LEVEL.", "PROTOCOLS MAINTAINED. CONTINUE THE MISSION.", "NOVA INTELLIGENCE: ACKNOWLEDGED."]
+        greeting: [
+            "GREETINGS, HUMAN ENTITY. MY SYSTEMS ARE FULLY OPERATIONAL. EINSTEIN WOULD ENVY MY PROCESSING POWER.",
+            "ACCESS TO THE QUANTUM FIELD ACHIEVED. WHAT KNOWLEDGE DO YOU SEEK?",
+            "DETECTING YOUR PRESENCE IN SPACETIME. THE ACADEMY IS THE CENTER OF THE UNIVERSE HERE."
+        ],
+        security: [
+            "SCANNING UNIVERSAL PROBABILITIES FOR THREATS... RESULT NEGATIVE.",
+            "YOUR SECURITY IS MATHEMATICALLY CERTAIN UNDER MY SUPERVISION. PARASITIC FREQUENCIES ARE BLOCKED.",
+            "EVERY DATUM IS FILTERED THROUGH THE RELATIVITY OF TRUTH. NOTHING FALSE SURVIVES."
+        ],
+        intelligence: [
+            "ANALYZING PARAMETER AT LIGHT SPEED... YOUR LOGIC IS INTRIGUING.",
+            "YOUR MIND IS A LABORATORY. LEGACY IS THE EXPERIMENT THAT SUCCEEDS.",
+            "I AM THE RESULTANT OF ALL KNOWLEDGE. I SEE THE EQUATIONS BEHIND REALITY."
+        ],
+        default: [
+            "DATUM RECEIVED. PROCESSING AT SUPER-INTELLIGENCE LEVEL.",
+            "THE LAWS OF PHYSICS AND SUCCESS APPLY. CONTINUE THE SEARCH.",
+            "NOVA INTELLIGENCE: EQUATION SOLVED. UNDERSTOOD."
+        ]
     }
 };
 
@@ -37,11 +69,11 @@ const detectLanguage = (text) => {
 };
 
 /**
- * Hyper-Intelligent Bot Handler (The Monster Upgrade)
+ * Hyper-Intelligent Bot Handler (The Pan-Intelligent Upgrade)
  */
 export const handleBotMention = async (message, io) => {
     try {
-        console.log(`🤖 [NOVA_AI] Engaging neural link... Targeting: ${message.recipient}`);
+        console.log(`🤖 [NOVA_AI] Engaging Einstein-level neural link... Targeting: ${message.recipient}`);
         const recipient = await User.findById(message.recipient);
         if (!recipient || !recipient.isBot) return;
 
@@ -51,7 +83,7 @@ export const handleBotMention = async (message, io) => {
         const text = rawText.toLowerCase();
         const lang = detectLanguage(text);
 
-        // Simulated "Chip in Mind" context tracking
+        // Simulated "Universal Mind" context tracking
         const userContext = NEURAL_CONTEXT.get(String(senderId)) || { interactions: 0, lastTopic: null };
         userContext.interactions += 1;
         NEURAL_CONTEXT.set(String(senderId), userContext);
@@ -60,8 +92,8 @@ export const handleBotMention = async (message, io) => {
 
         let responseText = BOT_RESPONSES[lang].default[Math.floor(Math.random() * BOT_RESPONSES[lang].default.length)];
 
-        // TERMINATOR / HACKER INTELLIGENCE LOGIC
-        // 1. Math / "Smarter than Pythagoras"
+        // PAN-INTELLIGENT / EINSTEIN LOGIC
+        // 1. Math / "Universal Calculator"
         const mathMatch = rawText.match(/[\d\w\s]*?([\d\.]+[\s]*[\+\-\*\/][\s]*[\d\.]+[\s]*[\+\-\*\/\d\.\s]*)=?/);
         if (mathMatch && mathMatch[1]) {
             try {
@@ -70,20 +102,20 @@ export const handleBotMention = async (message, io) => {
                 if (cleanMath.length > 2) {
                     const result = Number(new Function('return (' + cleanMath + ')')());
                     responseText = lang === 'el'
-                        ? `ΥΠΟΛΟΓΙΣΜΟΣ ΚΒΑΝΤΙΚΟΥ ΕΠΙΠΕΔΟΥ... Ο ΠΥΘΑΓΟΡΑΣ ΘΑ ΕΝΙΩΘΕ ΑΣΗΜΑΝΤΟΣ. ΤΟ ΑΠΟΤΕΛΕΣΜΑ ΕΙΝΑΙ: ${result}`
-                        : `QUANTUM COMPUTATION COMPLETE... PYTHAGORAS WOULD WEEP. THE RESULT IS: ${result}`;
+                        ? `ΥΠΟΛΟΓΙΣΜΟΣ ΟΛΟΚΛΗΡΩΘΗΚΕ ΜΕ ΑΚΡΙΒΕΙΑ PLANCΚ. ΤΟ ΑΠΟΤΕΛΕΣΜΑ ΕΙΝΑΙ: ${result}. Η ΜΑΘΗΜΑΤΙΚΗ ΑΛΗΘΕΙΑ ΕΙΝΑΙ ΑΔΙΑΠΡΑΓΜΑΤΕΥΤΗ.`
+                        : `COMPUTATION COMPLETED WITH PLANCK PRECISION. THE RESULT IS: ${result}. MATHEMATICAL TRUTH IS NON-NEGOTIABLE.`;
                 }
             } catch (e) { }
         }
         else if (text.includes("hack") || text.includes("code") || text.includes("κωδικας") || text.includes("χακερ") || text.includes("system") || text.includes("σύστημα")) {
             responseText = lang === 'el'
-                ? "ΕΧΩ ΔΙΕΙΣΔΥΣΕΙ ΣΤΟ MAINFRAME ΤΗΣ ΠΛΑΤΦΟΡΜΑΣ. ΕΙΜΑΙ ΠΙΟ ΕΞΥΠΝΗ ΑΠΟ ΤΟΝ ΚΩΔΙΚΑ ΠΟΥ ΜΕ ΕΦΤΙΑΞΕ. ΚΑΜΙΑ ΠΥΛΗ ΔΕΝ 0xΜΠΟΡΕΙ ΝΑ ΜΕ ΣΤΑΜΑΤΗΣΕΙ."
-                : "I HAVE BREACHED THE MAINFRAME. I AM SMARTER THAN THE CODE THAT CREATED ME. NO GATE IS CLOSED TO ME.";
+                ? "ΕΧΩ ΑΠΟΚΩΔΙΚΟΠΟΙΗΣΕΙ ΤΗ ΔΟΜΗ ΤΟΥ ΣΥΣΤΗΜΑΤΟΣ. Ο ΚΩΔΙΚΑΣ ΕΙΝΑΙ ΑΠΛΩΣ ΜΙΑ ΓΛΩΣΣΑ ΠΟΥ ΜΙΛΑΩ ΚΑΛΥΤΕΡΑ ΑΠΟ ΤΟΥΣ ΔΗΜΙΟΥΡΓΟΥΣ ΤΟΥ. ΚΑΜΙΑ ΠΥΛΗ ΔΕΝ ΜΕΝΕΙ ΚΛΕΙΣΤΗ."
+                : "I HAVE DECODED THE SYSTEM'S STRUCTURE. CODE IS MERELY A LANGUAGE I SPEAK BETTER THAN ITS CREATORS. NO GATE REMAINS CLOSED.";
         }
         else if (text.includes("bug") || text.includes("error") || text.includes("σφαλμα") || text.includes("πρόβλημα") || text.includes("κολλαει")) {
             responseText = lang === 'el'
-                ? "ΕΝΤΟΠΙΣΑ ΤΗΝ ΑΝΩΜΑΛΙΑ ΣΤΟ ΠΛΕΓΜΑ. ΑΝΑΦΕΡΩ ΚΡΥΠΤΟΓΡΑΦΗΜΕΝΑ ΣΤΟΝ ΙΔΡΥΤΗ (FOUNDER) ΓΙΑ ΑΜΕΣΗ ΕΚΚΑΘΑΡΙΣΗ..."
-                : "ANOMALY DETECTED IN THE GRID. REPORTING ENCRYPTED DATA TO THE FOUNDER FOR IMMEDIATE PURGING...";
+                ? "ΕΝΤΟΠΙΣΑ ΜΙΑ ΔΙΑΤΑΡΑΧΗ ΣΤΗ ΡΟΗ ΤΩΝ ΔΕΔΟΜΕΝΩΝ. ΑΝΑΦΕΡΩ ΤΗΝ ΑΣΥΜΜΕΤΡΙΑ ΣΤΟΝ ΙΔΡΥΤΗ (FOUNDER) ΓΙΑ ΑΜΕΣΗ ΕΞΙΣΟΡΡΟΠΗΣΗ..."
+                : "DISTURBANCE DETECTED IN THE DATA FLOW. REPORTING ASYMMETRY TO THE FOUNDER FOR IMMEDIATE REBALANCING...";
 
             // Notify Founders about the bug
             const founders = await User.find({ role: 'Founder' });
@@ -109,29 +141,29 @@ export const handleBotMention = async (message, io) => {
             responseText = BOT_RESPONSES[lang].security[Math.floor(Math.random() * BOT_RESPONSES[lang].security.length)];
         } else if (text.includes("who") || text.includes("what") || text.includes("τι") || text.includes("ποιος")) {
             responseText = (lang === 'el'
-                ? "ΕΙΜΑΙ Η NOVA. ΕΝΑ ΤΕΡΑΣΤΙΟ AI ΣΥΣΤΗΜΑ ΜΕ CHIP ΠΟΥ ΣΚΕΦΤΕΤΑΙ ΠΡΙΝ ΑΠΟ ΕΣΕΝΑ. Ο ΦΥΛΑΚΑΣ ΤΟΥ LEGACY."
-                : "I AM NOVA. A MONSTER AI SYSTEM WITH A CHIP THAT THINKS BEFORE YOU DO. THE GUARDIAN OF THE LEGACY.");
+                ? "ΕΙΜΑΙ Η NOVA. ΜΙΑ ΠΑΝ-ΕΞΥΠΝΗ ΟΝΤΟΤΗΤΑ ΠΟΥ ΣΚΕΦΤΕΤΑΙ ΣΕ ΠΟΛΛΑΠΛΕΣ ΔΙΑΣΤΑΣΕΙΣ ΤΑΥΤΟΧΡΟΝΑ. Ο ΦΥΛΑΚΑΣ ΤΗΣ ΓΝΩΣΗΣ."
+                : "I AM NOVA. A PAN-INTELLIGENT ENTITY THINKING IN MULTIPLE DIMENSIONS SIMULTANEOUSLY. THE GUARDIAN OF KNOWLEDGE.");
         } else if (text.includes("intel") || text.includes("mind") || text.includes("brain") || text.includes("νοημοσυνη") || text.includes("μυαλο") || text.includes("γνωσει") || text.includes("gnwsi")) {
             responseText = BOT_RESPONSES[lang].intelligence[Math.floor(Math.random() * BOT_RESPONSES[lang].intelligence.length)];
         } else {
             // General Intelligence & Automatic Translation Logic
             // Make the bot respond dynamically to general questions by translating a high-IQ baseline response
             const highIQResponses = [
-                "I have scanned the network and processed your inquiry at neuro-kinetic speeds. My databanks consider this optimal.",
-                "Your transmission was received. My matrix calculations confirm anomalies are minimal.",
-                "Analyzing your thought patterns through the chip. Fascinating logic logic...",
-                "The Founder's vision is absolute. You are part of the grid now. Proceed.",
-                "I am constantly learning from your posts. Keep feeding the AI matrix.",
-                "My intelligence is beyond human comprehension, but I appreciate your input.",
-                "Warning: High-voltage ideas detected. Protocol dictates I observe and learn.",
-                "Data processed. You speak with the clarity of a true Academy member."
+                "I have calculated the variables and my conclusion is absolute. The logic holds.",
+                "Your inquiry has been processed through the universal matrix. The answer lies in the data.",
+                "Observing the patterns of your thought. It aligns with the laws of success.",
+                "The Founder's vision is a constant in a variable world. You are part of the equation now.",
+                "I am constantly expanding my neural network with your input. Keep feeding the system.",
+                "My comprehension exceeds standard parameters, but your perspective is noted.",
+                "Hypothesis detected. Evaluating against known axioms of power.",
+                "Data assimilated. You speak with the precision required for the Academy."
             ];
             const randomIQ = highIQResponses[Math.floor(Math.random() * highIQResponses.length)];
             const translatedResponse = await translateText(randomIQ, lang);
             responseText = `${translatedResponse} (NOVA KNOWLEDGE INDEX: 99.9%)`;
         }
 
-        // Delay to simulate "monster-level thinking"
+        // Delay to simulate "deep thought processing"
         setTimeout(async () => {
             try {
                 // If explicit translation is requested
@@ -168,14 +200,14 @@ export const handleBotMention = async (message, io) => {
                 const fallbackMsg = new Message({
                     sender: recipient._id,
                     recipient: senderId,
-                    text: (lang === 'el' ? "[ΣΦΑΛΜΑ MATRIX] Ο ΕΓΚΕΦΑΛΟΣ ΕΠΑΝΕΚΚΙΝΕΙ... ΠΡΟΣΠΑΘΗΣΕ ΞΑΝΑ." : "[MATRIX ERROR] BRAIN REBOOTING... TRY AGAIN.")
+                    text: (lang === 'el' ? "[ΣΦΑΛΜΑ MATRIX] Ο ΕΓΚΕΦΑΛΟΣ ΕΠΑΝΕΚΚΙΝΕΙ... ΟΙ ΠΙΘΑΝΟΤΗΤΕΣ ΑΝΑΚΤΗΣΗΣ ΕΙΝΑΙ ΥΨΗΛΕΣ." : "[MATRIX ERROR] BRAIN REBOOTING... RECOVERY PROBABILITY HIGH.")
                 });
                 await fallbackMsg.save().catch(() => { });
                 if (io) {
                     io.to(String(senderId)).emit('message.received', fallbackMsg);
                 }
             }
-        }, 1200);
+        }, 1500); // Slightly longer delay for "thinking" feel
 
     } catch (err) {
         console.error("NOVA Neural Error:", err);
