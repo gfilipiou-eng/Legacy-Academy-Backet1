@@ -2,39 +2,46 @@ import axios from "axios";
 
 /**
  * Super-Intelligent Translation Engine (GTX Powered)
- * Translates any text to the target language using a multi-threaded neural bypass.
+ * Optimized for High-Frequency Academy Intelligence
  */
 export const translateText = async (text, targetLang = 'en') => {
     if (!text || text.trim().length === 0) return text;
 
     try {
-        // Map common codes if needed
-        const langMap = {
-            'el': 'el',
-            'en': 'en',
-            'ru': 'ru',
-            'fr': 'fr',
-            'de': 'de',
-            'es': 'es',
-            'tr': 'tr',
-            'cy': 'el' // Cypriot to Greek
+        // Robust Language Mapping (Normalization)
+        let target = (targetLang || 'en').toLowerCase().split('-')[0];
+        if (target === 'cy') target = 'el'; // Cypriot to Greek
+
+        // Google Translate API - Clients5 Endpoint (Bypasses IP Blocks more reliably)
+        const url = `https://clients5.google.com/translate_a/t`;
+
+        const params = {
+            client: 'dict-chrome-ex',
+            sl: 'auto',
+            tl: target,
+            q: text
         };
 
-        const target = langMap[targetLang] || targetLang;
+        const res = await axios.get(url, {
+            params,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+            },
+            timeout: 10000
+        });
 
-        // Google Translate GTX Endpoint (Free / No Key)
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
-
-        const res = await axios.get(url);
-
-        if (res.data && res.data[0]) {
-            // Reconstruct translated sentences
-            return res.data[0].map(s => s[0]).join("");
+        // The dict-chrome-ex endpoint returns an array where the first element is the full translated string
+        if (res.data && Array.isArray(res.data) && typeof res.data[0] === 'string') {
+            const translatedFull = res.data[0];
+            if (translatedFull) {
+                console.log(`🌍 [NEURAL_TRANS] Decryption Successful (${text.length} chars) -> Target: ${target}`);
+                return translatedFull;
+            }
         }
 
         return text;
     } catch (err) {
-        console.error("Neural Translation Error:", err.message);
-        return text; // Fallback to original
+        console.error("🌍 [NEURAL_TRANS] Critical Error:", err.message);
+        return text; // High-frequency fallback
     }
 };

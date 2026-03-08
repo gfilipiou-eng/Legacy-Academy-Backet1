@@ -133,7 +133,7 @@ export const playSound = (type) => {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(4200, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.03);
-        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -481,47 +481,44 @@ export const playSound = (type) => {
         pad.start();
         pad.stop(ctx.currentTime + 0.7);
     } else if (type === 'premium_tap') {
-        // PREMIUM LUXURY: Refined glass-haptic tap — crystal transient + warm sub resonance
-        const crystal = ctx.createOscillator();
+        // Ultra-Premium "Thock" (Deep, minimal, luxurious mechanical switch feel)
+        const thock = ctx.createOscillator();
         const sub = ctx.createOscillator();
-        const cGain = ctx.createGain();
+        const tGain = ctx.createGain();
         const sGain = ctx.createGain();
 
-        // Initial Click Transient for "Crispness"
-        const click = ctx.createOscillator();
-        const kGain = ctx.createGain();
-        click.type = 'triangle';
-        click.frequency.setValueAtTime(4000, ctx.currentTime);
-        kGain.gain.setValueAtTime(0.1, ctx.currentTime);
-        kGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.008);
+        // The "Thock" body (Very fast pitch drop in the low-mids)
+        thock.type = 'sine';
+        thock.frequency.setValueAtTime(400, ctx.currentTime);
+        thock.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.02);
 
-        // Pure sine for "Water Drop" effect
-        crystal.type = 'sine';
-        crystal.frequency.setValueAtTime(5200, ctx.currentTime);
-        crystal.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.045);
-        cGain.gain.setValueAtTime(0.35, ctx.currentTime);
-        cGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
+        tGain.gain.setValueAtTime(0.05, ctx.currentTime);
+        tGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
 
-        // Warm sub-resonance for haptic feel
+        // Warm sub-resonance for heavy haptic weight
         sub.type = 'sine';
-        sub.frequency.setValueAtTime(160, ctx.currentTime);
-        sub.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.12);
-        sGain.gain.setValueAtTime(0.4, ctx.currentTime);
-        sGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+        sub.frequency.setValueAtTime(90, ctx.currentTime);
+        sub.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.03);
 
-        click.connect(kGain);
-        crystal.connect(cGain);
+        sGain.gain.setValueAtTime(0.07, ctx.currentTime);
+        sGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+
+        thock.connect(tGain);
         sub.connect(sGain);
-        kGain.connect(ctx.destination);
-        cGain.connect(ctx.destination);
-        sGain.connect(ctx.destination);
 
-        click.start();
-        crystal.start();
+        // Low-pass filter to guarantee zero high-pitched noise/chirps (ultra smooth)
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, ctx.currentTime);
+
+        tGain.connect(filter);
+        sGain.connect(filter);
+        filter.connect(ctx.destination);
+
+        thock.start();
         sub.start();
-        click.stop(ctx.currentTime + 0.01);
-        crystal.stop(ctx.currentTime + 0.2);
-        sub.stop(ctx.currentTime + 0.2);
+        thock.stop(ctx.currentTime + 0.06);
+        sub.stop(ctx.currentTime + 0.1);
     } else if (type === 'premium_logout') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();

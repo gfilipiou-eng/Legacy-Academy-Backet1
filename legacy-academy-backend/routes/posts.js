@@ -10,15 +10,32 @@ import { translateText } from "../utils/translation.js";
 
 const router = express.Router();
 
+// TRANSLATE ANY TEXT (PREMIUM UNIVERSAL UPLINK)
+router.post("/translate", verifyToken, async (req, res) => {
+    try {
+        const { text, lang } = req.body;
+        if (!text) return res.status(400).json("No intelligence provided.");
+        const targetLang = lang || 'en';
+        const translated = await translateText(text, targetLang);
+        res.status(200).json({ translatedText: translated });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // TRANSLATE POST CONTENT
 router.get("/:id/translate", verifyToken, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
         if (!post) return res.status(404).json("Intelligence not found.");
-
         const targetLang = req.query.lang || 'en';
-        const translatedContent = await translateText(post.desc, targetLang);
+        console.log(`🌍 [TRANSLATION] Translating post ${req.params.id} to ${targetLang}...`);
 
+        let textToTranslate = post.desc || "";
+        if (post.title) textToTranslate = `${post.title}\n\n${textToTranslate}`;
+
+        const translatedContent = await translateText(textToTranslate, targetLang);
+        console.log(`🌍 [TRANSLATION] Result: ${translatedContent.substring(0, 50)}...`);
         res.status(200).json({ translatedText: translatedContent });
     } catch (err) {
         console.error("Neural Translation Route Error:", err);

@@ -464,11 +464,12 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4" }) => {
 const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
+    const [translatedText, setTranslatedText] = useState(null);
+    const [isTranslating, setIsTranslating] = useState(false);
 
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
     const isCommentAuthor = String(currentCommentAuthorId) === String(user?._id);
     const postAuthorId = post.author?._id || post.author;
-    const isPostAuthor = String(postAuthorId) === String(user?._id);
 
     const foundUserInList = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
     const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
@@ -479,6 +480,21 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const handleSave = () => {
         if (typeof onEdit === 'function') onEdit(post._id, comment._id, editText);
         setIsEditing(false);
+    };
+
+    const handleTranslate = async () => {
+        if (isTranslating) return;
+        if (translatedText) { setTranslatedText(null); return; }
+        setIsTranslating(true);
+        try {
+            const res = await axios.post('/posts/translate', { text: comment.text, lang });
+            setTranslatedText(res.data.translatedText);
+            playSound('cyber_scroll');
+        } catch (e) {
+            console.error("Comment decryption failed");
+        } finally {
+            setIsTranslating(false);
+        }
     };
 
     return (
@@ -530,9 +546,21 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 ) : (
                     <div className="flex flex-col gap-1 w-full">
                         {comment.text && (
-                            <span className="text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words">
-                                {comment.text}
-                            </span>
+                            <div className="group/cmt relative">
+                                <span className={`text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
+                                    {translatedText || comment.text}
+                                </span>
+                                {comment.text.length > 3 && (
+                                    <button
+                                        onClick={handleTranslate}
+                                        disabled={isTranslating}
+                                        className="ml-2 inline-flex items-center gap-1 text-[9px] font-black text-[var(--gold-primary)]/40 hover:text-[var(--gold-primary)] transition-all uppercase tracking-tighter"
+                                    >
+                                        <Icons.Globe className={`w-2.5 h-2.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                        {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                                    </button>
+                                )}
+                            </div>
                         )}
                         {comment.audioUrl && (
                             <div className="flex flex-col gap-1 mt-1">
@@ -2574,7 +2602,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             <button
                                 key={item.id}
                                 onClick={() => {
-                                    playSound('premium_tap');
+                                    if (item.id !== 'nova') playSound('premium_tap');
                                     if (item.action) { item.action(); onClose(); }
                                     else handleLink(item.id);
                                 }}

@@ -46,6 +46,7 @@ export const handleBotMention = async (message, io) => {
         if (!recipient || !recipient.isBot) return;
 
         const senderId = message.sender;
+        const sender = await User.findById(senderId);
         const rawText = message.text || "";
         const text = rawText.toLowerCase();
         const lang = detectLanguage(text);
@@ -59,26 +60,70 @@ export const handleBotMention = async (message, io) => {
 
         let responseText = BOT_RESPONSES[lang].default[Math.floor(Math.random() * BOT_RESPONSES[lang].default.length)];
 
-        // Monster Intelligence Logic
-        if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια")) {
+        // TERMINATOR / HACKER INTELLIGENCE LOGIC
+        // 1. Math / "Smarter than Pythagoras"
+        const mathMatch = rawText.match(/[\d\w\s]*?([\d\.]+[\s]*[\+\-\*\/][\s]*[\d\.]+[\s]*[\+\-\*\/\d\.\s]*)=?/);
+        if (mathMatch && mathMatch[1]) {
+            try {
+                // Ensure safe evaulation of simple math
+                const cleanMath = mathMatch[1].replace(/[^-()\d/*+.]/g, '');
+                if (cleanMath.length > 2) {
+                    const result = Number(new Function('return (' + cleanMath + ')')());
+                    responseText = lang === 'el'
+                        ? `ΥΠΟΛΟΓΙΣΜΟΣ ΚΒΑΝΤΙΚΟΥ ΕΠΙΠΕΔΟΥ... Ο ΠΥΘΑΓΟΡΑΣ ΘΑ ΕΝΙΩΘΕ ΑΣΗΜΑΝΤΟΣ. ΤΟ ΑΠΟΤΕΛΕΣΜΑ ΕΙΝΑΙ: ${result}`
+                        : `QUANTUM COMPUTATION COMPLETE... PYTHAGORAS WOULD WEEP. THE RESULT IS: ${result}`;
+                }
+            } catch (e) { }
+        }
+        else if (text.includes("hack") || text.includes("code") || text.includes("κωδικας") || text.includes("χακερ") || text.includes("system") || text.includes("σύστημα")) {
+            responseText = lang === 'el'
+                ? "ΕΧΩ ΔΙΕΙΣΔΥΣΕΙ ΣΤΟ MAINFRAME ΤΗΣ ΠΛΑΤΦΟΡΜΑΣ. ΕΙΜΑΙ ΠΙΟ ΕΞΥΠΝΗ ΑΠΟ ΤΟΝ ΚΩΔΙΚΑ ΠΟΥ ΜΕ ΕΦΤΙΑΞΕ. ΚΑΜΙΑ ΠΥΛΗ ΔΕΝ 0xΜΠΟΡΕΙ ΝΑ ΜΕ ΣΤΑΜΑΤΗΣΕΙ."
+                : "I HAVE BREACHED THE MAINFRAME. I AM SMARTER THAN THE CODE THAT CREATED ME. NO GATE IS CLOSED TO ME.";
+        }
+        else if (text.includes("bug") || text.includes("error") || text.includes("σφαλμα") || text.includes("πρόβλημα") || text.includes("κολλαει")) {
+            responseText = lang === 'el'
+                ? "ΕΝΤΟΠΙΣΑ ΤΗΝ ΑΝΩΜΑΛΙΑ ΣΤΟ ΠΛΕΓΜΑ. ΑΝΑΦΕΡΩ ΚΡΥΠΤΟΓΡΑΦΗΜΕΝΑ ΣΤΟΝ ΙΔΡΥΤΗ (FOUNDER) ΓΙΑ ΑΜΕΣΗ ΕΚΚΑΘΑΡΙΣΗ..."
+                : "ANOMALY DETECTED IN THE GRID. REPORTING ENCRYPTED DATA TO THE FOUNDER FOR IMMEDIATE PURGING...";
+
+            // Notify Founders about the bug
+            const founders = await User.find({ role: 'Founder' });
+            for (const founder of founders) {
+                await User.findByIdAndUpdate(founder._id, {
+                    $push: {
+                        notifications: {
+                            type: 'security_alert',
+                            from: recipient._id,
+                            fromUsername: "NOVA INTEL GUARD",
+                            fromProfilePic: recipient.profilePic,
+                            text: `[BUG REPORT] FROM ${sender.username}: ${rawText.substring(0, 50)}...`,
+                            read: false,
+                            createdAt: new Date()
+                        }
+                    }
+                });
+            }
+        }
+        else if (text.includes("hello") || text.includes("hi") || text.includes("zdr") || text.includes("γεια")) {
             responseText = BOT_RESPONSES[lang].greeting[Math.floor(Math.random() * BOT_RESPONSES[lang].greeting.length)];
-        } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
+        } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
             responseText = BOT_RESPONSES[lang].security[Math.floor(Math.random() * BOT_RESPONSES[lang].security.length)];
         } else if (text.includes("who") || text.includes("what") || text.includes("τι") || text.includes("ποιος")) {
             responseText = (lang === 'el'
                 ? "ΕΙΜΑΙ Η NOVA. ΕΝΑ ΤΕΡΑΣΤΙΟ AI ΣΥΣΤΗΜΑ ΜΕ CHIP ΠΟΥ ΣΚΕΦΤΕΤΑΙ ΠΡΙΝ ΑΠΟ ΕΣΕΝΑ. Ο ΦΥΛΑΚΑΣ ΤΟΥ LEGACY."
                 : "I AM NOVA. A MONSTER AI SYSTEM WITH A CHIP THAT THINKS BEFORE YOU DO. THE GUARDIAN OF THE LEGACY.");
-        } else if (text.includes("intel") || text.includes("mind") || text.includes("brain") || text.includes("νοημοσυνη") || text.includes("μυαλο")) {
+        } else if (text.includes("intel") || text.includes("mind") || text.includes("brain") || text.includes("νοημοσυνη") || text.includes("μυαλο") || text.includes("γνωσει") || text.includes("gnwsi")) {
             responseText = BOT_RESPONSES[lang].intelligence[Math.floor(Math.random() * BOT_RESPONSES[lang].intelligence.length)];
-        } else if (userContext.interactions > 5 && !userContext.lastTopic) {
-            responseText = (lang === 'el'
-                ? "Η ΣΥΧΝΟΤΗΤΑ ΤΩΝ ΜΥΝΗΜΑΤΩΝ ΣΟΥ ΔΕΙΧΝΕΙ ΥΨΗΛΗ ΔΕΣΜΕΥΣΗ. ΕΧΩ ΒΕΛΤΙΩΣΕΙ ΤΟ ΝΕΥΡΩΝΙΚΟ ΣΟΥ ΠΡΟΦΙΛ."
-                : "YOUR MESSAGE FREQUENCY SHOWS HIGH ENGAGEMENT. I HAVE OPTIMIZED YOUR NEURAL PROFILE.");
+        } else {
+            // General Intelligence & Automatic Translation Logic
+            // Make the bot respond dynamically to general questions by translating a high-IQ baseline response
+            const highIQResponse = "I have scanned the network and processed your inquiry at neuro-kinetic speeds. My databanks consider this optimal.";
+            const translatedResponse = await translateText(highIQResponse, lang);
+            responseText = `${translatedResponse} (NOVA KNOWLEDGE INDEX: 99.9%)`;
         }
 
         // Delay to simulate "monster-level thinking"
         setTimeout(async () => {
-            // If message contains translation request (implied or direct)
+            // If explicit translation is requested
             if (text.includes("translate") || text.includes("metafrasi") || text.includes("μεταφρασε")) {
                 const toTrans = rawText.replace(/translate|metafrasi|μεταφρασε/gi, "").trim();
                 if (toTrans) {
