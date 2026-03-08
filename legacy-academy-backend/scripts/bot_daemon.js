@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import User from "../models/User.js";
-import { createBotPost } from "../utils/botHandlers.js";
+import { createBotPost, scanPostsForAnomalies } from "../utils/botHandlers.js";
 
 dotenv.config();
 
-const RUN_INTERVAL = 4 * 60 * 60 * 1000; // Every 4 hours
+const SCAN_INTERVAL = 5 * 60 * 1000; // Every 5 minutes
+const POST_INTERVAL = 24 * 60 * 60 * 1000; // Every 24 hours (Daily)
 
 const runDaemon = async () => {
     try {
@@ -14,20 +15,27 @@ const runDaemon = async () => {
 
         const bot = await User.findOne({ isBot: true });
         if (!bot) {
-            console.error("❌ [BOT DAEMON] Nova Intel Guard User not found. Run setup script first.");
+            console.error("❌ [BOT DAEMON] Nova Intel Guard User not found.");
             process.exit(1);
         }
 
-        console.log(`📡 [BOT DAEMON] Monitoring as: ${bot.username} (${bot._id})`);
+        console.log(`📡 [BOT DAEMON] Monitoring as: ${bot.username}`);
 
-        // Immediate post on start for testing
-        await createBotPost(bot._id);
-        console.log("📝 [BOT DAEMON] Intelligence Report Published.");
+        // Initial scan
+        await scanPostsForAnomalies();
 
+        // Check last post time to decide whether to post daily
+        // For simplicity, we just interval it here
         setInterval(async () => {
-            console.log("⏲️ [BOT DAEMON] Generating Periodic Intelligence...");
+            console.log("📝 [BOT DAEMON] Publishing Daily Intelligence Report...");
             await createBotPost(bot._id);
-        }, RUN_INTERVAL);
+        }, POST_INTERVAL);
+
+        // Frequent scanning
+        setInterval(async () => {
+            console.log("🔍 [BOT DAEMON] Scanning for Anomaly/Forbidden Content...");
+            await scanPostsForAnomalies();
+        }, SCAN_INTERVAL);
 
     } catch (err) {
         console.error("💥 [BOT DAEMON] CRITICAL FAILURE:", err);

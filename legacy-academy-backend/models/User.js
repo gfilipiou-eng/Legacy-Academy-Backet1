@@ -79,7 +79,7 @@ const UserSchema = new mongoose.Schema(
         },
         notifications: [
             {
-                type: { type: String, enum: ['like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'message', 'system'] },
+                type: { type: String, enum: ['like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'message', 'system', 'security_alert'] },
                 from: { type: String },
                 fromUsername: { type: String },
                 fromProfilePic: { type: String },

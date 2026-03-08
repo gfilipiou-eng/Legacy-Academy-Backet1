@@ -1177,6 +1177,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
+        else if (note.type === 'security_alert') onOpenPost(note.post || note.postId);
         else if (note.post || note.postId) onOpenPost(note.post || note.postId);
         else onViewProfile(note.sender);
         playSound('pop');
@@ -1200,6 +1201,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
                 {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
                 {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
+                {note.type === 'security_alert' && <div className="absolute -bottom-1 -right-1 bg-orange-600 rounded-full p-1 border-2 border-black animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.6)]"><Icons.ShieldCheck className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
@@ -1211,7 +1213,8 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                                 note.type === 'comment' ? t('NOTIF_COMMENT') :
                                     note.type === 'message' ? t('NOTIF_MESSAGE') :
                                         note.type === 'mention' ? t('NOTIF_MENTION') :
-                                            note.type === 'follow_request' ? t('NOTIF_REQUEST') : ''}
+                                            note.type === 'security_alert' ? (lang === 'el' ? 'ΑΝΕΥΡΕΣΗ ΑΝΩΜΑΛΙΑΣ' : 'SECURITY ANOMALY DETECTED') :
+                                                note.type === 'follow_request' ? t('NOTIF_REQUEST') : ''}
                     </span>
                 </div>
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}

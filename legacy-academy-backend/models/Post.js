@@ -42,7 +42,9 @@ const PostSchema = new mongoose.Schema({
   visibility: { type: String, enum: ['public', 'followers', 'private'], default: 'public' },
   isPrivate: { type: Boolean, default: false }, // Denormalized for quick feed filtering
   isFollowersOnly: { type: Boolean, default: false }, // Denormalized for quick feed filtering
-  isStory: { type: Boolean, default: false } // Temporary intelligence (Highlights)
+  isStory: { type: Boolean, default: false }, // Temporary intelligence (Highlights)
+  isFlagged: { type: Boolean, default: false }, // Flagged by Nova for review
+  flagReason: { type: String, default: "" }    // Reason for flagging (e.g. 'NSFW', 'Spam')
 
 }, { timestamps: true });
 

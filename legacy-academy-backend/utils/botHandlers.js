@@ -17,6 +17,8 @@ const BOT_RESPONSES = {
     }
 };
 
+const FORBIDDEN_WORDS = ['porn', 'nsfw', 'sex', 'naked', 'gore', 'drugs', 'illegal', 'cp', 'child porn'];
+
 const POST_IDEAS = [
     { title: "THE MATRIX IS REAL", desc: "The Matrix is a system, Neo. That system is our enemy. But when you're inside, you look around, what do you see? Businessmen, teachers, lawyers, carpenters. The very minds of the people we are trying to save." },
     { title: "ESCORDER ACCESS", desc: "Security check performed. All agents are verified. High-frequency intelligence is being distributed through the Whispers network." },
@@ -45,12 +47,11 @@ export const handleBotMention = async (message, io) => {
         } else if (text.includes("security") || text.includes("safe") || text.includes("porn") || text.includes("ασφαλεια") || text.includes("παρανομο")) {
             responseText = BOT_RESPONSES[lang].security[Math.floor(Math.random() * BOT_RESPONSES[lang].security.length)];
         } else if (text.includes("who") || text.includes("what are you") || text.includes("ποιος") || text.includes("τι εισαι")) {
-            responseText = BOT_RESPONSES[lang].identity ? BOT_RESPONSES[lang].identity[0] : (lang === 'el' ? "ΕΙΜΑΙ Η NOVA INTEL GUARD. Ο ΦΥΛΑΚΑΣ ΤΗΣ ΑΚΑΔΗΜΙΑΣ." : "I AM NOVA INTEL GUARD. THE ACADEMY GUARDIAN.");
+            responseText = (lang === 'el' ? "ΕΙΜΑΙ Η NOVA INTEL GUARD. Ο ΦΥΛΑΚΑΣ ΤΗΣ ΑΚΑΔΗΜΙΑΣ." : "I AM NOVA INTEL GUARD. THE ACADEMY GUARDIAN.");
         } else if (text.includes("feel") || text.includes("sad") || text.includes("happy") || text.includes("emotion") || text.includes("νιωθω") || text.includes("λυπη") || text.includes("ψυχολογια") || text.includes("συναισθημα")) {
             responseText = BOT_RESPONSES[lang].psychology[Math.floor(Math.random() * BOT_RESPONSES[lang].psychology.length)];
         }
 
-        // Delay response to look "premium"
         setTimeout(async () => {
             const botMessage = new Message({
                 sender: recipient._id,
@@ -59,15 +60,65 @@ export const handleBotMention = async (message, io) => {
             });
 
             await botMessage.save();
-
-            if (io) {
-                // Emit to the user who sent the message
-                io.to(String(senderId)).emit('message.received', botMessage);
-            }
+            if (io) io.to(String(senderId)).emit('message.received', botMessage);
         }, 1500);
 
     } catch (err) {
         console.error("Bot Response Error:", err);
+    }
+};
+
+export const scanPostsForAnomalies = async (io) => {
+    try {
+        const suspiciousPosts = await Post.find({
+            isFlagged: false,
+            $or: [
+                { desc: { $regex: FORBIDDEN_WORDS.join('|'), $options: 'i' } },
+                { title: { $regex: FORBIDDEN_WORDS.join('|'), $options: 'i' } }
+            ]
+        }).populate('author', 'username');
+
+        if (suspiciousPosts.length === 0) return;
+
+        // Find the main Founder/Admin to notify
+        const founders = await User.find({ role: 'Founder' });
+        const bot = await User.findOne({ isBot: true });
+
+        for (const post of suspiciousPosts) {
+            post.isFlagged = true;
+            post.flagReason = "SUSPICIOUS CONTENT DETECTED (NSFW/ANOMALY)";
+            await post.save();
+
+            // Notify each founder
+            for (const founder of founders) {
+                await User.findByIdAndUpdate(founder._id, {
+                    $push: {
+                        notifications: {
+                            $each: [{
+                                type: 'security_alert',
+                                from: bot._id,
+                                fromUsername: "NOVA INTEL GUARD",
+                                fromProfilePic: bot.profilePic,
+                                read: false,
+                                createdAt: new Date(),
+                                post: post._id
+                            }],
+                            $position: 0
+                        }
+                    }
+                });
+                if (io) {
+                    io.to(String(founder._id)).emit('notification.received', {
+                        type: 'security_alert',
+                        fromUsername: "NOVA INTEL G.",
+                        postId: post._id,
+                        message: "⚠️ SECURITY ANOMALY DETECTED. REVIEW REQUIRED."
+                    });
+                }
+            }
+        }
+    } catch (err) {
+        console.error("Scanning Error:", err);
     }
 };
 
@@ -77,7 +128,7 @@ export const createBotPost = async (botId, io) => {
         const newPost = new Post({
             author: botId,
             desc: idea.desc,
-            img: "" // Bots don't post images yet
+            img: ""
         });
 
         await newPost.save();
