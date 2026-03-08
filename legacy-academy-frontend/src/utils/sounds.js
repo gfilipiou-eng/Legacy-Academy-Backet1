@@ -98,8 +98,8 @@ export const playSound = (type) => {
 
         // Tight envelope
         gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.002, ctx.currentTime + 0.005);
-        gain.gain.exponentialRampToValueAtTime(0.00005, ctx.currentTime + 0.1);
+        gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -118,8 +118,8 @@ export const playSound = (type) => {
         osc.frequency.setValueAtTime(1200, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.05);
 
-        gain.gain.setValueAtTime(0.008, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -127,21 +127,18 @@ export const playSound = (type) => {
         osc.stop(ctx.currentTime + 0.05);
 
     } else if (type === 'sweep' || type === 'soft_tap') {
-        // Premium "Glass Tap" (Light UI Touch)
+        // Soft Neural Drop
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-
-        osc.frequency.setValueAtTime(2400, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(3200, ctx.currentTime + 0.02);
-
-        gain.gain.setValueAtTime(0.01, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
-
+        osc.frequency.setValueAtTime(4200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.03);
+        osc.stop(ctx.currentTime + 0.05);
     } else if (type === 'whoosh' || type === 'swipe') {
         const bufferSize = ctx.sampleRate * 0.15;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -490,29 +487,41 @@ export const playSound = (type) => {
         const cGain = ctx.createGain();
         const sGain = ctx.createGain();
 
-        // Crystal layer — ultra-thin glass tap
+        // Initial Click Transient for "Crispness"
+        const click = ctx.createOscillator();
+        const kGain = ctx.createGain();
+        click.type = 'triangle';
+        click.frequency.setValueAtTime(4000, ctx.currentTime);
+        kGain.gain.setValueAtTime(0.1, ctx.currentTime);
+        kGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.008);
+
+        // Pure sine for "Water Drop" effect
         crystal.type = 'sine';
-        crystal.frequency.setValueAtTime(3200, ctx.currentTime);
-        crystal.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.03);
-        cGain.gain.setValueAtTime(0.001, ctx.currentTime);
-        cGain.gain.exponentialRampToValueAtTime(0.00005, ctx.currentTime + 0.03);
+        crystal.frequency.setValueAtTime(5200, ctx.currentTime);
+        crystal.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.045);
+        cGain.gain.setValueAtTime(0.35, ctx.currentTime);
+        cGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
 
-        // Sub resonance — soft haptic
+        // Warm sub-resonance for haptic feel
         sub.type = 'sine';
-        sub.frequency.setValueAtTime(120, ctx.currentTime);
-        sub.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.04);
-        sGain.gain.setValueAtTime(0.0015, ctx.currentTime);
-        sGain.gain.exponentialRampToValueAtTime(0.00005, ctx.currentTime + 0.05);
+        sub.frequency.setValueAtTime(160, ctx.currentTime);
+        sub.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.12);
+        sGain.gain.setValueAtTime(0.4, ctx.currentTime);
+        sGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
 
+        click.connect(kGain);
         crystal.connect(cGain);
         sub.connect(sGain);
+        kGain.connect(ctx.destination);
         cGain.connect(ctx.destination);
         sGain.connect(ctx.destination);
 
+        click.start();
         crystal.start();
         sub.start();
-        crystal.stop(ctx.currentTime + 0.05);
-        sub.stop(ctx.currentTime + 0.05);
+        click.stop(ctx.currentTime + 0.01);
+        crystal.stop(ctx.currentTime + 0.2);
+        sub.stop(ctx.currentTime + 0.2);
     } else if (type === 'premium_logout') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();

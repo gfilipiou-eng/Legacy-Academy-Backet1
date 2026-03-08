@@ -2574,6 +2574,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             <button
                                 key={item.id}
                                 onClick={() => {
+                                    playSound('premium_tap');
                                     if (item.action) { item.action(); onClose(); }
                                     else handleLink(item.id);
                                 }}
@@ -5193,7 +5194,7 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
-                                        onClick={() => { setIsDrawerOpen(true); playSound('soft_tap'); }}
+                                        onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
                                         className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
                                         aria-label="Open menu"
                                     >
