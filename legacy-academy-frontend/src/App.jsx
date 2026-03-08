@@ -2423,11 +2423,11 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 onClick={onClose}
             />
 
-            {/* DRAWER CONTAINER - LIQUID GLASS STYLE */}
+            {/* DRAWER CONTAINER - PREMIUM LIQUID GLASS */}
             <div className={`
-                fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] 
-                liquid-glass-nav backdrop-blur-[20px] border-r border-white/10 flex flex-col pointer-events-auto
-                animate-slide-right shadow-[20px_0_80px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
+                fixed top-0 left-0 bottom-0 w-[280px]
+                liquid-glass-nav backdrop-blur-[25px] border-r border-white/10 flex flex-col pointer-events-auto
+                animate-slide-right shadow-[15px_0_60px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
             `}>
                 <div className="flex-1 overflow-y-auto no-scrollbar relative">
                     {/* TOP ACCENT GLOW */}
@@ -2439,7 +2439,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         onClick={() => { onViewProfile(user); onClose(); }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-[64px] h-[64px] rounded-2xl overflow-hidden border-2 border-white/10 shrink-0 shadow-2xl rotate-[-2deg] hover:rotate-0 transition-transform">
+                            <div className="w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[var(--gold-primary)]/30 shrink-0 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.2)]">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col min-w-0">
@@ -2451,19 +2451,19 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 px-1">
-                            <div className="flex flex-col">
-                                <span className="font-black text-white text-lg tabular-nums leading-none">
+                        <div className="flex items-center gap-4 px-1 mt-1">
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="font-black text-white text-base tabular-nums">
                                     {user?.followers?.length || 0}
                                 </span>
-                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
+                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWERS')}</span>
                             </div>
-                            <div className="w-[1px] h-6 bg-white/10" />
-                            <div className="flex flex-col">
-                                <span className="font-black text-white text-lg tabular-nums leading-none">
+                            <div className="w-[3px] h-[3px] rounded-full bg-white/20" />
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="font-black text-white text-base tabular-nums">
                                     {user?.following?.length || 0}
                                 </span>
-                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1">{t('FOLLOWING')}</span>
+                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWING')}</span>
                             </div>
                         </div>
                     </div>
@@ -2517,7 +2517,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                     <button
                         onClick={() => { onLogout(); onClose(); }}
-                        className="w-full py-4.5 bg-red-500/10 hover:bg-red-600 active:bg-red-700 border border-red-500/20 text-red-500 hover:text-white font-black text-xs uppercase tracking-[0.25em] rounded-2xl transition-all flex items-center justify-center gap-3 group shadow-lg"
+                        className="w-full py-4.5 bg-red-500/10 hover:bg-red-600 active:bg-red-700 border border-red-500/20 text-red-500 hover:text-white font-black text-[11px] uppercase tracking-[0.25em] rounded-2xl transition-all flex items-center justify-center gap-3 group shadow-lg"
                     >
                         <Icons.Logout className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         {t('LOGOUT')}
