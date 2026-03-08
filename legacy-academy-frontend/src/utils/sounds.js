@@ -450,14 +450,14 @@ export const playSound = (type) => {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, t0);
             oscGain.gain.setValueAtTime(0, t0);
-            oscGain.gain.linearRampToValueAtTime(0.06, t0 + 0.01);
+            oscGain.gain.linearRampToValueAtTime(0.12, t0 + 0.01);
             oscGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.5);
 
             // Harmonic shimmer (octave above, quieter)
             harmonic.type = 'sine';
             harmonic.frequency.setValueAtTime(freq * 2, t0);
             harmGain.gain.setValueAtTime(0, t0);
-            harmGain.gain.linearRampToValueAtTime(0.015, t0 + 0.01);
+            harmGain.gain.linearRampToValueAtTime(0.03, t0 + 0.01);
             harmGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.35);
 
             osc.connect(oscGain);
@@ -477,7 +477,7 @@ export const playSound = (type) => {
         pad.type = 'sine';
         pad.frequency.setValueAtTime(330, ctx.currentTime); // E4 root
         padGain.gain.setValueAtTime(0, ctx.currentTime);
-        padGain.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 0.05);
+        padGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.05);
         padGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
         pad.connect(padGain);
         padGain.connect(ctx.destination);

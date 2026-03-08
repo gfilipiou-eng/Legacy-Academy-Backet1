@@ -3961,7 +3961,15 @@ const App = () => {
         const onNotificationRecv = (data) => {
             console.log("📡 [SOCKET] Real-time notification received", data);
             playSound('notification_arrive');
-            fetchNotifications(); // Refresh list
+            fetchNotifications(true); // silent = true to avoid double sound
+        };
+
+        const onMessageRecv = (msg) => {
+            // Only play sound if the message is for US and from someone else
+            if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
+                console.log("📨 [SOCKET] Live message sound trigger");
+                playSound('notification_arrive');
+            }
         };
 
         const onPostDeleted = (data) => {
@@ -4095,6 +4103,7 @@ const App = () => {
         };
 
         socket.on('notification.received', onNotificationRecv);
+        socket.on('message.received', onMessageRecv);
         socket.on('post.deleted', onPostDeleted);
         socket.on('post.liked', onPostLiked);
         socket.on('post.created', onPostCreated);
@@ -4106,6 +4115,7 @@ const App = () => {
 
         return () => {
             socket.off('notification.received', onNotificationRecv);
+            socket.off('message.received', onMessageRecv);
             socket.off('post.deleted', onPostDeleted);
             socket.off('post.liked', onPostLiked);
             socket.off('post.created', onPostCreated);
@@ -4256,11 +4266,11 @@ const App = () => {
     };
 
     // Notifications
-    const fetchNotifications = async () => {
+    const fetchNotifications = async (silent = false) => {
         if (!user) return;
         try {
             const res = await axios.get(`/users/notifications`);
-            if (res.data.length > (user.notifications?.length || 0)) {
+            if (!silent && res.data.length > (user.notifications?.length || 0)) {
                 const latest = res.data[0];
                 if (latest && !latest.read) playSound('notification_arrive');
             }
