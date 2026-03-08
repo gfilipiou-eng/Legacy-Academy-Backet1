@@ -37,6 +37,12 @@ const runDaemon = async () => {
             await scanPostsForAnomalies();
         }, SCAN_INTERVAL);
 
+        // 🔥 STATUS KEEP-ALIVE: Ensure bot looks online (Online status threshold is ~5 mins)
+        setInterval(async () => {
+            await User.findByIdAndUpdate(bot._id, { lastSeen: new Date() });
+            console.log("⚡ [BOT DAEMON] Heartbeat: Nova remains online.");
+        }, 60 * 1000); // Pulse every minute
+
     } catch (err) {
         console.error("💥 [BOT DAEMON] CRITICAL FAILURE:", err);
     }
