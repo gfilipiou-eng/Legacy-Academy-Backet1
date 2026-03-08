@@ -31,6 +31,11 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
+    // 🔥 SECURITY/UI CLEANUP: Hide media from the old, deactivated Cloudinary account (dfggkqhdb)
+    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/')) {
+        return null; // Force hide to avoid 401 errors and keep UI clean
+    }
+
     // AUTO-OPTIMIZE CLOUDINARY
     if (cleanUrl.includes('cloudinary.com') && cleanUrl.includes('/upload/')) {
         const parts = cleanUrl.split('/upload/');
