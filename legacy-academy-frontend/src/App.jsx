@@ -2492,8 +2492,14 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                         </div>
                                     </div>
                                 ), action: () => {
-                                    const bot = allUsers.find(u => u.isBot === true || u.username?.toLowerCase().includes('bot') || u.role === 'Admin') || { _id: 'nova_ai', username: 'NOVA ASSISTANT', profilePic: '' };
-                                    onOpenChat(bot);
+                                    const bot = allUsers.find(u => u.isBot === true || u.username?.includes('NOVA'));
+                                    if (bot) {
+                                        onOpenChat(bot);
+                                    } else {
+                                        // Fallback if not loaded yet, try to find by username
+                                        const admin = allUsers.find(u => u.role === 'Admin');
+                                        if (admin) onOpenChat(admin);
+                                    }
                                 }
                             },
                             { id: 'chat', icon: Icons.Ghost, label: t('WHISPERS') },

@@ -75,7 +75,9 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             }
         }
 
-        if (!recipientId) return res.status(400).json("Recipient is required");
+        if (!recipientId || !mongoose.Types.ObjectId.isValid(recipientId)) {
+            return res.status(400).json("Invalid or missing recipient ID");
+        }
 
         const recipientUser = await User.findById(recipientId);
         if (!recipientUser) return res.status(404).json("Target user no longer exists");
@@ -140,11 +142,17 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     }
 });
 
+import mongoose from "mongoose";
+
 // GET CONVERSATION
 const getConversation = async (req, res) => {
     try {
         const otherUserId = req.params.userId;
         const currentUserId = req.user.id;
+
+        if (!mongoose.Types.ObjectId.isValid(otherUserId)) {
+            return res.status(200).json([]); // Return empty conversation for invalid IDs
+        }
 
         // WHISPER CLEANUP: Delete messages read > 1 minute ago
         const oneMinuteAgo = new Date(Date.now() - 60 * 1000);

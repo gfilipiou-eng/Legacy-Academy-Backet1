@@ -551,6 +551,9 @@ router.put("/:id", verifyToken, async (req, res) => {
 // GET USER BY ID (With Privacy Guard)
 router.get("/find/:id", verifyToken, async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(404).json("Invalid Agent ID");
+        }
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json("User not found");
 
