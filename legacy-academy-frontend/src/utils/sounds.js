@@ -519,6 +519,28 @@ export const playSound = (type) => {
         sub.start();
         thock.stop(ctx.currentTime + 0.06);
         sub.stop(ctx.currentTime + 0.1);
+    } else if (type === 'nav_click') {
+        // Luxury "Nav Click" - Short, high-quality, muted pop
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'triangle'; // Richer harmonic content
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.04);
+
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2000, ctx.currentTime);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
     } else if (type === 'premium_logout') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();

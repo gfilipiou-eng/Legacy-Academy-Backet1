@@ -2296,7 +2296,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
                             </SettingRow>
                             <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="hover:border-blue-500/30">
-                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
+                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} saving={saving} color="blue" />
                             </SettingRow>
                         </div>
                     </section>
@@ -3116,7 +3116,7 @@ const ProfileModal = ({
 
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
-                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('premium_tap'); setActiveList('followers');
+                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all active:scale-95 group touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
@@ -3128,7 +3128,7 @@ const ProfileModal = ({
 
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
-                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('premium_tap'); setActiveList('following');
+                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all active:scale-95 group touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
@@ -5222,7 +5222,7 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
-                                        onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
+                                        onClick={() => { setIsDrawerOpen(true); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }}
                                         className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation"
                                         aria-label="Open menu"
                                     >
