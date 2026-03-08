@@ -204,6 +204,15 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
         if (targetUser.followers.map(id => id.toString()).includes(currentId)) {
             await targetUser.updateOne({ $pull: { followers: currentId } });
             await currentUser.updateOne({ $pull: { following: targetId } });
+
+            // 🔥 REAL-TIME SYNC: Emit updates for both users
+            if (io) {
+                const updatedTarget = await User.findById(targetId).select('-password');
+                const updatedCurrent = await User.findById(currentId).select('-password');
+                io.emit('user.updated', updatedTarget);
+                io.emit('user.updated', updatedCurrent);
+            }
+
             return res.status(200).json({
                 message: "Unfollowed",
                 followers: targetUser.followers.filter(id => id.toString() !== currentId)
@@ -271,6 +280,15 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             });
         }
         await currentUser.updateOne({ $addToSet: { following: targetId } });
+
+        // 🔥 REAL-TIME SYNC: Emit updates for both users
+        if (io) {
+            const updatedTarget = await User.findById(targetId).select('-password');
+            const updatedCurrent = await User.findById(currentId).select('-password');
+            io.emit('user.updated', updatedTarget);
+            io.emit('user.updated', updatedCurrent);
+        }
+
         return res.status(200).json({ message: "Followed", following: [...currentUser.following, targetId] });
     } catch (err) {
         res.status(500).json(err);
@@ -328,14 +346,17 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
             }
         });
 
-        // 🔥 REAL-TIME NOTIF
-        const io = req.app.get('io');
+        // 🔥 REAL-TIME SYNC: Emit updates for both users
         if (io) {
             io.to(String(requesterId)).emit('notification.received', {
                 type: 'follow_accepted',
                 fromUsername: user.username,
                 fromProfilePic: user.profilePic
             });
+            const updatedReq = await User.findById(requesterId).select('-password');
+            const updatedMe = await User.findById(userId).select('-password');
+            io.emit('user.updated', updatedReq);
+            io.emit('user.updated', updatedMe);
         }
 
         res.status(200).json("Request Accepted");

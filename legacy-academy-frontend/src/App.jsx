@@ -59,8 +59,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                 transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
-                // 350px is the sweet spot for profile cards/headers
-                transform = `w_350,h_350,c_fill,g_face,q_auto,f_auto`;
+                // 600px + q_auto:best for maximum quality as requested
+                transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
             } else if (width) {
                 transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
@@ -2450,14 +2450,14 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, onNavigate, onViewP
                         <div className="flex items-center gap-3 text-[15px]">
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-white tabular-nums">
-                                    {(user?.followers || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
+                                    {user?.followers?.length || 0}
                                 </span>
                                 <span className="text-gray-400">{t('FOLLOWERS').toLowerCase()}</span>
                             </div>
                             <span className="text-gray-700">·</span>
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-white tabular-nums">
-                                    {(user?.following || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
+                                    {user?.following?.length || 0}
                                 </span>
                                 <span className="text-gray-400">{t('FOLLOWING').toLowerCase()}</span>
                             </div>
@@ -2483,9 +2483,17 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, onNavigate, onViewP
                             <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('WHISPERS')}</span>
                         </button>
 
-                        <button onClick={() => handleLink('alerts')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
+                        <button onClick={() => handleLink('alerts')} className="relative w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
                             <Icons.Bell className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
                             <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('NOTIFICATIONS_TITLE')}</span>
+                            {/* 🔥 DRAWER NOTIF BADGE */}
+                            {alerts.filter(n => !n.read).length > 0 && (
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 min-w-[20px] h-[20px] px-1 bg-red-600 rounded-full border-2 border-black flex items-center justify-center animate-pulse z-10">
+                                    <span className="text-[10px] font-black text-white leading-none">
+                                        {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
+                                    </span>
+                                </div>
+                            )}
                         </button>
 
                         <button onClick={() => { onOpenSettings(); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
@@ -5072,12 +5080,21 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
-                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
+                                        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
                                         aria-label="Open menu"
                                     >
                                         <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-gray-400 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z" />
                                         </svg>
+
+                                        {/* 🔥 NOTIFICATION BADGE (UNREAD COUNT) */}
+                                        {alerts.filter(n => !n.read).length > 0 && (
+                                            <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-600 rounded-full border-2 border-black flex items-center justify-center animate-pulse z-10 shadow-[0_0_10px_rgba(220,38,38,0.5)]">
+                                                <span className="text-[10px] font-black text-white leading-none">
+                                                    {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
+                                                </span>
+                                            </div>
+                                        )}
                                     </button>
                                 </div>
                                 <div className="flex-1 flex justify-center">
