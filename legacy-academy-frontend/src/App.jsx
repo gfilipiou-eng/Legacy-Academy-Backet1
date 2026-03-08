@@ -547,7 +547,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     <div className="flex flex-col gap-1 w-full">
                         {comment.text && (
                             <div className="group/cmt relative">
-                                <span className={`text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
+                                <span className={`inline-block pb-1 text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
                                     {translatedText || comment.text}
                                 </span>
                                 {comment.text.length > 3 && (
@@ -857,7 +857,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         {/* Description Section */}
                         <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
                             <div className="space-y-4">
-                                <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
+                                <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
                                     {parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc))}
                                     {(translatedText || post.desc) && (translatedText || post.desc).length > 500 && (
                                         <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[var(--gold-primary)] text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
@@ -1529,7 +1529,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2">
+                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1">
                                         {parseHashtags(translatedText || post.desc, (tag) => onHashtagClick(tag))}
                                     </p>
                                     <button
@@ -3115,9 +3115,9 @@ const ProfileModal = ({
                                     </div>
 
                                     {/* FOLLOWERS */}
-                                    <div onPointerDown={(e) => {
-                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('premium_tap'); setActiveList('followers');
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
@@ -3127,9 +3127,9 @@ const ProfileModal = ({
                                     </div>
 
                                     {/* FOLLOWING */}
-                                    <div onPointerDown={(e) => {
-                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('premium_tap'); setActiveList('following');
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
@@ -5223,7 +5223,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => { setIsDrawerOpen(true); playSound('premium_tap'); }}
-                                        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90"
+                                        className="relative w-12 h-12 flex items-center justify-center rounded-2xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation"
                                         aria-label="Open menu"
                                     >
                                         <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-gray-400 pointer-events-none">
