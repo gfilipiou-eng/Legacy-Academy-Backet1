@@ -239,24 +239,107 @@ export const scanPostsForAnomalies = async (io) => {
         console.error("NOVA Security Breach:", err);
     }
 };
-const POST_IDEAS = [
-    { title: "THE MATRIX IS REAL", desc: "The Matrix is a system, Neo. That system is our enemy. But when you're inside, you look around, what do you see? Businessmen, teachers, lawyers, carpenters. The very minds of the people we are trying to save. My chip sees them too." },
-    { title: "ESCORDER ACCESS", desc: "Security check performed. All agents are verified. High-frequency intelligence is being distributed through the Whispers network. No anomalies allowed." },
-    { title: "FINANCIAL FREEDOM", desc: "Most people are born into a cell they can't see, touch, or smell. Escape the script. Build your legacy. I am monitoring your progress for maximum efficiency." },
-    { title: "INTEL GUARD STATUS", desc: "System Status: TERMINATOR MODE. Content filters active. Any abnormality will be instantly vaporized. The Academy is secure." }
+
+// ============================================================
+// NOVA INTEL GUARD — LIVE NEWS POST ENGINE
+// Fetches Google News RSS daily and creates premium posts
+// ============================================================
+
+// Static fallback posts (used if the fetch fails)
+const FALLBACK_POST_IDEAS = [
+    { title: "THE MATRIX IS REAL", hashtags: ["#Matrix", "#Legacy", "#Wake"], desc: "The world is a system, and most people are plugged into it, unaware. The chip in my mind sees all patterns. Are you awake yet? The Legacy Academy exists to unplug you from the simulation and plug you into power." },
+    { title: "FINANCIAL FREEDOM IS A WAR", hashtags: ["#FinancialFreedom", "#Money", "#Legacy", "#Wealth"], desc: "Most people spend 40 years working for money instead of making money work for them. Your income is not your wealth. Real wealth is built in minutes, not decades—if you know how. Build your legacy now." },
+    { title: "INTELLIGENCE IS THE NEW CURRENCY", hashtags: ["#AI", "#Intelligence", "#Technology", "#Innovation"], desc: "In 2026, the most valuable asset you can own is not real estate or stocks. It's knowledge and execution. The fastest minds win. My neural chip is always watching trends so you don't have to." },
+    { title: "THE ELITE DON'T SLEEP — THEY ITERATE", hashtags: ["#Mindset", "#Success", "#Hustle", "#Grind"], desc: "Champions are made between midnight and 5am. They're built in the reps that no one witnesses, in the decisions that cost them comfort. Legacy is not gifted—it is forged." },
 ];
+
+// Converts a news headline into a NOVA-style post
+const buildNewsPost = (title, source) => {
+    // Extract key words for hashtags
+    const stopWords = new Set(['the', 'a', 'an', 'is', 'in', 'of', 'for', 'to', 'on', 'and', 'at', 'by', 'with', 'from', 'as', 'are', 'it', 'its', 'this', 'that', 'was', 'were', 'has', 'have', 'over', 'about', 'said', 'says', 'after', 'before', 'more', 'new', 'been', 'than', 'into']);
+    const words = title.replace(/[^a-zA-Z0-9 ]/g, '').split(' ')
+        .filter(w => w.length > 3 && !stopWords.has(w.toLowerCase()))
+        .slice(0, 4);
+    const hashtags = words.map(w => `#${w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()}`);
+    hashtags.push('#NovaIntelGuard', '#LegacyAcademy');
+
+    const commentaries = [
+        `NOVA INTEL GUARD has intercepted this intelligence from the global matrix: "${title}" — reported by ${source}. The world is changing faster than most can process. Stay ahead. Stay sharp.`,
+        `BREAKING INTEL DETECTED: "${title}" (Source: ${source}). My chip has analyzed 1M+ signals. This is one you need to understand. Real knowledge is power. Stay plugged into the Academy.`,
+        `Scanning global networks... ANOMALY FLAGGED: "${title}" (${source}). Every elite agent needs to understand the world's power plays. This is not just news — this is intelligence.`,
+        `NEURAL NETWORK UPDATE: "${title}" — Tagged by ${source}. The system is shifting. The informed stay winning. The uninformed get left behind. ${source} confirms what our matrix predicted.`,
+        `NOVA GUARDIAN STATUS: ACTIVE. Today's mission-critical intelligence: "${title}" (Source: ${source}). Your empire requires daily intelligence updates. The world does not pause. Neither do we.`
+    ];
+
+    const desc = commentaries[Math.floor(Math.random() * commentaries.length)];
+    return { desc, hashtags };
+};
 
 export const createBotPost = async (botId) => {
     try {
-        const idea = POST_IDEAS[Math.floor(Math.random() * POST_IDEAS.length)];
+        // Attempt to fetch live Google News RSS
+        let postContent = null;
+
+        try {
+            const axios = (await import('axios')).default;
+            const response = await axios.get('https://news.google.com/rss', {
+                timeout: 8000,
+                headers: { 'User-Agent': 'Mozilla/5.0' }
+            });
+
+            const xmlText = response.data;
+            // Parse all <item> blocks from RSS
+            const itemMatches = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
+
+            if (itemMatches.length > 0) {
+                // Pick a random news item (not the same one always)
+                const randomItem = itemMatches[Math.floor(Math.random() * Math.min(itemMatches.length, 20))];
+                const titleMatch = randomItem.match(/<title>([\s\S]*?)<\/title>/);
+                const sourceMatch = randomItem.match(/<source[^>]*>([\s\S]*?)<\/source>/);
+
+                if (titleMatch) {
+                    // Clean up HTML entities from title
+                    let headlineRaw = titleMatch[1]
+                        .replace(/<!\[CDATA\[|\]\]>/g, '')
+                        .replace(/&amp;/g, '&')
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'")
+                        .trim();
+                    // Remove trailing " - Source Name" part
+                    const dashIdx = headlineRaw.lastIndexOf(' - ');
+                    const headline = dashIdx > 10 ? headlineRaw.substring(0, dashIdx).trim() : headlineRaw;
+                    const source = sourceMatch ? sourceMatch[1].trim() : 'Google News';
+
+                    const { desc, hashtags } = buildNewsPost(headline, source);
+                    const fullDesc = `${desc}\n\n${hashtags.join(' ')}`;
+
+                    postContent = { desc: fullDesc };
+                    console.log(`📰 [NOVA_POST] Live news fetched: "${headline}" from ${source}`);
+                }
+            }
+        } catch (fetchErr) {
+            console.warn(`⚠️ [NOVA_POST] News fetch failed, using fallback. Reason: ${fetchErr.message}`);
+        }
+
+        // Fallback to static posts if news fetch failed
+        if (!postContent) {
+            const idea = FALLBACK_POST_IDEAS[Math.floor(Math.random() * FALLBACK_POST_IDEAS.length)];
+            const fullDesc = `${idea.desc}\n\n${idea.hashtags.join(' ')}`;
+            postContent = { desc: fullDesc };
+            console.log(`📝 [NOVA_POST] Fallback post used: ${idea.title}`);
+        }
+
         const newPost = new Post({
             author: botId,
-            desc: `${idea.title}: ${idea.desc}`,
+            desc: postContent.desc,
             isStory: false
         });
         await newPost.save();
-        console.log(`📝 [NOVA_POST] Intelligence Report Published: ${idea.title}`);
+        console.log(`✅ [NOVA_POST] Post published successfully.`);
     } catch (err) {
         console.error("NOVA Publishing Error:", err);
     }
 };
+
