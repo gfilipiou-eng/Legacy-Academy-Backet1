@@ -94,11 +94,11 @@ export const handleBotMention = async (message, io) => {
 
         // HYBRID / DNA LOGIC
         // 1. Math / "Organic Calculator"
-        const mathMatch = rawText.match(/^[\d\s\(\)\.\+\-\*\/]+$/);
+        const mathMatch = rawText.match(/^[\d\s\(\)\.\+\-\*\/\^=x]+[\?]?$/i);
         if (mathMatch) {
             try {
                 // Ensure safe evaulation of simple math
-                const cleanMath = rawText.replace(/[^-()\d/*+.]/g, '');
+                const cleanMath = rawText.replace(/[^-\d/*+.\^x()]/gi, '').replace(/x/gi, '*').replace(/\^/g, '**');
                 if (cleanMath.length > 2 && /[\d]/.test(cleanMath)) {
                     const result = Number(new Function('return (' + cleanMath + ')')());
                     if (!isNaN(result)) {
