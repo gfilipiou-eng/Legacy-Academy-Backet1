@@ -2454,16 +2454,16 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         <div className="flex items-center gap-4 px-1 mt-1">
                             <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
                                 <span className="font-black text-white text-base tabular-nums">
-                                    {(user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))).length}
+                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
                                 </span>
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">
-                                    {(user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))).length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                 </span>
                             </div>
                             <div className="w-[3px] h-[3px] rounded-full bg-white/20" />
                             <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
                                 <span className="font-black text-white text-base tabular-nums">
-                                    {(user?.following || []).filter(id => allUsers.some(u => String(u._id) === String(id))).length}
+                                    {[...new Set((user?.following || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
                                 </span>
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWING')}</span>
                             </div>
@@ -3011,10 +3011,10 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {(displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))).length}
+                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
-                                            {(displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))).length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                         </span>
                                     </div>
 
@@ -3023,7 +3023,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {(displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))).length}
+                                            {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
