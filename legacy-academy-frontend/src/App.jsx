@@ -2454,16 +2454,16 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         <div className="flex items-center gap-4 px-1 mt-1">
                             <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
                                 <span className="font-black text-white text-base tabular-nums">
-                                    {[...new Set(user?.followers || [])].length}
+                                    {(user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))).length}
                                 </span>
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">
-                                    {[...new Set(user?.followers || [])].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                    {(user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))).length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                 </span>
                             </div>
                             <div className="w-[3px] h-[3px] rounded-full bg-white/20" />
                             <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
                                 <span className="font-black text-white text-base tabular-nums">
-                                    {[...new Set(user?.following || [])].length}
+                                    {(user?.following || []).filter(id => allUsers.some(u => String(u._id) === String(id))).length}
                                 </span>
                                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWING')}</span>
                             </div>
@@ -2477,6 +2477,17 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
+                            {
+                                id: 'nova', icon: () => (
+                                    <div className="relative">
+                                        <Icons.Cpu className="w-5 h-5 text-emerald-400" />
+                                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
+                                    </div>
+                                ), label: 'NOVA AI', action: () => {
+                                    const bot = allUsers.find(u => u.username?.toLowerCase().includes('bot') || u.role === 'Admin') || { _id: 'nova_ai', username: 'NOVA ASSISTANT', profilePic: '' };
+                                    onOpenChat(bot);
+                                }
+                            },
                             { id: 'chat', icon: Icons.Ghost, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
@@ -2519,9 +2530,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                     <button
                         onClick={() => { onLogout(); onClose(); }}
-                        className="w-full py-4.5 bg-red-500/10 hover:bg-red-600 active:bg-red-700 border border-red-500/20 text-red-500 hover:text-white font-black text-[11px] uppercase tracking-[0.25em] rounded-2xl transition-all flex items-center justify-center gap-3 group shadow-lg"
+                        className="w-full py-4.5 bg-white/[0.03] hover:bg-red-500/20 active:bg-red-500/30 border border-white/10 hover:border-red-500/40 text-gray-400 hover:text-red-500 font-black text-[11px] uppercase tracking-[0.3em] rounded-2xl transition-all duration-500 flex items-center justify-center gap-3 group shadow-2xl backdrop-blur-md relative overflow-hidden"
                     >
-                        <Icons.Logout className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        <Icons.Logout className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                         {t('LOGOUT')}
                     </button>
 
@@ -2999,9 +3011,11 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {displayUser?.followers?.length || 0}
+                                            {(displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))).length}
                                         </span>
-                                        <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
+                                        <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
+                                            {(displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))).length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                        </span>
                                     </div>
 
                                     {/* FOLLOWING */}
@@ -3009,7 +3023,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {displayUser?.following?.length || 0}
+                                            {(displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))).length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
@@ -4894,7 +4908,7 @@ const App = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
-        playSound('cyber_click');
+        playSound('premium_logout');
         window.location.reload();
     };
 
