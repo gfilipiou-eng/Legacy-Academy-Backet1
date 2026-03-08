@@ -13,11 +13,22 @@ let storage;
 if (hasCloudinary) {
     storage = new CloudinaryStorage({
         cloudinary,
-        params: {
-            folder: "legacyacademy",
-            allowed_formats: ["jpg", "png", "jpeg", "mp4", "mov", "avi", "webm", "mp3", "wav", "ogg"],
-            resource_type: "auto",
-        },
+        params: async (req, file) => {
+            const isVideo = file.mimetype.startsWith('video');
+            return {
+                folder: "legacyacademy",
+                allowed_formats: ["jpg", "png", "jpeg", "mp4", "mov", "avi", "webm", "mp3", "wav", "ogg"],
+                resource_type: "auto",
+                transformation: [
+                    {
+                        width: isVideo ? 720 : 1200,
+                        crop: "limit",
+                        quality: "auto",
+                        fetch_format: "auto"
+                    }
+                ]
+            };
+        }
     });
 } else {
     storage = multer.diskStorage({

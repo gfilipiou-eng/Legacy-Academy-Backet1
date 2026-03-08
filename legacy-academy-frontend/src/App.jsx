@@ -27,36 +27,39 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
         url = `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
     }
 
+    // CLEANUP: If URL is just 'undefined' or 'null' as string (backend artifacts), treat as null
+    const cleanUrl = String(url || '').trim();
+    if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
+
     // AUTO-OPTIMIZE CLOUDINARY
-    if (url.includes('cloudinary.com') && url.includes('/upload/')) {
-        const parts = url.split('/upload/');
+    if (cleanUrl.includes('cloudinary.com') && cleanUrl.includes('/upload/')) {
+        const parts = cleanUrl.split('/upload/');
+        if (parts.length < 2) return cleanUrl; // Ensure there's a path after /upload/
         // Only inject if not already transformed
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_') && !parts[1].startsWith('so_') && !parts[1].startsWith('q_')) {
-            const isVideo = url.includes('/video/upload/');
+            const isVideo = cleanUrl.includes('/video/upload/');
 
             if (isCover && isVideo) {
                 // Strip cached transformations mapped to covers
-                return url.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/$1');
+                return cleanUrl.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/$1');
             }
-
             let transform = '';
-
-            // SAVE CREDITS: Use 'q_auto:eco' (Economy) to heavily compress bandwidth
-            // Downgraded w_1080 and w_600 to smaller sizes
+            // SAVE CREDITS: Use 'q_auto' (Balanced) for high visual fidelity with storage savings
+            // Increased widths to avoid pixelation on high-PPI displays
             if (isPoster && isVideo) {
-                transform = `so_0.0,f_auto,q_auto:eco,w_600,c_limit`;
+                transform = `so_0.0,f_auto,q_auto,w_800,c_limit`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
             } else if (isAvatar && isVideo) {
-                // Limit animated avatar duration and size
-                transform = `w_200,h_200,c_fill,so_0,eo_2,q_auto:eco,f_webp,fl_animated`;
+                // Animated avatars: WebP (animated) + 350px
+                transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
                 parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
             } else if (isAvatar) {
-                // 200px is more than enough for avatars
-                transform = `w_200,h_200,c_fill,g_face,q_auto:eco,f_auto`;
+                // 350px is the sweet spot for profile cards/headers
+                transform = `w_350,h_350,c_fill,g_face,q_auto,f_auto`;
             } else if (width) {
-                transform = `w_${Math.min(width, 800)},c_limit,q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                transform = `q_auto:eco,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                transform = `q_auto,f_auto`;
             }
 
             return parts[0] + '/upload/' + transform + '/' + parts[1];
@@ -327,19 +330,18 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
 const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const [imgError, setImgError] = useState(false);
 
-    if (!user) return <DefaultAvatar size={size} />;
+    if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
 
-    const url = user.profilePic || user.fromProfilePic;
+    const rawUrl = user.profilePic || user.fromProfilePic;
     const name = user.username || user.fromUsername;
 
-    // Reset error state if url changes (basic check)
-    useEffect(() => { setImgError(false); }, [url]);
+    // Reset error state if url changes
+    useEffect(() => { setImgError(false); }, [String(rawUrl || '')]);
 
-    const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
-    const mediaUrl = url ? (rawIsVideo ? resolveMediaUrl(url, 250, false) : resolveMediaUrl(url, 150, true)) : null;
-    const isVideo = rawIsVideo && mediaUrl;
+    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 350 : 150, !String(rawUrl || '').includes('/video/upload/'));
+    const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
-    if (imgError) return <DefaultAvatar name={name} size={size} />;
+    if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
@@ -1196,7 +1198,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             </div>
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
-                    <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{note.fromUsername}</span>
+                    <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
                     <VerifiedBadge isFounder={isFounderSender} className="w-3.5 h-3.5 ml-1" />
                     <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
@@ -1309,9 +1311,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const discardRef = useRef(false);
     const [imgError, setImgError] = useState(false); // Handle broken images
 
-    const isFounder = post.author?.role === 'Founder';
     const isCurrentUserFounder = user?.role === 'Founder';
-    const isOwner = String(post.author?._id || post.author) === String(user?._id);
+
+    // 🔥 ROBUST AUTHOR RESOLUTION: Fix "Unknown Agent" by looking up user if author is just an ID
+    const author = (post.author && typeof post.author === 'object' && post.author.username)
+        ? post.author
+        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
+
+    const isFounder = author?.role === 'Founder';
+    const isOwner = String(author?._id || author) === String(user?._id);
     const canDelete = isOwner || isCurrentUserFounder;
 
     const stopRecording = (shouldDiscard = false) => {
@@ -1401,15 +1409,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
                         <Icons.RefreshCcw className="w-3.5 h-3.5" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                            {reposter.username === user?.username ? t('YOU_REPOSTED', 'YOU REPOSTED') : `${reposter.username} ${t('REPOSTED', 'REPOSTED')}`}
+                            {(reposter?.username || 'Agent') === user?.username ? t('YOU_REPOSTED', 'YOU REPOSTED') : `${reposter?.username || 'Agent'} ${t('REPOSTED', 'REPOSTED')}`}
                         </span>
                     </div>
                 )}
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(post.author)}>
-                            <ProfileAvatar user={post.author} className="rounded-full" />
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
+                            <ProfileAvatar user={author} className="rounded-full" />
                         </div>
                     </div>
 
@@ -1418,10 +1426,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {/* Header */}
                         <div className="flex items-start justify-between mb-1 sm:mb-2 -mt-1 sm:-mt-0.5">
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap leading-tight sm:leading-none">
-                                    <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer" onClick={() => onViewProfile(post.author)}>{post.author?.username}</span>
+                                <div className="flex items-center gap-1.5 flex-wrap leading-tight sm:leading-none">
+                                    <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer" onClick={() => onViewProfile(author)}>{author?.username}</span>
                                     <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                    <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{post.author?.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                                    <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{author?.username?.toLowerCase().replace(/\s+/g, '') || 'agent'}</span>
                                     <span className="text-gray-600 text-[13px] mx-1">·</span>
                                     <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
                                 </div>
@@ -2647,20 +2655,35 @@ const ProfileModal = ({
         return () => socket.off('post.reposted', handleReposted);
     }, [isOpen, profileUser?._id]);
 
-    // 🔥 KEY FIX: Sync likes/dislikes/comments from global posts into userSpecificPosts
+    // 🔥 PERFORMANCE FIX: Efficiently sync and update local profile posts with any global changes
     useEffect(() => {
-        if (!isOpen || !posts?.length) return;
-        setUserSpecificPosts(prev => prev.map(localPost => {
-            const globalPost = posts.find(p => String(p._id) === String(localPost._id));
+        if (!isOpen || !posts?.length || !userSpecificPosts?.length) return;
+
+        // Use a Map for O(1) lookups during sync
+        const globalPostMap = new Map(posts.map(p => [String(p._id), p]));
+
+        let hasChanges = false;
+        const synced = userSpecificPosts.map(localPost => {
+            const globalPost = globalPostMap.get(String(localPost._id));
             if (!globalPost) return localPost;
-            return {
-                ...localPost,
-                likes: globalPost.likes,
-                dislikes: globalPost.dislikes,
-                reposts: globalPost.reposts,
-                comments: globalPost.comments,
-            };
-        }));
+
+            // Shallow comparison check before updating to prevent infinite React cycles if needed
+            if (localPost.likes?.length !== globalPost.likes?.length ||
+                localPost.comments?.length !== globalPost.comments?.length ||
+                localPost.reposts?.length !== globalPost.reposts?.length) {
+                hasChanges = true;
+                return {
+                    ...localPost,
+                    likes: globalPost.likes,
+                    dislikes: globalPost.dislikes,
+                    reposts: globalPost.reposts,
+                    comments: globalPost.comments,
+                };
+            }
+            return localPost;
+        });
+
+        if (hasChanges) setUserSpecificPosts(synced);
     }, [posts, isOpen]);
 
     const userPosts = React.useMemo(() => (userSpecificPosts || []).filter(p => {
@@ -2952,7 +2975,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {(displayUser?.followers || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
+                                            {displayUser?.followers?.length || 0}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWERS')}</span>
                                     </div>
@@ -2962,7 +2985,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('cyber_click'); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-2.5 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-black transition-all active:scale-95 group">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {(displayUser?.following || []).filter(id => allUsers?.some(u => String(u._id) === String(id))).length}
+                                            {displayUser?.following?.length || 0}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
@@ -3795,7 +3818,8 @@ const App = () => {
         setPosts(prev => prev.map(p => {
             let updatedPost = p;
             if (String(p.author?._id || p.author) === userId) {
-                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : p.author;
+                // Fix: Ensure author is an object so name/pic are never undefined
+                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : { ...updatedUser };
                 updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
             }
 
@@ -4025,7 +4049,8 @@ const App = () => {
                     const userId = String(data._id);
                     let updatedPost = p;
                     if (String(p.author?._id || p.author) === userId) {
-                        const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...data } : p.author;
+                        // Fix: Ensure author is an object
+                        const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...data } : { ...data };
                         updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: data.profilePic || updatedPost.profilePic };
                     }
                     if (p.comments?.some(c => String(c.authorId) === userId)) {
@@ -4846,6 +4871,16 @@ const App = () => {
         return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} />;
     }
 
+    // Optimization: memoize feed calculation to avoid flickering & re-running heavy filters
+    const preloadedProfilePosts = useMemo(() => {
+        if (!profileUser?._id && !profileUser) return [];
+        const targetId = String(profileUser?._id || profileUser?.userId || profileUser);
+        return posts.filter(p =>
+            String(p.author?._id || p.author) === targetId ||
+            (Array.isArray(p.reposts) && p.reposts.some(id => String(id) === targetId))
+        );
+    }, [posts, profileUser]);
+
     return (
         <div className="app-container">
             {!user ? (
@@ -5232,7 +5267,7 @@ const App = () => {
                         profileUser={profileUser}
                         currentUser={user}
                         allUsers={users}
-                        preloadedPosts={posts.filter(p => String(p.author?._id || p.author) === String(profileUser?._id || profileUser?.userId || profileUser) || (Array.isArray(p.reposts) && p.reposts.some(id => String(id) === String(profileUser?._id || profileUser))))}
+                        preloadedPosts={preloadedProfilePosts}
                         posts={posts}
                         onFollow={handleFollow}
                         onUpdateUser={handleUpdateUser}
