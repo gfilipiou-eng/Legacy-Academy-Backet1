@@ -33,12 +33,18 @@ const detectLanguage = (text) => {
 
 export const handleBotMention = async (message, io) => {
     try {
+        console.log(`🤖 [BOT] Checking message for Nova... Target: ${message.recipient}`);
         const recipient = await User.findById(message.recipient);
-        if (!recipient || !recipient.isBot) return;
+        if (!recipient || !recipient.isBot) {
+            console.log(`🤖 [BOT] Recipient is not a bot or not found.`);
+            return;
+        }
 
         const senderId = message.sender;
         const text = (message.text || "").toLowerCase();
         const lang = detectLanguage(text);
+
+        console.log(`🤖 [BOT] Message from ${senderId} in ${lang}: "${text}"`);
 
         let responseText = BOT_RESPONSES[lang].default[Math.floor(Math.random() * BOT_RESPONSES[lang].default.length)];
 
@@ -53,6 +59,7 @@ export const handleBotMention = async (message, io) => {
         }
 
         setTimeout(async () => {
+            console.log(`🤖 [BOT] Sending response: ${responseText}`);
             const botMessage = new Message({
                 sender: recipient._id,
                 recipient: senderId,
@@ -60,7 +67,32 @@ export const handleBotMention = async (message, io) => {
             });
 
             await botMessage.save();
-            if (io) io.to(String(senderId)).emit('message.received', botMessage);
+
+            // Notify user
+            await User.findByIdAndUpdate(senderId, {
+                $push: {
+                    notifications: {
+                        $each: [{
+                            type: 'message',
+                            from: recipient._id,
+                            fromUsername: recipient.username,
+                            fromProfilePic: recipient.profilePic,
+                            read: false,
+                            createdAt: new Date()
+                        }],
+                        $position: 0
+                    }
+                }
+            });
+
+            if (io) {
+                io.to(String(senderId)).emit('message.received', botMessage);
+                io.to(String(senderId)).emit('notification.received', {
+                    type: 'message',
+                    fromUsername: recipient.username,
+                    fromProfilePic: recipient.profilePic
+                });
+            }
         }, 1500);
 
     } catch (err) {
@@ -80,7 +112,6 @@ export const scanPostsForAnomalies = async (io) => {
 
         if (suspiciousPosts.length === 0) return;
 
-        // Find the main Founder/Admin to notify
         const founders = await User.find({ role: 'Founder' });
         const bot = await User.findOne({ isBot: true });
 
@@ -89,7 +120,6 @@ export const scanPostsForAnomalies = async (io) => {
             post.flagReason = "SUSPICIOUS CONTENT DETECTED (NSFW/ANOMALY)";
             await post.save();
 
-            // Notify each founder
             for (const founder of founders) {
                 await User.findByIdAndUpdate(founder._id, {
                     $push: {

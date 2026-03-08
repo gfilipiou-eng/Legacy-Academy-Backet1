@@ -98,8 +98,8 @@ export const playSound = (type) => {
 
         // Tight envelope
         gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.005);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        gain.gain.linearRampToValueAtTime(0.005, ctx.currentTime + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -118,7 +118,7 @@ export const playSound = (type) => {
         osc.frequency.setValueAtTime(1200, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.05);
 
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
 
         osc.connect(gain);
@@ -135,7 +135,7 @@ export const playSound = (type) => {
         osc.frequency.setValueAtTime(2400, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(3200, ctx.currentTime + 0.02);
 
-        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.setValueAtTime(0.01, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
 
         osc.connect(gain);
@@ -172,7 +172,7 @@ export const playSound = (type) => {
         osc.frequency.setValueAtTime(150, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
 
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
 
         osc.connect(gain);
@@ -186,7 +186,7 @@ export const playSound = (type) => {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(1200, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.05);
-        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.setValueAtTime(0.005, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -201,13 +201,13 @@ export const playSound = (type) => {
         crystal.type = 'sine';
         crystal.frequency.setValueAtTime(3500, ctx.currentTime);
         crystal.frequency.exponentialRampToValueAtTime(2800, ctx.currentTime + 0.015);
-        cg.gain.setValueAtTime(0.035, ctx.currentTime);
+        cg.gain.setValueAtTime(0.005, ctx.currentTime);
         cg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
 
         velvet.type = 'sine';
         velvet.frequency.setValueAtTime(100, ctx.currentTime);
         velvet.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.02);
-        vg.gain.setValueAtTime(0.05, ctx.currentTime);
+        vg.gain.setValueAtTime(0.01, ctx.currentTime);
         vg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
 
         crystal.connect(cg);
@@ -228,7 +228,7 @@ export const playSound = (type) => {
         osc.frequency.setValueAtTime(400, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+        gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 0.02);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 0.2);
@@ -241,8 +241,8 @@ export const playSound = (type) => {
         osc.frequency.setValueAtTime(800, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.15);
         gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        gain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 0.2);
     } else if (type === 'cyber_repost') {
@@ -494,15 +494,15 @@ export const playSound = (type) => {
         crystal.type = 'sine';
         crystal.frequency.setValueAtTime(3200, ctx.currentTime);
         crystal.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.03);
-        cGain.gain.setValueAtTime(0.015, ctx.currentTime);
-        cGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+        cGain.gain.setValueAtTime(0.003, ctx.currentTime);
+        cGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
 
         // Sub resonance — soft haptic
         sub.type = 'sine';
         sub.frequency.setValueAtTime(120, ctx.currentTime);
         sub.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.04);
-        sGain.gain.setValueAtTime(0.02, ctx.currentTime);
-        sGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        sGain.gain.setValueAtTime(0.004, ctx.currentTime);
+        sGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
 
         crystal.connect(cGain);
         sub.connect(sGain);
