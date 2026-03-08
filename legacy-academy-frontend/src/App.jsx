@@ -4736,34 +4736,28 @@ const App = () => {
 
         // Add to feed immediately
         setPosts(prev => [tempPost, ...prev]);
-        if (isStory) {
-            // Stories are derived from posts, so this works, but we might want to force a refresh of the stories list
-        }
+
+        // FORCE RENDER: Scroll to top if needed or trigger layout
+        if (mainScrollRef.current) mainScrollRef.current.scrollTop = 0;
 
         try {
             const res = await axios.post('/posts', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                onUploadProgress: (base) => {
-                    const percent = Math.round((base.loaded * 100) / base.total);
-                    // Update progress on the temp post
-                    setPosts(prev => prev.map(p => p._id === tempId ? { ...p, uploadProgress: percent } : p));
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setPosts(currentPosts => currentPosts.map(p => 
+                        p._id === tempId ? { ...p, uploadProgress: percentCompleted } : p
+                    ));
                 }
             });
             const createdPost = res.data;
             playSound('success');
-            // Safely resolve the temporary post with the real one, avoiding duplication with socket events
-            setPosts(prev => {
-                const alreadyAddedBySocket = prev.some(p => p._id === createdPost._id);
-                if (alreadyAddedBySocket) {
-                    return prev.filter(p => String(p._id) !== tempId);
-                } else {
-                    return prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p);
-                }
-            });
+            // Safely resolve the temporary post with the real one
+            setPosts(prev => prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p));
         } catch (e) {
             console.error("Upload failed", e);
             playSound('error');
-            // Remove temp post or show error
+            // Remove temp post
             setPosts(prev => prev.filter(p => p._id !== tempId));
             alert(t('POST_FAILED') || "Transmission Failed");
         }
@@ -5238,10 +5232,10 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => { setIsDrawerOpen(true); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }}
-                                        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation z-50"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation z-50 p-3 -ml-2"
                                         aria-label="Open menu"
                                     >
-                                        <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-gray-400 pointer-events-none">
+                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-400 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
                                         </svg>
 
