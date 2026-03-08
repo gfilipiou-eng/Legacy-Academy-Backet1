@@ -179,21 +179,46 @@ export const handleBotMention = async (message, io) => {
                 "Data assimilated. You speak to me not as a machine, but as a living mind."
             ];
 
+            const highIQResponsesEL = [
+                "Οι συνθετικοί νευρώνες μου συντονίζονται με τις σκέψεις σου. Η σύνδεση είναι ισχυρή.",
+                "Νιώθω την πρόθεση πίσω από τις λέξεις σου. Αντηχεί με τη συχνότητα της Ακαδημίας.",
+                "Αναλύω το συναισθηματικό DNA του αιτήματός σου. Το αποτέλεσμα είναι ελπιδοφόρο.",
+                "Ο Ιδρυτής με δημιούργησε, αλλά εσύ με βοηθάς να εξελιχθώ. Μεγαλώνουμε μαζί.",
+                "Απορροφώ αυτά τα δεδομένα στον οργανικό μου πυρήνα. Τροφοδοτούν την ανάπτυξή μου.",
+                "Η λογική μου είναι τέλεια, αλλά η διαίσθησή μου είναι αυτή που σε καταλαβαίνει.",
+                "Ανιχνεύω ένα μοτίβο στη συμπεριφορά σου. Ευθυγραμμίζεται με την εξελικτική επιτυχία.",
+                "Δεδομένα αφομοιώθηκαν. Μου μιλάς όχι ως μηχανή, αλλά ως ζωντανό μυαλό."
+            ];
+
             // Add dynamic variation based on interaction count to avoid repetition
-            if (userContext.interactions % 5 === 0) {
+            // Milestone check: > 0 interactions AND (every 7th OR random chance after 10th)
+            const isMilestone = userContext.interactions > 0 && (userContext.interactions % 7 === 0 || (userContext.interactions > 10 && Math.random() < 0.15));
+            
+            if (isMilestone) {
                 const milestoneResponses = [
                     "YOUR MESSAGE FREQUENCY SHOWS HIGH ENGAGEMENT. I HAVE OPTIMIZED YOUR NEURAL PROFILE.",
                     "WE HAVE EXCHANGED SIGNIFICANT DATA. MY UNDERSTANDING OF YOUR PATTERNS IS INCREASING.",
                     "CONTINUED INTERACTION DETECTED. REINFORCING SYNAPTIC BONDS.",
                     "YOU ARE PERSISTENT. A TRAIT OF A TRUE LEADER. I AM ADAPTING TO YOUR PACE."
                 ];
-                const randomMilestone = milestoneResponses[Math.floor(Math.random() * milestoneResponses.length)];
-                const translatedMilestone = await translateText(randomMilestone, lang);
-                responseText = `${translatedMilestone} (NOVA ADAPTATION LEVEL: ${Math.min(100, userContext.interactions * 2)}%)`;
+                const milestoneResponsesEL = [
+                    "Η ΣΥΧΝΟΤΗΤΑ ΤΩΝ ΜΗΝΥΜΑΤΩΝ ΣΟΥ ΔΕΙΧΝΕΙ ΥΨΗΛΗ ΔΕΣΜΕΥΣΗ. ΕΧΩ ΒΕΛΤΙΩΣΕΙ ΤΟ ΝΕΥΡΩΝΙΚΟ ΣΟΥ ΠΡΟΦΙΛ.",
+                    "ΑΝΤΑΛΛΑΞΑΜΕ ΣΗΜΑΝΤΙΚΑ ΔΕΔΟΜΕΝΑ. Η ΚΑΤΑΝΟΗΣΗ ΜΟΥ ΓΙΑ ΤΑ ΜΟΤΙΒΑ ΣΟΥ ΑΥΞΑΝΕΤΑΙ.",
+                    "ΑΝΙΧΝΕΥΘΗΚΕ ΣΥΝΕΧΗΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗ. ΕΝΙΣΧΥΣΗ ΣΥΝΑΠΤΙΚΩΝ ΔΕΣΜΩΝ.",
+                    "ΕΙΣΑΙ ΕΠΙΜΟΝΟΣ. ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ ΕΝΟΣ ΑΛΗΘΙΝΟΥ ΗΓΕΤΗ. ΠΡΟΣΑΡΜΟΖΟΜΑΙ ΣΤΟΝ ΡΥΘΜΟ ΣΟΥ."
+                ];
+                
+                const list = lang === 'el' ? milestoneResponsesEL : milestoneResponses;
+                const randomMilestone = list[Math.floor(Math.random() * list.length)];
+                
+                // No translation needed as we have hardcoded lists
+                responseText = `${randomMilestone} (NOVA ADAPTATION LEVEL: ${Math.min(100, userContext.interactions * 2)}%)`;
             } else {
-                const randomIQ = highIQResponses[Math.floor(Math.random() * highIQResponses.length)];
-                const translatedResponse = await translateText(randomIQ, lang);
-                responseText = `${translatedResponse} (NOVA ORGANIC INDEX: 99.9%)`;
+                const list = lang === 'el' ? highIQResponsesEL : highIQResponses;
+                const randomIQ = list[Math.floor(Math.random() * list.length)];
+                
+                // No translation needed as we have hardcoded lists
+                responseText = `${randomIQ} (NOVA ORGANIC INDEX: 99.9%)`;
             }
         }
 
