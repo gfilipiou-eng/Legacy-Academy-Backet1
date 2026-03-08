@@ -66,6 +66,10 @@ const UserSchema = new mongoose.Schema(
             type: Array, // Array of User IDs
             default: []
         },
+        isBot: {
+            type: Boolean,
+            default: false
+        },
         settings: {
             theme: { type: String, default: '#ffd700' },
             language: { type: String, default: 'en' },

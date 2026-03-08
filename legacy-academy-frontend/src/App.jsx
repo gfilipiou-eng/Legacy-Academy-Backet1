@@ -2492,7 +2492,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                         </div>
                                     </div>
                                 ), action: () => {
-                                    const bot = allUsers.find(u => u.username?.toLowerCase().includes('bot') || u.role === 'Admin') || { _id: 'nova_ai', username: 'NOVA ASSISTANT', profilePic: '' };
+                                    const bot = allUsers.find(u => u.isBot === true || u.username?.toLowerCase().includes('bot') || u.role === 'Admin') || { _id: 'nova_ai', username: 'NOVA ASSISTANT', profilePic: '' };
                                     onOpenChat(bot);
                                 }
                             },

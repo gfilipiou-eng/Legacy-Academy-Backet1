@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 import { deleteCloudinaryFiles } from "../utils/cloudinaryCleanup.js";
+import { handleBotMention } from "../utils/botHandlers.js";
 
 const router = express.Router();
 
@@ -127,6 +128,9 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
                     fromProfilePic: senderUser.profilePic
                 });
             }
+
+            // --- BOT AUTOMATION ---
+            await handleBotMention(savedMessage, io);
         }
 
         res.status(200).json(savedMessage);
