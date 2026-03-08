@@ -3116,8 +3116,8 @@ const ProfileModal = ({
 
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
-                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all active:scale-95 group touch-manipulation select-none">
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('followers');
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all active:scale-95 group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
@@ -3128,8 +3128,8 @@ const ProfileModal = ({
 
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
-                                        e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all active:scale-95 group touch-manipulation select-none">
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('following');
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all active:scale-95 group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
@@ -5223,7 +5223,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => { setIsDrawerOpen(true); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }}
-                                        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation"
+                                        className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation z-50"
                                         aria-label="Open menu"
                                     >
                                         <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-gray-400 pointer-events-none">
