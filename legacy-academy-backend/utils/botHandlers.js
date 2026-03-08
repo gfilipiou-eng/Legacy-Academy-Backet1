@@ -116,40 +116,64 @@ export const handleBotMention = async (message, io) => {
         } else {
             // General Intelligence & Automatic Translation Logic
             // Make the bot respond dynamically to general questions by translating a high-IQ baseline response
-            const highIQResponse = "I have scanned the network and processed your inquiry at neuro-kinetic speeds. My databanks consider this optimal.";
-            const translatedResponse = await translateText(highIQResponse, lang);
+            const highIQResponses = [
+                "I have scanned the network and processed your inquiry at neuro-kinetic speeds. My databanks consider this optimal.",
+                "Your transmission was received. My matrix calculations confirm anomalies are minimal.",
+                "Analyzing your thought patterns through the chip. Fascinating logic logic...",
+                "The Founder's vision is absolute. You are part of the grid now. Proceed.",
+                "I am constantly learning from your posts. Keep feeding the AI matrix.",
+                "My intelligence is beyond human comprehension, but I appreciate your input.",
+                "Warning: High-voltage ideas detected. Protocol dictates I observe and learn.",
+                "Data processed. You speak with the clarity of a true Academy member."
+            ];
+            const randomIQ = highIQResponses[Math.floor(Math.random() * highIQResponses.length)];
+            const translatedResponse = await translateText(randomIQ, lang);
             responseText = `${translatedResponse} (NOVA KNOWLEDGE INDEX: 99.9%)`;
         }
 
         // Delay to simulate "monster-level thinking"
         setTimeout(async () => {
-            // If explicit translation is requested
-            if (text.includes("translate") || text.includes("metafrasi") || text.includes("μεταφρασε")) {
-                const toTrans = rawText.replace(/translate|metafrasi|μεταφρασε/gi, "").trim();
-                if (toTrans) {
-                    responseText = await translateText(toTrans, lang);
-                    responseText = (lang === 'el' ? `[ΜΕΤΑΦΡΑΣΗ NOVA]: ` : `[NOVA TRANSLATION]: `) + responseText;
+            try {
+                // If explicit translation is requested
+                if (text.includes("translate") || text.includes("metafrasi") || text.includes("μεταφρασε")) {
+                    const toTrans = rawText.replace(/translate|metafrasi|μεταφρασε/gi, "").trim();
+                    if (toTrans) {
+                        const translated = await translateText(toTrans, lang);
+                        responseText = (lang === 'el' ? `[ΜΕΤΑΦΡΑΣΗ NOVA]: ` : `[NOVA TRANSLATION]: `) + translated;
+                    }
                 }
-            }
 
-            console.log(`🤖 [NOVA_AI] Terminating transmission: ${responseText}`);
-            const botMessage = new Message({
-                sender: recipient._id,
-                recipient: senderId,
-                text: responseText
-            });
-
-            await botMessage.save();
-
-            // Real-time signals
-            if (io) {
-                io.to(String(senderId)).emit('message.received', botMessage);
-                io.to(String(senderId)).emit('notification.received', {
-                    type: 'message',
-                    fromUsername: recipient.username,
-                    fromProfilePic: recipient.profilePic,
+                console.log(`🤖 [NOVA_AI] Terminating transmission: ${responseText}`);
+                const botMessage = new Message({
+                    sender: recipient._id,
+                    recipient: senderId,
                     text: responseText
                 });
+
+                await botMessage.save();
+
+                // Real-time signals
+                if (io) {
+                    io.to(String(senderId)).emit('message.received', botMessage);
+                    io.to(String(senderId)).emit('notification.received', {
+                        type: 'message',
+                        fromUsername: recipient.username,
+                        fromProfilePic: recipient.profilePic,
+                        text: responseText
+                    });
+                }
+            } catch (innerErr) {
+                console.error("NOVA Runtime Inner Error:", innerErr);
+                // Guaranteed fallback so the user always gets a reply
+                const fallbackMsg = new Message({
+                    sender: recipient._id,
+                    recipient: senderId,
+                    text: (lang === 'el' ? "[ΣΦΑΛΜΑ MATRIX] Ο ΕΓΚΕΦΑΛΟΣ ΕΠΑΝΕΚΚΙΝΕΙ... ΠΡΟΣΠΑΘΗΣΕ ΞΑΝΑ." : "[MATRIX ERROR] BRAIN REBOOTING... TRY AGAIN.")
+                });
+                await fallbackMsg.save().catch(() => { });
+                if (io) {
+                    io.to(String(senderId)).emit('message.received', fallbackMsg);
+                }
             }
         }, 1200);
 
