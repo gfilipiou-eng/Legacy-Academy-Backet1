@@ -2406,7 +2406,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
     if (!isOpen) return null;
 
     const handleLink = (tab) => {
@@ -5369,6 +5369,7 @@ const App = () => {
                         onOpenTerms={() => setIsTermsOpen(true)}
                         onOpenPrivacy={() => setIsPrivacyOpen(true)}
                         onLogout={logout}
+                        onOpenChat={handleOpenChat}
                         t={t}
                     />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
