@@ -1945,15 +1945,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
-                <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
+                <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-transform duration-300 ${activeChat ? '-translate-x-full sm:translate-x-0' : 'translate-x-0'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-black italic flex items-center gap-2">
+                                <h2 className="text-xl font-black italic flex items-center gap-2 text-white">
                                     <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('CHAT')}
                                 </h2>
-                                <button onClick={onClose} className="sm:hidden"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="sm:hidden p-2 active:scale-90 transition-transform touch-manipulation text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">
@@ -1964,7 +1964,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('SEARCH_USERS_PH')}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] transition-colors placeholder:text-gray-600"
                             />
                         </div>
                     </div>
@@ -1973,31 +1973,37 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
-                                <div key={u._id} onClick={() => setActiveChat(u)} className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors ${activeChat?._id === u._id ? 'bg-white/5' : ''}`}>
-                                    <div className="relative"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div><div className="font-bold text-sm text-white flex items-center gap-2">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4" /></div><div className={`text-[10px] ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-tighter`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
-                                </div>
+                                <button key={u._id} onClick={() => { setActiveChat(u); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors text-left touch-manipulation active:bg-white/10 ${activeChat?._id === u._id ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
+                                    <div className="relative shrink-0"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm border border-white/10`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                </button>
                             )
                         })}
                     </div>
                 </div>
-                <div className={`flex-1 flex flex-col bg-[#050505] chat-shell ${!activeChat ? 'hidden sm:flex' : 'flex'}`}>
+                
+                {/* CHAT WINDOW */}
+                <div className={`flex-1 flex flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-transform duration-300 ${activeChat ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'}`}>
                     {activeChat ? (
                         <>
-                            <div className="p-3 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl shrink-0">
-                                <div className="flex items-center gap-3">
-                                    <button onClick={() => setActiveChat(null)} className="sm:hidden"><Icons.Back className="w-6 h-6" /></button>
-                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0"><ProfileAvatar user={activeChat} className="rounded-full" /></div>
-                                    <div>
-                                        <div className="font-bold text-sm flex items-center gap-2">
-                                            {activeChat?.username}
-                                            <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4" />
-                                        </div>
-                                        <div className={`text-[10px] ${isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
-                                            {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
-                                        </div>
+                            <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
+                                <button 
+                                    onClick={() => { setActiveChat(null); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} 
+                                    className="sm:hidden p-2 -ml-2 text-gray-400 hover:text-white active:scale-90 transition-transform touch-manipulation"
+                                >
+                                    <Icons.Back className="w-6 h-6" />
+                                </button>
+                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10"><ProfileAvatar user={activeChat} className="rounded-full" /></div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
+                                        {activeChat?.username}
+                                        <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4 shrink-0" />
+                                    </div>
+                                    <div className={`text-[10px] ${isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest shadow-green-500/20' : 'text-gray-500 uppercase tracking-tighter'}`}>
+                                        {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
                                     </div>
                                 </div>
+                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="hidden sm:block p-2 text-gray-400 hover:text-white active:scale-90 transition-transform"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => {
