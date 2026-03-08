@@ -2480,10 +2480,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             {
                                 id: 'nova', icon: () => (
                                     <div className="relative">
-                                        <Icons.Cpu className="w-5 h-5 text-emerald-400" />
+                                        <Icons.ShieldCheck className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
                                     </div>
-                                ), label: 'NOVA AI', action: () => {
+                                ), label: (
+                                    <div className="flex flex-col">
+                                        <span className="text-[15px] font-black text-white leading-tight">NOVA INTEL GUARD</span>
+                                        <div className="flex items-center gap-1">
+                                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                            <span className="text-[9px] font-black text-emerald-500/80 uppercase tracking-widest">SECURED ACCESS</span>
+                                        </div>
+                                    </div>
+                                ), action: () => {
                                     const bot = allUsers.find(u => u.username?.toLowerCase().includes('bot') || u.role === 'Admin') || { _id: 'nova_ai', username: 'NOVA ASSISTANT', profilePic: '' };
                                     onOpenChat(bot);
                                 }
@@ -2503,7 +2511,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] transition-all">
                                     <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-all" />
                                 </div>
-                                <span className="text-[17px] font-bold text-white/80 group-hover:text-white transition-colors">{item.label}</span>
+                                <div className="text-[17px] font-bold text-white/80 group-hover:text-white transition-colors">{item.label}</div>
 
                                 {item.badge > 0 && (
                                     <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">

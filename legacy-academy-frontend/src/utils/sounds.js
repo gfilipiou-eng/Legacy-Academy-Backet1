@@ -490,19 +490,19 @@ export const playSound = (type) => {
         const cGain = ctx.createGain();
         const sGain = ctx.createGain();
 
-        // Crystal layer — crisp high transient
+        // Crystal layer — ultra-thin glass tap
         crystal.type = 'sine';
-        crystal.frequency.setValueAtTime(4200, ctx.currentTime);
-        crystal.frequency.exponentialRampToValueAtTime(2800, ctx.currentTime + 0.02);
-        cGain.gain.setValueAtTime(0.04, ctx.currentTime);
-        cGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        crystal.frequency.setValueAtTime(3200, ctx.currentTime);
+        crystal.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.03);
+        cGain.gain.setValueAtTime(0.015, ctx.currentTime);
+        cGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
 
-        // Sub resonance — warm body
+        // Sub resonance — soft haptic
         sub.type = 'sine';
-        sub.frequency.setValueAtTime(180, ctx.currentTime);
-        sub.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.06);
-        sGain.gain.setValueAtTime(0.06, ctx.currentTime);
-        sGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        sub.frequency.setValueAtTime(120, ctx.currentTime);
+        sub.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.04);
+        sGain.gain.setValueAtTime(0.02, ctx.currentTime);
+        sGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
 
         crystal.connect(cGain);
         sub.connect(sGain);
@@ -511,8 +511,8 @@ export const playSound = (type) => {
 
         crystal.start();
         sub.start();
-        crystal.stop(ctx.currentTime + 0.04);
-        sub.stop(ctx.currentTime + 0.08);
+        crystal.stop(ctx.currentTime + 0.05);
+        sub.stop(ctx.currentTime + 0.05);
     } else if (type === 'premium_logout') {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
