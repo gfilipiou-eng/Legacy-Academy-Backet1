@@ -2280,7 +2280,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-0">
+                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-0 active:scale-90 transition-transform touch-manipulation">
                         <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
@@ -2602,11 +2602,11 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             <button
                                 key={item.id}
                                 onClick={() => {
-                                    if (item.id !== 'nova') playSound('premium_tap');
+                                    if (item.id !== 'nova') { playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }
                                     if (item.action) { item.action(); onClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)]"
+                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation active:scale-[0.98]"
                             >
                                 <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] transition-all">
                                     <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-all" />
@@ -2631,14 +2631,14 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
                     <div className="flex items-center justify-center gap-8">
-                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenTerms(); onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
                         <div className="w-1 h-1 rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest">{t('PRIVACY_POLICY')}</button>
+                        <button onClick={() => { onOpenPrivacy(); onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
-                        onClick={() => { onLogout(); onClose(); }}
-                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20 active:scale-95 relative overflow-hidden"
+                        onClick={() => { onLogout(); onClose(); playSound('premium_logout'); if (navigator.vibrate) navigator.vibrate(20); }}
+                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20 active:scale-95 relative overflow-hidden touch-manipulation"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                         <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -2662,7 +2662,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
             <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
                 <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
                     <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0">
+                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0 active:scale-90 touch-manipulation">
                         <Icons.X className="w-6 h-6" />
                     </button>
                 </div>
@@ -2670,7 +2670,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
                     {content}
                 </div>
                 <div className="p-6 border-t border-white/10 flex justify-end">
-                    <button onClick={onClose} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs">
+                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs touch-manipulation">
                         {t('GOT_IT')}
                     </button>
                 </div>
