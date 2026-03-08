@@ -2406,7 +2406,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, allUsers, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, t }) => {
     if (!isOpen) return null;
 
     const handleLink = (tab) => {
@@ -2419,104 +2419,113 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, onNavigate, onViewP
         <div className="fixed inset-0 z-[2000] flex pointer-events-none">
             {/* BACKDROP */}
             <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-auto animate-fade-in"
+                className="absolute inset-0 bg-black/60 backdrop-blur-[4px] pointer-events-auto animate-fade-in z-[100]"
                 onClick={onClose}
             />
 
-            {/* DRAWER CONTAINER */}
+            {/* DRAWER CONTAINER - LIQUID GLASS STYLE */}
             <div className={`
-                relative w-[85%] max-w-[300px] h-full bg-[#050505] border-r border-white/10 flex flex-col pointer-events-auto
-                animate-slide-right shadow-[10px_0_50px_rgba(0,0,0,0.8)]
+                fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] 
+                liquid-glass-nav backdrop-blur-[20px] border-r border-white/10 flex flex-col pointer-events-auto
+                animate-slide-right shadow-[20px_0_80px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
             `}>
-                <div className="flex-1 overflow-y-auto no-scrollbar">
+                <div className="flex-1 overflow-y-auto no-scrollbar relative">
+                    {/* TOP ACCENT GLOW */}
+                    <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
+
                     {/* PROFILE SECTION */}
                     <div
-                        className="p-5 pt-8 flex flex-col gap-4 cursor-pointer"
+                        className="p-6 pt-10 flex flex-col gap-5 cursor-pointer relative z-10"
                         onClick={() => { onViewProfile(user); onClose(); }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-[52px] h-[52px] rounded-full overflow-hidden border border-white/10 shrink-0">
+                            <div className="w-[64px] h-[64px] rounded-2xl overflow-hidden border-2 border-white/10 shrink-0 shadow-2xl rotate-[-2deg] hover:rotate-0 transition-transform">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                                <div className="flex items-center gap-1">
-                                    <span className="font-bold text-[19px] text-white truncate">{user?.username}</span>
+                                <div className="flex items-center gap-1.5">
+                                    <span className="font-black text-xl text-white truncate tracking-tight">{user?.username}</span>
                                     <VerifiedBadge isFounder={user?.role === 'Founder'} className="w-4 h-4 shrink-0" />
                                 </div>
-                                <span className="text-gray-400 text-[15px] truncate">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                                <span className="text-[var(--gold-primary)]/60 font-bold text-xs uppercase tracking-[0.15em] truncate">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 text-[15px]">
-                            <div className="flex items-center gap-1">
-                                <span className="font-bold text-white tabular-nums">
+                        <div className="flex items-center gap-4 px-1">
+                            <div className="flex flex-col">
+                                <span className="font-black text-white text-lg tabular-nums leading-none">
                                     {user?.followers?.length || 0}
                                 </span>
-                                <span className="text-gray-400">{t('FOLLOWERS').toLowerCase()}</span>
+                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1">{t('FOLLOWERS')}</span>
                             </div>
-                            <span className="text-gray-700">·</span>
-                            <div className="flex items-center gap-1">
-                                <span className="font-bold text-white tabular-nums">
+                            <div className="w-[1px] h-6 bg-white/10" />
+                            <div className="flex flex-col">
+                                <span className="font-black text-white text-lg tabular-nums leading-none">
                                     {user?.following?.length || 0}
                                 </span>
-                                <span className="text-gray-400">{t('FOLLOWING').toLowerCase()}</span>
+                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1">{t('FOLLOWING')}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="h-px bg-white/5 mx-5 mb-2" />
+                    <div className="h-px bg-white/5 mx-6 mb-4" />
 
                     {/* NAV ITEMS */}
-                    <div className="px-2 space-y-1">
-                        <button onClick={() => handleLink('home')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.Home className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('HOME')}</span>
-                        </button>
-
-                        <button onClick={() => handleLink('search')} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.Search className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('EXPLORE')}</span>
-                        </button>
-
-                        <button onClick={() => { onNavigate('chat'); onClose(); playSound('cyber_nav'); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.Ghost className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('WHISPERS')}</span>
-                        </button>
-
-                        <button onClick={() => handleLink('alerts')} className="relative w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.Bell className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('NOTIFICATIONS_TITLE')}</span>
-                            {/* 🔥 DRAWER NOTIF BADGE */}
-                            {alerts.filter(n => !n.read).length > 0 && (
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 min-w-[20px] h-[20px] px-1 bg-red-600 rounded-full border-2 border-black flex items-center justify-center animate-pulse z-10">
-                                    <span className="text-[10px] font-black text-white leading-none">
-                                        {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
-                                    </span>
+                    <div className="px-3 space-y-1.5 relative z-10">
+                        {[
+                            { id: 'home', icon: Icons.Home, label: t('HOME') },
+                            { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
+                            { id: 'chat', icon: Icons.Ghost, label: t('WHISPERS') },
+                            { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
+                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
+                        ].map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => {
+                                    if (item.action) { item.action(); onClose(); }
+                                    else handleLink(item.id);
+                                }}
+                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)]"
+                            >
+                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] transition-all">
+                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-all" />
                                 </div>
-                            )}
-                        </button>
+                                <span className="text-[17px] font-bold text-white/80 group-hover:text-white transition-colors">{item.label}</span>
 
-                        <button onClick={() => { onOpenSettings(); onClose(); }} className="w-full px-4 py-3.5 flex items-center gap-4 hover:bg-white/5 rounded-xl transition-all group">
-                            <Icons.Settings className="w-[26px] h-[26px] text-gray-400 group-hover:text-white transition-colors" />
-                            <span className="text-[18px] font-medium text-white group-hover:text-[var(--gold-primary)] transition-colors">{t('SETTINGS')}</span>
-                        </button>
+                                {item.badge > 0 && (
+                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">
+                                        <span className="text-[10px] font-black text-white leading-none">
+                                            {item.badge > 9 ? '9+' : item.badge}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* HOVER ACCENT */}
+                                <div className="absolute left-0 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-6 transition-all rounded-full" />
+                            </button>
+                        ))}
                     </div>
                 </div>
 
                 {/* FOOTER */}
-                <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5">
-                    <div className="flex flex-wrap gap-4">
-                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-blue-500 font-bold hover:underline text-[14px] uppercase tracking-wider">{t('TERMS_OF_SERVICE')}</button>
-                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-blue-500 font-bold hover:underline text-[14px] uppercase tracking-wider">{t('PRIVACY_POLICY')}</button>
+                <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
+                    <div className="flex items-center justify-center gap-8">
+                        <button onClick={() => { onOpenTerms(); onClose(); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest">{t('TERMS_OF_SERVICE')}</button>
+                        <div className="w-1 h-1 rounded-full bg-white/10" />
+                        <button onClick={() => { onOpenPrivacy(); onClose(); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
                         onClick={() => { onLogout(); onClose(); }}
-                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/20 text-red-500 hover:text-white font-black text-sm uppercase tracking-[0.2em] rounded-2xl transition-all flex items-center justify-center gap-3 group"
+                        className="w-full py-4.5 bg-red-500/10 hover:bg-red-600 active:bg-red-700 border border-red-500/20 text-red-500 hover:text-white font-black text-xs uppercase tracking-[0.25em] rounded-2xl transition-all flex items-center justify-center gap-3 group shadow-lg"
                     >
-                        <Icons.Logout className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <Icons.Logout className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         {t('LOGOUT')}
                     </button>
+
+                    <div className="text-center">
+                        <span className="text-[9px] font-black text-gray-600 tracking-[0.4em] uppercase">Legacy Academy v8.2</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5321,6 +5330,7 @@ const App = () => {
                         onClose={() => setIsDrawerOpen(false)}
                         user={user}
                         allUsers={users}
+                        alerts={alerts}
                         onNavigate={(tab) => {
                             if (tab === 'chat') {
                                 setTimeout(() => setIsChatOpen(true), 150);
