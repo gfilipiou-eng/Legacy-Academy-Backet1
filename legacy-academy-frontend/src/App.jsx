@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import EnhancedButton from './components/EnhancedButton';
 // DEPLOYMENT_VERSION: V12_PORTAL_FIX
 
 import axios from './api';
@@ -162,10 +163,6 @@ const getYouTubeEmbedUrl = (url) => {
 
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
-    // Rule: Bots are always online
-    const userObj = typeof u === 'object' ? u : {};
-    if (userObj.isBot || userObj.username?.includes('NOVA') || userObj.role?.includes('Guard')) return true;
-
     // Rule: You are always online to yourself (instant feedback)
     if (currentUser && (u._id === currentUser._id || u === currentUser._id || String(u._id) === String(currentUser._id))) return true;
 
@@ -2515,11 +2512,21 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 };
 
 const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
-    if (!isOpen) return null;
+    const [isClosing, setIsClosing] = useState(false);
+
+    if (!isOpen && !isClosing) return null;
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+            setIsClosing(false);
+        }, 200);
+    };
 
     const handleLink = (tab) => {
         onNavigate(tab);
-        onClose();
+        handleClose();
         playSound('cyber_nav');
     };
 
@@ -2527,15 +2534,16 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
         <div className="fixed inset-0 z-[2000] flex pointer-events-none">
             {/* BACKDROP */}
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-[4px] pointer-events-auto animate-fade-in z-[100]"
-                onClick={onClose}
+                className={`absolute inset-0 bg-black/60 backdrop-blur-[4px] pointer-events-auto z-[100] ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
+                onClick={handleClose}
             />
 
             {/* DRAWER CONTAINER - PREMIUM LIQUID GLASS */}
             <div className={`
                 fixed top-0 left-0 bottom-0 w-[min(280px,85%)] sm:w-[280px]
                 liquid-glass-nav backdrop-blur-[25px] border-r border-white/10 flex flex-col pointer-events-auto
-                animate-slide-right shadow-[15px_0_60px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
+                shadow-[15px_0_60px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
+                ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}>
                 <div className="flex-1 overflow-y-auto no-scrollbar relative">
                     {/* TOP ACCENT GLOW */}
@@ -2544,7 +2552,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                     {/* PROFILE SECTION */}
                     <div
                         className="p-6 pt-10 flex flex-col gap-5 cursor-pointer relative z-10"
-                        onClick={() => { onViewProfile(user); onClose(); }}
+                        onClick={() => { onViewProfile(user); handleClose(); }}
                     >
                         <div className="flex items-center gap-4">
                             <div className="w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[var(--gold-primary)]/30 shrink-0 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.2)]">
@@ -2585,43 +2593,19 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
-                            {
-                                id: 'nova', icon: () => (
-                                    <div className="relative">
-                                        <Icons.ShieldCheck className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-                                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
-                                    </div>
-                                ), label: (
-                                    <div className="flex flex-col">
-                                        <span className="text-[15px] font-black text-white leading-tight">NOVA INTEL GUARD</span>
-                                        <div className="flex items-center gap-1">
-                                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                            <span className="text-[9px] font-black text-emerald-500/80 uppercase tracking-widest">SECURED ACCESS</span>
-                                        </div>
-                                    </div>
-                                ), action: () => {
-                                    const bot = allUsers.find(u => u.isBot === true || u.username?.includes('NOVA'));
-                                    if (bot) {
-                                        onOpenChat(bot);
-                                    } else {
-                                        // Fallback if not loaded yet, try to find by username
-                                        const admin = allUsers.find(u => u.role === 'Admin');
-                                        if (admin) onOpenChat(admin);
-                                    }
-                                }
-                            },
                             { id: 'chat', icon: Icons.Ghost, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
-                        ].map((item) => (
+                        ].map((item, index) => (
                             <button
                                 key={item.id}
                                 onClick={() => {
-                                    if (item.id !== 'nova') { playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }
-                                    if (item.action) { item.action(); onClose(); }
+                                    playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5);
+                                    if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation active:scale-[0.98]"
+                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation active:scale-[0.98] menu-item-slide"
+                                style={{ animationDelay: `${index * 0.05}s` }}
                             >
                                 <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] transition-all">
                                     <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-all" />
@@ -2646,13 +2630,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
                     <div className="flex items-center justify-center gap-8">
-                        <button onClick={() => { onOpenTerms(); onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenTerms(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
                         <div className="w-1 h-1 rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('PRIVACY_POLICY')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
-                        onClick={() => { onLogout(); onClose(); playSound('premium_logout'); if (navigator.vibrate) navigator.vibrate(20); }}
+                        onClick={() => { onLogout(); handleClose(); playSound('premium_logout'); if (navigator.vibrate) navigator.vibrate(20); }}
                         className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20 active:scale-95 relative overflow-hidden touch-manipulation"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -5230,10 +5214,13 @@ const App = () => {
                         <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
-                                    <button
-                                        onClick={() => { setIsDrawerOpen(true); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 transition-all active:scale-90 touch-manipulation z-50 p-3 -ml-2"
+                                    <EnhancedButton
+                                        onClick={() => { setIsDrawerOpen(true); if (navigator.vibrate) navigator.vibrate(5); }}
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 z-50 p-3 -ml-2 menu-button-touch"
                                         aria-label="Open menu"
+                                        sound="nav_click"
+                                        scaleDown={0.9}
+                                        duration={150}
                                     >
                                         <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-400 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
@@ -5247,7 +5234,7 @@ const App = () => {
                                                 </span>
                                             </div>
                                         )}
-                                    </button>
+                                    </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
                                     <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.3)]" />

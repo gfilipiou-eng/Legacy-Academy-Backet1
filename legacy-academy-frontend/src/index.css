@@ -566,3 +566,178 @@ img {
 .animate-heart-beat {
   animation: heart-beat 0.8s ease-in-out;
 }
+
+/* === ENHANCED TOUCH FEEDBACK SYSTEM === */
+
+/* Touch feedback for all interactive elements */
+.touch-active {
+  transform: scale(0.95) !important;
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Enhanced button touch feedback */
+.touch-button {
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.touch-button:active {
+  transform: scale(0.95);
+  transition-duration: 100ms;
+}
+
+/* Touch ripple effect */
+.touch-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.touch-button:active::before {
+  width: 100px;
+  height: 100px;
+}
+
+/* Prevent double-tap zoom on mobile */
+@media (max-width: 768px) {
+  .touch-button {
+    touch-action: manipulation;
+  }
+}
+
+/* Smooth touch feedback for navigation items */
+.nav-touch-item {
+  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-touch-item:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+/* Card touch feedback */
+.touch-card {
+  transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Icon touch feedback */
+.touch-icon {
+  transition: all 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-icon:active {
+  transform: scale(1.15);
+  filter: brightness(1.2);
+}
+
+/* Enhanced active states for better feedback */
+.button-enhanced-active {
+  transform: scale(0.95) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: all 100ms ease-out !important;
+}
+
+/* Touch feedback for menu buttons */
+.menu-button-touch {
+  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-button-touch:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Twitter/X Style Drawer Animations */
+.drawer-backdrop {
+  animation: drawer-backdrop-fade-in 0.2s ease-out;
+}
+
+.drawer-panel {
+  animation: drawer-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.drawer-backdrop.closing {
+  animation: drawer-backdrop-fade-out 0.2s ease-in forwards;
+}
+
+.drawer-panel.closing {
+  animation: drawer-slide-out 0.3s cubic-bezier(0.32, 0, 0.67, 0) forwards;
+}
+
+@keyframes drawer-backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drawer-backdrop-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes drawer-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawer-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Smooth menu item animations */
+.menu-item-slide {
+  animation: menu-item-slide-in 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+.menu-item-slide:nth-child(1) { animation-delay: 0.05s; }
+.menu-item-slide:nth-child(2) { animation-delay: 0.1s; }
+.menu-item-slide:nth-child(3) { animation-delay: 0.15s; }
+.menu-item-slide:nth-child(4) { animation-delay: 0.2s; }
+.menu-item-slide:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes menu-item-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
