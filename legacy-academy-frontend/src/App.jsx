@@ -2557,39 +2557,39 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                     {/* TOP ACCENT GLOW */}
                     <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
 
-                    {/* PROFILE SECTION */}
+                    {/* PROFILE SECTION - TWITTER STYLE */}
                     <div
-                        className="p-6 pt-10 flex flex-col gap-5 cursor-pointer relative z-10 group"
+                        className="p-4 pt-8 flex flex-col cursor-pointer relative z-10 transition-colors duration-300 hover:bg-white/[0.02]"
                         onClick={() => { onViewProfile(user); handleClose(); }}
                     >
-                        <div className="flex items-center gap-4">
-                            <div className="w-[60px] h-[60px] rounded-full overflow-hidden border border-white/10 shrink-0 group-hover:border-[var(--gold-primary)]/50 transition-colors duration-300">
+                        <div className="flex justify-between items-start mb-2">
+                            <div className="w-[48px] h-[48px] rounded-full overflow-hidden shrink-0">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="font-black text-xl text-white truncate tracking-tight group-hover:text-[var(--gold-primary)] transition-colors duration-300">{user?.username}</span>
-                                    <VerifiedBadge isFounder={user?.role === 'Founder'} className="w-4 h-4 shrink-0" />
-                                </div>
-                                <span className="text-[var(--gold-primary)]/60 font-bold text-xs uppercase tracking-[0.15em] truncate">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 px-1 mt-1">
-                            <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
-                                <span className="font-black text-white text-base tabular-nums">
-                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
-                                </span>
-                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">
-                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
-                                </span>
+                        <div className="flex flex-col mt-1">
+                            <div className="flex items-center gap-1">
+                                <span className="font-bold text-[17px] text-white leading-tight break-words">{user?.username}</span>
+                                <VerifiedBadge isFounder={user?.role === 'Founder'} className="w-4 h-4 shrink-0" />
                             </div>
-                            <div className="w-[3px] h-[3px] rounded-full bg-white/20" />
-                            <div className="flex items-baseline gap-1.5 cursor-pointer" onClick={() => onViewProfile(user)}>
-                                <span className="font-black text-white text-base tabular-nums">
+                            <span className="text-[15px] text-gray-500 leading-tight mt-0.5 break-words">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                        </div>
+
+                        <div className="flex items-center gap-4 mt-4">
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
+                                <span className="font-bold text-white text-[15px] tabular-nums">
                                     {[...new Set((user?.following || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
                                 </span>
-                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">{t('FOLLOWING')}</span>
+                                <span className="text-[15px] text-gray-500 font-normal">{t('FOLLOWING')}</span>
+                            </div>
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
+                                <span className="font-bold text-white text-[15px] tabular-nums">
+                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
+                                </span>
+                                <span className="text-[15px] text-gray-500 font-normal">
+                                    {t('FOLLOWERS') || 'Followers'}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -2597,7 +2597,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                     <div className="h-px bg-white/5 mx-6 mb-4" />
 
                     {/* NAV ITEMS */}
-                    <div className="px-3 space-y-1.5 relative z-10">
+                    <div className="flex flex-col py-2 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
@@ -2608,28 +2608,22 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             <button
                                 key={item.id}
                                 onClick={() => {
-
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="relative w-full px-5 py-4 flex items-center gap-4 rounded-[1.25rem] group border border-transparent hover:bg-white/[0.04] transition-colors duration-300 touch-manipulation menu-item-slide overflow-hidden"
+                                className="w-full px-4 py-4 flex items-center gap-5 hover:bg-white/5 transition-colors touch-manipulation menu-item-slide"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
-                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 transition-colors duration-300 border border-white/5 group-hover:border-[var(--gold-primary)]/20 relative z-10">
-                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-colors duration-300" />
-                                </div>
-                                <div className="text-[17px] font-bold text-white/80 group-hover:text-white transition-colors duration-300 relative z-10">{item.label}</div>
+                                <item.icon className="w-[26px] h-[26px] text-white shrink-0" strokeWidth={2} />
+                                <span className="text-xl font-bold text-white tracking-wide">{item.label}</span>
 
                                 {item.badge > 0 && (
-                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center relative z-10 shadow-sm">
-                                        <span className="text-[10px] font-black text-white leading-none">
+                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[var(--gold-primary)] rounded-full flex items-center justify-center">
+                                        <span className="text-[11px] font-bold text-black leading-none">
                                             {item.badge > 9 ? '9+' : item.badge}
                                         </span>
                                     </div>
                                 )}
-
-                                {/* HOVER ACCENT LINE */}
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-6 rounded-r-md transition-all duration-300 ease-out z-10" />
                             </button>
                         ))}
                     </div>
