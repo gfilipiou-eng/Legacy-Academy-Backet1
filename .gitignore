@@ -6,3 +6,5 @@ build_log.txt
 t_*.txt
 .plans/
 .gemini/
+dist/
+legacy-academy-frontend/dist/
