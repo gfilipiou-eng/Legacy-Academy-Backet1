@@ -2621,8 +2621,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                     </div>
                                 )}
 
-                                {/* HOVER ACCENT */}
-                                <div className="absolute left-0 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-6  rounded-full" />
+                                {/* HOVER ACCENT - REMOVED GREEN ARROW/LINE */}
+                                <div className="absolute left-0 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-0 rounded-full" />
                             </button>
                         ))}
                     </div>

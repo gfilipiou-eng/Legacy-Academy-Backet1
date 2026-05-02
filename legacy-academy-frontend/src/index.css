@@ -694,6 +694,14 @@ span:hover {
   }
 }
 
+/* Ensure drawer is truly partial width on mobile */
+@media (max-width: 640px) {
+  .drawer-panel {
+    width: 65% !important;
+    max-width: 280px !important;
+  }
+}
+
 /* Smooth menu item animations */
 .menu-item-slide {
   animation: menu-item-slide-in 0.4s ease-out;
