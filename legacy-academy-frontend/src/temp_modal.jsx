@@ -62,7 +62,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <div className="w-4 h-4 rounded-full bg-red-500 animate-ping" />
                             <span className="text-sm font-black text-red-500 uppercase tracking-widest">{t('RECORDING')}...</span>
                         </div>
-                        <button onClick={stopRecording} className="px-6 py-2 bg-red-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg active:scale-95 transition-all">{t('STOP')}</button>
+                        <button onClick={stopRecording} className="px-6 py-2 bg-red-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg  transition-all">{t('STOP')}</button>
                     </div>
                 ) : (
                     <textarea
@@ -79,7 +79,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button
                             type="button"
                             onClick={startRecording}
-                            className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/30 transition-all hover:bg-white/10 active:scale-95"
+                            className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/30 transition-all hover:bg-white/10 "
                         >
                             <Icons.Mic className="w-6 h-6" />
                         </button>
@@ -87,7 +87,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                     <button
                         onClick={handleSubmit}
                         disabled={(audioBlob ? false : !value.trim()) || loading}
-                        className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-sm uppercase tracking-widest rounded-2xl shadow-lg shadow-[var(--gold-primary)]/20 hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                        className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-sm uppercase tracking-widest rounded-2xl shadow-lg shadow-[var(--gold-primary)]/20 hover:opacity-90  disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                     >
                         {loading ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Icons.Send className="w-5 h-5" />}
                         {t('SEND_COMMENT')}

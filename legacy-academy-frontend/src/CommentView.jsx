@@ -224,7 +224,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
             {/* Header */}
             <header className="shrink-0 h-16 border-b border-white/10 bg-black/80 backdrop-blur-3xl flex items-center justify-between px-4 z-50">
                 <div className="flex items-center gap-3">
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-all active:scale-90">
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-all ">
                         <Icons.Back className="w-6 h-6 text-white" />
                     </button>
                     <div>
@@ -367,7 +367,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                                         {canEdit && (
                                                             <button
                                                                 onClick={() => { setEditingCommentId(c._id); setEditText(c.text || ''); }}
-                                                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(59,130,246,0.5)] hover:shadow-[0_0_15px_rgba(59,130,246,0.8)] transition-all active:scale-95"
+                                                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(59,130,246,0.5)] hover:shadow-[0_0_15px_rgba(59,130,246,0.8)] transition-all "
                                                             >
                                                                 <Icons.Edit className="w-3 h-3" /> <span className="hidden sm:inline">{t('EDIT') || "EDIT"}</span>
                                                             </button>
@@ -375,7 +375,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                                                         {canDelete && (
                                                             <button
                                                                 onClick={() => handleDelete(c._id)}
-                                                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(220,38,38,0.5)] hover:shadow-[0_0_15px_rgba(220,38,38,0.8)] transition-all active:scale-95"
+                                                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(220,38,38,0.5)] hover:shadow-[0_0_15px_rgba(220,38,38,0.8)] transition-all "
                                                             >
                                                                 <Icons.Trash className="w-3 h-3" /> <span className="hidden sm:inline">{t('DELETE') || "DELETE"}</span>
                                                             </button>
@@ -412,7 +412,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                     <button
                         type="submit"
                         disabled={!commentText.trim() || isSubmitting}
-                        className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg shadow-glow-gold/40 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all"
+                        className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg shadow-glow-gold/40  disabled:opacity-30 disabled:scale-100 transition-all"
                     >
                         {isSubmitting ? (
                             <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />

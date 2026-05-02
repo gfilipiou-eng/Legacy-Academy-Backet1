@@ -42,7 +42,9 @@ export const useTouchFeedback = (options = {}) => {
     }
     
     // Play sound on touch start for better feedback
-    playSound(sound);
+    if (sound) {
+      playSound(sound);
+    }
   }, [disabled, sound]);
 
   const handleTouchEnd = useCallback((e) => {
@@ -58,7 +60,7 @@ export const useTouchFeedback = (options = {}) => {
     if (disabled) return;
     
     // Play sound on click if not already played on touch
-    if (!isTouch) {
+    if (!isTouch && sound) {
       playSound(sound);
     }
     
@@ -74,11 +76,13 @@ export const useTouchFeedback = (options = {}) => {
     }
   }, []);
 
-  const transform = isPressed 
+  const transform = (isPressed && scaleDown !== 1) 
     ? `scale(${scaleDown})` 
-    : 'scale(1)';
+    : undefined;
 
-  const transition = `transform ${duration}ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 200ms ease`;
+  const transition = (scaleDown !== 1 && duration !== 0)
+    ? `transform ${duration}ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 200ms ease`
+    : undefined;
 
   return {
     handlers: {

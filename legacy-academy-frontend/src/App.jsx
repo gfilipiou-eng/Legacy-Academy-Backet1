@@ -27,7 +27,6 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     if (!path.startsWith('http') && !path.startsWith('blob:')) {
         url = `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
     }
-
     // CLEANUP: If URL is just 'undefined' or 'null' as string (backend artifacts), treat as null
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
@@ -258,7 +257,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <Icons.Terminal className="w-5 h-5 text-[var(--gold-primary)]" />
                         {t('FOUNDER_CONSOLE')} <span className="text-[var(--gold-primary)] opacity-30 select-none">///</span>
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-90"><Icons.X className="w-6 h-6 text-gray-500" /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors "><Icons.X className="w-6 h-6 text-gray-500" /></button>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -296,7 +295,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <button
                                 type="button"
                                 onClick={startRecording}
-                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)] transition-all active:scale-95 shadow-xl group"
+                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)] transition-all  shadow-xl group"
                             >
                                 <Icons.Mic className="w-6 h-6 group-hover:scale-110 transition-transform" />
                             </button>
@@ -304,7 +303,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button
                             onClick={handleSubmit}
                             disabled={(audioBlob ? false : !value.trim()) || loading}
-                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl shadow-glow-gold active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3 hover:brightness-110"
+                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl shadow-glow-gold  disabled:opacity-50 transition-all flex items-center justify-center gap-3 hover:brightness-110"
                         >
                             {loading ? <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-full animate-spin" /> : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
@@ -406,7 +405,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
     return (
         <div className="relative shrink-0">
-            <button ref={btnRef} onClick={toggle} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:scale-90">
+            <button ref={btnRef} onClick={toggle} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 ">
                 <Icons.MoreHorizontal className="w-5 h-5" />
             </button>
             {showMenu && createPortal(
@@ -712,7 +711,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
     return (
         <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl active:scale-90 transition-all group">
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl  transition-all group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
@@ -843,7 +842,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
                                                 <Icons.Mic className="w-4 h-4" />
                                             </button>
-                                            <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25 transition-all active:scale-90 shrink-0">
+                                            <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25 transition-all  shrink-0">
                                                 <Icons.Send className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -1169,7 +1168,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             <div className="flex justify-start items-start gap-2.5">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); toggleMute(e); }}
-                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all  group/btn shadow-xl"
                                 >
                                     {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
                                 </button>
@@ -1185,7 +1184,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                             onExpand();
                                             playSound('cyber_click');
                                         }}
-                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all active:scale-90 group/btn shadow-xl"
+                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all  group/btn shadow-xl"
                                     >
                                         <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                     </button>
@@ -1286,7 +1285,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105  transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
                         <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
@@ -1592,7 +1591,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     playSound('cyber_repost');
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600 hover:text-green-400 active:scale-95'}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600 hover:text-green-400 '}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
@@ -1607,7 +1606,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onLike(post._id);
                                     if (navigator.vibrate) navigator.vibrate(20);
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600 hover:text-red-400 active:scale-95'}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600 hover:text-red-400 '}`}
                             >
                                 <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
@@ -1622,7 +1621,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onDislike(post._id);
                                     if (navigator.vibrate) navigator.vibrate(20);
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600 hover:text-[var(--gold-primary)] active:scale-95'}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600 hover:text-[var(--gold-primary)] '}`}
                             >
                                 <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
@@ -1650,7 +1649,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
                                                     <Icons.Mic className="w-5 h-5" />
                                                 </button>
-                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90 active:scale-95 transition-all">
+                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90  transition-all">
                                                     <Icons.Send className="w-5 h-5" />
                                                 </button>
                                             </div>
@@ -1950,7 +1949,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('CHAT')}
                                 </h2>
-                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="sm:hidden p-2 active:scale-90 transition-transform touch-manipulation text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="sm:hidden p-2  transition-transform touch-manipulation text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">
@@ -1986,7 +1985,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
                                 <button 
                                     onClick={() => { setActiveChat(null); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} 
-                                    className="sm:hidden p-2 -ml-2 text-gray-400 hover:text-white active:scale-90 transition-transform touch-manipulation"
+                                    className="sm:hidden p-2 -ml-2 text-gray-400 hover:text-white  transition-transform touch-manipulation"
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
@@ -2000,7 +1999,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
                                     </div>
                                 </div>
-                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="hidden sm:block p-2 text-gray-400 hover:text-white active:scale-90 transition-transform"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="hidden sm:block p-2 text-gray-400 hover:text-white  transition-transform"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => {
@@ -2080,7 +2079,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="absolute bottom-full left-0 right-0 p-3 bg-black/90 backdrop-blur-xl border-t border-white/10">
                                     <div className="relative inline-block">
                                         <img src={imagePreview} alt="" className="h-24 max-w-[200px] rounded-xl object-cover border border-white/10 shadow-xl" />
-                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-400 active:scale-90 transition-all">
+                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-400  transition-all">
                                             <Icons.X className="w-3 h-3 text-white" />
                                         </button>
                                     </div>
@@ -2127,7 +2126,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <button
                                         type="button"
                                         onClick={() => imageInputRef.current?.click()}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] active:scale-90'}`}
+                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] '}`}
                                         title="Send Image"
                                     >
                                         <Icons.Image className="w-5 h-5" />
@@ -2135,14 +2134,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <button
                                         type="button"
                                         onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] active:scale-90'}`}
+                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] '}`}
                                     >
                                         <Icons.Mic className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={() => handleSend()}
                                         disabled={!inputText.trim() && !imageFile}
-                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40 active:scale-90 disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
+                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40  disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
                                     >
                                         <Icons.Send className="w-5 h-5" />
                                     </button>
@@ -2152,7 +2151,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                     ) : (
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
-                                <button className="mb-6 bg-transparent border-none p-0 transition-all active:scale-95 group">
+                                <button className="mb-6 bg-transparent border-none p-0 transition-all  group">
                                     <Icons.Ghost className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105 transition-all duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
@@ -2292,7 +2291,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-0 active:scale-90 transition-transform touch-manipulation">
+                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-0  transition-transform touch-manipulation">
                         <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
@@ -2473,7 +2472,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         {t('DANGER_ZONE')}
                                     </div>
                                     <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                        className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-lg active:scale-95 uppercase">
+                                        className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-lg  uppercase">
                                         {t('DELETE_FOREVER')}
                                     </button>
                                     <button onClick={() => setShowDanger(false)} className="mt-3 text-[9px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">{t('CANCEL')}</button>
@@ -2484,7 +2483,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </button>
                             )}
 
-                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03] hover:bg-red-500/10 rounded-2xl border border-white/5 hover:border-red-500/20 transition-all group active:scale-95">
+                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03] hover:bg-red-500/10 rounded-2xl border border-white/5 hover:border-red-500/20 transition-all group ">
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
                                         <Icons.Logout className="w-4 h-4 text-red-500" />
@@ -2604,7 +2603,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation active:scale-[0.98] menu-item-slide"
+                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation  menu-item-slide"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
                                 <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] transition-all">
@@ -2630,14 +2629,14 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
                     <div className="flex items-center justify-center gap-8">
-                        <button onClick={() => { onOpenTerms(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenTerms(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
                         <div className="w-1 h-1 rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest active:scale-95 touch-manipulation">{t('PRIVACY_POLICY')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
                         onClick={() => { onLogout(); handleClose(); playSound('premium_logout'); if (navigator.vibrate) navigator.vibrate(20); }}
-                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20 active:scale-95 relative overflow-hidden touch-manipulation"
+                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20  relative overflow-hidden touch-manipulation"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                         <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -2661,7 +2660,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
             <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
                 <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
                     <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
-                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0 active:scale-90 touch-manipulation">
+                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0  touch-manipulation">
                         <Icons.X className="w-6 h-6" />
                     </button>
                 </div>
@@ -2669,7 +2668,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
                     {content}
                 </div>
                 <div className="p-6 border-t border-white/10 flex justify-end">
-                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs touch-manipulation">
+                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105  transition-all uppercase tracking-widest text-xs touch-manipulation">
                         {t('GOT_IT')}
                     </button>
                 </div>
@@ -2910,7 +2909,7 @@ const ProfileModal = ({
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
                         else onClose();
-                    }} className="p-2 -ml-2 rounded-full hover:bg-white/10 active:scale-95 transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
+                    }} className="p-2 -ml-2 rounded-full hover:bg-white/10  transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest leading-none">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
                     <div className="w-10" />
                 </div>
@@ -2923,7 +2922,7 @@ const ProfileModal = ({
                                 <div key={u._id} onClick={() => {
                                     onViewProfile(u);
                                     setActiveList(null);
-                                }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl cursor-pointer transition-all active:scale-95 border border-transparent hover:border-white/5">
+                                }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl cursor-pointer transition-all  border border-transparent hover:border-white/5">
                                     <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10">
                                         <ProfileAvatar user={u} className="rounded-full" />
                                     </div>
@@ -2967,7 +2966,7 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full mt-6">
                                 <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212] hover:bg-[#1a1a1a] border border-white/10 hover:border-white/30 rounded-2xl text-[11px] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98] group">
+                                    className="flex-1 py-4 bg-[#121212] hover:bg-[#1a1a1a] border border-white/10 hover:border-white/30 rounded-2xl text-[11px] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
                                     {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
@@ -2986,7 +2985,7 @@ const ProfileModal = ({
                                             finally { setCoverUploading(false); }
                                         }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-full text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 active:scale-[0.98]">
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-full text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 ">
                                         <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
@@ -3047,7 +3046,7 @@ const ProfileModal = ({
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
                                     else alert("Update failed.");
                                 }
-                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform text-sm">{t('SAVE_CHANGES')}</button>
+                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20  transition-transform text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
@@ -3116,7 +3115,7 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all active:scale-95 group touch-manipulation select-none relative z-10">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all  group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
@@ -3128,7 +3127,7 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all active:scale-95 group touch-manipulation select-none relative z-10">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all  group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
@@ -3142,7 +3141,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-4 space-y-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest transition-all active:scale-95">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest transition-all">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -3150,14 +3149,14 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className="flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 bg-black border border-white/10 text-white"
+                                                className="flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all  bg-black border border-white/10 text-white"
                                             >
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
                                             <button
                                                 onClick={() => onOpenChat(displayUser)}
                                                 title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
-                                                className="flex items-center gap-2 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 shrink-0"
+                                                className="flex items-center gap-2 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all  shrink-0"
                                             >
                                                 <div className="relative flex items-center justify-center">
                                                     <Icons.Ghost className="w-5 h-5 whispers-icon text-white transition-all duration-300" />
@@ -3168,7 +3167,7 @@ const ProfileModal = ({
                                     )}
                                 </div>
                                 {!isMe && currentUser?.role === 'Founder' && (
-                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95">
+                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all ">
                                         {t('BAN_3_DAYS') || 'BAN 3 ΗΜΕΡΕΣ'}
                                     </button>
                                 )}
@@ -3201,10 +3200,10 @@ const ProfileModal = ({
                                         <div className="h-0.5 w-12 bg-[var(--gold-primary)] mx-auto opacity-50" />
                                         <p className="text-gray-500 text-[11px] uppercase tracking-widest leading-relaxed mx-auto max-w-[240px] font-bold">{t('PRIVATE_DESC')}</p>
                                     </div>
-                                    <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 transition-all uppercase shadow-lg shadow-[var(--gold-primary)]/20">
+                                    <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105  transition-all uppercase shadow-lg shadow-[var(--gold-primary)]/20">
                                         {hasRequested ? t('REQUESTED') : t('FOLLOW_TO_VIEW')}
                                     </button>
-                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all">
+                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white hover:bg-white/10  transition-all">
                                         {t('CLOSE', 'ΚΛΕΙΣΙΜΟ')}
                                     </button>
                                 </div>
@@ -3557,7 +3556,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             if (fileRef.current) fileRef.current.value = '';
                             setIsStory(false);
                             setIsSubmitting(false);
-                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-transform disabled:opacity-50`}>
+                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20  transition-transform disabled:opacity-50`}>
                             {isSubmitting ? (isStory ? t('UPLOADING') || '...' : '...') : (isStory ? t('POST_STORY') : t('POST'))}
                         </button>
                     </div>
@@ -3744,7 +3743,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                         <div className="flex gap-4">
                             <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40 active:scale-95 transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
+                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40  transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
                         </div>
                     </div>
                 </div>
@@ -5069,7 +5068,7 @@ const App = () => {
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105  transition-transform disabled:opacity-50">
                                             {authLoading ? "AUTHENTICATING..." : "LOGIN"}
                                         </button>
                                         <div className="flex justify-between text-xs text-gray-500 px-2 mt-4 font-bold tracking-wide">
@@ -5173,7 +5172,7 @@ const App = () => {
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105  transition-transform disabled:opacity-50">
                                             {authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}
                                         </button>
                                         <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
@@ -5197,7 +5196,7 @@ const App = () => {
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-50">
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105  transition-transform disabled:opacity-50">
                                             {authLoading ? t('SENDING') : t('SEND_RESET_LINK')}
                                         </button>
                                         <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
@@ -5216,11 +5215,11 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); if (navigator.vibrate) navigator.vibrate(5); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 z-50 p-3 -ml-2 menu-button-touch"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 z-50 p-3 -ml-2"
                                         aria-label="Open menu"
-                                        sound="nav_click"
-                                        scaleDown={0.9}
-                                        duration={150}
+                                        sound={null}
+                                        scaleDown={1}
+                                        duration={0}
                                     >
                                         <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-400 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
@@ -5255,7 +5254,7 @@ const App = () => {
                                                 <button
                                                     onClick={deleteNotifications}
                                                     title={t('CLEAR_ALL')}
-                                                    className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full hover:bg-red-500/20 text-red-500 transition-all text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg active:scale-95"
+                                                    className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full hover:bg-red-500/20 text-red-500 transition-all text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg "
                                                 >
                                                     <Icons.Trash className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                                 </button>
@@ -5300,7 +5299,7 @@ const App = () => {
                                                             <span
                                                                 key={tag}
                                                                 onClick={() => setSearchQuery(tag)}
-                                                                className="px-4 py-2 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl text-xs font-black text-gray-400 cursor-pointer hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all border border-white/5 whitespace-nowrap active:scale-95 shadow-lg flex items-center gap-2 group"
+                                                                className="px-4 py-2 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl text-xs font-black text-gray-400 cursor-pointer hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all border border-white/5 whitespace-nowrap  shadow-lg flex items-center gap-2 group"
                                                             >
                                                                 <span className="text-[var(--gold-primary)] opacity-40 group-hover:opacity-100 transition-opacity">#</span>
                                                                 {tag.replace('#', '').toUpperCase()}
@@ -5404,7 +5403,7 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all "
                         >
                             <Icons.ArrowUp className="w-8 h-8 sm:w-5 sm:h-5" />
                         </button>
@@ -5416,7 +5415,7 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all active:scale-95"
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all "
                         >
                             <Icons.Compose className="w-9 h-9 sm:w-5 sm:h-5" />
                         </button>

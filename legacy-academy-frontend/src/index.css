@@ -177,7 +177,7 @@ img {
 
 /* Twitter-Style Pill Buttons with F1 Flare */
 .gold-btn {
-  @apply bg-[var(--f1-primary)] text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95;
+  @apply bg-[var(--f1-primary)] text-white font-bold px-6 py-3 rounded-full transition-all ;
   box-shadow: none;
 }
 
@@ -188,7 +188,7 @@ img {
 }
 
 .liquid-btn {
-  @apply bg-[var(--f1-primary)] text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95 text-sm;
+  @apply bg-[var(--f1-primary)] text-white font-bold px-6 py-3 rounded-full transition-all  text-sm;
   box-shadow: none;
 }
 
@@ -198,7 +198,7 @@ img {
 }
 
 .gold-btn-outline {
-  @apply bg-transparent border-2 border-[#2f3336] text-white font-bold px-6 py-3 rounded-full transition-all active:scale-95;
+  @apply bg-transparent border-2 border-[#2f3336] text-white font-bold px-6 py-3 rounded-full transition-all ;
 }
 
 .gold-btn-outline:hover {
@@ -569,9 +569,9 @@ img {
 
 /* === ENHANCED TOUCH FEEDBACK SYSTEM === */
 
-/* Touch feedback for all interactive elements */
+/* Touch feedback for all interactive elements - DISABLED scale per user request */
 .touch-active {
-  transform: scale(0.95) !important;
+  /* transform: scale(0.95) !important; */
   transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 
@@ -583,29 +583,12 @@ img {
   transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.touch-button:active {
+/* .touch-button:active {
   transform: scale(0.95);
   transition-duration: 100ms;
-}
+} */
 
-/* Touch ripple effect */
-.touch-button::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  transform: translate(-50%, -50%);
-  transition: width 0.3s, height 0.3s;
-}
-
-.touch-button:active::before {
-  width: 100px;
-  height: 100px;
-}
+/* Touch ripple effect - REMOVED per user request */
 
 /* Prevent double-tap zoom on mobile */
 @media (max-width: 768px) {
@@ -620,11 +603,11 @@ img {
   -webkit-tap-highlight-color: transparent;
 }
 
-.nav-touch-item:active {
+/* .nav-touch-item:active {
   transform: scale(0.9);
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-}
+} */
 
 /* Card touch feedback */
 .touch-card {
@@ -632,10 +615,10 @@ img {
   -webkit-tap-highlight-color: transparent;
 }
 
-.touch-card:active {
+/* .touch-card:active {
   transform: scale(0.98);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
+} */
 
 /* Icon touch feedback */
 .touch-icon {
@@ -643,15 +626,15 @@ img {
   -webkit-tap-highlight-color: transparent;
 }
 
-.touch-icon:active {
+/* .touch-icon:active {
   transform: scale(1.15);
   filter: brightness(1.2);
-}
+} */
 
 /* Enhanced active states for better feedback */
 .button-enhanced-active {
-  transform: scale(0.95) !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  /* transform: scale(0.95) !important; */
+  /* box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important; */
   transition: all 100ms ease-out !important;
 }
 
@@ -661,10 +644,10 @@ img {
   -webkit-tap-highlight-color: transparent;
 }
 
-.menu-button-touch:active {
+/* .menu-button-touch:active {
   transform: scale(0.9);
   background: rgba(255, 255, 255, 0.05);
-}
+} */
 
 /* Twitter/X Style Drawer Animations */
 .drawer-backdrop {
