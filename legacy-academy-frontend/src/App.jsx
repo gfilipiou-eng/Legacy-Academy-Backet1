@@ -2541,7 +2541,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
             {/* DRAWER CONTAINER - PREMIUM LIQUID GLASS */}
             <div className={`
-                fixed top-0 left-0 bottom-0 w-[min(280px,85%)] sm:w-[280px]
+                fixed top-0 left-0 bottom-0 w-[65%] sm:w-[280px]
                 liquid-glass-nav backdrop-blur-[25px] border-r border-white/10 flex flex-col pointer-events-auto
                 shadow-[15px_0_60px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
@@ -2629,11 +2629,11 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 </div>
 
                 {/* FOOTER */}
-                <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
-                    <div className="flex items-center justify-center gap-8">
-                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold   text-xs uppercase tracking-widest  touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
-                        <div className="w-1 h-1 rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold   text-xs uppercase tracking-widest  touch-manipulation">{t('PRIVACY_POLICY')}</button>
+                <div className="p-4 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2">{t('TERMS_OF_SERVICE')}</button>
+                        <div className="w-8 h-px bg-white/10" />
+                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
