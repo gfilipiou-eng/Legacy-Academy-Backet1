@@ -45,36 +45,47 @@ if (typeof window !== 'undefined') {
 }
 
 let audioCtx = null;
+let hasInteracted = false;
 
-const getCtx = () => {
+const initAudio = () => {
+    hasInteracted = true;
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     if (audioCtx.state === 'suspended') {
-        audioCtx.resume(); // Browsers require this to resolve but doing it sync triggers it
+        const p = audioCtx.resume();
+        if (p && p.catch) p.catch(() => { });
+    }
+
+    // Cleanup listeners
+    window.removeEventListener('click', initAudio);
+    window.removeEventListener('touchstart', initAudio);
+    window.removeEventListener('keydown', initAudio);
+};
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('click', initAudio);
+    window.addEventListener('touchstart', initAudio);
+    window.addEventListener('keydown', initAudio);
+}
+
+const getCtx = () => {
+    if (!hasInteracted) return null; // Safely prevent initialization prior to user gesture
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        const p = audioCtx.resume();
+        if (p && p.catch) p.catch(() => { });
     }
     return audioCtx;
 };
-
-// Global audio unlocker: wakes up audioCtx automatically on first touch/click
-if (typeof window !== 'undefined') {
-    const unlockAudio = () => {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    };
-    window.addEventListener('pointerdown', unlockAudio, { passive: true });
-    window.addEventListener('keydown', unlockAudio, { passive: true });
-    window.addEventListener('touchstart', unlockAudio, { passive: true });
-}
 
 export const playSound = (type) => {
     if (typeof window === 'undefined' || !window.SOUND_ENABLED) return;
 
     const ctx = getCtx();
+    if (!ctx) return;
 
     if (type === 'cyber_nav') {
         // High-end Cybernetic "Glass/Titanium Click"
