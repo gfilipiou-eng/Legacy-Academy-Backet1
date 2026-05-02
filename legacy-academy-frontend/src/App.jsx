@@ -2631,10 +2631,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                 {/* FOOTER */}
                 <div className="p-4 flex flex-col gap-5 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10 pb-8">
-                    <div className="flex justify-center items-center gap-3">
-                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-widest px-2">{t('TERMS_OF_SERVICE')}</button>
-                        <div className="w-1 h-1 rounded-full bg-white/20" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-widest px-2">{t('PRIVACY_POLICY')}</button>
+                    <div className="flex flex-col items-center justify-center gap-2.5 w-full">
+                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-wider px-2 w-full text-center whitespace-normal break-words leading-tight">{t('TERMS_OF_SERVICE')}</button>
+                        <div className="w-4 h-[1px] rounded-full bg-white/10" />
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-wider px-2 w-full text-center whitespace-normal break-words leading-tight">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
