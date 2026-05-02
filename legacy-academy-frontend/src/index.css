@@ -580,10 +580,9 @@ img {
 *:active, *:focus, *:hover {
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
-  background-color: transparent !important; /* Force transparent background on interaction */
 }
 
-/* Force disable all active/hover scaling and background changes on touch devices */
+/* Force disable all active/hover scaling and transitions on touch devices */
 @media (hover: none) {
   * {
     -webkit-tap-highlight-color: transparent !important;
@@ -596,8 +595,8 @@ img {
     user-select: none !important;
   }
 
-  button:active, div:active, a:active, span:active,
-  button:hover, div:hover, a:hover, span:hover {
+  /* KILL ALL HOVER/ACTIVE BACKGROUNDS ON MOBILE ONLY */
+  *:hover, *:active {
     background-color: transparent !important;
     transform: none !important;
     transition: none !important;
@@ -605,7 +604,14 @@ img {
   }
 }
 
-/* More specific targeting to kill the "white highlight" */
+/* On desktop, allow hover effects to work normally */
+@media (hover: hover) {
+  .hover\:bg-white\/5:hover { background-color: rgba(255, 255, 255, 0.05) !important; }
+  .hover\:bg-white\/10:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
+  .hover\:bg-white\/20:hover { background-color: rgba(255, 255, 255, 0.2) !important; }
+}
+
+/* More specific targeting to kill the tap highlight */
 button:active, 
 div:active, 
 a:active, 
@@ -615,7 +621,6 @@ div:hover,
 a:hover,
 span:hover {
   -webkit-tap-highlight-color: transparent !important;
-  background-color: transparent !important;
 }
 
 .touch-active, 
@@ -627,7 +632,6 @@ span:hover {
 .menu-button-touch {
   transform: none !important;
   transition: none !important;
-  background-color: transparent !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 

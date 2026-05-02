@@ -1267,7 +1267,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             </div>
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
-                    <span className="font-black text-white group-  uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
+                    <span className="font-black text-white group-hover:text-white uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
                     <VerifiedBadge isFounder={isFounderSender} className="w-3.5 h-3.5 ml-1" />
                     <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
@@ -2487,12 +2487,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
                             <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03]  rounded-2xl border border-white/5   group ">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group- ">
+                                    <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:text-white">
                                         <Icons.Logout className="w-4 h-4 text-red-500" />
                                     </div>
-                                    <span className="text-xs font-black text-white/80 group-  uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
+                                    <span className="text-xs font-black text-white/80 group-hover:text-white uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
                                 </div>
-                                <Icons.ArrowRight className="w-4 h-4 text-white/10 group-  group-hover:translate-x-1" />
+                                <Icons.ArrowRight className="w-4 h-4 text-white/10 group-hover:text-white group-hover:translate-x-1" />
                             </button>
                         </div>
                     </section>
@@ -2608,10 +2608,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 className="relative w-full px-5 py-4 flex items-center gap-4   rounded-[1.25rem]  group border border-transparent  hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation  menu-item-slide"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
-                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group- group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] ">
-                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group- " />
+                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:text-whitegroup-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] ">
+                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-white" />
                                 </div>
-                                <div className="text-[17px] font-bold text-white/80 group- ">{item.label}</div>
+                                <div className="text-[17px] font-bold text-white/80 group-hover:text-white">{item.label}</div>
 
                                 {item.badge > 0 && (
                                     <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">
@@ -3193,9 +3193,9 @@ const ProfileModal = ({
                             {/* PRIVACY LOCK SCREEN */}
                             {displayUser?.isPrivate && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
-                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-  relative overflow-hidden">
+                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:text-white relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/10 to-transparent animate-pulse" />
-                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-  relative z-10" />
+                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-hover:text-white relative z-10" />
                                     </div>
                                     <div className="space-y-3">
                                         <h3 className="font-black text-white text-xl uppercase tracking-[0.2em]">{t('PRIVATE_TITLE')}</h3>
@@ -3736,7 +3736,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                             ) : (
                                 <div className="w-full py-10 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3    text-gray-500 cursor-pointer group">
-                                    <Icons.Image className="w-8 h-8 opacity-30 group-hover:scale-110 group- " />
+                                    <Icons.Image className="w-8 h-8 opacity-30 group-hover:scale-110 group-hover:text-white" />
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('UPLOAD_MEDIA')}</span>
                                 </div>
                             )}
@@ -5494,7 +5494,7 @@ const App = () => {
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S1_TITLE')}</h3>
                                     </div>
-                                    <div className="pl-[52px] text-gray-400 group- ">{t('TERMS_S1_DESC')}</div>
+                                    <div className="pl-[52px] text-gray-400 group-hover:text-white">{t('TERMS_S1_DESC')}</div>
                                 </section>
 
                                 <section className="space-y-3 relative group">
@@ -5504,7 +5504,7 @@ const App = () => {
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S2_TITLE')}</h3>
                                     </div>
-                                    <div className="pl-[52px] text-gray-400 group- ">{t('TERMS_S2_DESC')}</div>
+                                    <div className="pl-[52px] text-gray-400 group-hover:text-white">{t('TERMS_S2_DESC')}</div>
                                 </section>
 
                                 <section className="space-y-3 relative group">
@@ -5514,7 +5514,7 @@ const App = () => {
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S3_TITLE')}</h3>
                                     </div>
-                                    <div className="pl-[52px] text-gray-400 group- ">{t('TERMS_S3_DESC')}</div>
+                                    <div className="pl-[52px] text-gray-400 group-hover:text-white">{t('TERMS_S3_DESC')}</div>
                                 </section>
 
                                 <div className="pt-6 border-t border-white/5 flex items-center gap-3">
