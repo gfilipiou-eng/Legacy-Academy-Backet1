@@ -2555,20 +2555,21 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
             `}>
                 <div className="flex-1 overflow-y-auto no-scrollbar relative">
                     {/* TOP ACCENT GLOW */}
-                    <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-[80%] h-[300px] bg-gradient-to-bl from-[var(--gold-primary)]/10 via-[var(--gold-primary)]/5 to-transparent pointer-events-none rounded-bl-full opacity-60 blur-3xl" />
+                    <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
 
                     {/* PROFILE SECTION */}
                     <div
-                        className="p-6 pt-10 flex flex-col gap-5 cursor-pointer relative z-10"
+                        className="p-6 pt-10 flex flex-col gap-5 cursor-pointer relative z-10 group"
                         onClick={() => { onViewProfile(user); handleClose(); }}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[var(--gold-primary)]/30 shrink-0 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.2)]">
+                            <div className="w-[60px] h-[60px] rounded-full overflow-hidden border-2 border-[var(--gold-primary)]/30 shrink-0 shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.2)] group-hover:shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.5)] group-hover:border-[var(--gold-primary)]/80 transition-all duration-500">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="font-black text-xl text-white truncate tracking-tight">{user?.username}</span>
+                                    <span className="font-black text-xl text-white truncate tracking-tight group-hover:text-[var(--gold-primary)] transition-colors duration-300">{user?.username}</span>
                                     <VerifiedBadge isFounder={user?.role === 'Founder'} className="w-4 h-4 shrink-0" />
                                 </div>
                                 <span className="text-[var(--gold-primary)]/60 font-bold text-xs uppercase tracking-[0.15em] truncate">@{user?.username?.toLowerCase().split(' ').join('')}</span>
@@ -2612,24 +2613,27 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="relative w-full px-5 py-4 flex items-center gap-4   rounded-[1.25rem]  group border border-transparent  hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation  menu-item-slide"
+                                className="relative w-full px-5 py-4 flex items-center gap-4 rounded-[1.25rem] group border border-transparent hover:bg-white/[0.03] transition-all duration-300 touch-manipulation menu-item-slide overflow-hidden hover:shadow-[inset_4px_0_20px_rgba(255,215,0,0.05)]"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
-                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:text-whitegroup-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] ">
-                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-white" />
+                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/20 group-hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.3)] transition-all duration-300 border border-white/5 group-hover:border-[var(--gold-primary)]/40 relative z-10">
+                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-colors duration-300" />
                                 </div>
-                                <div className="text-[17px] font-bold text-white/80 group-hover:text-white">{item.label}</div>
+                                <div className="text-[17px] font-bold text-white/80 group-hover:text-white transition-colors duration-300 relative z-10">{item.label}</div>
 
                                 {item.badge > 0 && (
-                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">
+                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)] relative z-10">
                                         <span className="text-[10px] font-black text-white leading-none">
                                             {item.badge > 9 ? '9+' : item.badge}
                                         </span>
                                     </div>
                                 )}
 
-                                {/* HOVER ACCENT - REMOVED GREEN ARROW/LINE */}
-                                <div className="absolute left-0 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-0 rounded-full" />
+                                {/* HOVER ACCENT LINE */}
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-0 bg-[var(--gold-primary)] group-hover:h-8 rounded-full transition-all duration-300 ease-out shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.8)] opacity-0 group-hover:opacity-100 z-10" />
+
+                                {/* GLOW BACKGROUND */}
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[80px] h-full bg-[var(--gold-primary)]/5 opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 rounded-full pointer-events-none" />
                             </button>
                         ))}
                     </div>
@@ -2645,10 +2649,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                     <button
                         onClick={() => { onLogout(); handleClose(); }}
-                        className="w-full py-4 bg-red-500/10   border border-red-500/30  text-red-500  font-black text-[10px] uppercase tracking-[0.25em] rounded-full  duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20  relative overflow-hidden touch-manipulation"
+                        className="w-full py-4 bg-black/40 border border-red-500/20 text-red-500 font-black text-[10px] uppercase tracking-[0.25em] rounded-full duration-500 flex items-center justify-center gap-2 group hover:bg-red-500/20 hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.3)] relative overflow-hidden touch-manipulation"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full  duration-700" />
-                        <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 " />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/10 to-transparent -translate-x-full group-hover:translate-x-full duration-700" />
+                        <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
                         {t('LOGOUT')}
                     </button>
 
