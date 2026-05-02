@@ -1969,7 +1969,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
-                                <button key={u._id} onClick={() => { setActiveChat(u); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors text-left touch-manipulation active:bg-white/10 ${activeChat?._id === u._id ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
+                                <button key={u._id} onClick={() => { setActiveChat(u); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors text-left touch-manipulation active:bg-white/10 ${activeChat?._id === u._id ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
                                     <div className="relative shrink-0"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm border border-white/10`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
@@ -4887,7 +4887,6 @@ const App = () => {
     const handleOpenChat = (targetUser) => {
         setChatTarget(targetUser);
         setIsChatOpen(true);
-        playSound('cyber_open');
     };
 
     // FIX: Real Share Functionality
