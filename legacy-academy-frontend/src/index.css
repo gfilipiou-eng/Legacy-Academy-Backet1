@@ -568,86 +568,42 @@ img {
 }
 
 /* === ENHANCED TOUCH FEEDBACK SYSTEM === */
+/* COMPLETELY DISABLED PER USER REQUEST - NO VISUAL FEEDBACK ON TOUCH */
 
-/* Touch feedback for all interactive elements - DISABLED scale per user request */
-.touch-active {
-  /* transform: scale(0.95) !important; */
-  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none !important;
 }
 
-/* Enhanced button touch feedback */
-.touch-button {
-  position: relative;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+*:active, *:focus {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
-/* .touch-button:active {
-  transform: scale(0.95);
-  transition-duration: 100ms;
-} */
-
-/* Touch ripple effect - REMOVED per user request */
-
-/* Prevent double-tap zoom on mobile */
-@media (max-width: 768px) {
-  .touch-button {
-    touch-action: manipulation;
-  }
+/* Force disable all active scaling and background changes on touch */
+button:active, 
+div:active, 
+a:active, 
+span:active {
+  transform: none !important;
+  transition: none !important;
 }
 
-/* Smooth touch feedback for navigation items */
-.nav-touch-item {
-  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* .nav-touch-item:active {
-  transform: scale(0.9);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-} */
-
-/* Card touch feedback */
-.touch-card {
-  transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* .touch-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-} */
-
-/* Icon touch feedback */
-.touch-icon {
-  transition: all 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* .touch-icon:active {
-  transform: scale(1.15);
-  filter: brightness(1.2);
-} */
-
-/* Enhanced active states for better feedback */
-.button-enhanced-active {
-  /* transform: scale(0.95) !important; */
-  /* box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important; */
-  transition: all 100ms ease-out !important;
-}
-
-/* Touch feedback for menu buttons */
+.touch-active, 
+.touch-button, 
+.nav-touch-item, 
+.touch-card, 
+.touch-icon, 
+.button-enhanced-active, 
 .menu-button-touch {
-  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  -webkit-tap-highlight-color: transparent;
+  transform: none !important;
+  transition: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
-/* .menu-button-touch:active {
-  transform: scale(0.9);
-  background: rgba(255, 255, 255, 0.05);
-} */
+.touch-button::before {
+  display: none !important;
+}
 
 /* Twitter/X Style Drawer Animations */
 .drawer-backdrop {

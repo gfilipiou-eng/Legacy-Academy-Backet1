@@ -25,7 +25,7 @@ const TouchButton = ({
       {...handlers}
       {...props}
       disabled={disabled}
-      className={`${className} ${isPressed ? 'touch-active' : ''}`}
+      className={`${className}`}
       style={{
         ...style,
         ...styles,

@@ -37,9 +37,7 @@ const EnhancedButton = ({
   // Combine classes for better touch feedback
   const combinedClasses = `
     ${className}
-    ${isPressed ? 'touch-active' : ''}
     ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    touch-button
     select-none
   `.trim();
 

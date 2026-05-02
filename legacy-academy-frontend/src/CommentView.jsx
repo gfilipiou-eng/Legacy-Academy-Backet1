@@ -168,7 +168,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
             await axios.post(`/posts/${postId}/comment`, { text: commentText });
             setCommentText('');
             fetchPost();
-            playSound('pop');
+            
             setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
         } catch (e) {
             alert(t('ERROR_POSTING') || "Connectivity failure.");
@@ -182,7 +182,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
             await axios.put(`/posts/${postId}/comment/${commentId}`, { text: newText });
             setEditingCommentId(null);
             fetchPost();
-            playSound('pop');
+            
         } catch (e) {
             alert(t('ERROR_UPDATING') || "Update failed.");
         }
@@ -193,7 +193,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
             fetchPost();
-            playSound('premium_delete');
+            
         } catch (e) {
             alert(t('ERROR_DELETING') || "Deletion failed.");
         }

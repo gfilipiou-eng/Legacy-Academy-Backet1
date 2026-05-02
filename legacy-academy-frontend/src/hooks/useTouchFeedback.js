@@ -76,13 +76,8 @@ export const useTouchFeedback = (options = {}) => {
     }
   }, []);
 
-  const transform = (isPressed && scaleDown !== 1) 
-    ? `scale(${scaleDown})` 
-    : undefined;
-
-  const transition = (scaleDown !== 1 && duration !== 0)
-    ? `transform ${duration}ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 200ms ease`
-    : undefined;
+  const transform = undefined;
+  const transition = undefined;
 
   return {
     handlers: {
@@ -94,8 +89,6 @@ export const useTouchFeedback = (options = {}) => {
       onClick: handleClick,
     },
     styles: {
-      transform,
-      transition,
       WebkitTapHighlightColor: 'transparent',
       WebkitTouchCallout: 'none',
       WebkitUserSelect: 'none',

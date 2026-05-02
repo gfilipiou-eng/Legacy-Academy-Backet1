@@ -1949,7 +1949,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('CHAT')}
                                 </h2>
-                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="sm:hidden p-2  transition-transform touch-manipulation text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">
@@ -1984,8 +1984,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
                                 <button 
-                                    onClick={() => { setActiveChat(null); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} 
-                                    className="sm:hidden p-2 -ml-2 text-gray-400 hover:text-white  transition-transform touch-manipulation"
+                                    onClick={() => { setActiveChat(null); }} 
+                                    className="sm:hidden p-2 -ml-2 text-gray-400 hover:text-white"
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
@@ -1999,7 +1999,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
                                     </div>
                                 </div>
-                                <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="hidden sm:block p-2 text-gray-400 hover:text-white  transition-transform"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => {
@@ -2291,7 +2291,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-0  transition-transform touch-manipulation">
+                    <button onClick={() => { onClose();  }} className="p-0  transition-transform touch-manipulation">
                         <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
@@ -2307,7 +2307,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
                             </SettingRow>
                             <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="hover:border-blue-500/30">
-                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} saving={saving} color="blue" />
+                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v);  }} saving={saving} color="blue" />
                             </SettingRow>
                         </div>
                     </section>
@@ -2599,7 +2599,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             <button
                                 key={item.id}
                                 onClick={() => {
-                                    playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5);
+                                    
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
@@ -2629,9 +2629,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
                     <div className="flex items-center justify-center gap-8">
-                        <button onClick={() => { onOpenTerms(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
                         <div className="w-1 h-1 rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('PRIVACY_POLICY')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
@@ -2660,7 +2660,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
             <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
                 <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
                     <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
-                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0  touch-manipulation">
+                    <button onClick={() => { onClose();  }} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0  touch-manipulation">
                         <Icons.X className="w-6 h-6" />
                     </button>
                 </div>
@@ -2668,7 +2668,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
                     {content}
                 </div>
                 <div className="p-6 border-t border-white/10 flex justify-end">
-                    <button onClick={() => { onClose(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105  transition-all uppercase tracking-widest text-xs touch-manipulation">
+                    <button onClick={() => { onClose();  }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105  transition-all uppercase tracking-widest text-xs touch-manipulation">
                         {t('GOT_IT')}
                     </button>
                 </div>
@@ -3114,7 +3114,7 @@ const ProfileModal = ({
 
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
-                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('followers');
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now();  setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all  group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
@@ -3126,7 +3126,7 @@ const ProfileModal = ({
 
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
-                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); playSound('nav_click'); if (navigator.vibrate) navigator.vibrate(5); setActiveList('following');
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now();  setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all  group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
@@ -5422,7 +5422,7 @@ const App = () => {
 
                     <ProfileModal
                         isOpen={isProfileOpen}
-                        onClose={() => { setIsProfileOpen(false); playSound('cyber_back'); }}
+                        onClose={() => { setIsProfileOpen(false);  }}
                         profileUser={profileUser}
                         currentUser={user}
                         allUsers={users}
@@ -5452,7 +5452,7 @@ const App = () => {
                         onOpenCreate={() => { setCreateModeStory(true); setIsCreateOpen(true); }}
                         loadingActions={loadingActions}
                     />
-                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); playSound('cyber_back'); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
+                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null);  }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
                     <NavigationDrawer
                         isOpen={isDrawerOpen}
                         onClose={() => setIsDrawerOpen(false)}
