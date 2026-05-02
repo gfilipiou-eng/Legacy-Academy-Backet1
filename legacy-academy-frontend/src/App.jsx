@@ -2626,27 +2626,24 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 )}
                             </button>
                         ))}
+
+                        <div className="h-px bg-white/5 mx-2 my-2" />
+
+                        {/* LOGOUT ITEM - MATCHES NAV */}
+                        <button
+                            onClick={() => { onLogout(); handleClose(); }}
+                            className="w-full px-4 py-4 flex items-center gap-5 hover:bg-white/5 transition-colors menu-item-slide group"
+                            style={{ animationDelay: `0.25s` }}
+                        >
+                            <Icons.Logout className="w-[26px] h-[26px] text-white shrink-0 group-hover:text-red-500 transition-colors" strokeWidth={2} />
+                            <span className="text-xl font-bold text-white tracking-wide group-hover:text-red-500 transition-colors">{t('LOGOUT')}</span>
+                        </button>
                     </div>
-                </div>
 
-                {/* FOOTER */}
-                <div className="p-4 flex flex-col gap-5 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10 pb-8">
-                    <div className="flex flex-col items-center justify-center gap-2.5 w-full">
-                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-wider px-2 w-full text-center whitespace-normal break-words leading-tight">{t('TERMS_OF_SERVICE')}</button>
-                        <div className="w-4 h-[1px] rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-wider px-2 w-full text-center whitespace-normal break-words leading-tight">{t('PRIVACY_POLICY')}</button>
-                    </div>
-
-                    <button
-                        onClick={() => { onLogout(); handleClose(); }}
-                        className="w-full py-4 mt-2 bg-red-500/5 text-red-500/90 font-bold text-[15px] uppercase tracking-wider rounded-[1.25rem] transition-colors flex items-center justify-center gap-3 group hover:bg-red-500 hover:text-white"
-                    >
-                        <Icons.Logout className="w-5 h-5" strokeWidth={2} />
-                        {t('LOGOUT')}
-                    </button>
-
-                    <div className="text-center mt-2">
-                        <span className="text-[9px] font-black text-gray-600 tracking-[0.4em] uppercase">Legacy Academy v8.2</span>
+                    {/* DISCREET BOTTOM LEGAL LINKS */}
+                    <div className="flex flex-col gap-3 px-6 pt-4 pb-10 mt-auto">
+                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[13px] whitespace-normal break-words leading-tight">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[13px] whitespace-normal break-words leading-tight">{t('PRIVACY_POLICY')}</button>
                     </div>
                 </div>
             </div>
