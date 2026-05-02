@@ -5,6 +5,7 @@
 @tailwind utilities;
 
 :root {
+  background-color: #000000;
   --gold-primary: #FFD700;
   --f1-red: #ff3131;
   --f1-primary: #FFD700;
@@ -21,7 +22,7 @@
 }
 
 body {
-  background-color: var(--app-bg);
+  background-color: #000000 !important;
   color: var(--app-text);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
@@ -595,9 +596,10 @@ img {
     user-select: none !important;
   }
 
-  /* KILL ALL HOVER/ACTIVE BACKGROUNDS ON MOBILE ONLY */
-  *:hover, *:active {
-    background-color: transparent !important;
+  /* KILL ALL HOVER/ACTIVE EFFECTS ON MOBILE ONLY FOR INTERACTIVE ELEMENTS */
+  button:hover, button:active, 
+  a:hover, a:active,
+  .cursor-pointer:hover, .cursor-pointer:active {
     transform: none !important;
     transition: none !important;
     box-shadow: none !important;
