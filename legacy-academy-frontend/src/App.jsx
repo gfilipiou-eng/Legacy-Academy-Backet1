@@ -2639,13 +2639,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                     <button
                         onClick={() => { onLogout(); handleClose(); }}
-                        className="w-full py-4 bg-white/[0.02] border border-white/5 text-gray-400 font-black text-[10px] uppercase tracking-[0.25em] rounded-full duration-300 flex items-center justify-center gap-2 group hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500 relative overflow-hidden touch-manipulation"
+                        className="w-full py-4 mt-2 bg-red-500/5 text-red-500/90 font-black text-[15px] uppercase tracking-wider rounded-[1.25rem] duration-300 flex items-center justify-center gap-3 group hover:bg-red-500 hover:text-white hover:shadow-[0_4px_15px_rgba(239,68,68,0.3)] transition-all touch-manipulation"
                     >
-                        <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
+                        <Icons.Logout className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" strokeWidth={2} />
                         {t('LOGOUT')}
                     </button>
 
-                    <div className="text-center">
+                    <div className="text-center mt-2">
                         <span className="text-[9px] font-black text-gray-600 tracking-[0.4em] uppercase">Legacy Academy v8.2</span>
                     </div>
                 </div>
