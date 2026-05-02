@@ -2630,11 +2630,11 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                 {/* FOOTER */}
                 <div className="p-4 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2">{t('TERMS_OF_SERVICE')}</button>
-                        <div className="w-8 h-px bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2">{t('PRIVACY_POLICY')}</button>
-                    </div>
+                                    <div className="flex flex-col items-center justify-center gap-3">
+                                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2 glow-gold">{t('TERMS_OF_SERVICE')}</button>
+                                        <div className="w-8 h-px bg-white/10" />
+                                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2 glow-gold">{t('PRIVACY_POLICY')}</button>
+                                    </div>
 
                     <button
                         onClick={() => { onLogout(); handleClose();   }}
@@ -5210,12 +5210,13 @@ const App = () => {
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-72 sm:pb-60 scroll-smooth relative z-10">
-                        <header className="relative w-full z-[20] bg-black/70 backdrop-blur-md border-b border-white/10 shrink-0">
+                        <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
+                        <header className="relative w-full z-[20] bg-black/40 backdrop-blur-xl border-b border-white/5 ai-glass shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true);  }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent  z-50 p-3 -ml-2"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl bg-white/[0.03] border border-white/5 ai-glass z-50 p-3 -ml-2"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
@@ -5286,7 +5287,7 @@ const App = () => {
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)]  shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] ai-glass shadow-inner" /></div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
