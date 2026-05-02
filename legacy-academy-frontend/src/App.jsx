@@ -257,7 +257,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <Icons.Terminal className="w-5 h-5 text-[var(--gold-primary)]" />
                         {t('FOUNDER_CONSOLE')} <span className="text-[var(--gold-primary)] opacity-30 select-none">///</span>
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors "><Icons.X className="w-6 h-6 text-gray-500" /></button>
+                    <button onClick={onClose} className="p-2  rounded-full  "><Icons.X className="w-6 h-6 text-gray-500" /></button>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -267,7 +267,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                                 <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)]" />
                                 <span className="text-xs font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                             </div>
-                            <button onClick={() => setAudioBlob(null)} className="p-2 hover:bg-white/5 rounded-full"><Icons.Trash className="w-5 h-5 text-red-500" /></button>
+                            <button onClick={() => setAudioBlob(null)} className="p-2  rounded-full"><Icons.Trash className="w-5 h-5 text-red-500" /></button>
                         </div>
                     ) : isRecording ? (
                         <div className="flex items-center justify-between p-5 bg-red-500/10 border border-red-500/30 rounded-2xl animate-pulse">
@@ -284,7 +284,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                                 value={value}
                                 onChange={(e) => onChange(e.target.value)}
                                 placeholder={t('WRITE_COMMENT')}
-                                className="w-full h-32 bg-white/[0.04] border border-white/10 rounded-2xl p-5 text-base text-white font-medium resize-none focus:border-[var(--gold-primary)] outline-none placeholder-gray-600 shadow-inner transition-all"
+                                className="w-full h-32 bg-white/[0.04] border border-white/10 rounded-2xl p-5 text-base text-white font-medium resize-none focus:border-[var(--gold-primary)] outline-none placeholder-gray-600 shadow-inner "
                             />
                             <div className="absolute bottom-3 right-3 text-[10px] font-black text-gray-700 uppercase tracking-widest">{value.length} / 500</div>
                         </div>
@@ -295,15 +295,15 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <button
                                 type="button"
                                 onClick={startRecording}
-                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)] transition-all  shadow-xl group"
+                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400     shadow-xl group"
                             >
-                                <Icons.Mic className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                <Icons.Mic className="w-6 h-6 group-hover:scale-110 " />
                             </button>
                         )}
                         <button
                             onClick={handleSubmit}
                             disabled={(audioBlob ? false : !value.trim()) || loading}
-                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl shadow-glow-gold  disabled:opacity-50 transition-all flex items-center justify-center gap-3 hover:brightness-110"
+                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl shadow-glow-gold  disabled:opacity-50  flex items-center justify-center gap-3 hover:brightness-110"
                         >
                             {loading ? <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-full animate-spin" /> : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
@@ -400,12 +400,12 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
             setCoords({ top: rect.bottom + 8, left: rect.right - 192 });
         }
         setShowMenu(!showMenu);
-        playSound('cyber_click');
+        
     };
 
     return (
         <div className="relative shrink-0">
-            <button ref={btnRef} onClick={toggle} className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 ">
+            <button ref={btnRef} onClick={toggle} className="p-2 text-gray-400   rounded-full  ">
                 <Icons.MoreHorizontal className="w-5 h-5" />
             </button>
             {showMenu && createPortal(
@@ -421,14 +421,14 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                         className="w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 animate-fade-in"
                     >
                         {isOwner && (
-                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 transition-transform" />
+                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl   w-full text-left group/item">
+                                <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 " />
                                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
                             </button>
                         )}
                         {canDelete && (
-                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all w-full text-left group/item">
-                                <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 transition-transform" />
+                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl   w-full text-left group/item">
+                                <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 " />
                                 <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
                             </button>
                         )}
@@ -485,7 +485,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
         try {
             const res = await axios.post('/posts/translate', { text: comment.text, lang });
             setTranslatedText(res.data.translatedText);
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error("Comment decryption failed");
         } finally {
@@ -527,13 +527,13 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <div className="flex gap-2 mt-2 justify-end">
                             <button
                                 onClick={handleSave}
-                                className="px-3 py-1.5 rounded-full bg-[var(--gold-primary)] text-[10px] font-black text-black hover:brightness-110 transition-colors uppercase tracking-wider"
+                                className="px-3 py-1.5 rounded-full bg-[var(--gold-primary)] text-[10px] font-black text-black hover:brightness-110  uppercase tracking-wider"
                             >
                                 {t('SAVE')}
                             </button>
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="px-3 py-1.5 rounded-full bg-white/5 text-[10px] font-black text-gray-400 hover:bg-white/10 transition-colors uppercase tracking-wider"
+                                className="px-3 py-1.5 rounded-full bg-white/5 text-[10px] font-black text-gray-400   uppercase tracking-wider"
                             >
                                 {t('CANCEL')}
                             </button>
@@ -550,7 +550,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                     <button
                                         onClick={handleTranslate}
                                         disabled={isTranslating}
-                                        className="ml-2 inline-flex items-center gap-1 text-[9px] font-black text-[var(--gold-primary)]/40 hover:text-[var(--gold-primary)] transition-all uppercase tracking-tighter"
+                                        className="ml-2 inline-flex items-center gap-1 text-[9px] font-black text-[var(--gold-primary)]/40   uppercase tracking-tighter"
                                     >
                                         <Icons.Globe className={`w-2.5 h-2.5 ${isTranslating ? 'animate-spin' : ''}`} />
                                         {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
@@ -577,7 +577,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <button
                             type="button"
                             onClick={() => setIsEditing(true)}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-gray-400   "
                             title={t('EDIT')}
                         >
                             <Icons.Edit className="w-3 h-3" /> <span className="hidden sm:inline">{t('EDIT')}</span>
@@ -587,7 +587,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <button
                             type="button"
                             onClick={() => onDelete?.(post._id, comment._id)}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-red-400   "
                             title={t('DELETE')}
                         >
                             <Icons.Trash className="w-3 h-3" /> <span className="hidden sm:inline">{t('DELETE')}</span>
@@ -626,7 +626,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         try {
             const res = await axios.get(`/posts/${post._id}/translate?lang=${lang}`);
             setTranslatedText(res.data.translatedText);
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error(e);
         } finally {
@@ -710,9 +710,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden transition-all duration-300">
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 z-[1500] shadow-2xl  transition-all group">
-                <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
+        <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden  duration-300">
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl  z-[1500] shadow-2xl   group">
+                <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 " />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
                 {/* Image Section */}
@@ -774,26 +774,26 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             <div className="flex flex-wrap items-center justify-between gap-2 w-full py-1">
                                 <button
                                     onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                    className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500 hover:text-sky-400 active:text-sky-400 transition-all">
+                                    className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500   ">
                                     <Icons.MessageSquare className="w-5 h-5" />
                                     <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
                                 </button>
                                 <button
                                     onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500 hover:text-green-400'}`}>
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500'}`}>
                                     <Icons.RefreshCcw className="w-5 h-5" />
                                     <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}>
-                                    <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                    onPointerDown={(e) => { e.stopPropagation(); onLike(post._id);  }}
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500'}`}>
+                                    <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); if (navigator.vibrate) navigator.vibrate(20); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
-                                    <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                    onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id);  }}
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
+                                    <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
@@ -819,7 +819,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
                                         </div>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-red-500"><Icons.Trash className="w-4 h-4" /></button>
+                                            <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500">
+                                                <Icons.X className="w-4 h-4" />
+                                            </button>
                                             <button onClick={() => {
                                                 const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
                                                 if (commentText.trim()) fd.append('text', commentText.trim());
@@ -839,10 +841,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             className="flex-1 min-w-0 bg-transparent py-3 px-3 text-sm text-white outline-none placeholder-gray-600 font-bold"
                                         />
                                         <div className="flex gap-1 pr-1 shrink-0">
-                                            <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500 hover:text-[var(--gold-primary)]'}`}>
+                                            <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-full ${isRecordingComment ? 'bg-red-500 text-white' : 'text-gray-500'}`}>
                                                 <Icons.Mic className="w-4 h-4" />
                                             </button>
-                                            <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25 transition-all  shrink-0">
+                                            <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--gold-primary)] text-black disabled:opacity-25   shrink-0">
                                                 <Icons.Send className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -986,7 +988,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             } else {
                 ytPlayerRef.current.playVideo();
             }
-            playSound('cyber_click');
+            
             return;
         }
 
@@ -994,11 +996,11 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
         if (videoRef.current.paused) {
             videoRef.current.play();
             setIsPlaying(true);
-            playSound('cyber_scroll');
+            
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
-            playSound('cyber_click');
+            
         }
     };
 
@@ -1013,7 +1015,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
         } else if (videoRef.current) {
             videoRef.current.muted = nextMute;
         }
-        playSound('cyber_click');
+        
     };
 
     const handleTimeUpdate = () => {
@@ -1149,7 +1151,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             onTimeUpdate={handleTimeUpdate}
                             onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
-                            className="w-full h-auto object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] transition-transform duration-500 will-change-transform transform-gpu"
+                            className="w-full h-auto object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]  duration-500 will-change-transform transform-gpu"
                         />
                     )}
                 </div>
@@ -1168,9 +1170,9 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             <div className="flex justify-start items-start gap-2.5">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); toggleMute(e); }}
-                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all  group/btn shadow-xl"
+                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto     group/btn shadow-xl"
                                 >
-                                    {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />}
+                                    {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 " /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 " />}
                                 </button>
                                 {onExpand && (
                                     <button
@@ -1182,11 +1184,11 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                                 setIsPlaying(false);
                                             }
                                             onExpand();
-                                            playSound('cyber_click');
+                                            
                                         }}
-                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto hover:bg-[var(--gold-primary)]/20 hover:border-[var(--gold-primary)]/40 transition-all  group/btn shadow-xl"
+                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto     group/btn shadow-xl"
                                     >
-                                        <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                                        <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 " />
                                     </button>
                                 )}
                             </div>
@@ -1213,14 +1215,14 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                 onMouseDown={handleMouseDown}
                                 onTouchStart={handleMouseDown}
                             >
-                                <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5 transition-colors rounded-full" />
+                                <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5  rounded-full" />
                                 <motion.div
                                     className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
                                     style={{ width: `${progress}%` }}
                                     transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
                                 />
                                 <motion.div
-                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100 transition-transform hidden sm:block"
+                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100  hidden sm:block"
                                     style={{ left: `${progress}%`, marginLeft: '-8px' }}
                                 />
                             </div>
@@ -1240,7 +1242,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         else if (note.type === 'security_alert') onOpenPost(note.post || note.postId);
         else if (note.post || note.postId) onOpenPost(note.post || note.postId);
         else onViewProfile(note.sender);
-        playSound('pop');
+        
     };
 
     const isFounderSender = note?.sender?.role === 'Founder';
@@ -1249,11 +1251,11 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl transition-all cursor-pointer border-b border-white/5 group"
+            className="flex items-center gap-3 p-3  rounded-2xl  cursor-pointer border-b border-white/5 group"
             onClick={handleClick}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10 transition-all shadow-md">
+                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10  shadow-md">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} className="rounded-full" />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
@@ -1265,7 +1267,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             </div>
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
-                    <span className="font-black text-white group-hover:text-[var(--gold-primary)] transition-colors uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
+                    <span className="font-black text-white group-  uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
                     <VerifiedBadge isFounder={isFounderSender} className="w-3.5 h-3.5 ml-1" />
                     <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
@@ -1285,13 +1287,13 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105  transition-all shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
-                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg hover:bg-red-500/20 hover:text-red-500 transition-all uppercase tracking-widest">{t('REJECT')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105   shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
+                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg    uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
             </div>
             {note.postImage && (
-                <div className="w-12 h-12 rounded-xl bg-gray-800 border border-white/10 overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-gray-800 border border-white/10 overflow-hidden shrink-0 group-hover:scale-105 ">
                     <img src={resolveMediaUrl(note.postImage)} className="w-full h-full object-cover opacity-60" />
                 </div>
             )}
@@ -1308,7 +1310,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
                     <ProfileAvatar user={user} className="opacity-80 rounded-full" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 ">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -1401,7 +1403,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
         try {
             const res = await axios.get(`/posts/${post._id}/translate?lang=${lang}`);
             setTranslatedText(res.data.translatedText);
-            playSound('cyber_scroll');
+            
         } catch (e) { console.error("Neural link error:", e); }
         finally { setIsTranslating(false); }
     };
@@ -1468,7 +1470,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-xl border border-white/5 hover:border-[var(--gold-primary)]/20 transition-all duration-500 shadow-2xl will-change-transform`}
+            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-xl border border-white/5   duration-500 shadow-2xl will-change-transform`}
         >
             {/* AMBIENT BACKGROUND GLOW */}
             <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
@@ -1500,7 +1502,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105 transition-transform duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105  duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="rounded-full" />
                         </div>
                     </div>
@@ -1540,7 +1542,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.01] transition-transform duration-700 shadow-md h-auto min-h-[100px] mt-2">
+                                <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.01]  duration-700 shadow-md h-auto min-h-[100px] mt-2">
                                     {isYouTubeUrl(post.videoUrl) ? (
                                         <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
@@ -1578,7 +1580,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {/* COMMENTS */}
                             <button
                                 onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${showComments ? 'text-sky-400' : 'text-gray-600 hover:text-sky-400'}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${showComments ? 'text-sky-400' : 'text-gray-600'}`}
                             >
                                 <Icons.MessageSquare className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
@@ -1588,10 +1590,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <button
                                 onPointerDown={(e) => {
                                     e.stopPropagation();
-                                    playSound('cyber_repost');
+                                    
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600 hover:text-green-400 '}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600  '}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
@@ -1604,11 +1606,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     const isLiked = post.likes?.some(id => String(id) === String(user?._id));
                                     playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                     onLike(post._id);
-                                    if (navigator.vibrate) navigator.vibrate(20);
+                                    
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600 hover:text-red-400 '}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600  '}`}
                             >
-                                <Icons.Heart className={`w-5 h-5 transition-all ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
@@ -1619,11 +1621,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     const isDisliked = post.dislikes?.some(id => String(id) === String(user?._id));
                                     playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                     onDislike(post._id);
-                                    if (navigator.vibrate) navigator.vibrate(20);
+                                    
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600 hover:text-[var(--gold-primary)] '}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600  '}`}
                             >
-                                <Icons.ThumbsDown className={`w-5 h-5 transition-all ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
@@ -1643,13 +1645,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 value={commentText}
                                                 onChange={(e) => setCommentText(e.target.value)}
                                                 placeholder={t('WRITE_COMMENT')}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40 transition-all min-h-[100px] resize-none pb-12"
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-[var(--gold-primary)]/40  min-h-[100px] resize-none pb-12"
                                             />
                                             <div className="absolute bottom-2 left-2 flex gap-2">
-                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-xl transition-all ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500 hover:text-red-500'}`}>
+                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-xl  ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500'}`}>
                                                     <Icons.Mic className="w-5 h-5" />
                                                 </button>
-                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90  transition-all">
+                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-[var(--gold-primary)] text-black rounded-xl hover:opacity-90  ">
                                                     <Icons.Send className="w-5 h-5" />
                                                 </button>
                                             </div>
@@ -1661,7 +1663,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                     <span className="text-[10px] font-black text-[var(--gold-primary)] uppercase">VOICE READY</span>
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5 hover:bg-red-500/20 text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
+                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5  text-red-500 rounded-lg"><Icons.Trash className="w-4 h-4" /></button>
                                                     <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-[var(--gold-primary)] text-black font-black text-[10px] rounded-lg">SEND</button>
                                                 </div>
                                             </div>
@@ -1805,7 +1807,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             if (activeChat?._id === withUser) {
                 setMessages(prev => ({ ...prev, [withUser]: [] }));
                 onClose(); // Close the chat window automatically
-                playSound('premium_logout'); // Play a delete sound effect
+                 // Play a delete sound effect
             }
         });
 
@@ -1837,11 +1839,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             console.log('📡 [DEBUG] Attempting to clear conversation:', targetId);
             await axios.post(`/messages/conversation/clear/${targetId}`);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
-            playSound('sword');
+            
         } catch (e) {
             console.error('Clear failed', e);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
-            playSound('sword');
+            
         }
     };
 
@@ -1873,7 +1875,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
             }));
-            playSound('cyber_scroll');
+            
         } catch (e) {
             const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
             const fullOutput = e.response?.data ? JSON.stringify(e.response.data) : 'No response body';
@@ -1904,7 +1906,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             };
             mediaRecorder.current.start();
             setIsRecording(true);
-            playSound('sweep');
+            
         } catch (e) { alert("Mic required for walkie-talkie mode"); }
     };
 
@@ -1941,7 +1943,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
-                <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-transform duration-300 ${activeChat ? '-translate-x-full sm:translate-x-0' : 'translate-x-0'}`}>
+                <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0  duration-300 ${activeChat ? '-translate-x-full sm:translate-x-0' : 'translate-x-0'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
@@ -1949,7 +1951,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <Icons.Ghost className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('CHAT')}
                                 </h2>
-                                <button onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">
@@ -1960,7 +1962,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('SEARCH_USERS_PH')}
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] transition-colors placeholder:text-gray-600"
+                                className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)]  placeholder:text-gray-600"
                             />
                         </div>
                     </div>
@@ -1969,7 +1971,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
-                                <button key={u._id} onClick={() => { setActiveChat(u); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors text-left touch-manipulation active:bg-white/10 ${activeChat?._id === u._id ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
+                                <button key={u._id} onClick={() => { setActiveChat(u); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer   text-left touch-manipulation  ${activeChat?._id === u._id ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
                                     <div className="relative shrink-0"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm border border-white/10`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
@@ -1979,13 +1981,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 </div>
                 
                 {/* CHAT WINDOW */}
-                <div className={`flex-1 flex flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-transform duration-300 ${activeChat ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'}`}>
+                <div className={`flex-1 flex flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0  duration-300 ${activeChat ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'}`}>
                     {activeChat ? (
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
                                 <button 
                                     onClick={() => { setActiveChat(null); }} 
-                                    className="sm:hidden p-2 -ml-2 text-gray-400 hover:text-white"
+                                    className="sm:hidden p-2 -ml-2 text-gray-400"
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
@@ -1999,7 +2001,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
                                     </div>
                                 </div>
-                                <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400 hover:text-white"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {(messages[activeChat._id] || []).map((m, i) => {
@@ -2032,7 +2034,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
-                                                        className={`absolute -top-2 right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-md ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)]' : 'bg-black/70 text-gray-400 border-white/20 hover:bg-white/10 hover:text-white'}`}
+                                                        className={`absolute -top-2 right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-md ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)]' : 'bg-black/70 text-gray-400 border-white/20'}`}
                                                         title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
                                                     >
                                                         <Icons.Lock className="w-3 h-3" />
@@ -2079,7 +2081,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="absolute bottom-full left-0 right-0 p-3 bg-black/90 backdrop-blur-xl border-t border-white/10">
                                     <div className="relative inline-block">
                                         <img src={imagePreview} alt="" className="h-24 max-w-[200px] rounded-xl object-cover border border-white/10 shadow-xl" />
-                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-400  transition-all">
+                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg   ">
                                             <Icons.X className="w-3 h-3 text-white" />
                                         </button>
                                     </div>
@@ -2087,7 +2089,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             )}
 
                             <div className="p-3 pb-14 sm:pb-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
-                                <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)] transition-all group overflow-hidden">
+                                <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)]  group overflow-hidden">
                                     <input
                                         id="chat-input"
                                         name="chat-message"
@@ -2110,14 +2112,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
-                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] " />
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => { setIsPhonetic(!isPhonetic); playSound('pop'); }}
-                                        className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
+                                        onClick={() => { setIsPhonetic(!isPhonetic);  }}
+                                        className={`w-12 h-12 flex items-center justify-center rounded-2xl border  shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
                                         title="Phonetic Greek Keyboard"
                                     >
                                         <Icons.Translate className="w-5 h-5" />
@@ -2126,7 +2128,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <button
                                         type="button"
                                         onClick={() => imageInputRef.current?.click()}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] '}`}
+                                        className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5  text-gray-500  '}`}
                                         title="Send Image"
                                     >
                                         <Icons.Image className="w-5 h-5" />
@@ -2134,14 +2136,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <button
                                         type="button"
                                         onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-[var(--gold-primary)] '}`}
+                                        className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5  text-gray-500  '}`}
                                     >
                                         <Icons.Mic className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={() => handleSend()}
                                         disabled={!inputText.trim() && !imageFile}
-                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40  disabled:opacity-20 disabled:scale-100 transition-all shrink-0 font-black hover:opacity-90"
+                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40  disabled:opacity-20 disabled:scale-100  shrink-0 font-black hover:opacity-90"
                                     >
                                         <Icons.Send className="w-5 h-5" />
                                     </button>
@@ -2151,8 +2153,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                     ) : (
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
-                                <button className="mb-6 bg-transparent border-none p-0 transition-all  group">
-                                    <Icons.Ghost className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105 transition-all duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
+                                <button className="mb-6 bg-transparent border-none p-0   group">
+                                    <Icons.Ghost className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105  duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
                                 <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
@@ -2174,9 +2176,9 @@ const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
     return (
         <div
             onClick={() => !saving && onToggle()}
-            className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black/40 border-white/20'}`}
+            className={`relative w-12 h-7 rounded-full  duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black/40 border-white/20'}`}
         >
-            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md  duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
         </div>
     );
 };
@@ -2188,10 +2190,10 @@ const SectionHeader = ({ color, label }) => (
     </div>
 );
 
-const SettingRow = ({ label, desc, children, hoverColor = 'hover:border-[var(--gold-primary)]/30' }) => (
-    <div className={`flex items-center justify-between gap-4 p-4 bg-white/[0.03] rounded-2xl border border-white/5 ${hoverColor} hover:bg-white/[0.05] transition-all group`}>
+const SettingRow = ({ label, desc, children, hoverColor = '' }) => (
+    <div className={`flex items-center justify-between gap-4 p-4 bg-white/[0.03] rounded-2xl border border-white/5 ${hoverColor} group`}>
         <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-white group-hover:text-[var(--gold-primary)] transition-colors truncate">{label}</div>
+            <div className="text-sm font-bold text-white truncate">{label}</div>
             {desc && <div className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">{desc}</div>}
         </div>
         {children}
@@ -2239,7 +2241,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 onUpdateUser(res.data);
                 if (key === 'isPrivate') setIsPrivate(val);
                 if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-                playSound('cyber_scroll');
+                
                 setSaving(false);
                 return;
             }
@@ -2252,7 +2254,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
@@ -2291,7 +2293,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={() => { onClose();  }} className="p-0  transition-transform touch-manipulation">
+                    <button onClick={() => { onClose();  }} className="p-0   touch-manipulation">
                         <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
@@ -2306,7 +2308,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <SettingRow label={t('PRIVATE_TITLE')} desc={t('PRIVATE_DESC_SHORT')}>
                                 <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
                             </SettingRow>
-                            <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="hover:border-blue-500/30">
+                            <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="">
                                 <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v);  }} saving={saving} color="blue" />
                             </SettingRow>
                         </div>
@@ -2349,9 +2351,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         <button
                                             key={opt.id}
                                             onClick={() => setThemeCategory(opt.id)}
-                                            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all ${themeCategory === opt.id
+                                            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border  ${themeCategory === opt.id
                                                 ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)] text-[var(--gold-primary)]'
-                                                : 'bg-white/[0.03] border-white/10 text-gray-500 hover:bg-white/10 hover:text-white'
+                                                : 'bg-white/[0.03] border-white/10 text-gray-500'
                                                 }`}
                                         >
                                             {opt.label}
@@ -2369,7 +2371,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             applyTheme(color);
                                             handleSave('theme', color);
                                         }}
-                                        className="w-full bg-[var(--app-bg)] border border-white/40 rounded-2xl py-3.5 px-4 text-[15px] font-black text-[var(--app-text)] outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-all appearance-none h-[56px]"
+                                        className="w-full bg-[var(--app-bg)] border border-white/40 rounded-2xl py-3.5 px-4 text-[15px] font-black text-[var(--app-text)] outline-none cursor-pointer   appearance-none h-[56px]"
                                     >
                                         <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
                                         <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
@@ -2394,7 +2396,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             return (
                                                 <div key={c} className="flex flex-col items-center justify-center">
                                                     <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                                        className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                                        className={`w-9 h-9 rounded-full  duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
                                                     >
                                                         <div className="w-full h-full rounded-full" style={{
                                                             backgroundColor: c,
@@ -2402,7 +2404,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                         }} />
                                                         {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
                                                     </button>
-                                                    <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>{label}</span>
+                                                    <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500'}`}>{t('COLOR_' + c.id)}</span>
                                                 </div>
                                             );
                                         })}
@@ -2423,7 +2425,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             return (
                                                 <div key={c} className="flex flex-col items-center justify-center">
                                                     <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                                        className={`w-9 h-9 rounded-full transition-all duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
+                                                        className={`w-9 h-9 rounded-full  duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
                                                     >
                                                         <div className="w-full h-full rounded-full" style={{
                                                             backgroundColor: c,
@@ -2431,7 +2433,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                         }} />
                                                         {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
                                                     </button>
-                                                    <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>{label}</span>
+                                                    <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500'}`}>{t('COLOR_' + c.id)}</span>
                                                 </div>
                                             );
                                         })}
@@ -2452,10 +2454,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', flag: '🇹🇷', label: 'TR' }, { id: 'fr', flag: '🇫🇷', label: 'FR' }
                             ].map(l => (
                                 <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
-                                    className={`py-3 rounded-2xl border transition-all flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_14px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/20'}`}
+                                    className={`py-3 rounded-2xl border  flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_14px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02]'}`}
                                 >
-                                    <div className="text-xl group-hover:scale-110 transition-transform drop-shadow">{l.flag}</div>
-                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500 group-hover:text-gray-300'}`}>{l.label}</div>
+                                    <div className="text-xl drop-shadow">{l.flag}</div>
+                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.name}</div>
                                 </button>
                             ))}
                         </div>
@@ -2472,25 +2474,25 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         {t('DANGER_ZONE')}
                                     </div>
                                     <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                        className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700 transition-all shadow-lg  uppercase">
+                                        className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700  shadow-lg  uppercase">
                                         {t('DELETE_FOREVER')}
                                     </button>
-                                    <button onClick={() => setShowDanger(false)} className="mt-3 text-[9px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">{t('CANCEL')}</button>
+                                    <button onClick={() => setShowDanger(false)} className="mt-3 text-[9px] font-black text-gray-500 uppercase tracking-widest  ">{t('CANCEL')}</button>
                                 </div>
                             ) : (
-                                <button onClick={() => setShowDanger(true)} className="w-full py-4 bg-white/[0.02] hover:bg-red-500/10 rounded-2xl border border-white/5 text-gray-500 hover:text-red-400 transition-all text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3">
+                                <button onClick={() => setShowDanger(true)} className="w-full py-4 bg-white/[0.02]  rounded-2xl border border-white/5 text-gray-500   text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3">
                                     {t('UNCOVER_RESTRICTED_OPS')}
                                 </button>
                             )}
 
-                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03] hover:bg-red-500/10 rounded-2xl border border-white/5 hover:border-red-500/20 transition-all group ">
+                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03]  rounded-2xl border border-white/5   group ">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
+                                    <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group- ">
                                         <Icons.Logout className="w-4 h-4 text-red-500" />
                                     </div>
-                                    <span className="text-xs font-black text-white/80 group-hover:text-red-400 transition-colors uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
+                                    <span className="text-xs font-black text-white/80 group-  uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
                                 </div>
-                                <Icons.ArrowRight className="w-4 h-4 text-white/10 group-hover:text-red-500 transition-all group-hover:translate-x-1" />
+                                <Icons.ArrowRight className="w-4 h-4 text-white/10 group-  group-hover:translate-x-1" />
                             </button>
                         </div>
                     </section>
@@ -2526,7 +2528,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
     const handleLink = (tab) => {
         onNavigate(tab);
         handleClose();
-        playSound('cyber_nav');
+        
     };
 
     return (
@@ -2603,13 +2605,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="relative w-full px-5 py-4 flex items-center gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] rounded-[1.25rem] transition-all group border border-transparent hover:border-white/5 hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation  menu-item-slide"
+                                className="relative w-full px-5 py-4 flex items-center gap-4   rounded-[1.25rem]  group border border-transparent  hover:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.02)] touch-manipulation  menu-item-slide"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
-                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group-hover:bg-[var(--gold-primary)]/10 group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] transition-all">
-                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group-hover:text-[var(--gold-primary)] transition-all" />
+                                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] group- group-hover:shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.1)] ">
+                                    <item.icon className="w-[22px] h-[22px] text-gray-400 group- " />
                                 </div>
-                                <div className="text-[17px] font-bold text-white/80 group-hover:text-white transition-colors">{item.label}</div>
+                                <div className="text-[17px] font-bold text-white/80 group- ">{item.label}</div>
 
                                 {item.badge > 0 && (
                                     <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-red-600 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">
@@ -2620,7 +2622,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 )}
 
                                 {/* HOVER ACCENT */}
-                                <div className="absolute left-0 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-6 transition-all rounded-full" />
+                                <div className="absolute left-0 w-1 h-0 bg-[var(--gold-primary)] group-hover:h-6  rounded-full" />
                             </button>
                         ))}
                     </div>
@@ -2629,17 +2631,17 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                 {/* FOOTER */}
                 <div className="p-6 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
                     <div className="flex items-center justify-center gap-8">
-                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold   text-xs uppercase tracking-widest  touch-manipulation">{t('TERMS_OF_SERVICE')}</button>
                         <div className="w-1 h-1 rounded-full bg-white/10" />
-                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold hover:text-blue-400 transition-colors text-xs uppercase tracking-widest  touch-manipulation">{t('PRIVACY_POLICY')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold   text-xs uppercase tracking-widest  touch-manipulation">{t('PRIVACY_POLICY')}</button>
                     </div>
 
                     <button
-                        onClick={() => { onLogout(); handleClose(); playSound('premium_logout'); if (navigator.vibrate) navigator.vibrate(20); }}
-                        className="w-full py-4 bg-red-500/10 hover:bg-red-500 active:bg-red-600 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-[0.25em] rounded-full transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20  relative overflow-hidden touch-manipulation"
+                        onClick={() => { onLogout(); handleClose();   }}
+                        className="w-full py-4 bg-red-500/10   border border-red-500/30  text-red-500  font-black text-[10px] uppercase tracking-[0.25em] rounded-full  duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20  relative overflow-hidden touch-manipulation"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                        <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full  duration-700" />
+                        <Icons.Logout className="w-4 h-4 group-hover:translate-x-0.5 " />
                         {t('LOGOUT')}
                     </button>
 
@@ -2660,7 +2662,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
             <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
                 <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
                     <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
-                    <button onClick={() => { onClose();  }} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white shrink-0  touch-manipulation">
+                    <button onClick={() => { onClose();  }} className="p-2  rounded-full  text-gray-400  shrink-0  touch-manipulation">
                         <Icons.X className="w-6 h-6" />
                     </button>
                 </div>
@@ -2668,7 +2670,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
                     {content}
                 </div>
                 <div className="p-6 border-t border-white/10 flex justify-end">
-                    <button onClick={() => { onClose();  }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105  transition-all uppercase tracking-widest text-xs touch-manipulation">
+                    <button onClick={() => { onClose();  }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105   uppercase tracking-widest text-xs touch-manipulation">
                         {t('GOT_IT')}
                     </button>
                 </div>
@@ -2909,7 +2911,7 @@ const ProfileModal = ({
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
                         else onClose();
-                    }} className="p-2 -ml-2 rounded-full hover:bg-white/10  transition-all"><Icons.Back className="w-6 h-6 text-white" /></button>
+                    }} className="p-2 -ml-2 rounded-full   "><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest leading-none">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
                     <div className="w-10" />
                 </div>
@@ -2922,7 +2924,7 @@ const ProfileModal = ({
                                 <div key={u._id} onClick={() => {
                                     onViewProfile(u);
                                     setActiveList(null);
-                                }} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-2xl cursor-pointer transition-all  border border-transparent hover:border-white/5">
+                                }} className="flex items-center gap-3 p-3  rounded-2xl cursor-pointer   border border-transparent">
                                     <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10">
                                         <ProfileAvatar user={u} className="rounded-full" />
                                     </div>
@@ -2966,8 +2968,8 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full mt-6">
                                 <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212] hover:bg-[#1a1a1a] border border-white/10 hover:border-white/30 rounded-2xl text-[11px] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
-                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all" />}
+                                    className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
+                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
                                 {displayUser?.coverPic && (
@@ -2985,7 +2987,7 @@ const ProfileModal = ({
                                             finally { setCoverUploading(false); }
                                         }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212] hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 rounded-full text-gray-400 hover:text-red-500 flex items-center justify-center transition-all duration-300 disabled:opacity-50 ">
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-full text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 ">
                                         <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
@@ -3013,7 +3015,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none transition-all" placeholder={t('USERNAME_PH')} />
+                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none " placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -3023,7 +3025,7 @@ const ProfileModal = ({
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 transition-all"
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 "
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
@@ -3046,7 +3048,7 @@ const ProfileModal = ({
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
                                     else alert("Update failed.");
                                 }
-                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20  transition-transform text-sm">{t('SAVE_CHANGES')}</button>
+                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20   text-sm">{t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
@@ -3093,13 +3095,13 @@ const ProfileModal = ({
                                 <div className="grid grid-cols-4 gap-1.5 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl hover:bg-black transition-all">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl  ">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
                                         <Icons.Grid className="w-3.5 h-3.5 text-white" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl hover:bg-black transition-all">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl  ">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = String(displayUser?._id || '');
@@ -3115,8 +3117,8 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now();  setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all  group touch-manipulation select-none relative z-10">
-                                        <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
+                                        <span className="font-black text-white text-base leading-none tabular-nums ">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
@@ -3127,8 +3129,8 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now();  setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-all  group touch-manipulation select-none relative z-10">
-                                        <span className="font-black text-white text-base leading-none tabular-nums transition-colors">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
+                                        <span className="font-black text-white text-base leading-none tabular-nums ">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
@@ -3141,7 +3143,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-4 space-y-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest transition-all">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest ">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -3149,17 +3151,17 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className="flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all  bg-black border border-white/10 text-white"
+                                                className="flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest   bg-black border border-white/10 text-white"
                                             >
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
                                             <button
                                                 onClick={() => onOpenChat(displayUser)}
                                                 title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
-                                                className="flex items-center gap-2 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all  shrink-0"
+                                                className="flex items-center gap-2 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em]   shrink-0"
                                             >
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-white transition-all duration-300" />
+                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-white  duration-300" />
                                                 </div>
                                                 <span className="whispers-label">{t('WHISPERS')}</span>
                                             </button>
@@ -3167,7 +3169,7 @@ const ProfileModal = ({
                                     )}
                                 </div>
                                 {!isMe && currentUser?.role === 'Founder' && (
-                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all ">
+                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest    ">
                                         {t('BAN_3_DAYS') || 'BAN 3 ΗΜΕΡΕΣ'}
                                     </button>
                                 )}
@@ -3178,9 +3180,9 @@ const ProfileModal = ({
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all ${activeTab === tab
+                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl  ${activeTab === tab
                                             ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
-                                            : 'text-white/60 hover:text-white hover:bg-white/5'
+                                            : 'text-white/60  '
                                             }`}
                                     >
                                         {t('TAB_' + tab)}
@@ -3191,19 +3193,19 @@ const ProfileModal = ({
                             {/* PRIVACY LOCK SCREEN */}
                             {displayUser?.isPrivate && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
-                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:border-[var(--gold-primary)]/40 transition-all relative overflow-hidden">
+                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-  relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/10 to-transparent animate-pulse" />
-                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-hover:text-[var(--gold-primary)] transition-all relative z-10" />
+                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-  relative z-10" />
                                     </div>
                                     <div className="space-y-3">
                                         <h3 className="font-black text-white text-xl uppercase tracking-[0.2em]">{t('PRIVATE_TITLE')}</h3>
                                         <div className="h-0.5 w-12 bg-[var(--gold-primary)] mx-auto opacity-50" />
                                         <p className="text-gray-500 text-[11px] uppercase tracking-widest leading-relaxed mx-auto max-w-[240px] font-bold">{t('PRIVATE_DESC')}</p>
                                     </div>
-                                    <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105  transition-all uppercase shadow-lg shadow-[var(--gold-primary)]/20">
+                                    <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105   uppercase shadow-lg shadow-[var(--gold-primary)]/20">
                                         {hasRequested ? t('REQUESTED') : t('FOLLOW_TO_VIEW')}
                                     </button>
-                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white hover:bg-white/10  transition-all">
+                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400    ">
                                         {t('CLOSE', 'ΚΛΕΙΣΙΜΟ')}
                                     </button>
                                 </div>
@@ -3218,7 +3220,7 @@ const ProfileModal = ({
                                                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
                                                             <ProfileAvatar user={currentUser} className="opacity-80 rounded-full" />
                                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 transition-transform">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 ">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
@@ -3458,7 +3460,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                     onChange={(e) => setDesc(e.target.value)}
                                     maxLength={300}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner font-bold"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner font-bold"
                                 />
                                 <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
                                     {desc.length} / 300
@@ -3503,10 +3505,10 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 ) : (
                                     <img src={preview} className="w-full h-full object-cover" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full hover:bg-red-500 transition-colors"><Icons.X className="w-3 h-3 text-white" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full  "><Icons.X className="w-3 h-3 text-white" /></button>
                             </div>
                         ) : (
-                            <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-all text-gray-500 cursor-pointer">
+                            <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2   text-gray-500 cursor-pointer">
                                 <Icons.Image className="w-8 h-8 opacity-50" />
                                 <span className="text-xs font-bold uppercase tracking-widest">{t('UPLOAD_MEDIA')}</span>
                             </div>
@@ -3514,8 +3516,8 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
-                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl transition-all border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
+                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl  border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 '}`}>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center  ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
                             </div>
                             <div className="flex flex-col">
@@ -3526,7 +3528,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     </div>
 
                     <div className="flex gap-4">
-                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
+                        <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
                         <button disabled={isSubmitting} onClick={async () => {
                             if (isSubmitting) return;
                             const rawYoutube = document.getElementById('c-youtube').value;
@@ -3556,7 +3558,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             if (fileRef.current) fileRef.current.value = '';
                             setIsStory(false);
                             setIsSubmitting(false);
-                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20  transition-transform disabled:opacity-50`}>
+                        }} className={`flex-1 py-3 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20   disabled:opacity-50`}>
                             {isSubmitting ? (isStory ? t('UPLOADING') || '...' : '...') : (isStory ? t('POST_STORY') : t('POST'))}
                         </button>
                     </div>
@@ -3640,7 +3642,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             setSaving(true);
             await axios.put(`/posts/${post._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
             onSuccess();
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error("Edit failed", e);
             const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
@@ -3666,7 +3668,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     onChange={e => setDesc(e.target.value)}
                                     maxLength={300}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all custom-scrollbar shadow-inner"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner"
                                 />
                                 <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
                                     {desc.length} / 300
@@ -3691,7 +3693,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     id="edit-youtube"
                                     value={youtubeUrl}
                                     placeholder="https://youtube.com/..."
-                                    className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40 hover:border-white/20 transition-all shadow-inner"
+                                    className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40   shadow-inner"
                                     onChange={(e) => {
                                         const v = e.target.value || '';
                                         setYoutubeUrl(v);
@@ -3727,23 +3729,23 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                             setYoutubeUrl('');
                                             if (fileRef.current) fileRef.current.value = '';
                                         }}
-                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl hover:bg-red-500 text-white transition-all shadow-xl border border-white/10 opacity-0 group-hover/preview:opacity-100"
+                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl  text-white  shadow-xl border border-white/10 opacity-0 group-hover/preview:opacity-100"
                                     >
                                         <Icons.X className="w-4 h-4" />
                                     </button>
                                 </div>
                             ) : (
-                                <div className="w-full py-10 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 hover:bg-white/5 hover:border-[var(--gold-primary)]/40 transition-all text-gray-500 cursor-pointer group">
-                                    <Icons.Image className="w-8 h-8 opacity-30 group-hover:scale-110 group-hover:text-[var(--gold-primary)] transition-all" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-gray-300">{t('UPDATE_MEDIA')}</span>
+                                <div className="w-full py-10 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3    text-gray-500 cursor-pointer group">
+                                    <Icons.Image className="w-8 h-8 opacity-30 group-hover:scale-110 group- " />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('UPLOAD_MEDIA')}</span>
                                 </div>
                             )}
                             <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
                         </div>
 
                         <div className="flex gap-4">
-                            <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs hover:bg-white/10 text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40  transition-transform`}>{saving ? '...' : t('PUBLISH')}</button>
+                            <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
+                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)]'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40  `}>{saving ? '...' : t('PUBLISH')}</button>
                         </div>
                     </div>
                 </div>
@@ -3892,7 +3894,7 @@ const App = () => {
     const scrollToTop = () => {
         if (mainScrollRef.current) {
             mainScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-            playSound('cyber_scroll');
+            
         }
     };
 
@@ -3910,7 +3912,7 @@ const App = () => {
 
     const toggleDate = (dateKey) => {
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
-        playSound('pop');
+        
     };
 
     const updateUserState = (newData) => {
@@ -4082,7 +4084,7 @@ const App = () => {
 
         const onNotificationRecv = (data) => {
             console.log("📡 [SOCKET] Real-time notification received", data);
-            playSound('notification_arrive');
+            
             fetchNotifications(true); // silent = true to avoid double sound
         };
 
@@ -4090,7 +4092,7 @@ const App = () => {
             // Only play sound if the message is for US and from someone else
             if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
                 console.log("📨 [SOCKET] Live message sound trigger");
-                playSound('notification_arrive');
+                
             }
         };
 
@@ -4394,7 +4396,6 @@ const App = () => {
             const res = await axios.get(`/users/notifications`);
             if (!silent && res.data.length > (user.notifications?.length || 0)) {
                 const latest = res.data[0];
-                if (latest && !latest.read) playSound('notification_arrive');
             }
             setAlerts(res.data);
             setUser(prev => {
@@ -4514,7 +4515,7 @@ const App = () => {
         }
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        if (navigator.vibrate) navigator.vibrate(50);
+        
 
         try {
             const res = await axios.put(`/posts/${safeId}/repost`);
@@ -4562,7 +4563,7 @@ const App = () => {
         const isLiking = posts.find(p => String(p._id) === String(safeId))?.likes?.includes(userId) === false;
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        if (navigator.vibrate) navigator.vibrate(50);
+        
 
         try {
             const res = await axios.put(`/posts/${safeId}/like`);
@@ -4589,8 +4590,8 @@ const App = () => {
     const handleHashtagClick = (tag) => {
         setSearchQuery(tag);
         setActiveTab('search');
-        playSound('pop');
-        if (navigator.vibrate) navigator.vibrate(10);
+        
+        
     };
 
     const handleDislike = async (postId) => {
@@ -4617,7 +4618,7 @@ const App = () => {
         const isDisliking = posts.find(p => String(p._id) === String(safeId))?.dislikes?.includes(userId) === false;
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        if (navigator.vibrate) navigator.vibrate(50);
+        
 
         try {
             const res = await axios.put(`/posts/${safeId}/dislike`);
@@ -4644,7 +4645,7 @@ const App = () => {
         const safeId = sanitizeObjectId(postId);
         if (!isValidObjectId(safeId)) return;
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        playSound('cyber_comment');
+        
         const textValue = (input instanceof FormData) ? null : (typeof input === 'string' ? input : (input?.text || ""));
         let tempId = 'temp-' + Date.now();
 
@@ -4697,7 +4698,7 @@ const App = () => {
 
     const handleCreatePost = async (formData, previewUrl, isStory) => {
         setIsCreateOpen(false); // Close immediately for zero-latency feel
-        playSound('cyber_click');
+        
 
         // 1. OPTIMISTIC UPDATE: Create a temporary "Uploading..." post/story
         const tempId = 'temp-' + Date.now();
@@ -4734,12 +4735,12 @@ const App = () => {
                 }
             });
             const createdPost = res.data;
-            playSound('success');
+            
             // Safely resolve the temporary post with the real one
             setPosts(prev => prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p));
         } catch (e) {
             console.error("Upload failed", e);
-            playSound('error');
+            
             // Remove temp post
             setPosts(prev => prev.filter(p => p._id !== tempId));
             alert(t('POST_FAILED') || "Transmission Failed");
@@ -4789,7 +4790,7 @@ const App = () => {
                 fetchUsers();
             }
 
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error('Follow failed', e);
             fetchUsers();
@@ -4830,7 +4831,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error(`[HANDSHAKE] Accept Error:`, e);
             fetchNotifications(); // Revert by fetching fresh
@@ -4872,7 +4873,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-            playSound('cyber_scroll');
+            
         } catch (e) {
             console.error("[HANDSHAKE] Reject Error:", e);
             fetchNotifications();
@@ -4924,7 +4925,7 @@ const App = () => {
 
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
-            playSound('cyber_delete');
+            
             cyberDeleteEffect();
         } catch (err) {
             console.error("Failed to delete comment", err);
@@ -4969,7 +4970,7 @@ const App = () => {
         setLastDeletedPostId(postId); // Propagate to modals
         try {
             await axios.delete(`/posts/${postId}`);
-            playSound('cyber_delete');
+            
             cyberDeleteEffect();
         } catch (e) {
             fetchPosts(); // Re-sync on failure
@@ -4981,7 +4982,7 @@ const App = () => {
         const fullUser = users.find(x => String(x._id) === String(targetId)) || u;
         setProfileUser(fullUser);
         setIsProfileOpen(true);
-        playSound('cyber_nav');
+        
     };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
@@ -5007,11 +5008,11 @@ const App = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
-        playSound('premium_logout');
+        
         window.location.reload();
     };
 
-    const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); playSound('cyber_delete'); cyberDeleteEffect(); } catch (e) { } };
+    const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u));  cyberDeleteEffect(); } catch (e) { } };
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
@@ -5044,12 +5045,12 @@ const App = () => {
                                     <>
                                         <div className="relative">
                                             <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="email" placeholder="Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
+                                            <input type="email" placeholder="Email" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner" />
                                         </div>
                                         <div className="relative">
                                             <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
-                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                            <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner" />
+                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500  ">
                                                 {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                             </button>
                                         </div>
@@ -5067,19 +5068,19 @@ const App = () => {
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105  transition-transform disabled:opacity-50">
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105   disabled:opacity-50">
                                             {authLoading ? "AUTHENTICATING..." : "LOGIN"}
                                         </button>
                                         <div className="flex justify-between text-xs text-gray-500 px-2 mt-4 font-bold tracking-wide">
-                                            <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Create Account</span>
-                                            <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors">Forgot Password?</span>
+                                            <span onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer  ">Create Account</span>
+                                            <span onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer  ">Forgot Password?</span>
                                         </div>
                                     </>
                                 )}
                                 {authMode === 'register' && (
                                     <>
-                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group hover:border-[var(--gold-primary)] mb-6 flex items-center justify-center transition-all">
-                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400 group-hover:text-[var(--gold-primary)]" />}
+                                        <div onClick={() => registerFileRef.current.click()} className="w-24 h-24 mx-auto rounded-full bg-gray-800 overflow-hidden border-2 border-dashed border-gray-600 cursor-pointer relative group  mb-6 flex items-center justify-center ">
+                                            {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : <Icons.Camera className="w-8 h-8 text-gray-400" />}
                                             <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => {
                                                 const file = e.target.files[0];
                                                 if (file) setRegisterPreview(URL.createObjectURL(file));
@@ -5087,16 +5088,16 @@ const App = () => {
                                         </div>
                                         <div className="relative mb-3">
                                             <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                            <input type="text" placeholder={t('USERNAME')} id="r-username" value={formData.username} maxLength={19} onChange={(e) => { if (e.target.value.length <= 19) handleAuthInputChange(e); }} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner text-sm" />
                                         </div>
                                         <div className="relative mb-3">
                                             <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
+                                            <input type="email" placeholder={t('EMAIL')} id="r-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner text-sm" />
                                         </div>
                                         <div className="relative mb-3">
                                             <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner text-sm" />
-                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                            <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner text-sm" />
+                                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500  ">
                                                 {showPassword ? <Icons.EyeOff className="w-5 h-5" /> : <Icons.Eye className="w-5 h-5" />}
                                             </button>
                                         </div>
@@ -5109,14 +5110,14 @@ const App = () => {
                                                     value={formData.bio || ''}
                                                     onChange={handleAuthInputChange}
                                                     maxLength={500}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner resize-none h-24"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white text-sm outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner resize-none h-24"
                                                 />
                                                 <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/20 uppercase tracking-widest">{(formData.bio || '').length} / 500</div>
                                             </div>
                                         </div>
 
                                         <div className="flex gap-2 mb-6">
-                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer hover:border-[var(--gold-primary)] transition-colors appearance-none text-center h-[52px]">
+                                            <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="w-1/3 bg-black border border-white/20 rounded-xl py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer   appearance-none text-center h-[52px]">
                                                 <option value="en" className="bg-black text-white">English</option>
                                                 <option value="el" className="bg-black text-white">Ελληνικά</option>
                                                 <option value="fr" className="bg-black text-white">Français</option>
@@ -5133,8 +5134,8 @@ const App = () => {
                                                     {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
                                                         <button
                                                             key={c}
-                                                            onClick={() => { playSound('cyber_click'); setFormData(prev => ({ ...prev, theme: c })); }}
-                                                            className={`w-7 h-7 rounded-lg border-2 transition-all relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/20'}`}
+                                                            onClick={() => {  setFormData(prev => ({ ...prev, theme: c })); }}
+                                                            className={`w-7 h-7 rounded-lg border-2 relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40'}`}
                                                             style={{ backgroundColor: c }}
                                                         >
                                                             {formData.theme === c && (
@@ -5171,10 +5172,10 @@ const App = () => {
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105  transition-transform disabled:opacity-50">
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105   disabled:opacity-50">
                                             {authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}
                                         </button>
-                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
+                                        <div className="text-xs text-gray-500 cursor-pointer  text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
                                     </>
                                 )}
                                 {authMode === 'forgot' && (
@@ -5182,7 +5183,7 @@ const App = () => {
                                         <p className="text-sm text-gray-400 mb-4 px-2 text-center">{t('RESET_LINK_DESC')}</p>
                                         <div className="relative mb-6">
                                             <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                            <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10 transition-all shadow-inner" />
+                                            <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold outline-none focus:border-[var(--gold-primary)] focus:bg-white/10  shadow-inner" />
                                         </div>
                                         <button disabled={authLoading} onClick={async () => {
                                             setAuthLoading(true);
@@ -5195,10 +5196,10 @@ const App = () => {
                                             } finally {
                                                 setAuthLoading(false);
                                             }
-                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105  transition-transform disabled:opacity-50">
+                                        }} className="w-full liquid-btn py-4 rounded-2xl font-black hover:scale-105   disabled:opacity-50">
                                             {authLoading ? t('SENDING') : t('SEND_RESET_LINK')}
                                         </button>
-                                        <div className="text-xs text-gray-500 cursor-pointer hover:text-white text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
+                                        <div className="text-xs text-gray-500 cursor-pointer  text-center mt-4 font-bold" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</div>
                                     </>
                                 )}
                             </div>
@@ -5213,8 +5214,8 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
-                                        onClick={() => { setIsDrawerOpen(true); if (navigator.vibrate) navigator.vibrate(5); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent hover:bg-white/10 z-50 p-3 -ml-2"
+                                        onClick={() => { setIsDrawerOpen(true);  }}
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-transparent  z-50 p-3 -ml-2"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
@@ -5253,9 +5254,9 @@ const App = () => {
                                                 <button
                                                     onClick={deleteNotifications}
                                                     title={t('CLEAR_ALL')}
-                                                    className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full hover:bg-red-500/20 text-red-500 transition-all text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg "
+                                                    className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full  text-red-500  text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg "
                                                 >
-                                                    <Icons.Trash className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                    <Icons.Trash className="w-4 h-4 group-hover:scale-110 " />
                                                 </button>
                                             )}
                                         </div>
@@ -5285,7 +5286,7 @@ const App = () => {
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] transition-all shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)]  shadow-inner" /></div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
@@ -5298,7 +5299,7 @@ const App = () => {
                                                             <span
                                                                 key={tag}
                                                                 onClick={() => setSearchQuery(tag)}
-                                                                className="px-4 py-2 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl text-xs font-black text-gray-400 cursor-pointer hover:text-[var(--gold-primary)] hover:border-[var(--gold-primary)]/40 hover:bg-white/10 transition-all border border-white/5 whitespace-nowrap  shadow-lg flex items-center gap-2 group"
+                                                                className="px-4 py-2 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl text-xs font-black text-gray-400 cursor-pointer     border border-white/5 whitespace-nowrap  shadow-lg flex items-center gap-2 group"
                                                             >
                                                                 <span className="text-[var(--gold-primary)] opacity-40 group-hover:opacity-100 transition-opacity">#</span>
                                                                 {tag.replace('#', '').toUpperCase()}
@@ -5312,7 +5313,7 @@ const App = () => {
                                             {activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
-                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
+                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer  ">
                                                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
                                                                 <ProfileAvatar user={u} className="rounded-full" />
                                                             </div>
@@ -5340,7 +5341,7 @@ const App = () => {
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
-                                                            <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">{t('VIEW')}</button>
+                                                            <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest  ">{t('VIEW')}</button>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -5402,7 +5403,7 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] hover:bg-white/20 hover:border-[var(--gold-primary)]/50 shadow-2xl backdrop-blur-xl transition-all "
+                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
                         >
                             <Icons.ArrowUp className="w-8 h-8 sm:w-5 sm:h-5" />
                         </button>
@@ -5413,8 +5414,8 @@ const App = () => {
                     {/* CREATE FAB (Bluesky Style) */}
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
-                            onClick={() => { setIsCreateOpen(true); playSound('cyber_click'); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl transition-all "
+                            onClick={() => { setIsCreateOpen(true);  }}
+                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
                         >
                             <Icons.Compose className="w-9 h-9 sm:w-5 sm:h-5" />
                         </button>
@@ -5493,7 +5494,7 @@ const App = () => {
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S1_TITLE')}</h3>
                                     </div>
-                                    <div className="pl-[52px] text-gray-400 group-hover:text-gray-300 transition-colors">{t('TERMS_S1_DESC')}</div>
+                                    <div className="pl-[52px] text-gray-400 group- ">{t('TERMS_S1_DESC')}</div>
                                 </section>
 
                                 <section className="space-y-3 relative group">
@@ -5503,7 +5504,7 @@ const App = () => {
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S2_TITLE')}</h3>
                                     </div>
-                                    <div className="pl-[52px] text-gray-400 group-hover:text-gray-300 transition-colors">{t('TERMS_S2_DESC')}</div>
+                                    <div className="pl-[52px] text-gray-400 group- ">{t('TERMS_S2_DESC')}</div>
                                 </section>
 
                                 <section className="space-y-3 relative group">
@@ -5513,7 +5514,7 @@ const App = () => {
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S3_TITLE')}</h3>
                                     </div>
-                                    <div className="pl-[52px] text-gray-400 group-hover:text-gray-300 transition-colors">{t('TERMS_S3_DESC')}</div>
+                                    <div className="pl-[52px] text-gray-400 group- ">{t('TERMS_S3_DESC')}</div>
                                 </section>
 
                                 <div className="pt-6 border-t border-white/5 flex items-center gap-3">
