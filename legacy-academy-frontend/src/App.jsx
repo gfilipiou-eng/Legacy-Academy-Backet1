@@ -80,12 +80,19 @@ if (typeof document !== 'undefined') {
         .safe-area-bottom {
             padding-bottom: env(safe-area-inset-bottom, 20px) !important;
         }
+        * {
+            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+            outline: none !important;
+        }
+        html, body {
+            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+        }
         .liquid-glass-nav {
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 40px rgba(var(--gold-primary-rgb), 0.05);
+            background: rgba(0, 0, 0, 0.15) !important;
+            backdrop-filter: blur(40px) saturate(200%) !important;
+            -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 15px 0 60px rgba(0,0,0,0.95), inset -1px 0 0 rgba(255,255,255,0.05) !important;
         }
         @keyframes gradient-shift {
             0%, 100% {
@@ -400,7 +407,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
             setCoords({ top: rect.bottom + 8, left: rect.right - 192 });
         }
         setShowMenu(!showMenu);
-        
+
     };
 
     return (
@@ -485,7 +492,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
         try {
             const res = await axios.post('/posts/translate', { text: comment.text, lang });
             setTranslatedText(res.data.translatedText);
-            
+
         } catch (e) {
             console.error("Comment decryption failed");
         } finally {
@@ -626,7 +633,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         try {
             const res = await axios.get(`/posts/${post._id}/translate?lang=${lang}`);
             setTranslatedText(res.data.translatedText);
-            
+
         } catch (e) {
             console.error(e);
         } finally {
@@ -785,13 +792,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onLike(post._id);  }}
+                                    onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); }}
                                     className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500'}`}>
                                     <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id);  }}
+                                    onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); }}
                                     className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
                                     <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
@@ -988,7 +995,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             } else {
                 ytPlayerRef.current.playVideo();
             }
-            
+
             return;
         }
 
@@ -996,11 +1003,11 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
         if (videoRef.current.paused) {
             videoRef.current.play();
             setIsPlaying(true);
-            
+
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
-            
+
         }
     };
 
@@ -1015,7 +1022,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
         } else if (videoRef.current) {
             videoRef.current.muted = nextMute;
         }
-        
+
     };
 
     const handleTimeUpdate = () => {
@@ -1184,7 +1191,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                                 setIsPlaying(false);
                                             }
                                             onExpand();
-                                            
+
                                         }}
                                         className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto     group/btn shadow-xl"
                                     >
@@ -1242,7 +1249,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         else if (note.type === 'security_alert') onOpenPost(note.post || note.postId);
         else if (note.post || note.postId) onOpenPost(note.post || note.postId);
         else onViewProfile(note.sender);
-        
+
     };
 
     const isFounderSender = note?.sender?.role === 'Founder';
@@ -1403,7 +1410,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
         try {
             const res = await axios.get(`/posts/${post._id}/translate?lang=${lang}`);
             setTranslatedText(res.data.translatedText);
-            
+
         } catch (e) { console.error("Neural link error:", e); }
         finally { setIsTranslating(false); }
     };
@@ -1590,7 +1597,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <button
                                 onPointerDown={(e) => {
                                     e.stopPropagation();
-                                    
+
                                     onRepost && onRepost(post._id);
                                 }}
                                 className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600  '}`}
@@ -1606,7 +1613,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     const isLiked = post.likes?.some(id => String(id) === String(user?._id));
                                     playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                     onLike(post._id);
-                                    
+
                                 }}
                                 className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600  '}`}
                             >
@@ -1621,7 +1628,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     const isDisliked = post.dislikes?.some(id => String(id) === String(user?._id));
                                     playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                     onDislike(post._id);
-                                    
+
                                 }}
                                 className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600  '}`}
                             >
@@ -1807,7 +1814,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             if (activeChat?._id === withUser) {
                 setMessages(prev => ({ ...prev, [withUser]: [] }));
                 onClose(); // Close the chat window automatically
-                 // Play a delete sound effect
+                // Play a delete sound effect
             }
         });
 
@@ -1839,11 +1846,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             console.log('📡 [DEBUG] Attempting to clear conversation:', targetId);
             await axios.post(`/messages/conversation/clear/${targetId}`);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
-            
+
         } catch (e) {
             console.error('Clear failed', e);
             setMessages(prev => ({ ...prev, [targetId]: [] }));
-            
+
         }
     };
 
@@ -1875,7 +1882,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 ...prev,
                 [targetId]: [...(prev[targetId] || []), res.data]
             }));
-            
+
         } catch (e) {
             const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
             const fullOutput = e.response?.data ? JSON.stringify(e.response.data) : 'No response body';
@@ -1906,7 +1913,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             };
             mediaRecorder.current.start();
             setIsRecording(true);
-            
+
         } catch (e) { alert("Mic required for walkie-talkie mode"); }
     };
 
@@ -1979,14 +1986,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         })}
                     </div>
                 </div>
-                
+
                 {/* CHAT WINDOW */}
                 <div className={`flex-1 flex flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0  duration-300 ${activeChat ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'}`}>
                     {activeChat ? (
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
-                                <button 
-                                    onClick={() => { setActiveChat(null); }} 
+                                <button
+                                    onClick={() => { setActiveChat(null); }}
                                     className="sm:hidden p-2 -ml-2 text-gray-400"
                                 >
                                     <Icons.Back className="w-6 h-6" />
@@ -2118,7 +2125,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="flex items-center gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => { setIsPhonetic(!isPhonetic);  }}
+                                        onClick={() => { setIsPhonetic(!isPhonetic); }}
                                         className={`w-12 h-12 flex items-center justify-center rounded-2xl border  shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
                                         title="Phonetic Greek Keyboard"
                                     >
@@ -2241,7 +2248,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 onUpdateUser(res.data);
                 if (key === 'isPrivate') setIsPrivate(val);
                 if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-                
+
                 setSaving(false);
                 return;
             }
@@ -2254,7 +2261,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-            
+
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
@@ -2293,7 +2300,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={() => { onClose();  }} className="p-0   touch-manipulation">
+                    <button onClick={() => { onClose(); }} className="p-0   touch-manipulation">
                         <Icons.X className="w-4 h-4 text-white" />
                     </button>
                 </div>
@@ -2309,7 +2316,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
                             </SettingRow>
                             <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="">
-                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v);  }} saving={saving} color="blue" />
+                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
                             </SettingRow>
                         </div>
                     </section>
@@ -2528,7 +2535,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
     const handleLink = (tab) => {
         onNavigate(tab);
         handleClose();
-        
+
     };
 
     return (
@@ -2601,7 +2608,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             <button
                                 key={item.id}
                                 onClick={() => {
-                                    
+
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
@@ -2630,14 +2637,14 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                 {/* FOOTER */}
                 <div className="p-4 pb-12 flex flex-col gap-6 border-t border-white/5 bg-black/20 backdrop-blur-sm relative z-10">
-                                    <div className="flex flex-col items-center justify-center gap-3">
-                                        <button onClick={() => { onOpenTerms(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2 glow-gold">{t('TERMS_OF_SERVICE')}</button>
-                                        <div className="w-8 h-px bg-white/10" />
-                                        <button onClick={() => { onOpenPrivacy(); handleClose();  }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2 glow-gold">{t('PRIVACY_POLICY')}</button>
-                                    </div>
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2 glow-gold">{t('TERMS_OF_SERVICE')}</button>
+                        <div className="w-8 h-px bg-white/10" />
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-gray-500 font-bold text-[10px] uppercase tracking-widest touch-manipulation break-all px-2 glow-gold">{t('PRIVACY_POLICY')}</button>
+                    </div>
 
                     <button
-                        onClick={() => { onLogout(); handleClose();   }}
+                        onClick={() => { onLogout(); handleClose(); }}
                         className="w-full py-4 bg-red-500/10   border border-red-500/30  text-red-500  font-black text-[10px] uppercase tracking-[0.25em] rounded-full  duration-300 flex items-center justify-center gap-2 group shadow-lg hover:shadow-red-500/20  relative overflow-hidden touch-manipulation"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full  duration-700" />
@@ -2662,7 +2669,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
             <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
                 <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
                     <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
-                    <button onClick={() => { onClose();  }} className="p-2  rounded-full  text-gray-400  shrink-0  touch-manipulation">
+                    <button onClick={() => { onClose(); }} className="p-2  rounded-full  text-gray-400  shrink-0  touch-manipulation">
                         <Icons.X className="w-6 h-6" />
                     </button>
                 </div>
@@ -2670,7 +2677,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
                     {content}
                 </div>
                 <div className="p-6 border-t border-white/10 flex justify-end">
-                    <button onClick={() => { onClose();  }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105   uppercase tracking-widest text-xs touch-manipulation">
+                    <button onClick={() => { onClose(); }} className="px-8 py-3 bg-white text-black font-black rounded-xl hover:scale-105   uppercase tracking-widest text-xs touch-manipulation">
                         {t('GOT_IT')}
                     </button>
                 </div>
@@ -3116,7 +3123,7 @@ const ProfileModal = ({
 
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
-                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now();  setActiveList('followers');
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums ">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
@@ -3128,7 +3135,7 @@ const ProfileModal = ({
 
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
-                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now();  setActiveList('following');
+                                        e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums ">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
@@ -3642,7 +3649,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             setSaving(true);
             await axios.put(`/posts/${post._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
             onSuccess();
-            
+
         } catch (e) {
             console.error("Edit failed", e);
             const detail = e.response?.data?.detail || e.response?.data?.message || e.message;
@@ -3894,7 +3901,7 @@ const App = () => {
     const scrollToTop = () => {
         if (mainScrollRef.current) {
             mainScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-            
+
         }
     };
 
@@ -3912,7 +3919,7 @@ const App = () => {
 
     const toggleDate = (dateKey) => {
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
-        
+
     };
 
     const updateUserState = (newData) => {
@@ -4084,7 +4091,7 @@ const App = () => {
 
         const onNotificationRecv = (data) => {
             console.log("📡 [SOCKET] Real-time notification received", data);
-            
+
             fetchNotifications(true); // silent = true to avoid double sound
         };
 
@@ -4092,7 +4099,7 @@ const App = () => {
             // Only play sound if the message is for US and from someone else
             if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
                 console.log("📨 [SOCKET] Live message sound trigger");
-                
+
             }
         };
 
@@ -4515,7 +4522,7 @@ const App = () => {
         }
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        
+
 
         try {
             const res = await axios.put(`/posts/${safeId}/repost`);
@@ -4563,7 +4570,7 @@ const App = () => {
         const isLiking = posts.find(p => String(p._id) === String(safeId))?.likes?.includes(userId) === false;
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        
+
 
         try {
             const res = await axios.put(`/posts/${safeId}/like`);
@@ -4590,8 +4597,8 @@ const App = () => {
     const handleHashtagClick = (tag) => {
         setSearchQuery(tag);
         setActiveTab('search');
-        
-        
+
+
     };
 
     const handleDislike = async (postId) => {
@@ -4618,7 +4625,7 @@ const App = () => {
         const isDisliking = posts.find(p => String(p._id) === String(safeId))?.dislikes?.includes(userId) === false;
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        
+
 
         try {
             const res = await axios.put(`/posts/${safeId}/dislike`);
@@ -4645,7 +4652,7 @@ const App = () => {
         const safeId = sanitizeObjectId(postId);
         if (!isValidObjectId(safeId)) return;
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
-        
+
         const textValue = (input instanceof FormData) ? null : (typeof input === 'string' ? input : (input?.text || ""));
         let tempId = 'temp-' + Date.now();
 
@@ -4698,7 +4705,7 @@ const App = () => {
 
     const handleCreatePost = async (formData, previewUrl, isStory) => {
         setIsCreateOpen(false); // Close immediately for zero-latency feel
-        
+
 
         // 1. OPTIMISTIC UPDATE: Create a temporary "Uploading..." post/story
         const tempId = 'temp-' + Date.now();
@@ -4729,18 +4736,18 @@ const App = () => {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 onUploadProgress: (progressEvent) => {
                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    setPosts(currentPosts => currentPosts.map(p => 
+                    setPosts(currentPosts => currentPosts.map(p =>
                         p._id === tempId ? { ...p, uploadProgress: percentCompleted } : p
                     ));
                 }
             });
             const createdPost = res.data;
-            
+
             // Safely resolve the temporary post with the real one
             setPosts(prev => prev.map(p => p._id === tempId ? { ...createdPost, author: user } : p));
         } catch (e) {
             console.error("Upload failed", e);
-            
+
             // Remove temp post
             setPosts(prev => prev.filter(p => p._id !== tempId));
             alert(t('POST_FAILED') || "Transmission Failed");
@@ -4790,7 +4797,7 @@ const App = () => {
                 fetchUsers();
             }
 
-            
+
         } catch (e) {
             console.error('Follow failed', e);
             fetchUsers();
@@ -4831,7 +4838,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-            
+
         } catch (e) {
             console.error(`[HANDSHAKE] Accept Error:`, e);
             fetchNotifications(); // Revert by fetching fresh
@@ -4873,7 +4880,7 @@ const App = () => {
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
             });
-            
+
         } catch (e) {
             console.error("[HANDSHAKE] Reject Error:", e);
             fetchNotifications();
@@ -4925,7 +4932,7 @@ const App = () => {
 
         try {
             await axios.delete(`/posts/${postId}/comment/${commentId}`);
-            
+
             cyberDeleteEffect();
         } catch (err) {
             console.error("Failed to delete comment", err);
@@ -4970,7 +4977,7 @@ const App = () => {
         setLastDeletedPostId(postId); // Propagate to modals
         try {
             await axios.delete(`/posts/${postId}`);
-            
+
             cyberDeleteEffect();
         } catch (e) {
             fetchPosts(); // Re-sync on failure
@@ -4982,7 +4989,7 @@ const App = () => {
         const fullUser = users.find(x => String(x._id) === String(targetId)) || u;
         setProfileUser(fullUser);
         setIsProfileOpen(true);
-        
+
     };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
@@ -5008,11 +5015,11 @@ const App = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
-        
+
         window.location.reload();
     };
 
-    const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u));  cyberDeleteEffect(); } catch (e) { } };
+    const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); cyberDeleteEffect(); } catch (e) { } };
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
@@ -5134,7 +5141,7 @@ const App = () => {
                                                     {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff', '#7cfc00', '#ff00ff', '#ffa500'].map(c => (
                                                         <button
                                                             key={c}
-                                                            onClick={() => {  setFormData(prev => ({ ...prev, theme: c })); }}
+                                                            onClick={() => { setFormData(prev => ({ ...prev, theme: c })); }}
                                                             className={`w-7 h-7 rounded-lg border-2 relative ${formData.theme === c ? 'scale-110 border-white z-10 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-white/5 opacity-40'}`}
                                                             style={{ backgroundColor: c }}
                                                         >
@@ -5215,14 +5222,14 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
-                                        onClick={() => { setIsDrawerOpen(true);  }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl bg-white/[0.03] border border-white/5 ai-glass z-50 p-3 -ml-2"
+                                        onClick={() => { setIsDrawerOpen(true); }}
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl bg-black/40 border border-white/10 shadow-[0_0_15px_rgba(255,215,0,0.1)] hover:shadow-[0_0_25px_rgba(255,215,0,0.3)] hover:border-[var(--gold-primary)]/50 transition-all duration-300 ai-glass z-50 p-2.5 -ml-2 group"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
                                         duration={0}
                                     >
-                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-400 pointer-events-none">
+                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-[var(--gold-primary)] transition-colors duration-300 pointer-events-none drop-shadow-[0_0_5px_rgba(255,255,255,0.2)] group-hover:drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
                                         </svg>
 
@@ -5415,7 +5422,7 @@ const App = () => {
                     {/* CREATE FAB (Bluesky Style) */}
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
-                            onClick={() => { setIsCreateOpen(true);  }}
+                            onClick={() => { setIsCreateOpen(true); }}
                             className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
                         >
                             <Icons.Compose className="w-9 h-9 sm:w-5 sm:h-5" />
@@ -5424,7 +5431,7 @@ const App = () => {
 
                     <ProfileModal
                         isOpen={isProfileOpen}
-                        onClose={() => { setIsProfileOpen(false);  }}
+                        onClose={() => { setIsProfileOpen(false); }}
                         profileUser={profileUser}
                         currentUser={user}
                         allUsers={users}
@@ -5454,7 +5461,7 @@ const App = () => {
                         onOpenCreate={() => { setCreateModeStory(true); setIsCreateOpen(true); }}
                         loadingActions={loadingActions}
                     />
-                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null);  }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
+                    <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
                     <NavigationDrawer
                         isOpen={isDrawerOpen}
                         onClose={() => setIsDrawerOpen(false)}
