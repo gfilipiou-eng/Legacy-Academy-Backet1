@@ -4017,6 +4017,73 @@ const App = () => {
         });
     };
 
+    /**
+     * UNIFIED STATE SYNC:
+     * The single source of truth for updating user intelligence across all states.
+     */
+    const syncUserIntelligence = useCallback((updatedUser) => {
+        const uid = safeId(updatedUser);
+        if (!uid) return;
+
+        console.log(`📡 [SYNC] Reconciling intelligence for user ${uid}`);
+
+        // 1. Resolve Full Intelligence (Source: usersRef + Payload)
+        const fullIntelligence = resolveFullUser(updatedUser, usersRef.current);
+
+        // 2. Update Global User State (ME)
+        if (user && isSameId(user._id, uid)) {
+            setUser(prev => {
+                const merged = { ...prev, ...fullIntelligence };
+                localStorage.setItem('user', JSON.stringify(merged));
+                return merged;
+            });
+            setImgKey(Date.now());
+        }
+
+        // 3. Update Intelligence Database (Users List)
+        setUsers(prev => (prev || []).map(u => {
+            if (isSameId(u._id, uid)) {
+                return { ...u, ...fullIntelligence, username: fullIntelligence.username || u.username };
+            }
+            return u;
+        }));
+
+        // 4. Update active Profile View
+        setProfileUser(prev => {
+            if (prev && isSameId(prev._id, uid)) {
+                return { ...prev, ...fullIntelligence, username: fullIntelligence.username || prev.username };
+            }
+            return prev;
+        });
+
+        // 5. Update Posts (Authors and Comments)
+        setPosts(prev => (prev || []).map(p => {
+            let nextPost = p;
+            const authorId = p.author?._id || p.author;
+            if (isSameId(authorId, uid)) {
+                const currentAuthor = typeof p.author === 'object' ? p.author : {};
+                const resolvedAuthor = resolveFullUser({ ...currentAuthor, ...fullIntelligence }, usersRef.current);
+                nextPost = { ...nextPost, author: resolvedAuthor, profilePic: fullIntelligence.profilePic || nextPost.profilePic };
+            }
+            if (p.comments?.some(c => isSameId(c.authorId, uid))) {
+                nextPost = {
+                    ...nextPost,
+                    comments: p.comments.map(c => isSameId(c.authorId, uid) ? { ...c, authorProfilePic: fullIntelligence.profilePic || c.authorProfilePic, authorName: fullIntelligence.username || c.authorName } : c)
+                };
+            }
+            return nextPost;
+        }));
+
+        // 6. Update Detail View
+        if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, uid)) {
+            setSelectedPost(prev => {
+                if (!prev) return prev;
+                const resolvedAuthor = resolveFullUser({ ...prev.author, ...fullIntelligence }, usersRef.current);
+                return { ...prev, author: resolvedAuthor, profilePic: fullIntelligence.profilePic };
+            });
+        }
+    }, [user, selectedPost]);
+
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
 
@@ -4030,71 +4097,14 @@ const App = () => {
             updatedUser.coverPic += `${sep}t=${Date.now()}`;
         }
 
-        // 1. Update primary user state
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        setImgKey(Date.now());
+        // Apply unified sync
+        syncUserIntelligence(updatedUser);
 
-        // 2. Synchronize across all local state arrays for immediate UI update
-        const userId = safeId(updatedUser);
-        if (!userId) {
-            console.error("❌ [CRITICAL] Could not determine userId for update!");
-            return;
-        }
-
-        // Update 'users' array safely
-        setUsers(prev => (prev || []).map(u => isSameId(u._id, userId) ? { ...u, ...updatedUser } : u));
-
-        // Update profileUser if currently open
-        setProfileUser(prev => {
-            if (prev && isSameId(prev._id, userId)) {
-                return { ...prev, ...updatedUser };
-            }
-            return prev;
-        });
-
-        // Update 'posts' array (authors, direct profilePic, and comments authors)
-        setPosts(prev => (prev || []).map(p => {
-            let updatedPost = p;
-            const authorId = p.author?._id || p.author;
-
-            if (userId && authorId && isSameId(authorId, userId)) {
-                // Fix: Ensure author is an object so name/pic are never undefined
-                const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                const updatedAuthor = { ...currentAuthor, ...updatedUser, username: updatedUser.username || currentAuthor.username };
-                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic || updatedPost.profilePic };
-            }
-
-            // Deep sync comments
-            if (p.comments?.some(c => isSameId(c.authorId, userId))) {
-                updatedPost = {
-                    ...updatedPost,
-                    comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: updatedUser.profilePic || c.authorProfilePic, authorName: updatedUser.username || c.authorName } : c)
-                };
-            }
-            return updatedPost;
-        }));
-
-        // FALLBACK: If things seem corrupted, trigger a fresh fetch after a delay
+        // Background reconciliation
         setTimeout(() => {
-            console.log("📡 [SYNC] Running background state reconciliation...");
             fetchUsers();
+            fetchPosts();
         }, 1500);
-
-        // stories will update automatically via useMemo since it depends on 'posts'
-
-        // Update selectedPost if open
-        if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, userId)) {
-            setSelectedPost(prev => {
-                if (!prev) return prev;
-                const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...updatedUser } : prev.author;
-                return { ...prev, author: updatedAuthor, profilePic: updatedUser.profilePic };
-            });
-        }
-
-        // 3. Background background sync
-        fetchPosts();
-        fetchUsers();
     };
 
 
@@ -4294,80 +4304,14 @@ const App = () => {
         };
 
         const onUserUpdated = (data) => {
-            const userId = safeId(data);
-            if (!userId) return;
+            if (!data) return;
+            console.log("📡 [SOCKET] User updated real-time:", safeId(data));
+            syncUserIntelligence(data);
 
-            console.log("📡 [SOCKET] User updated real-time:", userId);
-
-            // Add cache-breaker to incoming data if it has pictures
-            const timestamp = Date.now();
-            const syncData = { ...data };
-            if (!syncData.username && data.username === "") delete syncData.username;
-
-            const updateAllStates = (updatedUser) => {
-                const uid = safeId(updatedUser);
-                if (!uid) return;
-
-                // 1. Update Global User State (ME)
-                if (user && isSameId(user._id, uid)) {
-                    setUser(prev => {
-                        const merged = { ...prev, ...updatedUser };
-                        localStorage.setItem('user', JSON.stringify(merged));
-                        return merged;
-                    });
-                    setImgKey(Date.now());
-                }
-
-                // 2. Update Intelligence Database (Users List)
-                setUsers(prev => (prev || []).map(u => {
-                    if (isSameId(u._id, uid)) {
-                        return { ...u, ...updatedUser, username: updatedUser.username || u.username };
-                    }
-                    return u;
-                }));
-
-                // 3. Update active Profile View
-                setProfileUser(prev => {
-                    if (prev && isSameId(prev._id, uid)) {
-                        return { ...prev, ...updatedUser, username: updatedUser.username || prev.username };
-                    }
-                    return prev;
-                });
-
-                // 4. Update Posts (Authors and Comments)
-                setPosts(prev => (prev || []).map(p => {
-                    let nextPost = p;
-                    const authorId = p.author?._id || p.author;
-                    if (isSameId(authorId, uid)) {
-                        // RECONCILE: Merge current author object with new intelligence
-                        const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                        const resolvedIntelligence = resolveFullUser({ ...currentAuthor, ...updatedUser }, usersRef.current);
-                        nextPost = { ...nextPost, author: resolvedIntelligence, profilePic: updatedUser.profilePic || nextPost.profilePic };
-                    }
-                    if (p.comments?.some(c => isSameId(c.authorId, uid))) {
-                        nextPost = {
-                            ...nextPost,
-                            comments: p.comments.map(c => isSameId(c.authorId, uid) ? { ...c, authorProfilePic: updatedUser.profilePic || c.authorProfilePic, authorName: updatedUser.username || c.authorName } : c)
-                        };
-                    }
-                    return nextPost;
-                }));
-            };
-
-            updateAllStates(syncData);
-
-            // FALLBACK SYNC
+            // Background reconciliation
             setTimeout(() => {
                 fetchUsers();
             }, 2000);
-
-            if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, userId)) {
-                setSelectedPost(prev => {
-                    if (!prev) return prev;
-                    const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...data } : prev.author;
-                    return { ...prev, author: updatedAuthor, profilePic: data.profilePic || prev.profilePic };
-                });
-            }
         };
 
         socket.on('notification.received', onNotificationRecv);
