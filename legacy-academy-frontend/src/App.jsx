@@ -2974,7 +2974,7 @@ const ProfileModal = ({
                                         const res = await axios.post('/users/profile-pic', fd);
                                         const updatedUser = res.data;
                                         // Cache-break the new image
-                                        if (updatedUser.profilePic) {
+                                        if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:')) {
                                             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
                                             updatedUser.profilePic += `${sep}t=${Date.now()}`;
                                         }
@@ -3019,7 +3019,7 @@ const ProfileModal = ({
                                     try {
                                         const res = await axios.post('/users/cover-pic', fd);
                                         const updatedUser = res.data;
-                                        if (updatedUser.coverPic) {
+                                        if (updatedUser.coverPic && !updatedUser.coverPic.startsWith('blob:')) {
                                             const sep = updatedUser.coverPic.includes('?') ? '&' : '?';
                                             updatedUser.coverPic += `${sep}t=${Date.now()}`;
                                         }
@@ -3944,7 +3944,7 @@ const App = () => {
             const current = prev || JSON.parse(localStorage.getItem('user') || '{ }');
             // Cache-break the new image if it's identical base path
             let nextPic = newData.profilePic;
-            if (current.profilePic && nextPic && current.profilePic.split('?')[0] === nextPic.split('?')[0]) {
+            if (current.profilePic && nextPic && !nextPic.startsWith('blob:') && current.profilePic.split('?')[0] === nextPic.split('?')[0]) {
                 const sep = nextPic.includes('?') ? '&' : '?';
                 nextPic = `${nextPic.split('?')[0]}${sep}t=${Date.now()}`;
             }
@@ -3958,11 +3958,11 @@ const App = () => {
         if (!updatedUser) return;
 
         // Force cache-breaker on profilePic for immediate refresh
-        if (updatedUser.profilePic && !updatedUser.profilePic.includes('t=')) {
+        if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:') && !updatedUser.profilePic.includes('t=')) {
             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
             updatedUser.profilePic += `${sep}t=${Date.now()}`;
         }
-        if (updatedUser.coverPic && !updatedUser.coverPic.includes('t=')) {
+        if (updatedUser.coverPic && !updatedUser.coverPic.startsWith('blob:') && !updatedUser.coverPic.includes('t=')) {
             const sep = updatedUser.coverPic.includes('?') ? '&' : '?';
             updatedUser.coverPic += `${sep}t=${Date.now()}`;
         }
@@ -4206,11 +4206,11 @@ const App = () => {
                 setUser(prev => {
                     const nextData = { ...data };
                     const timestamp = Date.now();
-                    if (nextData.profilePic) {
+                    if (nextData.profilePic && !nextData.profilePic.startsWith('blob:')) {
                         const sep = nextData.profilePic.includes('?') ? '&' : '?';
                         nextData.profilePic += `${sep}t=${timestamp}`;
                     }
-                    if (nextData.coverPic) {
+                    if (nextData.coverPic && !nextData.coverPic.startsWith('blob:')) {
                         const sep = nextData.coverPic.includes('?') ? '&' : '?';
                         nextData.coverPic += `${sep}t=${timestamp}`;
                     }
@@ -4394,8 +4394,10 @@ const App = () => {
                             // If picture changed, force new timestamp
                             let nextPic = me.profilePic;
                             if (clean(prev.profilePic) !== clean(me.profilePic)) {
-                                const sep = nextPic.includes('?') ? '&' : '?';
-                                nextPic = `${clean(nextPic)}${sep}t=${Date.now()}`;
+                                if (nextPic && !nextPic.startsWith('blob:')) {
+                                    const sep = nextPic.includes('?') ? '&' : '?';
+                                    nextPic = `${clean(nextPic)}${sep}t=${Date.now()}`;
+                                }
                                 setImgKey(Date.now());
                             } else {
                                 // Keep existing timestamp if pic is same (prevent flickering)
