@@ -728,7 +728,18 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const authorId = post.author?._id || post.author;
     const author = (post.author && typeof post.author === 'object' && post.author.username)
         ? post.author
-        : (allUsers?.find(u => isSameId(u._id, authorId)) || { username: 'Unknown', _id: authorId });
+        : (allUsers?.find(u => isSameId(u._id, authorId)) || post.authorObject || { username: 'Unknown', _id: authorId });
+
+    // Robust reposter resolution
+    let reposter = null;
+    if (post.isRepost && post.repostedBy) {
+        const rId = post.repostedBy?._id || post.repostedBy;
+        reposter = allUsers?.find(u => isSameId(u._id, rId));
+        if (!reposter && typeof post.repostedBy === 'object' && post.repostedBy.username) {
+            reposter = post.repostedBy;
+        }
+        if (!reposter) reposter = { username: 'Agent', _id: rId };
+    }
 
     const isOwner = isSameId(author?._id, user?._id);
     const isFounder = user?.role === 'Founder';
@@ -4008,25 +4019,32 @@ const App = () => {
         });
 
         // Update 'posts' array (authors, direct profilePic, and comments authors)
-        setPosts(prev => prev.map(p => {
+        setPosts(prev => (prev || []).map(p => {
             let updatedPost = p;
             const authorId = p.author?._id || p.author;
 
-            if (isSameId(authorId, userId)) {
+            if (userId && authorId && isSameId(authorId, userId)) {
                 // Fix: Ensure author is an object so name/pic are never undefined
-                const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : { ...updatedUser };
-                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
+                const currentAuthor = typeof p.author === 'object' ? p.author : {};
+                const updatedAuthor = { ...currentAuthor, ...updatedUser, username: updatedUser.username || currentAuthor.username };
+                updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic || updatedPost.profilePic };
             }
 
             // Deep sync comments
             if (p.comments?.some(c => isSameId(c.authorId, userId))) {
                 updatedPost = {
                     ...updatedPost,
-                    comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: updatedUser.profilePic, authorName: updatedUser.username || c.authorName } : c)
+                    comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: updatedUser.profilePic || c.authorProfilePic, authorName: updatedUser.username || c.authorName } : c)
                 };
             }
             return updatedPost;
         }));
+
+        // FALLBACK: If things seem corrupted, trigger a fresh fetch after a delay
+        setTimeout(() => {
+            console.log("📡 [SYNC] Running background state reconciliation...");
+            fetchUsers();
+        }, 1500);
 
         // stories will update automatically via useMemo since it depends on 'posts'
 
@@ -4301,11 +4319,12 @@ const App = () => {
                     let updatedPost = p;
                     const authorId = p.author?._id || p.author;
 
-                    if (userId && isSameId(authorId, userId)) {
-                        // Fix: Ensure author is an object and don't lose data if p.author was just a string
-                        let updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...syncData } : { ...syncData };
+                    if (userId && authorId && isSameId(authorId, userId)) {
+                        console.log(`✨ [SYNC] Updating author data for post ${p._id}`);
+                        const currentAuthor = typeof p.author === 'object' ? p.author : {};
+                        const updatedAuthor = { ...currentAuthor, ...syncData, username: syncData.username || currentAuthor.username };
                         
-                        // Ensure username is preserved
+                        // Last ditch username recovery
                         if (!updatedAuthor.username) {
                             const recovered = usersRef.current?.find(u => isSameId(u._id, userId));
                             if (recovered?.username) updatedAuthor.username = recovered.username;
@@ -4323,6 +4342,12 @@ const App = () => {
                     return updatedPost;
                 });
             });
+
+            // NUCLEAR OPTION: If state is drifting, force a refresh of the key data after a short delay
+            setTimeout(() => {
+                console.log("📡 [SOCKET] Triggering background state re-sync...");
+                fetchUsers();
+            }, 2000);
 
             if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, userId)) {
                 setSelectedPost(prev => {
