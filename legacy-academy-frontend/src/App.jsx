@@ -4041,12 +4041,19 @@ const App = () => {
         }
 
         // 3. Update Intelligence Database (Users List)
-        setUsers(prev => (prev || []).map(u => {
-            if (isSameId(u._id, uid)) {
-                return { ...u, ...fullIntelligence, username: fullIntelligence.username || u.username };
+        setUsers(prev => {
+            const list = prev || [];
+            const exists = list.some(u => isSameId(u._id, uid));
+            if (!exists) {
+                return [...list, fullIntelligence];
             }
-            return u;
-        }));
+            return list.map(u => {
+                if (isSameId(u._id, uid)) {
+                    return { ...u, ...fullIntelligence, username: fullIntelligence.username || u.username };
+                }
+                return u;
+            });
+        });
 
         // 4. Update active Profile View
         setProfileUser(prev => {
