@@ -4171,8 +4171,7 @@ const App = () => {
             lastInitializedId.current = user._id;
 
             // 🔥 INITIAL FETCH
-            fetchPosts();
-            fetchUsers();
+            fetchPosts().then(() => fetchUsers());
             fetchNotifications();
 
             // 🔥 SOCKET JOIN ROOM
@@ -4411,14 +4410,48 @@ const App = () => {
             .map(([tag]) => tag);
     }, [posts]);
 
-    const fetchPosts = async () => {
-        if (selectedPostRef.current) return;
-        try {
-            const res = await axios.get(`/posts?limit=30`);
-            setPosts(res.data);
-            localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
-        } catch (e) { }
-    };
+    /**
+     * SELF-HEALING RECONCILIATION:
+     * Scans all posts and heals "Unknown Agent" metadata using the latest intelligence.
+     */
+    const reconcileIntelligence = useCallback((latestUsers) => {
+        if (!latestUsers || latestUsers.length === 0) return;
+        
+        setPosts(prev => {
+            if (!prev) return prev;
+            let changed = false;
+            const next = prev.map(p => {
+                const currentAuthorId = p.author?._id || p.author;
+                const resolved = resolveFullUser(p.author, latestUsers);
+                
+                // If the resolved username is better than what we had, update it
+                if (resolved.username !== 'Agent' && (p.author?.username === 'Unknown' || p.author?.username === 'Agent' || !p.author?.username)) {
+                    changed = true;
+                    return { ...p, author: resolved };
+                }
+                return p;
+            });
+            return changed ? next : prev;
+        });
+
+        if (selectedPost) {
+            setSelectedPost(prev => {
+                if (!prev) return prev;
+                const resolved = resolveFullUser(prev.author, latestUsers);
+                if (resolved.username !== 'Agent' && (prev.author?.username === 'Unknown' || prev.author?.username === 'Agent' || !prev.author?.username)) {
+                    return { ...prev, author: resolved };
+                }
+                return prev;
+            });
+        }
+    }, [selectedPost]);
+
+    // Auto-heal when database updates
+    useEffect(() => {
+        if (users.length > 0) {
+            reconcileIntelligence(users);
+        }
+    }, [users, reconcileIntelligence]);
     const fetchUsers = async (specificId = null) => {
         try {
             if (specificId) {
