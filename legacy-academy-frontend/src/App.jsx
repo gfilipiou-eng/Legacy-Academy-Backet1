@@ -250,30 +250,27 @@ const isSameId = (id1, id2) => {
  */
 const resolveFullUser = (partial, database) => {
     const uid = safeId(partial);
-    if (!uid) return partial;
+    if (!uid) return { username: 'Agent', _id: 'unknown' };
     
     const dbUser = (database || []).find(u => isSameId(u._id, uid));
     
-    // DEFENSIVE: If we have NO database info and NO username in partial, 
-    // we must not return a "naked" object that will corrupt the UI.
-    const hasIdentity = !!(partial?.username && partial.username !== 'Unknown' && partial.username !== 'Agent');
-    
-    if (!dbUser) {
-        if (hasIdentity) return partial;
-        return { ...partial, username: 'Agent' }; // Fallback
-    }
-
-    // Merge: Database (Source of Truth) + Partial (Live Update)
-    // CRITICAL: Never let an update "empty out" a field we already have.
-    return {
-        ...dbUser,
-        ...partial,
-        username: (partial?.username && partial.username !== "") ? partial.username : dbUser.username,
-        profilePic: partial?.profilePic || dbUser.profilePic,
-        role: partial?.role || dbUser.role,
-        followers: partial?.followers || dbUser.followers || [],
-        following: partial?.following || dbUser.following || []
+    // DEFENSIVE: Build the most complete object possible
+    const base = dbUser || (typeof partial === 'object' ? partial : { _id: uid });
+    const result = {
+        ...base,
+        ...(typeof partial === 'object' ? partial : {}),
+        _id: uid
     };
+
+    // Ensure identity fields are NEVER lost or set to invalid defaults
+    if (!result.username || result.username === 'Unknown' || result.username === 'Agent') {
+        result.username = base.username || partial?.username || 'Agent';
+    }
+    if (!result.profilePic) result.profilePic = base.profilePic || partial?.profilePic;
+    if (!result.followers) result.followers = base.followers || [];
+    if (!result.following) result.following = base.following || [];
+
+    return result;
 };
 
 // --- COMPONENTS ---
@@ -4272,14 +4269,17 @@ const App = () => {
             setPosts(prev => {
                 if (!prev) return [data];
                 
-                // 1. Check for exact ID match
-                if (prev.some(p => isSameId(p._id, data._id))) return prev;
+                // 1. UNIVERSAL DUPLICATE PREVENTION: Exact ID check for ALL users
+                if (prev.some(p => isSameId(p._id, data._id))) {
+                    console.log("📡 [SOCKET] Post ID already exists, ignoring duplicate.");
+                    return prev;
+                }
 
                 const authorId = data.author?._id || data.author;
                 const currentUserId = safeId(user);
                 const isOwner = isSameId(authorId, currentUserId);
 
-                // 2. DUPLICATE PREVENTION: If we are the owner, check for a matching optimistic post
+                // 2. OPTIMISTIC REPLACEMENT: If we are the owner, replace the optimistic placeholder
                 if (isOwner) {
                     const hasPendingOptimistic = prev.some(p => 
                         p.isOptimistic && 
@@ -4291,8 +4291,8 @@ const App = () => {
                         )
                     );
                     if (hasPendingOptimistic) {
-                        console.log("📡 [SOCKET] Ignoring own post (already in feed as optimistic/replacing)");
-                        return prev;
+                        console.log("📡 [SOCKET] Replacing own optimistic post.");
+                        return prev.map(p => (p.isOptimistic && p.desc === data.desc) ? data : p);
                     }
                 }
 
@@ -4312,13 +4312,12 @@ const App = () => {
 
         const onUserUpdated = (data) => {
             if (!data) return;
-            console.log("📡 [SOCKET] User updated real-time:", safeId(data));
+            const uid = safeId(data);
+            console.log("📡 [SOCKET] User updated real-time:", uid);
             syncUserIntelligence(data);
 
-            // Background reconciliation
-            setTimeout(() => {
-                fetchUsers();
-            }, 2000);
+            // Targeted re-sync immediately to ensure DB is perfect
+            fetchUsers(uid);
         };
 
         socket.on('notification.received', onNotificationRecv);
