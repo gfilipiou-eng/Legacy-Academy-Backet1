@@ -241,7 +241,31 @@ const safeId = (id) => {
 const isSameId = (id1, id2) => {
     const s1 = safeId(id1);
     const s2 = safeId(id2);
-    return s1 && s2 && s1 === s2;
+    return !!(s1 && s2 && s1 === s2);
+};
+
+/**
+ * INTELLIGENCE RESOLVER:
+ * Ensures we always have a full user object by merging partial data with the local database.
+ */
+const resolveFullUser = (partial, database) => {
+    const uid = safeId(partial);
+    if (!uid) return partial;
+    
+    const dbUser = (database || []).find(u => isSameId(u._id, uid));
+    if (!dbUser) return partial;
+
+    // Merge: Database (Source of Truth) + Partial (Live Update)
+    // Always preserve identity fields if the live update is missing them
+    return {
+        ...dbUser,
+        ...partial,
+        username: partial?.username || dbUser?.username || 'Agent',
+        profilePic: partial?.profilePic || dbUser?.profilePic,
+        role: partial?.role || dbUser?.role,
+        followers: partial?.followers || dbUser?.followers || [],
+        following: partial?.following || dbUser?.following || []
+    };
 };
 
 // --- COMPONENTS ---
@@ -4255,13 +4279,17 @@ const App = () => {
                     }
                 }
 
-                const isFollower = Array.isArray(data.author.followers) && data.author.followers.some(id => isSameId(id, currentUserId));
+                // 3. Resolve Full Author Intelligence immediately
+                const fullAuthor = resolveFullUser(data.author, usersRef.current);
+                const enrichedPost = { ...data, author: fullAuthor };
+
+                const isFollower = Array.isArray(fullAuthor.followers) && fullAuthor.followers.some(id => isSameId(id, currentUserId));
                 const isFounder = user?.role === 'Founder';
-                const isPrivate = !!(data.author.isPrivate || data.author.isFollowersOnly);
+                const isPrivate = !!(fullAuthor.isPrivate || fullAuthor.isFollowersOnly);
                 const allowed = !isPrivate || isOwner || isFollower || isFounder;
                 if (!allowed) return prev;
 
-                return [data, ...prev];
+                return [enrichedPost, ...prev];
             });
         };
 
@@ -4311,9 +4339,10 @@ const App = () => {
                     let nextPost = p;
                     const authorId = p.author?._id || p.author;
                     if (isSameId(authorId, uid)) {
+                        // RECONCILE: Merge current author object with new intelligence
                         const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                        const nextAuthor = { ...currentAuthor, ...updatedUser, username: updatedUser.username || currentAuthor.username };
-                        nextPost = { ...nextPost, author: nextAuthor, profilePic: updatedUser.profilePic || nextPost.profilePic };
+                        const resolvedIntelligence = resolveFullUser({ ...currentAuthor, ...updatedUser }, usersRef.current);
+                        nextPost = { ...nextPost, author: resolvedIntelligence, profilePic: updatedUser.profilePic || nextPost.profilePic };
                     }
                     if (p.comments?.some(c => isSameId(c.authorId, uid))) {
                         nextPost = {
@@ -5106,11 +5135,9 @@ const App = () => {
     };
 
     const viewProfile = (u) => {
-        const targetId = u?._id || u;
-        const fullUser = users.find(x => String(x._id) === String(targetId)) || u;
+        const fullUser = resolveFullUser(u, users);
         setProfileUser(fullUser);
         setIsProfileOpen(true);
-
     };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
