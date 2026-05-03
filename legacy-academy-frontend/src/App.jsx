@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
+import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import EnhancedButton from './components/EnhancedButton';
 // DEPLOYMENT_VERSION: V12_PORTAL_FIX
