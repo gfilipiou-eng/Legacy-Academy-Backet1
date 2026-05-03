@@ -3910,6 +3910,7 @@ const App = () => {
     const mainScrollRef = useRef(null);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
+    const usersRef = useRef(users);
 
     const lastScrollTime = useRef(0);
     const handleScroll = (e) => {
@@ -3934,6 +3935,7 @@ const App = () => {
     // Keep refs correctly updated
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
     useEffect(() => { postsRef.current = posts; }, [posts]);
+    useEffect(() => { usersRef.current = users; }, [users]);
     const isProcessingRequest = useRef(false);
 
     // SCROLL TO TOP ON LOGIN / TAB CHANGE
@@ -4199,11 +4201,28 @@ const App = () => {
             if (!data || !data.author) return;
             setPosts(prev => {
                 if (!prev) return [data];
+                
+                // 1. Check for exact ID match
                 if (prev.some(p => isSameId(p._id, data._id))) return prev;
 
                 const authorId = data.author?._id || data.author;
                 const currentUserId = safeId(user);
                 const isOwner = isSameId(authorId, currentUserId);
+
+                // 2. DUPLICATE PREVENTION: If we are the owner, check for a matching optimistic post
+                // that hasn't been reconciled yet. handleCreatePost handles the replacement.
+                if (isOwner) {
+                    const hasPendingOptimistic = prev.some(p => 
+                        p.isOptimistic && 
+                        (p.desc || "") === (data.desc || "") &&
+                        (p.image || "").includes('blob:') // Ensure it's a local upload
+                    );
+                    if (hasPendingOptimistic) {
+                        console.log("📡 [SOCKET] Ignoring own post (handled by handleCreatePost)");
+                        return prev;
+                    }
+                }
+
                 const isFollower = Array.isArray(data.author.followers) && data.author.followers.some(id => isSameId(id, currentUserId));
                 const isFounder = user?.role === 'Founder';
                 const isPrivate = !!(data.author.isPrivate || data.author.isFollowersOnly);
@@ -4215,12 +4234,24 @@ const App = () => {
         };
 
         const onUserUpdated = (data) => {
-            if (!data) return;
-            console.log("📡 [SOCKET] User updated real-time:", data._id);
-
             const userId = safeId(data);
+            if (!userId) return;
 
-            setUsers(prev => prev.map(u => isSameId(u._id, userId) ? { ...u, ...data } : u));
+            console.log("📡 [SOCKET] User updated real-time:", userId);
+
+            // Add cache-breaker to incoming data if it has pictures
+            const timestamp = Date.now();
+            const syncData = { ...data };
+            if (syncData.profilePic && !syncData.profilePic.startsWith('blob:') && !syncData.profilePic.includes('t=')) {
+                const sep = syncData.profilePic.includes('?') ? '&' : '?';
+                syncData.profilePic += `${sep}t=${timestamp}`;
+            }
+            if (syncData.coverPic && !syncData.coverPic.startsWith('blob:') && !syncData.coverPic.includes('t=')) {
+                const sep = syncData.coverPic.includes('?') ? '&' : '?';
+                syncData.coverPic += `${sep}t=${timestamp}`;
+            }
+
+            setUsers(prev => (prev || []).map(u => isSameId(u._id, userId) ? { ...u, ...syncData } : u));
 
             setProfileUser(prev => {
                 if (prev && isSameId(prev._id, userId)) {
@@ -4254,15 +4285,22 @@ const App = () => {
                     let updatedPost = p;
                     const authorId = p.author?._id || p.author;
 
-                    if (isSameId(authorId, userId)) {
-                        // Fix: Ensure author is an object
-                        const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...data } : { ...data };
-                        updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: data.profilePic || updatedPost.profilePic };
+                    if (userId && isSameId(authorId, userId)) {
+                        // Fix: Ensure author is an object and don't lose data if p.author was just a string
+                        let updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...syncData } : { ...syncData };
+                        
+                        // FIX: Use usersRef.current instead of stale 'users' closure
+                        if (!updatedAuthor.username) {
+                            const recovered = usersRef.current?.find(u => isSameId(u._id, userId));
+                            if (recovered) updatedAuthor = { ...recovered, ...updatedAuthor };
+                        }
+
+                        updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: syncData.profilePic || updatedPost.profilePic || updatedAuthor.profilePic };
                     }
                     if (p.comments?.some(c => isSameId(c.authorId, userId))) {
                         updatedPost = {
                             ...updatedPost,
-                            comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: data.profilePic || c.authorProfilePic, authorName: data.username || c.authorName } : c)
+                            comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: syncData.profilePic || c.authorProfilePic, authorName: syncData.username || c.authorName } : c)
                         };
                     }
                     return updatedPost;

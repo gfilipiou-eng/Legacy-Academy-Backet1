@@ -621,6 +621,12 @@ router.post("/profile-pic", verifyToken, (req, res, next) => {
             console.warn("Minor sync delay detected.");
         }
 
+        // 🔥 REAL-TIME SYNC: Inform all clients about the profile picture change
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('user.updated', updatedUser);
+        }
+
         res.status(200).json(updatedUser);
     } catch (err) {
         res.status(500).json({ message: "SYSTEM ERROR: Asset integration failed.", error: err.message });
@@ -671,6 +677,12 @@ router.put("/:id", verifyToken, async (req, res) => {
             { $set: req.body },
             { new: true }
         ).select('-password');
+
+        // 🔥 REAL-TIME SYNC: Inform all clients about the profile changes
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('user.updated', updatedUser);
+        }
 
         res.status(200).json(updatedUser);
     } catch (err) {
