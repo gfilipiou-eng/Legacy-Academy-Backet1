@@ -1433,10 +1433,21 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
     const isCurrentUserFounder = user?.role === 'Founder';
 
-    // 🔥 ROBUST AUTHOR RESOLUTION: Fix "Unknown Agent" by looking up user if author is just an ID
+    const authorId = post.author?._id || post.author;
     const author = (post.author && typeof post.author === 'object' && post.author.username)
         ? post.author
-        : (allUsers?.find(u => isSameId(u._id, post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
+        : (allUsers?.find(u => isSameId(u._id, authorId)) || { username: 'Unknown', _id: authorId });
+
+    // 🔥 ROBUST REPOSTER RESOLUTION
+    let resolvedReposter = reposter;
+    if (!resolvedReposter && post.isRepost && post.repostedBy) {
+        const rId = post.repostedBy?._id || post.repostedBy;
+        resolvedReposter = allUsers?.find(u => isSameId(u._id, rId));
+        if (!resolvedReposter && typeof post.repostedBy === 'object' && post.repostedBy.username) {
+            resolvedReposter = post.repostedBy;
+        }
+        if (!resolvedReposter) resolvedReposter = { username: 'Agent', _id: rId };
+    }
 
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
@@ -1541,11 +1552,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
             {/* CARD CONTENT */}
             <div className="relative z-10 flex flex-col">
-                {reposter && (
+                {resolvedReposter && (
                     <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
                         <Icons.RefreshCcw className="w-3.5 h-3.5" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                            {(reposter?.username || 'Agent') === user?.username ? t('YOU_REPOSTED', 'YOU REPOSTED') : `${reposter?.username || 'Agent'} ${t('REPOSTED', 'REPOSTED')}`}
+                            {(resolvedReposter?.username || 'Agent') === user?.username ? t('YOU_REPOSTED', 'YOU REPOSTED') : `${resolvedReposter?.username || 'Agent'} ${t('REPOSTED', 'REPOSTED')}`}
                         </span>
                     </div>
                 )}
@@ -4263,89 +4274,61 @@ const App = () => {
             // Add cache-breaker to incoming data if it has pictures
             const timestamp = Date.now();
             const syncData = { ...data };
-            
-            // DEFENSIVE: Never accept a payload that might corrupt the username if we have it
-            if (!syncData.username && data.username === "") delete syncData.username; 
+            if (!syncData.username && data.username === "") delete syncData.username;
 
-            if (syncData.profilePic && !syncData.profilePic.startsWith('blob:') && !syncData.profilePic.includes('t=')) {
-                const sep = syncData.profilePic.includes('?') ? '&' : '?';
-                syncData.profilePic += `${sep}t=${timestamp}`;
-            }
-            if (syncData.coverPic && !syncData.coverPic.startsWith('blob:') && !syncData.coverPic.includes('t=')) {
-                const sep = syncData.coverPic.includes('?') ? '&' : '?';
-                syncData.coverPic += `${sep}t=${timestamp}`;
-            }
+            const updateAllStates = (updatedUser) => {
+                const uid = safeId(updatedUser);
+                if (!uid) return;
 
-            console.log(`📡 [SOCKET] Syncing user ${userId} (${syncData.username || 'no-name'})`);
-
-            setUsers(prev => (prev || []).map(u => {
-                if (isSameId(u._id, userId)) {
-                    // Only merge if the update is actually for this user
-                    // Ensure we don't lose the username if syncData doesn't have it
-                    return { ...u, ...syncData, username: syncData.username || u.username };
+                // 1. Update Global User State (ME)
+                if (user && isSameId(user._id, uid)) {
+                    setUser(prev => {
+                        const merged = { ...prev, ...updatedUser };
+                        localStorage.setItem('user', JSON.stringify(merged));
+                        return merged;
+                    });
+                    setImgKey(Date.now());
                 }
-                return u;
-            }));
 
-            setProfileUser(prev => {
-                if (prev && isSameId(prev._id, userId)) {
-                    return { ...prev, ...data };
-                }
-                return prev;
-            });
+                // 2. Update Intelligence Database (Users List)
+                setUsers(prev => (prev || []).map(u => {
+                    if (isSameId(u._id, uid)) {
+                        return { ...u, ...updatedUser, username: updatedUser.username || u.username };
+                    }
+                    return u;
+                }));
 
-            if (user && isSameId(user._id, userId)) {
-                setUser(prev => {
-                    const nextData = { ...data };
-                    const timestamp = Date.now();
-                    if (nextData.profilePic && !nextData.profilePic.startsWith('blob:')) {
-                        const sep = nextData.profilePic.includes('?') ? '&' : '?';
-                        nextData.profilePic += `${sep}t=${timestamp}`;
+                // 3. Update active Profile View
+                setProfileUser(prev => {
+                    if (prev && isSameId(prev._id, uid)) {
+                        return { ...prev, ...updatedUser, username: updatedUser.username || prev.username };
                     }
-                    if (nextData.coverPic && !nextData.coverPic.startsWith('blob:')) {
-                        const sep = nextData.coverPic.includes('?') ? '&' : '?';
-                        nextData.coverPic += `${sep}t=${timestamp}`;
-                    }
-                    const updated = { ...prev, ...nextData };
-                    localStorage.setItem('user', JSON.stringify(updated));
-                    return updated;
+                    return prev;
                 });
-                setImgKey(Date.now());
-            }
 
-            setPosts(prev => {
-                if (!prev) return prev;
-                return prev.map(p => {
-                    let updatedPost = p;
+                // 4. Update Posts (Authors and Comments)
+                setPosts(prev => (prev || []).map(p => {
+                    let nextPost = p;
                     const authorId = p.author?._id || p.author;
-
-                    if (userId && authorId && isSameId(authorId, userId)) {
-                        console.log(`✨ [SYNC] Updating author data for post ${p._id}`);
+                    if (isSameId(authorId, uid)) {
                         const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                        const updatedAuthor = { ...currentAuthor, ...syncData, username: syncData.username || currentAuthor.username };
-                        
-                        // Last ditch username recovery
-                        if (!updatedAuthor.username) {
-                            const recovered = usersRef.current?.find(u => isSameId(u._id, userId));
-                            if (recovered?.username) updatedAuthor.username = recovered.username;
-                            if (!updatedAuthor.username && p.author?.username) updatedAuthor.username = p.author.username;
-                        }
-
-                        updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: syncData.profilePic || updatedPost.profilePic || updatedAuthor.profilePic };
+                        const nextAuthor = { ...currentAuthor, ...updatedUser, username: updatedUser.username || currentAuthor.username };
+                        nextPost = { ...nextPost, author: nextAuthor, profilePic: updatedUser.profilePic || nextPost.profilePic };
                     }
-                    if (p.comments?.some(c => isSameId(c.authorId, userId))) {
-                        updatedPost = {
-                            ...updatedPost,
-                            comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: syncData.profilePic || c.authorProfilePic, authorName: syncData.username || c.authorName } : c)
+                    if (p.comments?.some(c => isSameId(c.authorId, uid))) {
+                        nextPost = {
+                            ...nextPost,
+                            comments: p.comments.map(c => isSameId(c.authorId, uid) ? { ...c, authorProfilePic: updatedUser.profilePic || c.authorProfilePic, authorName: updatedUser.username || c.authorName } : c)
                         };
                     }
-                    return updatedPost;
-                });
-            });
+                    return nextPost;
+                }));
+            };
 
-            // NUCLEAR OPTION: If state is drifting, force a refresh of the key data after a short delay
+            updateAllStates(syncData);
+
+            // FALLBACK SYNC
             setTimeout(() => {
-                console.log("📡 [SOCKET] Triggering background state re-sync...");
                 fetchUsers();
             }, 2000);
 
