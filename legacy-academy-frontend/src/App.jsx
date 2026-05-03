@@ -220,20 +220,21 @@ const formatDate = (dateString, t, lang) => {
  */
 const safeId = (id) => {
     if (id === null || id === undefined) return null;
-    if (typeof id === 'string') return id;
+    if (typeof id === 'string') return id.trim();
     if (typeof id === 'number') return String(id);
 
     if (typeof id === 'object') {
-        // Handle Mongoose-like objects or user objects
         const actualId = id._id || id.userId || id.id;
         if (actualId && actualId !== id) return safeId(actualId);
 
-        if (typeof id.toString === 'function') {
-            const str = id.toString();
-            if (str && str !== '[object Object]' && !str.startsWith('[object')) {
-                return str;
+        try {
+            if (typeof id.toString === 'function') {
+                const str = id.toString();
+                if (str && str !== '[object Object]' && !str.startsWith('[object ')) {
+                    return str;
+                }
             }
-        }
+        } catch (e) { }
     }
     return null;
 };
@@ -253,22 +254,28 @@ const resolveFullUser = (partial, database) => {
     if (!uid) return { username: 'Agent', _id: 'unknown' };
 
     const dbUser = (database || []).find(u => isSameId(u._id, uid));
-
-    // DEFENSIVE: Build the most complete object possible
     const base = dbUser || (typeof partial === 'object' ? partial : { _id: uid });
+
+    const cleanPartial = {};
+    if (typeof partial === 'object' && partial !== null) {
+        Object.keys(partial).forEach(key => {
+            const val = partial[key];
+            if (val !== null && val !== undefined && val !== "") {
+                cleanPartial[key] = val;
+            }
+        });
+    }
+
     const result = {
         ...base,
-        ...(typeof partial === 'object' ? partial : {}),
+        ...cleanPartial,
         _id: uid
     };
 
-    // Ensure identity fields are NEVER lost or set to invalid defaults
-    if (!result.username || result.username === 'Unknown' || result.username === 'Agent') {
+    if (!result.username || result.username === 'Agent' || result.username === 'Unknown') {
         result.username = base.username || partial?.username || 'Agent';
     }
     if (!result.profilePic) result.profilePic = base.profilePic || partial?.profilePic;
-    if (!result.followers) result.followers = base.followers || [];
-    if (!result.following) result.following = base.following || [];
 
     return result;
 };
@@ -4028,65 +4035,68 @@ const App = () => {
 
         console.log(`📡 [SYNC] Coordinating intelligence update for ${uid}`);
 
-        // 1. Update Intelligence Database (Users List) FIRST
-        // This ensures subsequent state updates can resolve against the latest DB
+        // 1. Update Intelligence Database (Users List)
         setUsers(prev => {
             const list = prev || [];
             const fullIntel = resolveFullUser(updatedUser, list);
-
             const exists = list.some(u => isSameId(u._id, uid));
-            const nextList = exists
+            return exists 
                 ? list.map(u => isSameId(u._id, uid) ? { ...u, ...fullIntel } : u)
                 : [...list, fullIntel];
-
-            // 2. Update Global User State (ME)
-            if (user && isSameId(user._id, uid)) {
-                setUser(prevMe => {
-                    const merged = { ...prevMe, ...fullIntel };
-                    localStorage.setItem('user', JSON.stringify(merged));
-                    return merged;
-                });
-                setImgKey(Date.now());
-            }
-
-            // 3. Update active Profile View
-            setProfileUser(prevProfile => {
-                if (prevProfile && isSameId(prevProfile._id, uid)) {
-                    return { ...prevProfile, ...fullIntel };
-                }
-                return prevProfile;
-            });
-
-            // 4. Update Posts
-            setPosts(prevPosts => (prevPosts || []).map(p => {
-                let nextPost = p;
-                const authorId = p.author?._id || p.author;
-                if (isSameId(authorId, uid)) {
-                    const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                    const resolvedAuthor = resolveFullUser({ ...currentAuthor, ...fullIntel }, nextList);
-                    nextPost = { ...nextPost, author: resolvedAuthor, profilePic: fullIntel.profilePic || nextPost.profilePic };
-                }
-                if (p.comments?.some(c => isSameId(c.authorId, uid))) {
-                    nextPost = {
-                        ...nextPost,
-                        comments: p.comments.map(c => isSameId(c.authorId, uid) ? { ...c, authorProfilePic: fullIntel.profilePic || c.authorProfilePic, authorName: fullIntel.username || c.authorName } : c)
-                    };
-                }
-                return nextPost;
-            }));
-
-            // 5. Update Detail View
-            if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, uid)) {
-                setSelectedPost(prevDetail => {
-                    if (!prevDetail) return prevDetail;
-                    const resolvedAuthor = resolveFullUser({ ...prevDetail.author, ...fullIntel }, nextList);
-                    return { ...prevDetail, author: resolvedAuthor, profilePic: fullIntel.profilePic };
-                });
-            }
-
-            return nextList;
         });
-    }, [user, selectedPost]);
+
+        // 2. Update Global User State (ME)
+        if (user && isSameId(user._id, uid)) {
+            setUser(prev => {
+                const fullIntel = resolveFullUser(updatedUser, [prev]);
+                const merged = { ...prev, ...fullIntel };
+                localStorage.setItem('user', JSON.stringify(merged));
+                return merged;
+            });
+            setImgKey(Date.now());
+        }
+
+        // 3. Update active Profile View
+        setProfileUser(prevProfile => {
+            if (prevProfile && isSameId(prevProfile._id, uid)) {
+                return resolveFullUser(updatedUser, [prevProfile]);
+            }
+            return prevProfile;
+        });
+
+        // 4. Update Posts
+        setPosts(prevPosts => (prevPosts || []).map(p => {
+            const authorId = p.author?._id || p.author;
+            if (isSameId(authorId, uid)) {
+                const currentAuthor = typeof p.author === 'object' ? p.author : {};
+                const fullIntel = resolveFullUser(updatedUser, [currentAuthor]);
+                return { ...p, author: fullIntel, profilePic: fullIntel.profilePic || p.profilePic };
+            }
+            if (p.comments?.some(c => isSameId(c.authorId, uid))) {
+                return {
+                    ...p,
+                    comments: p.comments.map(c => {
+                        if (isSameId(c.authorId, uid)) {
+                            const intel = resolveFullUser(updatedUser, [{ _id: uid, username: c.authorName, profilePic: c.authorProfilePic }]);
+                            return { ...c, authorProfilePic: intel.profilePic || c.authorProfilePic, authorName: intel.username || c.authorName };
+                        }
+                        return c;
+                    })
+                };
+            }
+            return p;
+        }));
+
+        // 5. Update Detail View
+        setSelectedPost(prevDetail => {
+            if (prevDetail && isSameId(prevDetail.author?._id || prevDetail.author, uid)) {
+                const currentAuthor = typeof prevDetail.author === 'object' ? prevDetail.author : {};
+                const fullIntel = resolveFullUser(updatedUser, [currentAuthor]);
+                return { ...prevDetail, author: fullIntel, profilePic: fullIntel.profilePic };
+            }
+            return prevDetail;
+        });
+    }, [user]);
 
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
