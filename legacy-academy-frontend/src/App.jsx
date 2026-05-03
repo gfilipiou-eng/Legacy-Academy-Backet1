@@ -251,9 +251,9 @@ const isSameId = (id1, id2) => {
 const resolveFullUser = (partial, database) => {
     const uid = safeId(partial);
     if (!uid) return { username: 'Agent', _id: 'unknown' };
-    
+
     const dbUser = (database || []).find(u => isSameId(u._id, uid));
-    
+
     // DEFENSIVE: Build the most complete object possible
     const base = dbUser || (typeof partial === 'object' ? partial : { _id: uid });
     const result = {
@@ -4033,9 +4033,9 @@ const App = () => {
         setUsers(prev => {
             const list = prev || [];
             const fullIntel = resolveFullUser(updatedUser, list);
-            
+
             const exists = list.some(u => isSameId(u._id, uid));
-            const nextList = exists 
+            const nextList = exists
                 ? list.map(u => isSameId(u._id, uid) ? { ...u, ...fullIntel } : u)
                 : [...list, fullIntel];
 
@@ -4267,7 +4267,7 @@ const App = () => {
             if (!data || !data.author) return;
             setPosts(prev => {
                 if (!prev) return [data];
-                
+
                 // 1. UNIVERSAL DUPLICATE PREVENTION: Exact ID check for ALL users
                 if (prev.some(p => isSameId(p._id, data._id))) {
                     console.log("📡 [SOCKET] Post ID already exists, ignoring duplicate.");
@@ -4280,11 +4280,11 @@ const App = () => {
 
                 // 2. OPTIMISTIC REPLACEMENT: If we are the owner, replace the optimistic placeholder
                 if (isOwner) {
-                    const hasPendingOptimistic = prev.some(p => 
-                        p.isOptimistic && 
+                    const hasPendingOptimistic = prev.some(p =>
+                        p.isOptimistic &&
                         (p.desc || "") === (data.desc || "") &&
                         (
-                            (p.image || "").includes('blob:') || 
+                            (p.image || "").includes('blob:') ||
                             (p.videoUrl && p.videoUrl === data.videoUrl) ||
                             (p.isUploading)
                         )
@@ -4416,14 +4416,14 @@ const App = () => {
      */
     const reconcileIntelligence = useCallback((latestUsers) => {
         if (!latestUsers || latestUsers.length === 0) return;
-        
+
         setPosts(prev => {
             if (!prev) return prev;
             let changed = false;
             const next = prev.map(p => {
                 const currentAuthorId = p.author?._id || p.author;
                 const resolved = resolveFullUser(p.author, latestUsers);
-                
+
                 // If the resolved username is better than what we had, update it
                 if (resolved.username !== 'Agent' && (p.author?.username === 'Unknown' || p.author?.username === 'Agent' || !p.author?.username)) {
                     changed = true;
@@ -4452,6 +4452,14 @@ const App = () => {
             reconcileIntelligence(users);
         }
     }, [users, reconcileIntelligence]);
+    const fetchPosts = async () => {
+        if (selectedPostRef.current) return;
+        try {
+            const res = await axios.get(`/posts?limit=30`);
+            setPosts(res.data);
+            localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
+        } catch (e) { }
+    };
     const fetchUsers = async (specificId = null) => {
         try {
             if (specificId) {
