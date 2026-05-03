@@ -170,9 +170,10 @@ const getYouTubeEmbedUrl = (url) => {
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
 const isUserOnline = (u, currentUser) => {
     // Rule: You are always online to yourself (instant feedback)
-    if (currentUser && (u._id === currentUser._id || u === currentUser._id || String(u._id) === String(currentUser._id))) return true;
+    if (currentUser && isSameId(u, currentUser)) return true;
 
-    if (!u || !u.lastSeen) return false;
+    const lastSeen = u?.lastSeen;
+    if (!lastSeen) return false;
     try {
         // Robust Threshold: 5 minutes (300,000ms) to account for clock skew/distributed systems
         return (Date.now() - new Date(u.lastSeen).getTime()) < 300000;
@@ -214,18 +215,27 @@ const formatDate = (dateString, t, lang) => {
 };
 
 /**
- * Robustly converts any ID (string or Mongoose object) to a clean hex string.
+ * Robustly converts any ID (string, number, or object) to a clean hex string.
  * Prevents the "[object Object]" bug that causes state corruption.
  */
 const safeId = (id) => {
-    if (!id) return null;
+    if (id === null || id === undefined) return null;
     if (typeof id === 'string') return id;
-    if (id._id) return safeId(id._id);
-    if (typeof id.toString === 'function') {
-        const str = id.toString();
-        return str === '[object Object]' ? null : str;
+    if (typeof id === 'number') return String(id);
+
+    if (typeof id === 'object') {
+        // Handle Mongoose-like objects or user objects
+        const actualId = id._id || id.userId || id.id;
+        if (actualId && actualId !== id) return safeId(actualId);
+
+        if (typeof id.toString === 'function') {
+            const str = id.toString();
+            if (str && str !== '[object Object]' && !str.startsWith('[object')) {
+                return str;
+            }
+        }
     }
-    return String(id);
+    return null;
 };
 
 const isSameId = (id1, id2) => {
@@ -417,7 +427,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [coords, setCoords] = useState({ top: 0, left: 0 });
     const btnRef = useRef(null);
-    const isOwner = String(post.author?._id || post.author) === String(user?._id);
+    const isOwner = isSameId(post.author?._id || post.author, user?._id);
     const canDelete = isOwner || user?.role === 'Founder';
 
     const toggle = (e) => {
@@ -492,10 +502,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const [isTranslating, setIsTranslating] = useState(false);
 
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
-    const isCommentAuthor = String(currentCommentAuthorId) === String(user?._id);
+    const isCommentAuthor = isSameId(currentCommentAuthorId, user?._id);
     const postAuthorId = post.author?._id || post.author;
 
-    const foundUserInList = allUsers?.find(u => String(u._id) === String(currentCommentAuthorId));
+    const foundUserInList = allUsers?.find(u => isSameId(u._id, currentCommentAuthorId));
     const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
@@ -715,11 +725,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     if (!post) return null;
 
     // Resolve author object if it's just an ID or missing details
+    const authorId = post.author?._id || post.author;
     const author = (post.author && typeof post.author === 'object' && post.author.username)
         ? post.author
-        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
+        : (allUsers?.find(u => isSameId(u._id, authorId)) || { username: 'Unknown', _id: authorId });
 
-    const isOwner = String(author?._id) === String(user?._id);
+    const isOwner = isSameId(author?._id, user?._id);
     const isFounder = user?.role === 'Founder';
 
     const handleClearComments = async () => {
@@ -808,20 +819,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                                 <button
                                     onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400' : 'text-gray-500'}`}>
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400' : 'text-gray-500'}`}>
                                     <Icons.RefreshCcw className="w-5 h-5" />
                                     <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
                                     onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400' : 'text-gray-500'}`}>
-                                    <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400' : 'text-gray-500'}`}>
+                                    <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
                                     onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
-                                    <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
+                                    <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
@@ -1621,7 +1632,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.reposts?.some(id => String(id) === String(user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600  '}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600  '}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
                                 <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
@@ -1631,14 +1642,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <button
                                 onPointerDown={(e) => {
                                     e.stopPropagation();
-                                    const isLiked = post.likes?.some(id => String(id) === String(user?._id));
+                                    const isLiked = post.likes?.some(id => isSameId(id, user?._id));
                                     playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                     onLike(post._id);
 
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600  '}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600  '}`}
                             >
-                                <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
@@ -1646,14 +1657,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <button
                                 onPointerDown={(e) => {
                                     e.stopPropagation();
-                                    const isDisliked = post.dislikes?.some(id => String(id) === String(user?._id));
+                                    const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
                                     playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                     onDislike(post._id);
 
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600  '}`}
+                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600  '}`}
                             >
-                                <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => String(id) === String(user?._id)) ? 'fill-current' : ''}`} />
+                                <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
@@ -1797,7 +1808,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     useEffect(() => {
         if (isOpen && initialChatUser) {
             if (typeof initialChatUser === 'string') {
-                const found = allUsers.find(u => String(u._id) === String(initialChatUser));
+                const found = allUsers.find(u => isSameId(u._id, initialChatUser));
                 if (found) setActiveChat(found);
             } else if (initialChatUser._id || initialChatUser.id) {
                 setActiveChat(initialChatUser);
@@ -1813,8 +1824,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         // 🔥 REAL-TIME MESSAGE LISTENER
         const handleMessageReceived = (msg) => {
             // Check if message belongs to THIS conversation
-            const isFromCurrentTarget = String(msg.sender) === String(targetId);
-            const isToCurrentTarget = String(msg.recipient) === String(targetId);
+            const isFromCurrentTarget = isSameId(msg.sender, targetId);
+            const isToCurrentTarget = isSameId(msg.recipient, targetId);
 
             if (isFromCurrentTarget || isToCurrentTarget) {
                 console.log("📨 [SOCKET] New whisper received in current chat");
@@ -1999,7 +2010,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
-                                <button key={u._id} onClick={() => { setActiveChat(u); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer   text-left touch-manipulation  ${activeChat?._id === u._id ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
+                                <button key={u._id} onClick={() => { setActiveChat(u); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer   text-left touch-manipulation  ${isSameId(activeChat?._id, u._id) ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
                                     <div className="relative shrink-0"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm border border-white/10`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
@@ -2025,8 +2036,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {activeChat?.username}
                                         <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4 shrink-0" />
                                     </div>
-                                    <div className={`text-[10px] ${isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user) ? 'text-green-500 font-bold uppercase tracking-widest shadow-green-500/20' : 'text-gray-500 uppercase tracking-tighter'}`}>
-                                        {(isUserOnline(allUsers.find(au => String(au._id) === String(activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
+                                    <div className={`text-[10px] ${isUserOnline(allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat, user) ? 'text-green-400 font-bold uppercase tracking-widest shadow-green-500/20' : 'text-gray-500 uppercase tracking-tighter'}`}>
+                                        {(isUserOnline(allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
                                     </div>
                                 </div>
                                 <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
@@ -2037,7 +2048,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     const isAudioActuallyImage = audioVal && /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|avif)/i.test(audioVal.split('?')[0]);
                                     const imageUrl = m.image || (isAudioActuallyImage ? audioVal : "");
                                     const realAudio = isAudioActuallyImage ? "" : audioVal;
-                                    const isOwn = String(m.sender) === String(user?._id);
+                                    const isOwn = isSameId(m.sender, user?._id);
 
                                     const toggleLockMessage = async () => {
                                         if (!m._id) return;
@@ -2600,13 +2611,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         <div className="flex items-center gap-4 mt-4">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[15px] tabular-nums">
-                                    {[...new Set((user?.following || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
+                                    {[...new Set((user?.following || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
                                 </span>
                                 <span className="text-[15px] text-gray-500 font-normal">{t('FOLLOWING')}</span>
                             </div>
                             <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[15px] tabular-nums">
-                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => String(u._id) === String(id))))].length}
+                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
                                 </span>
                                 <span className="text-[15px] text-gray-500 font-normal">
                                     {t('FOLLOWERS') || 'Followers'}
@@ -2728,23 +2739,27 @@ const ProfileModal = ({
         const currentUserId = safeId(currentUser);
         const isMe = isSameId(profileUserId, currentUserId);
 
-        // Prioritize userData (fetched specifically for this profile)
-        // If it's 'me', currentUser is the most up-to-date source
+        // 1. Determine the "base" data source (detailed info like bio)
+        // For ME: currentUser is always the most fresh
+        // For OTHERS: userData (from specific fetch) or profileUser (from global list)
         const base = isMe ? currentUser : (userData || profileUser);
-        const live = allUsers.find(u => isSameId(u._id, base?._id));
 
-        // CRITICAL SYNC: Merge live data (online status) with base data (bio, username)
-        // If it's ME, prioritize currentUser object which is the most fresh
-        if (isMe) {
-            return {
-                ...base,
-                ...live,
-                ...currentUser,
-                bio: currentUser?.bio ?? base?.bio ?? live?.bio
-            };
-        }
-        // FOR OTHERS: Merge detailed base (from /find/:id) with fresh live status (from App users list)
-        return live ? { ...base, ...live, bio: base?.bio || live?.bio } : base;
+        // 2. Get "live" status (online status, latest follower counts) from global users list
+        const live = allUsers.find(u => isSameId(u._id, base?._id)) || {};
+
+        // 3. Merge: Prioritize 'base' for identity/bio, but use 'live' for real-time status
+        // We merge live first, then base, so base fields (like bio/username) always win
+        const merged = {
+            ...live,
+            ...base,
+            // Ensure some live fields from the global sync win if they are present
+            lastSeen: live.lastSeen || base.lastSeen,
+            followers: live.followers || base.followers || [],
+            following: live.following || base.following || [],
+            followRequests: live.followRequests || base.followRequests || []
+        };
+
+        return merged;
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
@@ -2899,13 +2914,13 @@ const ProfileModal = ({
     const getListUsers = () => {
         if (!activeList || !displayUser) return [];
         const ids = activeList === 'followers' ? displayUser.followers : displayUser.following;
-        return (allUsers || []).filter(u => ids?.some(id => String(id) === String(u._id)));
+        return (allUsers || []).filter(u => ids?.some(id => isSameId(id, u._id)));
     };
 
     if (!isOpen || !profileUser) return null;
 
-    const isFollowing = currentUser?.following?.some(id => String(id) === String(displayUser?._id));
-    const hasRequested = displayUser?.followRequests?.some(id => String(id) === String(currentUser?._id));
+    const isFollowing = currentUser?.following?.some(id => isSameId(id, displayUser?._id));
+    const hasRequested = displayUser?.followRequests?.some(id => isSameId(id, currentUser?._id));
 
     return (
 
@@ -3122,10 +3137,10 @@ const ProfileModal = ({
                                     <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl  ">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
-                                                const uid = String(displayUser?._id || '');
+                                                const uid = safeId(displayUser);
                                                 return (userSpecificPosts || []).filter(p =>
-                                                    Array.isArray(p.reposts) && p.reposts.some(id => String(id) === uid) &&
-                                                    String(p.author?._id || p.author) !== uid
+                                                    Array.isArray(p.reposts) && p.reposts.some(id => isSameId(id, uid)) &&
+                                                    !isSameId(p.author, uid)
                                                 ).length;
                                             })()}
                                         </span>
@@ -3137,10 +3152,10 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums ">
-                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
+                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
-                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                         </span>
                                     </div>
 
@@ -3149,7 +3164,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums ">
-                                            {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => String(u._id) === String(id))))].length}
+                                            {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
                                         </span>
                                         <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
@@ -3974,9 +3989,21 @@ const App = () => {
 
         // 2. Synchronize across all local state arrays for immediate UI update
         const userId = safeId(updatedUser);
+        if (!userId) {
+            console.error("❌ [CRITICAL] Could not determine userId for update!");
+            return;
+        }
 
         // Update 'users' array safely
-        setUsers(prev => prev.map(u => isSameId(u._id, userId) ? { ...u, ...updatedUser } : u));
+        setUsers(prev => (prev || []).map(u => isSameId(u._id, userId) ? { ...u, ...updatedUser } : u));
+
+        // Update profileUser if currently open
+        setProfileUser(prev => {
+            if (prev && isSameId(prev._id, userId)) {
+                return { ...prev, ...updatedUser };
+            }
+            return prev;
+        });
 
         // Update 'posts' array (authors, direct profilePic, and comments authors)
         setPosts(prev => prev.map(p => {
@@ -4144,12 +4171,12 @@ const App = () => {
         const onCommentSync = (data) => {
             console.log("📡 [SOCKET] Comments updated real-time:", data.postId);
             const updateFn = (p) => {
-                if (String(p._id) !== String(data.postId)) return p;
+                if (!isSameId(p._id, data.postId)) return p;
                 return { ...p, comments: data.comments };
             };
             setPosts(prev => prev.map(updateFn));
             setSelectedPost(prev => {
-                if (prev && String(prev._id) === String(data.postId)) {
+                if (prev && isSameId(prev._id, data.postId)) {
                     return updateFn(prev);
                 }
                 return prev;
@@ -4158,9 +4185,9 @@ const App = () => {
 
         const onUserStatus = (data) => {
             console.log("📡 [SOCKET] User status change:", data);
-            setUsers(prev => prev.map(u => String(u._id) === String(data.userId) ? { ...u, lastSeen: data.lastSeen } : u));
+            setUsers(prev => prev.map(u => isSameId(u._id, data.userId) ? { ...u, lastSeen: data.lastSeen } : u));
             setProfileUser(prev => {
-                if (prev && String(prev._id) === String(data.userId)) {
+                if (prev && isSameId(prev._id, data.userId)) {
                     return { ...prev, lastSeen: data.lastSeen };
                 }
                 return prev;
@@ -4172,14 +4199,14 @@ const App = () => {
             if (!data || !data.author) return;
             setPosts(prev => {
                 if (!prev) return [data];
-                if (prev.some(p => String(p._id) === String(data._id))) return prev;
+                if (prev.some(p => isSameId(p._id, data._id))) return prev;
 
-                const author = data.author || {};
-                const currentUserId = String(user?._id || "");
-                const isOwner = String(author._id || author) === currentUserId;
-                const isFollower = Array.isArray(author.followers) && author.followers.some(id => String(id) === currentUserId);
+                const authorId = data.author?._id || data.author;
+                const currentUserId = safeId(user);
+                const isOwner = isSameId(authorId, currentUserId);
+                const isFollower = Array.isArray(data.author.followers) && data.author.followers.some(id => isSameId(id, currentUserId));
                 const isFounder = user?.role === 'Founder';
-                const isPrivate = !!(author.isPrivate || author.isFollowersOnly);
+                const isPrivate = !!(data.author.isPrivate || data.author.isFollowersOnly);
                 const allowed = !isPrivate || isOwner || isFollower || isFounder;
                 if (!allowed) return prev;
 
@@ -4412,7 +4439,18 @@ const App = () => {
                     });
                 }
             }
-            setUsers(res.data);
+            // Sync users list while preserving our local optimistic updates for ourselves
+            setUsers(prev => {
+                const incoming = res.data || [];
+                const currentUserId = safeId(user);
+                return incoming.map(u => {
+                    if (isSameId(u._id, currentUserId) && user) {
+                        // Merge server data with our potentially fresher local state (e.g. optimistic profilePic)
+                        return { ...u, ...user };
+                    }
+                    return u;
+                });
+            });
         } catch (e) { }
     };
 
