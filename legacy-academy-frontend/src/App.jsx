@@ -253,18 +253,26 @@ const resolveFullUser = (partial, database) => {
     if (!uid) return partial;
     
     const dbUser = (database || []).find(u => isSameId(u._id, uid));
-    if (!dbUser) return partial;
+    
+    // DEFENSIVE: If we have NO database info and NO username in partial, 
+    // we must not return a "naked" object that will corrupt the UI.
+    const hasIdentity = !!(partial?.username && partial.username !== 'Unknown' && partial.username !== 'Agent');
+    
+    if (!dbUser) {
+        if (hasIdentity) return partial;
+        return { ...partial, username: 'Agent' }; // Fallback
+    }
 
     // Merge: Database (Source of Truth) + Partial (Live Update)
-    // Always preserve identity fields if the live update is missing them
+    // CRITICAL: Never let an update "empty out" a field we already have.
     return {
         ...dbUser,
         ...partial,
-        username: partial?.username || dbUser?.username || 'Agent',
-        profilePic: partial?.profilePic || dbUser?.profilePic,
-        role: partial?.role || dbUser?.role,
-        followers: partial?.followers || dbUser?.followers || [],
-        following: partial?.following || dbUser?.following || []
+        username: (partial?.username && partial.username !== "") ? partial.username : dbUser.username,
+        profilePic: partial?.profilePic || dbUser.profilePic,
+        role: partial?.role || dbUser.role,
+        followers: partial?.followers || dbUser.followers || [],
+        following: partial?.following || dbUser.following || []
     };
 };
 
@@ -4017,78 +4025,70 @@ const App = () => {
         });
     };
 
-    /**
-     * UNIFIED STATE SYNC:
-     * The single source of truth for updating user intelligence across all states.
-     */
     const syncUserIntelligence = useCallback((updatedUser) => {
         const uid = safeId(updatedUser);
         if (!uid) return;
 
-        console.log(`📡 [SYNC] Reconciling intelligence for user ${uid}`);
+        console.log(`📡 [SYNC] Coordinating intelligence update for ${uid}`);
 
-        // 1. Resolve Full Intelligence (Source: usersRef + Payload)
-        const fullIntelligence = resolveFullUser(updatedUser, usersRef.current);
-
-        // 2. Update Global User State (ME)
-        if (user && isSameId(user._id, uid)) {
-            setUser(prev => {
-                const merged = { ...prev, ...fullIntelligence };
-                localStorage.setItem('user', JSON.stringify(merged));
-                return merged;
-            });
-            setImgKey(Date.now());
-        }
-
-        // 3. Update Intelligence Database (Users List)
+        // 1. Update Intelligence Database (Users List) FIRST
+        // This ensures subsequent state updates can resolve against the latest DB
         setUsers(prev => {
             const list = prev || [];
+            const fullIntel = resolveFullUser(updatedUser, list);
+            
             const exists = list.some(u => isSameId(u._id, uid));
-            if (!exists) {
-                return [...list, fullIntelligence];
+            const nextList = exists 
+                ? list.map(u => isSameId(u._id, uid) ? { ...u, ...fullIntel } : u)
+                : [...list, fullIntel];
+
+            // 2. Update Global User State (ME)
+            if (user && isSameId(user._id, uid)) {
+                setUser(prevMe => {
+                    const merged = { ...prevMe, ...fullIntel };
+                    localStorage.setItem('user', JSON.stringify(merged));
+                    return merged;
+                });
+                setImgKey(Date.now());
             }
-            return list.map(u => {
-                if (isSameId(u._id, uid)) {
-                    return { ...u, ...fullIntelligence, username: fullIntelligence.username || u.username };
+
+            // 3. Update active Profile View
+            setProfileUser(prevProfile => {
+                if (prevProfile && isSameId(prevProfile._id, uid)) {
+                    return { ...prevProfile, ...fullIntel };
                 }
-                return u;
+                return prevProfile;
             });
+
+            // 4. Update Posts
+            setPosts(prevPosts => (prevPosts || []).map(p => {
+                let nextPost = p;
+                const authorId = p.author?._id || p.author;
+                if (isSameId(authorId, uid)) {
+                    const currentAuthor = typeof p.author === 'object' ? p.author : {};
+                    const resolvedAuthor = resolveFullUser({ ...currentAuthor, ...fullIntel }, nextList);
+                    nextPost = { ...nextPost, author: resolvedAuthor, profilePic: fullIntel.profilePic || nextPost.profilePic };
+                }
+                if (p.comments?.some(c => isSameId(c.authorId, uid))) {
+                    nextPost = {
+                        ...nextPost,
+                        comments: p.comments.map(c => isSameId(c.authorId, uid) ? { ...c, authorProfilePic: fullIntel.profilePic || c.authorProfilePic, authorName: fullIntel.username || c.authorName } : c)
+                    };
+                }
+                return nextPost;
+            }));
+
+            // 5. Update Detail View
+            if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, uid)) {
+                setSelectedPost(prevDetail => {
+                    if (!prevDetail) return prevDetail;
+                    const resolvedAuthor = resolveFullUser({ ...prevDetail.author, ...fullIntel }, nextList);
+                    return { ...prevDetail, author: resolvedAuthor, profilePic: fullIntel.profilePic };
+                });
+            }
+
+            return nextList;
         });
-
-        // 4. Update active Profile View
-        setProfileUser(prev => {
-            if (prev && isSameId(prev._id, uid)) {
-                return { ...prev, ...fullIntelligence, username: fullIntelligence.username || prev.username };
-            }
-            return prev;
-        });
-
-        // 5. Update Posts (Authors and Comments)
-        setPosts(prev => (prev || []).map(p => {
-            let nextPost = p;
-            const authorId = p.author?._id || p.author;
-            if (isSameId(authorId, uid)) {
-                const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                const resolvedAuthor = resolveFullUser({ ...currentAuthor, ...fullIntelligence }, usersRef.current);
-                nextPost = { ...nextPost, author: resolvedAuthor, profilePic: fullIntelligence.profilePic || nextPost.profilePic };
-            }
-            if (p.comments?.some(c => isSameId(c.authorId, uid))) {
-                nextPost = {
-                    ...nextPost,
-                    comments: p.comments.map(c => isSameId(c.authorId, uid) ? { ...c, authorProfilePic: fullIntelligence.profilePic || c.authorProfilePic, authorName: fullIntelligence.username || c.authorName } : c)
-                };
-            }
-            return nextPost;
-        }));
-
-        // 6. Update Detail View
-        if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, uid)) {
-            setSelectedPost(prev => {
-                if (!prev) return prev;
-                const resolvedAuthor = resolveFullUser({ ...prev.author, ...fullIntelligence }, usersRef.current);
-                return { ...prev, author: resolvedAuthor, profilePic: fullIntelligence.profilePic };
-            });
-        }
     }, [user, selectedPost]);
 
     const handleUpdateUser = (updatedUser) => {
