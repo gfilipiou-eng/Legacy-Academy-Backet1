@@ -213,6 +213,27 @@ const formatDate = (dateString, t, lang) => {
     } catch (e) { return ''; }
 };
 
+/**
+ * Robustly converts any ID (string or Mongoose object) to a clean hex string.
+ * Prevents the "[object Object]" bug that causes state corruption.
+ */
+const safeId = (id) => {
+    if (!id) return null;
+    if (typeof id === 'string') return id;
+    if (id._id) return safeId(id._id);
+    if (typeof id.toString === 'function') {
+        const str = id.toString();
+        return str === '[object Object]' ? null : str;
+    }
+    return String(id);
+};
+
+const isSameId = (id1, id2) => {
+    const s1 = safeId(id1);
+    const s2 = safeId(id2);
+    return s1 && s2 && s1 === s2;
+};
+
 // --- COMPONENTS ---
 
 const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAudioSubmit, t, loading }) => {
@@ -1393,10 +1414,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     // 🔥 ROBUST AUTHOR RESOLUTION: Fix "Unknown Agent" by looking up user if author is just an ID
     const author = (post.author && typeof post.author === 'object' && post.author.username)
         ? post.author
-        : (allUsers?.find(u => String(u._id) === String(post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
+        : (allUsers?.find(u => isSameId(u._id, post.author?._id || post.author)) || { username: 'Unknown', _id: post.author });
 
     const isFounder = author?.role === 'Founder';
-    const isOwner = String(author?._id || author) === String(user?._id);
+    const isOwner = isSameId(author?._id || author, user?._id);
     const canDelete = isOwner || isCurrentUserFounder;
 
     const [translatedText, setTranslatedText] = useState(null);
@@ -2703,14 +2724,14 @@ const ProfileModal = ({
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
-        const profileUserId = String(profileUser?._id || profileUser);
-        const currentUserId = String(currentUser?._id || '');
-        const isMe = profileUserId === currentUserId;
+        const profileUserId = safeId(profileUser);
+        const currentUserId = safeId(currentUser);
+        const isMe = isSameId(profileUserId, currentUserId);
 
         // Prioritize userData (fetched specifically for this profile)
         // If it's 'me', currentUser is the most up-to-date source
         const base = isMe ? currentUser : (userData || profileUser);
-        const live = allUsers.find(u => String(u._id) === String(base?._id));
+        const live = allUsers.find(u => isSameId(u._id, base?._id));
 
         // CRITICAL SYNC: Merge live data (online status) with base data (bio, username)
         // If it's ME, prioritize currentUser object which is the most fresh
@@ -2944,7 +2965,7 @@ const ProfileModal = ({
                                     // Immediate local update
                                     const localUrl = URL.createObjectURL(file);
                                     setUserData(prev => ({ ...prev, profilePic: localUrl })); // Optimistic update
-                                    if (currentUser && displayUser && String(currentUser._id) === String(displayUser._id)) {
+                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
                                         onUpdateUser({ ...currentUser, profilePic: localUrl });
                                     }
 
@@ -3934,6 +3955,8 @@ const App = () => {
     };
 
     const handleUpdateUser = (updatedUser) => {
+        if (!updatedUser) return;
+
         // Force cache-breaker on profilePic for immediate refresh
         if (updatedUser.profilePic && !updatedUser.profilePic.includes('t=')) {
             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
@@ -3948,29 +3971,29 @@ const App = () => {
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setImgKey(Date.now());
-        // Sync with global users list so others/searches see it immediately too
-        setUsers(prev => prev.map(u => String(u._id) === String(updatedUser._id) ? updatedUser : u));
 
         // 2. Synchronize across all local state arrays for immediate UI update
-        const userId = String(updatedUser._id || updatedUser.id);
+        const userId = safeId(updatedUser);
 
-        // Update 'users' array
-        setUsers(prev => prev.map(u => String(u._id) === userId ? { ...u, ...updatedUser } : u));
+        // Update 'users' array safely
+        setUsers(prev => prev.map(u => isSameId(u._id, userId) ? { ...u, ...updatedUser } : u));
 
         // Update 'posts' array (authors, direct profilePic, and comments authors)
         setPosts(prev => prev.map(p => {
             let updatedPost = p;
-            if (String(p.author?._id || p.author) === userId) {
+            const authorId = p.author?._id || p.author;
+
+            if (isSameId(authorId, userId)) {
                 // Fix: Ensure author is an object so name/pic are never undefined
                 const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...updatedUser } : { ...updatedUser };
                 updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: updatedUser.profilePic };
             }
 
             // Deep sync comments
-            if (p.comments?.some(c => String(c.authorId) === userId)) {
+            if (p.comments?.some(c => isSameId(c.authorId, userId))) {
                 updatedPost = {
                     ...updatedPost,
-                    comments: p.comments.map(c => String(c.authorId) === userId ? { ...c, authorProfilePic: updatedUser.profilePic } : c)
+                    comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: updatedUser.profilePic, authorName: updatedUser.username || c.authorName } : c)
                 };
             }
             return updatedPost;
@@ -3979,8 +4002,9 @@ const App = () => {
         // stories will update automatically via useMemo since it depends on 'posts'
 
         // Update selectedPost if open
-        if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === userId) {
+        if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, userId)) {
             setSelectedPost(prev => {
+                if (!prev) return prev;
                 const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...updatedUser } : prev.author;
                 return { ...prev, author: updatedAuthor, profilePic: updatedUser.profilePic };
             });
@@ -4164,18 +4188,21 @@ const App = () => {
         };
 
         const onUserUpdated = (data) => {
+            if (!data) return;
             console.log("📡 [SOCKET] User updated real-time:", data._id);
 
-            setUsers(prev => prev.map(u => String(u._id) === String(data._id) ? { ...u, ...data } : u));
+            const userId = safeId(data);
+
+            setUsers(prev => prev.map(u => isSameId(u._id, userId) ? { ...u, ...data } : u));
 
             setProfileUser(prev => {
-                if (prev && String(prev._id) === String(data._id)) {
+                if (prev && isSameId(prev._id, userId)) {
                     return { ...prev, ...data };
                 }
                 return prev;
             });
 
-            if (user && String(user._id) === String(data._id)) {
+            if (user && isSameId(user._id, userId)) {
                 setUser(prev => {
                     const nextData = { ...data };
                     const timestamp = Date.now();
@@ -4197,24 +4224,25 @@ const App = () => {
             setPosts(prev => {
                 if (!prev) return prev;
                 return prev.map(p => {
-                    const userId = String(data._id);
                     let updatedPost = p;
-                    if (String(p.author?._id || p.author) === userId) {
+                    const authorId = p.author?._id || p.author;
+
+                    if (isSameId(authorId, userId)) {
                         // Fix: Ensure author is an object
                         const updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...data } : { ...data };
                         updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: data.profilePic || updatedPost.profilePic };
                     }
-                    if (p.comments?.some(c => String(c.authorId) === userId)) {
+                    if (p.comments?.some(c => isSameId(c.authorId, userId))) {
                         updatedPost = {
                             ...updatedPost,
-                            comments: p.comments.map(c => String(c.authorId) === userId ? { ...c, authorProfilePic: data.profilePic || c.authorProfilePic, authorName: data.username || c.authorName } : c)
+                            comments: p.comments.map(c => isSameId(c.authorId, userId) ? { ...c, authorProfilePic: data.profilePic || c.authorProfilePic, authorName: data.username || c.authorName } : c)
                         };
                     }
                     return updatedPost;
                 });
             });
 
-            if (selectedPost && String(selectedPost.author?._id || selectedPost.author) === String(data._id)) {
+            if (selectedPost && isSameId(selectedPost.author?._id || selectedPost.author, userId)) {
                 setSelectedPost(prev => {
                     if (!prev) return prev;
                     const updatedAuthor = typeof prev.author === 'object' ? { ...prev.author, ...data } : prev.author;
@@ -4329,13 +4357,13 @@ const App = () => {
                 const res = await axios.get(`/users/find/${specificId}?t=${Date.now()}`);
                 if (res.data) {
                     setUsers(prev => {
-                        const exists = prev.find(u => String(u._id) === String(specificId));
-                        if (exists) return prev.map(u => String(u._id) === String(specificId) ? res.data : u);
+                        const exists = prev.find(u => isSameId(u._id, specificId));
+                        if (exists) return prev.map(u => isSameId(u._id, specificId) ? res.data : u);
                         return [...prev, res.data];
                     });
                     // Also update profileUser if the profile modal is open for this user
                     setProfileUser(prev => {
-                        if (prev && String(prev._id) === String(specificId)) {
+                        if (prev && isSameId(prev._id, specificId)) {
                             return { ...prev, ...res.data };
                         }
                         return prev;
@@ -4346,7 +4374,7 @@ const App = () => {
             const res = await axios.get(`/users?t=${Date.now()}`);
             // Sync self (fix for "Follow" button state not updating without reload)
             if (user) {
-                const me = res.data.find(u => String(u._id) === String(user._id));
+                const me = res.data.find(u => isSameId(u._id, user._id));
                 if (me) {
                     setUser(prev => {
                         if (!prev) return prev;
