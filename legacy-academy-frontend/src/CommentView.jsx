@@ -74,9 +74,18 @@ const formatDate = (dateString, t, lang) => {
 
 const ProfileAvatarBase = ({ user }) => {
   if (!user) return <div className="w-full h-full bg-gray-800" />;
-  const url = user.profilePic;
+  const url = user.profilePic || user.authorProfilePic;
+  const name = user.username || user.authorName || 'Agent';
+  const timestamp = Date.now();
+  
   const rawIsVideo = url && (url.match(/\.(mp4|mov|webm)($|\?)/i) || url.includes('/video/upload/'));
-  const mediaUrl = url ? resolveMediaUrl(url, 150, true) : null;
+  let mediaUrl = url ? resolveMediaUrl(url, 150, true) : null;
+  
+  if (mediaUrl && !mediaUrl.startsWith('blob:') && !mediaUrl.includes('t=')) {
+    const sep = mediaUrl.includes('?') ? '&' : '?';
+    mediaUrl += `${sep}t=${timestamp}`;
+  }
+
   if (rawIsVideo && mediaUrl) {
     return (
       <video
@@ -92,9 +101,12 @@ const ProfileAvatarBase = ({ user }) => {
   }
   return (
     <img
-      src={mediaUrl || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`}
+      src={mediaUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`}
       className="w-full h-full object-cover"
-      alt={user.username || ''}
+      alt={name}
+      onError={(e) => {
+        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=333&color=fff`;
+      }}
     />
   );
 };

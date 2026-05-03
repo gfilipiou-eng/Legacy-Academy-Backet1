@@ -4210,15 +4210,18 @@ const App = () => {
                 const isOwner = isSameId(authorId, currentUserId);
 
                 // 2. DUPLICATE PREVENTION: If we are the owner, check for a matching optimistic post
-                // that hasn't been reconciled yet. handleCreatePost handles the replacement.
                 if (isOwner) {
                     const hasPendingOptimistic = prev.some(p => 
                         p.isOptimistic && 
                         (p.desc || "") === (data.desc || "") &&
-                        (p.image || "").includes('blob:') // Ensure it's a local upload
+                        (
+                            (p.image || "").includes('blob:') || 
+                            (p.videoUrl && p.videoUrl === data.videoUrl) ||
+                            (p.isUploading)
+                        )
                     );
                     if (hasPendingOptimistic) {
-                        console.log("📡 [SOCKET] Ignoring own post (handled by handleCreatePost)");
+                        console.log("📡 [SOCKET] Ignoring own post (already in feed as optimistic/replacing)");
                         return prev;
                     }
                 }
@@ -4242,6 +4245,10 @@ const App = () => {
             // Add cache-breaker to incoming data if it has pictures
             const timestamp = Date.now();
             const syncData = { ...data };
+            
+            // DEFENSIVE: Never accept a payload that might corrupt the username if we have it
+            if (!syncData.username && data.username === "") delete syncData.username; 
+
             if (syncData.profilePic && !syncData.profilePic.startsWith('blob:') && !syncData.profilePic.includes('t=')) {
                 const sep = syncData.profilePic.includes('?') ? '&' : '?';
                 syncData.profilePic += `${sep}t=${timestamp}`;
@@ -4251,7 +4258,16 @@ const App = () => {
                 syncData.coverPic += `${sep}t=${timestamp}`;
             }
 
-            setUsers(prev => (prev || []).map(u => isSameId(u._id, userId) ? { ...u, ...syncData } : u));
+            console.log(`📡 [SOCKET] Syncing user ${userId} (${syncData.username || 'no-name'})`);
+
+            setUsers(prev => (prev || []).map(u => {
+                if (isSameId(u._id, userId)) {
+                    // Only merge if the update is actually for this user
+                    // Ensure we don't lose the username if syncData doesn't have it
+                    return { ...u, ...syncData, username: syncData.username || u.username };
+                }
+                return u;
+            }));
 
             setProfileUser(prev => {
                 if (prev && isSameId(prev._id, userId)) {
@@ -4289,10 +4305,11 @@ const App = () => {
                         // Fix: Ensure author is an object and don't lose data if p.author was just a string
                         let updatedAuthor = typeof p.author === 'object' ? { ...p.author, ...syncData } : { ...syncData };
                         
-                        // FIX: Use usersRef.current instead of stale 'users' closure
+                        // Ensure username is preserved
                         if (!updatedAuthor.username) {
                             const recovered = usersRef.current?.find(u => isSameId(u._id, userId));
-                            if (recovered) updatedAuthor = { ...recovered, ...updatedAuthor };
+                            if (recovered?.username) updatedAuthor.username = recovered.username;
+                            if (!updatedAuthor.username && p.author?.username) updatedAuthor.username = p.author.username;
                         }
 
                         updatedPost = { ...updatedPost, author: updatedAuthor, profilePic: syncData.profilePic || updatedPost.profilePic || updatedAuthor.profilePic };
