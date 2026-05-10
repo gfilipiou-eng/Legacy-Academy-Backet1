@@ -2954,15 +2954,7 @@ const ProfileModal = ({
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
                                     
-                                    // 🔥 SAFE OPTIMISTIC UPDATE: Only update local display, NO onUpdateUser!
-                                    const localUrl = URL.createObjectURL(file);
                                     setProfileUploading(true);
-                                    
-                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                        // Update local state ONLY for the modal
-                                        setUserData(prev => ({ ...prev, profilePic: localUrl }));
-                                        setImgKey(prev => prev + 1);
-                                    }
 
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
@@ -3037,13 +3029,7 @@ const ProfileModal = ({
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
                                     
-                                    // 🔥 SAFE OPTIMISTIC UPDATE: Only update local display, NO onUpdateUser!
-                                    const localUrl = URL.createObjectURL(file);
                                     setCoverUploading(true);
-                                    
-                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                        setUserData(prev => ({ ...prev, coverPic: localUrl }));
-                                    }
 
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
