@@ -220,23 +220,15 @@ const formatDate = (dateString, t, lang) => {
  */
 const safeId = (id) => {
     if (id === null || id === undefined) return null;
-    if (typeof id === 'string') return id.trim();
+    if (typeof id === 'string') return id;
     if (typeof id === 'number') return String(id);
-
     if (typeof id === 'object') {
-        const actualId = id._id || id.userId || id.id;
-        if (actualId && actualId !== id) return safeId(actualId);
-
-        try {
-            if (typeof id.toString === 'function') {
-                const str = id.toString();
-                if (str && str !== '[object Object]' && !str.startsWith('[object ')) {
-                    return str;
-                }
-            }
-        } catch (e) { }
+        if (id._id) return safeId(id._id);
+        if (id.id) return safeId(id.id);
+        if (id.userId) return safeId(id.userId);
+        if (id.toString && id.toString() !== '[object Object]') return id.toString();
     }
-    return null;
+    return String(id);
 };
 
 const isSameId = (id1, id2) => {
@@ -252,33 +244,25 @@ const isSameId = (id1, id2) => {
  */
 const resolveFullUser = (partial, database) => {
     const uid = safeId(partial);
-    if (!uid) {
-        // Don't return "Agent" - just return the partial or null so it doesn't pollute state
-        return typeof partial === 'object' && partial !== null ? partial : null;
-    }
+    if (!uid) return null;
 
     const dbUser = (database || []).find(u => isSameId(u._id, uid));
-    const base = dbUser || (typeof partial === 'object' ? partial : { _id: uid });
+    const base = dbUser || partial;
+    
+    if (!base) return null;
 
-    const cleanPartial = {};
+    const result = { ...base };
+    
     if (typeof partial === 'object' && partial !== null) {
         Object.keys(partial).forEach(key => {
             const val = partial[key];
-            if (val !== null && val !== undefined && val !== "") {
-                cleanPartial[key] = val;
+            if (val !== null && val !== undefined) {
+                result[key] = val;
             }
         });
     }
-
-    const result = {
-        ...base,
-        ...cleanPartial,
-        _id: uid
-    };
-
-    if (!result.username) result.username = base.username || partial?.username || 'Agent';
-    if (!result.profilePic) result.profilePic = base.profilePic || partial?.profilePic;
-
+    
+    result._id = uid;
     return result;
 };
 
@@ -4054,94 +4038,13 @@ const App = () => {
         });
     };
 
-    const syncUserIntelligence = useCallback((updatedUser) => {
-        const uid = safeId(updatedUser);
-        if (!uid) return;
-
-        console.log(`📡 [SYNC] Coordinating intelligence update for ${uid}`);
-
-        // 1. Update Intelligence Database (Users List)
-        setUsers(prev => {
-            const list = prev || [];
-            const fullIntel = resolveFullUser(updatedUser, list);
-            if (!fullIntel) return list; // Skip if invalid
-            
-            const exists = list.some(u => isSameId(u._id, uid));
-            return exists 
-                ? list.map(u => isSameId(u._id, uid) ? { ...u, ...fullIntel } : u)
-                : [...list, fullIntel];
-        });
-
-        // 2. Update Global User State (ME)
-        if (user && isSameId(user._id, uid)) {
-            setUser(prev => {
-                const fullIntel = resolveFullUser(updatedUser, [prev]);
-                if (!fullIntel) return prev; // Skip if invalid
-                
-                const merged = { ...prev, ...fullIntel };
-                localStorage.setItem('user', JSON.stringify(merged));
-                return merged;
-            });
-            setImgKey(Date.now());
-        }
-
-        // 3. Update active Profile View
-        setProfileUser(prevProfile => {
-            if (prevProfile && isSameId(prevProfile._id, uid)) {
-                const fullIntel = resolveFullUser(updatedUser, [prevProfile]);
-                return fullIntel || prevProfile; // Fallback to old data if invalid
-            }
-            return prevProfile;
-        });
-
-        // 4. Update Posts
-        setPosts(prevPosts => (prevPosts || []).map(p => {
-            const authorId = p.author?._id || p.author;
-            if (isSameId(authorId, uid)) {
-                const currentAuthor = typeof p.author === 'object' ? p.author : {};
-                const fullIntel = resolveFullUser(updatedUser, [currentAuthor]);
-                if (!fullIntel) return p; // Skip if invalid
-                return { ...p, author: fullIntel, profilePic: fullIntel.profilePic || p.profilePic };
-            }
-            if (p.comments?.some(c => isSameId(c.authorId, uid))) {
-                return {
-                    ...p,
-                    comments: p.comments.map(c => {
-                        if (isSameId(c.authorId, uid)) {
-                            const intel = resolveFullUser(updatedUser, [{ _id: uid, username: c.authorName, profilePic: c.authorProfilePic }]);
-                            if (!intel) return c; // Skip if invalid
-                            return { ...c, authorProfilePic: intel.profilePic || c.authorProfilePic, authorName: intel.username || c.authorName };
-                        }
-                        return c;
-                    })
-                };
-            }
-            return p;
-        }));
-
-        // 5. Update Detail View
-        setSelectedPost(prevDetail => {
-            if (prevDetail && isSameId(prevDetail.author?._id || prevDetail.author, uid)) {
-                const currentAuthor = typeof prevDetail.author === 'object' ? prevDetail.author : {};
-                const fullIntel = resolveFullUser(updatedUser, [currentAuthor]);
-                if (!fullIntel) return prevDetail; // Skip if invalid
-                return { ...prevDetail, author: fullIntel, profilePic: fullIntel.profilePic };
-            }
-            return prevDetail;
-        });
-    }, [user]);
-
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
         
-        // 🔥 SAFETY: Only proceed if we have a valid user ID
         const uid = safeId(updatedUser);
-        if (!uid) {
-            console.warn("⚠️ [SAFETY] Skipping user update, no valid ID found:", updatedUser);
-            return;
-        }
+        if (!uid) return;
 
-        // Force cache-breaker on profilePic for immediate refresh
+        // Cache-break
         if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:') && !updatedUser.profilePic.includes('t=')) {
             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
             updatedUser.profilePic += `${sep}t=${Date.now()}`;
@@ -4151,14 +4054,51 @@ const App = () => {
             updatedUser.coverPic += `${sep}t=${Date.now()}`;
         }
 
-        // Apply unified sync
-        syncUserIntelligence(updatedUser);
+        // Update users list
+        setUsers(prev => {
+            const list = prev || [];
+            const exists = list.some(u => safeId(u) === uid);
+            return exists 
+                ? list.map(u => safeId(u) === uid ? { ...u, ...updatedUser } : u)
+                : [...list, updatedUser];
+        });
 
-        // Background reconciliation
-        setTimeout(() => {
-            fetchUsers();
-            fetchPosts();
-        }, 1500);
+        // Update current user
+        if (user && safeId(user) === uid) {
+            const merged = { ...user, ...updatedUser };
+            setUser(merged);
+            localStorage.setItem('user', JSON.stringify(merged));
+            setImgKey(Date.now());
+        }
+
+        // Update profile view
+        setProfileUser(prev => {
+            if (prev && safeId(prev) === uid) {
+                return { ...prev, ...updatedUser };
+            }
+            return prev;
+        });
+
+        // Update posts
+        setPosts(prevPosts => (prevPosts || []).map(p => {
+            const authorId = safeId(p.author);
+            if (authorId === uid) {
+                const currentAuthor = typeof p.author === 'object' ? p.author : { _id: uid };
+                return { ...p, author: { ...currentAuthor, ...updatedUser }, profilePic: updatedUser.profilePic || p.profilePic };
+            }
+            if (p.comments?.some(c => safeId(c.authorId) === uid)) {
+                return {
+                    ...p,
+                    comments: p.comments.map(c => {
+                        if (safeId(c.authorId) === uid) {
+                            return { ...c, authorProfilePic: updatedUser.profilePic || c.authorProfilePic, authorName: updatedUser.username || c.authorName };
+                        }
+                        return c;
+                    })
+                };
+            }
+            return p;
+        }));
     };
 
 
