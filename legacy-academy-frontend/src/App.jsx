@@ -5227,13 +5227,21 @@ const App = () => {
     };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
+        const savedLang = localStorage.getItem('language');
+        
         if (user?.settings?.language) {
             if (i18n.language !== user.settings.language) {
                 console.log(`Setting language to user preference: ${user.settings.language}`);
                 i18n.changeLanguage(user.settings.language);
             }
+        } else if (savedLang) {
+            // Use saved language from localStorage if user setting is missing
+            if (i18n.language !== savedLang) {
+                console.log(`Setting language to saved preference: ${savedLang}`);
+                i18n.changeLanguage(savedLang);
+            }
         } else {
-            // Detect browser language if no user setting
+            // Detect browser language if no user setting or saved preference
             const browserLang = navigator.language.split('-')[0];
             const supported = ['en', 'el', 'de', 'fr', 'ru', 'es', 'tr'];
             if (supported.includes(browserLang) && i18n.language !== browserLang) {

@@ -720,7 +720,8 @@ span:hover {
 }
 
 /* Ensure drawer is truly partial width on mobile */
-@media (max-width: 640px) {
+/* Force mobile UI on ALL screen sizes */
+@media (min-width: 640px) {
   .drawer-panel {
     width: 65% !important;
     max-width: 280px !important;
