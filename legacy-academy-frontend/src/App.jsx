@@ -3400,9 +3400,26 @@ const ProfileModal = ({
 
                                     <div className="space-y-6 pb-20">
                                         {loadingPosts ? (
-                                            <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                                <div className="w-8 h-8 border-2 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin" />
-                                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest animate-pulse">{t('SCANNING')}</div>
+                                            <div className="flex flex-col items-center justify-center py-24 gap-6">
+                                                {/* Animated gold rings */}
+                                                <div className="relative w-20 h-20">
+                                                    <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)]/20" />
+                                                    <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)] border-t-transparent animate-spin" />
+                                                    <div className="absolute inset-2 rounded-full border-2 border-[var(--gold-primary)]/30 border-t-transparent animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+                                                    <div className="absolute inset-5 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-transparent" />
+                                                    <Icons.Folder className="absolute inset-0 m-auto w-6 h-6 text-[var(--gold-primary)] animate-pulse" />
+                                                </div>
+                                                {/* Loading text */}
+                                                <div className="text-center space-y-2">
+                                                    <h3 className="text-[var(--gold-primary)] font-black uppercase tracking-[0.4em] text-[10px] animate-pulse">SCANNING FILES</h3>
+                                                    <p className="text-gray-500 text-[9px] uppercase tracking-widest">RETRIEVING INTEL</p>
+                                                </div>
+                                                {/* Progress dots */}
+                                                <div className="flex gap-2">
+                                                    {[0, 1, 2].map(i => (
+                                                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)] animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                                                    ))}
+                                                </div>
                                             </div>
                                         ) : userPosts.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -3968,6 +3985,7 @@ const App = () => {
     });
     const [lastDeletedPostId, setLastDeletedPostId] = useState(null);
     const [users, setUsers] = useState([]);
+    const [isLoadingFeed, setIsLoadingFeed] = useState(false);
     const [activeTab, setActiveTab] = useState('home');
     const [searchQuery, setSearchQuery] = useState('');
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -4232,6 +4250,13 @@ const App = () => {
         }
     }, [user]);
 
+    // 🔥 FETCH POSTS WHEN ACTIVE TAB CHANGES
+    useEffect(() => {
+        if (user) {
+            fetchPosts();
+        }
+    }, [user, activeTab]);
+
     // 🔥 GLOBAL REAL-TIME LISTENERS
     useEffect(() => {
         if (!user) return;
@@ -4492,11 +4517,15 @@ const App = () => {
     }, [users, reconcileIntelligence]);
     const fetchPosts = async () => {
         if (selectedPostRef.current) return;
+        setIsLoadingFeed(true);
         try {
             const res = await axios.get(`/posts?limit=30`);
             setPosts(res.data);
             localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
         } catch (e) { }
+        finally {
+            setIsLoadingFeed(false);
+        }
     };
     const fetchUsers = async (specificId = null) => {
         try {
@@ -5503,7 +5532,29 @@ const App = () => {
                                             </div>
                                         )}
                                         <div className="space-y-6">
-                                            {activeTab === 'search' && searchQuery && (
+                                            {isLoadingFeed ? (
+                                                <div className="flex flex-col items-center justify-center py-24 gap-6">
+                                                    {/* Animated gold rings */}
+                                                    <div className="relative w-24 h-24">
+                                                        <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)]/20" />
+                                                        <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)] border-t-transparent animate-spin" />
+                                                        <div className="absolute inset-3 rounded-full border-2 border-[var(--gold-primary)]/30 border-t-transparent animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+                                                        <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-transparent" />
+                                                        <Icons.Zap className="absolute inset-0 m-auto w-8 h-8 text-[var(--gold-primary)] animate-pulse" />
+                                                    </div>
+                                                    {/* Loading text */}
+                                                    <div className="text-center space-y-2">
+                                                        <h3 className="text-[var(--gold-primary)] font-black uppercase tracking-[0.4em] text-xs animate-pulse">DECRYPTING FEED</h3>
+                                                        <p className="text-gray-500 text-[10px] uppercase tracking-widest">GATHERING INTELLIGENCE</p>
+                                                    </div>
+                                                    {/* Progress dots */}
+                                                    <div className="flex gap-2">
+                                                        {[0, 1, 2].map(i => (
+                                                            <div key={i} className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer  ">
