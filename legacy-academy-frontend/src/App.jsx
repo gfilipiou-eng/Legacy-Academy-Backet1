@@ -3031,23 +3031,31 @@ const ProfileModal = ({
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 space-y-8 animate-fade-in">
-                            <div onClick={() => !profileUploading && fileRef.current.click()} className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] cursor-pointer relative group shadow-xl shadow-black/50">
+                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] relative shadow-xl shadow-black/50">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                     </div>
                                 ) : (
-                                    <>
-                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
-                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8 text-white" /></div>
-                                    </>
+                                    <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                 )}
                             </div>
                             <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                    
+                                    // Optimistic update για άμεση εμφάνιση!
+                                    const localUrl = URL.createObjectURL(file);
                                     setProfileUploading(true);
+                                    
+                                    // Ενημέρωση τοπικά πρώτα
+                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                        const tempUser = { ...currentUser, profilePic: localUrl };
+                                        setUserData(prev => ({ ...prev, profilePic: localUrl }));
+                                        onUpdateUser(tempUser);
+                                    }
+
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/profile-pic', fd);
@@ -3068,7 +3076,12 @@ const ProfileModal = ({
                             <div className="flex gap-2 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
                                     className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
-                                    {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Camera className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
+                                    {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : (
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110">
+                                            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                                            <circle cx="12" cy="13" r="3"></circle>
+                                        </svg>
+                                    )}
                                     {profileUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE')}
                                 </button>
                             </div>
@@ -3076,7 +3089,7 @@ const ProfileModal = ({
                             <div className="flex gap-2 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
                                     className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
-                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
+                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
                                 {displayUser?.coverPic && (
@@ -3090,7 +3103,10 @@ const ProfileModal = ({
                                                 localStorage.setItem('user', JSON.stringify(updatedUser));
                                                 if (onUpdateUser) onUpdateUser(updatedUser);
                                                 if (addToast) addToast('Background removed', 'success');
-                                            } catch (err) { alert("Failed to remove background."); }
+                                            } catch (err) { 
+                                                console.error(err);
+                                                alert("Failed to remove background."); 
+                                            }
                                             finally { setCoverUploading(false); }
                                         }
                                     }} disabled={coverUploading}
