@@ -248,10 +248,14 @@ const isSameId = (id1, id2) => {
 /**
  * INTELLIGENCE RESOLVER:
  * Ensures we always have a full user object by merging partial data with the local database.
+ * SAFE: Will NEVER return a user with _id: 'unknown' or overwrite others.
  */
 const resolveFullUser = (partial, database) => {
     const uid = safeId(partial);
-    if (!uid) return { username: 'Agent', _id: 'unknown' };
+    if (!uid) {
+        // Don't return "Agent" - just return the partial or null so it doesn't pollute state
+        return typeof partial === 'object' && partial !== null ? partial : null;
+    }
 
     const dbUser = (database || []).find(u => isSameId(u._id, uid));
     const base = dbUser || (typeof partial === 'object' ? partial : { _id: uid });
@@ -272,9 +276,7 @@ const resolveFullUser = (partial, database) => {
         _id: uid
     };
 
-    if (!result.username || result.username === 'Agent' || result.username === 'Unknown') {
-        result.username = base.username || partial?.username || 'Agent';
-    }
+    if (!result.username) result.username = base.username || partial?.username || 'Agent';
     if (!result.profilePic) result.profilePic = base.profilePic || partial?.profilePic;
 
     return result;
@@ -4039,6 +4041,8 @@ const App = () => {
         setUsers(prev => {
             const list = prev || [];
             const fullIntel = resolveFullUser(updatedUser, list);
+            if (!fullIntel) return list; // Skip if invalid
+            
             const exists = list.some(u => isSameId(u._id, uid));
             return exists 
                 ? list.map(u => isSameId(u._id, uid) ? { ...u, ...fullIntel } : u)
@@ -4049,6 +4053,8 @@ const App = () => {
         if (user && isSameId(user._id, uid)) {
             setUser(prev => {
                 const fullIntel = resolveFullUser(updatedUser, [prev]);
+                if (!fullIntel) return prev; // Skip if invalid
+                
                 const merged = { ...prev, ...fullIntel };
                 localStorage.setItem('user', JSON.stringify(merged));
                 return merged;
@@ -4059,7 +4065,8 @@ const App = () => {
         // 3. Update active Profile View
         setProfileUser(prevProfile => {
             if (prevProfile && isSameId(prevProfile._id, uid)) {
-                return resolveFullUser(updatedUser, [prevProfile]);
+                const fullIntel = resolveFullUser(updatedUser, [prevProfile]);
+                return fullIntel || prevProfile; // Fallback to old data if invalid
             }
             return prevProfile;
         });
@@ -4070,6 +4077,7 @@ const App = () => {
             if (isSameId(authorId, uid)) {
                 const currentAuthor = typeof p.author === 'object' ? p.author : {};
                 const fullIntel = resolveFullUser(updatedUser, [currentAuthor]);
+                if (!fullIntel) return p; // Skip if invalid
                 return { ...p, author: fullIntel, profilePic: fullIntel.profilePic || p.profilePic };
             }
             if (p.comments?.some(c => isSameId(c.authorId, uid))) {
@@ -4078,6 +4086,7 @@ const App = () => {
                     comments: p.comments.map(c => {
                         if (isSameId(c.authorId, uid)) {
                             const intel = resolveFullUser(updatedUser, [{ _id: uid, username: c.authorName, profilePic: c.authorProfilePic }]);
+                            if (!intel) return c; // Skip if invalid
                             return { ...c, authorProfilePic: intel.profilePic || c.authorProfilePic, authorName: intel.username || c.authorName };
                         }
                         return c;
@@ -4092,6 +4101,7 @@ const App = () => {
             if (prevDetail && isSameId(prevDetail.author?._id || prevDetail.author, uid)) {
                 const currentAuthor = typeof prevDetail.author === 'object' ? prevDetail.author : {};
                 const fullIntel = resolveFullUser(updatedUser, [currentAuthor]);
+                if (!fullIntel) return prevDetail; // Skip if invalid
                 return { ...prevDetail, author: fullIntel, profilePic: fullIntel.profilePic };
             }
             return prevDetail;
@@ -4100,6 +4110,13 @@ const App = () => {
 
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
+        
+        // 🔥 SAFETY: Only proceed if we have a valid user ID
+        const uid = safeId(updatedUser);
+        if (!uid) {
+            console.warn("⚠️ [SAFETY] Skipping user update, no valid ID found:", updatedUser);
+            return;
+        }
 
         // Force cache-breaker on profilePic for immediate refresh
         if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:') && !updatedUser.profilePic.includes('t=')) {
@@ -4125,19 +4142,43 @@ const App = () => {
     useEffect(() => {
         const saved = localStorage.getItem('user');
         const token = localStorage.getItem('token');
-        if (saved && !token) {
-            localStorage.removeItem('user');
-            setUser(null);
-        } else if (saved) {
-            const userData = JSON.parse(saved);
-            setUser(userData);
+        
+        // 🔥 SAFETY: Validate user data
+        let userData = null;
+        let isValidUser = false;
+        
+        if (saved) {
+            try {
+                userData = JSON.parse(saved);
+                // Validate that user data is good
+                const parsedUserId = safeId(userData);
+                if (!parsedUserId || parsedUserId === 'unknown' || parsedUserId === '[object Object]') {
+                    // Corrupted user data in localStorage - CLEAR IT!
+                    console.warn("⚠️ [SAFETY] Corrupted user data detected in localStorage, clearing...");
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('token');
+                    userData = null;
+                }
+            } catch (e) {
+                console.warn("⚠️ [SAFETY] Could not parse user from localStorage, clearing...");
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                userData = null;
+            }
         }
 
-        const userData = saved ? JSON.parse(saved) : null;
-        const savedTheme = userData?.settings?.theme || localStorage.getItem('themeColor');
+        if (userData && token) {
+            setUser(userData);
+        } else if (saved && !token) {
+            localStorage.removeItem('user');
+            setUser(null);
+        }
+
+        const userSettings = userData;
+        const savedTheme = userSettings?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
         applyDisplayMode('dark');
-        const savedZoom = userData?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
+        const savedZoom = userSettings?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
         applyZoom(savedZoom);
 
         // SYNC USER DATA & THEME LIVE ACROSS TABS
