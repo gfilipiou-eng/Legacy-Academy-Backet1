@@ -3317,26 +3317,9 @@ const ProfileModal = ({
 
                                     <div className="space-y-6 pb-20">
                                         {loadingPosts ? (
-                                            <div className="flex flex-col items-center justify-center py-24 gap-6">
-                                                {/* Animated gold rings */}
-                                                <div className="relative w-20 h-20">
-                                                    <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)]/20" />
-                                                    <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)] border-t-transparent animate-spin" />
-                                                    <div className="absolute inset-2 rounded-full border-2 border-[var(--gold-primary)]/30 border-t-transparent animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-                                                    <div className="absolute inset-5 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-transparent" />
-                                                    <Icons.Folder className="absolute inset-0 m-auto w-6 h-6 text-[var(--gold-primary)] animate-pulse" />
-                                                </div>
-                                                {/* Loading text */}
-                                                <div className="text-center space-y-2">
-                                                    <h3 className="text-[var(--gold-primary)] font-black uppercase tracking-[0.4em] text-[10px] animate-pulse">SCANNING FILES</h3>
-                                                    <p className="text-gray-500 text-[9px] uppercase tracking-widest">RETRIEVING INTEL</p>
-                                                </div>
-                                                {/* Progress dots */}
-                                                <div className="flex gap-2">
-                                                    {[0, 1, 2].map(i => (
-                                                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)] animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
-                                                    ))}
-                                                </div>
+                                            <div className="flex flex-col items-center justify-center py-24 gap-4">
+                                                <div className="w-10 h-10 border-3 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
+                                                <div className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] text-[10px]">{t('DECRYPTING_FEED')}</div>
                                             </div>
                                         ) : userPosts.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
