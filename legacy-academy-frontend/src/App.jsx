@@ -3895,11 +3895,7 @@ const App = () => {
         const key = id.replace('l-', '').replace('r-', '').replace('f-', '');
         setFormData(prev => ({ ...prev, [key]: value }));
     };
-    const [posts, setPosts] = useState(() => {
-        // FAST HYDRATION: Return cached posts instantly while fetching new ones
-        const cached = typeof localStorage !== 'undefined' ? localStorage.getItem('cached_posts') : null;
-        try { return cached ? JSON.parse(cached) : []; } catch (e) { return []; }
-    });
+    const [posts, setPosts] = useState([]);
     const [lastDeletedPostId, setLastDeletedPostId] = useState(null);
     const [users, setUsers] = useState([]);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
@@ -4443,6 +4439,10 @@ const App = () => {
             setIsLoadingFeed(false);
         }
     };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
     const fetchUsers = async (specificId = null) => {
         try {
             if (specificId) {
