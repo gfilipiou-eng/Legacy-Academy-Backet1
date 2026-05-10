@@ -5445,26 +5445,9 @@ const App = () => {
                                         )}
                                         <div className="space-y-6">
                                             {isLoadingFeed ? (
-                                                <div className="flex flex-col items-center justify-center py-24 gap-6">
-                                                    {/* Animated gold rings */}
-                                                    <div className="relative w-24 h-24">
-                                                        <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)]/20" />
-                                                        <div className="absolute inset-0 rounded-full border-2 border-[var(--gold-primary)] border-t-transparent animate-spin" />
-                                                        <div className="absolute inset-3 rounded-full border-2 border-[var(--gold-primary)]/30 border-t-transparent animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-                                                        <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-transparent" />
-                                                        <Icons.Zap className="absolute inset-0 m-auto w-8 h-8 text-[var(--gold-primary)] animate-pulse" />
-                                                    </div>
-                                                    {/* Loading text */}
-                                                    <div className="text-center space-y-2">
-                                                        <h3 className="text-[var(--gold-primary)] font-black uppercase tracking-[0.4em] text-xs animate-pulse">{t('DECRYPTING_FEED')}</h3>
-                                                        <p className="text-gray-500 text-[10px] uppercase tracking-widest">{t('GATHERING_INTELLIGENCE') || 'GATHERING INTELLIGENCE'}</p>
-                                                    </div>
-                                                    {/* Progress dots */}
-                                                    <div className="flex gap-2">
-                                                        {[0, 1, 2].map(i => (
-                                                            <div key={i} className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
-                                                        ))}
-                                                    </div>
+                                                <div className="flex flex-col items-center justify-center py-24 gap-4">
+                                                    <div className="w-10 h-10 border-3 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
+                                                    <div className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] text-xs">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             ) : activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
