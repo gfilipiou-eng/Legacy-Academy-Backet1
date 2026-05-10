@@ -3084,6 +3084,13 @@ const ProfileModal = ({
                                     <button onClick={async (e) => {
                                         e.preventDefault();
                                         setCoverUploading(true);
+                                        
+                                        if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                            const tempUser = { ...currentUser, coverPic: null };
+                                            setUserData(prev => ({ ...prev, coverPic: null }));
+                                            onUpdateUser(tempUser);
+                                        }
+                                        
                                         try {
                                             const res = await axios.delete('/users/cover-pic');
                                             const updatedUser = res.data;
