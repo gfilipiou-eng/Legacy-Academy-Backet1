@@ -5542,9 +5542,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-32 right-20 sm:bottom-28 sm:right-32 z-[950] w-14 h-14 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
+                            className="fixed bottom-32 right-20 sm:bottom-28 sm:right-32 z-[950] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
                         >
-                            <Icons.ArrowUp className="w-7 h-7 sm:w-5 sm:h-5" />
+                            <Icons.ArrowUp className="w-7 h-7 sm:w-7 sm:h-7" />
                         </button>
                     )}
 
@@ -5554,9 +5554,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-32 right-4 sm:bottom-28 sm:right-10 z-[1000] w-14 h-14 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
+                            className="fixed bottom-32 right-4 sm:bottom-28 sm:right-10 z-[1000] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
                         >
-                            <Icons.Compose className="w-7 h-7 sm:w-5 sm:h-5" />
+                            <Icons.Compose className="w-7 h-7 sm:w-7 sm:h-7" />
                         </button>
                     )}
 
