@@ -5657,7 +5657,7 @@ const App = () => {
                                         onClick={() => setIsCreateOpen(true)}
                                         className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300"
                                     >
-                                        <div className="w-11 h-11 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:scale-110 transition-all duration-300">
+                                        <div className="w-11 h-11 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 hover:scale-110 transition-all duration-300">
                                             <Icons.Plus className="w-6 h-6 text-black font-black" />
                                         </div>
                                     </button>
