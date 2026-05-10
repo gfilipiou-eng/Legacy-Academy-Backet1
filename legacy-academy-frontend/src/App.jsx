@@ -3028,7 +3028,17 @@ const ProfileModal = ({
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                    
+                                    // 🔥 SAFE OPTIMISTIC UPDATE: Only update local display, NO onUpdateUser!
+                                    const localUrl = URL.createObjectURL(file);
                                     setProfileUploading(true);
+                                    
+                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                        // Update local state ONLY for the modal
+                                        setUserData(prev => ({ ...prev, profilePic: localUrl }));
+                                        setImgKey(prev => prev + 1);
+                                    }
+
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/profile-pic', fd);
@@ -3069,10 +3079,9 @@ const ProfileModal = ({
                                         e.preventDefault();
                                         setCoverUploading(true);
                                         
+                                        // 🔥 SAFE OPTIMISTIC UPDATE: Only update local display, NO onUpdateUser!
                                         if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                            const tempUser = { ...currentUser, coverPic: null };
                                             setUserData(prev => ({ ...prev, coverPic: null }));
-                                            onUpdateUser(tempUser);
                                         }
                                         
                                         try {
@@ -3096,7 +3105,15 @@ const ProfileModal = ({
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                    
+                                    // 🔥 SAFE OPTIMISTIC UPDATE: Only update local display, NO onUpdateUser!
+                                    const localUrl = URL.createObjectURL(file);
                                     setCoverUploading(true);
+                                    
+                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                        setUserData(prev => ({ ...prev, coverPic: localUrl }));
+                                    }
+
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/cover-pic', fd);
@@ -4040,11 +4057,15 @@ const App = () => {
 
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
+
+        // 🔥 SAFETY: Only proceed if updatedUser is a real user object with _id
+        if (!updatedUser._id) return;
+        if (!updatedUser.username) return;
         
         const uid = safeId(updatedUser);
         if (!uid) return;
 
-        // Cache-break
+        // Cache-break ONLY for real URLs (not blob)
         if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:') && !updatedUser.profilePic.includes('t=')) {
             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
             updatedUser.profilePic += `${sep}t=${Date.now()}`;
@@ -4054,7 +4075,7 @@ const App = () => {
             updatedUser.coverPic += `${sep}t=${Date.now()}`;
         }
 
-        // Update users list
+        // Update users list - ONLY with full real users
         setUsers(prev => {
             const list = prev || [];
             const exists = list.some(u => safeId(u) === uid);
@@ -4083,7 +4104,7 @@ const App = () => {
         setPosts(prevPosts => (prevPosts || []).map(p => {
             const authorId = safeId(p.author);
             if (authorId === uid) {
-                const currentAuthor = typeof p.author === 'object' ? p.author : { _id: uid };
+                const currentAuthor = typeof p.author === 'object' && p.author ? p.author : { _id: uid };
                 return { ...p, author: { ...currentAuthor, ...updatedUser }, profilePic: updatedUser.profilePic || p.profilePic };
             }
             if (p.comments?.some(c => safeId(c.authorId) === uid)) {
@@ -4115,7 +4136,7 @@ const App = () => {
                 userData = JSON.parse(saved);
                 // Validate that user data is good
                 const parsedUserId = safeId(userData);
-                if (!parsedUserId || parsedUserId === 'unknown' || parsedUserId === '[object Object]') {
+                if (!parsedUserId || parsedUserId === 'unknown' || parsedUserId === '[object Object]' || !userData.username) {
                     // Corrupted user data in localStorage - CLEAR IT!
                     console.warn("⚠️ [SAFETY] Corrupted user data detected in localStorage, clearing...");
                     localStorage.removeItem('user');
@@ -4132,6 +4153,9 @@ const App = () => {
 
         if (userData && token) {
             setUser(userData);
+            // CLEAN ALL STATE: Reset users/posts and fetch fresh
+            setUsers([]);
+            setPosts([]);
         } else if (saved && !token) {
             localStorage.removeItem('user');
             setUser(null);
