@@ -3044,23 +3044,11 @@ const ProfileModal = ({
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
-                                    
-                                    // Optimistic update για άμεση εμφάνιση!
-                                    const localUrl = URL.createObjectURL(file);
                                     setProfileUploading(true);
-                                    
-                                    // Ενημέρωση τοπικά πρώτα
-                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                        const tempUser = { ...currentUser, profilePic: localUrl };
-                                        setUserData(prev => ({ ...prev, profilePic: localUrl }));
-                                        onUpdateUser(tempUser);
-                                    }
-
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/profile-pic', fd);
                                         const updatedUser = res.data;
-                                        // Cache-break the new image
                                         if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:')) {
                                             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
                                             updatedUser.profilePic += `${sep}t=${Date.now()}`;
@@ -3096,13 +3084,6 @@ const ProfileModal = ({
                                     <button onClick={async (e) => {
                                         e.preventDefault();
                                         setCoverUploading(true);
-                                        
-                                        if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                            const tempUser = { ...currentUser, coverPic: null };
-                                            setUserData(prev => ({ ...prev, coverPic: null }));
-                                            onUpdateUser(tempUser);
-                                        }
-                                        
                                         try {
                                             const res = await axios.delete('/users/cover-pic');
                                             const updatedUser = res.data;
@@ -3124,16 +3105,7 @@ const ProfileModal = ({
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
-                                    
-                                    const localUrl = URL.createObjectURL(file);
                                     setCoverUploading(true);
-                                    
-                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                        const tempUser = { ...currentUser, coverPic: localUrl };
-                                        setUserData(prev => ({ ...prev, coverPic: localUrl }));
-                                        onUpdateUser(tempUser);
-                                    }
-
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/cover-pic', fd);
