@@ -2456,16 +2456,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         <SectionHeader color="bg-blue-500" label={t('COGNITION')} />
                         <div className="grid grid-cols-4 gap-2">
                             {[
-                                { id: 'en', flag: '🇺🇸', label: 'EN' }, { id: 'el', flag: '🇬🇷', label: 'EL' },
-                                { id: 'de', flag: '🇩🇪', label: 'DE' }, { id: 'ru', flag: '🇷🇺', label: 'RU' },
-                                { id: 'cy', flag: '🇨🇾', label: 'CY' }, { id: 'es', flag: '🇪🇸', label: 'ES' },
-                                { id: 'tr', flag: '🇹🇷', label: 'TR' }, { id: 'fr', flag: '🇫🇷', label: 'FR' }
+                                { id: 'en', flag: '🇺🇸', label: 'EN', name: 'English' }, { id: 'el', flag: '🇬🇷', label: 'EL', name: 'Ελληνικά' },
+                                { id: 'de', flag: '🇩🇪', label: 'DE', name: 'Deutsch' }, { id: 'ru', flag: '🇷🇺', label: 'RU', name: 'Русский' },
+                                { id: 'cy', flag: '🇨🇾', label: 'CY', name: 'Κυπριακά' }, { id: 'es', flag: '🇪🇸', label: 'ES', name: 'Español' },
+                                { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
                                 <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
                                     className={`py-3 rounded-2xl border  flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_14px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02]'}`}
                                 >
                                     <div className="text-xl drop-shadow">{l.flag}</div>
-                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.name}</div>
+                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.label}</div>
                                 </button>
                             ))}
                         </div>
