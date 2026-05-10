@@ -3069,12 +3069,12 @@ const ProfileModal = ({
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
                                     className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
                                     {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Camera className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
-                                    {profileUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_AVATAR') || 'CHANGE AVATAR')}
+                                    {profileUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE')}
                                 </button>
                             </div>
 
-                            <div className="flex gap-2 w-full mt-6">
-                                <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
+                            <div className="flex gap-2 w-full mt-4">
+                                <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
                                     className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
                                     {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
@@ -3094,7 +3094,7 @@ const ProfileModal = ({
                                             finally { setCoverUploading(false); }
                                         }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-full text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 ">
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-full text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
                                         <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
