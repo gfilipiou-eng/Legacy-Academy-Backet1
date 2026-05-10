@@ -5355,7 +5355,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-24 sm:pb-20 scroll-smooth relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-32 sm:pb-28 scroll-smooth relative z-10">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
                         <header className="relative w-full z-[20] bg-black/40 backdrop-blur-xl border-b border-white/5 ai-glass shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
@@ -5616,7 +5616,7 @@ const App = () => {
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
                     {/* Bottom Navbar - Liquid Glass Morphing Effect */}
-                    <nav className="fixed bottom-0 left-0 w-full z-[99] px-3 pb-2 pt-2">
+                    <nav className="fixed bottom-0 left-0 w-full z-[99] px-3 pb-4 pt-3">
                         <div className="max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto relative">
                             {/* Glass Container */}
                             <div className="relative bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[24px] shadow-[0_0_40px_rgba(0,0,0,0.8),0_0_60px_rgba(255,215,0,0.05)] overflow-hidden">
@@ -5624,14 +5624,14 @@ const App = () => {
                                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/10 via-white/5 to-[var(--gold-primary)]/10 animate-pulse opacity-50" />
                                 
                                 {/* Nav Items */}
-                                <div className="relative flex items-center justify-around py-2.5">
+                                <div className="relative flex items-center justify-around py-3.5">
                                     {/* Home */}
                                     <button
                                         onClick={() => setActiveTab('home')}
                                         className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <div className={`w-8 h-8 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'home' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
-                                            <Icons.Home className={`w-6 h-6 transition-all duration-300 ${activeTab === 'home' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'home' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
+                                            <Icons.Home className={`w-7 h-7 transition-all duration-300 ${activeTab === 'home' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
                                         </div>
                                     </button>
 
@@ -5640,12 +5640,12 @@ const App = () => {
                                         onClick={() => setActiveTab('alerts')}
                                         className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 relative ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <div className={`w-8 h-8 flex items-center justify-center rounded-2xl transition-all duration-300 relative ${activeTab === 'alerts' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
-                                            <Icons.Bell className={`w-6 h-6 transition-all duration-300 ${activeTab === 'alerts' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 relative ${activeTab === 'alerts' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
+                                            <Icons.Bell className={`w-7 h-7 transition-all duration-300 ${activeTab === 'alerts' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
                                         </div>
                                         {alerts.filter(n => !n.read).length > 0 && (
-                                            <div className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] bg-red-600 rounded-full border border-black flex items-center justify-center animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.6)]">
-                                                <span className="text-[9px] font-black text-white leading-none">
+                                            <div className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-600 rounded-full border border-black flex items-center justify-center animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.6)]">
+                                                <span className="text-[10px] font-black text-white leading-none">
                                                     {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
                                                 </span>
                                             </div>
@@ -5657,8 +5657,8 @@ const App = () => {
                                         onClick={() => setIsCreateOpen(true)}
                                         className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300"
                                     >
-                                        <div className="w-11 h-11 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 hover:scale-110 transition-all duration-300">
-                                            <Icons.Plus className="w-6 h-6 text-black font-black" />
+                                        <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 hover:scale-110 transition-all duration-300">
+                                            <Icons.Plus className="w-8 h-8 text-black font-black" />
                                         </div>
                                     </button>
 
@@ -5667,8 +5667,8 @@ const App = () => {
                                         onClick={() => setActiveTab('search')}
                                         className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <div className={`w-8 h-8 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'search' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
-                                            <Icons.Search className={`w-6 h-6 transition-all duration-300 ${activeTab === 'search' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'search' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
+                                            <Icons.Search className={`w-7 h-7 transition-all duration-300 ${activeTab === 'search' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
                                         </div>
                                     </button>
 
@@ -5681,7 +5681,7 @@ const App = () => {
                                         }}
                                         className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white"
                                     >
-                                        <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 transition-all duration-300 hover:scale-110">
+                                        <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 transition-all duration-300 hover:scale-110">
                                             <ProfileAvatar user={user} className="w-full h-full rounded-full" />
                                         </div>
                                     </button>
