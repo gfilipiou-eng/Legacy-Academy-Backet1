@@ -5509,12 +5509,7 @@ const App = () => {
                                                     );
                                                 })}
                                             </div>
-                                            {posts.length === 0 && (
-                                                <div className="h-96 flex flex-col items-center justify-center space-y-4">
-                                                    <div className="w-12 h-12 border-4 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-[var(--gold-primary)] font-black text-sm uppercase tracking-[0.2em] animate-pulse">{t('DECRYPTING_FEED')}</div>
-                                                </div>
-                                            )}
+
                                         </div>
                                     </div>
                                 </>
