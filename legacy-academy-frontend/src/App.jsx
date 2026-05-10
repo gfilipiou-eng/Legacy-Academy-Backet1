@@ -2678,7 +2678,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, selectedPost }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, selectedPost }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -2988,9 +2988,9 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
-                                    className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
+                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-2xl text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
                                             <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
                                             <circle cx="12" cy="13" r="3"></circle>
                                         </svg>
@@ -3001,8 +3001,8 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
-                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
+                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-2xl text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
                                 {displayUser?.coverPic && (
@@ -4306,7 +4306,7 @@ const App = () => {
             if (!data) return;
             const uid = safeId(data);
             console.log("📡 [SOCKET] User updated real-time:", uid);
-            syncUserIntelligence(data);
+            handleUpdateUser(data);
 
             // Targeted re-sync immediately to ensure DB is perfect
             fetchUsers(uid);
@@ -5465,8 +5465,8 @@ const App = () => {
                                                     </div>
                                                     {/* Loading text */}
                                                     <div className="text-center space-y-2">
-                                                        <h3 className="text-[var(--gold-primary)] font-black uppercase tracking-[0.4em] text-xs animate-pulse">DECRYPTING FEED</h3>
-                                                        <p className="text-gray-500 text-[10px] uppercase tracking-widest">GATHERING INTELLIGENCE</p>
+                                                        <h3 className="text-[var(--gold-primary)] font-black uppercase tracking-[0.4em] text-xs animate-pulse">{t('DECRYPTING_FEED')}</h3>
+                                                        <p className="text-gray-500 text-[10px] uppercase tracking-widest">{t('GATHERING_INTELLIGENCE') || 'GATHERING INTELLIGENCE'}</p>
                                                     </div>
                                                     {/* Progress dots */}
                                                     <div className="flex gap-2">
@@ -5568,9 +5568,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-24 right-20 sm:bottom-28 sm:right-32 z-[950] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
+                            className="fixed bottom-32 right-20 sm:bottom-28 sm:right-32 z-[950] w-12 h-12 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
                         >
-                            <Icons.ArrowUp className="w-8 h-8 sm:w-5 sm:h-5" />
+                            <Icons.ArrowUp className="w-6 h-6 sm:w-5 sm:h-5" />
                         </button>
                     )}
 
@@ -5580,9 +5580,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-24 right-4 sm:bottom-28 sm:right-10 z-[1000] w-16 h-16 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
+                            className="fixed bottom-32 right-4 sm:bottom-28 sm:right-10 z-[1000] w-12 h-12 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
                         >
-                            <Icons.Compose className="w-9 h-9 sm:w-5 sm:h-5" />
+                            <Icons.Compose className="w-6 h-6 sm:w-5 sm:h-5" />
                         </button>
                     )}
 
@@ -5601,6 +5601,7 @@ const App = () => {
                         onOpenDetail={setSelectedPost}
                         selectedPost={selectedPost}
                         imgKey={imgKey}
+                        setImgKey={setImgKey}
                         fetchSpecificUser={fetchUsers}
                         lastDeletedPostId={lastDeletedPostId}
                         followLoading={followLoading}
@@ -5633,7 +5634,7 @@ const App = () => {
                                     {/* Home */}
                                     <button
                                         onClick={() => setActiveTab('home')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
+                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
                                     >
                                         <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'home' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
                                             <Icons.Home className={`w-7 h-7 transition-all duration-300 ${activeTab === 'home' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
@@ -5643,7 +5644,7 @@ const App = () => {
                                     {/* Alerts */}
                                     <button
                                         onClick={() => setActiveTab('alerts')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 relative ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
+                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 relative active:scale-95 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
                                     >
                                         <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 relative ${activeTab === 'alerts' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
                                             <Icons.Bell className={`w-7 h-7 transition-all duration-300 ${activeTab === 'alerts' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
@@ -5660,9 +5661,9 @@ const App = () => {
                                     {/* Create Post */}
                                     <button
                                         onClick={() => setIsCreateOpen(true)}
-                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300"
+                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-90"
                                     >
-                                        <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 hover:scale-110 transition-all duration-300">
+                                        <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 hover:scale-110 active:scale-105 transition-all duration-300">
                                             <Icons.Plus className="w-8 h-8 text-black font-black" />
                                         </div>
                                     </button>
@@ -5670,7 +5671,7 @@ const App = () => {
                                     {/* Search */}
                                     <button
                                         onClick={() => setActiveTab('search')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
+                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
                                     >
                                         <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'search' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
                                             <Icons.Search className={`w-7 h-7 transition-all duration-300 ${activeTab === 'search' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
@@ -5684,9 +5685,9 @@ const App = () => {
                                                 viewProfile(user);
                                             }
                                         }}
-                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white"
+                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white active:scale-95"
                                     >
-                                        <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 transition-all duration-300 hover:scale-110">
+                                        <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 transition-all duration-300 hover:scale-110 active:scale-105">
                                             <ProfileAvatar user={user} className="w-full h-full rounded-full" />
                                         </div>
                                     </button>
