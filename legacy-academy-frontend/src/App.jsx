@@ -3095,20 +3095,25 @@ const ProfileModal = ({
                                 {displayUser?.coverPic && (
                                     <button onClick={async (e) => {
                                         e.preventDefault();
-                                        if (window.confirm("Remove background?")) {
-                                            setCoverUploading(true);
-                                            try {
-                                                const res = await axios.delete('/users/cover-pic');
-                                                const updatedUser = res.data;
-                                                localStorage.setItem('user', JSON.stringify(updatedUser));
-                                                if (onUpdateUser) onUpdateUser(updatedUser);
-                                                if (addToast) addToast('Background removed', 'success');
-                                            } catch (err) { 
-                                                console.error(err);
-                                                alert("Failed to remove background."); 
-                                            }
-                                            finally { setCoverUploading(false); }
+                                        setCoverUploading(true);
+                                        
+                                        if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                            const tempUser = { ...currentUser, coverPic: null };
+                                            setUserData(prev => ({ ...prev, coverPic: null }));
+                                            onUpdateUser(tempUser);
                                         }
+                                        
+                                        try {
+                                            const res = await axios.delete('/users/cover-pic');
+                                            const updatedUser = res.data;
+                                            localStorage.setItem('user', JSON.stringify(updatedUser));
+                                            if (onUpdateUser) onUpdateUser(updatedUser);
+                                            if (addToast) addToast('Background removed', 'success');
+                                        } catch (err) { 
+                                            console.error(err);
+                                            alert("Failed to remove background."); 
+                                        }
+                                        finally { setCoverUploading(false); }
                                     }} disabled={coverUploading}
                                         className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-full text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
                                         <Icons.X className="w-5 h-5" />
@@ -3119,7 +3124,16 @@ const ProfileModal = ({
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                    
+                                    const localUrl = URL.createObjectURL(file);
                                     setCoverUploading(true);
+                                    
+                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                        const tempUser = { ...currentUser, coverPic: localUrl };
+                                        setUserData(prev => ({ ...prev, coverPic: localUrl }));
+                                        onUpdateUser(tempUser);
+                                    }
+
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/cover-pic', fd);
