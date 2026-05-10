@@ -2670,18 +2670,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
                         <div className="flex items-center gap-4 mt-4">
                             <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-white text-[15px] tabular-nums">
-                                    {[...new Set((user?.following || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
-                                </span>
-                                <span className="text-[15px] text-gray-500 font-normal">{t('FOLLOWING')}</span>
-                            </div>
-                            <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-white text-[15px] tabular-nums">
+                                <span className="font-bold text-white text-[13px] tabular-nums">
                                     {[...new Set((user?.followers || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
                                 </span>
-                                <span className="text-[15px] text-gray-500 font-normal">
+                                <span className="text-[13px] text-gray-500 font-normal">
                                     {t('FOLLOWERS') || 'Followers'}
                                 </span>
+                            </div>
+                            <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
+                                <span className="font-bold text-white text-[13px] tabular-nums">
+                                    {[...new Set((user?.following || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
+                                </span>
+                                <span className="text-[13px] text-gray-500 font-normal">{t('FOLLOWING')}</span>
                             </div>
                         </div>
                     </div>
@@ -5443,7 +5443,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl bg-black/40 border border-white/10 shadow-[0_0_15px_rgba(255,215,0,0.1)] hover:shadow-[0_0_25px_rgba(255,215,0,0.3)] hover:border-[var(--gold-primary)]/50 transition-all duration-300 ai-glass z-50 p-2.5 -ml-2 group"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl bg-black/40 border border-white/10 transition-all duration-300 z-50 p-2.5 -ml-2 group"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
