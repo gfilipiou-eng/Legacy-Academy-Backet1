@@ -2792,6 +2792,7 @@ const ProfileModal = ({
     const fileRef = useRef(null);
     const coverFileRef = useRef(null);
     const [coverUploading, setCoverUploading] = useState(false);
+    const [profileUploading, setProfileUploading] = useState(false);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -3030,20 +3031,23 @@ const ProfileModal = ({
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 space-y-8 animate-fade-in">
-                            <div onClick={() => fileRef.current.click()} className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] cursor-pointer relative group shadow-xl shadow-black/50">
-                                <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8 text-white" /></div>
+                            <div onClick={() => !profileUploading && fileRef.current.click()} className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] cursor-pointer relative group shadow-xl shadow-black/50">
+                                {profileUploading ? (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
+                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Icons.Camera className="w-8 h-8 text-white" /></div>
+                                    </>
+                                )}
                             </div>
                             <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
-                                    // Immediate local update
-                                    const localUrl = URL.createObjectURL(file);
-                                    setUserData(prev => ({ ...prev, profilePic: localUrl })); // Optimistic update
-                                    if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                        onUpdateUser({ ...currentUser, profilePic: localUrl });
-                                    }
-
+                                    if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                    setProfileUploading(true);
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/profile-pic', fd);
@@ -3055,9 +3059,19 @@ const ProfileModal = ({
                                         }
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
-                                    } catch (e) { alert("Failed to update."); }
+                                        if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
+                                    } catch (e) { alert("Failed to update profile picture."); }
+                                    finally { setProfileUploading(false); e.target.value = ''; }
                                 }
                             }} />
+
+                            <div className="flex gap-2 w-full">
+                                <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
+                                    className="flex-1 py-4 bg-[#121212]  border border-white/10  rounded-2xl text-[11px] text-gray-300  font-black uppercase tracking-[0.2em] cursor-pointer  duration-300 flex items-center justify-center gap-3 disabled:opacity-50  group">
+                                    {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Camera className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:scale-110 " />}
+                                    {profileUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_AVATAR') || 'CHANGE AVATAR')}
+                                </button>
+                            </div>
 
                             <div className="flex gap-2 w-full mt-6">
                                 <button onClick={e => { e.preventDefault(); coverFileRef.current.click(); }} disabled={coverUploading}
