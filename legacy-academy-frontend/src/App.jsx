@@ -5408,19 +5408,31 @@ const App = () => {
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
                                                             <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-glow)]" />
-                                                            {t('TRENDING_NOW') || 'TRENDING INTELLIGENCE'}
+                                                            {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
                                                     <div className="flex gap-2 p-1 overflow-x-auto no-scrollbar pb-2">
-                                                        {(trendingHashtags.length > 0 ? trendingHashtags : ['#legacy', '#hustle', '#crypto', '#boxing', '#mindset', '#freedom']).map(tag => (
-                                                            <span
-                                                                key={tag}
-                                                                onClick={() => setSearchQuery(tag)}
-                                                                className="px-4 py-2 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl text-xs font-black text-gray-400 cursor-pointer     border border-white/5 whitespace-nowrap  shadow-lg flex items-center gap-2 group"
+                                                        {[...(posts || [])].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 6).map((post, i) => (
+                                                            <div
+                                                                key={post._id || i}
+                                                                onClick={() => setSelectedPost(post)}
+                                                                className="flex-shrink-0 w-44 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl border border-white/5 shadow-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300"
                                                             >
-                                                                <span className="text-[var(--gold-primary)] opacity-40 group-hover:opacity-100 transition-opacity">#</span>
-                                                                {tag.replace('#', '').toUpperCase()}
-                                                            </span>
+                                                                {post.image ? (
+                                                                    <div className="h-24 bg-cover bg-center" style={{ backgroundImage: `url(${post.image})` }} />
+                                                                ) : (
+                                                                    <div className="h-24 bg-gradient-to-br from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 flex items-center justify-center">
+                                                                        <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]/50" />
+                                                                    </div>
+                                                                )}
+                                                                <div className="p-3 space-y-1.5">
+                                                                    <p className="text-[10px] text-white/90 font-bold truncate">{post.content || t('POST')}</p>
+                                                                    <div className="flex items-center gap-2 text-[8px] text-gray-500 font-bold">
+                                                                        <Icons.Heart className="w-3 h-3 text-red-500" />
+                                                                        <span>{post.likes?.length || 0} {t('LIKES')}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 </div>
