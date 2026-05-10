@@ -4430,12 +4430,17 @@ const App = () => {
     const fetchPosts = async () => {
         if (selectedPostRef.current) return;
         setIsLoadingFeed(true);
+        const startTime = Date.now();
         try {
             const res = await axios.get(`/posts?limit=30`);
             setPosts(res.data);
             localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
         } catch (e) { }
         finally {
+            const elapsed = Date.now() - startTime;
+            if (elapsed < 1000) {
+                await new Promise(resolve => setTimeout(resolve, 1000 - elapsed));
+            }
             setIsLoadingFeed(false);
         }
     };
@@ -5554,9 +5559,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-32 right-20 sm:bottom-28 sm:right-32 z-[950] w-12 h-12 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
+                            className="fixed bottom-32 right-20 sm:bottom-28 sm:right-32 z-[950] w-14 h-14 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
                         >
-                            <Icons.ArrowUp className="w-6 h-6 sm:w-5 sm:h-5" />
+                            <Icons.ArrowUp className="w-7 h-7 sm:w-5 sm:h-5" />
                         </button>
                     )}
 
@@ -5566,9 +5571,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-32 right-4 sm:bottom-28 sm:right-10 z-[1000] w-12 h-12 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
+                            className="fixed bottom-32 right-4 sm:bottom-28 sm:right-10 z-[1000] w-14 h-14 sm:w-11 sm:h-11 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
                         >
-                            <Icons.Compose className="w-6 h-6 sm:w-5 sm:h-5" />
+                            <Icons.Compose className="w-7 h-7 sm:w-5 sm:h-5" />
                         </button>
                     )}
 
