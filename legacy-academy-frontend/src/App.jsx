@@ -2975,8 +2975,14 @@ const ProfileModal = ({
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
-                                    } catch (e) { alert("Failed to update profile picture."); }
-                                    finally { setProfileUploading(false); e.target.value = ''; }
+                                    } catch (e) { 
+                                        console.error("❌ Profile picture upload error:", e);
+                                        alert("Failed to update profile picture."); 
+                                    }
+                                    finally { 
+                                        setProfileUploading(false); 
+                                        e.target.value = ''; 
+                                    }
                                 }
                             }} />
 
@@ -4001,9 +4007,8 @@ const App = () => {
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
 
-        // 🔥 SAFETY: Only proceed if updatedUser is a real user object with _id
+        // 🔥 SAFETY: Only proceed if updatedUser has _id
         if (!updatedUser._id) return;
-        if (!updatedUser.username) return;
         
         const uid = safeId(updatedUser);
         if (!uid) return;
