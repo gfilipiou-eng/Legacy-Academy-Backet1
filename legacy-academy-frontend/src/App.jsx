@@ -2426,24 +2426,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         className="w-full accent-[var(--gold-primary)]"
                                     />
                                 </div>
-                                <div className="hidden sm:flex items-center justify-center gap-2">
-                                    {[
-                                        { id: 'primary', label: t('CATEGORY_PRIMARY') },
-                                        { id: 'neons', label: t('CATEGORY_NEONS') }
-                                    ].map(opt => (
-                                        <button
-                                            key={opt.id}
-                                            onClick={() => setThemeCategory(opt.id)}
-                                            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border  ${themeCategory === opt.id
-                                                ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)] text-[var(--gold-primary)]'
-                                                : 'bg-white/[0.03] border-white/10 text-gray-500'
-                                                }`}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="sm:hidden space-y-2">
+                                <div className="space-y-2">
                                     <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
                                         THEME
                                     </div>
@@ -2464,64 +2447,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         <option value="#a855f7" className="bg-black text-white">{t('COLOR_PURPLE')}</option>
                                     </select>
                                 </div>
-                                {themeCategory === 'primary' && (
-                                    <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
-                                        {[
-                                            { hex: '#ffd700', glow: '#ffd700', label: t('COLOR_GOLD') },
-                                            { hex: '#3b82f6', glow: '#3b82f6', label: t('COLOR_BLUE') },
-                                            { hex: '#cc0000', glow: '#ff0000', label: t('COLOR_RED') },
-                                            { hex: '#10b981', glow: '#10b981', label: t('COLOR_GREEN') },
-                                            { hex: '#ffffff', glow: '#ffffff', label: t('COLOR_WHITE') },
-                                            { hex: '#a855f7', glow: '#a855f7', label: t('COLOR_PURPLE') },
-                                        ].map(({ hex: c, glow, label }) => {
-                                            const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
-                                            const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
-                                            return (
-                                                <div key={c} className="flex flex-col items-center justify-center">
-                                                    <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                                        className={`w-9 h-9 rounded-full  duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
-                                                    >
-                                                        <div className="w-full h-full rounded-full" style={{
-                                                            backgroundColor: c,
-                                                            boxShadow: 'none'
-                                                        }} />
-                                                        {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
-                                                    </button>
-                                                    <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500'}`}>{t('COLOR_' + c.id)}</span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                                {themeCategory === 'neons' && (
-                                    <div className="hidden sm:grid grid-cols-6 gap-3 place-items-center">
-                                        {[
-                                            { hex: '#ff8c00', glow: '#ff8c00', label: t('COLOR_ORANGE') },
-                                            { hex: '#ff69b4', glow: '#ff69b4', label: t('COLOR_PINK') },
-                                            { hex: '#00ffff', glow: '#00ffff', label: t('COLOR_CYAN') },
-                                            { hex: '#7cfc00', glow: '#7cfc00', label: t('COLOR_LIME') },
-                                            { hex: '#ff00ff', glow: '#ff00ff', label: t('COLOR_MAGENTA') },
-                                            { hex: '#ffa500', glow: '#ffa500', label: t('COLOR_TANGERINE') },
-                                        ].map(({ hex: c, glow, label }) => {
-                                            const currentTheme = user?.settings?.theme || localStorage.getItem('themeColor') || '#ffd700';
-                                            const isActive = currentTheme === c || (c === '#cc0000' && currentTheme === '#ef4444');
-                                            return (
-                                                <div key={c} className="flex flex-col items-center justify-center">
-                                                    <button onClick={() => { applyTheme(c); handleSave('theme', c); }}
-                                                        className={`w-9 h-9 rounded-full  duration-300 relative flex items-center justify-center ${isActive ? 'scale-125' : 'opacity-50 hover:opacity-100 hover:scale-110'}`}
-                                                    >
-                                                        <div className="w-full h-full rounded-full" style={{
-                                                            backgroundColor: c,
-                                                            boxShadow: 'none'
-                                                        }} />
-                                                        {isActive && <div className="absolute inset-0 ring-2 ring-white/70 ring-offset-2 ring-offset-black rounded-full" />}
-                                                    </button>
-                                                    <span className={`text-[9px] font-black mt-1 ${isActive ? 'text-white' : 'text-gray-500'}`}>{t('COLOR_' + c.id)}</span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </section>
@@ -5446,15 +5371,6 @@ const App = () => {
                                         <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-[var(--gold-primary)] transition-colors duration-300 pointer-events-none drop-shadow-[0_0_5px_rgba(255,255,255,0.2)] group-hover:drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
                                         </svg>
-
-                                        {/* 🔥 NOTIFICATION BADGE (UNREAD COUNT) */}
-                                        {alerts.filter(n => !n.read).length > 0 && (
-                                            <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-600 rounded-full border-2 border-black flex items-center justify-center animate-pulse z-10 shadow-[0_0_10px_rgba(220,38,38,0.5)]">
-                                                <span className="text-[10px] font-black text-white leading-none">
-                                                    {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
-                                                </span>
-                                            </div>
-                                        )}
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
@@ -5700,7 +5616,7 @@ const App = () => {
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
                     {/* Bottom Navbar - Liquid Glass Morphing Effect */}
-                    <nav className="fixed bottom-0 left-0 w-full z-[99] px-3 pb-3 pt-1">
+                    <nav className="fixed bottom-0 left-0 w-full z-[99] px-3 pb-2 pt-2">
                         <div className="max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto relative">
                             {/* Glass Container */}
                             <div className="relative bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[24px] shadow-[0_0_40px_rgba(0,0,0,0.8),0_0_60px_rgba(255,215,0,0.05)] overflow-hidden">
@@ -5746,16 +5662,6 @@ const App = () => {
                                         </div>
                                     </button>
 
-                                    {/* Chat */}
-                                    <button
-                                        onClick={() => setIsChatOpen(true)}
-                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white"
-                                    >
-                                        <div className="w-8 h-8 flex items-center justify-center rounded-2xl transition-all duration-300">
-                                            <Icons.MessageCircle className="w-6 h-6" />
-                                        </div>
-                                    </button>
-
                                     {/* Search */}
                                     <button
                                         onClick={() => setActiveTab('search')}
@@ -5763,6 +5669,20 @@ const App = () => {
                                     >
                                         <div className={`w-8 h-8 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'search' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
                                             <Icons.Search className={`w-6 h-6 transition-all duration-300 ${activeTab === 'search' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        </div>
+                                    </button>
+
+                                    {/* Profile */}
+                                    <button
+                                        onClick={() => {
+                                            if (user) {
+                                                viewProfile(user);
+                                            }
+                                        }}
+                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white"
+                                    >
+                                        <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 transition-all duration-300 hover:scale-110">
+                                            <ProfileAvatar user={user} className="w-full h-full rounded-full" />
                                         </div>
                                     </button>
                                 </div>
