@@ -851,25 +851,25 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
                             <div className="flex flex-wrap items-center justify-between gap-2 w-full py-1">
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                    onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
                                     className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500   ">
                                     <Icons.MessageSquare className="w-5 h-5" />
                                     <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
+                                    onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
                                     className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400' : 'text-gray-500'}`}>
                                     <Icons.RefreshCcw className="w-5 h-5" />
                                     <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onLike(post._id); }}
+                                    onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
                                     className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400' : 'text-gray-500'}`}>
                                     <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
-                                    onPointerDown={(e) => { e.stopPropagation(); onDislike(post._id); }}
+                                    onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
                                     className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
                                     <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
@@ -1642,7 +1642,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* COMMENTS */}
                             <button
-                                onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                                onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
                                 className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${showComments ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' : 'text-gray-400 hover:text-white'}`}
                             >
                                 <Icons.MessageSquare className="w-5 h-5" />
@@ -1651,7 +1651,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* REPOSTS */}
                             <button
-                                onPointerDown={(e) => {
+                                onClick={(e) => {
                                     e.stopPropagation();
 
                                     onRepost && onRepost(post._id);
@@ -1664,7 +1664,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* LIKE */}
                             <button
-                                onPointerDown={(e) => {
+                                onClick={(e) => {
                                     e.stopPropagation();
                                     const isLiked = post.likes?.some(id => isSameId(id, user?._id));
                                     playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
@@ -1679,7 +1679,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* DISLIKE */}
                             <button
-                                onPointerDown={(e) => {
+                                onClick={(e) => {
                                     e.stopPropagation();
                                     const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
                                     playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
