@@ -407,13 +407,15 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    const borderRadiusStyle = { borderRadius: isFounder ? '1.5rem' : '9999px' };
+    // Strip rounded-full from className if founder to let parent container clip it
+    const finalClassName = `w-full h-full object-cover ${className || ''}`.replace(isFounder ? /rounded-full/g : '', '');
+    const borderRadiusStyle = isFounder ? { borderRadius: 'inherit' } : { borderRadius: '50%' };
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
-            <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick} style={borderRadiusStyle}>
+            <div className={`w-full h-full bg-gray-900 ${finalClassName}`} onClick={onClick} style={borderRadiusStyle}>
                 <div className="w-full h-full relative overflow-hidden bg-black" style={borderRadiusStyle}>
                     <video
                         src={mediaUrl}
@@ -435,7 +437,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     return mediaUrl ? (
         <img
             src={mediaUrl}
-            className={`w-full h-full object-cover ${className || ''}`}
+            className={finalClassName}
             style={borderRadiusStyle}
             onClick={onClick}
             loading="lazy"
