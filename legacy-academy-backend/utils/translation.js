@@ -30,9 +30,15 @@ export const translateText = async (text, targetLang = 'en') => {
             timeout: 10000
         });
 
-        // The dict-chrome-ex endpoint returns an array where the first element is the full translated string
-        if (res.data && Array.isArray(res.data) && typeof res.data[0] === 'string') {
-            const translatedFull = res.data[0];
+        // The dict-chrome-ex endpoint returns an array like [["Translated Text", "source_lang"]]
+        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            let translatedFull = "";
+            if (Array.isArray(res.data[0]) && typeof res.data[0][0] === 'string') {
+                translatedFull = res.data[0][0];
+            } else if (typeof res.data[0] === 'string') {
+                translatedFull = res.data[0];
+            }
+            
             if (translatedFull) {
                 console.log(`🌍 [NEURAL_TRANS] Decryption Successful (${text.length} chars) -> Target: ${target}`);
                 return translatedFull;
