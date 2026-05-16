@@ -3336,13 +3336,12 @@ const ProfileModal = ({
                                             Object.keys(groupedUserPosts).map(dateKey => {
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
-                                                        <div className="flex items-center gap-3 mb-6 px-1 opacity-80 mt-4">
-                                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                            <div className="flex items-center gap-2.5">
-                                                                <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-glow-gold" />
-                                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 font-mono">{dateKey}</span>
+                                                        <div className="flex items-center justify-center mb-10 mt-8 opacity-90">
+                                                            <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                                                                <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
+                                                                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
+                                                                <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
                                                             </div>
-                                                            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                                                         </div>
                                                         <AnimatePresence>
                                                             <div className="overflow-hidden">
