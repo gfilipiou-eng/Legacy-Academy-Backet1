@@ -1553,7 +1553,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/40 backdrop-blur-2xl border border-white/10 hover:border-white/20 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:shadow-[0_16px_48px_rgba(255,215,0,0.08)] will-change-transform`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/40 backdrop-blur-2xl border border-white/10 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.6)] will-change-transform`}
         >
 
 
@@ -1581,7 +1581,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-black/60 shadow-xl group-hover:scale-105 transition-all duration-500 cursor-pointer overflow-hidden border border-white/10 group-hover:border-[var(--gold-primary)]/50 group-hover:shadow-[0_0_15px_rgba(255,215,0,0.2)]" onClick={() => onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-black/60 shadow-xl cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -1621,7 +1621,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.02] transition-transform duration-700 shadow-lg group-hover:shadow-[0_8px_30px_rgba(255,215,0,0.1)] h-auto min-h-[100px] mt-3">
+                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative shadow-lg h-auto min-h-[100px] mt-3">
                                     {isYouTubeUrl(post.videoUrl) ? (
                                         <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
