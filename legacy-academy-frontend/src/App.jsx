@@ -5353,7 +5353,9 @@ const App = () => {
                                         </>
                                     )}
                                 </div>
+                            </div>
                         </div>
+                        <div className="text-center mt-6 text-[10px] text-white/15 uppercase tracking-[0.3em] font-black">Legacy Academy © 2026</div>
                     </div>
                 </div>
             ) : (
