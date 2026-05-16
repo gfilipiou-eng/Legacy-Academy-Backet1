@@ -1534,10 +1534,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/40 backdrop-blur-2xl border border-white/10 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.6)] will-change-transform`}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/90 sm:bg-black/40 backdrop-blur-none sm:backdrop-blur-2xl border border-white/10 transition-[transform,opacity,border-color] duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.5)] sm:shadow-[0_8px_32px_rgba(0,0,0,0.6)] will-change-transform`}
         >
 
 
@@ -5178,9 +5178,9 @@ const App = () => {
                 <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
                     {/* ANIMATED BACKGROUND ORBS */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/8 blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
-                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/5 blur-[150px] animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }} />
-                        <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full bg-white/[0.03] blur-[100px] animate-pulse" style={{ animationDuration: '8s', animationDelay: '1s' }} />
+                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/8 blur-[80px] sm:blur-[120px] md:animate-pulse" style={{ animationDuration: '4s' }} />
+                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/5 blur-[90px] sm:blur-[150px] md:animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }} />
+                        <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full bg-white/[0.03] blur-[70px] sm:blur-[100px] md:animate-pulse" style={{ animationDuration: '8s', animationDelay: '1s' }} />
                         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                     </div>
 
