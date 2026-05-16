@@ -2595,7 +2595,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
-                            { id: 'chat', icon: Icons.Ghost, label: t('WHISPERS') },
+                            { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
                         ].map((item, index) => (
