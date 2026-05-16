@@ -1553,7 +1553,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            className={`premium-post-card group relative p-4 sm:p-6 mb-6 rounded-[2.5rem] bg-black/40 backdrop-blur-xl border border-white/5   duration-500 shadow-2xl will-change-transform`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/40 backdrop-blur-2xl border border-white/10 hover:border-white/20 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:shadow-[0_16px_48px_rgba(255,215,0,0.08)] will-change-transform`}
         >
             {/* AMBIENT BACKGROUND GLOW */}
             <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
@@ -1585,8 +1585,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-800 shadow-xl group-hover:scale-105  duration-500 cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
-                            <ProfileAvatar user={author} className="rounded-full" />
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-black/60 shadow-xl group-hover:scale-105 transition-all duration-500 cursor-pointer overflow-hidden border border-white/10 group-hover:border-[var(--gold-primary)]/50 group-hover:shadow-[0_0_15px_rgba(255,215,0,0.2)]" onClick={() => onViewProfile(author)}>
+                            <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
 
@@ -1625,7 +1625,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.01]  duration-700 shadow-md h-auto min-h-[100px] mt-2">
+                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative group-hover/media:scale-[1.02] transition-transform duration-700 shadow-lg group-hover:shadow-[0_8px_30px_rgba(255,215,0,0.1)] h-auto min-h-[100px] mt-3">
                                     {isYouTubeUrl(post.videoUrl) ? (
                                         <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
@@ -1658,15 +1658,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         </div>
 
                         {/* ── POST ACTIONS BAR ── */}
-                        <div className="flex items-center justify-around mt-3 w-full border-t border-white/5 pt-3">
+                        <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
 
                             {/* COMMENTS */}
                             <button
                                 onPointerDown={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${showComments ? 'text-sky-400' : 'text-gray-600'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${showComments ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' : 'text-gray-400 hover:text-white'}`}
                             >
                                 <Icons.MessageSquare className="w-5 h-5" />
-                                <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                                <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
                             </button>
 
                             {/* REPOSTS */}
@@ -1676,10 +1676,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 scale-110' : 'text-gray-600  '}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 bg-green-500/10 border-green-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
-                                <Icons.RefreshCcw className="w-5 h-5" />
-                                <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                                <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
+                                <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                             </button>
 
                             {/* LIKE */}
@@ -1691,10 +1691,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onLike(post._id);
 
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 scale-110' : 'text-gray-600  '}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 bg-red-500/10 border-red-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
-                                <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                                <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]' : ''}`} />
+                                <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
                             {/* DISLIKE */}
@@ -1706,10 +1706,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onDislike(post._id);
 
                                 }}
-                                className={`flex flex-col items-center gap-0.5 min-w-[44px] rounded-xl  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)] scale-110' : 'text-gray-600  '}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
-                                <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                                <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
+                                <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
                             {/* SHARE */}
@@ -4412,7 +4412,9 @@ const App = () => {
     }, [users, reconcileIntelligence]);
     const fetchPosts = async () => {
         if (selectedPostRef.current) return;
-        setIsLoadingFeed(true);
+        if (!postsRef.current || postsRef.current.length === 0) {
+            setIsLoadingFeed(true);
+        }
         const startTime = Date.now();
         try {
             const res = await axios.get(`/posts?limit=30`);
@@ -5336,7 +5338,7 @@ const App = () => {
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-32 sm:pb-28 scroll-smooth relative z-10">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
-                        <header className="relative w-full z-[20] bg-black/40 backdrop-blur-xl border-b border-white/5 ai-glass shrink-0">
+                        <header className="relative w-full z-[20] bg-black/40 backdrop-blur-2xl border-b border-white/10 shrink-0 shadow-lg">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
@@ -5486,13 +5488,12 @@ const App = () => {
                                                     const dateKey = group.key;
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
-                                                            <div className="flex items-center gap-3 mb-8 px-1 opacity-80">
-                                                                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                                <div className="flex items-center gap-2.5">
-                                                                    <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-glow-gold" />
-                                                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 font-mono">{dateKey}</span>
+                                                            <div className="flex items-center justify-center mb-10 opacity-90">
+                                                                <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_rgba(255,215,0,0.8)]" />
+                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_rgba(255,215,0,0.8)]" />
                                                                 </div>
-                                                                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                                                             </div>
 
                                                             <div className="space-y-8">
