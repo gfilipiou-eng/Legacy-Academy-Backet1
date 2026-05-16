@@ -2909,7 +2909,26 @@ const ProfileModal = ({
                         else onClose();
                     }} className="p-2 -ml-2 rounded-full   "><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest leading-none">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
-                    <div className="w-10" />
+                    {!activeList && !isEditing ? (
+                        <button
+                            onClick={async () => {
+                                const shareUrl = `${window.location.origin}/?profile=${displayUser?.username}`;
+                                try {
+                                    await navigator.clipboard.writeText(shareUrl);
+                                    addToast(t('PROFILE_LINK_COPIED') || "Profile link copied to clipboard!", "success");
+                                    // Play sound effect if any
+                                    if (typeof playSound === 'function') playSound('cyber_like');
+                                } catch (err) {
+                                    alert(shareUrl);
+                                }
+                            }}
+                            className="p-2 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center text-white"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
+                        </button>
+                    ) : (
+                        <div className="w-10" />
+                    )}
                 </div>
 
                 <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-32 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
@@ -3846,11 +3865,254 @@ const applyZoom = (zoom) => {
     localStorage.setItem('uiZoom', String(z));
 };
 
+const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onClose, t }) => {
+    const themeColor = publicUser?.settings?.theme || '#ffd700';
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
+                <div className="w-12 h-12 rounded-full border-4 border-[var(--gold-primary)]/20 border-t-[var(--gold-primary)] animate-spin" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/50">GATHERING INTEL...</span>
+            </div>
+        );
+    }
+
+    if (!publicUser) {
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor }}>
+                <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-10 h-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                </div>
+                <div>
+                    <h2 className="text-xl font-black text-white uppercase tracking-widest mb-2">ACCESS LOCKED</h2>
+                    <p className="text-xs text-gray-500 max-w-xs leading-relaxed uppercase tracking-wider">The requested agent profile is classified or does not exist in the active core directory.</p>
+                </div>
+                <button onClick={onClose} className="px-8 py-3 bg-white text-black font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-transform">
+                    RETURN TO PORTAL
+                </button>
+            </div>
+        );
+    }
+
+    const isFounder = publicUser.role === 'Founder';
+
+    return (
+        <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
+            {/* AMBIENT BACKGROUND GLOWS */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/5 blur-[120px]" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/3 blur-[150px]" />
+                <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            </div>
+
+            {/* DYNAMIC COVER BACKGROUND */}
+            {publicUser.coverPic && (
+                <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden">
+                    {publicUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
+                        <video src={publicUser.coverPic} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-60" />
+                    ) : (
+                        <img src={publicUser.coverPic} className="w-full h-full object-cover opacity-60 blur-[1px]" alt="" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                </div>
+            )}
+
+            <div className="relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
+                {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
+                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-lg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+                </button>
+
+                {/* SIGN UP CALL TO ACTION */}
+                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-[var(--gold-primary)] text-black font-black text-[9px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
+                    JOIN ACADEMY
+                </button>
+
+                {/* AVATAR & IDENTITY */}
+                <div className="relative mt-8 mb-4">
+                    <div className={`w-28 h-28 ${isFounder ? 'rounded-[28px]' : 'rounded-full'} overflow-hidden border-2 border-[var(--gold-primary)] shadow-[0_0_30px_rgba(255,215,0,0.2)] bg-black/40 backdrop-blur-md`}>
+                        {publicUser.profilePic ? (
+                            <img src={publicUser.profilePic} className="w-full h-full object-cover" alt="" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-white/5 text-4xl font-bold uppercase text-white/40">
+                                {publicUser.username?.[0]}
+                            </div>
+                        )}
+                    </div>
+                    {isFounder && (
+                        <div className="absolute -bottom-2 right-0 bg-gradient-to-r from-yellow-500 to-amber-600 text-black p-1.5 rounded-xl shadow-lg border border-yellow-300/30 flex items-center justify-center animate-bounce" style={{ animationDuration: '2s' }}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-black"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" /></svg>
+                        </div>
+                    )}
+                </div>
+
+                <div className="text-center space-y-1">
+                    <div className="flex items-center justify-center gap-1.5">
+                        <h1 className="text-2xl font-black text-white uppercase tracking-wider">{publicUser.username}</h1>
+                        {isFounder && (
+                            <div className="w-4 h-4 rounded-full bg-[var(--gold-primary)] flex items-center justify-center text-black shadow-[0_0_8px_rgba(255,215,0,0.5)]">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2.5 h-2.5"><path d="M20 6L9 17l-5-5" /></svg>
+                            </div>
+                        )}
+                    </div>
+                    <span className="text-xs text-gray-500 font-bold tracking-widest uppercase">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                </div>
+
+                {/* BIO CARD */}
+                {publicUser.bio && (
+                    <div className="w-full mt-6 p-5 bg-white/[0.03] backdrop-blur-md border border-white/5 rounded-3xl text-center shadow-lg relative group">
+                        <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                        <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed italic select-text">
+                            "{publicUser.bio}"
+                        </p>
+                    </div>
+                )}
+
+                {/* STATS BAR */}
+                <div className="w-full grid grid-cols-3 gap-3 mt-6">
+                    <div className="p-4 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl text-center shadow-md">
+                        <span className="block text-lg font-black text-white tabular-nums">{publicPosts?.length || 0}</span>
+                        <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('POSTS') || 'POSTS'}</span>
+                    </div>
+                    <div className="p-4 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl text-center shadow-md">
+                        <span className="block text-lg font-black text-white tabular-nums">{publicUser.followers?.length || 0}</span>
+                        <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
+                    </div>
+                    <div className="p-4 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl text-center shadow-md">
+                        <span className="block text-lg font-black text-white tabular-nums">{publicUser.following?.length || 0}</span>
+                        <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWING') || 'FOLLOWING'}</span>
+                    </div>
+                </div>
+
+                {/* LINKTREE STYLE INVITATION CARD */}
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-gradient-to-r from-[var(--gold-primary)]/10 to-black border border-[var(--gold-primary)]/20 rounded-3xl cursor-pointer hover:scale-[1.02] transition-transform shadow-[0_15px_40px_rgba(0,0,0,0.5)] flex items-center justify-between gap-4 group">
+                    <div className="space-y-1 text-left">
+                        <h3 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-[0.2em]">{t('JOIN_ELITE') || 'JOIN THE ELITE'}</h3>
+                        <p className="text-xs text-white/80 font-bold leading-snug">{t('CREATE_ACCOUNT') || 'Create your account to connect'}</p>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-[var(--gold-primary)] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                    </div>
+                </div>
+
+                {/* POST SHOWCASE SECTION TITLE */}
+                <div className="w-full flex items-center gap-3 mt-10 mb-6">
+                    <div className="w-1.5 h-4 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_currentColor]" />
+                    <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.3em]">INTELLIGENCE BRIEFINGS</span>
+                    <div className="h-[1px] flex-1 bg-white/5" />
+                </div>
+
+                {/* simplified, READ-ONLY POST LIST */}
+                <div className="w-full space-y-4">
+                    {publicPosts.length === 0 ? (
+                        <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
+                            NO ARCHIVES DISPATCHED YET
+                        </div>
+                    ) : (
+                        publicPosts.map(post => {
+                            const isVideo = post.videoUrl?.match(/\.(mp4|mov|webm|avi|m4v)$/i) || post.image?.match(/\.(mp4|mov|webm)$/i);
+                            return (
+                                <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-[2rem] shadow-lg flex flex-col gap-4 relative group text-left">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-9 h-9 ${isFounder ? 'rounded-[10px]' : 'rounded-full'} overflow-hidden border border-white/10 shrink-0 bg-black/40`}>
+                                            {publicUser.profilePic ? (
+                                                <img src={publicUser.profilePic} className="w-full h-full object-cover" alt="" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-white/5 text-sm font-bold uppercase text-white/40">
+                                                    {publicUser.username?.[0]}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1">
+                                                <span className="font-bold text-xs text-white uppercase tracking-wider">{publicUser.username}</span>
+                                                {isFounder && (
+                                                    <div className="w-3.5 h-3.5 rounded-full bg-[var(--gold-primary)] flex items-center justify-center text-black shadow-[0_0_6px_rgba(255,215,0,0.5)]">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2 h-2"><path d="M20 6L9 17l-5-5" /></svg>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">
+                                                {new Date(post.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* CONTENT */}
+                                    {post.text && (
+                                        <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed whitespace-pre-wrap select-text">
+                                            {post.text}
+                                        </p>
+                                    )}
+
+                                    {/* MEDIA */}
+                                    {post.image && !isVideo && (
+                                        <div className="rounded-2xl overflow-hidden border border-white/5 shadow-md">
+                                            <img src={post.image} className="w-full h-auto object-cover max-h-[300px]" alt="" />
+                                        </div>
+                                    )}
+
+                                    {post.videoUrl && !isVideo && (
+                                        <div className="rounded-2xl overflow-hidden border border-white/5 shadow-md aspect-video bg-black">
+                                            <iframe src={post.videoUrl} className="w-full h-full" frameBorder="0" allowFullScreen />
+                                        </div>
+                                    )}
+
+                                    {isVideo && (
+                                        <div className="rounded-2xl overflow-hidden border border-white/5 shadow-md aspect-video bg-black">
+                                            <video src={post.videoUrl || post.image} controls className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+
+                                    {/* simplified READ-ONLY STATS */}
+                                    <div className="flex items-center gap-4 mt-2 border-t border-white/5 pt-4 text-gray-500 text-[10px] font-black uppercase tracking-wider">
+                                        <div className="flex items-center gap-1.5">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                                            <span className="tabular-nums">{post.likes?.length || 0}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                                            <span className="tabular-nums">{post.comments?.length || 0}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
-    // Profile Sync Logic
-    const viewPostId = searchParams.get('postId');
+    const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile'));
+    const [publicUser, setPublicUser] = useState(null);
+    const [publicPosts, setPublicPosts] = useState([]);
+    const [publicLoading, setPublicLoading] = useState(false);
+
+    useEffect(() => {
+        if (publicProfileUsername) {
+            const loadPublicProfile = async () => {
+                setPublicLoading(true);
+                try {
+                    const uRes = await axios.get(`/users/username/${publicProfileUsername}`);
+                    setPublicUser(uRes.data);
+                    const pRes = await axios.get(`/users/public/posts/${publicProfileUsername}`);
+                    setPublicPosts(pRes.data);
+                } catch (err) {
+                    console.error("Failed to load public profile:", err);
+                } finally {
+                    setPublicLoading(false);
+                }
+            };
+            loadPublicProfile();
+        }
+    }, [publicProfileUsername]);
+
     const [user, setUser] = useState(null);
+    const viewPostId = searchParams.get('postId');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -5153,6 +5415,23 @@ const App = () => {
     };
 
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); cyberDeleteEffect(); } catch (e) { } };
+
+    // IF DIRECT LINK TO PUBLIC PROFILE
+    if (publicProfileUsername) {
+        return (
+            <PublicProfileLinktree 
+                username={publicProfileUsername} 
+                publicUser={publicUser} 
+                publicPosts={publicPosts} 
+                loading={publicLoading}
+                onClose={() => {
+                    setPublicProfileUsername(null);
+                    window.history.pushState({}, '', window.location.pathname);
+                }}
+                t={t}
+            />
+        );
+    }
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {

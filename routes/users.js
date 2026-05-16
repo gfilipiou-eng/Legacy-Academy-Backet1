@@ -276,6 +276,18 @@ router.get("/username/:username", async (req, res) => {
     }
 });
 
+// Get public posts of a user by username for public view-only Linktree profile view
+router.get("/public/posts/:username", async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) return res.status(404).json("Agent not found.");
+        const posts = await Post.find({ author: user._id }).sort({ createdAt: -1 });
+        res.status(200).json(posts);
+    } catch (err) {
+        res.status(500).json([]);
+    }
+});
+
 // ACCEPT follow request
 router.post("/requests/:requestId/accept", verifyToken, async (req, res) => {
     try {
