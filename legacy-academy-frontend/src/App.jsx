@@ -2563,10 +2563,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                     {/* PROFILE SECTION - TWITTER STYLE CLEAN */}
                     <div
                         className="p-4 pt-8 flex flex-col cursor-pointer relative z-10 transition-colors duration-300 hover:bg-white/[0.02]"
-                        onClick={() => { onViewProfile(user); handleClose(); }}
+                        onClick={() => { handleClose(); setTimeout(() => onViewProfile(user), 150); }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <div className="w-[48px] h-[48px] rounded-full overflow-hidden shrink-0 border border-white/10">
+                            <div className={`w-[48px] h-[48px] ${user?.role === 'Founder' ? 'rounded-[14px]' : 'rounded-full'} overflow-hidden shrink-0 border border-white/10`}>
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                         </div>
