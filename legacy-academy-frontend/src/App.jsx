@@ -5492,9 +5492,9 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 opacity-90">
                                                                 <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_rgba(255,215,0,0.8)]" />
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
                                                                     <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_rgba(255,215,0,0.8)]" />
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
                                                                 </div>
                                                             </div>
 
