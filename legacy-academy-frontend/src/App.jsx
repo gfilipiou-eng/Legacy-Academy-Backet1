@@ -5341,7 +5341,22 @@ const App = () => {
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 <span className="relative">{authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}</span>
                                             </button>
-                                            <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</button>
+                                            <div className="flex items-center my-3.5">
+                                                 <div className="flex-1 h-[1px] bg-white/5" />
+                                                 <span className="px-3 text-[9px] text-white/20 uppercase tracking-[0.2em] font-black">OR REGISTER WITH</span>
+                                                 <div className="flex-1 h-[1px] bg-white/5" />
+                                             </div>
+                                             <button onClick={handleGoogleSignIn} disabled={authLoading} className="w-full relative group overflow-hidden rounded-2xl py-3.5 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] active:bg-white/[0.08] transition-all duration-300 flex items-center justify-center gap-3 text-white text-xs font-black uppercase tracking-[0.15em] hover:border-white/15">
+                                                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                 <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
+                                                     <path fill="#EA4335" d="M12 5.04c1.67 0 3.19.58 4.37 1.71l3.27-3.27C17.65 1.58 15.01 1 12 1 7.24 1 3.2 3.75 1.25 7.78l3.92 3.04C6.12 7.76 8.81 5.04 12 5.04z" />
+                                                     <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.43h6.45c-.28 1.48-1.12 2.74-2.38 3.59l3.71 2.87c2.17-2 3.71-4.94 3.71-8.55z" />
+                                                     <path fill="#FBBC05" d="M5.17 14.74a7.12 7.12 0 0 1 0-4.48L1.25 7.22A11.96 11.96 0 0 0 0 12c0 1.72.36 3.35 1.25 4.78l3.92-3.04z" />
+                                                     <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.71-2.87c-1.03.69-2.35 1.1-4.25 1.1-3.19 0-5.88-2.72-6.84-5.78L1.24 15.57C3.19 19.6 7.24 23 12 23z" />
+                                                 </svg>
+                                                 <span>GOOGLE REGISTER</span>
+                                             </button>
+                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</button>
                                         </>
                                     )}
                                     {authMode === 'forgot' && (
