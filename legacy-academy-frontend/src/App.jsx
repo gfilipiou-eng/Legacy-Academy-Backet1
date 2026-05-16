@@ -1555,11 +1555,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
             className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/40 backdrop-blur-2xl border border-white/10 hover:border-white/20 transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:shadow-[0_16px_48px_rgba(255,215,0,0.08)] will-change-transform`}
         >
-            {/* AMBIENT BACKGROUND GLOW */}
-            <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] rounded-full" />
-                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--gold-primary)]/5 blur-[100px] rounded-full" />
-            </div>
+
 
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
