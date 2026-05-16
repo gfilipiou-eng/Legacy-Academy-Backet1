@@ -1851,13 +1851,26 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
+    const hasInitializedRef = useRef(false);
+
     useEffect(() => {
-        if (isOpen && initialChatUser) {
+        if (!isOpen) {
+            hasInitializedRef.current = false;
+            setActiveChat(null);
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen && initialChatUser && !hasInitializedRef.current) {
             if (typeof initialChatUser === 'string') {
                 const found = allUsers.find(u => isSameId(u._id, initialChatUser));
-                if (found) setActiveChat(found);
+                if (found) {
+                    setActiveChat(found);
+                    hasInitializedRef.current = true;
+                }
             } else if (initialChatUser._id || initialChatUser.id) {
                 setActiveChat(initialChatUser);
+                hasInitializedRef.current = true;
             }
         }
     }, [isOpen, initialChatUser, allUsers]);
