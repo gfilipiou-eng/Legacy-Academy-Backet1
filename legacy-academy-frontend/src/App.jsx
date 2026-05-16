@@ -2897,8 +2897,8 @@ const ProfileModal = ({
     return (
 
         <div className="fixed inset-0 z-[1200] flex items-end sm:items-center justify-center">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-2xl ${displayUser?.coverPic ? 'bg-black' : 'bg-[#0a0a0a]'}`}>
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
 
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
@@ -2911,7 +2911,7 @@ const ProfileModal = ({
                     </div>
                 )}
 
-                <div className={`flex-none p-4 flex items-center justify-between border-b border-white/10 z-10 relative ${displayUser?.coverPic ? 'bg-transparent backdrop-blur-md' : 'bg-[#0a0a0a]'}`}>
+                <div className={`flex-none p-4 flex items-center justify-between border-b border-white/10 z-10 relative ${displayUser?.coverPic ? 'bg-transparent backdrop-blur-md' : 'bg-black/60 backdrop-blur-3xl'}`}>
                     <button onClick={() => {
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
@@ -2921,7 +2921,7 @@ const ProfileModal = ({
                     <div className="w-10" />
                 </div>
 
-                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-32 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-[#050505]'}`}>
+                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-32 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
                     {activeList ? (
                         <div className="p-4 space-y-4">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -3128,16 +3128,16 @@ const ProfileModal = ({
                                 </div>
 
                                 {/* STATS GRID — 4 equal columns, no scroll */}
-                                <div className="grid grid-cols-4 gap-1.5 w-full">
+                                <div className="grid grid-cols-4 gap-2 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl  ">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-lg">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
-                                        <Icons.Grid className="w-3.5 h-3.5 text-white" />
+                                        <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-2.5 bg-black border border-white/10 rounded-2xl  ">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-lg">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = safeId(displayUser);
@@ -3147,17 +3147,17 @@ const ProfileModal = ({
                                                 ).length;
                                             })()}
                                         </span>
-                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-white" />
+                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-400" />
                                     </div>
 
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
-                                        <span className="font-black text-white text-base leading-none tabular-nums ">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all shadow-lg touch-manipulation select-none relative z-10">
+                                        <span className="font-black text-white text-base leading-none tabular-nums">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
                                         </span>
-                                        <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
+                                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                         </span>
                                     </div>
@@ -3165,21 +3165,21 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3 bg-black border border-white/10 rounded-2xl cursor-pointer     group touch-manipulation select-none relative z-10">
-                                        <span className="font-black text-white text-base leading-none tabular-nums ">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all shadow-lg touch-manipulation select-none relative z-10">
+                                        <span className="font-black text-white text-base leading-none tabular-nums">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
                                         </span>
-                                        <span className="text-white text-[7px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
+                                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
 
                                 </div>
                             </div>
 
                             {/* ACTION BUTTONS: Enhanced layout */}
-                            <div className="px-2 mb-4 space-y-2">
+                            <div className="px-2 mb-4 space-y-2 mt-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest ">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest transition-all shadow-md">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -3187,17 +3187,17 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className="flex-1 py-3 rounded-full text-[11px] font-black uppercase tracking-widest   bg-black border border-white/10 text-white"
+                                                className={`flex-1 py-3.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all shadow-md ${isFollowing ? 'bg-white/5 hover:bg-white/10 border border-white/10 text-white' : 'bg-white text-black hover:bg-gray-200'}`}
                                             >
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
                                             <button
                                                 onClick={() => onOpenChat(displayUser)}
                                                 title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
-                                                className="flex items-center gap-2 px-4 py-2.5 bg-black border border-white/10 rounded-2xl text-white text-[10px] font-black uppercase tracking-[0.2em]   shrink-0"
+                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full transition-all shrink-0 shadow-md group text-[10px] font-black uppercase tracking-[0.2em] text-white"
                                             >
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-white  duration-300" />
+                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-gray-300 group-hover:text-white transition-colors duration-300" />
                                                 </div>
                                                 <span className="whispers-label">{t('WHISPERS')}</span>
                                             </button>
