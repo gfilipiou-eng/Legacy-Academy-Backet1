@@ -4446,9 +4446,6 @@ const App = () => {
         }
     };
 
-    useEffect(() => {
-        fetchPosts();
-    }, []);
     const fetchUsers = async (specificId = null) => {
         try {
             if (specificId) {
