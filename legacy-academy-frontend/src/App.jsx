@@ -407,16 +407,15 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    // Strip rounded-full from className if founder to let parent container clip it
-    const finalClassName = `w-full h-full object-cover ${className || ''}`.replace(isFounder ? /rounded-full/g : '', '');
-    const borderRadiusStyle = isFounder ? { borderRadius: 'inherit' } : { borderRadius: '50%' };
+    // Strip rounded-full from className to prevent anti-aliasing gaps. Parent container's overflow-hidden handles the clipping.
+    const finalClassName = `w-full h-full object-cover ${className || ''}`.replace(/rounded-full/g, '');
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
-            <div className={`w-full h-full bg-gray-900 ${finalClassName}`} onClick={onClick} style={borderRadiusStyle}>
-                <div className="w-full h-full relative overflow-hidden bg-black" style={borderRadiusStyle}>
+            <div className={`w-full h-full bg-gray-900 ${finalClassName}`} onClick={onClick}>
+                <div className="w-full h-full relative overflow-hidden bg-black">
                     <video
                         src={mediaUrl}
                         className="w-full h-full object-cover pointer-events-none"
@@ -438,7 +437,6 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
         <img
             src={mediaUrl}
             className={finalClassName}
-            style={borderRadiusStyle}
             onClick={onClick}
             loading="lazy"
             decoding="async"
@@ -446,7 +444,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
             onError={() => setImgError(true)}
         />
     ) : (
-        <div style={{ ...borderRadiusStyle, overflow: 'hidden', width: '100%', height: '100%' }}>
+        <div className="w-full h-full overflow-hidden">
             <DefaultAvatar name={name} size={size} />
         </div>
     );
