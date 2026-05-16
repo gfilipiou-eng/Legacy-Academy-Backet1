@@ -406,12 +406,15 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 350 : 150, !String(rawUrl || '').includes('/video/upload/'));
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
+    const isFounder = user?.role === 'Founder';
+    const borderRadiusStyle = { borderRadius: isFounder ? '1.5rem' : '9999px' };
+
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
-            <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick}>
-                <div className="w-full h-full relative overflow-hidden rounded-full bg-black">
+            <div className={`w-full h-full bg-gray-900 ${className || ''}`} onClick={onClick} style={borderRadiusStyle}>
+                <div className="w-full h-full relative overflow-hidden bg-black" style={borderRadiusStyle}>
                     <video
                         src={mediaUrl}
                         className="w-full h-full object-cover pointer-events-none"
@@ -432,7 +435,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
     return mediaUrl ? (
         <img
             src={mediaUrl}
-            className={`w-full h-full object-cover rounded-full ${className || ''}`}
+            className={`w-full h-full object-cover ${className || ''}`}
+            style={borderRadiusStyle}
             onClick={onClick}
             loading="lazy"
             decoding="async"
@@ -440,7 +444,9 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
             onError={() => setImgError(true)}
         />
     ) : (
-        <DefaultAvatar name={name} size={size} />
+        <div style={{ ...borderRadiusStyle, overflow: 'hidden', width: '100%', height: '100%' }}>
+            <DefaultAvatar name={name} size={size} />
+        </div>
     );
 };
 
@@ -1581,7 +1587,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-black/60 shadow-xl cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
+                        <div className={`w-12 h-12 sm:w-14 sm:h-14 ${isFounder ? 'rounded-2xl' : 'rounded-full'} bg-black/60 shadow-xl cursor-pointer overflow-hidden border border-white/10`} onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -3084,8 +3090,8 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-start justify-between mb-3 sm:mb-4">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0">
-                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
+                                    <div className={`w-24 h-24 sm:w-32 sm:h-32 ${displayUser?.role === 'Founder' ? 'rounded-[2rem]' : 'rounded-full'} bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0`}>
+                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover" />
                                     </div>
                                 </div>
                             </div>
@@ -5595,24 +5601,24 @@ const App = () => {
                                     {/* Home */}
                                     <button
                                         onClick={() => setActiveTab('home')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'home' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
+                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'home' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'home' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
-                                            <Icons.Home className={`w-7 h-7 transition-all duration-300 ${activeTab === 'home' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        <div className={`w-14 h-9 flex items-center justify-center rounded-full transition-all duration-300 ${activeTab === 'home' ? 'bg-white/10' : ''}`}>
+                                            <Icons.Home className="w-6 h-6 transition-all duration-300" />
                                         </div>
                                     </button>
 
                                     {/* Alerts */}
                                     <button
                                         onClick={() => setActiveTab('alerts')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 relative active:scale-95 ${activeTab === 'alerts' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
+                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 relative active:scale-95 ${activeTab === 'alerts' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 relative ${activeTab === 'alerts' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
-                                            <Icons.Bell className={`w-7 h-7 transition-all duration-300 ${activeTab === 'alerts' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        <div className={`w-14 h-9 flex items-center justify-center rounded-full transition-all duration-300 relative ${activeTab === 'alerts' ? 'bg-white/10' : ''}`}>
+                                            <Icons.Bell className="w-6 h-6 transition-all duration-300" />
                                         </div>
                                         {alerts.filter(n => !n.read).length > 0 && (
-                                            <div className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-600 rounded-full border border-black flex items-center justify-center animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.6)]">
-                                                <span className="text-[10px] font-black text-white leading-none">
+                                            <div className="absolute top-1 right-2 min-w-[16px] h-[16px] bg-red-600 rounded-full flex items-center justify-center animate-pulse">
+                                                <span className="text-[9px] font-black text-white leading-none">
                                                     {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
                                                 </span>
                                             </div>
@@ -5624,18 +5630,18 @@ const App = () => {
                                         onClick={() => setIsCreateOpen(true)}
                                         className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-90"
                                     >
-                                        <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--gold-primary)] to-[var(--gold-primary)]/70 hover:scale-110 active:scale-105 transition-all duration-300">
-                                            <Icons.Plus className="w-8 h-8 text-black font-black" />
+                                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--gold-primary)] text-black transition-all duration-300">
+                                            <Icons.Plus className="w-7 h-7 font-black" />
                                         </div>
                                     </button>
 
                                     {/* Search */}
                                     <button
                                         onClick={() => setActiveTab('search')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'search' ? 'text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white'}`}
+                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'search' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                                     >
-                                        <div className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${activeTab === 'search' ? 'bg-[var(--gold-primary)]/10 scale-110' : ''}`}>
-                                            <Icons.Search className={`w-7 h-7 transition-all duration-300 ${activeTab === 'search' ? 'drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]' : ''}`} />
+                                        <div className={`w-14 h-9 flex items-center justify-center rounded-full transition-all duration-300 ${activeTab === 'search' ? 'bg-white/10' : ''}`}>
+                                            <Icons.Search className="w-6 h-6 transition-all duration-300" />
                                         </div>
                                     </button>
 
@@ -5648,8 +5654,8 @@ const App = () => {
                                         }}
                                         className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white active:scale-95"
                                     >
-                                        <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 transition-all duration-300 hover:scale-110 active:scale-105">
-                                            <ProfileAvatar user={user} className="w-full h-full rounded-full" />
+                                        <div className={`w-9 h-9 ${user?.role === 'Founder' ? 'rounded-[10px]' : 'rounded-full'} overflow-hidden border border-white/10 transition-all duration-300`}>
+                                            <ProfileAvatar user={user} className="w-full h-full object-cover" />
                                         </div>
                                     </button>
                                 </div>
