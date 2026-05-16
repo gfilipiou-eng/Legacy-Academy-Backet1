@@ -2576,7 +2576,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                     {/* PROFILE SECTION - TWITTER STYLE CLEAN */}
                     <div
                         className="p-4 pt-8 flex flex-col cursor-pointer relative z-10 transition-colors duration-300 hover:bg-white/[0.02]"
-                        onClick={() => { handleClose(); setTimeout(() => onViewProfile(user), 150); }}
+                        onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex justify-between items-start mb-2">
                             <div className={`w-[48px] h-[48px] ${user?.role === 'Founder' ? 'rounded-[14px]' : 'rounded-full'} overflow-hidden shrink-0 border border-white/10`}>
@@ -2909,7 +2909,7 @@ const ProfileModal = ({
 
     return (
 
-        <div className="fixed inset-0 z-[1200] flex items-end sm:items-center justify-center">
+        <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
             <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
 
@@ -5363,7 +5363,7 @@ const App = () => {
                                         scaleDown={1}
                                         duration={0}
                                     >
-                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-[var(--gold-primary)] transition-colors duration-300 pointer-events-none drop-shadow-[0_0_5px_rgba(255,255,255,0.2)] group-hover:drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]">
+                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-white transition-colors duration-300 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
                                         </svg>
                                     </EnhancedButton>
