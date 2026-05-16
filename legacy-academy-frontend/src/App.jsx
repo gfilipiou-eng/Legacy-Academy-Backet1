@@ -2471,7 +2471,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             {showDanger ? (
                                 <div className="p-5 bg-red-950/20 rounded-2xl border border-red-500/20 text-center animate-pop-in">
                                     <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
-                                        <Icons.AlertTriangle className="w-3 h-3" />
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-red-500"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
                                         {t('DANGER_ZONE')}
                                     </div>
                                     <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
