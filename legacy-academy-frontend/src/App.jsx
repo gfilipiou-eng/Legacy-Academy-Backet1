@@ -2458,7 +2458,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
                                         <option value="#3b82f6" className="bg-black text-white">{t('COLOR_BLUE')}</option>
                                         <option value="#10b981" className="bg-black text-white">{t('COLOR_GREEN')}</option>
-                                        <option value="#ffffff" className="bg-black text-white">{t('COLOR_WHITE')}</option>
+                                        <option value="#ff5500" className="bg-black text-[#ff5500] font-black">{t('COLOR_WHITE')}</option>
                                         <option value="#a855f7" className="bg-black text-white">{t('COLOR_PURPLE')}</option>
                                     </select>
                                 </div>
@@ -3804,12 +3804,12 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
 const applyTheme = (color) => {
     const getSecondary = (hex) => {
-        if (hex === '#ffffff') return '#888888';
+        if (hex === '#ff5500') return '#cc4400';
         if (hex === '#ffd700') return '#b8860b';
         return hex + 'aa';
     };
     const getHover = (hex) => {
-        if (hex === '#ffffff') return '#f0f0f0';
+        if (hex === '#ff5500') return '#ff661a';
         return hex + 'cc';
     };
     const secondary = getSecondary(color);
@@ -5292,9 +5292,9 @@ const App = () => {
                                                 <div className="flex-1 bg-white/[0.03] border border-white/[0.08] rounded-xl p-2.5 space-y-1.5">
                                                     <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">THEME</div>
                                                     <div className="flex gap-1.5 flex-wrap">
-                                                        {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ffffff', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff'].map(c => (
+                                                        {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ff5500', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff'].map(c => (
                                                             <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-5 h-5 rounded-md border-2 relative transition-all duration-200 ${formData.theme === c ? 'scale-125 border-white' : 'border-transparent opacity-50 hover:opacity-80'}`} style={{ backgroundColor: c }}>
-                                                                {formData.theme === c && <Icons.Check className={`w-3 h-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ffffff' ? 'text-black' : 'text-white'}`} />}
+                                                                {formData.theme === c && <Icons.Check className={`w-3 h-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ff5500' ? 'text-white' : 'text-white'}`} />}
                                                             </button>
                                                         ))}
                                                     </div>
