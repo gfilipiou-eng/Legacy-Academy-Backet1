@@ -2683,6 +2683,14 @@ const ProfileModal = ({
     const [isEditing, setIsEditing] = useState(false);
     const [userData, setUserData] = useState(profileUser);
     const [activeList, setActiveList] = useState(null);
+
+    // 🔥 SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
+    useEffect(() => {
+        if (profileUser) {
+            const latest = (allUsers || []).find(u => isSameId(u._id, profileUser._id)) || profileUser;
+            setUserData(latest);
+        }
+    }, [profileUser, allUsers]);
     const [clickLock, setClickLock] = useState(false);
     const lastOpenedAt = useRef(Date.now());
     const [bio, setBio] = useState(profileUser?.bio || "");
@@ -2715,6 +2723,7 @@ const ProfileModal = ({
         const merged = {
             ...live,
             ...base,
+            username: base?.username || live?.username || profileUser?.username || 'Unknown Agent',
             // Ensure some live fields from the global sync win if they are present
             lastSeen: live.lastSeen || base.lastSeen,
             followers: live.followers || base.followers || [],
@@ -3207,7 +3216,7 @@ const ProfileModal = ({
                                                 className="flex items-center justify-center gap-2 px-4 py-3.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full transition-all shrink-0 shadow-md group text-[10px] font-black uppercase tracking-[0.2em] text-white"
                                             >
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.Ghost className="w-5 h-5 whispers-icon text-gray-300 group-hover:text-white transition-colors duration-300" />
+                                                    <Icons.MessageSquare className="w-5 h-5 whispers-icon text-gray-300 group-hover:text-white transition-colors duration-300" />
                                                 </div>
                                                 <span className="whispers-label">{t('WHISPERS')}</span>
                                             </button>
@@ -4256,6 +4265,13 @@ const App = () => {
         const uid = safeId(updatedUser);
         if (!uid) return;
 
+        // 🔥 EXTRA PROTECTION: If payload is missing username (e.g. partial response), do not merge it as it would overwrite name with undefined!
+        if (!updatedUser.username) {
+            console.warn("⚠️ [SAFETY] Received user update without a username, fetching full user to prevent corruption:", uid);
+            fetchUsers(uid);
+            return;
+        }
+
         // Cache-break ONLY for real URLs (not blob)
         if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:') && !updatedUser.profilePic.includes('t=')) {
             const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
@@ -4296,7 +4312,13 @@ const App = () => {
             const authorId = safeId(p.author);
             if (authorId === uid) {
                 const currentAuthor = typeof p.author === 'object' && p.author ? p.author : { _id: uid };
-                return { ...p, author: { ...currentAuthor, ...updatedUser }, profilePic: updatedUser.profilePic || p.profilePic };
+                const nextAuthor = { ...currentAuthor };
+                Object.keys(updatedUser).forEach(key => {
+                    if (updatedUser[key] !== null && updatedUser[key] !== undefined && updatedUser[key] !== '') {
+                        nextAuthor[key] = updatedUser[key];
+                    }
+                });
+                return { ...p, author: nextAuthor, profilePic: updatedUser.profilePic || p.profilePic || nextAuthor.profilePic };
             }
             if (p.comments?.some(c => safeId(c.authorId) === uid)) {
                 return {
@@ -4657,13 +4679,15 @@ const App = () => {
             if (!prev) return prev;
             let changed = false;
             const next = prev.map(p => {
-                const currentAuthorId = p.author?._id || p.author;
                 const resolved = resolveFullUser(p.author, latestUsers);
 
-                // If the resolved username is better than what we had, update it
-                if (resolved.username !== 'Agent' && (p.author?.username === 'Unknown' || p.author?.username === 'Agent' || !p.author?.username)) {
-                    changed = true;
-                    return { ...p, author: resolved };
+                // 🔥 HIGH SAFETY GUARD: Only update if the resolved user actually has a valid, real username
+                if (resolved && resolved.username && resolved.username !== 'Unknown' && resolved.username !== 'Agent') {
+                    const currentUsername = p.author?.username || '';
+                    if (currentUsername !== resolved.username) {
+                        changed = true;
+                        return { ...p, author: resolved };
+                    }
                 }
                 return p;
             });
@@ -4674,8 +4698,11 @@ const App = () => {
             setSelectedPost(prev => {
                 if (!prev) return prev;
                 const resolved = resolveFullUser(prev.author, latestUsers);
-                if (resolved.username !== 'Agent' && (prev.author?.username === 'Unknown' || prev.author?.username === 'Agent' || !prev.author?.username)) {
-                    return { ...prev, author: resolved };
+                if (resolved && resolved.username && resolved.username !== 'Unknown' && resolved.username !== 'Agent') {
+                    const currentUsername = prev.author?.username || '';
+                    if (currentUsername !== resolved.username) {
+                        return { ...prev, author: resolved };
+                    }
                 }
                 return prev;
             });
@@ -5416,6 +5443,16 @@ const App = () => {
 
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); cyberDeleteEffect(); } catch (e) { } };
 
+    // Optimization: memoize feed calculation to avoid flickering & re-running heavy filters
+    const preloadedProfilePosts = useMemo(() => {
+        if (!profileUser?._id && !profileUser) return [];
+        const targetId = String(profileUser?._id || profileUser?.userId || profileUser);
+        return posts.filter(p =>
+            String(p.author?._id || p.author) === targetId ||
+            (Array.isArray(p.reposts) && p.reposts.some(id => String(id) === targetId))
+        );
+    }, [posts, profileUser]);
+
     // IF DIRECT LINK TO PUBLIC PROFILE
     if (publicProfileUsername) {
         return (
@@ -5437,16 +5474,6 @@ const App = () => {
     if (viewPostId) {
         return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} />;
     }
-
-    // Optimization: memoize feed calculation to avoid flickering & re-running heavy filters
-    const preloadedProfilePosts = useMemo(() => {
-        if (!profileUser?._id && !profileUser) return [];
-        const targetId = String(profileUser?._id || profileUser?.userId || profileUser);
-        return posts.filter(p =>
-            String(p.author?._id || p.author) === targetId ||
-            (Array.isArray(p.reposts) && p.reposts.some(id => String(id) === targetId))
-        );
-    }, [posts, profileUser]);
 
     return (
         <div className="app-container">
