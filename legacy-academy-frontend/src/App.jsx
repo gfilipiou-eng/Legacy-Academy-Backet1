@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, memo, useMemo, useCallback, startTransition } from 'react';
 import { createPortal } from 'react-dom';
 import EnhancedButton from './components/EnhancedButton';
 // DEPLOYMENT_VERSION: V12_PORTAL_FIX
@@ -11,6 +11,7 @@ import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 import socket from './socket';
+import BottomNavbar from './components/BottomNavbar';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
@@ -392,7 +393,7 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
-const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
+const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = false }) => {
     const [imgError, setImgError] = useState(false);
 
     if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
@@ -438,7 +439,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick }) => {
             src={mediaUrl}
             className={finalClassName}
             onClick={onClick}
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : undefined}
             decoding="async"
             alt=""
             onError={() => setImgError(true)}
@@ -797,13 +799,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
-                            <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} />
+                            <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} cinematic />
                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                             <NeuralVideoPlayer
                                 src={resolveMediaUrl(post.videoUrl || post.image)}
                                 poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
                                 className="w-full h-full"
                                 forcePause={isWritingComment}
+                                cinematic
                             />
                         ) : (
                             !imgError ? (
@@ -974,7 +977,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     );
 };
 
-const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }) => {
+const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause, cinematic = true }) => {
     const videoRef = useRef(null);
     const seekRef = useRef(null);
     const ytPlayerRef = useRef(null);
@@ -1188,7 +1191,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 
     return (
         <div
-            className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${className || ''}`}
+            className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${cinematic ? 'cinematic-video-frame' : ''} ${className || ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={(e) => {
@@ -1197,6 +1200,13 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                 togglePlay(e);
             }}
         >
+            {cinematic && (
+                <>
+                    <div className="cinematic-bar cinematic-bar-top" aria-hidden />
+                    <div className="cinematic-bar cinematic-bar-bottom" aria-hidden />
+                    <div className="cinematic-vignette pointer-events-none" aria-hidden />
+                </>
+            )}
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
@@ -1211,10 +1221,10 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             {(!isActuallyPlaying || !ytId) && (
                 <div className={`${ytId ? 'absolute inset-0' : 'relative w-full'} z-10 will-change-transform transform-gpu`}>
                     {ytId ? (
-                        <div className="w-full h-full relative bg-[#050505]">
+                        <div className={`w-full h-full relative bg-[#050505] ${cinematic ? 'aspect-[2.39/1] mx-auto' : ''}`}>
                             <img
                                 src={youtubeThumb}
-                                className="w-full h-full object-cover opacity-60 transform-gpu"
+                                className={`w-full h-full object-cover opacity-60 transform-gpu ${cinematic ? 'cinematic-video-el' : ''}`}
                                 onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
                             />
                         </div>
@@ -1229,7 +1239,8 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             onTimeUpdate={handleTimeUpdate}
                             onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
-                            className="w-full h-auto object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh]  duration-500 will-change-transform transform-gpu"
+                            preload="metadata"
+                            className={`w-full cursor-pointer duration-500 will-change-transform transform-gpu ${cinematic ? 'cinematic-video-el aspect-[2.39/1] object-cover max-h-[72vh] md:max-h-[78vh]' : 'h-auto object-contain max-h-[75vh] md:max-h-[85vh]'}`}
                         />
                     )}
                 </div>
@@ -1605,11 +1616,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative shadow-lg h-auto min-h-[100px] mt-3">
+                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-black relative shadow-lg h-auto min-h-[100px] mt-3 cinematic-video-wrap">
                                     {isYouTubeUrl(post.videoUrl) ? (
-                                        <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                        <NeuralVideoPlayer src={post.videoUrl} className="w-full" onExpand={() => onOpenDetail(post)} forcePause={forcePause} cinematic />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full" onExpand={() => onOpenDetail(post)} forcePause={forcePause} cinematic />
                                     ) : post.image && (
                                         imgError ? (
                                             <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
@@ -1983,7 +1994,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             mediaRecorder.current.start();
             setIsRecording(true);
 
-        } catch (e) { alert("Mic required for walkie-talkie mode"); }
+        } catch (e) { alert(t('MIC_REQUIRED')); }
     };
 
     const stopRecording = () => {
@@ -2022,12 +2033,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0  duration-300 ${activeChat ? '-translate-x-full sm:translate-x-0' : 'translate-x-0'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-black italic flex items-center gap-2 text-white">
-                                    <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]" />
-                                    {t('CHAT')}
-                                </h2>
-                                <button onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
+                            <div className="flex justify-between items-start gap-2">
+                                <div className="min-w-0 flex-1">
+                                    <h2 className="text-xl font-black italic flex items-center gap-2 text-white">
+                                        <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)] shrink-0" />
+                                        {t('WHISPERS')}
+                                    </h2>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 pl-10">{t('WHISPERS_SUBTITLE')}</p>
+                                </div>
+                                <button type="button" onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400 shrink-0"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">
@@ -2430,13 +2444,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             applyTheme(color);
                                             handleSave('theme', color);
                                         }}
-                                        className="w-full bg-[var(--app-bg)] border border-white/40 rounded-2xl py-3.5 px-4 text-[15px] font-black text-[var(--app-text)] outline-none cursor-pointer   appearance-none h-[56px]"
+                                        className="theme-select w-full bg-[var(--app-bg)] border border-white/40 rounded-2xl py-3.5 px-4 text-[15px] font-black text-white outline-none cursor-pointer appearance-none h-[56px]"
                                     >
                                         <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
                                         <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
                                         <option value="#3b82f6" className="bg-black text-white">{t('COLOR_BLUE')}</option>
                                         <option value="#10b981" className="bg-black text-white">{t('COLOR_GREEN')}</option>
-                                        <option value="#ff5500" className="bg-black text-[#ff5500] font-black">{t('COLOR_WHITE')}</option>
+                                        <option value="#ff5500" className="bg-black text-white">{t('COLOR_ORANGE_BLACK') || t('COLOR_WHITE')}</option>
                                         <option value="#a855f7" className="bg-black text-white">{t('COLOR_PURPLE')}</option>
                                     </select>
                                 </div>
@@ -3212,7 +3226,7 @@ const ProfileModal = ({
                                             </button>
                                             <button
                                                 onClick={() => onOpenChat(displayUser)}
-                                                title={t('DM_SAFE_DESC', 'ΑΣΦΑΛΗΣ ΕΠΙΚΟΙΝΩΝΙΑ: Κρυπτογραφημένη & Ιδιωτική.')}
+                                                title={t('DM_SAFE_DESC')}
                                                 className="flex items-center justify-center gap-2 px-4 py-3.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full transition-all shrink-0 shadow-md group text-[10px] font-black uppercase tracking-[0.2em] text-white"
                                             >
                                                 <div className="relative flex items-center justify-center">
@@ -3817,6 +3831,13 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     );
 };
 
+const hexToRgb = (hex) => {
+    const h = String(hex || '').replace('#', '');
+    if (h.length !== 6) return null;
+    const n = parseInt(h, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+};
+
 const applyTheme = (color) => {
     const getSecondary = (hex) => {
         if (hex === '#ff5500') return '#cc4400';
@@ -3831,12 +3852,20 @@ const applyTheme = (color) => {
     const hover = getHover(color);
     const glow = `${color}44`;
     const glowSoft = `${color}1a`;
+    const rgb = hexToRgb(color);
 
     document.documentElement.style.setProperty('--gold-primary', color);
     document.documentElement.style.setProperty('--gold-secondary', secondary);
     document.documentElement.style.setProperty('--gold-hover', hover);
     document.documentElement.style.setProperty('--gold-glow', glow);
     document.documentElement.style.setProperty('--gold-glow-soft', glowSoft);
+    document.documentElement.style.setProperty('--app-text', '#e7e9ea');
+    document.documentElement.style.setProperty('--f1-red', color);
+    document.documentElement.style.setProperty('--f1-primary', color);
+    if (rgb) {
+        document.documentElement.style.setProperty('--gold-primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+    }
+    document.body.classList.toggle('theme-orange-black', color === '#ff5500');
 
     localStorage.setItem('themeColor', color);
     localStorage.setItem('themeSecondary', secondary);
@@ -4151,6 +4180,13 @@ const App = () => {
         setFormData(prev => ({ ...prev, [key]: value }));
     };
 
+    const commitAuthenticatedUser = useCallback((userData) => {
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('language', userData.settings?.language || 'en');
+        localStorage.setItem('themeColor', userData.settings?.theme || '#ffd700');
+        startTransition(() => setUser(userData));
+    }, []);
+
     const handleGoogleSignIn = async () => {
         setAuthLoading(true);
         try {
@@ -4161,10 +4197,7 @@ const App = () => {
                 picture: "https://lh3.googleusercontent.com/a/ACg8ocL3-vA-eD2q1bW3a6A"
             });
             localStorage.setItem('token', res.data.token);
-            localStorage.setItem('user', JSON.stringify(res.data.user));
-            localStorage.setItem('language', res.data.user.settings?.language || 'en');
-            localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
-            setUser(res.data.user);
+            commitAuthenticatedUser(res.data.user);
             addToast("Connected via Secure Google Protocol!", "success");
         } catch (e) {
             console.error("Google Sign In Failed", e);
@@ -4454,12 +4487,10 @@ const App = () => {
         }
     }, [user]);
 
-    // 🔥 FETCH POSTS WHEN ACTIVE TAB CHANGES
+    // Fetch posts on tab change only (login/refresh handled by user init effect)
     useEffect(() => {
-        if (user) {
-            fetchPosts();
-        }
-    }, [user, activeTab]);
+        if (user) fetchPosts();
+    }, [activeTab]);
 
     // 🔥 GLOBAL REAL-TIME LISTENERS
     useEffect(() => {
@@ -5538,10 +5569,7 @@ const App = () => {
                                                 try {
                                                     const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
                                                     localStorage.setItem('token', res.data.token);
-                                                    localStorage.setItem('user', JSON.stringify(res.data.user));
-                                                    localStorage.setItem('language', res.data.user.settings?.language || 'en');
-                                                    localStorage.setItem('themeColor', res.data.user.settings?.theme || '#ffd700');
-                                                    setUser(res.data.user);
+                                                    commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     alert(e.response?.data?.message || "Invalid Credentials.");
                                                 } finally { setAuthLoading(false); }
@@ -5642,10 +5670,9 @@ const App = () => {
                                                     if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
                                                     const res = await axios.post('/auth/register', fd);
                                                     localStorage.setItem('token', res.data.token);
-                                                    localStorage.setItem('user', JSON.stringify(res.data.user));
-                                                    localStorage.setItem('language', res.data.user.settings?.language || formData.language || 'en');
-                                                    localStorage.setItem('themeColor', res.data.user.settings?.theme || formData.theme || '#ffd700');
-                                                    setUser(res.data.user);
+                                                    if (formData.language) localStorage.setItem('language', formData.language);
+                                                    if (formData.theme) localStorage.setItem('themeColor', formData.theme);
+                                                    commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
                                                 } finally { setAuthLoading(false); }
@@ -5955,80 +5982,15 @@ const App = () => {
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
-                    {/* Bottom Navbar - Liquid Glass Morphing Effect */}
-                    <nav className="fixed bottom-0 left-0 w-full z-[99] px-3 pb-4 pt-3">
-                        <div className="max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto relative">
-                            {/* Glass Container */}
-                            <div className="relative bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[24px] shadow-[0_0_40px_rgba(0,0,0,0.8),0_0_60px_rgba(255,215,0,0.05)] overflow-hidden">
-                                {/* Liquid Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/10 via-white/5 to-[var(--gold-primary)]/10 animate-pulse opacity-50" />
-                                
-                                {/* Nav Items */}
-                                <div className="relative flex items-center justify-around py-3.5">
-                                    {/* Home */}
-                                    <button
-                                        onClick={() => setActiveTab('home')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'home' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                                    >
-                                        <div className={`w-14 h-9 flex items-center justify-center rounded-full transition-all duration-300 ${activeTab === 'home' ? 'bg-white/10' : ''}`}>
-                                            <Icons.Home className="w-6 h-6 transition-all duration-300" />
-                                        </div>
-                                    </button>
-
-                                    {/* Alerts */}
-                                    <button
-                                        onClick={() => setActiveTab('alerts')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 relative active:scale-95 ${activeTab === 'alerts' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                                    >
-                                        <div className={`w-14 h-9 flex items-center justify-center rounded-full transition-all duration-300 relative ${activeTab === 'alerts' ? 'bg-white/10' : ''}`}>
-                                            <Icons.Bell className="w-6 h-6 transition-all duration-300" />
-                                        </div>
-                                        {alerts.filter(n => !n.read).length > 0 && (
-                                            <div className="absolute top-1 right-2 min-w-[16px] h-[16px] bg-red-600 rounded-full flex items-center justify-center animate-pulse">
-                                                <span className="text-[9px] font-black text-white leading-none">
-                                                    {alerts.filter(n => !n.read).length > 9 ? '9+' : alerts.filter(n => !n.read).length}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </button>
-
-                                    {/* Create Post */}
-                                    <button
-                                        onClick={() => setIsCreateOpen(true)}
-                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-90"
-                                    >
-                                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--gold-primary)] text-black transition-all duration-300">
-                                            <Icons.Plus className="w-7 h-7 font-black" />
-                                        </div>
-                                    </button>
-
-                                    {/* Search */}
-                                    <button
-                                        onClick={() => setActiveTab('search')}
-                                        className={`flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 active:scale-95 ${activeTab === 'search' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                                    >
-                                        <div className={`w-14 h-9 flex items-center justify-center rounded-full transition-all duration-300 ${activeTab === 'search' ? 'bg-white/10' : ''}`}>
-                                            <Icons.Search className="w-6 h-6 transition-all duration-300" />
-                                        </div>
-                                    </button>
-
-                                    {/* Profile */}
-                                    <button
-                                        onClick={() => {
-                                            if (user) {
-                                                viewProfile(user);
-                                            }
-                                        }}
-                                        className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-all duration-300 text-gray-400 hover:text-white active:scale-95"
-                                    >
-                                        <div className={`w-9 h-9 ${user?.role === 'Founder' ? 'rounded-[10px]' : 'rounded-full'} overflow-hidden border border-white/10 transition-all duration-300`}>
-                                            <ProfileAvatar user={user} className="w-full h-full object-cover" />
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </nav>
+                    <BottomNavbar
+                        activeTab={activeTab}
+                        onTabChange={setActiveTab}
+                        alerts={alerts}
+                        user={user}
+                        onCreate={() => setIsCreateOpen(true)}
+                        onProfile={() => user && viewProfile(user)}
+                        ProfileAvatar={ProfileAvatar}
+                    />
 
                     <NavigationDrawer
                         isOpen={isDrawerOpen}

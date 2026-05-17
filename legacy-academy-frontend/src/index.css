@@ -134,6 +134,137 @@ body {
   }
 }
 
+/* Bottom navbar — opaque liquid glass (fast paint, no pulse) */
+.bottom-nav-shell {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  contain: layout style;
+}
+
+.bottom-nav-glass {
+  position: relative;
+  isolation: isolate;
+  contain: layout style paint;
+  background: linear-gradient(
+    155deg,
+    rgba(24, 24, 28, 0.96) 0%,
+    rgba(12, 12, 14, 0.98) 42%,
+    rgba(8, 8, 10, 0.99) 100%
+  );
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 0 48px rgba(255, 215, 0, 0.04);
+}
+
+.bottom-nav-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 215, 0, 0.09) 0%,
+    transparent 36%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 64%,
+    rgba(255, 215, 0, 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+.bottom-nav-glass::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  pointer-events: none;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bottom-nav-glass {
+    background: rgba(10, 10, 12, 0.99);
+  }
+}
+
+/* Orange Black theme — keep body text readable on desktop (accent stays orange) */
+body.theme-orange-black {
+  color: #e7e9ea;
+}
+
+body.theme-orange-black .app-container,
+body.theme-orange-black main,
+body.theme-orange-black p,
+body.theme-orange-black span,
+body.theme-orange-black h1,
+body.theme-orange-black h2,
+body.theme-orange-black h3,
+body.theme-orange-black label,
+body.theme-orange-black input,
+body.theme-orange-black textarea,
+body.theme-orange-black select {
+  color: inherit;
+}
+
+select.theme-select {
+  color: #e7e9ea !important;
+}
+
+select.theme-select option {
+  color: #e7e9ea;
+  background-color: #000;
+}
+
+/* Cinematic video (letterbox + vignette) */
+.cinematic-video-wrap {
+  background: #000;
+}
+
+.cinematic-video-frame {
+  background: #000;
+  min-height: 120px;
+}
+
+.cinematic-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 12;
+  pointer-events: none;
+  background: #000;
+}
+
+.cinematic-bar-top {
+  top: 0;
+  height: clamp(8px, 2.5vw, 14px);
+}
+
+.cinematic-bar-bottom {
+  bottom: 0;
+  height: clamp(10px, 3vw, 18px);
+}
+
+.cinematic-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.cinematic-video-el {
+  display: block;
+  width: 100%;
+  background: #000;
+}
+
 .nav-item-btn {
   @apply p-3.5 rounded-full transition-all duration-300 flex items-center justify-center;
   color: #71767b;
