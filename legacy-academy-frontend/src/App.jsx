@@ -3231,18 +3231,27 @@ const ProfileModal = ({
                             </div>
 
                             <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4 border border-white/10 backdrop-blur-xl">
-                                {['ALL', 'POSTS', 'VIDEO'].map(tab => (
-                                    <button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl  ${activeTab === tab
-                                            ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
-                                            : 'text-white/60  '
-                                            }`}
-                                    >
-                                        {t('TAB_' + tab)}
-                                    </button>
-                                ))}
+                                {['ALL', 'POSTS', 'VIDEO'].map(tab => {
+                                    const renderIcon = () => {
+                                        if (tab === 'ALL') return <Icons.Grid className="w-3.5 h-3.5 shrink-0" />;
+                                        if (tab === 'POSTS') return <Icons.Compose className="w-3.5 h-3.5 shrink-0" />;
+                                        if (tab === 'VIDEO') return <Icons.Play className="w-3 h-3 shrink-0 fill-current" />;
+                                        return null;
+                                    };
+                                    return (
+                                        <button
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab)}
+                                            className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl flex items-center justify-center gap-2 duration-300 ${activeTab === tab
+                                                ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
+                                                : 'text-white/60 hover:text-white hover:bg-white/5'
+                                                }`}
+                                        >
+                                            {renderIcon()}
+                                            <span>{t('TAB_' + tab)}</span>
+                                        </button>
+                                    );
+                                })}
                             </div>
 
                             {/* PRIVACY LOCK SCREEN */}
