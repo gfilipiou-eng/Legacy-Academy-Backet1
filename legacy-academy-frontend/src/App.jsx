@@ -799,14 +799,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
-                            <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} cinematic />
+                            <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} />
                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                             <NeuralVideoPlayer
                                 src={resolveMediaUrl(post.videoUrl || post.image)}
                                 poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
                                 className="w-full h-full"
                                 forcePause={isWritingComment}
-                                cinematic
                             />
                         ) : (
                             !imgError ? (
@@ -977,7 +976,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     );
 };
 
-const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause, cinematic = true }) => {
+const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }) => {
     const videoRef = useRef(null);
     const seekRef = useRef(null);
     const ytPlayerRef = useRef(null);
@@ -1191,7 +1190,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause, 
 
     return (
         <div
-            className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${cinematic ? 'cinematic-video-frame' : ''} ${className || ''}`}
+            className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${className || ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={(e) => {
@@ -1200,13 +1199,6 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause, 
                 togglePlay(e);
             }}
         >
-            {cinematic && (
-                <>
-                    <div className="cinematic-bar cinematic-bar-top" aria-hidden />
-                    <div className="cinematic-bar cinematic-bar-bottom" aria-hidden />
-                    <div className="cinematic-vignette pointer-events-none" aria-hidden />
-                </>
-            )}
             {/* YOUTUBE ENGINE LAYER - DEEP STEALTH MASKING */}
             {ytId && isActivated && (
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
@@ -1221,10 +1213,10 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause, 
             {(!isActuallyPlaying || !ytId) && (
                 <div className={`${ytId ? 'absolute inset-0' : 'relative w-full'} z-10 will-change-transform transform-gpu`}>
                     {ytId ? (
-                        <div className={`w-full h-full relative bg-[#050505] ${cinematic ? 'aspect-[2.39/1] mx-auto' : ''}`}>
+                        <div className="w-full h-full relative bg-[#050505]">
                             <img
                                 src={youtubeThumb}
-                                className={`w-full h-full object-cover opacity-60 transform-gpu ${cinematic ? 'cinematic-video-el' : ''}`}
+                                className="w-full h-full object-cover opacity-60 transform-gpu"
                                 onError={(e) => e.target.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
                             />
                         </div>
@@ -1239,8 +1231,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause, 
                             onTimeUpdate={handleTimeUpdate}
                             onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
-                            preload="metadata"
-                            className={`w-full cursor-pointer duration-500 will-change-transform transform-gpu ${cinematic ? 'cinematic-video-el aspect-[2.39/1] object-cover max-h-[72vh] md:max-h-[78vh]' : 'h-auto object-contain max-h-[75vh] md:max-h-[85vh]'}`}
+                            className="w-full h-auto object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] duration-500 will-change-transform transform-gpu"
                         />
                     )}
                 </div>
@@ -1616,11 +1607,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-black relative shadow-lg h-auto min-h-[100px] mt-3 cinematic-video-wrap">
+                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative shadow-lg h-auto min-h-[100px] mt-3">
                                     {isYouTubeUrl(post.videoUrl) ? (
-                                        <NeuralVideoPlayer src={post.videoUrl} className="w-full" onExpand={() => onOpenDetail(post)} forcePause={forcePause} cinematic />
+                                        <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full" onExpand={() => onOpenDetail(post)} forcePause={forcePause} cinematic />
+                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : post.image && (
                                         imgError ? (
                                             <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
@@ -2033,15 +2024,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0  duration-300 ${activeChat ? '-translate-x-full sm:translate-x-0' : 'translate-x-0'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
-                            <div className="flex justify-between items-start gap-2">
-                                <div className="min-w-0 flex-1">
-                                    <h2 className="text-xl font-black italic flex items-center gap-2 text-white">
-                                        <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)] shrink-0" />
-                                        {t('WHISPERS')}
-                                    </h2>
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1 pl-10">{t('WHISPERS_SUBTITLE')}</p>
-                                </div>
-                                <button type="button" onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400 shrink-0"><Icons.X className="w-6 h-6" /></button>
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-xl font-black italic flex items-center gap-2 text-white">
+                                    <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]" />
+                                    {t('WHISPERS')}
+                                </h2>
+                                <button type="button" onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">

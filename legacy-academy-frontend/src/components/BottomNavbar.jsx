@@ -52,7 +52,7 @@ const BottomNavbar = memo(({
                             onClick={onCreate}
                             className="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-transform duration-200 active:scale-90"
                         >
-                            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--gold-primary)] text-black shadow-[0_4px_20px_rgba(255,215,0,0.35)]">
+                            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--gold-primary)] text-black shadow-lg shadow-black/40">
                                 <Icons.Plus className="w-7 h-7 font-black" />
                             </div>
                         </button>
