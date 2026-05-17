@@ -169,6 +169,18 @@ const getYouTubeEmbedUrl = (url) => {
 };
 
 const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
+
+const formatUserHandle = (username) =>
+    '@' + String(username || 'agent').toLowerCase().replace(/\s+/g, '');
+
+const THEME_PALETTE = [
+    { value: '#cc0000', labelKey: 'COLOR_RED' },
+    { value: '#ffd700', labelKey: 'COLOR_GOLD' },
+    { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
+    { value: '#10b981', labelKey: 'COLOR_GREEN' },
+    { value: '#ff5500', labelKey: 'COLOR_ORANGE_BLACK' },
+    { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
+];
 const isUserOnline = (u, currentUser) => {
     // Rule: You are always online to yourself (instant feedback)
     if (currentUser && isSameId(u, currentUser)) return true;
@@ -837,9 +849,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <ProfileAvatar user={author} className="rounded-full" />
                             </div>
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="font-bold text-white leading-none whitespace-nowrap">{author?.username}</span>
-                                    <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4" />
+                                <div className="post-author-line min-w-0">
+                                    <span className="font-bold text-white leading-none shrink-0 max-w-[45%] truncate">{author?.username}</span>
+                                    <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4 shrink-0" />
+                                    <span className="post-handle text-gray-500 text-[12px]">{formatUserHandle(author?.username)}</span>
                                 </div>
                             </div>
                         </div>
@@ -1575,14 +1588,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     {/* RIGHT COL: CONTENT */}
                     <div className="flex-1 flex flex-col min-w-0">
                         {/* Header */}
-                        <div className="flex items-start justify-between mb-1 sm:mb-2 -mt-1 sm:-mt-0.5">
-                            <div className="flex flex-col">
-                                <div className="flex items-center gap-1.5 flex-wrap leading-tight sm:leading-none">
-                                    <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer" onClick={() => onViewProfile(author)}>{author?.username}</span>
+                        <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
+                            <div className="min-w-0 flex-1 pr-1 overflow-hidden">
+                                <div className="post-author-line">
+                                    <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer shrink-0 max-w-[38%] sm:max-w-[45%] truncate" onClick={() => onViewProfile(author)}>{author?.username}</span>
                                     <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                    <span className="text-gray-500 text-[13px] ml-1 truncate max-w-[100px] sm:max-w-none">@{author?.username?.toLowerCase().replace(/\s+/g, '') || 'agent'}</span>
-                                    <span className="text-gray-600 text-[13px] mx-1">·</span>
-                                    <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
+                                    <span className="post-handle text-gray-500 text-[13px]">{formatUserHandle(author?.username)}</span>
+                                    <span className="text-gray-600 text-[13px] shrink-0">·</span>
+                                    <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap shrink-0">{formatDate(post.createdAt, t, lang)}</span>
                                 </div>
                             </div>
 
@@ -2423,24 +2436,32 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </div>
                                 <div className="space-y-2">
                                     <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
-                                        THEME
+                                        {t('THEME')}
                                     </div>
-                                    <select
-                                        value={user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000'}
-                                        onChange={(e) => {
-                                            const color = e.target.value;
-                                            applyTheme(color);
-                                            handleSave('theme', color);
-                                        }}
-                                        className="theme-select w-full bg-[var(--app-bg)] border border-white/40 rounded-2xl py-3.5 px-4 text-[15px] font-black text-white outline-none cursor-pointer appearance-none h-[56px]"
-                                    >
-                                        <option value="#cc0000" className="bg-black text-white">{t('COLOR_RED')}</option>
-                                        <option value="#ffd700" className="bg-black text-white">{t('COLOR_GOLD')}</option>
-                                        <option value="#3b82f6" className="bg-black text-white">{t('COLOR_BLUE')}</option>
-                                        <option value="#10b981" className="bg-black text-white">{t('COLOR_GREEN')}</option>
-                                        <option value="#ff5500" className="bg-black text-white">{t('COLOR_ORANGE_BLACK') || t('COLOR_WHITE')}</option>
-                                        <option value="#a855f7" className="bg-black text-white">{t('COLOR_PURPLE')}</option>
-                                    </select>
+                                    <div className="theme-swatch-grid">
+                                        {THEME_PALETTE.map(({ value, labelKey }) => {
+                                            const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
+                                            return (
+                                                <button
+                                                    key={value}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        applyTheme(value);
+                                                        handleSave('theme', value);
+                                                    }}
+                                                    className="theme-swatch-btn flex flex-col items-center gap-1.5"
+                                                >
+                                                    <span
+                                                        className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all ${active ? 'border-white ring-2 ring-white/90 ring-offset-2 ring-offset-black' : 'border-white/25 opacity-85 hover:opacity-100'}`}
+                                                        style={{ backgroundColor: value }}
+                                                    />
+                                                    <span className={`text-[9px] font-bold uppercase tracking-wide text-center leading-tight max-w-[72px] ${active ? 'text-white' : 'text-gray-500'}`}>
+                                                        {t(labelKey) || t('COLOR_WHITE')}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -5636,9 +5657,9 @@ const App = () => {
                                                 </div>
                                                 <div className="flex-1 bg-white/[0.03] border border-white/[0.08] rounded-xl p-2.5 space-y-1.5">
                                                     <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">THEME</div>
-                                                    <div className="flex gap-1.5 flex-wrap">
+                                                    <div className="flex gap-2 flex-wrap overflow-visible p-0.5">
                                                         {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ff5500', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff'].map(c => (
-                                                            <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-5 h-5 rounded-md border-2 relative transition-all duration-200 ${formData.theme === c ? 'scale-125 border-white' : 'border-transparent opacity-50 hover:opacity-80'}`} style={{ backgroundColor: c }}>
+                                                            <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-7 h-7 sm:w-6 sm:h-6 rounded-md border-2 relative transition-all duration-200 overflow-visible ${formData.theme === c ? 'border-white ring-2 ring-white/80 ring-offset-1 ring-offset-black' : 'border-transparent opacity-50 hover:opacity-80'}`} style={{ backgroundColor: c }}>
                                                                 {formData.theme === c && <Icons.Check className={`w-3 h-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ff5500' ? 'text-white' : 'text-white'}`} />}
                                                             </button>
                                                         ))}

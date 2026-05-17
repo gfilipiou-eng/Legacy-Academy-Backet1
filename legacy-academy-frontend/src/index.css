@@ -172,32 +172,55 @@ body {
   }
 }
 
-/* Orange Black theme — keep body text readable on desktop (accent stays orange) */
+/* Orange Black theme — readable text; accents use --gold-primary */
 body.theme-orange-black {
   color: #e7e9ea;
+  --app-text: #e7e9ea;
 }
 
-body.theme-orange-black .app-container,
-body.theme-orange-black main,
-body.theme-orange-black p,
-body.theme-orange-black span,
-body.theme-orange-black h1,
-body.theme-orange-black h2,
-body.theme-orange-black h3,
-body.theme-orange-black label,
-body.theme-orange-black input,
-body.theme-orange-black textarea,
-body.theme-orange-black select {
-  color: inherit;
+.post-author-line {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  overflow: hidden;
+  flex-wrap: nowrap;
 }
 
-select.theme-select {
-  color: #e7e9ea !important;
+.post-author-line .post-handle {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-select.theme-select option {
-  color: #e7e9ea;
-  background-color: #000;
+.theme-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem 0.5rem;
+  padding: 0.35rem 0.15rem 0.15rem;
+  overflow: visible;
+}
+
+@media (min-width: 380px) {
+  .theme-swatch-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.theme-swatch-btn {
+  overflow: visible;
+  padding: 0.15rem;
+}
+
+.theme-swatch-dot {
+  flex-shrink: 0;
+}
+
+body.theme-orange-black .theme-swatch-dot[style*="#ff5500"],
+body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
+  box-shadow: 0 0 0 1px rgba(255, 85, 0, 0.5);
 }
 
 .nav-item-btn {
