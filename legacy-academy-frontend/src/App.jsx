@@ -3614,12 +3614,11 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
                         <button disabled={isSubmitting} onClick={async () => {
                             if (isSubmitting) return;
-                            const rawYoutube = document.getElementById('c-youtube').value;
                             const file = fileRef.current?.files?.[0];
 
                             // Auto-extract from description if they pasted it there instead of the dedicated box
                             const ytMatch = getYouTubeId(desc);
-                            const youtube = rawYoutube ? rawYoutube.trim() : (ytMatch ? `https://youtube.com/watch?v=${ytMatch}` : '');
+                            const youtube = ytMatch ? `https://youtube.com/watch?v=${ytMatch}` : '';
 
                             if (!desc && !file && !youtube) return;
 
