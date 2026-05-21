@@ -2165,7 +2165,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div ref={scrollRef} />
                             </div>
                             {/* Hidden image input */}
-                            <input type="file" ref={imageInputRef} hidden accept="image/*" onChange={handleImageSelect} />
+                            <input type="file" ref={imageInputRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={handleImageSelect} />
 
                             {/* IMAGE PREVIEW STRIP */}
                             {imagePreview && (
@@ -2993,7 +2993,7 @@ const ProfileModal = ({
                                     <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
                                 )}
                             </div>
-                            <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
+                            <input type="file" ref={fileRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
@@ -3068,7 +3068,7 @@ const ProfileModal = ({
                                     </button>
                                 )}
                             </div>
-                            <input type="file" ref={coverFileRef} hidden accept="image/*,video/*" onChange={async (e) => {
+                            <input type="file" ref={coverFileRef} hidden accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
@@ -3599,7 +3599,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 <span className="text-xs font-bold uppercase tracking-widest">{t('UPLOAD_MEDIA')}</span>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*, audio/mpeg, audio/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
                         <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl  border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 '}`}>
@@ -3826,7 +3826,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('UPLOAD_MEDIA')}</span>
                                 </div>
                             )}
-                            <input type="file" ref={fileRef} accept="image/*,video/*,audio/*" hidden onChange={handleFileChange} />
+                            <input type="file" ref={fileRef} accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*, audio/mpeg, audio/*" hidden onChange={handleFileChange} />
                         </div>
 
                         <div className="flex gap-4">
@@ -5616,7 +5616,7 @@ const App = () => {
                                                         <span className="text-[8px] uppercase tracking-wider font-black">Photo</span>
                                                     </div>
                                                 )}
-                                                <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
+                                                <input type="file" ref={registerFileRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
                                             </div>
                                             {[{ id: 'r-username', type: 'text', icon: <Icons.User className="w-4 h-4" />, ph: t('USERNAME'), val: formData.username, max: 19 },
                                               { id: 'r-email', type: 'email', icon: <Icons.Mail className="w-4 h-4" />, ph: t('EMAIL'), val: formData.email },
