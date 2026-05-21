@@ -1276,8 +1276,21 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                                 else if (videoRef.current) videoRef.current.pause();
                                                 setIsPlaying(false);
                                             }
-                                            onExpand();
-
+                                            
+                                            // Check if it's fullscreen capable
+                                            if (videoRef.current) {
+                                                if (videoRef.current.requestFullscreen) {
+                                                    videoRef.current.requestFullscreen();
+                                                } else if (videoRef.current.webkitRequestFullscreen) {
+                                                    videoRef.current.webkitRequestFullscreen();
+                                                } else if (videoRef.current.webkitEnterFullscreen) {
+                                                    videoRef.current.webkitEnterFullscreen(); // For iOS
+                                                } else {
+                                                    onExpand(); // Fallback to modal
+                                                }
+                                            } else {
+                                                onExpand(); // Fallback for youtube or missing ref
+                                            }
                                         }}
                                         className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto     group/btn shadow-xl"
                                     >
