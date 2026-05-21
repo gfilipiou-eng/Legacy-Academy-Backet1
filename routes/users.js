@@ -649,6 +649,56 @@ router.post("/profile-pic", verifyToken, (req, res, next) => {
     }
 });
 
+// UPDATE COVER PICTURE (Premium Background)
+router.post("/cover-pic", verifyToken, (req, res, next) => {
+    profilePicUpload.single("image")(req, res, (err) => {
+        if (err) return res.status(500).json({ message: "Upload failed.", error: err.message });
+        next();
+    });
+}, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        if (!req.file || !req.file.path) return res.status(400).json("No valid asset uploaded.");
+
+        let imagePath = req.file.path;
+        if (imagePath.startsWith('uploads')) imagePath = '/' + imagePath.replace(/\\/g, '/');
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { coverPic: imagePath } },
+            { new: true }
+        ).select('-password');
+
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        res.status(500).json({ message: "SYSTEM ERROR: Cover integration failed.", error: err.message });
+    }
+});
+
+// REMOVE COVER PICTURE (Premium Background)
+router.delete("/cover-pic", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $unset: { coverPic: "" } },
+            { new: true }
+        ).select("-password");
+
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Cover Pic Delete Error:", err);
+        res.status(500).json(err);
+    }
+});
+
 // 3. Update User (Generic + Username Update Logic)
 router.put("/:id", verifyToken, async (req, res) => {
     try {

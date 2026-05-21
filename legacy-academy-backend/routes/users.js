@@ -126,6 +126,33 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
+// Get user by username
+router.get("/username/:username", async (req, res) => {
+    try {
+        const usernameParam = decodeURIComponent(req.params.username).trim();
+        const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
+        const user = await User.findOne({ username: { $regex: safeRegex } }).select('-password');
+        if (!user) return res.status(404).json("User not found");
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// Get public posts of a user by username for public view-only Linktree profile view
+router.get("/public/posts/:username", async (req, res) => {
+    try {
+        const usernameParam = decodeURIComponent(req.params.username).trim();
+        const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
+        const user = await User.findOne({ username: { $regex: safeRegex } });
+        if (!user) return res.status(404).json("Agent not found.");
+        const posts = await Post.find({ author: user._id }).sort({ createdAt: -1 });
+        res.status(200).json(posts);
+    } catch (err) {
+        res.status(500).json([]);
+    }
+});
+
 // GET NOTIFICATIONS (with auto-heal for 'Someone' usernames)
 router.get("/notifications", verifyToken, async (req, res) => {
     try {
