@@ -1304,19 +1304,19 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             </div>
                             <div
                                 ref={seekRef}
-                                className="w-full h-2 bg-white/10 rounded-full cursor-pointer relative group/seek"
+                                className="w-full h-1.5 bg-white/10 backdrop-blur-sm rounded-full cursor-pointer relative group/seek shadow-[0_0_10px_rgba(0,0,0,0.5)] border border-white/5"
                                 onMouseDown={handleMouseDown}
                                 onTouchStart={handleMouseDown}
                             >
-                                <div className="absolute inset-x-0 -inset-y-2 group-hover/seek:bg-white/5  rounded-full" />
+                                <div className="absolute inset-x-0 -inset-y-4 group-hover/seek:bg-white/5 rounded-full" />
                                 <motion.div
-                                    className="absolute inset-y-0 left-0 bg-[var(--gold-primary)] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
+                                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffea70] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
                                     style={{ width: `${progress}%` }}
                                     transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
                                 />
                                 <motion.div
-                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-2xl border-2 border-[var(--gold-primary)] scale-0 group-hover/seek:scale-100  hidden sm:block"
-                                    style={{ left: `${progress}%`, marginLeft: '-8px' }}
+                                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_5px_rgba(255,255,255,0.8)] scale-0 group-hover/seek:scale-100 hidden sm:block"
+                                    style={{ left: `${progress}%`, marginLeft: '-6px' }}
                                 />
                             </div>
                         </div>
@@ -1606,7 +1606,17 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {post.desc && (
                                 <div className="space-y-2">
                                     <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1">
-                                        {parseHashtags(translatedText || post.desc, (tag) => onHashtagClick(tag))}
+                                        {parseHashtags(translatedText || post.desc, (tag) => onHashtagClick(tag)).map((part, i) => {
+                                            if (typeof part !== 'string') return <React.Fragment key={i}>{part}</React.Fragment>;
+                                            const urlRegex = /(https?:\/\/[^\s]+)/g;
+                                            const parts = part.split(urlRegex);
+                                            return parts.map((p, j) => {
+                                                if (p.match(urlRegex)) {
+                                                    return <a key={`${i}-${j}`} href={p} target="_blank" rel="noopener noreferrer" className="text-[var(--gold-primary)] hover:underline" onClick={(e) => e.stopPropagation()}>{p}</a>;
+                                                }
+                                                return p;
+                                            });
+                                        })}
                                     </p>
                                     <button
                                         onClick={handleTranslate}
@@ -3562,20 +3572,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     </div>
 
                     {/* YouTube URL input */}
-                    <div className="mb-3">
-                        <input id="c-youtube" name="youtube-url" placeholder={t('YOUTUBE_PH')} className="w-full bg-black/20 border border-white/5 rounded-xl p-2 text-sm text-white outline-none placeholder-gray-500" onChange={(e) => {
-                            const v = e.target.value?.trim() || '';
-                            const id = getYouTubeId(v);
-                            if (id) {
-                                setPreview(`https://img.youtube.com/vi/${id}/hqdefault.jpg`);
-                                setIsVideo(false); // Youtube is a thumbnail preview (image)
-                                setIsAudio(false);
-                            } else if (!v) {
-                                setPreview(null);
-                                setIsVideo(false);
-                            }
-                        }} />
-                    </div>
+                    {/* YOUTUBE INPUT REMOVED PER USER REQUEST */}
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
                         {preview ? (
@@ -3637,8 +3634,6 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             await onCreatePost(fd, preview, isStory);
 
                             // Reset logic safely
-                            const ytEl = document.getElementById('c-youtube');
-                            if (ytEl) ytEl.value = '';
 
                             setPreview(null);
                             if (fileRef.current) fileRef.current.value = '';
@@ -3659,7 +3654,6 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [desc, setDesc] = useState(post?.desc || '');
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
-    const [youtubeUrl, setYoutubeUrl] = useState(''); // Tracking state to fix ReferenceError
     const [saving, setSaving] = useState(false);
     const fileRef = useRef(null);
 
@@ -3669,8 +3663,6 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
             const isYT = isYouTubeUrl(post.videoUrl);
             setIsVideo(isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false)));
-            // initialize youtube state
-            setYoutubeUrl(isYT ? post.videoUrl : '');
         }
     }, [post]);
 
@@ -3812,7 +3804,6 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                             e.stopPropagation();
                                             setPreview(null);
                                             setIsVideo(false);
-                                            setYoutubeUrl('');
                                             if (fileRef.current) fileRef.current.value = '';
                                         }}
                                         className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl  text-white  shadow-xl border border-white/10 opacity-0 group-hover/preview:opacity-100"
@@ -5479,6 +5470,19 @@ const App = () => {
         }
     }, [user?.settings?.language]);
 
+    // iOS PWA FIX: Blur active inputs when app goes to background to prevent freezing
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                    document.activeElement.blur();
+                }
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }, []);
+
     const logout = () => {
         if (user) {
             socket.emit('logout', user._id);
@@ -5810,7 +5814,7 @@ const App = () => {
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] ai-glass shadow-inner" /></div>
+                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] ai-glass shadow-inner" /></div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
@@ -5818,25 +5822,68 @@ const App = () => {
                                                             {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
-                                                    <div className="flex gap-2 p-1 overflow-x-auto no-scrollbar pb-2">
+                                                    <div className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory">
                                                         {[...(posts || [])].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 6).map((post, i) => (
                                                             <div
                                                                 key={post._id || i}
                                                                 onClick={() => setSelectedPost(post)}
-                                                                className="flex-shrink-0 w-44 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-xl border border-white/5 shadow-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300"
+                                                                className="flex-shrink-0 w-[280px] sm:w-[320px] bg-black/40 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300 snap-center relative group"
                                                             >
-                                                                {post.image ? (
-                                                                    <div className="h-24 bg-cover bg-center" style={{ backgroundImage: `url(${post.image})` }} />
-                                                                ) : (
-                                                                    <div className="h-24 bg-gradient-to-br from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 flex items-center justify-center">
-                                                                        <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]/50" />
-                                                                    </div>
-                                                                )}
-                                                                <div className="p-3 space-y-1.5">
-                                                                    <p className="text-[10px] text-white/90 font-bold truncate">{post.content || t('POST')}</p>
-                                                                    <div className="flex items-center gap-2 text-[8px] text-gray-500 font-bold">
-                                                                        <Icons.Heart className="w-3 h-3 text-red-500" />
-                                                                        <span>{post.likes?.length || 0} {t('LIKES')}</span>
+                                                                <div className="w-full aspect-[4/5] relative bg-black overflow-hidden">
+                                                                    {(post.image || post.videoUrl || post.thumbnailUrl) ? (
+                                                                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
+                                                                             <div className="w-full h-full relative">
+                                                                                 <img src={`https://img.youtube.com/vi/${getYouTubeId(post.videoUrl || post.thumbnailUrl || post.image)}/maxresdefault.jpg`} className="w-full h-full object-cover" alt="" />
+                                                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
+                                                                                     <div className="w-12 h-12 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg backdrop-blur-sm">
+                                                                                         <Icons.Play className="w-6 h-6 text-white ml-1" />
+                                                                                     </div>
+                                                                                 </div>
+                                                                             </div>
+                                                                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                                                             <video
+                                                                                src={resolveMediaUrl(post.videoUrl || post.image)}
+                                                                                poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                                                                className="w-full h-full object-cover pointer-events-none"
+                                                                                autoPlay
+                                                                                muted
+                                                                                loop
+                                                                                playsInline
+                                                                            />
+                                                                         ) : (
+                                                                             <img
+                                                                                 src={resolveMediaUrl(post.image || post.thumbnailUrl)}
+                                                                                 className="w-full h-full object-cover"
+                                                                                 loading="lazy"
+                                                                             />
+                                                                         )
+                                                                    ) : (
+                                                                        <div className="w-full h-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-[var(--gold-primary)]/5 flex items-center justify-center p-6 text-center">
+                                                                            <span className="font-black text-white/90 text-lg uppercase tracking-tighter leading-tight italic line-clamp-6">{post.desc}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+                                                                    
+                                                                    <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 z-10">
+                                                                        <div className="flex items-center gap-2 mb-1">
+                                                                            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20">
+                                                                                <ProfileAvatar user={post.author} />
+                                                                            </div>
+                                                                            <span className="text-[11px] font-bold text-white uppercase tracking-wider truncate shadow-sm">
+                                                                                {post.author?.username || 'Agent'}
+                                                                            </span>
+                                                                        </div>
+                                                                        <p className="text-xs text-white/90 font-medium line-clamp-2 leading-snug drop-shadow-md">{post.content || post.desc}</p>
+                                                                        <div className="flex items-center gap-4 text-[10px] text-[var(--gold-primary)] font-black uppercase tracking-widest pt-1">
+                                                                            <div className="flex items-center gap-1.5">
+                                                                                <Icons.Heart className="w-3.5 h-3.5" />
+                                                                                <span>{post.likes?.length || 0}</span>
+                                                                            </div>
+                                                                            <div className="flex items-center gap-1.5 text-gray-300">
+                                                                                <Icons.MessageSquare className="w-3.5 h-3.5" />
+                                                                                <span>{post.comments?.length || 0}</span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -5889,7 +5936,7 @@ const App = () => {
                                             )}
                                             <div className="space-y-4">
 
-                                                {groupedPosts.map(group => {
+                                                {(activeTab === 'home' || (activeTab === 'search' && searchQuery)) && groupedPosts.map(group => {
                                                     const dateKey = group.key;
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">

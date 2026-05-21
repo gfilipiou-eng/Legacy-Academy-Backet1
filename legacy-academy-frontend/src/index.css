@@ -149,6 +149,11 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: none;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform, backdrop-filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .bottom-nav-glass::after {
@@ -690,7 +695,17 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   -webkit-tap-highlight-color: transparent !important;
   -webkit-touch-callout: none !important;
   outline: none !important;
+}
+
+/* Re-enable user-select for inputs so users can actually type! */
+input, textarea {
+  user-select: auto !important;
+  -webkit-user-select: auto !important;
+}
+
+*:not(input):not(textarea) {
   user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 *:active, *:focus, *:hover {
@@ -708,7 +723,6 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   
   button, div, a, span, li {
     -webkit-tap-highlight-color: transparent !important;
-    user-select: none !important;
   }
 
   /* KILL ALL HOVER/ACTIVE EFFECTS ON MOBILE ONLY FOR INTERACTIVE ELEMENTS */
