@@ -18,7 +18,7 @@ const BottomNavbar = memo(({
     return (
         <nav className="bottom-nav-shell fixed bottom-0 left-0 w-full z-[99] px-3 pt-3 pointer-events-none">
             <div className="max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto pointer-events-auto">
-                <div className="bottom-nav-glass rounded-[24px] overflow-hidden">
+                <div className="bottom-nav-glass rounded-[24px]">
                     <div className="relative flex items-center justify-around py-3.5">
                         <button
                             type="button"

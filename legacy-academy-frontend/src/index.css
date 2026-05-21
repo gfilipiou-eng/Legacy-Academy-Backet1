@@ -136,27 +136,17 @@ body {
 
 /* Bottom navbar — opaque liquid glass (fast paint, no pulse) */
 .bottom-nav-shell {
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-  contain: layout style;
 }
 
 .bottom-nav-glass {
   position: relative;
-  isolation: isolate;
-  contain: layout style paint;
-  background: rgba(18, 18, 20, 0.72);
-  backdrop-filter: blur(20px) saturate(1.25);
-  -webkit-backdrop-filter: blur(20px) saturate(1.25);
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  background: rgba(18, 18, 20, 0.88);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  will-change: transform;
 }
 
 .bottom-nav-glass::after {
