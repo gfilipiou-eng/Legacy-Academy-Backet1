@@ -144,8 +144,10 @@ body {
 
 .bottom-nav-glass {
   position: relative;
-  background: transparent;
-  border: none;
+  background: rgba(18, 18, 20, 0.75);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: none;
 }
 
