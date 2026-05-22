@@ -18,8 +18,12 @@
   --app-text: #f0f0f0;
 }
 
+html {
+  background-color: var(--app-bg);
+}
+
 body {
-  background-color: #000000 !important;
+  background-color: var(--app-bg) !important;
   color: var(--app-text);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
@@ -27,10 +31,20 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -10;
   background-image: 
     radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 100% 100%, rgba(0, 242, 255, 0.02) 0%, transparent 40%);
-  background-attachment: fixed;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 /* AI Style Glassmorphism */
@@ -144,26 +158,31 @@ body {
 
 .bottom-nav-glass {
   position: relative;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(0, 0, 0, 0.35) 100%), rgba(10, 10, 15, 0.75);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 
-    0 20px 40px -10px rgba(0, 0, 0, 0.85),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 8px 16px -4px rgba(255, 255, 255, 0.06),
-    inset 0 -8px 16px -4px rgba(0, 0, 0, 0.5);
+    0 25px 50px -12px rgba(0, 0, 0, 0.95),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 8px 16px -4px rgba(255, 255, 255, 0.08),
+    inset 0 -8px 16px -4px rgba(0, 0, 0, 0.6);
   
-  /* Safari/WebKit Scroll Performance & Black Box Fixes */
+  /* Safari/WebKit Scroll Performance & Repaint Isolation */
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  will-change: transform;
+  isolation: isolate;
 }
 
-.bottom-nav-glass::after {
-  display: none;
+.bottom-nav-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(0, 0, 0, 0.4) 100%), rgba(12, 12, 18, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  pointer-events: none;
 }
 
 /* 3D Liquid Droplet Active Indicator */
@@ -786,25 +805,22 @@ input, textarea {
   -webkit-tap-highlight-color: transparent !important;
 }
 
-/* Force disable all active/hover scaling and transitions on touch devices */
+/* Force disable default tap highlight and sticky hover states on mobile */
 @media (hover: none) {
   * {
     -webkit-tap-highlight-color: transparent !important;
-    transition: none !important;
-    animation: none !important;
   }
   
   button, div, a, span, li {
     -webkit-tap-highlight-color: transparent !important;
   }
 
-  /* KILL ALL HOVER/ACTIVE EFFECTS ON MOBILE ONLY FOR INTERACTIVE ELEMENTS */
-  button:hover, button:active, 
-  a:hover, a:active,
-  .cursor-pointer:hover, .cursor-pointer:active {
-    transform: none !important;
-    transition: none !important;
-    box-shadow: none !important;
+  /* KILL STICKY HOVER STATES ON MOBILE (they stay styled after tap) */
+  button:hover, 
+  a:hover, 
+  .cursor-pointer:hover {
+    background-color: transparent !important;
+    color: inherit !important;
   }
 }
 
