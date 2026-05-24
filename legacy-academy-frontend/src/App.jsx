@@ -3318,10 +3318,9 @@ const ProfileModal = ({
                                     {profileDescriptor && (
                                         <button
                                             type="button"
-                                            onClick={(e) => { 
-                                                e.preventDefault(); 
+                                            onClick={(e) => {
                                                 e.stopPropagation();
-                                                setProfileDescriptor(''); 
+                                                setProfileDescriptor('');
                                             }}
                                             className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer touch-manipulation p-2 -mr-2"
                                         >
@@ -3337,10 +3336,9 @@ const ProfileModal = ({
                                             <button
                                                 key={option.value}
                                                 type="button"
-                                                onClick={(e) => { 
-                                                    e.preventDefault();
+                                                onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setProfileDescriptor(option.value); 
+                                                    setProfileDescriptor(option.value);
                                                 }}
                                                 className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
@@ -4235,10 +4233,10 @@ const applyZoom = (zoom) => {
     localStorage.setItem('uiZoom', String(z));
 };
 
-const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onClose, t }) => {
+const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, t }) => {
     const themeColor = publicUser?.settings?.theme || '#ffd700';
 
-    if (loading) {
+    if (loadingUser && !publicUser) {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
                 <div className="w-12 h-12 rounded-full border-4 border-[var(--gold-primary)]/20 border-t-[var(--gold-primary)] animate-spin" />
@@ -4265,6 +4263,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
     }
 
     const isFounder = publicUser.role === 'Founder';
+    const resolvedPublicProfilePic = resolveMediaUrl(publicUser.profilePic, 320, true);
+    const resolvedPublicCoverPic = resolveMediaUrl(publicUser.coverPic);
 
     return (
         <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
@@ -4276,12 +4276,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
             </div>
 
             {/* DYNAMIC COVER BACKGROUND */}
-            {publicUser.coverPic && (
+            {resolvedPublicCoverPic && (
                 <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden">
-                    {publicUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
-                        <video src={publicUser.coverPic} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-60" />
+                    {String(resolvedPublicCoverPic).match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
+                        <video src={resolvedPublicCoverPic} autoPlay loop muted playsInline preload="metadata" className="w-full h-full object-cover opacity-60" />
                     ) : (
-                        <img src={publicUser.coverPic} className="w-full h-full object-cover opacity-60 blur-[1px]" alt="" />
+                        <img src={resolvedPublicCoverPic} className="w-full h-full object-cover opacity-60 blur-[1px]" alt="" loading="eager" decoding="async" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
@@ -4301,8 +4301,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
                     <div className="w-28 h-28 rounded-[28px] overflow-hidden border-2 border-[var(--gold-primary)] shadow-[0_0_30px_rgba(255,215,0,0.2)] bg-black/40 backdrop-blur-md">
-                        {publicUser.profilePic ? (
-                            <img src={publicUser.profilePic} className="w-full h-full object-cover" alt="" />
+                        {resolvedPublicProfilePic ? (
+                            <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="eager" decoding="async" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-white/5 text-4xl font-bold uppercase text-white/40">
                                 {publicUser.username?.[0]}
@@ -4379,7 +4379,11 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
 
                 {/* simplified, READ-ONLY POST LIST */}
                 <div className="w-full space-y-4">
-                    {publicPosts.length === 0 ? (
+                    {loadingPosts ? (
+                        <div className="p-12 text-center text-xs text-white/35 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
+                            LOADING ARCHIVES...
+                        </div>
+                    ) : publicPosts.length === 0 ? (
                         <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
                             NO ARCHIVES DISPATCHED YET
                         </div>
@@ -4390,8 +4394,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                                 <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-[2rem] shadow-lg flex flex-col gap-4 relative group text-left">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-[10px] overflow-hidden border border-white/10 shrink-0 bg-black/40">
-                                            {publicUser.profilePic ? (
-                                                <img src={publicUser.profilePic} className="w-full h-full object-cover" alt="" />
+                                            {resolvedPublicProfilePic ? (
+                                                <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-white/5 text-sm font-bold uppercase text-white/40">
                                                     {publicUser.username?.[0]}
@@ -4440,12 +4444,15 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                                                     className="w-full h-auto object-contain max-h-[400px]" 
                                                     controls
                                                     controlsList="nodownload"
+                                                    preload="metadata"
                                                 />
                                             ) : (
                                                 <img 
                                                     src={resolveMediaUrl(post.image || post.thumbnailUrl)} 
                                                     className="w-full h-auto object-contain max-h-[400px]" 
                                                     alt="" 
+                                                    loading="lazy"
+                                                    decoding="async"
                                                 />
                                             )}
                                         </div>
@@ -4477,25 +4484,51 @@ const App = () => {
     const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile'));
     const [publicUser, setPublicUser] = useState(null);
     const [publicPosts, setPublicPosts] = useState([]);
-    const [publicLoading, setPublicLoading] = useState(false);
+    const [publicUserLoading, setPublicUserLoading] = useState(false);
+    const [publicPostsLoading, setPublicPostsLoading] = useState(false);
 
     useEffect(() => {
-        if (publicProfileUsername) {
-            const loadPublicProfile = async () => {
-                setPublicLoading(true);
-                try {
-                    const uRes = await axios.get(`/users/username/${encodeURIComponent(publicProfileUsername)}`);
-                    setPublicUser(uRes.data);
-                    const pRes = await axios.get(`/users/public/posts/${encodeURIComponent(publicProfileUsername)}`);
-                    setPublicPosts(pRes.data);
-                } catch (err) {
-                    console.error("Failed to load public profile:", err);
-                } finally {
-                    setPublicLoading(false);
-                }
-            };
-            loadPublicProfile();
-        }
+        if (!publicProfileUsername) return;
+
+        let isActive = true;
+        const normalizedUsername = decodeURIComponent(String(publicProfileUsername || '')).trim();
+
+        const loadPublicProfile = async () => {
+            setPublicUserLoading(true);
+            setPublicPostsLoading(true);
+            setPublicUser(null);
+            setPublicPosts([]);
+
+            const [userResult, postsResult] = await Promise.allSettled([
+                axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 12000 }),
+                axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 12000 })
+            ]);
+
+            if (!isActive) return;
+
+            if (userResult.status === 'fulfilled') {
+                setPublicUser(userResult.value?.data || null);
+            } else {
+                console.error("Failed to load public profile:", userResult.reason);
+                setPublicUser(null);
+            }
+
+            if (postsResult.status === 'fulfilled') {
+                setPublicPosts(Array.isArray(postsResult.value?.data) ? postsResult.value.data : []);
+            } else {
+                console.error("Failed to load public posts:", postsResult.reason);
+                setPublicPosts([]);
+            }
+
+            setPublicUserLoading(false);
+            setPublicPostsLoading(false);
+        };
+
+        loadPublicProfile();
+
+        return () => {
+            isActive = false;
+        };
     }, [publicProfileUsername]);
 
     const [user, setUser] = useState(null);
@@ -5937,7 +5970,8 @@ const App = () => {
                 username={publicProfileUsername} 
                 publicUser={publicUser} 
                 publicPosts={publicPosts} 
-                loading={publicLoading}
+                loadingUser={publicUserLoading}
+                loadingPosts={publicPostsLoading}
                 onClose={() => {
                     setPublicProfileUsername(null);
                     window.history.pushState({}, '', window.location.pathname);
