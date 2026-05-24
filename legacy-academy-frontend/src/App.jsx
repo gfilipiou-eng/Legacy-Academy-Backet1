@@ -4789,7 +4789,9 @@ const App = () => {
                 if (!onlineUsersRef.current.has(id)) {
                     const comingOnlineUser = users.find(u => String(u._id) === id);
                     if (comingOnlineUser) {
-                        addToast(`${comingOnlineUser.username} is now online`, 'success');
+                        // Ελέγχουμε αν υπάρχει ήδη ενεργό toast για αυτόν τον χρήστη για αποφυγή spam (debounce)
+                        const toastMsg = t('USER_IS_ONLINE', { user: comingOnlineUser.username, defaultValue: `${comingOnlineUser.username} is now online` });
+                        addToast(toastMsg, 'success');
                     }
                 }
             });
@@ -6242,29 +6244,28 @@ const App = () => {
                                                 <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-transparent py-3.5 px-4 text-white text-sm font-medium outline-none placeholder:text-white/20 resize-none h-20 z-10" />
                                                 <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/15 z-10">{(formData.bio || '').length}/500</div>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <div className="relative group">
-                                                    <div className="absolute inset-0 rounded-xl bg-white/[0.03] border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                    <select value={formData.language || 'en'} onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))} className="relative bg-transparent py-3 px-3 text-white text-xs font-bold outline-none cursor-pointer appearance-none z-10 w-[90px]">
-                                                        <option value="en" className="bg-black">English</option>
-                                                        <option value="el" className="bg-black">Ελληνικά</option>
-                                                        <option value="fr" className="bg-black">Français</option>
-                                                        <option value="de" className="bg-black">Deutsch</option>
-                                                        <option value="ru" className="bg-black">Русский</option>
-                                                        <option value="es" className="bg-black">Español</option>
-                                                        <option value="tr" className="bg-black">Türkçe</option>
-                                                        <option value="cy" className="bg-black">Cypriot</option>
-                                                    </select>
-                                                </div>
-                                                <div className="flex-1 bg-white/[0.03] border border-white/[0.08] rounded-xl p-2.5 space-y-1.5">
-                                                    <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">THEME</div>
-                                                    <div className="flex gap-2 flex-wrap overflow-visible p-0.5">
-                                                        {['#ffd700', '#3b82f6', '#ef4444', '#10b981', '#ff5500', '#a855f7', '#ff8c00', '#ff69b4', '#00ffff'].map(c => (
-                                                            <button key={c} onClick={() => setFormData(prev => ({ ...prev, theme: c }))} className={`w-7 h-7 sm:w-6 sm:h-6 rounded-md border-2 relative transition-all duration-200 overflow-visible ${formData.theme === c ? 'border-white ring-2 ring-white/80 ring-offset-1 ring-offset-black' : 'border-transparent opacity-50 hover:opacity-80'}`} style={{ backgroundColor: c }}>
-                                                                {formData.theme === c && <Icons.Check className={`w-3 h-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c === '#ff5500' ? 'text-white' : 'text-white'}`} />}
-                                                            </button>
-                                                        ))}
-                                                    </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest px-1">{t('SELECT_LANGUAGE', 'Select Language')}</label>
+                                                <div className="grid grid-cols-4 gap-2">
+                                                    {[
+                                                        { code: 'en', label: 'English', flag: '🇬🇧' },
+                                                        { code: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
+                                                        { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+                                                        { code: 'fr', label: 'Français', flag: '🇫🇷' },
+                                                        { code: 'es', label: 'Español', flag: '🇪🇸' },
+                                                        { code: 'ru', label: 'Русский', flag: '🇷🇺' },
+                                                        { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+                                                        { code: 'cy', label: 'Cypriot', flag: '🇨🇾' }
+                                                    ].map(lang => (
+                                                        <button
+                                                            key={lang.code}
+                                                            onClick={() => setFormData(prev => ({ ...prev, language: lang.code }))}
+                                                            className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl border transition-all duration-200 ${formData.language === lang.code ? 'border-white bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.1)] text-white' : 'border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/[0.05] hover:border-white/30'}`}
+                                                        >
+                                                            <span className="text-xl">{lang.flag}</span>
+                                                            <span className="text-[8px] font-black uppercase tracking-wider">{lang.label}</span>
+                                                        </button>
+                                                    ))}
                                                 </div>
                                             </div>
                                             <button disabled={authLoading} onClick={async () => {
@@ -6276,12 +6277,12 @@ const App = () => {
                                                     fd.append('password', formData.password);
                                                     if (formData.bio !== undefined) fd.append('bio', formData.bio.trim());
                                                     fd.append('language', formData.language || 'en');
-                                                    fd.append('theme', formData.theme || '#ffd700');
+                                                    fd.append('theme', '#ffd700'); // Always use default theme
                                                     if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
                                                     const res = await axios.post('/auth/register', fd);
                                                     localStorage.setItem('token', res.data.token);
                                                     if (formData.language) localStorage.setItem('language', formData.language);
-                                                    if (formData.theme) localStorage.setItem('themeColor', formData.theme);
+                                                    localStorage.setItem('themeColor', '#ffd700');
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
@@ -6376,13 +6377,22 @@ const App = () => {
                                         </div>
                                         <div className="flex gap-2">
                                             {alerts.length > 0 && (
-                                                <button
-                                                    onClick={deleteNotifications}
-                                                    title={t('CLEAR_ALL')}
-                                                    className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full  text-red-500  text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg "
-                                                >
-                                                    <Icons.Trash className="w-4 h-4 group-hover:scale-110 " />
-                                                </button>
+                                                <>
+                                                    <button
+                                                        onClick={markAllNotificationsRead}
+                                                        title={t('MARK_ALL_READ', 'Mark all as read')}
+                                                        className="w-9 h-9 sm:w-auto sm:px-4 bg-green-500/10 rounded-full text-green-500 text-[10px] font-black uppercase tracking-widest border border-green-500/20 flex items-center justify-center gap-0 group shadow-lg"
+                                                    >
+                                                        <Icons.Check className="w-4 h-4 group-hover:scale-110" />
+                                                    </button>
+                                                    <button
+                                                        onClick={deleteNotifications}
+                                                        title={t('CLEAR_ALL')}
+                                                        className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full text-red-500 text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg"
+                                                    >
+                                                        <Icons.Trash className="w-4 h-4 group-hover:scale-110" />
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
                                     </div>

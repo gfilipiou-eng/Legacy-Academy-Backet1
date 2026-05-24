@@ -253,5 +253,10 @@
     "PRIVACY_S3_TITLE": "Zugriffsrechte",
     "PRIVACY_S3_DESC": "Du hast das volle Recht, deinen digitalen Fußabdruck jederzeit zu löschen. Nach der Löschung werden alle damit verbundenen neuralen Einträge aus unserer aktiven Matrix gelöscht.",
     "GOT_IT": "VERSTANDEN",
-    "PROFILE_LINK_COPIED": "Profil-Link in die Zwischenablage kopiert!"
+    "PROFILE_LINK_COPIED": "Profil-Link in die Zwischenablage kopiert!",
+    "VIEW": "ANSEHEN",
+    "SELECT_LANGUAGE": "Sprache auswählen",
+    "USER_IS_ONLINE": "{{user}} ist jetzt online",
+    "MARK_ALL_READ": "Alle als gelesen markieren",
+    "FOLLOWERS_COUNT": "FOLLOWER"
 }
