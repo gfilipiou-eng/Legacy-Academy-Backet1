@@ -3317,7 +3317,7 @@ const ProfileModal = ({
                                     {profileDescriptor && (
                                         <button
                                             type="button"
-                                            onTouchEnd={(e) => { e.preventDefault(); setProfileDescriptor(''); }}
+                                            onTouchStart={(e) => { e.preventDefault(); setProfileDescriptor(''); }}
                                             onClick={(e) => { e.preventDefault(); setProfileDescriptor(''); }}
                                             className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer p-2 -mr-2"
                                         >
@@ -3333,7 +3333,7 @@ const ProfileModal = ({
                                             <button
                                                 key={option.value}
                                                 type="button"
-                                                onTouchEnd={(e) => { 
+                                                onTouchStart={(e) => { 
                                                     e.preventDefault(); 
                                                     setProfileDescriptor(option.value); 
                                                 }}
@@ -3356,6 +3356,29 @@ const ProfileModal = ({
                                         );
                                     })}
                                 </div>
+                                {displayUser?.role === 'Founder' && (
+                                    <div className="mt-4 pt-4 border-t border-white/10">
+                                        <label className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest pl-1 mb-2 block">FOUNDER AFFILIATION</label>
+                                        <div className="relative">
+                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-black">@</div>
+                                            <input 
+                                                type="text" 
+                                                value={profileDescriptor?.startsWith('custom:') ? profileDescriptor.split(':')[1] : ''}
+                                                onChange={(e) => {
+                                                    const val = e.target.value.trim().replace('@', '');
+                                                    if (val) {
+                                                        setProfileDescriptor(`custom:${val}`);
+                                                    } else {
+                                                        setProfileDescriptor('');
+                                                    }
+                                                }}
+                                                placeholder="affiliated_username"
+                                                className="w-full bg-black/40 border border-white/10 rounded-2xl py-3 pl-8 pr-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none"
+                                            />
+                                        </div>
+                                        <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-2 pl-1">Links to another profile (e.g., your company).</div>
+                                    </div>
+                                )}
                             </div>
 
                             <button type="button" disabled={isProfileSaving} onClick={async () => {
@@ -4280,12 +4303,26 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                     </div>
                 </div>
 
-                <div className="text-center space-y-1">
+                    <div className="text-center space-y-1">
                     <div className="flex items-center justify-center gap-1.5">
                         <h1 className="text-2xl font-black text-white uppercase tracking-wider">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} className="w-5 h-5 shrink-0" />
                     </div>
-                    <span className="text-xs text-gray-500 font-bold tracking-widest uppercase">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                    {publicUser.profileDescriptor?.startsWith('custom:') ? (
+                        <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gold-primary)] font-bold tracking-widest uppercase mt-1 hover:underline cursor-pointer" onClick={() => {
+                            window.location.href = `/?profile=${encodeURIComponent(publicUser.profileDescriptor.split(':')[1])}`;
+                        }}>
+                            <Icons.Link className="w-3.5 h-3.5" />
+                            @{publicUser.profileDescriptor.split(':')[1]}
+                        </div>
+                    ) : publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] ? (
+                        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">
+                            {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
+                            {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
+                        </div>
+                    ) : (
+                        <span className="text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                    )}
                 </div>
 
                 {/* BIO CARD */}
@@ -4356,15 +4393,26 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                                         <div>
                                             <div className="flex items-center gap-1">
                                                 <span className="font-bold text-xs text-white uppercase tracking-wider">{publicUser.username}</span>
-                                                {isFounder && (
-                                                    <div className="w-3.5 h-3.5 rounded-full bg-[var(--gold-primary)] flex items-center justify-center text-black shadow-[0_0_6px_rgba(255,215,0,0.5)]">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2 h-2"><path d="M20 6L9 17l-5-5" /></svg>
-                                                    </div>
-                                                )}
+                                                <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
                                             </div>
-                                            <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">
-                                                {new Date(post.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
-                                            </span>
+                                            {publicUser.profileDescriptor?.startsWith('custom:') ? (
+                                                <div className="flex items-center gap-1 text-[var(--gold-primary)] text-[9px] font-bold tracking-widest uppercase hover:underline cursor-pointer" onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    window.location.href = `/?profile=${encodeURIComponent(publicUser.profileDescriptor.split(':')[1])}`;
+                                                }}>
+                                                    <Icons.Link className="w-2.5 h-2.5" />
+                                                    @{publicUser.profileDescriptor.split(':')[1]}
+                                                </div>
+                                            ) : publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] ? (
+                                                <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
+                                                    {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
+                                                    {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
+                                                </div>
+                                            ) : (
+                                                <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">
+                                                    {new Date(post.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -4376,21 +4424,22 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                                     )}
 
                                     {/* MEDIA */}
-                                    {post.image && !isVideo && (
-                                        <div className="rounded-2xl overflow-hidden border border-white/5 shadow-md">
-                                            <img src={post.image} className="w-full h-auto object-cover max-h-[300px]" alt="" />
-                                        </div>
-                                    )}
-
-                                    {post.videoUrl && !isVideo && (
-                                        <div className="rounded-2xl overflow-hidden border border-white/5 shadow-md aspect-video bg-black">
-                                            <iframe src={post.videoUrl} className="w-full h-full" frameBorder="0" allowFullScreen />
-                                        </div>
-                                    )}
-
-                                    {isVideo && (
-                                        <div className="rounded-2xl overflow-hidden border border-white/5 shadow-md aspect-video bg-black">
-                                            <video src={post.videoUrl || post.image} controls className="w-full h-full object-cover" />
+                                    {(post.image || post.thumbnailUrl || post.videoUrl) && (
+                                        <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
+                                            {post.videoUrl && !post.image && !post.thumbnailUrl ? (
+                                                <video 
+                                                    src={resolveMediaUrl(post.videoUrl)} 
+                                                    className="w-full h-auto object-contain max-h-[400px]" 
+                                                    controls
+                                                    controlsList="nodownload"
+                                                />
+                                            ) : (
+                                                <img 
+                                                    src={resolveMediaUrl(post.image || post.thumbnailUrl)} 
+                                                    className="w-full h-auto object-contain max-h-[400px]" 
+                                                    alt="" 
+                                                />
+                                            )}
                                         </div>
                                     )}
 
@@ -6589,8 +6638,16 @@ const App = () => {
                                         {shareModalPost.author?.username}
                                         <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} className="w-4 h-4" />
                                     </div>
-                                    {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
-                                        <div className="text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">
+                                    {shareModalPost.author?.profileDescriptor?.startsWith('custom:') ? (
+                                        <div className="flex items-center gap-1.5 text-[var(--gold-primary)] text-xs mt-1 uppercase tracking-widest font-bold hover:underline cursor-pointer" onClick={() => {
+                                            window.location.href = `/?profile=${encodeURIComponent(shareModalPost.author.profileDescriptor.split(':')[1])}`;
+                                        }}>
+                                            <Icons.Link className="w-3 h-3" />
+                                            @{shareModalPost.author.profileDescriptor.split(':')[1]}
+                                        </div>
+                                    ) : shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
+                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">
+                                            {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3" })}
                                             {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
                                         </div>
                                     ) : (
@@ -6677,12 +6734,22 @@ const App = () => {
                                 {shareModalProfile.username}
                                 <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} className="w-6 h-6" />
                             </div>
-                            {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
-                                <div className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-4">
+                            
+                            {shareModalProfile.profileDescriptor?.startsWith('custom:') ? (
+                                <div className="flex items-center justify-center gap-1.5 text-[var(--gold-primary)] text-sm font-bold uppercase tracking-widest mb-4 hover:underline cursor-pointer" onClick={() => {
+                                    window.location.href = `/?profile=${encodeURIComponent(shareModalProfile.profileDescriptor.split(':')[1])}`;
+                                }}>
+                                    <Icons.Link className="w-4 h-4" />
+                                    @{shareModalProfile.profileDescriptor.split(':')[1]}
+                                </div>
+                            ) : shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] ? (
+                                <div className="flex items-center justify-center gap-1.5 text-gray-400 text-sm font-bold uppercase tracking-widest mb-4">
+                                    {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].Icon, { className: "w-4 h-4" })}
                                     {t(`DESC_${shareModalProfile.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].label)}
                                 </div>
+                            ) : (
+                                <div className="mb-4"></div>
                             )}
-                            {!shareModalProfile.profileDescriptor && <div className="mb-4"></div>}
                             
                             {/* Bio */}
                             {shareModalProfile.bio && (
