@@ -2309,9 +2309,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {activeChat?.username}
                                         <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4 shrink-0" />
                                     </div>
-                                    <div className={`text-[10px] ${isUserOnline(allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat, user) ? 'text-green-400 font-bold uppercase tracking-widest shadow-green-500/20' : 'text-gray-500 uppercase tracking-tighter'}`}>
-                                        {(isUserOnline(allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat, user)) ? t('ONLINE') : t('OFFLINE')}
-                                    </div>
+                                    {(() => {
+                                        const chatUser = allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat;
+                                        const isChatUserOnline = isUserOnline(chatUser, user);
+                                        return (
+                                            <div className={`text-[10px] ${isChatUserOnline ? 'text-green-400 font-bold uppercase tracking-widest shadow-green-500/20' : 'text-gray-500 uppercase tracking-tighter'}`}>
+                                                {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                                 <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
                             </div>
@@ -4592,6 +4598,17 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
+    const urlLang = searchParams.get('lang');
+    
+    // Check and set language from URL if present before any rendering
+    useEffect(() => {
+        if (urlLang && ['en', 'el', 'de', 'ru', 'es', 'tr', 'fr', 'cy'].includes(urlLang)) {
+            localStorage.setItem('language', urlLang);
+            // i18n instance will pick it up on mount, or we can manually change it here
+            // It will be applied by useTranslation hook inside App component
+        }
+    }, [urlLang]);
+
     const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile'));
     const [publicUser, setPublicUser] = useState(null);
     const [publicPosts, setPublicPosts] = useState([]);
@@ -4646,6 +4663,13 @@ const App = () => {
     const viewPostId = searchParams.get('postId');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
+
+    useEffect(() => {
+        if (urlLang && ['en', 'el', 'de', 'ru', 'es', 'tr', 'fr', 'cy'].includes(urlLang)) {
+            i18n.changeLanguage(urlLang);
+        }
+    }, [urlLang, i18n]);
+
     const [uploadProgress, setUploadProgress] = useState(0);
     const [toasts, setToasts] = useState([]);
     const addToast = (text, type = 'info') => {
@@ -6845,7 +6869,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?post=${shareModalPost._id}`;
+                                    const shareUrl = `${window.location.origin}/?post=${shareModalPost._id}&lang=${lang}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Post', url: shareUrl }); } catch (e) { }
                                     } else {
@@ -6921,7 +6945,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?profile=${encodeURIComponent(shareModalProfile.username)}`;
+                                    const shareUrl = `${window.location.origin}/?profile=${encodeURIComponent(shareModalProfile.username)}&lang=${lang}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Profile', url: shareUrl }); } catch (e) { }
                                     } else {
