@@ -158,8 +158,8 @@ body::before {
 
 .bottom-nav-glass {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #000000;
+  border: none;
+  background: transparent;
   box-shadow: none;
   
   /* Safari/WebKit Scroll Performance & Repaint Isolation */
@@ -176,7 +176,7 @@ body::before {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: #000000;
+  background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   pointer-events: none;

@@ -11,7 +11,7 @@ const router = express.Router();
 // Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find().select('username role profilePic isPrivate isFollowersOnly followers following followRequests createdAt lastSeen');
+        const users = await User.find().select('username role profilePic profileDescriptor isPrivate isFollowersOnly followers following followRequests settings createdAt lastSeen');
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json([]);
@@ -225,7 +225,7 @@ router.post("/:id/unfollow", verifyToken, async (req, res) => {
 // 1. Λήψη στοιχείων χρήστη
 router.get("/find/:id", verifyToken, async (req, res) => {
     try {
-        const foundUser = await User.findById(req.params.id).select('username role profilePic bio isPrivate isFollowersOnly followers following followRequests settings createdAt lastSeen');
+        const foundUser = await User.findById(req.params.id).select('username role profilePic bio profileDescriptor isPrivate isFollowersOnly followers following followRequests settings createdAt lastSeen');
         if (!foundUser) return res.status(404).json("Χρήστης δεν βρέθηκε.");
 
         // Add isRequested flag for frontend convenience
@@ -527,7 +527,7 @@ router.get("/:id/followers", async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json("User not found");
 
-        const followers = await User.find({ _id: { $in: user.followers } }).select('username role profilePic');
+        const followers = await User.find({ _id: { $in: user.followers } }).select('username role profilePic profileDescriptor settings');
         res.status(200).json(followers);
     } catch (err) {
         res.status(500).json(err);
@@ -540,7 +540,7 @@ router.get("/:id/following", async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json("User not found");
 
-        const following = await User.find({ _id: { $in: user.following } }).select('username role profilePic');
+        const following = await User.find({ _id: { $in: user.following } }).select('username role profilePic profileDescriptor settings');
         res.status(200).json(following);
     } catch (err) {
         res.status(500).json(err);

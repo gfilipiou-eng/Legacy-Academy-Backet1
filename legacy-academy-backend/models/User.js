@@ -50,6 +50,11 @@ const UserSchema = new mongoose.Schema(
             max: 500,
             default: "Entrepreneur. Legacy Member."
         },
+        profileDescriptor: {
+            type: String,
+            enum: ['', 'entrepreneur', 'creator', 'popular', 'pet-lover', 'community', 'visionary'],
+            default: ''
+        },
         lastSeen: {
             type: Date,
             default: Date.now

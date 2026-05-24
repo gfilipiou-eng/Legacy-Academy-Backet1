@@ -181,6 +181,52 @@ const THEME_PALETTE = [
     { value: '#ff5500', labelKey: 'COLOR_ORANGE_BLACK' },
     { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
 ];
+const PROFILE_DESCRIPTOR_OPTIONS = [
+    {
+        value: 'entrepreneur',
+        label: 'Entrepreneur',
+        description: 'Building something big',
+        Icon: Icons.Briefcase,
+        accentClass: 'bg-orange-500/10 text-orange-200 border-orange-400/20'
+    },
+    {
+        value: 'creator',
+        label: 'Creator',
+        description: 'Making content and ideas',
+        Icon: Icons.Camera,
+        accentClass: 'bg-sky-500/10 text-sky-200 border-sky-400/20'
+    },
+    {
+        value: 'popular',
+        label: 'Popular',
+        description: 'Always in demand',
+        Icon: Icons.Sparkles,
+        accentClass: 'bg-fuchsia-500/10 text-fuchsia-200 border-fuchsia-400/20'
+    },
+    {
+        value: 'pet-lover',
+        label: 'Dog Lover',
+        description: 'Pets are family',
+        Icon: Icons.PawPrint,
+        accentClass: 'bg-emerald-500/10 text-emerald-200 border-emerald-400/20'
+    },
+    {
+        value: 'community',
+        label: 'Community',
+        description: 'People first energy',
+        Icon: Icons.Users,
+        accentClass: 'bg-violet-500/10 text-violet-200 border-violet-400/20'
+    },
+    {
+        value: 'visionary',
+        label: 'Visionary',
+        description: 'Future focused mindset',
+        Icon: Icons.Zap,
+        accentClass: 'bg-amber-500/10 text-amber-200 border-amber-400/20'
+    }
+];
+const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
+
 const isUserOnline = (u, currentUser) => {
     // Rule: You are always online to yourself (instant feedback)
     if (currentUser && isSameId(u, currentUser)) return true;
@@ -2784,6 +2830,7 @@ const ProfileModal = ({
     const lastOpenedAt = useRef(Date.now());
     const [bio, setBio] = useState(profileUser?.bio || "");
     const [editUsername, setEditUsername] = useState(profileUser?.username || "");
+    const [profileDescriptor, setProfileDescriptor] = useState(profileUser?.profileDescriptor || "");
     const [activeTab, setActiveTab] = useState('ALL');
     const [userSpecificPosts, setUserSpecificPosts] = useState(preloadedPosts || []);
     const [loadingPosts, setLoadingPosts] = useState(false);
@@ -2824,7 +2871,9 @@ const ProfileModal = ({
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
-    const canShowProfileShareButton = displayUser?.settings?.showProfileShareButton !== false;
+    const canShowProfileShareButton = isMe
+        ? currentUser?.settings?.showProfileShareButton !== false
+        : !!displayUser?.settings && displayUser.settings.showProfileShareButton !== false;
 
     const toggleDate = (dateKey) => {
         // Disabled clicking - folders are always open
@@ -2834,6 +2883,7 @@ const ProfileModal = ({
         if (displayUser && !isEditing) {
             setBio(displayUser.bio || "");
             setEditUsername(displayUser.username || "");
+            setProfileDescriptor(displayUser.profileDescriptor || "");
         }
     }, [displayUser, isEditing]);
 
@@ -2983,6 +3033,8 @@ const ProfileModal = ({
 
     const isFollowing = currentUser?.following?.some(id => isSameId(id, displayUser?._id));
     const hasRequested = displayUser?.followRequests?.some(id => isSameId(id, currentUser?._id));
+    const selectedProfileDescriptor = PROFILE_DESCRIPTOR_MAP[displayUser?.profileDescriptor || ''];
+    const SelectedProfileDescriptorIcon = selectedProfileDescriptor?.Icon;
 
     return (
 
@@ -3177,11 +3229,54 @@ const ProfileModal = ({
                                 </div>
                             </div>
 
+                            <div className="space-y-3 text-left">
+                                <div className="flex items-center justify-between gap-3 pl-1">
+                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">WHAT BEST DESCRIBES YOU?</label>
+                                    {profileDescriptor && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setProfileDescriptor('')}
+                                            className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="grid grid-cols-2 gap-2.5">
+                                    {PROFILE_DESCRIPTOR_OPTIONS.map(option => {
+                                        const isSelected = profileDescriptor === option.value;
+                                        const OptionIcon = option.Icon;
+                                        return (
+                                            <button
+                                                key={option.value}
+                                                type="button"
+                                                onClick={() => setProfileDescriptor(option.value)}
+                                                className={`text-left rounded-2xl border px-3.5 py-3 transition-all duration-200 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
+                                                        <OptionIcon className="w-5 h-5" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <div className="font-black text-[12px] uppercase tracking-wide truncate">{option.label}</div>
+                                                        <div className={`text-[10px] leading-tight ${isSelected ? 'text-black/65' : 'text-white/45'}`}>{option.description}</div>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
                             <button onClick={async () => {
                                 try {
                                     const trimmedBio = bio?.trim() || "";
                                     const trimmedUsername = editUsername?.trim() || "";
-                                    const res = await axios.put(`/users/${displayUser?._id}`, { bio: trimmedBio, username: trimmedUsername });
+                                    const res = await axios.put(`/users/${displayUser?._id}`, {
+                                        bio: trimmedBio,
+                                        username: trimmedUsername,
+                                        profileDescriptor
+                                    });
                                     if (res.data) {
                                         localStorage.setItem('user', JSON.stringify(res.data));
                                         if (onUpdateUser) onUpdateUser(res.data);
@@ -3231,6 +3326,15 @@ const ProfileModal = ({
                                         <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                 </div>
+
+                                {selectedProfileDescriptor && (
+                                    <div className="mb-4">
+                                        <div className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 ${selectedProfileDescriptor.accentClass}`}>
+                                            <SelectedProfileDescriptorIcon className="w-4 h-4 shrink-0" />
+                                            <span className="text-[11px] font-black uppercase tracking-[0.18em]">{selectedProfileDescriptor.label}</span>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="text-[14px] sm:text-[15px] text-white/90 leading-relaxed max-w-[90%] whitespace-pre-wrap font-medium mb-5 break-words">
                                     {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}

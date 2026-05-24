@@ -79,6 +79,9 @@ export const Icons = {
             <path d="M16 12h.01" strokeWidth="3" opacity="0.5" />
         </svg>
     ),
+    PawPrint: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="7.5" cy="9" r="1.6" /><circle cx="12" cy="6.5" r="1.6" /><circle cx="16.5" cy="9" r="1.6" /><path d="M12 19c-1.6 0-4.8-1.1-4.8-3.6 0-1.7 1.2-2.9 2.8-2.9 1.1 0 1.7.5 2 .9.3-.4.9-.9 2-.9 1.6 0 2.8 1.2 2.8 2.9C16.8 17.9 13.6 19 12 19Z" /></svg>,
+    Briefcase: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M3 12h18" /><path d="M10 12v2" /><path d="M14 12v2" /></svg>,
+    Sparkles: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m12 3 1.4 3.6L17 8l-3.6 1.4L12 13l-1.4-3.6L7 8l3.6-1.4L12 3Z" /><path d="m19 14 .8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Z" /><path d="m5 14 1 2.5L8.5 17 6 18l-1 2.5L4 18l-2.5-1L4 16.5 5 14Z" /></svg>,
     ArrowUp: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 19V5" /><path d="m5 12 7-7 7 7" /></svg>,
     ShieldCheck: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="m9 12 2 2 4-4" /></svg>,
     Activity: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>,

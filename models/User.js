@@ -7,6 +7,11 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, default: "User" },
   profilePic: { type: String, default: "" },
   bio: { type: String, default: "" },
+  profileDescriptor: {
+    type: String,
+    enum: ["", "entrepreneur", "creator", "popular", "pet-lover", "community", "visionary"],
+    default: ""
+  },
   lastUsernameChange: { type: Date },
   lastSeen: { type: Date, default: Date.now },
   lastActive: { type: Date, default: Date.now },
