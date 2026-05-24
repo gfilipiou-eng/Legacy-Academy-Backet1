@@ -59,13 +59,15 @@ const initAudio = () => {
 
     // Cleanup listeners
     window.removeEventListener('click', initAudio);
-    window.removeEventListener('touchstart', initAudio);
+    window.removeEventListener('touchend', initAudio);
+    window.removeEventListener('pointerup', initAudio);
     window.removeEventListener('keydown', initAudio);
 };
 
 if (typeof window !== 'undefined') {
     window.addEventListener('click', initAudio);
-    window.addEventListener('touchstart', initAudio);
+    window.addEventListener('touchend', initAudio);
+    window.addEventListener('pointerup', initAudio);
     window.addEventListener('keydown', initAudio);
 }
 

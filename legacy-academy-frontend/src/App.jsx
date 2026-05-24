@@ -430,77 +430,6 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                     </div>
                 </div>
             </div>
-            {shareModalPost && (
-                <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                    <button onClick={() => setShareModalPost(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition">
-                        <Icons.X className="w-6 h-6 text-white" />
-                    </button>
-                    
-                    <div className="bg-black border border-white/20 rounded-[2rem] max-w-[400px] w-full overflow-hidden shadow-2xl">
-                        <div id="share-card-content" className="bg-[#0a0a0a] p-6 pb-8 relative overflow-hidden">
-                            {/* Watermark */}
-                            <div className="absolute top-4 right-6 opacity-20 font-black italic text-2xl tracking-tighter text-[var(--gold-primary)]">LEGACY</div>
-                            
-                            {/* Author */}
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-12 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10 shrink-0">
-                                    <ProfileAvatar user={shareModalPost.author} />
-                                </div>
-                                <div>
-                                    <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none">
-                                        {shareModalPost.author?.username}
-                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} forceGold={true} className="w-4 h-4" />
-                                    </div>
-                                    <div className="text-gray-500 text-xs mt-1">@legacy_academy</div>
-                                </div>
-                            </div>
-                            
-                            {/* Text */}
-                            {shareModalPost.desc && (
-                                <p className="text-white text-base leading-relaxed mb-4 whitespace-pre-wrap">{shareModalPost.desc}</p>
-                            )}
-                            
-                            {/* Media - FULL COVER/CONTAIN */}
-                            {(shareModalPost.image || shareModalPost.thumbnailUrl) && (
-                                <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-black mb-2">
-                                    <img 
-                                        src={resolveMediaUrl(shareModalPost.image || shareModalPost.thumbnailUrl)} 
-                                        className="w-full h-auto object-contain max-h-[400px]" 
-                                        alt="" 
-                                    />
-                                </div>
-                            )}
-                            
-                            {/* Footer stats */}
-                            <div className="flex items-center gap-6 mt-4 text-gray-500 text-sm font-medium">
-                                <div className="flex items-center gap-1.5"><Icons.Heart className="w-4 h-4 text-red-500" /> {shareModalPost.likes?.length || 0}</div>
-                                <div className="flex items-center gap-1.5"><Icons.MessageSquare className="w-4 h-4" /> {shareModalPost.comments?.length || 0}</div>
-                                <div className="flex items-center gap-1.5"><Icons.RefreshCcw className="w-4 h-4 text-green-500" /> {shareModalPost.reposts?.length || 0}</div>
-                            </div>
-                        </div>
-                        
-                        {/* Actions */}
-                        <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
-                            <button 
-                                onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?post=${shareModalPost._id}`;
-                                    if (navigator.share) {
-                                        try { await navigator.share({ title: 'Legacy Post', url: shareUrl }); } catch (e) { }
-                                    } else {
-                                        navigator.clipboard.writeText(shareUrl);
-                                        addToast(t('PROFILE_LINK_COPIED') || "Link copied!", "success");
-                                    }
-                                    setShareModalPost(null);
-                                }}
-                                className="flex-1 bg-[var(--gold-primary)] text-black font-black py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90"
-                            >
-                                <Icons.Share className="w-5 h-5" />
-                                SHARE LINK
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
@@ -3388,7 +3317,8 @@ const ProfileModal = ({
                                     {profileDescriptor && (
                                         <button
                                             type="button"
-                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProfileDescriptor(''); }}
+                                            onPointerDown={(e) => { e.stopPropagation(); setProfileDescriptor(''); }}
+                                            onClick={(e) => { e.stopPropagation(); setProfileDescriptor(''); }}
                                             className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer touch-manipulation p-2 -mr-2"
                                         >
                                             {t('CLEAR', 'Clear')}
@@ -3403,7 +3333,8 @@ const ProfileModal = ({
                                             <button
                                                 key={option.value}
                                                 type="button"
-                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProfileDescriptor(option.value); }}
+                                                onPointerDown={(e) => { e.stopPropagation(); setProfileDescriptor(option.value); }}
+                                                onClick={(e) => { e.stopPropagation(); setProfileDescriptor(option.value); }}
                                                 className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
                                                 <div className="flex items-center gap-3 min-w-0">
@@ -4337,21 +4268,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                             </div>
                         )}
                     </div>
-                    {isFounder && (
-                        <div className="absolute -bottom-2 right-0 bg-gradient-to-r from-yellow-500 to-amber-600 text-black p-1.5 rounded-xl shadow-lg border border-yellow-300/30 flex items-center justify-center animate-bounce" style={{ animationDuration: '2s' }}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-black"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" /></svg>
-                        </div>
-                    )}
                 </div>
 
                 <div className="text-center space-y-1">
                     <div className="flex items-center justify-center gap-1.5">
                         <h1 className="text-2xl font-black text-white uppercase tracking-wider">{publicUser.username}</h1>
-                        {isFounder && (
-                            <div className="w-4 h-4 rounded-full bg-[var(--gold-primary)] flex items-center justify-center text-black shadow-[0_0_8px_rgba(255,215,0,0.5)]">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2.5 h-2.5"><path d="M20 6L9 17l-5-5" /></svg>
-                            </div>
-                        )}
+                        <VerifiedBadge isFounder={isFounder} className="w-5 h-5 shrink-0" />
                     </div>
                     <span className="text-xs text-gray-500 font-bold tracking-widest uppercase">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                 </div>
@@ -6636,16 +6558,16 @@ const App = () => {
                 </div>
             )}
             
-             {shareModalPost && (
+            {shareModalPost && (
                 <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                    <button onClick={() => setShareModalPost(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition">
+                    <button onClick={() => setShareModalPost(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-[14px] hover:bg-white/20 transition">
                         <Icons.X className="w-6 h-6 text-white" />
                     </button>
                     
-                    <div className="bg-black border border-white/20 rounded-[2rem] max-w-[400px] w-full overflow-hidden shadow-2xl">
+                    <div className="bg-black border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-2xl">
                         <div id="share-card-content" className="bg-[#0a0a0a] p-6 pb-8 relative overflow-hidden">
                             {/* Watermark */}
-                            <div className="absolute top-4 right-6 opacity-20 font-black italic text-2xl tracking-tighter text-[var(--gold-primary)]">LEGACY</div>
+                            <div className="absolute top-4 right-6 opacity-10 font-black italic text-2xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Author */}
                             <div className="flex items-center gap-3 mb-4">
@@ -6655,7 +6577,7 @@ const App = () => {
                                 <div>
                                     <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none">
                                         {shareModalPost.author?.username}
-                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} forceGold={shareModalPost.author?.role === 'Founder'} className="w-4 h-4" />
+                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} className="w-4 h-4" />
                                     </div>
                                     <div className="text-gray-500 text-xs mt-1">@legacy_academy</div>
                                 </div>
@@ -6668,7 +6590,7 @@ const App = () => {
                             
                             {/* Media - FULL COVER/CONTAIN */}
                             {(shareModalPost.image || shareModalPost.thumbnailUrl) && (
-                                <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-black mb-2">
+                                <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2">
                                     <img 
                                         src={resolveMediaUrl(shareModalPost.image || shareModalPost.thumbnailUrl)} 
                                         className="w-full h-auto object-contain max-h-[400px]" 
@@ -6698,7 +6620,7 @@ const App = () => {
                                     }
                                     setShareModalPost(null);
                                 }}
-                                className="flex-1 bg-[var(--gold-primary)] text-black font-black py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90"
+                                className="flex-1 bg-white text-black font-black py-3 rounded-[14px] flex items-center justify-center gap-2 hover:bg-gray-200"
                             >
                                 <Icons.Share className="w-5 h-5" />
                                 SHARE LINK
@@ -6711,26 +6633,31 @@ const App = () => {
             {/* Profile Share Modal */}
             {shareModalProfile && (
                 <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                    <button onClick={() => setShareModalProfile(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition">
+                    <button onClick={() => setShareModalProfile(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-[14px] hover:bg-white/20 transition">
                         <Icons.X className="w-6 h-6 text-white" />
                     </button>
                     
-                    <div className="bg-black border border-white/20 rounded-[2rem] max-w-[360px] w-full overflow-hidden shadow-2xl">
+                    <div className="bg-black border border-white/20 rounded-[20px] max-w-[360px] w-full overflow-hidden shadow-2xl">
                         <div className="bg-[#0a0a0a] relative overflow-hidden flex flex-col items-center pt-10 pb-8 px-6 text-center">
                             {/* Watermark */}
-                            <div className="absolute top-4 right-6 opacity-20 font-black italic text-xl tracking-tighter text-[var(--gold-primary)]">LEGACY</div>
+                            <div className="absolute top-4 right-6 opacity-10 font-black italic text-xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Profile Image */}
-                            <div className="w-24 h-24 rounded-[20px] bg-gray-800 overflow-hidden border-2 border-[var(--gold-primary)] shadow-[0_0_20px_rgba(255,215,0,0.15)] shrink-0 mb-4">
+                            <div className="w-24 h-24 rounded-[14px] bg-gray-800 overflow-hidden border border-white/20 shrink-0 mb-4">
                                 <ProfileAvatar user={shareModalProfile} size="large" />
                             </div>
                             
                             {/* Profile Name & Badge */}
                             <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none mb-1">
                                 {shareModalProfile.username}
-                                <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} forceGold={shareModalProfile.role === 'Founder'} className="w-6 h-6" />
+                                <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} className="w-6 h-6" />
                             </div>
-                            <div className="text-[var(--gold-primary)] text-sm font-bold uppercase tracking-widest mb-4">Legacy Agent</div>
+                            {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
+                                <div className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-4">
+                                    {t(`DESC_${shareModalProfile.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].label)}
+                                </div>
+                            )}
+                            {!shareModalProfile.profileDescriptor && <div className="mb-4"></div>}
                             
                             {/* Bio */}
                             {shareModalProfile.bio && (
@@ -6763,7 +6690,7 @@ const App = () => {
                                     }
                                     setShareModalProfile(null);
                                 }}
-                                className="flex-1 bg-[var(--gold-primary)] text-black font-black py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90"
+                                className="flex-1 bg-white text-black font-black py-3 rounded-[14px] flex items-center justify-center gap-2 hover:bg-gray-200"
                             >
                                 <Icons.Share className="w-5 h-5" />
                                 SHARE PROFILE
