@@ -19,7 +19,7 @@ const BottomNavbar = memo(({
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black border-t border-white/10">
-            <div className="flex justify-center px-2 sm:px-3 pt-3 pb-[calc(6px+env(safe-area-inset-bottom))]">
+            <div className="flex justify-center px-2 sm:px-3 pt-4 sm:pt-5 pb-[calc(6px+env(safe-area-inset-bottom))] bg-black">
                 <div className="w-full bottom-nav-glass rounded-none px-2.5 py-2.5 sm:py-3 pointer-events-auto flex items-center justify-between relative gap-1.5">
                 <button
                     type="button"
