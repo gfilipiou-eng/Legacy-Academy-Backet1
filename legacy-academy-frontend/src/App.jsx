@@ -6520,15 +6520,13 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black border border-white/20 transition-all duration-300 z-50 p-2.5 -ml-2 group"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black border border-white/20 transition-all duration-300 z-50 p-0 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
                                         duration={0}
                                     >
-                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-white transition-colors duration-300 pointer-events-none">
-                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
-                                        </svg>
+                                        <ProfileAvatar user={user} className="w-full h-full object-cover" />
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
