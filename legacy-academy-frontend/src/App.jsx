@@ -1056,20 +1056,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.RefreshCcw className="w-5 h-5" />
+                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20 scale-105 shadow-[0_0_10px_rgba(34,197,94,0.2)]' : 'text-gray-400 hover:text-green-400'}`}>
+                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]' : ''}`} />
                                     <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 bg-red-500/10 border-red-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]' : ''}`} />
+                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20 scale-105 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'text-gray-400 hover:text-red-400'}`}>
+                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]' : ''}`} />
                                     <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20 scale-105' : 'text-gray-400 hover:text-white'}`}>
-                                    <Icons.ThumbsDown className={`w-5 h-5 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : ''}`} />
+                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20 scale-105 shadow-[0_0_10px_rgba(59,130,246,0.2)]' : 'text-gray-400 hover:text-blue-400'}`}>
+                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
                                     <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
@@ -1885,9 +1885,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20 scale-105' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20 scale-105 shadow-[0_0_10px_rgba(34,197,94,0.2)]' : 'text-gray-400 hover:text-green-400'}`}
                             >
-                                <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
+                                <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                             </button>
 
@@ -1900,9 +1900,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onLike(post._id);
 
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20 scale-105' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20 scale-105 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'text-gray-400 hover:text-red-400'}`}
                             >
-                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
+                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
@@ -1915,9 +1915,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onDislike(post._id);
 
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20 scale-105' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20 scale-105 shadow-[0_0_10px_rgba(59,130,246,0.2)]' : 'text-gray-400 hover:text-blue-400'}`}
                             >
-                                <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
+                                <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                             </button>
 
@@ -4716,7 +4716,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     {/* simplified READ-ONLY STATS */}
                                     <div className="flex items-center gap-4 mt-2 border-t border-white/5 pt-4 text-gray-500 text-[10px] font-black uppercase tracking-wider">
                                         <div className="flex items-center gap-1.5">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                                            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" strokeWidth="2.5" className="w-4 h-4 text-red-500"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
                                             <span className="tabular-nums">{post.likes?.length || 0}</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
@@ -4724,7 +4724,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             <span className="tabular-nums">{post.comments?.length || 0}</span>
                                         </div>
                                         <div className="flex items-center gap-1.5">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4 text-green-500"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
                                             <span className="tabular-nums">{post.reposts?.length || 0}</span>
                                         </div>
                                     </div>
@@ -7090,7 +7090,7 @@ const App = () => {
                             
                             {/* Footer stats */}
                             <div className="flex items-center gap-6 mt-4 text-gray-500 text-sm font-medium">
-                                <div className="flex items-center gap-1.5"><Icons.Heart className="w-4 h-4 text-red-500" /> {shareModalPost.likes?.length || 0}</div>
+                                <div className="flex items-center gap-1.5"><Icons.Heart className="w-4 h-4 text-red-500 fill-current" /> {shareModalPost.likes?.length || 0}</div>
                                 <div className="flex items-center gap-1.5"><Icons.MessageSquare className="w-4 h-4" /> {shareModalPost.comments?.length || 0}</div>
                                 <div className="flex items-center gap-1.5"><Icons.RefreshCcw className="w-4 h-4 text-green-500" /> {shareModalPost.reposts?.length || 0}</div>
                             </div>
