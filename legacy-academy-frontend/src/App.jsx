@@ -6220,18 +6220,19 @@ const App = () => {
                     {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
                         {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
-                        <div 
-                            className="absolute inset-0 bg-cover bg-center sm:bg-center bg-no-repeat opacity-80"
+                        <img 
+                            src="https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=2000&q=80"
+                            className="absolute inset-0 w-full h-full object-cover object-top opacity-80"
                             style={{ 
-                                backgroundImage: 'url(https://images.unsplash.com/photo-1543781298-b80c35ab959a?q=100&w=1080&auto=format&fit=crop)',
                                 animation: 'kenburns 30s infinite alternate ease-in-out',
-                                transformOrigin: 'center center'
+                                transformOrigin: 'top center'
                             }}
+                            alt="Ancient Greece Background"
                         />
                         {/* Light overlays so the image is fully visible but text is readable */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-transparent" />
-                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-20 mix-blend-overlay" />
+                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-[0.15] mix-blend-color" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
                         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/20 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
