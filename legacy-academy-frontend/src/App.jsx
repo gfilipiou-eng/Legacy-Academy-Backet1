@@ -627,10 +627,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             exit={{ opacity: 0, y: -4 }}
             className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
         >
-            <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/10 bg-black">
+            <div className="w-9 h-9 rounded-[12px] overflow-hidden shrink-0 border border-white/10 bg-black">
                 <ProfileAvatar
                     user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })}
-                    className="rounded-full"
                 />
             </div>
 
@@ -892,8 +891,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
                         <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10 shadow-md">
-                                <ProfileAvatar user={author} className="rounded-full" />
+                            <div className="w-11 h-11 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10 shadow-md">
+                                <ProfileAvatar user={author} />
                             </div>
                             <div className="flex flex-col">
                                 <div className="post-author-line min-w-0">
@@ -938,8 +937,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                             </div>
                             <div className="flex items-center gap-2 w-full">
-                                <div className="w-9 h-9 rounded-full bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
-                                    <ProfileAvatar user={user} className="rounded-full" />
+                                <div className="w-9 h-9 rounded-[12px] bg-gray-800 overflow-hidden shrink-0 ring-1 ring-white/10">
+                                    <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
                                     <div className="flex-1 min-w-0 bg-red-500/10 border border-red-500/30 rounded-2xl p-2 flex items-center justify-between">
@@ -1408,8 +1407,8 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             onClick={handleClick}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden border border-white/10  shadow-md">
-                    <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} className="rounded-full" />
+                <div className="w-12 h-12 rounded-[16px] bg-gray-800 overflow-hidden border border-white/10  shadow-md">
+                    <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
                 {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageSquare className="w-3 h-3 text-white fill-current" /></div>}
@@ -1460,8 +1459,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
-                    <ProfileAvatar user={user} className="opacity-80 rounded-full" key={imgKey} />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
+                    <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 ">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1480,8 +1479,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-amber-500 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[20px] sm:rounded-[24px] p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] to-amber-500 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="w-full h-full rounded-[18px] sm:rounded-[22px] overflow-hidden border border-black bg-black">
                                 <img src={authorPic} className="w-full h-full object-cover" alt="" />
                             </div>
                             {isNativeVideo && (
@@ -1640,7 +1639,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className={`w-12 h-12 sm:w-14 sm:h-14 ${isFounder ? 'rounded-2xl' : 'rounded-full'} bg-black/60 shadow-xl cursor-pointer overflow-hidden border border-white/10`} onClick={() => onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[16px] sm:rounded-[20px] bg-black/60 shadow-xl cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -1784,8 +1783,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {showComments && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
                                 <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
-                                        <ProfileAvatar user={user} className="rounded-full" />
+                                    <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-white/10">
+                                        <ProfileAvatar user={user} />
                                     </div>
                                     <div className="flex-1 flex flex-col gap-3">
                                         <div className="relative">
@@ -2174,7 +2173,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm border border-white/10`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-[16px] bg-gray-900 overflow-hidden shadow-sm border border-white/10"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2193,7 +2192,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10"><ProfileAvatar user={activeChat} className="rounded-full" /></div>
+                                <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-white/10"><ProfileAvatar user={activeChat} /></div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
@@ -2760,7 +2759,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <div className={`w-[48px] h-[48px] ${user?.role === 'Founder' ? 'rounded-[14px]' : 'rounded-full'} overflow-hidden shrink-0 border border-white/10`}>
+                            <div className="w-[48px] h-[48px] rounded-[14px] overflow-hidden shrink-0 border border-white/10">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                         </div>
@@ -3166,8 +3165,8 @@ const ProfileModal = ({
                                     onViewProfile(u);
                                     setActiveList(null);
                                 }} className="flex items-center gap-3 p-3  rounded-2xl cursor-pointer   border border-transparent">
-                                    <div className="w-11 h-11 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                        <ProfileAvatar user={u} className="rounded-full" />
+                                    <div className="w-11 h-11 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10">
+                                        <ProfileAvatar user={u} />
                                     </div>
                                     <div className="flex flex-col">
                                         <div className="font-bold text-white text-sm">{u?.username}</div>
@@ -3178,13 +3177,13 @@ const ProfileModal = ({
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 space-y-8 animate-fade-in">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] relative shadow-xl shadow-black/50">
+                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-[2rem] bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] relative shadow-xl shadow-black/50">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                     </div>
                                 ) : (
-                                    <ProfileAvatar user={displayUser} size="large" key={imgKey} className="rounded-full" />
+                                    <ProfileAvatar user={displayUser} size="large" key={imgKey} />
                                 )}
                             </div>
                             <input type="file" ref={fileRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={async (e) => {
@@ -3410,7 +3409,7 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-start justify-between mb-3 sm:mb-4">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className={`w-24 h-24 sm:w-32 sm:h-32 ${displayUser?.role === 'Founder' ? 'rounded-[2rem]' : 'rounded-full'} bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0`}>
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-[2rem] bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover" />
                                     </div>
                                 </div>
@@ -3588,8 +3587,8 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
-                                                            <ProfileAvatar user={currentUser} className="opacity-80 rounded-full" />
+                                                        <div className="w-16 h-16 rounded-[20px] overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
+                                                            <ProfileAvatar user={currentUser} className="opacity-80" />
                                                             <div className="absolute inset-0 flex items-center justify-center">
                                                                 <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 ">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -3611,12 +3610,12 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-full overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
+                                                            <div className="w-16 h-16 rounded-[20px] overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
                                                                             src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                            className="w-full h-full object-cover rounded-full pointer-events-none"
+                                                                            className="w-full h-full object-cover pointer-events-none"
                                                                             autoPlay
                                                                             muted
                                                                             loop
@@ -3626,7 +3625,7 @@ const ProfileModal = ({
                                                                         />
                                                                     ) : isYT ? (
                                                                         <div className="w-full h-full relative">
-                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" alt="" />
+                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
                                                                             <div className="absolute inset-0 flex items-center justify-center">
                                                                                 <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
                                                                                     <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
@@ -3634,10 +3633,10 @@ const ProfileModal = ({
                                                                             </div>
                                                                         </div>
                                                                     ) : (
-                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover rounded-full" />
+                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" />
                                                                     )
                                                                 ) : (
-                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1 rounded-full">
+                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
                                                                         <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
                                                                             {s.desc}
                                                                         </span>
@@ -3814,8 +3813,8 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex flex-col gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                                <ProfileAvatar user={user} className="rounded-full" />
+                            <div className="w-10 h-10 rounded-[14px] bg-gray-800 overflow-hidden shrink-0 border border-white/10">
+                                <ProfileAvatar user={user} />
                             </div>
                             <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
                         </div>
@@ -4250,7 +4249,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className={`w-28 h-28 ${isFounder ? 'rounded-[28px]' : 'rounded-full'} overflow-hidden border-2 border-[var(--gold-primary)] shadow-[0_0_30px_rgba(255,215,0,0.2)] bg-black/40 backdrop-blur-md`}>
+                    <div className="w-28 h-28 rounded-[28px] overflow-hidden border-2 border-[var(--gold-primary)] shadow-[0_0_30px_rgba(255,215,0,0.2)] bg-black/40 backdrop-blur-md">
                         {publicUser.profilePic ? (
                             <img src={publicUser.profilePic} className="w-full h-full object-cover" alt="" />
                         ) : (
@@ -4334,7 +4333,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loading, onC
                             return (
                                 <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-[2rem] shadow-lg flex flex-col gap-4 relative group text-left">
                                     <div className="flex items-center gap-3">
-                                        <div className={`w-9 h-9 ${isFounder ? 'rounded-[10px]' : 'rounded-full'} overflow-hidden border border-white/10 shrink-0 bg-black/40`}>
+                                        <div className="w-9 h-9 rounded-[10px] overflow-hidden border border-white/10 shrink-0 bg-black/40">
                                             {publicUser.profilePic ? (
                                                 <img src={publicUser.profilePic} className="w-full h-full object-cover" alt="" />
                                             ) : (
@@ -6232,7 +6231,7 @@ const App = () => {
                                                                     
                                                                     <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 z-10">
                                                                         <div className="flex items-center gap-2 mb-1">
-                                                                            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20">
+                                                                            <div className="w-6 h-6 rounded-[8px] overflow-hidden border border-white/20">
                                                                                 <ProfileAvatar user={post.author} />
                                                                             </div>
                                                                             <span className="text-[11px] font-bold text-white uppercase tracking-wider truncate shadow-sm">
@@ -6268,8 +6267,8 @@ const App = () => {
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer  ">
-                                                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden border border-white/10">
-                                                                <ProfileAvatar user={u} className="rounded-full" />
+                                                            <div className="w-10 h-10 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10">
+                                                                <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-1.5">
