@@ -4446,7 +4446,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* SIGN UP CALL TO ACTION */}
                 <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-[var(--gold-primary)] text-black font-black text-[9px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
-                    JOIN ACADEMY
+                    {t('JOIN_ACADEMY_PRICE', 'JOIN ACADEMY • 4€/MO')}
                 </button>
 
                 {/* AVATAR & IDENTITY */}
@@ -4511,8 +4511,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* LINKTREE STYLE INVITATION CARD */}
                 <div onClick={onClose} className="w-full mt-6 p-5 bg-gradient-to-r from-[var(--gold-primary)]/10 to-black border border-[var(--gold-primary)]/20 rounded-3xl cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
                     <div className="space-y-1 text-left">
-                        <h3 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-[0.2em]">{t('JOIN_ELITE') || 'JOIN THE ELITE'}</h3>
-                        <p className="text-xs text-white/80 font-bold leading-snug">{t('CREATE_ACCOUNT') || 'Create your account to connect'}</p>
+                        <h3 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
+                        <p className="text-xs text-white/80 font-bold leading-snug">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-[var(--gold-primary)] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
