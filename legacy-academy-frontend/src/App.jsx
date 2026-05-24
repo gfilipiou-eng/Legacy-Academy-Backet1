@@ -4584,7 +4584,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* POST SHOWCASE SECTION TITLE */}
                 <div className="w-full flex items-center gap-3 mt-10 mb-6">
                     <div className="w-1.5 h-4 bg-white rounded-none" />
-                    <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.3em]">INTELLIGENCE BRIEFINGS</span>
+                    <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.3em]">{t('INTELLIGENCE_BRIEFINGS', 'INTELLIGENCE BRIEFINGS')}</span>
                     <div className="h-[1px] flex-1 bg-white/5" />
                 </div>
 
@@ -4605,12 +4605,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 </g>
                             </svg>
                             <div className="text-center text-xs text-white/35 font-bold uppercase tracking-widest">
-                                LOADING ARCHIVES...
+                                {t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')}
                             </div>
                         </div>
                     ) : publicPosts.length === 0 ? (
                         <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-none bg-white/[0.01]">
-                            NO ARCHIVES DISPATCHED YET
+                            {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
                         </div>
                     ) : (
                         publicPosts.map(post => {
@@ -4637,7 +4637,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     {isRepost && (
                                         <div className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
-                                            @{publicUser.username} REPOSTED
+                                            @{publicUser.username} {t('REPOSTED', 'REPOSTED')}
                                         </div>
                                     )}
 
