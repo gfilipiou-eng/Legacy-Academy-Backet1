@@ -4531,9 +4531,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     </div>
 
                                     {/* CONTENT */}
-                                    {post.text && (
+                                    {post.desc && (
                                         <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed whitespace-pre-wrap select-text">
-                                            {post.text}
+                                            {post.desc}
                                         </p>
                                     )}
 
