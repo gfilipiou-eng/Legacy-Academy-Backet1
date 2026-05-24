@@ -478,31 +478,31 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
     return (
         <div className="fixed inset-0 z-[6000] flex items-start justify-center pointer-events-none p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto" onClick={onClose} />
-            <div className="relative w-full sm:max-w-[400px] bg-black/95 backdrop-blur-3xl border-b border-white/10 sm:border sm:rounded-[2.5rem] rounded-none p-6 animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
+            <div className="relative w-full sm:max-w-[400px] bg-black border-b border-white/20 sm:border sm:rounded-none rounded-none p-6 animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-black italic text-white flex items-center gap-3">
-                        <Icons.Terminal className="w-5 h-5 text-[var(--gold-primary)]" />
-                        {t('FOUNDER_CONSOLE')} <span className="text-[var(--gold-primary)] opacity-30 select-none">///</span>
+                        <Icons.Terminal className="w-5 h-5 text-white" />
+                        {t('FOUNDER_CONSOLE')} <span className="text-white opacity-30 select-none">///</span>
                     </h3>
-                    <button onClick={onClose} className="p-2  rounded-full  "><Icons.X className="w-6 h-6 text-gray-500" /></button>
+                    <button onClick={onClose} className="p-2 rounded-none"><Icons.X className="w-6 h-6 text-gray-500" /></button>
                 </div>
 
                 <div className="flex flex-col gap-4">
                     {audioBlob ? (
-                        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl animate-pulse">
+                        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/20 rounded-none animate-pulse">
                             <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 rounded-full bg-[var(--gold-primary)]" />
-                                <span className="text-xs font-black text-[var(--gold-primary)] uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
+                                <div className="w-2.5 h-2.5 rounded-none bg-white" />
+                                <span className="text-xs font-black text-white uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
                             </div>
-                            <button onClick={() => setAudioBlob(null)} className="p-2  rounded-full"><Icons.Trash className="w-5 h-5 text-red-500" /></button>
+                            <button onClick={() => setAudioBlob(null)} className="p-2 rounded-none"><Icons.Trash className="w-5 h-5 text-red-500" /></button>
                         </div>
                     ) : isRecording ? (
-                        <div className="flex items-center justify-between p-5 bg-red-500/10 border border-red-500/30 rounded-2xl animate-pulse">
+                        <div className="flex items-center justify-between p-5 bg-red-600 border border-red-500 rounded-none animate-pulse">
                             <div className="flex items-center gap-3">
-                                <div className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
-                                <span className="text-sm font-black text-red-500 uppercase tracking-widest">{t('RECORDING')}...</span>
+                                <div className="w-3 h-3 rounded-none bg-white animate-ping" />
+                                <span className="text-sm font-black text-white uppercase tracking-widest">{t('RECORDING')}...</span>
                             </div>
-                            <button onClick={stopRecording} className="px-5 py-2 bg-red-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20">{t('STOP')}</button>
+                            <button onClick={stopRecording} className="px-5 py-2 bg-white text-red-600 font-black text-xs uppercase tracking-widest rounded-none shadow-none">{t('STOP')}</button>
                         </div>
                     ) : (
                         <div className="relative">
@@ -511,7 +511,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                                 value={value}
                                 onChange={(e) => onChange(e.target.value)}
                                 placeholder={t('WRITE_COMMENT')}
-                                className="w-full h-32 bg-white/[0.04] border border-white/10 rounded-2xl p-5 text-base text-white font-medium resize-none focus:border-[var(--gold-primary)] outline-none placeholder-gray-600 shadow-inner "
+                                className="w-full h-32 bg-black border border-white/20 rounded-none p-5 text-base text-white font-medium resize-none focus:border-white outline-none placeholder-gray-600 shadow-none"
                             />
                             <div className="absolute bottom-3 right-3 text-[10px] font-black text-gray-700 uppercase tracking-widest">{value.length} / 500</div>
                         </div>
@@ -522,7 +522,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <button
                                 type="button"
                                 onClick={startRecording}
-                                className="p-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400     shadow-xl group"
+                                className="p-4 bg-black border border-white/20 rounded-none text-gray-400 shadow-none group"
                             >
                                 <Icons.Mic className="w-6 h-6 group-hover:scale-110 " />
                             </button>
@@ -530,9 +530,9 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button
                             onClick={handleSubmit}
                             disabled={(audioBlob ? false : !value.trim()) || loading}
-                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl disabled:opacity-50  flex items-center justify-center gap-3 hover:brightness-110"
+                            className="flex-1 py-4 bg-white text-black font-black text-xs uppercase tracking-[0.15em] rounded-none disabled:opacity-50 flex items-center justify-center gap-3 hover:bg-gray-200"
                         >
-                            {loading ? <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-full animate-spin" /> : <Icons.Send className="w-5 h-5" />}
+                            {loading ? <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-none animate-spin" /> : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
                         </button>
                     </div>
@@ -677,7 +677,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false }) => {
-    const color = (isFounder || forceGold) ? "#FFD700" : "#1D9BF0";
+    const color = (isFounder || forceGold) ? "#FFFFFF" : "#FFFFFF";
 
     return (
         <svg viewBox="0 0 22 22" className={`${className} shrink-0`} style={{ overflow: 'visible' }}>
@@ -1095,7 +1095,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             className="flex-1 min-w-0 bg-transparent py-3 px-3 text-sm text-white outline-none placeholder-gray-600 font-bold"
                                         />
                                         <div className="flex gap-1 pr-1 shrink-0">
-                                            <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-none ${isRecordingComment ? 'bg-white text-black' : 'text-gray-500'}`}>
+                                            <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-none ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'text-gray-500'}`}>
                                                 <Icons.Mic className="w-4 h-4" />
                                             </button>
                                             <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-none bg-white text-black disabled:opacity-25   shrink-0">
@@ -1913,7 +1913,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 className="w-full bg-black border border-white/20 rounded-none p-4 text-sm text-white outline-none focus:border-white min-h-[100px] resize-none pb-12"
                                             />
                                             <div className="absolute bottom-2 left-2 flex gap-2">
-                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-none  ${isRecordingComment ? 'bg-white text-black animate-pulse' : 'bg-black border border-white/20 text-gray-500'}`}>
+                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-none  ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'bg-black border border-white/20 text-gray-500'}`}>
                                                     <Icons.Mic className="w-5 h-5" />
                                                 </button>
                                                 <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-white border border-white text-black rounded-none hover:opacity-90  ">
@@ -4437,11 +4437,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const publicFounderAffiliation = getFounderAffiliation(publicUser);
 
     return (
-        <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
-            {/* AMBIENT BACKGROUND GLOWS */}
+        <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text">
+            {/* AMBIENT BACKGROUND GLOWS REMOVED FOR TETRAGONO */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/5 blur-[120px]" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/3 blur-[150px]" />
                 <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
             </div>
 
@@ -4464,18 +4462,18 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </button>
 
                 {/* SIGN UP CALL TO ACTION */}
-                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-[var(--gold-primary)] text-black font-black text-[9px] uppercase tracking-widest rounded-none hover:scale-105 transition-transform shadow-none animate-pulse" style={{ animationDuration: '3s' }}>
+                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-white text-black font-black text-[9px] uppercase tracking-widest rounded-none hover:scale-105 transition-transform shadow-none">
                     {t('JOIN_ACADEMY_PRICE', 'JOIN ACADEMY • 4€/MO')}
                 </button>
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-none overflow-hidden border border-[var(--gold-primary)] bg-black/40 backdrop-blur-md relative">
+                    <div className="w-28 h-28 rounded-none overflow-hidden border border-white/20 bg-black/40 backdrop-blur-md relative">
                         {/* Meander corners */}
-                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[var(--gold-primary)] pointer-events-none" />
-                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[var(--gold-primary)] pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[var(--gold-primary)] pointer-events-none" />
-                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[var(--gold-primary)] pointer-events-none" />
+                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/50 pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/50 pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/50 pointer-events-none" />
+                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/50 pointer-events-none" />
                         {resolvedPublicProfilePic ? (
                             <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="eager" decoding="async" />
                         ) : (
@@ -4533,19 +4531,19 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
 
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-gradient-to-r from-[var(--gold-primary)]/10 to-black border border-[var(--gold-primary)]/20 rounded-3xl cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-black border border-white/20 rounded-none cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
                     <div className="space-y-1 text-left">
-                        <h3 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
-                        <p className="text-xs text-white/80 font-bold leading-snug">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
+                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
+                        <p className="text-xs text-gray-400 font-bold leading-snug">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-[var(--gold-primary)] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                    <div className="w-10 h-10 rounded-none bg-white text-black flex items-center justify-center shadow-none group-hover:scale-110 transition-transform shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </div>
                 </div>
 
                 {/* POST SHOWCASE SECTION TITLE */}
                 <div className="w-full flex items-center gap-3 mt-10 mb-6">
-                    <div className="w-1.5 h-4 bg-[var(--gold-primary)] rounded-full" />
+                    <div className="w-1.5 h-4 bg-white rounded-none" />
                     <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.3em]">INTELLIGENCE BRIEFINGS</span>
                     <div className="h-[1px] flex-1 bg-white/5" />
                 </div>
