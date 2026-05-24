@@ -1767,12 +1767,17 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {/* Header */}
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
                             <div className="min-w-0 flex-1 pr-1">
-                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
-                                    <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer break-words leading-tight" onClick={() => onViewProfile(author)}>{author?.username}</span>
-                                    <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                    <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
-                                    <span className="text-gray-600 text-[13px] shrink-0">·</span>
-                                    <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap shrink-0">{formatDate(post.createdAt, t, lang)}</span>
+                                <div className="flex flex-col gap-2 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
+                                        <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer break-words leading-tight" onClick={() => onViewProfile(author)}>{author?.username}</span>
+                                        <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
+                                        <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
+                                    </div>
+                                    <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-2 sm:gap-3 w-max">
+                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full"></div>
+                                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{formatDate(post.createdAt, t, lang)}</span>
+                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -4622,29 +4627,26 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 </div>
                                             )}
                                         </div>
-                                        <div>
+                                        <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center gap-1">
                                                 <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
                                                 <VerifiedBadge isFounder={isAuthorFounder} className="w-3.5 h-3.5" />
                                             </div>
-                                            {postAuthor?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor] ? (
-                                                <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
-                                                    {React.createElement(PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
-                                                    {t(`DESC_${postAuthor.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].label)}
-                                                    <span className="opacity-50 mx-1">•</span>
-                                                    <span>{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
-                                                </div>
-                                            ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) ? (
-                                                <div className="flex items-center gap-2 mt-0.5">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {postAuthor?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor] ? (
+                                                    <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
+                                                        {React.createElement(PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
+                                                        {t(`DESC_${postAuthor.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].label)}
+                                                    </div>
+                                                ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) && (
                                                     <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
-                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase opacity-50">•</span>
-                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
+                                                )}
+                                                <div className="px-2.5 py-1 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-1.5">
+                                                    <div className="w-1 h-1 bg-[var(--gold-primary)] rounded-full"></div>
+                                                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
+                                                    <div className="w-1 h-1 bg-[var(--gold-primary)] rounded-full"></div>
                                                 </div>
-                                            ) : (
-                                                <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase mt-0.5 block">
-                                                    {formatDate(post.createdAt, t, urlLangParam || 'en')}
-                                                </span>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
 
