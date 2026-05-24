@@ -361,19 +361,25 @@ const formatDate = (dateString, t, lang) => {
 
         if (diffInSeconds < 60) return t('JUST_NOW') || 'Just now';
 
+        const isEl = lang === 'el';
+
         const diffInMinutes = Math.round(diffInSeconds / 60);
         if (diffInMinutes < 60) {
-            return `${diffInMinutes} ${t('UNIT_M')}`;
+            return isEl ? `${diffInMinutes} λεπτά` : `${diffInMinutes}m`;
         }
 
         const diffInHours = Math.round(diffInSeconds / 3600);
         if (diffInHours < 24) {
-            return `${diffInHours} ${t('UNIT_H')}`;
+            return diffInHours === 1 
+                ? (isEl ? '1 ώρα' : '1h')
+                : (isEl ? `${diffInHours} ώρες` : `${diffInHours}h`);
         }
 
         const diffInDays = Math.round(diffInSeconds / 86400);
         if (diffInDays < 7) {
-            return `${diffInDays} ${t('UNIT_D')}`;
+            return diffInDays === 1 
+                ? (isEl ? '1 μέρα' : '1d')
+                : (isEl ? `${diffInDays} μέρες` : `${diffInDays}d`);
         }
 
         const locale = getLocaleForLang(lang);
@@ -6743,10 +6749,10 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 opacity-90">
-                                                                <div className="px-5 py-2.5 rounded-none bg-black border border-white flex items-center gap-3">
-                                                                    <div className="w-1.5 h-1.5 bg-white rounded-none" />
-                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white font-mono">{dateKey}</span>
-                                                                    <div className="w-1.5 h-1.5 bg-white rounded-none" />
+                                                                <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3">
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
+                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
                                                                 </div>
                                                             </div>
 
