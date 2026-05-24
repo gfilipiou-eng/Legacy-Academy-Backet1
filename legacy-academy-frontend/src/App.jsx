@@ -2529,9 +2529,9 @@ const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
     return (
         <div
             onClick={() => !saving && onToggle()}
-            className={`relative w-12 h-7 rounded-full  duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black border-white/20'}`}
+            className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black border-white/20'}`}
         >
-            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full ${active ? 'bg-black' : 'bg-white'} shadow-sm  duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full ${active ? 'bg-black' : 'bg-white'} shadow-sm transition-all duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
         </div>
     );
 };
