@@ -677,7 +677,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false }) => {
-    const color = (isFounder || forceGold) ? "#FFFFFF" : "#FFFFFF";
+    const color = (isFounder || forceGold) ? "#FFD700" : "#1D9BF0";
 
     return (
         <svg viewBox="0 0 22 22" className={`${className} shrink-0`} style={{ overflow: 'visible' }}>
@@ -6293,7 +6293,7 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-36 w-auto object-contain" style={{ filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.15))' }} />
+                                    <img src="https://res.cloudinary.com/ddehek3eo/image/upload/w_600,h_600,c_fill,g_face,q_auto:best,f_auto/v1779641735/legacyacademy/sfijqfcdsyobep6gnzcd.jpg" alt="Legacy Academy" className="h-36 w-auto object-contain" style={{ filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.15))' }} />
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--gold-primary)]/60">
@@ -6507,7 +6507,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain" />
+                                    <img src="https://res.cloudinary.com/ddehek3eo/image/upload/w_600,h_600,c_fill,g_face,q_auto:best,f_auto/v1779641735/legacyacademy/sfijqfcdsyobep6gnzcd.jpg" alt="Legacy Academy" className="h-48 w-auto object-contain" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
