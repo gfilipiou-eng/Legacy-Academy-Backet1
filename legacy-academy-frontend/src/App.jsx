@@ -3388,8 +3388,8 @@ const ProfileModal = ({
                                     {profileDescriptor && (
                                         <button
                                             type="button"
-                                            onClick={() => setProfileDescriptor('')}
-                                            className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white"
+                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProfileDescriptor(''); }}
+                                            className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer touch-manipulation p-2 -mr-2"
                                         >
                                             {t('CLEAR', 'Clear')}
                                         </button>
@@ -3403,10 +3403,10 @@ const ProfileModal = ({
                                             <button
                                                 key={option.value}
                                                 type="button"
-                                                onClick={() => setProfileDescriptor(option.value)}
-                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProfileDescriptor(option.value); }}
+                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
-                                                <div className="flex items-center gap-3 min-w-0 pointer-events-none">
+                                                <div className="flex items-center gap-3 min-w-0">
                                                     <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
                                                         <OptionIcon className="w-5 h-5" />
                                                     </div>
