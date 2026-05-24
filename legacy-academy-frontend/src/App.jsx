@@ -4383,6 +4383,8 @@ const applyZoom = (zoom) => {
 
 const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, t }) => {
     const themeColor = publicUser?.settings?.theme || '#ffd700';
+    const searchParams = new URLSearchParams(window.location.search);
+    const urlLangParam = searchParams.get('lang');
 
     if (loadingUser && !publicUser) {
         return (
@@ -4564,17 +4566,17 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
                                                     {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
                                                     <span className="opacity-50 mx-1">•</span>
-                                                    <span>{formatDate(post.createdAt, t, urlLang || 'en')}</span>
+                                                    <span>{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
                                                 </div>
                                             ) : publicFounderAffiliation ? (
                                                 <div className="flex items-center gap-2 mt-0.5">
                                                     <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" />
                                                     <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase opacity-50">•</span>
-                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, urlLang || 'en')}</span>
+                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
                                                 </div>
                                             ) : (
                                                 <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase mt-0.5 block">
-                                                    {formatDate(post.createdAt, t, urlLang || 'en')}
+                                                    {formatDate(post.createdAt, t, urlLangParam || 'en')}
                                                 </span>
                                             )}
                                         </div>
