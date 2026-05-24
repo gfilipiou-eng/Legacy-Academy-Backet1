@@ -4495,9 +4495,9 @@ const App = () => {
             const loadPublicProfile = async () => {
                 setPublicLoading(true);
                 try {
-                    const uRes = await axios.get(`/users/username/${publicProfileUsername}`);
+                    const uRes = await axios.get(`/users/username/${encodeURIComponent(publicProfileUsername)}`);
                     setPublicUser(uRes.data);
-                    const pRes = await axios.get(`/users/public/posts/${publicProfileUsername}`);
+                    const pRes = await axios.get(`/users/public/posts/${encodeURIComponent(publicProfileUsername)}`);
                     setPublicPosts(pRes.data);
                 } catch (err) {
                     console.error("Failed to load public profile:", err);
@@ -6753,7 +6753,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?profile=${shareModalProfile.username}`;
+                                    const shareUrl = `${window.location.origin}/?profile=${encodeURIComponent(shareModalProfile.username)}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Profile', url: shareUrl }); } catch (e) { }
                                     } else {
