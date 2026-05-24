@@ -2960,7 +2960,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, selectedPost }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -3224,7 +3224,7 @@ const ProfileModal = ({
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
-                                setShareModalProfile(displayUser);
+                                if (onShareProfile) onShareProfile(displayUser);
                             }}
                             className="p-2 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center text-white"
                         >
@@ -6470,6 +6470,7 @@ const App = () => {
                         onDeleteComment={handleDeleteComment}
                         onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }}
                         onShare={handleShare}
+                        onShareProfile={setShareModalProfile}
                         onHashtagClick={handleHashtagClick}
                         onOpenCreate={() => { setCreateModeStory(true); setIsCreateOpen(true); }}
                         loadingActions={loadingActions}
