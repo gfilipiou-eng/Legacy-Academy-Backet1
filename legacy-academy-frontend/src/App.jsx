@@ -2399,6 +2399,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
+    const latestUserRef = useRef(user);
     const [zoomLevel, setZoomLevel] = useState(
         Math.min(
             1,
@@ -2408,6 +2409,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             )
         )
     );
+
+    useEffect(() => {
+        latestUserRef.current = user;
+    }, [user]);
 
     useEffect(() => {
         if (user && isOpen) {
@@ -2449,26 +2454,29 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
             if (key === 'showProfileShareButton') {
                 const nextToggleValue = Boolean(val);
+                const baseUser = latestUserRef.current || user || {};
                 pendingShareToggleRef.current = nextToggleValue;
                 setShowProfileShareButton(nextToggleValue);
                 onUpdateUser?.({
-                    ...user,
+                    ...baseUser,
                     settings: {
-                        ...(user?.settings || {}),
+                        ...(baseUser?.settings || {}),
                         showProfileShareButton: nextToggleValue
                     }
                 });
             }
             const res = await axios.put('/users/settings', payload);
+            const baseUser = latestUserRef.current || user || {};
             const mergedResponse = {
-                ...user,
+                ...baseUser,
                 ...res.data,
                 settings: {
-                    ...(user?.settings || {}),
+                    ...(baseUser?.settings || {}),
                     ...(res.data?.settings || {}),
                     ...(payload.settings || {})
                 }
             };
+            latestUserRef.current = mergedResponse;
             onUpdateUser(mergedResponse);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
@@ -2871,6 +2879,7 @@ const ProfileModal = ({
     const coverFileRef = useRef(null);
     const [coverUploading, setCoverUploading] = useState(false);
     const [profileUploading, setProfileUploading] = useState(false);
+    const [isProfileSaving, setIsProfileSaving] = useState(false);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -3306,25 +3315,35 @@ const ProfileModal = ({
                                 </div>
                             </div>
 
-                            <button onClick={async () => {
+                            <button type="button" disabled={isProfileSaving} onClick={async () => {
+                                if (isProfileSaving) return;
+                                const previousUserSnapshot = displayUser ? {
+                                    ...displayUser,
+                                    settings: {
+                                        ...(displayUser?.settings || {})
+                                    }
+                                } : null;
                                 try {
+                                    setIsProfileSaving(true);
                                     const trimmedBio = bio?.trim() || "";
                                     const trimmedUsername = editUsername?.trim() || "";
+                                    const nextProfileDescriptor = String(profileDescriptor || '');
                                     const optimisticUser = {
                                         ...displayUser,
                                         bio: trimmedBio,
                                         username: trimmedUsername || displayUser?.username,
-                                        profileDescriptor
+                                        profileDescriptor: nextProfileDescriptor
                                     };
                                     setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
                                     setProfileUser(prev => (prev && isSameId(prev._id, optimisticUser._id) ? { ...prev, ...optimisticUser } : prev));
                                     if (isSameId(displayUser?._id, currentUser?._id)) {
                                         onUpdateUser?.(optimisticUser);
                                     }
+                                    setIsEditing(false);
                                     const res = await axios.put(`/users/${displayUser?._id}`, {
                                         bio: trimmedBio,
                                         username: trimmedUsername,
-                                        profileDescriptor
+                                        profileDescriptor: nextProfileDescriptor
                                     });
                                     if (res.data) {
                                         const mergedUpdatedUser = {
@@ -3335,17 +3354,29 @@ const ProfileModal = ({
                                                 ...(res.data?.settings || {})
                                             }
                                         };
-                                        localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
+                                        if (isSameId(displayUser?._id, currentUser?._id)) {
+                                            localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
+                                        }
                                         if (onUpdateUser) onUpdateUser(mergedUpdatedUser);
+                                        fetchUsers(displayUser?._id).catch(() => { });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
                                     }
-                                    setIsEditing(false);
                                 } catch (e) {
                                     console.error(e);
+                                    if (displayUser) {
+                                        setUserData(prev => ({ ...(prev || {}), ...(previousUserSnapshot || {}) }));
+                                        setProfileUser(prev => (prev && isSameId(prev._id, displayUser?._id) ? { ...prev, ...(previousUserSnapshot || {}) } : prev));
+                                        if (isSameId(displayUser?._id, currentUser?._id) && previousUserSnapshot) {
+                                            onUpdateUser?.(previousUserSnapshot);
+                                        }
+                                    }
+                                    setIsEditing(true);
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
                                     else alert("Update failed.");
+                                } finally {
+                                    setIsProfileSaving(false);
                                 }
-                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20   text-sm">{t('SAVE_CHANGES')}</button>
+                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 text-sm disabled:opacity-60">{isProfileSaving ? (t('SAVING') || 'SAVING...') : t('SAVE_CHANGES')}</button>
                         </div>
                     ) : (
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
