@@ -76,15 +76,41 @@ const io = new Server(server, {
 
 app.set('io', io);
 
+// Map to track user status by socket ID
+const userSocketMap = new Map(); // socket.id -> userId
+
 io.on('connection', (socket) => {
   console.log(`🔌 [SOCKET] New client connected: ${socket.id} (Transport: ${socket.conn.transport.name})`);
 
   socket.on('join', (room) => {
     socket.join(room);
+    userSocketMap.set(socket.id, room);
     console.log(`📡 [SOCKET] Client ${socket.id} joined room: ${room}`);
+    // Broadcast they are online
+    io.emit('user.status', { userId: room, status: 'online', lastSeen: new Date() });
   });
 
-  socket.on('disconnect', (reason) => {
+  socket.on('logout', async (userId) => {
+    if (userId) {
+      try {
+        const User = (await import('./models/User.js')).default;
+        await User.findByIdAndUpdate(userId, { lastSeen: new Date(Date.now() - 600000) });
+        io.emit('user.status', { userId, status: 'offline', lastSeen: new Date(Date.now() - 600000) });
+      } catch (e) { console.error("Logout status update failed", e); }
+    }
+  });
+
+  socket.on('disconnect', async (reason) => {
+    const userId = userSocketMap.get(socket.id);
+    if (userId) {
+      try {
+        const offlineTime = new Date(Date.now() - 600000); // 10 mins ago guaranteed offline
+        const User = (await import('./models/User.js')).default;
+        await User.findByIdAndUpdate(userId, { lastSeen: offlineTime });
+        io.emit('user.status', { userId, status: 'offline', lastSeen: offlineTime });
+        userSocketMap.delete(socket.id);
+      } catch (e) { console.error("Disconnect status update failed", e); }
+    }
     console.log(`🔌 [SOCKET] Client disconnected: ${socket.id} Reason: ${reason}`);
   });
 

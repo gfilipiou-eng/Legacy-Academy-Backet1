@@ -105,6 +105,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         if (io) {
             const senderUser = await User.findById(currentUserId).select('username profilePic');
             io.to(String(recipientId)).emit('message.received', savedMessage);
+            io.to(String(currentUserId)).emit('message.received', savedMessage); // Live sync for sender's other devices
             if (senderUser) {
                 // Save to DB for historical/offline access
                 await User.findByIdAndUpdate(recipientId, {
@@ -178,8 +179,17 @@ const getConversation = async (req, res) => {
             });
             deleteCloudinaryFiles(mediaToDelete).catch(() => { });
 
-            // Now delete the messages
+        // Now delete the messages
             await Message.deleteMany({ _id: { $in: expiredMessages.map(m => m._id) } });
+
+            // FIRE REAL-TIME CLEAR EVENT SO BOTH CLIENTS DROP IT
+            const io = req.app.get('io');
+            if (io) {
+                expiredMessages.forEach(m => {
+                    io.to(String(m.sender)).emit('message.deleted', { messageId: m._id, conversationWith: m.recipient });
+                    io.to(String(m.recipient)).emit('message.deleted', { messageId: m._id, conversationWith: m.sender });
+                });
+            }
         }
 
         const messages = await Message.find({

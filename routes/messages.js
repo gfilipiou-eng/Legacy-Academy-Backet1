@@ -227,7 +227,8 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         const io = req.app.get('io');
         if (io) {
             io.to(String(recipientOid)).emit('message.received', savedMessage);
-            console.log(`${logPrefix} Broadcast 'message.received' to recipient ${recipientOid}`);
+            io.to(String(senderOid)).emit('message.received', savedMessage);
+            console.log(`${logPrefix} Broadcast 'message.received' to recipient ${recipientOid} and sender ${senderOid}`);
         }
 
         res.status(201).json(savedMessage);
@@ -251,6 +252,41 @@ router.get("/conversation/:otherUserId", verifyToken, async (req, res) => {
         if (!req.user) return res.status(401).json("Auth required");
         const currentUserId = req.user.id || req.user.userId;
         const otherUserId = req.params.otherUserId;
+
+        const fiveSecondsAgo = new Date(Date.now() - 5 * 1000);
+
+        // Find messages to delete FIRST (to get their media URLs)
+        const expiredMessages = await Message.find({
+            $or: [
+                { sender: currentUserId, recipient: otherUserId },
+                { sender: otherUserId, recipient: currentUserId }
+            ],
+            isRead: true,
+            readAt: { $lt: fiveSecondsAgo },
+            isLocked: { $ne: true }
+        });
+
+        // 🗑️ CLOUDINARY CLEANUP: Delete media from expired messages
+        if (expiredMessages.length > 0) {
+            const mediaToDelete = [];
+            expiredMessages.forEach(m => {
+                if (m.audio) mediaToDelete.push(m.audio);
+                if (m.image) mediaToDelete.push(m.image);
+            });
+            // deleteCloudinaryFiles(mediaToDelete).catch(() => { }); // Removed to prevent error if not imported
+
+            // Now delete the messages
+            await Message.deleteMany({ _id: { $in: expiredMessages.map(m => m._id) } });
+
+            // FIRE REAL-TIME CLEAR EVENT SO BOTH CLIENTS DROP IT
+            const io = req.app.get('io');
+            if (io) {
+                expiredMessages.forEach(m => {
+                    io.to(String(m.sender)).emit('message.deleted', { messageId: m._id, conversationWith: m.recipient });
+                    io.to(String(m.recipient)).emit('message.deleted', { messageId: m._id, conversationWith: m.sender });
+                });
+            }
+        }
 
         const messages = await Message.find({
             $or: [

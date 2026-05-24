@@ -478,7 +478,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
     return (
         <div className="fixed inset-0 z-[6000] flex items-start justify-center pointer-events-none p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto" onClick={onClose} />
-            <div className="relative w-full sm:max-w-[400px] bg-black/95 backdrop-blur-3xl border-b border-white/10 sm:border sm:rounded-[2.5rem] rounded-none p-6 shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
+            <div className="relative w-full sm:max-w-[400px] bg-black/95 backdrop-blur-3xl border-b border-white/10 sm:border sm:rounded-[2.5rem] rounded-none p-6 animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-black italic text-white flex items-center gap-3">
                         <Icons.Terminal className="w-5 h-5 text-[var(--gold-primary)]" />
@@ -530,7 +530,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         <button
                             onClick={handleSubmit}
                             disabled={(audioBlob ? false : !value.trim()) || loading}
-                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl shadow-glow-gold  disabled:opacity-50  flex items-center justify-center gap-3 hover:brightness-110"
+                            className="flex-1 py-4 bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-[0.15em] rounded-2xl disabled:opacity-50  flex items-center justify-center gap-3 hover:brightness-110"
                         >
                             {loading ? <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-full animate-spin" /> : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
@@ -959,7 +959,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl  z-[2600] shadow-2xl   group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 " />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative">
                 {/* Image Section */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -1100,7 +1100,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             </div>
                         </div>
                         {/* Description Section */}
-                        <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-10 relative">
+                        <div className="px-4 sm:px-6 py-6 bg-gradient-to-br from-black via-[#0a0a0a] to-black border-b border-white/10 z-10 relative">
                             <div className="space-y-4">
                                 <div className="text-[15px] text-white border-l-4 border-[var(--gold-primary)] pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left drop-shadow-2xl">
                                     {parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc))}
@@ -1542,12 +1542,12 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
                 <div className="flex items-center gap-3 mt-2">
                     <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt, t, lang)}</div>
-                    {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full shadow-glow-yellow" />}
+                    {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
                 </div>
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105   shadow-lg shadow-glow-gold/40 uppercase tracking-widest">{t('ACCEPT')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 shadow-lg uppercase tracking-widest">{t('ACCEPT')}</button>
                         <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg    uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
@@ -1719,7 +1719,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/90 sm:bg-black/40 backdrop-blur-none sm:backdrop-blur-2xl border border-white/10 transition-[transform,opacity,border-color] duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.5)] sm:shadow-[0_8px_32px_rgba(0,0,0,0.6)] will-change-transform`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/90 sm:bg-black/40 backdrop-blur-none sm:backdrop-blur-2xl border border-white/10 transition-[transform,opacity,border-color] duration-300 will-change-transform`}
         >
 
 
@@ -1865,7 +1865,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 }}
                                 className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 bg-red-500/10 border-red-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
-                                <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]' : ''}`} />
+                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                             </button>
 
@@ -2026,20 +2026,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 // Trigger burn protocol
                 Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => { })));
                 
-                // Snapchat UI Logic: Auto-remove from view after 5 seconds if not locked
-                setTimeout(() => {
-                    setMessages(prev => {
-                        const msgs = prev[otherUserId] || [];
-                        const remaining = msgs.filter(m => {
-                            if (incomingUnread.find(u => u._id === m._id)) {
-                                return m.isLocked; // Keep only if it got locked in the meantime
-                            }
-                            return true;
-                        });
-                        return { ...prev, [otherUserId]: remaining };
-                    });
-                }, 5000);
-            }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
 
@@ -2083,10 +2069,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
             if (isFromCurrentTarget || isToCurrentTarget) {
                 console.log("📨 [SOCKET] New whisper received in current chat");
-                setMessages(prev => ({
-                    ...prev,
-                    [targetId]: [...(prev[targetId] || []), normalizedMessage]
-                }));
+                setMessages(prev => {
+                    const existing = prev[targetId] || [];
+                    if (existing.some(m => m._id === normalizedMessage._id)) return prev;
+                    return {
+                        ...prev,
+                        [targetId]: [...existing, normalizedMessage]
+                    };
+                });
                 // Auto-read if we are looking at it
                 if (isFromCurrentTarget && !normalizedMessage.isLocked && !normalizedMessage.isRead) {
                     axios.patch(`/messages/${normalizedMessage._id}/read`).catch(() => { });
@@ -2101,7 +2091,20 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             }
         };
 
+        const handleMessageDeleted = (data) => {
+            if (data.messageId) {
+                setMessages(prev => {
+                    const newMessages = { ...prev };
+                    Object.keys(newMessages).forEach(chatId => {
+                        newMessages[chatId] = newMessages[chatId].filter(m => m._id !== data.messageId);
+                    });
+                    return newMessages;
+                });
+            }
+        };
+
         socket.on('message.received', handleMessageReceived);
+        socket.on('message.deleted', handleMessageDeleted);
 
         socket.on('chat.cleared', ({ withUser }) => {
             if (activeChat?._id === withUser) {
@@ -2113,6 +2116,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
         return () => {
             socket.off('message.received', handleMessageReceived);
+            socket.off('message.deleted', handleMessageDeleted);
             socket.off('chat.cleared');
         };
     }, [isOpen, activeChat?._id]);
@@ -2171,10 +2175,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
         try {
             const res = await axios.post('/messages', fd);
-            setMessages(prev => ({
-                ...prev,
-                [targetId]: [...(prev[targetId] || []), normalizeWhisper(res.data)]
-            }));
+            setMessages(prev => {
+                const existing = prev[targetId] || [];
+                if (existing.some(m => m._id === res.data._id)) return prev;
+                return {
+                    ...prev,
+                    [targetId]: [...existing, normalizeWhisper(res.data)]
+                };
+            });
 
         } catch (e) {
             const detail = e.response?.data?.detail || e.response?.data?.message || e.response?.data?.error || e.message;
@@ -2283,7 +2291,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-[16px] bg-gray-900 overflow-hidden shadow-sm border border-white/10"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-[16px] bg-gray-900 overflow-hidden border border-white/10"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2422,7 +2430,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="p-3 pb-14 sm:pb-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                            <div className="p-3 pb-14 sm:pb-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
                                     <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
@@ -2461,7 +2469,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             <button
                                                 type="button"
                                                 onClick={() => { setIsPhonetic(!isPhonetic); }}
-                                                className={`w-12 h-12 flex items-center justify-center rounded-2xl border  shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
+                                                className={`w-12 h-12 flex items-center justify-center rounded-2xl border shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
                                                 title="Phonetic Greek Keyboard"
                                             >
                                                 <Icons.Translate className="w-5 h-5" />
@@ -2478,14 +2486,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5  text-gray-500  '}`}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-xl shrink-0 ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500'}`}
                                             >
                                                 <Icons.Mic className="w-5 h-5" />
                                             </button>
                                             <button
                                                 onClick={() => handleSend()}
                                                 disabled={!inputText.trim() && !imageFile}
-                                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40  disabled:opacity-20 disabled:scale-100  shrink-0 font-black hover:opacity-90"
+                                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black disabled:opacity-20 disabled:scale-100 shrink-0 font-black hover:opacity-90"
                                             >
                                                 <Icons.Send className="w-5 h-5" />
                                             </button>
@@ -2497,8 +2505,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                     ) : (
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
-                                <button className="mb-6 bg-transparent border-none p-0   group">
-                                    <Icons.MessageSquare className="w-24 h-24 text-[var(--gold-primary)] group-hover:scale-105  duration-500 drop-shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]" />
+                                <button className="mb-6 bg-transparent border-none p-0 group">
+                                    <Icons.MessageSquare className="w-24 h-24 text-white group-hover:scale-105 duration-500" />
                                 </button>
                                 <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
                                 <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
@@ -2513,16 +2521,16 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
 const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
     const colors = {
-        gold: { on: 'bg-[var(--gold-primary)] border-[var(--gold-primary)]', dot: '' },
+        gold: { on: 'bg-white border-white', dot: '' },
         blue: { on: 'bg-blue-600 border-blue-500', dot: '' },
     };
     const c = colors[color] || colors.gold;
     return (
         <div
             onClick={() => !saving && onToggle()}
-            className={`relative w-12 h-7 rounded-full  duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black/40 border-white/20'}`}
+            className={`relative w-12 h-7 rounded-full  duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black border-white/20'}`}
         >
-            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-md  duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full ${active ? 'bg-black' : 'bg-white'} shadow-sm  duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
         </div>
     );
 };
@@ -2542,7 +2550,7 @@ const ShareSettingLabel = ({ t }) => (
 
 const SectionHeader = ({ color, label }) => (
     <div className="flex items-center gap-3 mb-4">
-        <div className={`w-1 h-4 rounded-full shadow-[0_0_10px_currentColor] ${color}`} />
+        <div className={`w-1 h-4 rounded-full ${color}`} />
         <h3 className="text-[10px] font-black text-white/50 uppercase tracking-[0.25em]">{label}</h3>
     </div>
 );
@@ -2673,12 +2681,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh] border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] flex flex-col backdrop-blur-3xl will-change-transform"
+                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col backdrop-blur-3xl will-change-transform"
                 style={{ backgroundColor: 'var(--glass-bg)' }}
             >
-                {/* Ambient glows */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-20" />
-                <div className="absolute -top-[100px] -right-[100px] w-[250px] h-[250px] bg-[var(--gold-primary)]/[0.04] rounded-full blur-[80px] pointer-events-none" />
+
 
                 {/* HEADER */}
                 <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between shrink-0">
@@ -2797,10 +2803,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
                                 <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
-                                    className={`py-3 rounded-2xl border  flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_14px_rgba(255,215,0,0.15)]' : 'border-white/5 bg-white/[0.02]'}`}
+                                    className={`py-3 rounded-2xl border  flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-white bg-white text-black' : 'border-white/5 bg-white/[0.02]'}`}
                                 >
                                     <div className="text-xl drop-shadow">{l.flag}</div>
-                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.label}</div>
+                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-black' : 'text-gray-500'}`}>{l.label}</div>
                                 </button>
                             ))}
                         </div>
@@ -3259,7 +3265,7 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
 
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
@@ -3808,7 +3814,7 @@ const ProfileModal = ({
                                                                         <div className="w-full h-full relative">
                                                                             <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
                                                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.8)]">
+                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center">
                                                                                     <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
                                                                                 </div>
                                                                             </div>
@@ -3850,7 +3856,7 @@ const ProfileModal = ({
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
                                                         <div className="flex items-center justify-center mb-10 mt-8 opacity-90">
-                                                            <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                                                            <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3">
                                                                 <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
                                                                 <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
                                                                 <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
@@ -4215,7 +4221,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 px-1">
-                                <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note w-full">
+                                <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl group/note w-full">
                                     <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
                                     <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
                                         {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
@@ -4284,7 +4290,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                         <div className="flex gap-4">
                             <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)]'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-glow-gold/40  `}>{saving ? '...' : t('PUBLISH')}</button>
+                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)]'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg`}>{saving ? '...' : t('PUBLISH')}</button>
                         </div>
                     </div>
                 </div>
@@ -4442,7 +4448,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-[28px] overflow-hidden border-2 border-[var(--gold-primary)] shadow-[0_0_30px_rgba(255,215,0,0.2)] bg-black/40 backdrop-blur-md">
+                    <div className="w-28 h-28 rounded-[28px] overflow-hidden border-2 border-[var(--gold-primary)] bg-black/40 backdrop-blur-md">
                         {resolvedPublicProfilePic ? (
                             <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="eager" decoding="async" />
                         ) : (
@@ -4500,7 +4506,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
 
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-gradient-to-r from-[var(--gold-primary)]/10 to-black border border-[var(--gold-primary)]/20 rounded-3xl cursor-pointer hover:scale-[1.02] transition-transform shadow-[0_15px_40px_rgba(0,0,0,0.5)] flex items-center justify-between gap-4 group">
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-gradient-to-r from-[var(--gold-primary)]/10 to-black border border-[var(--gold-primary)]/20 rounded-3xl cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
                     <div className="space-y-1 text-left">
                         <h3 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-[0.2em]">{t('JOIN_ELITE') || 'JOIN THE ELITE'}</h3>
                         <p className="text-xs text-white/80 font-bold leading-snug">{t('CREATE_ACCOUNT') || 'Create your account to connect'}</p>
@@ -4512,7 +4518,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* POST SHOWCASE SECTION TITLE */}
                 <div className="w-full flex items-center gap-3 mt-10 mb-6">
-                    <div className="w-1.5 h-4 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_currentColor]" />
+                    <div className="w-1.5 h-4 bg-[var(--gold-primary)] rounded-full" />
                     <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.3em]">INTELLIGENCE BRIEFINGS</span>
                     <div className="h-[1px] flex-1 bg-white/5" />
                 </div>
@@ -4556,12 +4562,18 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
                                                     {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
                                                     {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
+                                                    <span className="opacity-50 mx-1">•</span>
+                                                    <span>{formatDate(post.createdAt, t, lang)}</span>
                                                 </div>
                                             ) : publicFounderAffiliation ? (
-                                                <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" />
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" />
+                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase opacity-50">•</span>
+                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, lang)}</span>
+                                                </div>
                                             ) : (
-                                                <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">
-                                                    {new Date(post.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase mt-0.5 block">
+                                                    {formatDate(post.createdAt, t, lang)}
                                                 </span>
                                             )}
                                         </div>
@@ -6209,7 +6221,7 @@ const App = () => {
 
                     {/* MAIN GLASS CARD */}
                     <div className="relative w-full max-w-[400px] mx-4 z-10">
-                        <div className="relative bg-white/[0.04] backdrop-blur-[40px] border border-white/[0.08] rounded-[2.5rem] overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.1)]">
+                        <div className="relative bg-white/[0.04] backdrop-blur-[40px] border border-white/[0.08] rounded-[2.5rem] overflow-hidden">
                             <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                             <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
@@ -6328,7 +6340,7 @@ const App = () => {
                                                         <button
                                                             key={lang.code}
                                                             onClick={() => setFormData(prev => ({ ...prev, language: lang.code }))}
-                                                            className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl border transition-all duration-200 ${formData.language === lang.code ? 'border-white bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.1)] text-white' : 'border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/[0.05] hover:border-white/30'}`}
+                                                            className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl border transition-all duration-200 ${formData.language === lang.code ? 'border-white bg-white/10 text-white' : 'border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/[0.05] hover:border-white/30'}`}
                                                         >
                                                             <span className="text-xl">{lang.flag}</span>
                                                             <span className="text-[8px] font-black uppercase tracking-wider">{lang.label}</span>
@@ -6430,7 +6442,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain drop-shadow-[0_0_30px_rgba(var(--gold-primary-rgb),0.3)]" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
@@ -6496,7 +6508,7 @@ const App = () => {
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
-                                                            <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full shadow-[0_0_8px_var(--gold-glow)]" />
+                                                            <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full" />
                                                             {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
@@ -6619,7 +6631,7 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 opacity-90">
-                                                                <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                                                                <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3">
                                                                     <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
                                                                     <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
                                                                     <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
@@ -6901,9 +6913,15 @@ const App = () => {
                                         <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">
                                             {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3" })}
                                             {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
+                                            <span className="opacity-50 mx-1">•</span>
+                                            <span className="text-gray-500">{formatDate(shareModalPost.createdAt, t, lang)}</span>
                                         </div>
                                     ) : getFounderAffiliation(shareModalPost.author) ? (
-                                        <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" className="mt-1" />
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" />
+                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50">•</span>
+                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase">{formatDate(shareModalPost.createdAt, t, lang)}</span>
+                                        </div>
                                     ) : (
                                         <div className="text-gray-500 text-xs mt-1 uppercase tracking-widest font-bold">
                                             {formatDate(shareModalPost.createdAt, t, lang)}

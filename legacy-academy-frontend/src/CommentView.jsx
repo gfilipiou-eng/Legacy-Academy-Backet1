@@ -424,7 +424,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
           <button
             type="submit"
             disabled={!commentText.trim() || isSubmitting}
-            className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg shadow-glow-gold/40 disabled:opacity-30 disabled:scale-100 transition-all"
+            className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg disabled:opacity-30 disabled:scale-100 transition-all"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
