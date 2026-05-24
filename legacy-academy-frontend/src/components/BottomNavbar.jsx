@@ -18,8 +18,8 @@ const BottomNavbar = memo(({
     const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'border-white bg-white text-black' : 'border-white/10 bg-black text-white/80'}`;
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] flex justify-center pointer-events-none px-0">
-            <div className="w-full bottom-nav-glass rounded-none px-2 py-2 sm:py-2.5 pb-[calc(8px+env(safe-area-inset-bottom))] pointer-events-auto flex items-center justify-between relative gap-2">
+        <nav className="fixed bottom-[calc(12px+env(safe-area-inset-bottom))] left-0 right-0 w-full z-[99] flex justify-center pointer-events-none px-2 sm:px-3">
+            <div className="w-full bottom-nav-glass rounded-none px-2 py-2 sm:py-2.5 pointer-events-auto flex items-center justify-between relative gap-2">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
