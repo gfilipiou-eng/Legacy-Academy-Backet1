@@ -5477,12 +5477,28 @@ const App = () => {
     const markAllNotificationsRead = async () => {
         try {
             await axios.put('/users/notifications/read');
+            // Update the separate alerts state used for rendering the list
             setAlerts(prev => prev.map(a => ({ ...a, read: true })));
+            // Update the main user object which drives the red dot indicator
             setUser(prev => {
-                if (!prev) return prev;
-                const updated = { ...prev, notifications: prev.notifications.map(n => ({ ...n, read: true })) };
+                if (!prev || !prev.notifications) return prev;
+                const updatedNotifications = prev.notifications.map(n => ({ ...n, read: true }));
+                const updated = { ...prev, notifications: updatedNotifications };
                 localStorage.setItem('user', JSON.stringify(updated));
                 return updated;
+            });
+            // Update the users array as well to ensure total consistency
+            setUsers(prev => {
+                const currentUserId = safeId(user);
+                return prev.map(u => {
+                    if (isSameId(u._id, currentUserId)) {
+                        return {
+                            ...u,
+                            notifications: (u.notifications || []).map(n => ({ ...n, read: true }))
+                        };
+                    }
+                    return u;
+                });
             });
         } catch (e) { console.error('Mark read failed', e); }
     };
