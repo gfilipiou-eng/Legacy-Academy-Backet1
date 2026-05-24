@@ -18,9 +18,9 @@ const BottomNavbar = memo(({
     const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black shadow-[0_10px_40px_rgba(255,255,255,0.15)]' : 'bg-transparent text-white/50 hover:text-white/90'}`;
     const iconClass = (isActive) => isActive ? 'w-10 h-10 sm:w-11 sm:h-11 opacity-100' : 'w-9 h-9 sm:w-10 sm:h-10 opacity-80';
 
-    // 2026 Style Icons
+    // 2026 Style Icons - Bold, Thick Strokes like the Plus Icon
     const HomeIcon = ({ isActive }) => (
-        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "1.8"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
+        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
             {isActive ? (
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
             ) : (
@@ -31,7 +31,7 @@ const BottomNavbar = memo(({
     );
 
     const BellIcon = ({ isActive }) => (
-        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "1.8"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
+        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
             {isActive ? (
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
             ) : (
@@ -44,26 +44,20 @@ const BottomNavbar = memo(({
     );
 
     const SearchIcon = ({ isActive }) => (
-        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "1.8"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
-            {isActive ? (
-                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-            ) : (
-                <>
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </>
-            )}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? "3.5" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16" y2="16" />
         </svg>
     );
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black">
             <div className="flex justify-center px-3 sm:px-4 pt-6 sm:pt-7 pb-[calc(10px+env(safe-area-inset-bottom))] bg-black">
-                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 sm:py-3.5 pointer-events-auto flex items-end justify-between relative gap-2">
+                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 sm:py-3.5 pointer-events-auto flex items-center justify-between relative gap-2">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
-                    className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
+                    className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'home')}>
                         <HomeIcon isActive={activeTab === 'home'} />
@@ -73,7 +67,7 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={() => onTabChange('alerts')}
-                    className="flex flex-col items-center justify-end relative flex-1 pb-0.5 sm:pb-1"
+                    className="flex flex-col items-center justify-center relative flex-1"
                 >
                     <div className={navItemClass(activeTab === 'alerts')}>
                         <BellIcon isActive={activeTab === 'alerts'} />
@@ -90,7 +84,7 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onCreate}
-                    className="flex flex-col items-center justify-end pb-1.5 sm:pb-2"
+                    className="flex flex-col items-center justify-center"
                 >
                     <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black shadow-[0_10px_40px_rgba(255,255,255,0.15)]">
                         <Icons.Plus className="w-10 h-10 sm:w-11 sm:h-11 font-black stroke-[2.7]" />
@@ -100,7 +94,7 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={() => onTabChange('search')}
-                    className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
+                    className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'search')}>
                         <SearchIcon isActive={activeTab === 'search'} />
@@ -110,7 +104,7 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onProfile}
-                    className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
+                    className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>
                         <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-[14px] sm:rounded-[16px] border border-black/10' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-[12px] sm:rounded-[14px] border border-white/20 shadow-md'}`}>
