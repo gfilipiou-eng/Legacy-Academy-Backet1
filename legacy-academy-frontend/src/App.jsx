@@ -4564,17 +4564,17 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
                                                     {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
                                                     <span className="opacity-50 mx-1">•</span>
-                                                    <span>{formatDate(post.createdAt, t, lang)}</span>
+                                                    <span>{formatDate(post.createdAt, t, urlLang || 'en')}</span>
                                                 </div>
                                             ) : publicFounderAffiliation ? (
                                                 <div className="flex items-center gap-2 mt-0.5">
                                                     <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" />
                                                     <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase opacity-50">•</span>
-                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, lang)}</span>
+                                                    <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, urlLang || 'en')}</span>
                                                 </div>
                                             ) : (
                                                 <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase mt-0.5 block">
-                                                    {formatDate(post.createdAt, t, lang)}
+                                                    {formatDate(post.createdAt, t, urlLang || 'en')}
                                                 </span>
                                             )}
                                         </div>
