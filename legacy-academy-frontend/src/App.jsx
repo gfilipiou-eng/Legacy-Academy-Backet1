@@ -2324,6 +2324,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [saving, setSaving] = useState(false);
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
+    const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
     const [zoomLevel, setZoomLevel] = useState(
@@ -2340,6 +2341,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         if (user && !saving) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
+            setShowProfileShareButton(user?.settings?.showProfileShareButton !== false);
             setZoomLevel(
                 Math.min(
                     1,
@@ -2369,15 +2371,18 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'theme') payload = { settings: { theme: val } };
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
+            if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: val } };
             const res = await axios.put('/users/settings', payload);
             onUpdateUser(res.data);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
+            if (key === 'showProfileShareButton') setShowProfileShareButton(val);
 
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
+            if (key === 'showProfileShareButton') setShowProfileShareButton(!val);
         } finally { setSaving(false); }
     };
 
@@ -2429,6 +2434,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </SettingRow>
                             <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="">
                                 <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
+                            </SettingRow>
+                            <SettingRow
+                                label={lang === 'el' || lang === 'cy' ? 'ΚΟΥΜΠΙ ΚΟΙΝΟΠΟΙΗΣΗΣ ΠΡΟΦΙΛ' : 'PROFILE SHARE BUTTON'}
+                                desc={lang === 'el' || lang === 'cy' ? 'Εμφανιζει η κρυβει το κουμπι κοινοποιησης στο προφιλ σου.' : 'Shows or hides the share button on your profile.'}
+                                hoverColor=""
+                            >
+                                <Toggle
+                                    active={showProfileShareButton}
+                                    onToggle={() => {
+                                        const v = !showProfileShareButton;
+                                        setShowProfileShareButton(v);
+                                        handleSave('showProfileShareButton', v);
+                                    }}
+                                    saving={saving}
+                                    color="blue"
+                                />
                             </SettingRow>
                         </div>
                     </section>
@@ -2786,6 +2807,7 @@ const ProfileModal = ({
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
+    const canShowProfileShareButton = displayUser?.settings?.showProfileShareButton !== false;
 
     const toggleDate = (dateKey) => {
         // Disabled clicking - folders are always open
@@ -2969,7 +2991,7 @@ const ProfileModal = ({
                         else onClose();
                     }} className="p-2 -ml-2 rounded-full   "><Icons.Back className="w-6 h-6 text-white" /></button>
                     <div className="font-bold text-white text-sm uppercase tracking-widest leading-none">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
-                    {!activeList && !isEditing ? (
+                    {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
                                 const shareUrl = `${window.location.origin}/?profile=${displayUser?.username}`;

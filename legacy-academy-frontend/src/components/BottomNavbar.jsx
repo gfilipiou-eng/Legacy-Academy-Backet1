@@ -14,12 +14,12 @@ const BottomNavbar = memo(({
         () => (alerts || []).filter((n) => !n.read).length,
         [alerts]
     );
-    const navItemBaseClass = 'flex-1 max-w-[88px] sm:max-w-[96px] h-14 sm:h-16 flex items-center justify-center rounded-[12px] sm:rounded-[14px] border';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'border-white bg-white text-black' : 'border-white/10 bg-black text-white/72'}`;
+    const navItemBaseClass = 'flex-1 max-w-[88px] sm:max-w-[96px] h-[58px] sm:h-[66px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] border';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'border-white bg-white text-black shadow-[0_8px_24px_rgba(255,255,255,0.12)]' : 'border-white/12 bg-white/[0.03] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'}`;
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] flex justify-center pointer-events-none px-0">
-            <div className="w-full bottom-nav-glass rounded-none px-2 py-2 sm:py-2.5 pb-[calc(8px+env(safe-area-inset-bottom))] pointer-events-auto flex items-center justify-between relative gap-2">
+        <nav className="fixed bottom-[calc(10px+env(safe-area-inset-bottom))] left-0 right-0 w-full z-[99] flex justify-center pointer-events-none px-2 sm:px-3">
+            <div className="w-full bottom-nav-glass rounded-[18px] sm:rounded-[20px] px-2.5 py-2.5 sm:py-3 pointer-events-auto flex items-center justify-between relative gap-2">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
@@ -52,7 +52,7 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-center"
                 >
-                    <div className="w-[56px] h-[56px] sm:w-[64px] sm:h-[64px] flex items-center justify-center rounded-[12px] sm:rounded-[14px] border border-white bg-white text-black">
+                    <div className="w-[60px] h-[60px] sm:w-[68px] sm:h-[68px] flex items-center justify-center rounded-[16px] sm:rounded-[18px] border border-white bg-white text-black shadow-[0_10px_28px_rgba(255,255,255,0.16)]">
                         <Icons.Plus className="w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 font-black" />
                     </div>
                 </button>
@@ -72,7 +72,7 @@ const BottomNavbar = memo(({
                     onClick={onProfile}
                     className="flex flex-col items-center justify-center"
                 >
-                    <div className={`${navItemBaseClass} border-white/10 bg-black text-white/72`}>
+                    <div className={`${navItemBaseClass} border-white/12 bg-white/[0.03] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]`}>
                         <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[10px] sm:rounded-[12px] overflow-hidden border border-white/15 bg-black">
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
