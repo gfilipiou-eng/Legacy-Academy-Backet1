@@ -6221,7 +6221,7 @@ const App = () => {
                     <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
                         {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
                         <div 
-                            className="absolute inset-0 bg-cover bg-[center_30%] sm:bg-center bg-no-repeat opacity-60 mix-blend-screen"
+                            className="absolute inset-0 bg-cover bg-[center_30%] sm:bg-center bg-no-repeat opacity-80"
                             style={{ 
                                 backgroundImage: 'url(https://images.unsplash.com/photo-1543781298-b80c35ab959a?q=100&w=2070&auto=format&fit=crop)',
                                 animation: 'kenburns 30s infinite alternate ease-in-out',
@@ -6229,10 +6229,9 @@ const App = () => {
                             }}
                         />
                         {/* Dark/Gold Overlays for readability and vibe */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
-                        <div className="absolute top-0 left-0 w-full h-full bg-[var(--gold-primary)] mix-blend-color opacity-[0.2]" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-[var(--gold-primary)] mix-blend-color opacity-20" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
                         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
