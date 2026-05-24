@@ -3861,8 +3861,19 @@ const ProfileModal = ({
                                     <div className="space-y-6 pb-20">
                                         {loadingPosts ? (
                                             <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                <div className="w-10 h-10 border-3 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
-                                                <div className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] text-[10px]">{t('DECRYPTING_FEED')}</div>
+                                                <svg viewBox="0 0 100 100" className="w-12 h-12 text-white animate-spin" style={{ animationDuration: '4s' }}>
+                                                    <circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" strokeWidth="2" />
+                                                    <circle cx="50" cy="50" r="6" fill="currentColor" />
+                                                    <g fill="currentColor">
+                                                        {[...Array(8)].map((_, i) => (
+                                                            <polygon key={`long-${i}`} points="47,34 50,2 53,34" transform={`rotate(${i * 45} 50 50)`} />
+                                                        ))}
+                                                        {[...Array(8)].map((_, i) => (
+                                                            <polygon key={`short-${i}`} points="48,34 50,14 52,34" transform={`rotate(${i * 45 + 22.5} 50 50)`} />
+                                                        ))}
+                                                    </g>
+                                                </svg>
+                                                <div className="text-white font-black uppercase tracking-[0.2em] text-[10px]">{t('DECRYPTING_FEED')}</div>
                                             </div>
                                         ) : userPosts.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -4551,8 +4562,22 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* simplified, READ-ONLY POST LIST */}
                 <div className="w-full space-y-4">
                     {loadingPosts ? (
-                        <div className="p-12 text-center text-xs text-white/35 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-none bg-white/[0.01]">
-                            LOADING ARCHIVES...
+                        <div className="flex flex-col items-center justify-center p-12 gap-4 border border-dashed border-white/10 rounded-none bg-white/[0.01]">
+                            <svg viewBox="0 0 100 100" className="w-10 h-10 text-white/40 animate-spin" style={{ animationDuration: '4s' }}>
+                                <circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" strokeWidth="2" />
+                                <circle cx="50" cy="50" r="6" fill="currentColor" />
+                                <g fill="currentColor">
+                                    {[...Array(8)].map((_, i) => (
+                                        <polygon key={`long-${i}`} points="47,34 50,2 53,34" transform={`rotate(${i * 45} 50 50)`} />
+                                    ))}
+                                    {[...Array(8)].map((_, i) => (
+                                        <polygon key={`short-${i}`} points="48,34 50,14 52,34" transform={`rotate(${i * 45 + 22.5} 50 50)`} />
+                                    ))}
+                                </g>
+                            </svg>
+                            <div className="text-center text-xs text-white/35 font-bold uppercase tracking-widest">
+                                LOADING ARCHIVES...
+                            </div>
                         </div>
                     ) : publicPosts.length === 0 ? (
                         <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-none bg-white/[0.01]">
@@ -6656,7 +6681,18 @@ const App = () => {
                                         <div className="space-y-6">
                                             {isLoadingFeed ? (
                                                 <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                    <div className="w-10 h-10 border-2 border-white border-t-transparent rounded-none animate-spin"></div>
+                                                    <svg viewBox="0 0 100 100" className="w-12 h-12 text-white animate-spin" style={{ animationDuration: '4s' }}>
+                                                        <circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" strokeWidth="2" />
+                                                        <circle cx="50" cy="50" r="6" fill="currentColor" />
+                                                        <g fill="currentColor">
+                                                            {[...Array(8)].map((_, i) => (
+                                                                <polygon key={`long-${i}`} points="47,34 50,2 53,34" transform={`rotate(${i * 45} 50 50)`} />
+                                                            ))}
+                                                            {[...Array(8)].map((_, i) => (
+                                                                <polygon key={`short-${i}`} points="48,34 50,14 52,34" transform={`rotate(${i * 45 + 22.5} 50 50)`} />
+                                                            ))}
+                                                        </g>
+                                                    </svg>
                                                     <div className="text-white font-black uppercase tracking-[0.2em] text-xs">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             ) : activeTab === 'search' && searchQuery && (
