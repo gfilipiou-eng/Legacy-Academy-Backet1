@@ -450,7 +450,12 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
     if (isPrivate && !isOwner && !isFollower && !isFounder) {
       return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
     }
-    const posts = await Post.find({ author: userId })
+    const posts = await Post.find({
+      $or: [
+        { author: userId },
+        { reposts: userId }
+      ]
+    })
       .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
       .sort({ createdAt: -1 })
       .lean();

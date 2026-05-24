@@ -285,7 +285,12 @@ router.get("/public/posts/:username", async (req, res) => {
         const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
         const user = await User.findOne({ username: { $regex: safeRegex } });
         if (!user) return res.status(404).json("Agent not found.");
-        const posts = await Post.find({ author: user._id }).sort({ createdAt: -1 });
+        const posts = await Post.find({
+            $or: [
+                { author: user._id },
+                { reposts: user._id }
+            ]
+        }).populate('author', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json([]);

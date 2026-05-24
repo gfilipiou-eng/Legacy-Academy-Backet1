@@ -142,9 +142,10 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
                 { reposts: targetUserId }
             ]
         })
-            .populate("author", "username profilePic role")
+            .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
             .populate("comments.user", "username profilePic role")
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
 
         res.status(200).json(posts);
     } catch (err) {
