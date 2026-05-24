@@ -597,6 +597,11 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
     opacity: 0;
     filter: blur(10px);
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 @keyframes kenburns {
@@ -608,13 +613,6 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   }
   100% {
     transform: scale(1.1) translate(1%, -1%);
-  }
-}
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-    filter: blur(0);
   }
 }
 
