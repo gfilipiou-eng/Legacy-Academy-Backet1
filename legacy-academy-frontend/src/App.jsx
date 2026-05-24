@@ -6546,12 +6546,12 @@ const App = () => {
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] ai-glass shadow-inner" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black border border-white/20 rounded-none py-4 pl-12 pr-4 font-bold outline-none focus:border-white shadow-none" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
-                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">
-                                                            <div className="w-1 h-3 bg-[var(--gold-primary)] rounded-full" />
+                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white flex items-center gap-2">
+                                                            <div className="w-1 h-3 bg-white rounded-none" />
                                                             {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
@@ -6560,8 +6560,14 @@ const App = () => {
                                                             <div
                                                                 key={post._id || i}
                                                                 onClick={() => setSelectedPost(post)}
-                                                                className="flex-shrink-0 w-[280px] sm:w-[320px] bg-black/40 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300 snap-center relative group"
+                                                                className="flex-shrink-0 w-[280px] sm:w-[320px] bg-black border border-white/20 rounded-none shadow-none overflow-hidden cursor-pointer hover:border-white transition-colors duration-300 snap-center relative group"
                                                             >
+                                                                {/* Meander corners */}
+                                                                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 pointer-events-none z-20" />
+                                                                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/30 pointer-events-none z-20" />
+                                                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/30 pointer-events-none z-20" />
+                                                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 pointer-events-none z-20" />
+                                                                
                                                                 <div className="w-full aspect-[4/5] relative bg-black overflow-hidden">
                                                                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                                                                          isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
@@ -6599,7 +6605,7 @@ const App = () => {
                                                                     
                                                                     <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 z-10">
                                                                         <div className="flex items-center gap-2 mb-1">
-                                                                            <div className="w-6 h-6 rounded-[8px] overflow-hidden border border-white/20">
+                                                                            <div className="w-6 h-6 rounded-none overflow-hidden border border-white/20">
                                                                                 <ProfileAvatar user={post.author} />
                                                                             </div>
                                                                             <span className="text-[11px] font-bold text-white uppercase tracking-wider truncate shadow-sm">
@@ -6607,7 +6613,7 @@ const App = () => {
                                                                             </span>
                                                                         </div>
                                                                         <p className="text-xs text-white/90 font-medium line-clamp-2 leading-snug drop-shadow-md">{post.content || post.desc}</p>
-                                                                        <div className="flex items-center gap-4 text-[10px] text-[var(--gold-primary)] font-black uppercase tracking-widest pt-1">
+                                                                        <div className="flex items-center gap-4 text-[10px] text-white font-black uppercase tracking-widest pt-1">
                                                                             <div className="flex items-center gap-1.5">
                                                                                 <Icons.Heart className="w-3.5 h-3.5" />
                                                                                 <span>{post.likes?.length || 0}</span>
@@ -6628,14 +6634,14 @@ const App = () => {
                                         <div className="space-y-6">
                                             {isLoadingFeed ? (
                                                 <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                    <div className="w-10 h-10 border-3 border-[var(--gold-primary)] border-t-transparent rounded-full animate-spin"></div>
-                                                    <div className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] text-xs">{t('DECRYPTING_FEED')}</div>
+                                                    <div className="w-10 h-10 border-2 border-white border-t-transparent rounded-none animate-spin"></div>
+                                                    <div className="text-white font-black uppercase tracking-[0.2em] text-xs">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             ) : activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
-                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 cursor-pointer  ">
-                                                            <div className="w-10 h-10 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10">
+                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none border border-white/20 cursor-pointer hover:border-white transition-colors">
+                                                            <div className="w-10 h-10 rounded-none bg-gray-800 overflow-hidden border border-white/20">
                                                                 <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
@@ -6652,7 +6658,7 @@ const App = () => {
                                                                                 style={{ overflow: 'visible' }}
                                                                             >
                                                                                 <path
-                                                                                    fill="#FFD700"
+                                                                                    fill="#ffffff"
                                                                                     stroke="none"
                                                                                     d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
                                                                                 />
@@ -6662,7 +6668,7 @@ const App = () => {
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
-                                                            <button className="px-3 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest  ">{t('VIEW')}</button>
+                                                            <button className="px-3 py-1.5 bg-white text-black rounded-none text-[10px] font-black uppercase tracking-widest">{t('VIEW')}</button>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -6674,10 +6680,10 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 opacity-90">
-                                                                <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3">
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
-                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
+                                                                <div className="px-5 py-2.5 rounded-none bg-black border border-white flex items-center gap-3">
+                                                                    <div className="w-1.5 h-1.5 bg-white rounded-none" />
+                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white font-mono">{dateKey}</span>
+                                                                    <div className="w-1.5 h-1.5 bg-white rounded-none" />
                                                                 </div>
                                                             </div>
 

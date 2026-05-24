@@ -6,9 +6,9 @@
 
 :root {
   background-color: #000000;
-  --gold-primary: #FFD700;
-  --gold-secondary: #B8860B;
-  --gold-glow: rgba(255, 215, 0, 0.4);
+  --gold-primary: #ffffff;
+  --gold-secondary: #aaaaaa;
+  --gold-glow: rgba(255, 255, 255, 0.2);
   --ai-cyan: #00f2ff;
   --ai-glow: rgba(0, 242, 255, 0.3);
   --carbon-black: #050505;
