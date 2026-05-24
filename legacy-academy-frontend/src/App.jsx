@@ -997,20 +997,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
                 {/* Info Section */}
                 <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
-                    <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50">
-                        <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10 shadow-md">
+                    <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-gradient-to-b from-black/60 to-black/40 backdrop-blur-xl shrink-0 relative z-50 gap-2">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <div className="w-11 h-11 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10 shadow-md shrink-0">
                                 <ProfileAvatar user={author} />
                             </div>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col min-w-0 flex-1 pr-2">
                                 <div className="post-author-line min-w-0">
                                     <span className="font-bold text-white leading-none shrink-0 max-w-[45%] truncate">{author?.username}</span>
                                     <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4 shrink-0" />
-                                    <span className="post-handle text-gray-500 text-[12px]">{formatUserHandle(author?.username)}</span>
+                                    <span className="post-handle text-gray-500 text-[12px] truncate">{formatUserHandle(author?.username)}</span>
                                 </div>
                             </div>
                         </div>
-                        <div className="relative">
+                        <div className="relative shrink-0">
                             <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
                         </div>
                     </div>
@@ -1757,10 +1757,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {/* Header */}
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
                             <div className="min-w-0 flex-1 pr-1 overflow-hidden">
-                                <div className="post-author-line">
+                                <div className="post-author-line min-w-0">
                                     <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer shrink-0 max-w-[38%] sm:max-w-[45%] truncate" onClick={() => onViewProfile(author)}>{author?.username}</span>
                                     <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                    <span className="post-handle text-gray-500 text-[13px]">{formatUserHandle(author?.username)}</span>
+                                    <span className="post-handle text-gray-500 text-[13px] truncate">{formatUserHandle(author?.username)}</span>
                                     <span className="text-gray-600 text-[13px] shrink-0">·</span>
                                     <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap shrink-0">{formatDate(post.createdAt, t, lang)}</span>
                                 </div>

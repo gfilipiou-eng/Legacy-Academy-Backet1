@@ -258,7 +258,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
               </div>
             </div>
             <div className="flex-1 flex flex-col min-w-0">
-              <div className="post-author-line mb-2">
+              <div className="post-author-line mb-2 min-w-0">
                 <span className="font-bold text-white text-[13px] sm:text-[15px] shrink-0 max-w-[38%] sm:max-w-[45%] truncate">{post.author?.username || post.authorName}</span>
                 {post.author?.role === 'Founder' && (
                   <>
@@ -266,7 +266,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                     <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 -ml-0.5" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </>
                 )}
-                <span className="post-handle text-gray-500 text-[13px]">@{String(post.author?.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}</span>
+                <span className="post-handle text-gray-500 text-[13px] truncate">{`@${String(post.author?.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
                 <span className="text-gray-600 text-[13px] shrink-0">·</span>
                 <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap shrink-0">{formatDate(post.createdAt, t, lang)}</span>
               </div>
