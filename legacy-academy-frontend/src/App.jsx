@@ -2069,11 +2069,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         const targetId = activeChat._id;
         fetchMessages(targetId);
 
-        // Snapchat UI Logic: Poll to reflect backend auto-deletes for messages we sent
-        const pollInterval = setInterval(() => {
-            fetchMessages(targetId);
-        }, 5000);
-
+        // Removed aggressive 5s polling. Socket updates are enough, polling overrides optimistic UI.
+        
         // 🔥 REAL-TIME MESSAGE LISTENER
         const handleMessageReceived = (msg) => {
             const normalizedMessage = normalizeWhisper(msg);
@@ -2112,7 +2109,6 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         });
 
         return () => {
-            clearInterval(pollInterval);
             socket.off('message.received', handleMessageReceived);
             socket.off('chat.cleared');
         };
@@ -2125,7 +2121,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             // Use a small timeout to ensure DOM has updated with new content
             const timer = setTimeout(() => {
                 scrollRef.current?.scrollIntoView({ behavior, block: 'end' });
-            }, 100);
+            }, 150);
             return () => clearTimeout(timer);
         }
     }, [messages[activeChat?._id]?.length, activeChat?._id]);
@@ -2349,21 +2345,21 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         return (
                                             <motion.div 
                                                 key={m._id || i}
-                                                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                exit={{ opacity: 0, scale: 0.5, filter: 'blur(5px)', transition: { duration: 0.3 } }}
+                                                exit={{ opacity: 0, scale: 0.9, filter: 'blur(8px)', x: isOwn ? 20 : -20, transition: { duration: 0.4, ease: "easeInOut" } }}
                                                 layout
                                                 className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                                             >
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative border cursor-pointer select-none ${isOwn ? 'bg-blue-600 text-white rounded-br-none border-blue-400/40' : 'bg-[#1a1a1a] text-white rounded-bl-none border-white/5'} ${m.isLocked ? 'ring-1 ring-[var(--gold-primary)]/70' : ''}`}
+                                                    className={`group/msg max-w-[85%] px-5 py-3 rounded-[22px] text-[15px] shadow-sm relative border cursor-pointer select-none ${isOwn ? 'bg-[#007AFF] text-white rounded-br-sm border-transparent shadow-[0_4px_14px_rgba(0,122,255,0.2)]' : 'bg-[#1E1E1E] text-white rounded-bl-sm border-white/5'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/80 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.2)]' : ''} hover:scale-[1.02] transition-transform duration-200`}
                                                 >
                                                 {isOwn && (
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
-                                                        className={`absolute -top-2 right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-md ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)]' : 'bg-black/70 text-gray-400 border-white/20'}`}
+                                                        className={`absolute -top-2 right-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-lg opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)] opacity-100' : 'bg-[#2C2C2C] text-gray-300 border-white/10 hover:bg-[#3C3C3C]'}`}
                                                         title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
                                                     >
                                                         <Icons.Lock className="w-3 h-3" />
@@ -2390,12 +2386,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                             <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
                                                         </div>
                                                         <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                        {m.text && <p className="text-white/80 italic mt-1">{m.text}</p>}
+                                                        {m.text && <p className="text-white/90 font-medium leading-relaxed mt-1">{m.text}</p>}
                                                     </div>
                                                 ) : (
-                                                    m.text && !imageUrl ? m.text : (m.text && imageUrl ? <p className="mt-1">{m.text}</p> : null)
+                                                    m.text && !imageUrl ? <p className="leading-relaxed font-medium text-white/90">{m.text}</p> : (m.text && imageUrl ? <p className="mt-2 leading-relaxed font-medium text-white/90">{m.text}</p> : null)
                                                 )}
-                                                <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
+                                                <div className="flex justify-end items-center gap-1.5 mt-1.5 opacity-60">
+                                                    <span className="text-[10px] font-medium">{formatDate(m.createdAt, t, lang)}</span>
+                                                    {isOwn && (
+                                                        <Icons.Check className={`w-3 h-3 ${m.isRead ? 'text-blue-400' : 'text-gray-400'}`} />
+                                                    )}
+                                                </div>
                                                 </div>
                                             </motion.div>
                                         );
