@@ -2396,6 +2396,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     m.text && !imageUrl ? m.text : (m.text && imageUrl ? <p className="mt-1">{m.text}</p> : null)
                                                 )}
                                                 <div className="text-[9px] opacity-50 text-right mt-1">{formatDate(m.createdAt, t, lang)}</div>
+                                                </div>
                                             </motion.div>
                                         );
                                     })}
