@@ -394,31 +394,15 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #020205;
-  background-image:
-    radial-gradient(circle at 50% 50%, rgba(10, 10, 40, 0.45) 0%, transparent 80%),
-    radial-gradient(1px 1px at 20px 30px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1.5px 1.5px at 150px 100px, #eee, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 250px 250px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 350px 50px, #ddd, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 450px 400px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 550px 200px, #fff, rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: 100% 100%, 300px 300px, 400px 400px, 500px 500px, 600px 600px, 700px 700px, 800px 800px;
-  animation: space-drift 120s linear infinite;
+  background-color: #000000;
+  /* Hardware acceleration for mobile performance */
+  transform: translateZ(0);
+  will-change: transform;
   pointer-events: none;
   z-index: -1;
 }
 
-@keyframes space-drift {
-  from {
-    background-position: 0 0;
-  }
 
-  to {
-    background-position: 1000px 1000px;
-  }
-}
 
 @keyframes liquid-drift {
   0% {

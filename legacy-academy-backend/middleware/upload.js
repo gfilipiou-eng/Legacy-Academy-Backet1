@@ -45,7 +45,7 @@ if (hasCloudinary) {
 
 const upload = multer({
     storage,
-    limits: { fileSize: 200 * 1024 * 1024 } // 200MB limit
+    limits: { fileSize: 500 * 1024 * 1024 } // 500MB limit για τους Founders (2K Videos)
 });
 
 export default upload;

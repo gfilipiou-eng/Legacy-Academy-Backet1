@@ -25,7 +25,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
-app.use(express.json()); // Essential for parsing JSON bodies
+app.use(express.json({ limit: '500mb' })); // Essential for parsing JSON bodies + large file support
+app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 app.use(cors());
 
 // --- SOCKET.IO SETUP ---

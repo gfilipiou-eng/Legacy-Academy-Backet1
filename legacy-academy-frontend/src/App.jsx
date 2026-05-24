@@ -3396,7 +3396,13 @@ const ProfileModal = ({
                             <input type="file" ref={coverFileRef} hidden accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
-                                    if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                    // Ο Founder έχει όριο 500MB, οι άλλοι έχουν 90MB
+                                    const maxUploadSize = displayUser?.role === 'Founder' ? 500 * 1024 * 1024 : 90 * 1024 * 1024;
+                                    
+                                    if (file.size > maxUploadSize) { 
+                                        alert(displayUser?.role === 'Founder' ? "File too large. Max 500MB for Founders" : "File too large. Max 90MB"); 
+                                        return e.target.value = ''; 
+                                    }
                                     
                                     setCoverUploading(true);
 
@@ -3946,6 +3952,15 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Ο Founder έχει όριο 500MB, οι άλλοι 90MB (όπως και στο profile cover)
+        const maxUploadSize = user?.role === 'Founder' ? 500 * 1024 * 1024 : 90 * 1024 * 1024;
+        
+        if (file.size > maxUploadSize) {
+            alert(user?.role === 'Founder' ? "File too large. Max 500MB for Founders" : "File too large. Max 90MB");
+            e.target.value = '';
+            return;
+        }
 
         if (file.type.startsWith('video')) {
             const url = URL.createObjectURL(file);
