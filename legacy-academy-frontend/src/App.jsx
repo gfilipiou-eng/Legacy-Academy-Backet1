@@ -2916,7 +2916,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <div className="w-[48px] h-[48px] rounded-[14px] overflow-hidden shrink-0 border border-white/10">
+                            <div className="w-[48px] h-[48px] rounded-none overflow-hidden shrink-0 border border-white/20">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                         </div>
