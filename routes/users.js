@@ -288,6 +288,7 @@ router.get("/public/posts/:username", async (req, res) => {
         const posts = await Post.find({
             $or: [
                 { author: user._id },
+                { reposts: String(user._id) },
                 { reposts: user._id }
             ]
         }).populate('author', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });

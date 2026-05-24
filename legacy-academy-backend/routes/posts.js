@@ -139,7 +139,8 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
         const posts = await Post.find({
             $or: [
                 { author: targetUserId },
-                { reposts: targetUserId }
+                { reposts: targetUserId },
+                { reposts: new mongoose.Types.ObjectId(targetUserId) }
             ]
         })
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers")

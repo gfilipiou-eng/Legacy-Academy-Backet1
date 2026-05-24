@@ -114,7 +114,7 @@ mongoose.connect(process.env.MONGO_URL)
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "healthy",
-    deployed: "V17 (Auto-heal notification usernames from DB)",
+    deployed: "V18 (Repost Fix)",
     timestamp: new Date(),
     uptime: process.uptime()
   });
