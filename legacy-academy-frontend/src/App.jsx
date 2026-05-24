@@ -362,28 +362,36 @@ const formatDate = (dateString, t, lang) => {
         if (diffInSeconds < 60) return t('JUST_NOW') || 'Just now';
 
         const isEl = lang === 'el';
+        const isDe = lang === 'de';
 
         const diffInMinutes = Math.round(diffInSeconds / 60);
         if (diffInMinutes < 60) {
-            return isEl ? `${diffInMinutes} λεπτά` : `${diffInMinutes}m`;
+            return isEl ? (diffInMinutes === 1 ? '1 λεπτό' : `${diffInMinutes} λεπτά`) : 
+                   isDe ? (diffInMinutes === 1 ? '1 Minute' : `${diffInMinutes} Minuten`) : 
+                   (diffInMinutes === 1 ? '1 minute' : `${diffInMinutes} minutes`);
         }
 
         const diffInHours = Math.round(diffInSeconds / 3600);
         if (diffInHours < 24) {
             return diffInHours === 1 
-                ? (isEl ? '1 ώρα' : '1h')
-                : (isEl ? `${diffInHours} ώρες` : `${diffInHours}h`);
+                ? (isEl ? '1 ώρα' : isDe ? '1 Stunde' : '1 hour')
+                : (isEl ? `${diffInHours} ώρες` : isDe ? `${diffInHours} Stunden` : `${diffInHours} hours`);
         }
 
         const diffInDays = Math.round(diffInSeconds / 86400);
         if (diffInDays < 7) {
             return diffInDays === 1 
-                ? (isEl ? '1 μέρα' : '1d')
-                : (isEl ? `${diffInDays} μέρες` : `${diffInDays}d`);
+                ? (isEl ? '1 μέρα' : isDe ? '1 Tag' : '1 day')
+                : (isEl ? `${diffInDays} μέρες` : isDe ? `${diffInDays} Tage` : `${diffInDays} days`);
         }
 
         const locale = getLocaleForLang(lang);
-        return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+        const currentYear = new Date().getFullYear();
+        const options = { month: 'long', day: 'numeric' };
+        if (date.getFullYear() !== currentYear) {
+            options.year = 'numeric';
+        }
+        return date.toLocaleDateString(locale, options);
     } catch (e) { return ''; }
 };
 
@@ -1779,10 +1787,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
                                         <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
                                     </div>
-                                    <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-2 sm:gap-3 w-max">
-                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full"></div>
-                                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{formatDate(post.createdAt, t, lang)}</span>
-                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full"></div>
+                                    <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3 w-max">
+                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
+                                        <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{formatDate(post.createdAt, t, lang)}</span>
+                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
                                     </div>
                                 </div>
                             </div>
@@ -4650,10 +4658,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) && (
                                                     <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
                                                 )}
-                                                <div className="px-2.5 py-1 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-1.5">
-                                                    <div className="w-1 h-1 bg-[var(--gold-primary)] rounded-full"></div>
-                                                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
-                                                    <div className="w-1 h-1 bg-[var(--gold-primary)] rounded-full"></div>
+                                                <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3 w-max">
+                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
+                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
+                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -6749,10 +6757,10 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 opacity-90">
-                                                                <div className="px-5 py-2.5 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl flex items-center gap-3">
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
-                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/80 font-mono">{dateKey}</span>
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />
+                                                                <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3">
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none" />
+                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{dateKey}</span>
+                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none" />
                                                                 </div>
                                                             </div>
 
