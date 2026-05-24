@@ -2057,7 +2057,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
-                <div className={`w-full sm:w-80 border-r border-white/10 flex flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0  duration-300 ${activeChat ? '-translate-x-full sm:translate-x-0' : 'translate-x-0'}`}>
+                <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
@@ -2085,7 +2085,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
-                                <button key={u._id} onClick={() => { setActiveChat(u); }} className={`w-full p-4 flex items-center gap-3 cursor-pointer   text-left touch-manipulation  ${isSameId(activeChat?._id, u._id) ? 'bg-white/5 border-l-2 border-[var(--gold-primary)]' : 'border-l-2 border-transparent'}`}>
+                                <button
+                                    key={u._id}
+                                    type="button"
+                                    onClick={() => { setActiveChat(u); }}
+                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
+                                >
                                     <div className="relative shrink-0"><div className={`w-12 h-12 rounded-full bg-gray-900 overflow-hidden shadow-sm border border-white/10`}><ProfileAvatar user={u} className="rounded-full" /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
@@ -2095,7 +2100,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 </div>
 
                 {/* CHAT WINDOW */}
-                <div className={`flex-1 flex flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0  duration-300 ${activeChat ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'}`}>
+                <div className={`flex-1 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
                     {activeChat ? (
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
