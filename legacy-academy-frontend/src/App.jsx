@@ -6038,6 +6038,9 @@ const App = () => {
         setIsChatOpen(true);
     };
 
+    // Make lang available for share URLs by getting it from useTranslation or fallback
+    const currentLanguage = user?.settings?.language || localStorage.getItem('language') || 'en';
+
     // FIX: Real Share Functionality with Visual Card Generation
     const [shareModalPost, setShareModalPost] = useState(null);
     const [shareModalProfile, setShareModalProfile] = useState(null);
@@ -6915,17 +6918,17 @@ const App = () => {
                                             {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3" })}
                                             {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
                                             <span className="opacity-50 mx-1">•</span>
-                                            <span className="text-gray-500">{formatDate(shareModalPost.createdAt, t, lang)}</span>
+                                            <span className="text-gray-500">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
                                         </div>
                                     ) : getFounderAffiliation(shareModalPost.author) ? (
                                         <div className="flex items-center gap-2 mt-1">
                                             <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" />
                                             <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50">•</span>
-                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase">{formatDate(shareModalPost.createdAt, t, lang)}</span>
+                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
                                         </div>
                                     ) : (
                                         <div className="text-gray-500 text-xs mt-1 uppercase tracking-widest font-bold">
-                                            {formatDate(shareModalPost.createdAt, t, lang)}
+                                            {formatDate(shareModalPost.createdAt, t, currentLanguage)}
                                         </div>
                                     )}
                                 </div>
@@ -6968,7 +6971,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?post=${shareModalPost._id}&lang=${lang}`;
+                                    const shareUrl = `${window.location.origin}/?post=${shareModalPost._id}&lang=${currentLanguage}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Post', url: shareUrl }); } catch (e) { }
                                     } else {
@@ -7044,7 +7047,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?profile=${encodeURIComponent(shareModalProfile.username)}&lang=${lang}`;
+                                    const shareUrl = `${window.location.origin}/?profile=${encodeURIComponent(shareModalProfile.username)}&lang=${currentLanguage}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Profile', url: shareUrl }); } catch (e) { }
                                     } else {
