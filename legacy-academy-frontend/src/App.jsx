@@ -3244,7 +3244,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-4 space-y-2 mt-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest transition-all shadow-md">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -3252,17 +3252,17 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 py-3.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all shadow-md ${isFollowing ? 'bg-white/5 hover:bg-white/10 border border-white/10 text-white' : 'bg-white text-black hover:bg-gray-200'}`}
+                                                className={`flex-1 py-3.5 rounded-full text-[11px] font-black uppercase tracking-widest border ${isFollowing ? 'bg-black border-white/10 text-white' : 'bg-white border-white text-black'}`}
                                             >
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
                                             <button
                                                 onClick={() => onOpenChat(displayUser)}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full transition-all shrink-0 shadow-md group text-[10px] font-black uppercase tracking-[0.2em] text-white"
+                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black border border-white/10 rounded-full shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white"
                                             >
                                                 <div className="relative flex items-center justify-center">
-                                                    <Icons.MessageSquare className="w-5 h-5 whispers-icon text-gray-300 group-hover:text-white transition-colors duration-300" />
+                                                    <Icons.MessageSquare className="w-5 h-5 whispers-icon text-white/80" />
                                                 </div>
                                                 <span className="whispers-label">{t('WHISPERS')}</span>
                                             </button>

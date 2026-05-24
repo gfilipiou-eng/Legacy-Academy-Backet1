@@ -14,6 +14,8 @@ const BottomNavbar = memo(({
         () => (alerts || []).filter((n) => !n.read).length,
         [alerts]
     );
+    const navItemBaseClass = 'w-[17vw] max-w-[80px] sm:w-22 h-14 sm:h-16 flex items-center justify-center rounded-[22px] sm:rounded-[26px] border';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'border-white bg-white text-black' : 'border-transparent bg-transparent text-white/72'}`;
 
     return (
         <nav className="fixed bottom-[calc(14px+env(safe-area-inset-bottom))] left-0 right-0 w-full z-[99] flex justify-center pointer-events-none px-3">
@@ -21,9 +23,9 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
-                    className="nav-btn-glow flex flex-col items-center justify-center transition-all duration-200 active:scale-95"
+                    className="flex flex-col items-center justify-center"
                 >
-                    <div className={`w-[17vw] max-w-[80px] sm:w-22 h-14 sm:h-16 flex items-center justify-center rounded-[22px] sm:rounded-[26px] transition-all duration-300 ${activeTab === 'home' ? 'liquid-droplet-active text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                    <div className={navItemClass(activeTab === 'home')}>
                         <Icons.Home className="w-8 sm:w-9 h-8 sm:h-9" />
                     </div>
                 </button>
@@ -31,9 +33,9 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={() => onTabChange('alerts')}
-                    className="nav-btn-glow flex flex-col items-center justify-center relative transition-all duration-200 active:scale-95"
+                    className="flex flex-col items-center justify-center relative"
                 >
-                    <div className={`w-[17vw] max-w-[80px] sm:w-22 h-14 sm:h-16 flex items-center justify-center rounded-[22px] sm:rounded-[26px] transition-all duration-300 ${activeTab === 'alerts' ? 'liquid-droplet-active text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                    <div className={navItemClass(activeTab === 'alerts')}>
                         <Icons.Bell className="w-8 sm:w-9 h-8 sm:h-9" />
                     </div>
                     {unreadCount > 0 && (
@@ -48,9 +50,9 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onCreate}
-                    className="flex flex-col items-center justify-center transition-transform duration-200 active:scale-90"
+                    className="flex flex-col items-center justify-center"
                 >
-                    <div className="w-[62px] h-[62px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full liquid-gold-btn text-black shadow-lg shadow-black/50">
+                    <div className="w-[62px] h-[62px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full border border-white bg-white text-black">
                         <Icons.Plus className="w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 font-black" />
                     </div>
                 </button>
@@ -58,9 +60,9 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={() => onTabChange('search')}
-                    className="nav-btn-glow flex flex-col items-center justify-center transition-all duration-200 active:scale-95"
+                    className="flex flex-col items-center justify-center"
                 >
-                    <div className={`w-[17vw] max-w-[80px] sm:w-22 h-14 sm:h-16 flex items-center justify-center rounded-[22px] sm:rounded-[26px] transition-all duration-300 ${activeTab === 'search' ? 'liquid-droplet-active text-[var(--gold-primary)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                    <div className={navItemClass(activeTab === 'search')}>
                         <Icons.Search className="w-8 sm:w-9 h-8 sm:h-9" />
                     </div>
                 </button>
@@ -68,10 +70,10 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onProfile}
-                    className="nav-btn-glow flex flex-col items-center justify-center transition-all duration-200 active:scale-95"
+                    className="flex flex-col items-center justify-center"
                 >
-                    <div className="w-[17vw] max-w-[80px] sm:w-22 h-14 sm:h-16 flex items-center justify-center rounded-[22px] sm:rounded-[26px] transition-all duration-300 hover:bg-white/5">
-                        <div className={`w-9 h-9 sm:w-10 sm:h-10 ${user?.role === 'Founder' ? 'rounded-[10px]' : 'rounded-full'} overflow-hidden border border-white/15 bg-black/40`}>
+                    <div className={`${navItemBaseClass} border-transparent bg-transparent text-white/72`}>
+                        <div className={`w-9 h-9 sm:w-10 sm:h-10 ${user?.role === 'Founder' ? 'rounded-[10px]' : 'rounded-full'} overflow-hidden border border-white/15 bg-black`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

@@ -158,12 +158,9 @@ body::before {
 
 .bottom-nav-glass {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.95),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 8px 16px -4px rgba(255, 255, 255, 0.08),
-    inset 0 -8px 16px -4px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.88);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.92);
   
   /* Safari/WebKit Scroll Performance & Repaint Isolation */
   transform: translate3d(0, 0, 0);
@@ -179,22 +176,18 @@ body::before {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(0, 0, 0, 0.4) 100%), rgba(12, 12, 18, 0.88);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   pointer-events: none;
 }
 
-/* 3D Liquid Droplet Active Indicator */
+/* Simple black/white active state */
 .liquid-droplet-active {
   position: relative;
-  background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(0, 0, 0, 0.35) 100%), rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 
-    0 8px 20px -4px var(--gold-glow),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.5),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-  animation: liquid-pulse 3s infinite ease-in-out;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.9);
   
   /* Safari Compositing Fixes for animations */
   transform: translate3d(0, 0, 0);
@@ -203,32 +196,12 @@ body::before {
   -webkit-backface-visibility: hidden;
 }
 
-@keyframes liquid-pulse {
-  0%, 100% {
-    box-shadow: 
-      0 6px 15px -4px var(--gold-glow),
-      inset 0 1.5px 2px rgba(255, 255, 255, 0.5),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-    transform: scale(1) translate3d(0, 0, 0);
-  }
-  50% {
-    box-shadow: 
-      0 12px 25px -4px var(--gold-glow),
-      inset 0 2px 3px rgba(255, 255, 255, 0.6),
-      inset 0 -3px 6px rgba(0, 0, 0, 0.5);
-    transform: scale(1.03) translate3d(0, -1px, 0);
-  }
-}
-
-/* 3D Liquid Gold Button */
+/* Simple center action button */
 .liquid-gold-btn {
-  background: linear-gradient(135deg, #ffffff 0%, var(--gold-primary) 25%, var(--gold-secondary) 100%) !important;
+  background: #ffffff !important;
   color: #000000 !important;
-  box-shadow: 
-    0 10px 25px -3px var(--gold-glow),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.75),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
   position: relative;
   overflow: hidden;
   
@@ -237,37 +210,16 @@ body::before {
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: none;
 }
 
-.liquid-gold-btn:hover {
-  transform: scale(1.08) translate3d(0, -2px, 0);
-  box-shadow: 
-    0 15px 30px -3px var(--gold-glow),
-    inset 0 2px 3px rgba(255, 255, 255, 0.85),
-    inset 0 -4px 8px rgba(0, 0, 0, 0.5) !important;
-}
-
-.liquid-gold-btn:active {
-  transform: scale(0.92) translate3d(0, 1px, 0);
-}
-
-/* Tap glow effect on nav buttons */
+/* Disabled glow effect on nav buttons */
 .nav-btn-glow {
   position: relative;
 }
 .nav-btn-glow::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 9999px;
-  background: radial-gradient(circle, var(--gold-primary) 0%, transparent 70%);
   opacity: 0;
-  transition: opacity 0.3s ease;
   pointer-events: none;
-}
-.nav-btn-glow:active::after {
-  opacity: 0.15;
 }
 
 /* Orange Black theme — readable text; accents use --gold-primary */
