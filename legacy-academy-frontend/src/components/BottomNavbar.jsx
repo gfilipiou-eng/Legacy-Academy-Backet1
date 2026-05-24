@@ -15,8 +15,8 @@ const BottomNavbar = memo(({
         [alerts]
     );
     const navItemBaseClass = 'flex-1 max-w-[108px] sm:max-w-[116px] h-[72px] sm:h-[80px] flex items-center justify-center transition-all duration-200';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[10px] sm:rounded-[12px] -translate-y-4 sm:-translate-y-4.5 bg-white text-black shadow-[0_16px_40px_rgba(255,255,255,0.10)]' : 'rounded-[20px] sm:rounded-[22px] -translate-y-2 sm:-translate-y-2.5 bg-[#050505] text-white/80'}`;
-    const iconClass = (isActive) => isActive ? 'w-9 h-9 sm:w-10 sm:h-10 stroke-[1.8]' : 'w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 stroke-[1.65]';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[10px] sm:rounded-[12px] -translate-y-4 sm:-translate-y-4.5 bg-white text-black shadow-[0_16px_40px_rgba(255,255,255,0.10)]' : 'rounded-[18px] sm:rounded-[20px] -translate-y-2 sm:-translate-y-2.5 bg-[#0b0b0b] text-white/92 border border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'}`;
+    const iconClass = (isActive) => isActive ? 'w-9 h-9 sm:w-10 sm:h-10 opacity-100' : 'w-9 h-9 sm:w-10 sm:h-10 opacity-95';
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black">
@@ -28,7 +28,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'home')}>
-                        <Icons.Home className={iconClass(activeTab === 'home')} />
+                        <Icons.Home className={iconClass(activeTab === 'home')} strokeWidth={activeTab === 'home' ? 1.9 : 1.75} />
                     </div>
                 </button>
 
@@ -38,7 +38,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end relative flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'alerts')}>
-                        <Icons.Bell className={iconClass(activeTab === 'alerts')} />
+                        <Icons.Bell className={iconClass(activeTab === 'alerts')} strokeWidth={activeTab === 'alerts' ? 1.9 : 1.75} />
                     </div>
                     {unreadCount > 0 && (
                         <div className="absolute top-1 right-1 sm:right-2.5 min-w-[20px] h-[20px] bg-red-600 rounded-full flex items-center justify-center border-2 border-[#12121a] shadow-lg z-10 animate-pulse">
@@ -65,7 +65,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'search')}>
-                        <Icons.Search className={iconClass(activeTab === 'search')} />
+                        <Icons.Search className={iconClass(activeTab === 'search')} strokeWidth={activeTab === 'search' ? 1.9 : 1.75} />
                     </div>
                 </button>
 
