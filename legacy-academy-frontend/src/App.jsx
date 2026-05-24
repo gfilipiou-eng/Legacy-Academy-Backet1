@@ -2247,7 +2247,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
@@ -3676,7 +3676,10 @@ const ProfileModal = ({
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
                                             <button
-                                                onClick={() => onOpenChat(displayUser)}
+                                                onClick={() => {
+                                                    onClose(); // Κλείνουμε πρώτα το profile modal για να μην υπάρχει conflict στα gestures του mobile
+                                                    setTimeout(() => onOpenChat(displayUser), 50); // Ανοίγουμε το Chat Modal μετά από 50ms
+                                                }}
                                                 title={t('DM_SAFE_DESC')}
                                                 className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black border border-white/10 rounded-full shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white"
                                             >
