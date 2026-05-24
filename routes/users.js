@@ -590,6 +590,11 @@ router.put("/settings", verifyToken, async (req, res) => {
             console.log(`[PRIVACY SYNC] Updated posts for user ${userId}:`, privacyUpdate);
         }
 
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('user.updated', updatedUser);
+        }
+
         res.status(200).json(updatedUser);
     } catch (err) {
         console.error("CRITICAL SETTINGS FAILURE:", err);

@@ -28,6 +28,7 @@ router.patch("/:messageId/read", verifyToken, async (req, res) => {
 
         // Mark as read with timestamp
         message.read = true;
+        message.isRead = true;
         message.readAt = new Date();
         await message.save();
 
@@ -48,6 +49,7 @@ router.post("/:messageId/read", verifyToken, async (req, res) => {
         if (!message) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(message.recipient) !== String(userId)) return res.status(403).json("Not authorized");
         message.read = true;
+        message.isRead = true;
         message.readAt = new Date();
         await message.save();
         res.status(200).json({ success: true, readAt: message.readAt });
@@ -64,6 +66,7 @@ router.get("/:messageId/read", verifyToken, async (req, res) => {
         if (!message) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(message.recipient) !== String(userId)) return res.status(403).json("Not authorized");
         message.read = true;
+        message.isRead = true;
         message.readAt = new Date();
         await message.save();
         res.status(200).json({ success: true, readAt: message.readAt });
@@ -77,7 +80,8 @@ const cleanupExpiredWhispers = async () => {
     try {
         const fiveSecondsAgo = new Date(Date.now() - 5 * 1000);
         const result = await Message.deleteMany({
-            readAt: { $ne: null, $lt: fiveSecondsAgo }
+            readAt: { $ne: null, $lt: fiveSecondsAgo },
+            isLocked: { $ne: true }
         });
         if (result.deletedCount > 0) {
             console.log(`[WHISPERS CLEANUP] 🔥 Auto-deleted ${result.deletedCount} expired whispers`);
@@ -187,6 +191,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
             sender: senderOid,
             recipient: recipientOid,
             text: (text || "").toString().trim(),
+            audio: audioUrl,
             audioUrl
         });
 
@@ -337,6 +342,29 @@ router.post("/conversation/clear/:otherUserId", verifyToken, async (req, res) =>
         res.status(200).json("Conversation neutralized.");
     } catch (err) {
         console.error("CLEAR CHAT ERROR:", err);
+        res.status(500).json(err);
+    }
+});
+
+router.patch("/:messageId/lock", verifyToken, async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const userId = req.user.id || req.user.userId;
+        const locked = !!req.body.locked;
+
+        const message = await Message.findById(messageId);
+        if (!message) return res.status(404).json("Message not found");
+
+        if (String(message.sender) !== String(userId) && String(message.recipient) !== String(userId)) {
+            return res.status(403).json("Not authorized");
+        }
+
+        message.isLocked = locked;
+        await message.save();
+
+        res.status(200).json({ success: true, isLocked: message.isLocked });
+    } catch (err) {
+        console.error("Lock toggle error:", err);
         res.status(500).json(err);
     }
 });

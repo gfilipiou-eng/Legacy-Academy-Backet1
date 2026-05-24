@@ -182,6 +182,18 @@ body::before {
   pointer-events: none;
 }
 
+.app-main-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+@media (pointer: coarse) {
+  .app-main-scroll {
+    scroll-behavior: auto;
+  }
+}
+
 /* Simple black/white active state */
 .liquid-droplet-active {
   position: relative;

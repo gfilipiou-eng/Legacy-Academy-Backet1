@@ -1835,6 +1835,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast, fetchSpecificUser }) => {
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
+    const normalizeWhisper = useCallback((message) => ({
+        ...message,
+        audio: message?.audio || message?.audioUrl || "",
+        image: message?.image || "",
+        isRead: message?.isRead ?? message?.read ?? false,
+        isLocked: message?.isLocked ?? false
+    }), []);
 
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for target user on mount/change
     useEffect(() => {
@@ -1893,19 +1900,20 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     const fetchMessages = async (otherUserId) => {
         try {
             const res = await axios.get(`/messages/conversation/${otherUserId}`);
+            const normalizedMessages = (res.data || []).map(normalizeWhisper);
 
             // Only update if data actually changed to avoid unnecessary re-renders and scroll jumps
             setMessages(prev => {
                 const currentMsgs = prev[otherUserId] || [];
                 // Simple comparison - for more complex objects we'd use a deep compare helper
-                if (currentMsgs.length === res.data.length && JSON.stringify(currentMsgs[currentMsgs.length - 1]) === JSON.stringify(res.data[res.data.length - 1])) {
+                if (currentMsgs.length === normalizedMessages.length && JSON.stringify(currentMsgs[currentMsgs.length - 1]) === JSON.stringify(normalizedMessages[normalizedMessages.length - 1])) {
                     return prev;
                 }
-                return { ...prev, [otherUserId]: res.data };
+                return { ...prev, [otherUserId]: normalizedMessages };
             });
 
             // 🔥 WHISPERS: Auto-mark incoming messages as read (and trigger deletion on backend)
-            const incomingUnread = res.data.filter(m => m.recipient === user._id && !m.isRead);
+            const incomingUnread = normalizedMessages.filter(m => String(m.recipient) === String(user._id) && !m.isRead && !m.isLocked);
             if (incomingUnread.length > 0) {
                 // Trigger burn protocol
                 Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => { })));
@@ -1944,19 +1952,20 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
         // 🔥 REAL-TIME MESSAGE LISTENER
         const handleMessageReceived = (msg) => {
+            const normalizedMessage = normalizeWhisper(msg);
             // Check if message belongs to THIS conversation
-            const isFromCurrentTarget = isSameId(msg.sender, targetId);
-            const isToCurrentTarget = isSameId(msg.recipient, targetId);
+            const isFromCurrentTarget = isSameId(normalizedMessage.sender, targetId);
+            const isToCurrentTarget = isSameId(normalizedMessage.recipient, targetId);
 
             if (isFromCurrentTarget || isToCurrentTarget) {
                 console.log("📨 [SOCKET] New whisper received in current chat");
                 setMessages(prev => ({
                     ...prev,
-                    [targetId]: [...(prev[targetId] || []), msg]
+                    [targetId]: [...(prev[targetId] || []), normalizedMessage]
                 }));
                 // Auto-read if we are looking at it
-                if (isFromCurrentTarget) {
-                    axios.patch(`/messages/${msg._id}/read`).catch(() => { });
+                if (isFromCurrentTarget && !normalizedMessage.isLocked && !normalizedMessage.isRead) {
+                    axios.patch(`/messages/${normalizedMessage._id}/read`).catch(() => { });
                 }
             }
         };
@@ -2033,7 +2042,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             const res = await axios.post('/messages', fd);
             setMessages(prev => ({
                 ...prev,
-                [targetId]: [...(prev[targetId] || []), res.data]
+                [targetId]: [...(prev[targetId] || []), normalizeWhisper(res.data)]
             }));
 
         } catch (e) {
@@ -2194,7 +2203,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
                                     return (
                                         <div key={i} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative border ${isOwn ? 'bg-blue-600 text-white rounded-br-none border-blue-400/40' : 'bg-[#1a1a1a] text-white rounded-bl-none border-white/5'} ${m.isLocked ? 'ring-1 ring-[var(--gold-primary)]/70' : ''}`}>
+                                            <div
+                                                onDoubleClick={toggleLockMessage}
+                                                className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md relative border cursor-pointer select-none ${isOwn ? 'bg-blue-600 text-white rounded-br-none border-blue-400/40' : 'bg-[#1a1a1a] text-white rounded-bl-none border-white/5'} ${m.isLocked ? 'ring-1 ring-[var(--gold-primary)]/70' : ''}`}
+                                            >
                                                 {isOwn && (
                                                     <button
                                                         type="button"
@@ -2386,6 +2398,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
+    const pendingShareToggleRef = useRef(null);
     const [zoomLevel, setZoomLevel] = useState(
         Math.min(
             1,
@@ -2400,7 +2413,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         if (user && isOpen) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
-            setShowProfileShareButton(user?.settings?.showProfileShareButton !== false);
+            const nextShareValue = pendingShareToggleRef.current !== null
+                ? pendingShareToggleRef.current
+                : user?.settings?.showProfileShareButton !== false;
+            setShowProfileShareButton(nextShareValue);
             setZoomLevel(
                 Math.min(
                     1,
@@ -2431,9 +2447,21 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
-            if (key === 'showProfileShareButton') setShowProfileShareButton(Boolean(val));
+            if (key === 'showProfileShareButton') {
+                const nextToggleValue = Boolean(val);
+                pendingShareToggleRef.current = nextToggleValue;
+                setShowProfileShareButton(nextToggleValue);
+                onUpdateUser?.({
+                    ...user,
+                    settings: {
+                        ...(user?.settings || {}),
+                        showProfileShareButton: nextToggleValue
+                    }
+                });
+            }
             const res = await axios.put('/users/settings', payload);
             const mergedResponse = {
+                ...user,
                 ...res.data,
                 settings: {
                     ...(user?.settings || {}),
@@ -2451,7 +2479,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
             if (key === 'showProfileShareButton') setShowProfileShareButton(!Boolean(val));
-        } finally { setSaving(false); }
+        } finally {
+            if (key === 'showProfileShareButton') pendingShareToggleRef.current = null;
+            setSaving(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -2865,16 +2896,22 @@ const ProfileModal = ({
             lastSeen: live.lastSeen || base.lastSeen,
             followers: live.followers || base.followers || [],
             following: live.following || base.following || [],
-            followRequests: live.followRequests || base.followRequests || []
+            followRequests: live.followRequests || base.followRequests || [],
+            profileDescriptor: base?.profileDescriptor ?? live?.profileDescriptor ?? profileUser?.profileDescriptor ?? '',
+            settings: {
+                ...(live?.settings || {}),
+                ...(profileUser?.settings || {}),
+                ...(base?.settings || {})
+            }
         };
 
         return merged;
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
-    const canShowProfileShareButton = isMe
-        ? currentUser?.settings?.showProfileShareButton !== false
-        : !!displayUser?.settings && displayUser.settings.showProfileShareButton !== false;
+    const canShowProfileShareButton = (isMe
+        ? currentUser?.settings?.showProfileShareButton
+        : displayUser?.settings?.showProfileShareButton) !== false;
 
     const toggleDate = (dateKey) => {
         // Disabled clicking - folders are always open
@@ -3273,14 +3310,33 @@ const ProfileModal = ({
                                 try {
                                     const trimmedBio = bio?.trim() || "";
                                     const trimmedUsername = editUsername?.trim() || "";
+                                    const optimisticUser = {
+                                        ...displayUser,
+                                        bio: trimmedBio,
+                                        username: trimmedUsername || displayUser?.username,
+                                        profileDescriptor
+                                    };
+                                    setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
+                                    setProfileUser(prev => (prev && isSameId(prev._id, optimisticUser._id) ? { ...prev, ...optimisticUser } : prev));
+                                    if (isSameId(displayUser?._id, currentUser?._id)) {
+                                        onUpdateUser?.(optimisticUser);
+                                    }
                                     const res = await axios.put(`/users/${displayUser?._id}`, {
                                         bio: trimmedBio,
                                         username: trimmedUsername,
                                         profileDescriptor
                                     });
                                     if (res.data) {
-                                        localStorage.setItem('user', JSON.stringify(res.data));
-                                        if (onUpdateUser) onUpdateUser(res.data);
+                                        const mergedUpdatedUser = {
+                                            ...optimisticUser,
+                                            ...res.data,
+                                            settings: {
+                                                ...(optimisticUser?.settings || {}),
+                                                ...(res.data?.settings || {})
+                                            }
+                                        };
+                                        localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
+                                        if (onUpdateUser) onUpdateUser(mergedUpdatedUser);
                                         if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
                                     }
                                     setIsEditing(false);
@@ -4430,6 +4486,13 @@ const App = () => {
         }
     }, [user?._id, activeTab]);
 
+    useEffect(() => {
+        if (!user && mainScrollRef.current) {
+            mainScrollRef.current.scrollTo({ top: 0, behavior: 'auto' });
+            setShowScrollTop(false);
+        }
+    }, [authMode, user]);
+
     const toggleDate = (dateKey) => {
         setExpandedDates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }));
 
@@ -4963,13 +5026,30 @@ const App = () => {
                 if (res.data) {
                     setUsers(prev => {
                         const exists = prev.find(u => isSameId(u._id, specificId));
-                        if (exists) return prev.map(u => isSameId(u._id, specificId) ? res.data : u);
-                        return [...prev, res.data];
+                        const mergedUser = exists ? {
+                            ...exists,
+                            ...res.data,
+                            profileDescriptor: res.data?.profileDescriptor ?? exists?.profileDescriptor ?? '',
+                            settings: {
+                                ...(exists?.settings || {}),
+                                ...(res.data?.settings || {})
+                            }
+                        } : res.data;
+                        if (exists) return prev.map(u => isSameId(u._id, specificId) ? mergedUser : u);
+                        return [...prev, mergedUser];
                     });
                     // Also update profileUser if the profile modal is open for this user
                     setProfileUser(prev => {
                         if (prev && isSameId(prev._id, specificId)) {
-                            return { ...prev, ...res.data };
+                            return {
+                                ...prev,
+                                ...res.data,
+                                profileDescriptor: res.data?.profileDescriptor ?? prev?.profileDescriptor ?? '',
+                                settings: {
+                                    ...(prev?.settings || {}),
+                                    ...(res.data?.settings || {})
+                                }
+                            };
                         }
                         return prev;
                     });
@@ -5944,7 +6024,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar p-0 pb-32 sm:pb-28 scroll-smooth relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 pb-32 sm:pb-28 relative z-10">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
                         <header className="relative w-full z-[20] bg-black/40 backdrop-blur-2xl border-b border-white/10 shrink-0 shadow-lg">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
