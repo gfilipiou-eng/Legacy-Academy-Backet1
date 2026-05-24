@@ -3384,18 +3384,18 @@ const ProfileModal = ({
 
                             <div className="space-y-3 text-left">
                                 <div className="flex items-center justify-between gap-3 pl-1">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">WHAT BEST DESCRIBES YOU?</label>
+                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('WHAT_BEST_DESCRIBES_YOU', 'WHAT BEST DESCRIBES YOU?')}</label>
                                     {profileDescriptor && (
                                         <button
                                             type="button"
                                             onClick={() => setProfileDescriptor('')}
                                             className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white"
                                         >
-                                            Clear
+                                            {t('CLEAR', 'Clear')}
                                         </button>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-2">
                                     {PROFILE_DESCRIPTOR_OPTIONS.map(option => {
                                         const isSelected = profileDescriptor === option.value;
                                         const OptionIcon = option.Icon;
@@ -3410,9 +3410,9 @@ const ProfileModal = ({
                                                     <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
                                                         <OptionIcon className="w-5 h-5" />
                                                     </div>
-                                                    <div className="min-w-0">
-                                                        <div className="font-black text-[12px] sm:text-[13px] uppercase tracking-wide truncate">{option.label}</div>
-                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-black/65' : 'text-white/45'}`}>{option.description}</div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="font-black text-[12px] sm:text-[13px] uppercase tracking-wide truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
+                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-black/65' : 'text-white/45'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
                                                     </div>
                                                 </div>
                                             </button>

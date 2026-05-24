@@ -16,7 +16,7 @@ const BottomNavbar = memo(({
     );
     const navItemBaseClass = 'flex-1 max-w-[108px] sm:max-w-[116px] h-[72px] sm:h-[80px] flex items-center justify-center transition-all duration-300';
     const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black shadow-[0_10px_40px_rgba(255,255,255,0.15)]' : 'bg-transparent text-white/50 hover:text-white/90'}`;
-    const iconClass = (isActive) => isActive ? 'w-9 h-9 sm:w-10 sm:h-10 opacity-100' : 'w-8 h-8 sm:w-9 sm:h-9 opacity-80';
+    const iconClass = (isActive) => isActive ? 'w-10 h-10 sm:w-11 sm:h-11 opacity-100' : 'w-9 h-9 sm:w-10 sm:h-10 opacity-80';
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black">
@@ -55,7 +55,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end pb-1.5 sm:pb-2"
                 >
                     <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black shadow-[0_10px_40px_rgba(255,255,255,0.15)]">
-                        <Icons.Plus className="w-9 h-9 sm:w-10 sm:h-10 font-black stroke-[2.7]" />
+                        <Icons.Plus className="w-10 h-10 sm:w-11 sm:h-11 font-black stroke-[2.7]" />
                     </div>
                 </button>
 
@@ -75,7 +75,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>
-                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-11 h-11 sm:w-12 sm:h-12 rounded-[14px] sm:rounded-[16px] border border-black/10' : 'w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] sm:rounded-[14px] border border-white/20 shadow-md'}`}>
+                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-[14px] sm:rounded-[16px] border border-black/10' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-[12px] sm:rounded-[14px] border border-white/20 shadow-md'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
