@@ -385,8 +385,16 @@ const formatDate = (dateString, t, lang) => {
                 : (isEl ? `${diffInDays} μέρες` : isDe ? `${diffInDays} Tage` : `${diffInDays} days`);
         }
 
-        const locale = getLocaleForLang(lang);
         const currentYear = new Date().getFullYear();
+        const yearSuffix = date.getFullYear() !== currentYear ? ` ${date.getFullYear()}` : '';
+        const day = date.getDate();
+        
+        if (isEl) {
+            const greekMonths = ['Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου', 'Μαΐου', 'Ιουνίου', 'Ιουλίου', 'Αυγούστου', 'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'];
+            return `${day} ${greekMonths[date.getMonth()]}${yearSuffix}`;
+        }
+
+        const locale = getLocaleForLang(lang);
         const options = { month: 'long', day: 'numeric' };
         if (date.getFullYear() !== currentYear) {
             options.year = 'numeric';
@@ -2835,10 +2843,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
                                 <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
-                                    className={`py-3 rounded-2xl border  flex flex-col items-center justify-center gap-1.5 group relative overflow-hidden ${lang === l.id ? 'border-white bg-white text-black' : 'border-white/5 bg-white/[0.02]'}`}
+                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_rgba(212,175,55,0.2)] scale-[1.02]' : 'border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-white/10'}`}
                                 >
-                                    <div className="text-xl drop-shadow">{l.flag}</div>
-                                    <div className={`text-[9px] font-black ${lang === l.id ? 'text-black' : 'text-gray-500'}`}>{l.label}</div>
+                                    <div className={`text-xl transition-transform duration-300 ${lang === l.id ? 'scale-110 drop-shadow-md' : 'opacity-80 grayscale-[0.2]'}`}>{l.flag}</div>
+                                    <div className={`text-[9px] font-black uppercase tracking-widest ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.label}</div>
                                 </button>
                             ))}
                         </div>
