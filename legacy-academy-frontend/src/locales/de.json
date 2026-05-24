@@ -236,5 +236,6 @@
     "PRIVACY_S2_DESC": "Deine Whispers sind privat. Wir verkaufen deine persönlichen Daten nicht an traditionelle Drittanbieter. Unsere Wirtschaft basiert auf Wert, nicht auf Ausbeutung.",
     "PRIVACY_S3_TITLE": "Zugriffsrechte",
     "PRIVACY_S3_DESC": "Du hast das volle Recht, deinen digitalen Fußabdruck jederzeit zu löschen. Nach der Löschung werden alle damit verbundenen neuralen Einträge aus unserer aktiven Matrix gelöscht.",
-    "GOT_IT": "VERSTANDEN"
+    "GOT_IT": "VERSTANDEN",
+    "PROFILE_LINK_COPIED": "Profil-Link in die Zwischenablage kopiert!"
 }

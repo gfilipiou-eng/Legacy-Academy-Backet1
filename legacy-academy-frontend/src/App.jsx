@@ -847,8 +847,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[1200] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden  duration-300">
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl  z-[1500] shadow-2xl   group">
+        <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden  duration-300">
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl  z-[2600] shadow-2xl   group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 " />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#0a0a0a] rounded-none md:rounded-[2.5rem] flex flex-col md:flex-row border-none md:border md:border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] shrink-0 my-auto transform-gpu relative">
@@ -910,30 +910,30 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
                         {/* ── STICKY COMMENT/ACTIONS BAR ── */}
                         <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
-                            <div className="flex flex-wrap items-center justify-between gap-2 w-full py-1">
+                            <div className="flex items-center justify-between mt-1 mb-3 w-full px-2">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                    className="flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl text-gray-500   ">
+                                    className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 text-gray-400 hover:text-white">
                                     <Icons.MessageSquare className="w-5 h-5" />
-                                    <span className="text-[10px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                                    <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400' : 'text-gray-500'}`}>
+                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-white'}`}>
                                     <Icons.RefreshCcw className="w-5 h-5" />
-                                    <span className="text-[10px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                                    <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400' : 'text-gray-500'}`}>
-                                    <Icons.Heart className={`w-5 h-5  ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                    <span className="text-[10px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 bg-red-500/10 border-red-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}>
+                                    <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]' : ''}`} />
+                                    <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
-                                    className={`flex flex-col items-center gap-1 min-w-[44px] py-1.5 rounded-2xl  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
-                                    <Icons.ThumbsDown className={`w-5 h-5  ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                    <span className="text-[10px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/20 scale-105' : 'text-gray-400 hover:text-white'}`}>
+                                    <Icons.ThumbsDown className={`w-5 h-5 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]' : ''}`} />
+                                    <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
                             <div className="flex items-center gap-2 w-full">
@@ -2124,9 +2124,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
     const filteredUsers = allUsers.filter(u => {
         if (u._id === user?._id) return false;
+        const isFollowing = user?.following?.some(id => isSameId(id, u._id));
+        
+        // Hide private accounts entirely from search unless you follow them
+        if (u.isPrivate && !isFollowing) {
+            return false;
+        }
+        
         const isSearchEmpty = searchQuery.trim() === '';
         const matchesSearch = u.username.toLowerCase().includes(searchQuery.toLowerCase());
-        const isFollowing = user?.following?.some(id => String(id) === String(u._id));
 
         if (isSearchEmpty) {
             return isFollowing;
@@ -2293,24 +2299,29 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             )}
 
                             <div className="p-3 pb-14 sm:pb-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
-                                <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)]  group overflow-hidden">
-                                    <input
-                                        id="chat-input"
-                                        name="chat-message"
-                                        type="text"
-                                        value={inputText}
-                                        onChange={(e) => {
-                                            let val = e.target.value;
-                                            if (isPhonetic) {
-                                                const pos = e.target.selectionStart;
-                                                const char = val.slice(pos - 1, pos);
-                                                if (GREEK_PHONETIC[char]) {
-                                                    val = val.slice(0, pos - 1) + GREEK_PHONETIC[char] + val.slice(pos);
+                                {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
+                                    <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
+                                        {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)]  group overflow-hidden">
+                                        <input
+                                            id="chat-input"
+                                            name="chat-message"
+                                            type="text"
+                                            value={inputText}
+                                            onChange={(e) => {
+                                                let val = e.target.value;
+                                                if (isPhonetic) {
+                                                    const pos = e.target.selectionStart;
+                                                    const char = val.slice(pos - 1, pos);
+                                                    if (GREEK_PHONETIC[char]) {
+                                                        val = val.slice(0, pos - 1) + GREEK_PHONETIC[char] + val.slice(pos);
+                                                    }
                                                 }
-                                            }
-                                            setInputText(val);
-                                        }}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                                setInputText(val);
+                                            }}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
                                         className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
                                     />
@@ -2318,39 +2329,44 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
                                         <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] " />
                                     </div>
-                                </div>
+                                    </div>
+                                )}
                                 <div className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => { setIsPhonetic(!isPhonetic); }}
-                                        className={`w-12 h-12 flex items-center justify-center rounded-2xl border  shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
-                                        title="Phonetic Greek Keyboard"
-                                    >
-                                        <Icons.Translate className="w-5 h-5" />
-                                    </button>
-                                    {/* IMAGE UPLOAD BUTTON */}
-                                    <button
-                                        type="button"
-                                        onClick={() => imageInputRef.current?.click()}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5  text-gray-500  '}`}
-                                        title="Send Image"
-                                    >
-                                        <Icons.Image className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5  text-gray-500  '}`}
-                                    >
-                                        <Icons.Mic className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleSend()}
-                                        disabled={!inputText.trim() && !imageFile}
-                                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40  disabled:opacity-20 disabled:scale-100  shrink-0 font-black hover:opacity-90"
-                                    >
-                                        <Icons.Send className="w-5 h-5" />
-                                    </button>
+                                    {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? null : (
+                                        <>
+                                            <button
+                                                type="button"
+                                                onClick={() => { setIsPhonetic(!isPhonetic); }}
+                                                className={`w-12 h-12 flex items-center justify-center rounded-2xl border  shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)] shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
+                                                title="Phonetic Greek Keyboard"
+                                            >
+                                                <Icons.Translate className="w-5 h-5" />
+                                            </button>
+                                            {/* IMAGE UPLOAD BUTTON */}
+                                            <button
+                                                type="button"
+                                                onClick={() => imageInputRef.current?.click()}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5  text-gray-500  '}`}
+                                                title="Send Image"
+                                            >
+                                                <Icons.Image className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.preventDefault(); toggleRecording(); }}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${isRecording ? 'bg-red-500 text-white shadow-glow-red animate-pulse' : 'bg-white/5  text-gray-500  '}`}
+                                            >
+                                                <Icons.Mic className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleSend()}
+                                                disabled={!inputText.trim() && !imageFile}
+                                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black shadow-lg shadow-glow-gold/40  disabled:opacity-20 disabled:scale-100  shrink-0 font-black hover:opacity-90"
+                                            >
+                                                <Icons.Send className="w-5 h-5" />
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </>
@@ -3140,7 +3156,7 @@ const ProfileModal = ({
                                 const shareUrl = `${window.location.origin}/?profile=${displayUser?.username}`;
                                 try {
                                     await navigator.clipboard.writeText(shareUrl);
-                                    addToast(t('PROFILE_LINK_COPIED') || "Profile link copied to clipboard!", "success");
+                                    addToast(t('PROFILE_LINK_COPIED'), "success");
                                     // Play sound effect if any
                                     if (typeof playSound === 'function') playSound('cyber_like');
                                 } catch (err) {
@@ -3536,7 +3552,7 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4 border border-white/10 backdrop-blur-xl">
+                            <div className="flex gap-2 p-1 bg-white/[0.02] rounded-2xl mb-4 border border-white/5 backdrop-blur-xl">
                                 {['ALL', 'POSTS', 'VIDEO'].map(tab => {
                                     const renderIcon = () => {
                                         if (tab === 'ALL') return <Icons.Grid className="w-3.5 h-3.5 shrink-0" />;
@@ -3549,8 +3565,8 @@ const ProfileModal = ({
                                             key={tab}
                                             onClick={() => setActiveTab(tab)}
                                             className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl flex items-center justify-center gap-2 duration-300 ${activeTab === tab
-                                                ? 'bg-white/15 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]'
-                                                : 'text-white/60 hover:text-white hover:bg-white/5'
+                                                ? 'bg-white/10 text-white shadow-sm'
+                                                : 'text-white/40 hover:text-white hover:bg-white/5'
                                                 }`}
                                         >
                                             {renderIcon()}
