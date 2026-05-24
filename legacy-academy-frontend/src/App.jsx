@@ -2302,6 +2302,19 @@ const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
     );
 };
 
+const ShareSettingLabel = () => (
+    <div className="flex items-center gap-2 min-w-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white shrink-0">
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+        </svg>
+        <span className="text-sm font-bold text-white truncate">Share Button</span>
+    </div>
+);
+
 const SectionHeader = ({ color, label }) => (
     <div className="flex items-center gap-3 mb-4">
         <div className={`w-1 h-4 rounded-full shadow-[0_0_10px_currentColor] ${color}`} />
@@ -2312,7 +2325,7 @@ const SectionHeader = ({ color, label }) => (
 const SettingRow = ({ label, desc, children, hoverColor = '' }) => (
     <div className={`flex items-center justify-between gap-4 p-4 bg-white/[0.03] rounded-2xl border border-white/5 ${hoverColor} group`}>
         <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-white truncate">{label}</div>
+            {typeof label === 'string' ? <div className="text-sm font-bold text-white truncate">{label}</div> : label}
             {desc && <div className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">{desc}</div>}
         </div>
         {children}
@@ -2373,7 +2386,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'zoom') payload = { settings: { zoom: val } };
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: val } };
             const res = await axios.put('/users/settings', payload);
-            onUpdateUser(res.data);
+            const mergedResponse = {
+                ...res.data,
+                settings: {
+                    ...(user?.settings || {}),
+                    ...(res.data?.settings || {}),
+                    ...(payload.settings || {})
+                }
+            };
+            onUpdateUser(mergedResponse);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
             if (key === 'showProfileShareButton') setShowProfileShareButton(val);
@@ -2435,11 +2456,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="">
                                 <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
                             </SettingRow>
-                            <SettingRow
-                                label={lang === 'el' || lang === 'cy' ? 'ΚΟΥΜΠΙ ΚΟΙΝΟΠΟΙΗΣΗΣ ΠΡΟΦΙΛ' : 'PROFILE SHARE BUTTON'}
-                                desc={lang === 'el' || lang === 'cy' ? 'Εμφανιζει η κρυβει το κουμπι κοινοποιησης στο προφιλ σου.' : 'Shows or hides the share button on your profile.'}
-                                hoverColor=""
-                            >
+                            <SettingRow label={<ShareSettingLabel />} desc="Turn this off if you want to hide the share button on your profile." hoverColor="">
                                 <Toggle
                                     active={showProfileShareButton}
                                     onToggle={() => {
@@ -4367,14 +4384,29 @@ const App = () => {
         setUsers(prev => {
             const list = prev || [];
             const exists = list.some(u => safeId(u) === uid);
+            const mergeUser = (base, incoming) => ({
+                ...base,
+                ...incoming,
+                settings: {
+                    ...(base?.settings || {}),
+                    ...(incoming?.settings || {})
+                }
+            });
             return exists 
-                ? list.map(u => safeId(u) === uid ? { ...u, ...updatedUser } : u)
+                ? list.map(u => safeId(u) === uid ? mergeUser(u, updatedUser) : u)
                 : [...list, updatedUser];
         });
 
         // Update current user
         if (user && safeId(user) === uid) {
-            const merged = { ...user, ...updatedUser };
+            const merged = {
+                ...user,
+                ...updatedUser,
+                settings: {
+                    ...(user?.settings || {}),
+                    ...(updatedUser?.settings || {})
+                }
+            };
             setUser(merged);
             localStorage.setItem('user', JSON.stringify(merged));
             setImgKey(Date.now());
@@ -4383,7 +4415,14 @@ const App = () => {
         // Update profile view
         setProfileUser(prev => {
             if (prev && safeId(prev) === uid) {
-                return { ...prev, ...updatedUser };
+                return {
+                    ...prev,
+                    ...updatedUser,
+                    settings: {
+                        ...(prev?.settings || {}),
+                        ...(updatedUser?.settings || {})
+                    }
+                };
             }
             return prev;
         });
