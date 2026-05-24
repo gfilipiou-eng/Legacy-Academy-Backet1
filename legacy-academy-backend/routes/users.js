@@ -607,4 +607,17 @@ router.delete("/notifications", verifyToken, async (req, res) => {
     }
 });
 
+// MARK NOTIFICATIONS AS READ
+router.put("/notifications/read", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, {
+            $set: { 'notifications.$[].read': true }
+        });
+        res.status(200).json({ message: "Notifications marked as read" });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 export default router;
