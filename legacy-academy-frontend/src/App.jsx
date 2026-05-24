@@ -181,7 +181,7 @@ const THEME_PALETTE = [
     { value: '#ffd700', labelKey: 'COLOR_GOLD' },
     { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
     { value: '#10b981', labelKey: 'COLOR_GREEN' },
-    { value: '#ff5500', labelKey: 'COLOR_ORANGE_BLACK' },
+    { value: '#ff5500', labelKey: 'COLOR_ORANGE' },
     { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
 ];
 const PROFILE_DESCRIPTOR_OPTIONS = [

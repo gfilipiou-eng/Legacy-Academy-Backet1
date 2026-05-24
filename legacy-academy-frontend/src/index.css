@@ -234,7 +234,7 @@ body::before {
   pointer-events: none;
 }
 
-/* Orange Black theme — readable text; accents use --gold-primary */
+/* Orange theme — readable text; accents use --gold-primary */
 body.theme-orange-black {
   color: #e7e9ea;
   --app-text: #e7e9ea;
