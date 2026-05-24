@@ -15,12 +15,12 @@ const BottomNavbar = memo(({
         [alerts]
     );
     const navItemBaseClass = 'flex-1 max-w-[108px] sm:max-w-[116px] h-[72px] sm:h-[80px] flex items-center justify-center transition-all duration-300';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black shadow-[0_10px_40px_rgba(255,255,255,0.15)]' : 'bg-transparent text-white/50 hover:text-white/90'}`;
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black will-change-transform' : 'bg-transparent text-white/50 hover:text-white/90 will-change-transform'}`;
     const iconClass = (isActive) => isActive ? 'w-10 h-10 sm:w-11 sm:h-11 opacity-100' : 'w-9 h-9 sm:w-10 sm:h-10 opacity-80';
 
     // 2026 Style Icons - Bold, Thick Strokes like the Plus Icon
     const HomeIcon = ({ isActive }) => (
-        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
+        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)} shapeRendering="geometricPrecision">
             {isActive ? (
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
             ) : (
@@ -31,7 +31,7 @@ const BottomNavbar = memo(({
     );
 
     const BellIcon = ({ isActive }) => (
-        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
+        <svg viewBox="0 0 24 24" fill={isActive ? "currentColor" : "none"} stroke="currentColor" strokeWidth={isActive ? "0" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)} shapeRendering="geometricPrecision">
             {isActive ? (
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
             ) : (
@@ -44,7 +44,7 @@ const BottomNavbar = memo(({
     );
 
     const SearchIcon = ({ isActive }) => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? "3.5" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? "3.5" : "2.5"} strokeLinecap="round" strokeLinejoin="round" className={iconClass(isActive)} shapeRendering="geometricPrecision">
             <circle cx="11" cy="11" r="7" />
             <line x1="21" y1="21" x2="16" y2="16" />
         </svg>
@@ -86,8 +86,8 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-center"
                 >
-                    <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black shadow-[0_10px_40px_rgba(255,255,255,0.15)]">
-                        <Icons.Plus className="w-10 h-10 sm:w-11 sm:h-11 font-black stroke-[2.7]" />
+                    <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black will-change-transform">
+                        <Icons.Plus className="w-10 h-10 sm:w-11 sm:h-11 font-black stroke-[2.7]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
