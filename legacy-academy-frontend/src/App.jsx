@@ -6220,25 +6220,24 @@ const App = () => {
                     {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
                         {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
-                        <div 
-                            className="absolute inset-0 bg-cover bg-[center_30%] sm:bg-center bg-no-repeat opacity-80"
+                        <img 
+                            src="https://images.unsplash.com/photo-1555993539-1732b0258235?q=100&w=2070&auto=format&fit=crop"
+                            className="absolute inset-0 w-full h-full object-cover opacity-70"
                             style={{ 
-                                backgroundImage: 'url(https://images.unsplash.com/photo-1543781298-b80c35ab959a?q=100&w=2070&auto=format&fit=crop)',
                                 animation: 'kenburns 30s infinite alternate ease-in-out',
-                                transformOrigin: 'center center'
+                                transformOrigin: 'center center',
+                                objectPosition: 'center 30%'
                             }}
+                            alt="Background"
                         />
-                        {/* Dark/Gold Overlays for readability and vibe */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-transparent" />
-                        <div className="absolute inset-0 bg-[var(--gold-primary)] mix-blend-color opacity-20" />
+                        {/* Light overlays so the image is fully visible but text is readable */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-10 mix-blend-overlay" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
-                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
-                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/5 blur-[120px] md:animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
-                        
-                        {/* Tech Grid (Matrix overlay) */}
-                        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,215,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/20 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
+                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/10 blur-[120px] md:animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
                     </div>
 
                     {/* MAIN GLASS CARD */}
