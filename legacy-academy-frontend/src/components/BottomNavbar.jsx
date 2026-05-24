@@ -15,7 +15,7 @@ const BottomNavbar = memo(({
         [alerts]
     );
     const navItemBaseClass = 'flex-1 max-w-[108px] sm:max-w-[116px] h-[72px] sm:h-[80px] flex items-center justify-center transition-all duration-300';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black will-change-transform' : 'bg-transparent text-white/50 hover:text-white/90 will-change-transform'}`;
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-none -translate-y-3 sm:-translate-y-4 bg-white text-black will-change-transform' : 'bg-transparent text-white/50 hover:text-white/90 will-change-transform'}`;
     const iconClass = (isActive) => isActive ? 'w-10 h-10 sm:w-11 sm:h-11 opacity-100' : 'w-9 h-9 sm:w-10 sm:h-10 opacity-80';
 
     // 2026 Style Icons - Bold, Thick Strokes like the Plus Icon
@@ -86,7 +86,7 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-center"
                 >
-                    <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] -translate-y-3 sm:-translate-y-4 bg-white text-black will-change-transform">
+                    <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] flex items-center justify-center rounded-none -translate-y-3 sm:-translate-y-4 bg-white text-black will-change-transform">
                         <Icons.Plus className="w-10 h-10 sm:w-11 sm:h-11 font-black stroke-[2.7]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
@@ -107,7 +107,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>
-                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-[14px] sm:rounded-[16px] border border-black/10' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-[12px] sm:rounded-[14px] border border-white/20 shadow-md'}`}>
+                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-none border border-black/10' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-none border border-white/20 shadow-none'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

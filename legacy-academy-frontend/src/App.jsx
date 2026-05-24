@@ -3269,7 +3269,7 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-3xl overflow-hidden flex flex-col border border-white/10 ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-none overflow-hidden flex flex-col border border-white/10 ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
 
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
@@ -3324,7 +3324,7 @@ const ProfileModal = ({
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 space-y-8 animate-fade-in">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-[2rem] bg-gray-800 overflow-hidden border-4 border-[#0a0a0a] relative shadow-xl shadow-black/50">
+                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-none bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -3364,7 +3364,7 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
-                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-2xl text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : (
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
                                             <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
@@ -3377,7 +3377,7 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-2xl text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
@@ -3403,7 +3403,7 @@ const ProfileModal = ({
                                         }
                                         finally { setCoverUploading(false); }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-full text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-none text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
                                         <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
@@ -3582,17 +3582,23 @@ const ProfileModal = ({
                                         }
                                     }
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
-                                    else alert("Update failed.");
                                 } finally {
                                     setIsProfileSaving(false);
                                 }
-                            }} className="w-full py-4 bg-[var(--gold-primary)] rounded-2xl text-black font-black uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 text-sm disabled:opacity-60">{isProfileSaving ? (t('SAVING') || 'SAVING...') : t('SAVE_CHANGES')}</button>
+                            }} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-none hover:bg-gray-200 transition-colors duration-300">
+                                {isProfileSaving ? <div className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" /> {t('SAVING') || 'SAVING...'}</div> : (t('SAVE') || 'SAVE')}
+                            </button>
                         </div>
                     ) : (
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-start justify-between mb-3 sm:mb-4">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-[2rem] bg-[#0a0a0a] border-[4px] border-[#0a0a0a] overflow-hidden shadow-xl shrink-0">
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-none bg-[#0a0a0a] border border-[#0a0a0a] overflow-hidden shadow-none shrink-0 relative">
+                                        {/* Meander corners */}
+                                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 pointer-events-none" />
+                                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/30 pointer-events-none" />
+                                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/30 pointer-events-none" />
+                                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 pointer-events-none" />
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover" />
                                     </div>
                                 </div>
@@ -4443,18 +4449,23 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
             <div className="relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
-                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-lg">
+                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-none text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-none">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
                 {/* SIGN UP CALL TO ACTION */}
-                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-[var(--gold-primary)] text-black font-black text-[9px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform shadow-lg animate-pulse" style={{ animationDuration: '3s' }}>
+                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-[var(--gold-primary)] text-black font-black text-[9px] uppercase tracking-widest rounded-none hover:scale-105 transition-transform shadow-none animate-pulse" style={{ animationDuration: '3s' }}>
                     {t('JOIN_ACADEMY_PRICE', 'JOIN ACADEMY • 4€/MO')}
                 </button>
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-[28px] overflow-hidden border-2 border-[var(--gold-primary)] bg-black/40 backdrop-blur-md">
+                    <div className="w-28 h-28 rounded-none overflow-hidden border border-[var(--gold-primary)] bg-black/40 backdrop-blur-md relative">
+                        {/* Meander corners */}
+                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[var(--gold-primary)] pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[var(--gold-primary)] pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[var(--gold-primary)] pointer-events-none" />
+                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[var(--gold-primary)] pointer-events-none" />
                         {resolvedPublicProfilePic ? (
                             <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="eager" decoding="async" />
                         ) : (
@@ -4532,11 +4543,11 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* simplified, READ-ONLY POST LIST */}
                 <div className="w-full space-y-4">
                     {loadingPosts ? (
-                        <div className="p-12 text-center text-xs text-white/35 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
+                        <div className="p-12 text-center text-xs text-white/35 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-none bg-white/[0.01]">
                             LOADING ARCHIVES...
                         </div>
                     ) : publicPosts.length === 0 ? (
-                        <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
+                        <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-none bg-white/[0.01]">
                             NO ARCHIVES DISPATCHED YET
                         </div>
                     ) : (
@@ -4548,9 +4559,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 (post.image && post.image.match(/\.(mp4|mov|webm|avi|m4v)(\?.*)?$/i))
                             );
                             return (
-                                <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-[2rem] shadow-lg flex flex-col gap-4 relative group text-left">
+                                <div key={post._id} className="w-full p-5 bg-black/80 backdrop-blur-md border border-white/10 rounded-none shadow-none flex flex-col gap-4 relative group text-left overflow-hidden">
+                                    {/* Meander corners */}
+                                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20 pointer-events-none" />
+                                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20 pointer-events-none" />
+                                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 pointer-events-none" />
+                                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 pointer-events-none" />
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-[10px] overflow-hidden border border-white/10 shrink-0 bg-black/40">
+                                        <div className="w-9 h-9 rounded-none overflow-hidden border border-white/10 shrink-0 bg-black/40">
                                             {resolvedPublicProfilePic ? (
                                                 <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
                                             ) : (
@@ -4594,7 +4610,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                                     {/* MEDIA */}
                                     {(post.image || post.thumbnailUrl || post.videoUrl) && (
-                                        <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
+                                        <div className="w-full rounded-none overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
                                             {isYouTubePost ? (
                                                 <div className="w-full aspect-video bg-black">
                                                     <NeuralVideoPlayer
@@ -4633,6 +4649,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         <div className="flex items-center gap-1.5">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                                             <span className="tabular-nums">{post.comments?.length || 0}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
+                                            <span className="tabular-nums">{post.reposts?.length || 0}</span>
                                         </div>
                                     </div>
                                 </div>
