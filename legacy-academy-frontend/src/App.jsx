@@ -1719,8 +1719,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] bg-black/90 sm:bg-black/40 backdrop-blur-none sm:backdrop-blur-2xl border border-white/10 transition-[transform,opacity,border-color] duration-300 will-change-transform`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-none border border-white/10 bg-black/90 sm:bg-black/60 backdrop-blur-md transition-all duration-300 will-change-transform overflow-hidden`}
         >
+            {/* Subtle Ancient Greek Meander Top Border */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.5) 4px, rgba(255,255,255,0.5) 5px)' }} />
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.5) 4px, rgba(255,255,255,0.5) 5px)' }} />
 
 
             {/* UPLOADING OVERLAY */}
@@ -1747,7 +1750,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[16px] sm:rounded-[20px] bg-black/60 shadow-xl cursor-pointer overflow-hidden border border-white/10" onClick={() => onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-none bg-black/60 shadow-none cursor-pointer overflow-hidden border border-white/20" onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -1797,7 +1800,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-2xl sm:rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative shadow-lg h-auto min-h-[100px] mt-3">
+                                <div className="rounded-none overflow-hidden border border-white/20 bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
                                     {isYouTubeUrl(post.videoUrl) ? (
                                         <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
@@ -1835,7 +1838,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {/* COMMENTS */}
                             <button
                                 onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${showComments ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${showComments ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' : 'text-gray-400 hover:text-white'}`}
                             >
                                 <Icons.MessageSquare className="w-5 h-5" />
                                 <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
@@ -1848,7 +1851,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 bg-green-500/10 border-green-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-400 bg-green-500/10 border-green-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
                                 <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
@@ -1863,7 +1866,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onLike(post._id);
 
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 bg-red-500/10 border-red-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-400 bg-red-500/10 border-red-500/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
                                     <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
@@ -1878,7 +1881,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onDislike(post._id);
 
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/20 scale-105' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/20 scale-105' : 'text-gray-400 hover:text-white'}`}
                             >
                                 <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                 <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
