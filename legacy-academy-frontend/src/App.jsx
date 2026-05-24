@@ -6217,12 +6217,29 @@ const App = () => {
         <div className="app-container">
             {!user ? (
                 <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-                    {/* ANIMATED BACKGROUND ORBS */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/8 blur-[80px] sm:blur-[120px] md:animate-pulse" style={{ animationDuration: '4s' }} />
-                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/5 blur-[90px] sm:blur-[150px] md:animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }} />
-                        <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full bg-white/[0.03] blur-[70px] sm:blur-[100px] md:animate-pulse" style={{ animationDuration: '8s', animationDelay: '1s' }} />
-                        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                    {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
+                        {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
+                        <div 
+                            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity"
+                            style={{ 
+                                backgroundImage: 'url(https://images.unsplash.com/photo-1555993539-1732b0258235?q=100&w=2070&auto=format&fit=crop)',
+                                animation: 'kenburns 30s infinite alternate ease-in-out',
+                                transformOrigin: 'center center'
+                            }}
+                        />
+                        {/* Dark/Gold Overlays for readability and vibe */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80" />
+                        <div className="absolute top-0 left-0 w-full h-full bg-[var(--gold-primary)] mix-blend-overlay opacity-[0.08]" />
+                        
+                        {/* Animated Orbs for magical ancient vibe */}
+                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
+                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/5 blur-[120px] md:animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+                        
+                        {/* Tech Grid (Matrix overlay) */}
+                        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,215,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                     </div>
 
                     {/* MAIN GLASS CARD */}
