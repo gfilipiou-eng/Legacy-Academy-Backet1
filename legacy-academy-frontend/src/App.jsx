@@ -2397,7 +2397,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 
     useEffect(() => {
-        if (user && !saving) {
+        if (user && isOpen) {
             setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
             setShowProfileShareButton(user?.settings?.showProfileShareButton !== false);
@@ -2411,7 +2411,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 )
             );
         }
-    }, [user, saving]);
+    }, [user, isOpen]);
 
     const handleSave = async (key, val) => {
         setSaving(true);
@@ -2430,7 +2430,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'theme') payload = { settings: { theme: val } };
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
-            if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: val } };
+            if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
+            if (key === 'showProfileShareButton') setShowProfileShareButton(Boolean(val));
             const res = await axios.put('/users/settings', payload);
             const mergedResponse = {
                 ...res.data,
@@ -2443,13 +2444,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             onUpdateUser(mergedResponse);
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-            if (key === 'showProfileShareButton') setShowProfileShareButton(val);
+            if (key === 'showProfileShareButton') setShowProfileShareButton(Boolean(val));
 
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
-            if (key === 'showProfileShareButton') setShowProfileShareButton(!val);
+            if (key === 'showProfileShareButton') setShowProfileShareButton(!Boolean(val));
         } finally { setSaving(false); }
     };
 
@@ -3242,7 +3243,7 @@ const ProfileModal = ({
                                         </button>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-2 gap-2.5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                     {PROFILE_DESCRIPTOR_OPTIONS.map(option => {
                                         const isSelected = profileDescriptor === option.value;
                                         const OptionIcon = option.Icon;
@@ -3251,15 +3252,15 @@ const ProfileModal = ({
                                                 key={option.value}
                                                 type="button"
                                                 onClick={() => setProfileDescriptor(option.value)}
-                                                className={`text-left rounded-2xl border px-3.5 py-3 transition-all duration-200 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
                                                         <OptionIcon className="w-5 h-5" />
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <div className="font-black text-[12px] uppercase tracking-wide truncate">{option.label}</div>
-                                                        <div className={`text-[10px] leading-tight ${isSelected ? 'text-black/65' : 'text-white/45'}`}>{option.description}</div>
+                                                        <div className="font-black text-[12px] sm:text-[13px] uppercase tracking-wide truncate">{option.label}</div>
+                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-black/65' : 'text-white/45'}`}>{option.description}</div>
                                                     </div>
                                                 </div>
                                             </button>
@@ -3302,7 +3303,7 @@ const ProfileModal = ({
 
                             <div className="mb-6 px-2">
                                 <div className="flex flex-col mb-4">
-                                    <div className="font-black text-white text-lg sm:text-xl flex items-center gap-2 leading-none uppercase tracking-tighter">
+                                    <div className="font-black text-white text-lg sm:text-xl flex items-center gap-2 leading-none uppercase tracking-tighter flex-wrap">
                                         <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
                                             {displayUser?.role === 'Founder' && (
@@ -3319,6 +3320,12 @@ const ProfileModal = ({
                                                     />
                                                 </svg>
                                             )}
+                                            {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
+                                                <div className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 ${selectedProfileDescriptor.accentClass}`}>
+                                                    <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
+                                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.18em]">{selectedProfileDescriptor.label}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="text-gray-400 text-sm font-bold mt-1 flex items-center gap-2">
@@ -3326,15 +3333,6 @@ const ProfileModal = ({
                                         <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                 </div>
-
-                                {selectedProfileDescriptor && (
-                                    <div className="mb-4">
-                                        <div className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 ${selectedProfileDescriptor.accentClass}`}>
-                                            <SelectedProfileDescriptorIcon className="w-4 h-4 shrink-0" />
-                                            <span className="text-[11px] font-black uppercase tracking-[0.18em]">{selectedProfileDescriptor.label}</span>
-                                        </div>
-                                    </div>
-                                )}
 
                                 <div className="text-[14px] sm:text-[15px] text-white/90 leading-relaxed max-w-[90%] whitespace-pre-wrap font-medium mb-5 break-words">
                                     {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
