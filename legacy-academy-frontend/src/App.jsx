@@ -234,8 +234,8 @@ const isUserOnline = (u, currentUser) => {
     const lastSeen = u?.lastSeen;
     if (!lastSeen) return false;
     try {
-        // Robust Threshold: 5 minutes (300,000ms) to account for clock skew/distributed systems
-        return (Date.now() - new Date(u.lastSeen).getTime()) < 300000;
+        // Tight Threshold: 60 seconds (60,000ms) for real-time Snapchat-like accuracy
+        return (Date.now() - new Date(u.lastSeen).getTime()) < 60000;
     } catch (e) { return false; }
 };
 
@@ -869,7 +869,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             !imgError ? (
                                 <img
                                     src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                    className="max-w-full max-h-full object-contain"
+                                    className="max-w-full max-h-full object-contain cursor-pointer"
+                                    onClick={onClose}
                                     decoding="async"
                                     onError={() => {
                                         setImgError(true);
@@ -1917,6 +1918,20 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             if (incomingUnread.length > 0) {
                 // Trigger burn protocol
                 Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => { })));
+                
+                // Snapchat UI Logic: Auto-remove from view after 5 seconds if not locked
+                setTimeout(() => {
+                    setMessages(prev => {
+                        const msgs = prev[otherUserId] || [];
+                        const remaining = msgs.filter(m => {
+                            if (incomingUnread.find(u => u._id === m._id)) {
+                                return m.isLocked; // Keep only if it got locked in the meantime
+                            }
+                            return true;
+                        });
+                        return { ...prev, [otherUserId]: remaining };
+                    });
+                }, 5000);
             }
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
@@ -1950,6 +1965,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         const targetId = activeChat._id;
         fetchMessages(targetId);
 
+        // Snapchat UI Logic: Poll to reflect backend auto-deletes for messages we sent
+        const pollInterval = setInterval(() => {
+            fetchMessages(targetId);
+        }, 5000);
+
         // 🔥 REAL-TIME MESSAGE LISTENER
         const handleMessageReceived = (msg) => {
             const normalizedMessage = normalizeWhisper(msg);
@@ -1966,6 +1986,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 // Auto-read if we are looking at it
                 if (isFromCurrentTarget && !normalizedMessage.isLocked && !normalizedMessage.isRead) {
                     axios.patch(`/messages/${normalizedMessage._id}/read`).catch(() => { });
+                    setTimeout(() => {
+                        setMessages(prev => {
+                            const msgs = prev[targetId] || [];
+                            const remaining = msgs.filter(m => m._id === normalizedMessage._id ? m.isLocked : true);
+                            return { ...prev, [targetId]: remaining };
+                        });
+                    }, 5000);
                 }
             }
         };
@@ -1981,6 +2008,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         });
 
         return () => {
+            clearInterval(pollInterval);
             socket.off('message.received', handleMessageReceived);
             socket.off('chat.cleared');
         };
@@ -3300,7 +3328,7 @@ const ProfileModal = ({
                                                 onClick={() => setProfileDescriptor(option.value)}
                                                 className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
-                                                <div className="flex items-center gap-3 min-w-0">
+                                                <div className="flex items-center gap-3 min-w-0 pointer-events-none">
                                                     <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
                                                         <OptionIcon className="w-5 h-5" />
                                                     </div>
@@ -3338,7 +3366,6 @@ const ProfileModal = ({
                                     if (isSameId(displayUser?._id, currentUser?._id)) {
                                         onUpdateUser?.(optimisticUser);
                                     }
-                                    setIsEditing(false);
                                     const res = await axios.put(`/users/${displayUser?._id}`, {
                                         bio: trimmedBio,
                                         username: trimmedUsername,
@@ -3356,8 +3383,11 @@ const ProfileModal = ({
                                         if (isSameId(displayUser?._id, currentUser?._id)) {
                                             localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
                                         }
+                                        setUserData(prev => ({ ...(prev || {}), ...mergedUpdatedUser }));
                                         if (onUpdateUser) onUpdateUser(mergedUpdatedUser);
                                         fetchUsers(displayUser?._id).catch(() => { });
+                                        setActiveList(null);
+                                        setIsEditing(false);
                                         if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
                                     }
                                 } catch (e) {
@@ -4481,6 +4511,7 @@ const App = () => {
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
     const usersRef = useRef(users);
+    const onlineUsersRef = useRef(new Set());
 
     const lastScrollTime = useRef(0);
     const handleScroll = (e) => {
@@ -4506,6 +4537,30 @@ const App = () => {
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
     useEffect(() => { postsRef.current = posts; }, [posts]);
     useEffect(() => { usersRef.current = users; }, [users]);
+
+    // Track online users to show a toast when someone comes online
+    useEffect(() => {
+        if (!user) return;
+        const currentOnline = new Set();
+        users.forEach(u => {
+            if (isUserOnline(u, user) && !isSameId(u._id, user._id)) {
+                currentOnline.add(String(u._id));
+            }
+        });
+
+        // Don't show toast on initial load (when previous size was 0)
+        if (onlineUsersRef.current.size > 0) {
+            currentOnline.forEach(id => {
+                if (!onlineUsersRef.current.has(id)) {
+                    const comingOnlineUser = users.find(u => String(u._id) === id);
+                    if (comingOnlineUser) {
+                        addToast(`${comingOnlineUser.username} is now online`, 'success');
+                    }
+                }
+            });
+        }
+        onlineUsersRef.current = currentOnline;
+    }, [users, user, addToast]);
     const isProcessingRequest = useRef(false);
 
     // SCROLL TO TOP ON LOGIN / TAB CHANGE
@@ -6122,7 +6177,10 @@ const App = () => {
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
-                                                <div className="relative"><Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" /><input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] ai-glass shadow-inner" /></div>
+                                                <div className="relative">
+                                                    <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)] ai-glass shadow-inner" />
+                                                </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
                                                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)] flex items-center gap-2">

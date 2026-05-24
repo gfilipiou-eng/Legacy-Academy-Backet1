@@ -14,6 +14,7 @@ const BottomNavbar = memo(({
         () => (alerts || []).filter((n) => !n.read).length,
         [alerts]
     );
+    const isFounder = user?.role === 'Founder';
     const navItemBaseClass = 'flex-1 max-w-[108px] sm:max-w-[116px] h-[72px] sm:h-[80px] flex items-center justify-center transition-all duration-200';
     const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[10px] sm:rounded-[12px] -translate-y-4 sm:-translate-y-4.5 bg-white text-black shadow-[0_16px_40px_rgba(255,255,255,0.10)]' : 'rounded-[18px] sm:rounded-[20px] -translate-y-2 sm:-translate-y-2.5 bg-[#0b0b0b] text-white/92 border border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'}`;
     const iconClass = (isActive) => isActive ? 'w-9 h-9 sm:w-10 sm:h-10 opacity-100' : 'w-9 h-9 sm:w-10 sm:h-10 opacity-95';
@@ -75,7 +76,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>
-                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-11 h-11 sm:w-12 sm:h-12 rounded-[10px] border border-black/10' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/15'}`}>
+                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? `w-11 h-11 sm:w-12 sm:h-12 ${isFounder ? 'rounded-[14px] sm:rounded-[16px]' : 'rounded-[10px]'} border border-black/10` : `w-10 h-10 sm:w-11 sm:h-11 ${isFounder ? 'rounded-[12px] sm:rounded-[14px]' : 'rounded-full'} border border-white/15`}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
