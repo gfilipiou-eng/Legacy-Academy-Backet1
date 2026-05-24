@@ -2931,9 +2931,9 @@ const ProfileModal = ({
         const isMe = isSameId(profileUserId, currentUserId);
 
         // 1. Determine the "base" data source (detailed info like bio)
-        // For ME: currentUser is always the most fresh
-        // For OTHERS: userData (from specific fetch) or profileUser (from global list)
-        const base = isMe ? currentUser : (userData || profileUser);
+        // Prefer local optimistic data first so profile edits are visible instantly,
+        // even before the parent/currentUser poll catches up.
+        const base = isMe ? (userData || currentUser || profileUser) : (userData || profileUser);
 
         // 2. Get "live" status (online status, latest follower counts) from global users list
         const live = allUsers.find(u => isSameId(u._id, base?._id)) || {};
@@ -2961,6 +2961,7 @@ const ProfileModal = ({
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
+    const isFounderProfile = displayUser?.role === 'Founder' || currentUser?.role === 'Founder' || profileUser?.role === 'Founder';
     const canShowProfileShareButton = (isMe
         ? currentUser?.settings?.showProfileShareButton
         : displayUser?.settings?.showProfileShareButton) !== false;
@@ -3356,7 +3357,7 @@ const ProfileModal = ({
                                         );
                                     })}
                                 </div>
-                                {displayUser?.role === 'Founder' && (
+                                {isFounderProfile && (
                                     <div className="mt-4 pt-4 border-t border-white/10">
                                         <label className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest pl-1 mb-2 block">FOUNDER AFFILIATION</label>
                                         <div className="relative">
@@ -3440,7 +3441,6 @@ const ProfileModal = ({
                                             onUpdateUser?.(previousUserSnapshot);
                                         }
                                     }
-                                    setIsEditing(true);
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
                                     else alert("Update failed.");
                                 } finally {
@@ -3463,7 +3463,7 @@ const ProfileModal = ({
                                     <div className="font-black text-white text-lg sm:text-xl flex items-center gap-2 leading-none uppercase tracking-tighter flex-wrap">
                                         <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            {displayUser?.role === 'Founder' && (
+                                            {isFounderProfile && (
                                                 <svg
                                                     aria-label="Verified Founder"
                                                     viewBox="0 0 22 22"
