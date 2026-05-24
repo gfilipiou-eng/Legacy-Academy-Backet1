@@ -1726,7 +1726,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-none border border-white/10 bg-black/90 sm:bg-black/60 backdrop-blur-md transition-all duration-300 will-change-transform overflow-hidden`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-[2rem] border border-white/10 bg-black/40 sm:bg-black/40 backdrop-blur-md transition-all duration-300 will-change-transform shadow-[0_8px_30px_rgb(0,0,0,0.5)] overflow-hidden`}
         >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="absolute top-0 left-0 right-0 h-1.5 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.5) 4px, rgba(255,255,255,0.5) 5px)' }} />
@@ -1757,8 +1757,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-none bg-black/60 shadow-none cursor-pointer overflow-hidden border border-white/20" onClick={() => onViewProfile(author)}>
-                            <ProfileAvatar user={author} className="w-full h-full object-cover" />
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-lg cursor-pointer overflow-hidden border border-[var(--gold-primary)]/20" onClick={() => onViewProfile(author)}>
+                            <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
                         </div>
                     </div>
 
@@ -1807,7 +1807,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-none overflow-hidden border border-white/20 bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
+                                <div className="rounded-[1.5rem] overflow-hidden border border-white/10 bg-[#050505] relative shadow-lg h-auto min-h-[100px] mt-3">
                                     {isYouTubeUrl(post.videoUrl) ? (
                                         <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
@@ -6520,13 +6520,15 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black border border-white/20 transition-all duration-300 z-50 p-0 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[14px] bg-black/40 border border-white/10 transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
                                         duration={0}
                                     >
-                                        <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-white transition-colors duration-300 pointer-events-none">
+                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
+                                        </svg>
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
