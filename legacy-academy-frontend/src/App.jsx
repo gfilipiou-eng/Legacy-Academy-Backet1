@@ -6579,7 +6579,13 @@ const App = () => {
                                         {shareModalPost.author?.username}
                                         <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} className="w-4 h-4" />
                                     </div>
-                                    <div className="text-gray-500 text-xs mt-1">@legacy_academy</div>
+                                    {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
+                                        <div className="text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">
+                                            {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
+                                        </div>
+                                    ) : (
+                                        <div className="text-gray-500 text-xs mt-1">@{shareModalPost.author?.username?.toLowerCase().replace(/\s+/g, '') || 'legacy_academy'}</div>
+                                    )}
                                 </div>
                             </div>
                             
@@ -6589,13 +6595,22 @@ const App = () => {
                             )}
                             
                             {/* Media - FULL COVER/CONTAIN */}
-                            {(shareModalPost.image || shareModalPost.thumbnailUrl) && (
-                                <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2">
-                                    <img 
-                                        src={resolveMediaUrl(shareModalPost.image || shareModalPost.thumbnailUrl)} 
-                                        className="w-full h-auto object-contain max-h-[400px]" 
-                                        alt="" 
-                                    />
+                            {(shareModalPost.image || shareModalPost.thumbnailUrl || shareModalPost.videoUrl) && (
+                                <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
+                                    {shareModalPost.videoUrl && !shareModalPost.image && !shareModalPost.thumbnailUrl ? (
+                                        <video 
+                                            src={resolveMediaUrl(shareModalPost.videoUrl)} 
+                                            className="w-full h-auto object-contain max-h-[400px]" 
+                                            controls
+                                            controlsList="nodownload"
+                                        />
+                                    ) : (
+                                        <img 
+                                            src={resolveMediaUrl(shareModalPost.image || shareModalPost.thumbnailUrl)} 
+                                            className="w-full h-auto object-contain max-h-[400px]" 
+                                            alt="" 
+                                        />
+                                    )}
                                 </div>
                             )}
                             
