@@ -2025,6 +2025,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             if (incomingUnread.length > 0) {
                 // Trigger burn protocol
                 Promise.all(incomingUnread.map(m => axios.patch(`/messages/${m._id}/read`).catch(() => { })));
+            }
                 
         } catch (e) { console.error('Failed to fetch messages', e); }
     };
