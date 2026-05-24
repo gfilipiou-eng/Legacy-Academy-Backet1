@@ -317,16 +317,16 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             }}
             className={`inline-flex items-center gap-1.5 text-[var(--gold-primary)] font-bold tracking-widest uppercase hover:underline cursor-pointer ${textSizeClass} ${className}`}
         >
-            <div className={`${avatarSizeClass} overflow-hidden border border-[var(--gold-primary)]/30 bg-black/40 shrink-0`}>
+            <div className={`${avatarSizeClass} overflow-hidden bg-black/40 shrink-0 flex items-center justify-center`}>
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[8px] font-black text-[var(--gold-primary)]/80">
+                    <span className="text-[8px] font-black text-[var(--gold-primary)]/80">
                         {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                    </div>
+                    </span>
                 )}
             </div>
-            <Icons.Link className={`${iconSizeClass} shrink-0`} />
+            <Icons.Link className={`${iconSizeClass} shrink-0 opacity-70`} />
             <span className="truncate max-w-[180px]">@{normalizedUsername}</span>
         </button>
     );
