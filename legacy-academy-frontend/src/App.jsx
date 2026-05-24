@@ -2380,13 +2380,16 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             >
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`group/msg max-w-[85%] px-5 py-3 rounded-none text-[15px] shadow-none relative border cursor-pointer select-none ${isOwn ? 'bg-white text-black border-white' : 'bg-black text-white border-white/20'} ${m.isLocked ? 'ring-2 ring-white/80' : ''} hover:scale-[1.02] transition-transform duration-200`}
+                                                    className={`group/msg max-w-[85%] px-5 py-3 rounded-none text-[15px] shadow-lg relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)] shadow-[0_0_15px_rgba(212,175,55,0.3)]' : 'bg-black text-white border-[var(--gold-primary)]/30'} ${m.isLocked ? 'ring-2 ring-white/80' : ''} hover:scale-[1.02] transition-transform duration-200`}
                                                 >
+                                                {/* Subtle Ancient Greek Meander Top Border */}
+                                                <div className={`absolute top-0 left-0 right-0 h-1 pointer-events-none ${isOwn ? 'opacity-30' : 'opacity-20'}`} style={{ backgroundImage: isOwn ? 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.5) 4px, rgba(0,0,0,0.5) 5px)' : 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(212,175,55,0.5) 4px, rgba(212,175,55,0.5) 5px)' }} />
+
                                                 {isOwn && (
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
-                                                        className={`absolute -top-2 right-0 w-6 h-6 rounded-none flex items-center justify-center text-[10px] border shadow-none opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 ${m.isLocked ? 'bg-white text-black border-black opacity-100' : 'bg-black text-gray-300 border-white/20 hover:bg-white/10'}`}
+                                                        className={`absolute -top-2 right-0 w-6 h-6 rounded-none flex items-center justify-center text-[10px] border shadow-none opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 z-10 ${m.isLocked ? 'bg-black text-[var(--gold-primary)] border-[var(--gold-primary)] opacity-100' : 'bg-black text-[var(--gold-primary)] border-[var(--gold-primary)]/50 hover:bg-black/80'}`}
                                                         title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
                                                     >
                                                         <Icons.Lock className="w-3 h-3" />
@@ -2394,11 +2397,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 )}
                                                 {/* IMAGE ATTACHMENT */}
                                                 {imageUrl && (
-                                                    <div className="mb-2">
+                                                    <div className="mb-2 relative z-10">
                                                         <img
                                                             src={resolveMediaUrl(imageUrl)}
                                                             alt=""
-                                                            className="max-w-full max-h-[300px] rounded-none object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/20"
+                                                            className="max-w-full max-h-[300px] rounded-none object-cover cursor-pointer hover:opacity-90 transition-opacity border border-black/20"
                                                             onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
                                                             loading="lazy"
                                                             onError={(e) => e.target.style.display = 'none'} // Hide if broken
@@ -2407,21 +2410,21 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 )}
                                                 {/* AUDIO ATTACHMENT */}
                                                 {realAudio ? (
-                                                    <div className="flex flex-col gap-2">
+                                                    <div className="flex flex-col gap-2 relative z-10">
                                                         <div className="flex items-center gap-2">
-                                                            <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
+                                                            <div className={`w-2 h-2 rounded-full animate-pulse ${isOwn ? 'bg-black' : 'bg-[var(--gold-primary)]'}`} />
+                                                            <span className={`text-[10px] font-black uppercase tracking-widest ${isOwn ? 'text-black' : 'text-[var(--gold-primary)]'}`}>{t('VOICE_NOTE')}</span>
                                                         </div>
                                                         <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                        {m.text && <p className="text-white/90 font-medium leading-relaxed mt-1">{m.text}</p>}
+                                                        {m.text && <p className="font-bold leading-relaxed mt-1">{m.text}</p>}
                                                     </div>
                                                 ) : (
-                                                    m.text && !imageUrl ? <p className="leading-relaxed font-medium text-white/90">{m.text}</p> : (m.text && imageUrl ? <p className="mt-2 leading-relaxed font-medium text-white/90">{m.text}</p> : null)
+                                                    m.text && !imageUrl ? <p className="leading-relaxed font-bold relative z-10">{m.text}</p> : (m.text && imageUrl ? <p className="mt-2 leading-relaxed font-bold relative z-10">{m.text}</p> : null)
                                                 )}
-                                                <div className="flex justify-end items-center gap-1.5 mt-1.5 opacity-60">
-                                                    <span className="text-[10px] font-medium">{formatDate(m.createdAt, t, lang)}</span>
+                                                <div className="flex justify-end items-center gap-1.5 mt-1.5 opacity-80 relative z-10">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest">{formatDate(m.createdAt, t, lang)}</span>
                                                     {isOwn && (
-                                                        <Icons.Check className={`w-3 h-3 ${m.isRead ? 'text-blue-400' : 'text-gray-400'}`} />
+                                                        <Icons.Check className={`w-3 h-3 ${m.isRead ? 'text-black' : 'text-black/50'}`} />
                                                     )}
                                                 </div>
                                                 </div>
