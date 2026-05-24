@@ -130,8 +130,8 @@
     "PRIVATE_DESC": "Μόνο ακόλουθοι βλέπουν περιεχόμενο",
     "GUARD_TITLE": "Guard Chat",
     "GUARD_DESC": "Μηνύματα μόνο από τους ακολούθους σας",
-    "PRIVATE_DESC_SHORT": "ΜΟΝΟ ΑΚΟΛΟΥΘΟΙ",
-    "GUARD_DESC_SHORT": "ΜΟΝΟ ΑΠΟ ΑΚΟΛΟΥΘΟΥΣ",
+    "PRIVATE_DESC_SHORT": "Μόνο ακόλουθοι βλέπουν το περιεχόμενο",
+    "GUARD_DESC_SHORT": "Μηνύματα μόνο από ακολούθους",
     "UNCOVER_RESTRICTED_OPS": "ΕΜΦΑΝΙΣΗ ΑΠΟΡΡΗΤΩΝ ΛΕΙΤΟΥΡΓΙΩΝ",
     "FOLLOW_TO_VIEW": "ΑΚΟΛΟΥΘΗΣΤΕ ΓΙΑ ΠΡΟΒΟΛΗ",
     "PRIVACY": "ΙΔΙΩΤΙΚΟΤΗΤΑ",
@@ -207,6 +207,7 @@
     "UPDATE_FAILED": "Η ενημέρωση απέτυχε.",
     "MIC_DENIED": "Η πρόσβαση στο μικρόφωνο απορρίφθηκε.",
     "FOLLOWS_YOU": "Σας ακολουθεί",
+    "AESTHETICS": "ΑΙΣΘΗΤΙΚΗ",
     "INTEL_COUNT_DETECTED": "{{count}} ΔΗΜΟΣΙΕΥΣΕΙΣ ΕΝΤΟΠΙΣΤΗΚΑΝ",
     "INTEL_COUNT_DEPLOYED": "{{count}} ΔΗΜΟΣΙΕΥΣΕΙΣ ΠΑΡΑΤΑΧΘΗΚΑΝ",
     "WELCOME_FOUNDER": "Καλωσόρισες Founder/CEO",
@@ -276,5 +277,7 @@
     "DESC_COMMUNITY": "Κοινότητα",
     "DESC_COMMUNITY_SUB": "Οι άνθρωποι προηγούνται",
     "DESC_VISIONARY": "Οραματιστής",
-    "DESC_VISIONARY_SUB": "Εστιασμένος στο μέλλον"
+    "DESC_VISIONARY_SUB": "Εστιασμένος στο μέλλον",
+    "SHARE_PROFILE_BUTTON": "Κουμπί Κοινοποίησης Προφίλ",
+    "SHARE_PROFILE_DESC": "Απενεργοποιήστε το αν θέλετε να κρύψετε το κουμπί κοινοποίησης από το προφίλ σας."
 }

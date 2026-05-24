@@ -2403,7 +2403,7 @@ const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
     );
 };
 
-const ShareSettingLabel = () => (
+const ShareSettingLabel = ({ t }) => (
     <div className="flex items-center gap-2 min-w-0">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white shrink-0">
             <circle cx="18" cy="5" r="3" />
@@ -2412,7 +2412,7 @@ const ShareSettingLabel = () => (
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
         </svg>
-        <span className="text-sm font-bold text-white truncate">Share Button</span>
+        <span className="text-sm font-bold text-white truncate">{t('SHARE_PROFILE_BUTTON', 'Share Button')}</span>
     </div>
 );
 
@@ -2585,7 +2585,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="">
                                 <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
                             </SettingRow>
-                            <SettingRow label={<ShareSettingLabel />} desc="Turn this off if you want to hide the share button on your profile." hoverColor="">
+                            <SettingRow label={<ShareSettingLabel t={t} />} desc={t('SHARE_PROFILE_DESC', 'Turn this off if you want to hide the share button on your profile.')} hoverColor="">
                                 <Toggle
                                     active={showProfileShareButton}
                                     onToggle={() => {
@@ -3317,9 +3317,9 @@ const ProfileModal = ({
                                     {profileDescriptor && (
                                         <button
                                             type="button"
-                                            onPointerDown={(e) => { e.stopPropagation(); setProfileDescriptor(''); }}
-                                            onClick={(e) => { e.stopPropagation(); setProfileDescriptor(''); }}
-                                            className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer touch-manipulation p-2 -mr-2"
+                                            onTouchEnd={(e) => { e.preventDefault(); setProfileDescriptor(''); }}
+                                            onClick={(e) => { e.preventDefault(); setProfileDescriptor(''); }}
+                                            className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer p-2 -mr-2"
                                         >
                                             {t('CLEAR', 'Clear')}
                                         </button>
@@ -3333,9 +3333,15 @@ const ProfileModal = ({
                                             <button
                                                 key={option.value}
                                                 type="button"
-                                                onPointerDown={(e) => { e.stopPropagation(); setProfileDescriptor(option.value); }}
-                                                onClick={(e) => { e.stopPropagation(); setProfileDescriptor(option.value); }}
-                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                                onTouchEnd={(e) => { 
+                                                    e.preventDefault(); 
+                                                    setProfileDescriptor(option.value); 
+                                                }}
+                                                onClick={(e) => { 
+                                                    e.preventDefault();
+                                                    setProfileDescriptor(option.value); 
+                                                }}
+                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
                                                 <div className="flex items-center gap-3 min-w-0">
                                                     <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
@@ -3375,6 +3381,12 @@ const ProfileModal = ({
                                     if (isSameId(displayUser?._id, currentUser?._id)) {
                                         onUpdateUser?.(optimisticUser);
                                     }
+                                    
+                                    // Άμεσο κλείσιμο (optimistic navigation)
+                                    setActiveList(null);
+                                    setIsEditing(false);
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    
                                     const res = await axios.put(`/users/${displayUser?._id}`, {
                                         bio: trimmedBio,
                                         username: trimmedUsername,
@@ -3395,8 +3407,6 @@ const ProfileModal = ({
                                         setUserData(prev => ({ ...(prev || {}), ...mergedUpdatedUser }));
                                         if (onUpdateUser) onUpdateUser(mergedUpdatedUser);
                                         fetchUsers(displayUser?._id).catch(() => { });
-                                        setActiveList(null);
-                                        setIsEditing(false);
                                         if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
                                     }
                                 } catch (e) {
