@@ -4991,7 +4991,9 @@ const App = () => {
                             JSON.stringify(prev.followRequests) !== JSON.stringify(me.followRequests) ||
                             clean(prev.profilePic) !== clean(me.profilePic) ||
                             prev.username !== me.username ||
-                            prev.bio !== me.bio;
+                            prev.bio !== me.bio ||
+                            prev.profileDescriptor !== me.profileDescriptor ||
+                            prev.settings?.showProfileShareButton !== me.settings?.showProfileShareButton;
 
                         if (isDiff) {
                             console.log("🔄 [SYNC] Self-profile updated from network poll");
@@ -5009,7 +5011,15 @@ const App = () => {
                                 nextPic = prev.profilePic;
                             }
 
-                            const updated = { ...prev, ...me, profilePic: nextPic };
+                            const updated = {
+                                ...prev,
+                                ...me,
+                                profilePic: nextPic,
+                                settings: {
+                                    ...(prev?.settings || {}),
+                                    ...(me?.settings || {})
+                                }
+                            };
                             localStorage.setItem('user', JSON.stringify(updated));
                             return updated;
                         }
@@ -5023,8 +5033,17 @@ const App = () => {
                 const currentUserId = safeId(user);
                 return incoming.map(u => {
                     if (isSameId(u._id, currentUserId) && user) {
-                        // Merge server data with our potentially fresher local state (e.g. optimistic profilePic)
-                        return { ...u, ...user };
+                        // Preserve fresh local optimistic data, but never lose new server-backed profile metadata.
+                        return {
+                            ...u,
+                            ...user,
+                            profileDescriptor: user.profileDescriptor ?? u.profileDescriptor,
+                            settings: {
+                                ...(u?.settings || {}),
+                                ...(user?.settings || {}),
+                                showProfileShareButton: user?.settings?.showProfileShareButton ?? u?.settings?.showProfileShareButton
+                            }
+                        };
                     }
                     return u;
                 });

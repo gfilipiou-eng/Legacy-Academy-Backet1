@@ -14,13 +14,13 @@ const BottomNavbar = memo(({
         () => (alerts || []).filter((n) => !n.read).length,
         [alerts]
     );
-    const navItemBaseClass = 'flex-1 max-w-[96px] sm:max-w-[104px] h-[62px] sm:h-[70px] flex items-center justify-center rounded-[20px] sm:rounded-[24px] transition-colors duration-200';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'bg-white/[0.04] text-white/80'}`;
+    const navItemBaseClass = 'flex-1 max-w-[94px] sm:max-w-[102px] h-[60px] sm:h-[68px] flex items-center justify-center rounded-[12px] sm:rounded-[14px] border transition-colors duration-200';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'bg-white text-black border-white' : 'bg-black text-white/78 border-white/10'}`;
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black">
             <div className="flex justify-center px-3 sm:px-4 pt-5 sm:pt-6 pb-[calc(8px+env(safe-area-inset-bottom))] bg-black">
-                <div className="w-full bottom-nav-glass rounded-none px-2 py-2 sm:py-2.5 pointer-events-auto flex items-center justify-between relative gap-1.5">
+                <div className="w-full bottom-nav-glass rounded-none px-2 py-2 sm:py-2.5 pointer-events-auto flex items-center justify-between relative gap-2">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
@@ -53,7 +53,7 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-center"
                 >
-                    <div className="w-[66px] h-[66px] sm:w-[74px] sm:h-[74px] flex items-center justify-center rounded-[24px] sm:rounded-[28px] bg-white text-black shadow-[0_12px_30px_rgba(255,255,255,0.09)]">
+                    <div className="w-[62px] h-[62px] sm:w-[70px] sm:h-[70px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] border border-white bg-white text-black">
                         <Icons.Plus className="w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 font-black" />
                     </div>
                 </button>
