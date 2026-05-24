@@ -5063,14 +5063,35 @@ const App = () => {
         const onNotificationRecv = (data) => {
             console.log("📡 [SOCKET] Real-time notification received", data);
 
-            fetchNotifications(true); // silent = true to avoid double sound
+            // Άμεση ενημέρωση του UI χωρίς αναμονή για το δίκτυο
+            setAlerts(prev => [data, ...prev]);
+            setUser(prev => {
+                if (!prev) return prev;
+                const updated = { ...prev, notifications: [data, ...(prev.notifications || [])] };
+                localStorage.setItem('user', JSON.stringify(updated));
+                return updated;
+            });
+            
+            // Το Toast δείχνει αμέσως την ειδοποίηση
+            let toastMsg = data.text || "New Notification";
+            if (data.type === 'follow') toastMsg = `${data.fromUsername} ${t('NOTIF_FOLLOW', 'started following you')}`;
+            if (data.type === 'like') toastMsg = `${data.fromUsername} ${t('NOTIF_LIKE', 'liked your post')}`;
+            if (data.type === 'comment') toastMsg = `${data.fromUsername} ${t('NOTIF_COMMENT', 'commented on your post')}`;
+            
+            addToast(toastMsg, 'info');
+
+            fetchNotifications(true); // silent = true to ensure DB is perfectly synced
         };
 
         const onMessageRecv = (msg) => {
             // Only play sound if the message is for US and from someone else
             if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
                 console.log("📨 [SOCKET] Live message sound trigger");
-
+                
+                // Show a toast if chat window is not open with this user
+                if (!activeChat || String(activeChat._id) !== String(msg.sender)) {
+                    addToast(`${t('NOTIF_MESSAGE', 'New message from')} ${msg.senderName || 'Agent'}`, 'info');
+                }
             }
         };
 
