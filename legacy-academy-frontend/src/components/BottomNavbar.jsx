@@ -14,8 +14,9 @@ const BottomNavbar = memo(({
         () => (alerts || []).filter((n) => !n.read).length,
         [alerts]
     );
-    const navItemBaseClass = 'flex-1 max-w-[106px] sm:max-w-[114px] h-[70px] sm:h-[78px] flex items-center justify-center transition-all duration-200';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[11px] sm:rounded-[12px] -translate-y-3 sm:-translate-y-3.5 bg-white text-black shadow-[0_12px_34px_rgba(255,255,255,0.08)]' : 'rounded-[18px] sm:rounded-[20px] -translate-y-1.5 sm:-translate-y-2 bg-[#050505] text-white/78'}`;
+    const navItemBaseClass = 'flex-1 max-w-[108px] sm:max-w-[116px] h-[72px] sm:h-[80px] flex items-center justify-center transition-all duration-200';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'rounded-[10px] sm:rounded-[12px] -translate-y-4 sm:-translate-y-4.5 bg-white text-black shadow-[0_16px_40px_rgba(255,255,255,0.10)]' : 'rounded-[20px] sm:rounded-[22px] -translate-y-2 sm:-translate-y-2.5 bg-[#050505] text-white/80'}`;
+    const iconClass = (isActive) => isActive ? 'w-9 h-9 sm:w-10 sm:h-10 stroke-[1.8]' : 'w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 stroke-[1.65]';
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black">
@@ -27,7 +28,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'home')}>
-                        <Icons.Home className="w-8 sm:w-9 h-8 sm:h-9" />
+                        <Icons.Home className={iconClass(activeTab === 'home')} />
                     </div>
                 </button>
 
@@ -37,7 +38,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end relative flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'alerts')}>
-                        <Icons.Bell className="w-8 sm:w-9 h-8 sm:h-9" />
+                        <Icons.Bell className={iconClass(activeTab === 'alerts')} />
                     </div>
                     {unreadCount > 0 && (
                         <div className="absolute top-1 right-1 sm:right-2.5 min-w-[20px] h-[20px] bg-red-600 rounded-full flex items-center justify-center border-2 border-[#12121a] shadow-lg z-10 animate-pulse">
@@ -53,8 +54,8 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-end pb-1.5 sm:pb-2"
                 >
-                    <div className="w-[72px] h-[72px] sm:w-[78px] sm:h-[78px] flex items-center justify-center rounded-[14px] sm:rounded-[16px] -translate-y-3.5 sm:-translate-y-4 bg-white text-black shadow-[0_14px_36px_rgba(255,255,255,0.09)]">
-                        <Icons.Plus className="w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 font-black" />
+                    <div className="w-[74px] h-[74px] sm:w-[82px] sm:h-[82px] flex items-center justify-center rounded-[13px] sm:rounded-[15px] -translate-y-4 sm:-translate-y-4.5 bg-white text-black shadow-[0_16px_42px_rgba(255,255,255,0.11)]">
+                        <Icons.Plus className="w-9 h-9 sm:w-10 sm:h-10 font-black stroke-[2.7]" />
                     </div>
                 </button>
 
@@ -64,7 +65,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'search')}>
-                        <Icons.Search className="w-8 sm:w-9 h-8 sm:h-9" />
+                        <Icons.Search className={iconClass(activeTab === 'search')} />
                     </div>
                 </button>
 
@@ -74,7 +75,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-end flex-1 pb-0.5 sm:pb-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>
-                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border border-white/15 bg-black">
+                        <div className={`overflow-hidden bg-black ${activeTab === 'profile' ? 'w-11 h-11 sm:w-12 sm:h-12 rounded-[10px] border border-black/10' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/15'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

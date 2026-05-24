@@ -3335,7 +3335,6 @@ const ProfileModal = ({
                                         profileDescriptor: nextProfileDescriptor
                                     };
                                     setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
-                                    setProfileUser(prev => (prev && isSameId(prev._id, optimisticUser._id) ? { ...prev, ...optimisticUser } : prev));
                                     if (isSameId(displayUser?._id, currentUser?._id)) {
                                         onUpdateUser?.(optimisticUser);
                                     }
@@ -3365,7 +3364,6 @@ const ProfileModal = ({
                                     console.error(e);
                                     if (displayUser) {
                                         setUserData(prev => ({ ...(prev || {}), ...(previousUserSnapshot || {}) }));
-                                        setProfileUser(prev => (prev && isSameId(prev._id, displayUser?._id) ? { ...prev, ...(previousUserSnapshot || {}) } : prev));
                                         if (isSameId(displayUser?._id, currentUser?._id) && previousUserSnapshot) {
                                             onUpdateUser?.(previousUserSnapshot);
                                         }
