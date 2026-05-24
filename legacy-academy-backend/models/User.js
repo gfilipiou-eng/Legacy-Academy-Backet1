@@ -54,6 +54,10 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: ''
         },
+        founderAffiliation: {
+            type: String,
+            default: ''
+        },
         lastSeen: {
             type: Date,
             default: Date.now

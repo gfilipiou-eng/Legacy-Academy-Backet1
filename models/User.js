@@ -11,6 +11,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  founderAffiliation: {
+    type: String,
+    default: ""
+  },
   lastUsernameChange: { type: Date },
   lastSeen: { type: Date, default: Date.now },
   lastActive: { type: Date, default: Date.now },
