@@ -6293,7 +6293,7 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="https://res.cloudinary.com/ddehek3eo/image/upload/w_600,h_600,c_fill,g_face,q_auto:best,f_auto/v1779641735/legacyacademy/sfijqfcdsyobep6gnzcd.jpg" alt="Legacy Academy" className="h-36 w-auto object-contain" style={{ filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.15))' }} />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-36 w-auto object-contain" style={{ filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.15))' }} />
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--gold-primary)]/60">
@@ -6507,7 +6507,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="https://res.cloudinary.com/ddehek3eo/image/upload/w_600,h_600,c_fill,g_face,q_auto:best,f_auto/v1779641735/legacyacademy/sfijqfcdsyobep6gnzcd.jpg" alt="Legacy Academy" className="h-48 w-auto object-contain" />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
