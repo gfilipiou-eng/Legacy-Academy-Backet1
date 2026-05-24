@@ -306,7 +306,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-[7px]' : 'w-6 h-6 rounded-[8px]';
+    const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-none' : 'w-6 h-6 rounded-none';
     const iconSizeClass = size === 'sm' ? 'w-2.5 h-2.5' : 'w-3 h-3';
     const textSizeClass = size === 'sm' ? 'text-[9px]' : 'text-[10px]';
     const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, size === 'large' ? 600 : 80, true);
@@ -318,19 +318,19 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex items-center gap-1.5 text-[var(--gold-primary)] font-bold tracking-widest uppercase hover:underline cursor-pointer ${textSizeClass} ${className}`}
+            className={`inline-flex items-center gap-1.5 text-white font-bold tracking-widest uppercase hover:underline cursor-pointer ${textSizeClass} ${className}`}
         >
-            <div className={`${avatarSizeClass} overflow-hidden bg-black/40 shrink-0 flex items-center justify-center`}>
+            <div className={`${avatarSizeClass} overflow-hidden bg-black border border-white/20 shrink-0 flex items-center justify-center`}>
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
-                    <span className="text-[8px] font-black text-[var(--gold-primary)]/80">
+                    <span className="text-[8px] font-black text-white/80">
                         {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                     </span>
                 )}
             </div>
-            <Icons.Link className={`${iconSizeClass} shrink-0 opacity-70`} />
-            <span className="truncate max-w-[180px]">@{normalizedUsername}</span>
+            <Icons.Link className={`${iconSizeClass} shrink-0 opacity-70 text-white`} />
+            <span className="truncate max-w-[180px] text-white">@{normalizedUsername}</span>
         </button>
     );
 };
@@ -1577,7 +1577,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none overflow-hidden bg-black border border-white/20 shadow-none relative group">
                     <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 ">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -2267,7 +2267,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     return (
         <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-3xl border border-white/10 flex overflow-hidden shadow-2xl">
+            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none border border-white/20 flex overflow-hidden shadow-none">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
@@ -2302,7 +2302,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-[16px] bg-gray-900 overflow-hidden border border-white/10"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden border border-white/20"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-none border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2321,7 +2321,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-white/10"><ProfileAvatar user={activeChat} /></div>
+                                <div className="w-10 h-10 rounded-none overflow-hidden shrink-0 border border-white/20 bg-black"><ProfileAvatar user={activeChat} /></div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
@@ -2375,13 +2375,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             >
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`group/msg max-w-[85%] px-5 py-3 rounded-[22px] text-[15px] shadow-sm relative border cursor-pointer select-none ${isOwn ? 'bg-[#007AFF] text-white rounded-br-sm border-transparent shadow-[0_4px_14px_rgba(0,122,255,0.2)]' : 'bg-[#1E1E1E] text-white rounded-bl-sm border-white/5'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/80 shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.2)]' : ''} hover:scale-[1.02] transition-transform duration-200`}
+                                                    className={`group/msg max-w-[85%] px-5 py-3 rounded-none text-[15px] shadow-none relative border cursor-pointer select-none ${isOwn ? 'bg-white text-black border-white' : 'bg-black text-white border-white/20'} ${m.isLocked ? 'ring-2 ring-white/80' : ''} hover:scale-[1.02] transition-transform duration-200`}
                                                 >
                                                 {isOwn && (
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
-                                                        className={`absolute -top-2 right-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-lg opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)] opacity-100' : 'bg-[#2C2C2C] text-gray-300 border-white/10 hover:bg-[#3C3C3C]'}`}
+                                                        className={`absolute -top-2 right-0 w-6 h-6 rounded-none flex items-center justify-center text-[10px] border shadow-none opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 ${m.isLocked ? 'bg-white text-black border-black opacity-100' : 'bg-black text-gray-300 border-white/20 hover:bg-white/10'}`}
                                                         title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
                                                     >
                                                         <Icons.Lock className="w-3 h-3" />
@@ -2393,7 +2393,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                         <img
                                                             src={resolveMediaUrl(imageUrl)}
                                                             alt=""
-                                                            className="max-w-full max-h-[300px] rounded-xl object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10"
+                                                            className="max-w-full max-h-[300px] rounded-none object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/20"
                                                             onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
                                                             loading="lazy"
                                                             onError={(e) => e.target.style.display = 'none'} // Hide if broken
@@ -3791,10 +3791,10 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-16 h-16 rounded-[20px] overflow-hidden bg-gray-900 border border-white/10 shadow-md relative group">
+                                                        <div className="w-16 h-16 rounded-none overflow-hidden bg-black border border-white/20 shadow-none relative group">
                                                             <ProfileAvatar user={currentUser} className="opacity-80" />
                                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg group-hover:scale-125 ">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
@@ -3814,7 +3814,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-[20px] overflow-hidden bg-black shadow-md border border-white/10 relative cursor-pointer hover:opacity-90 transition-opacity">
+                                                            <div className="w-16 h-16 rounded-none p-[2px] bg-white shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
@@ -3830,11 +3831,7 @@ const ProfileModal = ({
                                                                     ) : isYT ? (
                                                                         <div className="w-full h-full relative">
                                                                             <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
-                                                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                                <div className="w-6 h-6 rounded-full bg-red-600/90 flex items-center justify-center">
-                                                                                    <Icons.Play className="w-3.5 h-3.5 text-white -ml-0.5" />
-                                                                                </div>
-                                                                            </div>
+                                                                            {/* Removed redundant play icon */}
                                                                         </div>
                                                                     ) : (
                                                                         <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" />
@@ -3844,6 +3841,12 @@ const ProfileModal = ({
                                                                         <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
                                                                             {s.desc}
                                                                         </span>
+                                                                    </div>
+                                                                )}
+                                                                </div>
+                                                                {(isNativeVideo || isYT) && (
+                                                                    <div className="absolute bottom-0 right-0 w-4 h-4 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
+                                                                        <Icons.Play className="w-2 h-2 fill-black pl-[0.5px]" />
                                                                     </div>
                                                                 )}
                                                             </div>
@@ -4565,6 +4568,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 (post.videoUrl && post.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)(\?.*)?$/i)) ||
                                 (post.image && post.image.match(/\.(mp4|mov|webm|avi|m4v)(\?.*)?$/i))
                             );
+                            const isRepost = String(post.author?._id || post.author) !== String(publicUser._id);
+                            const postAuthor = isRepost && typeof post.author === 'object' ? post.author : publicUser;
+                            const postAuthorUsername = postAuthor?.username || 'Agent';
+                            const postAuthorPic = isRepost ? resolveMediaUrl(postAuthor?.profilePic, 80, true) : resolvedPublicProfilePic;
+                            const isAuthorFounder = postAuthor?.role === 'Founder';
+
                             return (
                                 <div key={post._id} className="w-full p-5 bg-black/80 backdrop-blur-md border border-white/10 rounded-none shadow-none flex flex-col gap-4 relative group text-left overflow-hidden">
                                     {/* Meander corners */}
@@ -4572,31 +4581,39 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20 pointer-events-none" />
                                     <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 pointer-events-none" />
                                     <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 pointer-events-none" />
+                                    
+                                    {isRepost && (
+                                        <div className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
+                                            @{publicUser.username} REPOSTED
+                                        </div>
+                                    )}
+
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-none overflow-hidden border border-white/10 shrink-0 bg-black/40">
-                                            {resolvedPublicProfilePic ? (
-                                                <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
+                                            {postAuthorPic ? (
+                                                <img src={postAuthorPic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-white/5 text-sm font-bold uppercase text-white/40">
-                                                    {publicUser.username?.[0]}
+                                                    {postAuthorUsername?.[0]}
                                                 </div>
                                             )}
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-1">
-                                                <span className="font-bold text-xs text-white uppercase tracking-wider">{publicUser.username}</span>
-                                                <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
+                                                <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
+                                                <VerifiedBadge isFounder={isAuthorFounder} className="w-3.5 h-3.5" />
                                             </div>
-                                            {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] ? (
+                                            {postAuthor?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor] ? (
                                                 <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
-                                                    {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
-                                                    {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
+                                                    {React.createElement(PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
+                                                    {t(`DESC_${postAuthor.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].label)}
                                                     <span className="opacity-50 mx-1">•</span>
                                                     <span>{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
                                                 </div>
-                                            ) : publicFounderAffiliation ? (
+                                            ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) ? (
                                                 <div className="flex items-center gap-2 mt-0.5">
-                                                    <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" />
+                                                    <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
                                                     <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase opacity-50">•</span>
                                                     <span className="text-gray-500 text-[9px] font-bold tracking-widest uppercase">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
                                                 </div>
@@ -6475,12 +6492,12 @@ const App = () => {
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 pb-32 sm:pb-28 relative z-10">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
-                        <header className="relative w-full z-[20] bg-black/40 backdrop-blur-2xl border-b border-white/10 shrink-0 shadow-lg">
+                        <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl bg-black/40 border border-white/10 transition-all duration-300 z-50 p-2.5 -ml-2 group"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black border border-white/20 transition-all duration-300 z-50 p-2.5 -ml-2 group"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
