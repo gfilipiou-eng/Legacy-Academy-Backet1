@@ -2390,25 +2390,24 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                 exit={{ opacity: 0, scale: 0.9, filter: 'blur(8px)', x: isOwn ? 20 : -20, transition: { duration: 0.4, ease: "easeInOut" } }}
                                                 layout
-                                                className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                                                className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group/msg items-center gap-2`}
                                             >
-                                                <div
-                                                    onDoubleClick={toggleLockMessage}
-                                                    className={`group/msg max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-sm relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-gradient-to-br from-[#101010] to-[#1a1a1a] text-white border-white/10 rounded-br-sm' : 'bg-black text-white border-white/10 rounded-bl-sm'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/80' : ''} hover:scale-[1.02] transition-transform duration-200`}
-                                                >
-                                                {/* Subtle iOS Glass Effect overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none rounded-[22px]" />
-
                                                 {isOwn && (
                                                     <button
                                                         type="button"
                                                         onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
-                                                        className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border shadow-none opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 z-10 ${m.isLocked ? 'bg-black text-[var(--gold-primary)] border-[var(--gold-primary)] opacity-100' : 'bg-[#1a1a1a] text-gray-400 border-white/20 hover:bg-white/10'}`}
+                                                        className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] border shadow-none opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 z-10 shrink-0 ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)] opacity-100' : 'bg-black text-gray-400 border-white/20 hover:bg-white/10'}`}
                                                         title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
                                                     >
-                                                        <Icons.Lock className="w-3 h-3" />
+                                                        <Icons.Lock className="w-3.5 h-3.5" />
                                                     </button>
                                                 )}
+                                                <div
+                                                    onDoubleClick={toggleLockMessage}
+                                                    className={`max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-sm relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-gradient-to-br from-[#101010] to-[#1a1a1a] text-white border-white/10 rounded-br-sm' : 'bg-black text-white border-white/10 rounded-bl-sm'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/80' : ''} hover:scale-[1.02] transition-transform duration-200`}
+                                                >
+                                                {/* Subtle iOS Glass Effect overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none rounded-[22px]" />
                                                 {/* IMAGE ATTACHMENT */}
                                                 {imageUrl && (
                                                     <div className="mb-2 relative z-10">
