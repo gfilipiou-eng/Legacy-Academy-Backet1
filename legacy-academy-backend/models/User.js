@@ -52,7 +52,6 @@ const UserSchema = new mongoose.Schema(
         },
         profileDescriptor: {
             type: String,
-            enum: ['', 'entrepreneur', 'creator', 'popular', 'pet-lover', 'community', 'visionary'],
             default: ''
         },
         lastSeen: {

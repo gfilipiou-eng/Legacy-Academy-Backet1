@@ -3477,7 +3477,7 @@ const ProfileModal = ({
                                                     />
                                                 </svg>
                                             )}
-                                            {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
+                                            {selectedProfileDescriptor && SelectedProfileDescriptorIcon && !displayUser?.profileDescriptor?.startsWith('custom:') && (
                                                 <div className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 ${selectedProfileDescriptor.accentClass}`}>
                                                     <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
                                                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.18em]">{selectedProfileDescriptor.label}</span>
@@ -3485,6 +3485,14 @@ const ProfileModal = ({
                                             )}
                                         </div>
                                     </div>
+                                    {displayUser?.profileDescriptor?.startsWith('custom:') && (
+                                        <div className="text-[var(--gold-primary)] text-sm font-bold mt-1 flex items-center gap-2 hover:underline cursor-pointer" onClick={() => {
+                                            window.location.href = `/?profile=${encodeURIComponent(displayUser.profileDescriptor.split(':')[1])}`;
+                                        }}>
+                                            <Icons.Link className="w-4 h-4" />
+                                            @{displayUser.profileDescriptor.split(':')[1]}
+                                        </div>
+                                    )}
                                     <div className="text-gray-400 text-sm font-bold mt-1 flex items-center gap-2">
                                         @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
                                         <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />

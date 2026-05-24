@@ -9,7 +9,6 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: "" },
   profileDescriptor: {
     type: String,
-    enum: ["", "entrepreneur", "creator", "popular", "pet-lover", "community", "visionary"],
     default: ""
   },
   lastUsernameChange: { type: Date },
