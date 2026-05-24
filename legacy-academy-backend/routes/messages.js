@@ -17,7 +17,7 @@ const markMessageRead = async (req, res) => {
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
 
-        // WHISPER PROTOCOL: Burn after 1 minute
+        // WHISPER PROTOCOL: Burn after 5 seconds instead of 1 minute!
         // We set readAt now. Cleanup happens on GET.
         msg.isRead = true;
         msg.readAt = new Date();
@@ -155,8 +155,8 @@ const getConversation = async (req, res) => {
             return res.status(200).json([]); // Return empty conversation for invalid IDs
         }
 
-        // WHISPER CLEANUP: Delete messages read > 1 minute ago
-        const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+        // WHISPER CLEANUP: Delete messages read > 5 seconds ago
+        const fiveSecondsAgo = new Date(Date.now() - 5 * 1000);
 
         // Find messages to delete FIRST (to get their media URLs)
         const expiredMessages = await Message.find({
@@ -165,7 +165,7 @@ const getConversation = async (req, res) => {
                 { sender: otherUserId, recipient: currentUserId }
             ],
             isRead: true,
-            readAt: { $lt: oneMinuteAgo },
+            readAt: { $lt: fiveSecondsAgo },
             isLocked: { $ne: true }
         });
 

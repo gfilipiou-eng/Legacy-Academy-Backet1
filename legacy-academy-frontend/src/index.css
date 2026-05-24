@@ -432,27 +432,16 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 }
 
 .animate-pop-in {
-  animation: pop-in 0.4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-}
-
-@keyframes pop-in {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  /* All shadows removed per user request (no glow) */
+  box-shadow: none !important;
 }
 
 .shadow-glow-white {
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  box-shadow: none !important;
 }
 
 .shadow-glow-red {
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+  box-shadow: none !important;
 }
 
 .high-res-poster {

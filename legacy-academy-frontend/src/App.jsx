@@ -45,9 +45,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
         if (!parts[1].startsWith('c_') && !parts[1].startsWith('w_') && !parts[1].startsWith('so_') && !parts[1].startsWith('q_')) {
             const isVideo = cleanUrl.includes('/video/upload/');
 
-            if (isCover && isVideo) {
-                // Strip cached transformations mapped to covers
-                return cleanUrl.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/$1');
+            // 4K Background Support: Keep high quality for cover images
+            if (isCover) {
+                return cleanUrl.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/w_2000,c_limit,q_auto:best/$1');
             }
             let transform = '';
             // SAVE CREDITS: Use 'q_auto' (Balanced) for high visual fidelity with storage savings
@@ -62,6 +62,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
             } else if (isAvatar) {
                 // 600px + q_auto:best for maximum quality as requested
                 transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
+            } else if (width === 2000 || isCover) {
+                // Founder 4K Background / High-Res Cover
+                transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else if (width) {
                 transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
@@ -306,7 +309,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
     const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-[7px]' : 'w-6 h-6 rounded-[8px]';
     const iconSizeClass = size === 'sm' ? 'w-2.5 h-2.5' : 'w-3 h-3';
     const textSizeClass = size === 'sm' ? 'text-[9px]' : 'text-[10px]';
-    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 80, true);
+    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, size === 'large' ? 600 : 80, true);
 
     return (
         <button
@@ -6880,7 +6883,7 @@ const App = () => {
                     </button>
                     
                     <div className="bg-black border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-2xl">
-                        <div id="share-card-content" className="bg-[#0a0a0a] p-6 pb-8 relative overflow-hidden">
+                        <div id="share-card-content" className="bg-[#0a0a0a] p-6 pb-8 relative overflow-hidden flex flex-col items-center text-center">
                             {/* Watermark */}
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-2xl tracking-tighter text-white">LEGACY</div>
                             
@@ -6902,7 +6905,9 @@ const App = () => {
                                     ) : getFounderAffiliation(shareModalPost.author) ? (
                                         <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" className="mt-1" />
                                     ) : (
-                                        <div className="text-gray-500 text-xs mt-1">@{shareModalPost.author?.username?.toLowerCase().replace(/\s+/g, '') || 'legacy_academy'}</div>
+                                        <div className="text-gray-500 text-xs mt-1 uppercase tracking-widest font-bold">
+                                            {formatDate(shareModalPost.createdAt, t, lang)}
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -6917,14 +6922,14 @@ const App = () => {
                                 <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
                                     {shareModalPost.videoUrl && !shareModalPost.image && !shareModalPost.thumbnailUrl ? (
                                         <video 
-                                            src={resolveMediaUrl(shareModalPost.videoUrl)} 
+                                            src={resolveMediaUrl(shareModalPost.videoUrl, 1200)} 
                                             className="w-full h-auto object-contain max-h-[400px]" 
                                             controls
                                             controlsList="nodownload"
                                         />
                                     ) : (
                                         <img 
-                                            src={resolveMediaUrl(shareModalPost.image || shareModalPost.thumbnailUrl)} 
+                                            src={resolveMediaUrl(shareModalPost.image || shareModalPost.thumbnailUrl, 1200)} 
                                             className="w-full h-auto object-contain max-h-[400px]" 
                                             alt="" 
                                         />
@@ -6971,7 +6976,7 @@ const App = () => {
                     </button>
                     
                     <div className="bg-black border border-white/20 rounded-[20px] max-w-[360px] w-full overflow-hidden shadow-2xl">
-                        <div className="bg-[#0a0a0a] relative overflow-hidden flex flex-col items-center pt-10 pb-8 px-6 text-center">
+                        <div id="share-card-content" className="bg-[#0a0a0a] relative overflow-hidden flex flex-col items-center pt-10 pb-8 px-6 text-center">
                             {/* Watermark */}
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-xl tracking-tighter text-white">LEGACY</div>
                             
