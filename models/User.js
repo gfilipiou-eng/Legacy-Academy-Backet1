@@ -31,7 +31,8 @@ const UserSchema = new mongoose.Schema({
     language: { type: String, default: 'en' },
     soundEnabled: { type: Boolean, default: true },
     notifications: { type: Boolean, default: true },
-    dmFollowersOnly: { type: Boolean, default: false }
+    dmFollowersOnly: { type: Boolean, default: false },
+    showProfileShareButton: { type: Boolean, default: true }
   },
 
   // Notifications

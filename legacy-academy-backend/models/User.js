@@ -75,7 +75,8 @@ const UserSchema = new mongoose.Schema(
             language: { type: String, default: 'en' },
             dmFollowersOnly: { type: Boolean, default: false },
             displayMode: { type: String, default: 'dark' },
-            zoom: { type: Number, default: 1 }
+            zoom: { type: Number, default: 1 },
+            showProfileShareButton: { type: Boolean, default: true }
         },
         notifications: [
             {
