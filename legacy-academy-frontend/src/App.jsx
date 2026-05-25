@@ -751,15 +751,15 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     };
 
     return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
-        >
-            <div className="w-9 h-9 rounded-[12px] overflow-hidden shrink-0 border border-white/10 bg-black">
-                <ProfileAvatar
+            <motion.div
+                layout
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
+            >
+                <div className="w-9 h-9 rounded-none overflow-hidden shrink-0 border border-white/10 bg-black">
+                    <ProfileAvatar
                     user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })}
                 />
             </div>
@@ -1934,7 +1934,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {showComments && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
                                 <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-[14px] overflow-hidden shrink-0 border border-white/10">
+                                    <div className="w-10 h-10 rounded-none overflow-hidden shrink-0 border border-white/10 bg-black">
                                         <ProfileAvatar user={user} />
                                     </div>
                                     <div className="flex-1 flex flex-col gap-3">
@@ -6367,7 +6367,7 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-36 w-auto object-contain transform-gpu" style={{ filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.15))', WebkitFilter: 'drop-shadow(0 0 20px rgba(255,215,0,0.15))', imageRendering: '-webkit-optimize-contrast' }} />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-36 w-auto object-contain transform-gpu" style={{ filter: 'drop-shadow(0 10px 20px rgba(255,255,255,0.25)) drop-shadow(0 4px 6px rgba(255,255,255,0.4)) contrast(1.2) brightness(1.15) saturate(1.1)', WebkitFilter: 'drop-shadow(0 10px 20px rgba(255,255,255,0.25)) drop-shadow(0 4px 6px rgba(255,255,255,0.4)) contrast(1.2) brightness(1.15) saturate(1.1)', imageRendering: '-webkit-optimize-contrast' }} />
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--gold-primary)]/60">
@@ -6581,7 +6581,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain transform-gpu drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" style={{ imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden' }} />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain transform-gpu" style={{ filter: 'drop-shadow(0 10px 20px rgba(255,255,255,0.25)) drop-shadow(0 4px 6px rgba(255,255,255,0.4)) contrast(1.2) brightness(1.15) saturate(1.1)', WebkitFilter: 'drop-shadow(0 10px 20px rgba(255,255,255,0.25)) drop-shadow(0 4px 6px rgba(255,255,255,0.4)) contrast(1.2) brightness(1.15) saturate(1.1)', imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden' }} />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
