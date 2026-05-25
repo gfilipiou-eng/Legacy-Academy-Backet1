@@ -3900,7 +3900,7 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`min-w-0 min-h-[58px] sm:min-h-[62px] px-2 sm:px-3 py-2.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.14em] rounded-xl flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 transition-all duration-200 relative overflow-hidden border select-none whitespace-nowrap appearance-none focus:outline-none active:scale-[0.99] cursor-pointer ${isActive
+                                            className={`min-w-0 min-h-[70px] sm:min-h-[74px] px-2 sm:px-3 py-2.5 font-black uppercase rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all duration-200 relative overflow-hidden border select-none appearance-none focus:outline-none active:scale-[0.99] cursor-pointer ${isActive
                                                 ? 'bg-white/[0.10] text-white border-[var(--gold-primary)]/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
                                                 : 'bg-transparent text-white/80 border-transparent hover:bg-white/[0.05] hover:border-white/10'
                                                 }`}
@@ -3912,7 +3912,12 @@ const ProfileModal = ({
                                                 </>
                                             )}
                                             {renderIcon(isActive)}
-                                            <span className={`leading-none text-center transition-colors duration-200 truncate ${isActive ? 'text-white' : 'text-white/90'}`}>{t('TAB_' + tab, tab)}</span>
+                                            <span
+                                                className={`max-w-full text-center text-[8px] sm:text-[9px] md:text-[10px] leading-[1.15] tracking-[0.08em] sm:tracking-[0.1em] transition-colors duration-200 whitespace-normal ${isActive ? 'text-white' : 'text-white/90'}`}
+                                                style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+                                            >
+                                                {t('TAB_' + tab, tab)}
+                                            </span>
                                         </button>
                                     );
                                 })}
