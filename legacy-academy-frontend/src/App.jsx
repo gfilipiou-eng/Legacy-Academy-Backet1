@@ -4712,14 +4712,26 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     <div className="hidden" />
                                     
                                     {isRepost && (
-                                        <div className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2">
+                                        <div 
+                                            className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2 cursor-pointer hover:text-white transition-colors z-10 w-fit"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                window.location.href = `/?profile=${publicUser.username}`;
+                                            }}
+                                        >
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
                                             @{publicUser.username} {t('REPOSTED', 'REPOSTED')}
                                         </div>
                                     )}
 
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-none overflow-hidden  shrink-0 bg-black/40">
+                                        <div 
+                                            className="w-9 h-9 rounded-none overflow-hidden shrink-0 bg-black/40 cursor-pointer z-10"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                window.location.href = `/?profile=${postAuthorUsername}`;
+                                            }}
+                                        >
                                             {postAuthorPic ? (
                                                 <img src={postAuthorPic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
                                             ) : (
@@ -4728,8 +4740,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="flex flex-col gap-1.5">
-                                            <div className="flex items-center gap-1">
+                                        <div className="flex flex-col gap-1.5 z-10">
+                                            <div 
+                                                className="flex items-center gap-1 cursor-pointer hover:underline w-fit"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    window.location.href = `/?profile=${postAuthorUsername}`;
+                                                }}
+                                            >
                                                 <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
                                                 <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder} className="w-3.5 h-3.5" />
                                             </div>
