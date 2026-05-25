@@ -417,15 +417,31 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   }
 }
 
-/* Hide Scrollbars Everywhere (Global) */
+/* 2030 Futuristic Scrollbar */
 ::-webkit-scrollbar {
-  display: none;
-  width: 0px;
-  background: transparent;
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-primary);
+  border-radius: 0;
+  transition: all 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  box-shadow: 0 0 10px var(--gold-primary);
 }
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--gold-primary) #000000;
+  -ms-overflow-style: auto; /* IE/Edge */
 }
 
 .animate-pop-in {
@@ -910,4 +926,19 @@ span:hover {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  50% { top: 100%; }
+  100% { top: 0; }
+}
+
+.animate-scan {
+  animation: scan 2s linear infinite;
 }

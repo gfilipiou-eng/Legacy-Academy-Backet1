@@ -115,8 +115,22 @@ export const Icons = {
         </svg>
     ),
     Loader: p => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}>
-            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        <svg viewBox="0 0 50 50" fill="none" stroke="currentColor" {...p}>
+            {/* Outer static ring */}
+            <circle cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
+            {/* Fast inner spinner */}
+            <circle cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="30 100" strokeLinecap="square">
+                <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite" />
+            </circle>
+            {/* Core pulse */}
+            <circle cx="25" cy="25" r="8" fill="currentColor" opacity="0.8">
+                <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.5s" repeatCount="indefinite" />
+                <animate attributeName="r" values="6;9;6" dur="1.5s" repeatCount="indefinite" />
+            </circle>
+            {/* Outer thin orbit */}
+            <circle cx="25" cy="25" r="23" stroke="currentColor" strokeWidth="0.5" strokeDasharray="10 40">
+                <animateTransform attributeName="transform" type="rotate" from="360 25 25" to="0 25 25" dur="2s" repeatCount="indefinite" />
+            </circle>
         </svg>
     ),
 };

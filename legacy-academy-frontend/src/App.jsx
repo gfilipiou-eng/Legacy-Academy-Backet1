@@ -719,7 +719,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     );
 };
 
-const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang }) => {
+const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang, onViewProfile }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
     const [translatedText, setTranslatedText] = useState(null);
@@ -763,7 +763,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 exit={{ opacity: 0, y: -4 }}
                 className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
             >
-                <div className="w-9 h-9 rounded-none overflow-hidden shrink-0 border border-white/10 bg-black">
+                <div 
+                    className="w-9 h-9 rounded-none overflow-hidden shrink-0 border border-white/10 bg-black cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
+                >
                     <ProfileAvatar
                     user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })}
                 />
@@ -771,7 +774,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end text-right' : 'items-start'}`}>
                 <div className="flex items-center gap-2 mb-1 max-w-full">
-                    <span className={`font-black text-[10px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-white'}`}>
+                    <span 
+                        className={`font-black text-[10px] uppercase tracking-[0.15em] truncate cursor-pointer hover:underline ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-white'}`}
+                        onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
+                    >
                         {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
                     </span>
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5" />
@@ -862,7 +868,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     );
 });
 
-const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onRepost, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onRepost, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments, onViewProfile }) => {
     const { t, lang } = useTranslation(user);
 
     // Audio Comment State
@@ -1167,7 +1173,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                                 ) : (
                                     (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
-                                        <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                                        <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} onViewProfile={onViewProfile} />
                                     ))
                                 )}
                             </div>
@@ -1630,25 +1636,30 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
                 const authorPic = s.author?.profilePic ? resolveMediaUrl(s.author.profilePic, null, false, false, false) : '/logo.png';
                 const authorName = s.author?.username || 'Agent';
+                const storyMediaUrl = s.thumbnailUrl || s.image || s.videoUrl;
+                const displayImg = storyMediaUrl ? resolveMediaUrl(storyMediaUrl, null, false, true) : authorPic;
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none p-[2px] bg-white shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black">
-                                <img src={authorPic} className="w-full h-full object-cover" alt="" />
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none p-[2px] bg-[var(--gold-primary)] shadow-[0_0_10px_rgba(255,215,0,0.3)] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative">
+                                <img src={displayImg} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                <div className="absolute top-1 left-1 w-5 h-5 rounded-none overflow-hidden border border-white/50 shadow-sm">
+                                    <img src={authorPic} className="w-full h-full object-cover" alt="" />
+                                </div>
                             </div>
                             {isNativeVideo && (
-                                <div className="absolute bottom-0 right-0 w-4 h-4 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
-                                    <Icons.Play className="w-2 h-2 fill-black pl-[0.5px]" />
+                                <div className="absolute bottom-[-4px] right-[-4px] w-5 h-5 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
+                                    <Icons.Play className="w-2.5 h-2.5 fill-black pl-[0.5px]" />
                                 </div>
                             )}
                             {isYT && (
-                                <div className="absolute bottom-0 right-0 w-4 h-4 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
-                                    <Icons.Play className="w-2 h-2 fill-black pl-[0.5px]" />
+                                <div className="absolute bottom-[-4px] right-[-4px] w-5 h-5 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
+                                    <Icons.Play className="w-2.5 h-2.5 fill-black pl-[0.5px]" />
                                 </div>
                             )}
                         </div>
-                        <span className="text-[9px] font-black text-white/50 uppercase tracking-wider group-hover:text-white transition-colors max-w-[60px] truncate">{authorName}</span>
+                        <span className="text-[9px] font-black text-white/70 uppercase tracking-wider group-hover:text-white transition-colors max-w-[60px] truncate">{authorName}</span>
                     </div>
                 );
             })}
@@ -3669,13 +3680,16 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-start justify-between mb-3 sm:mb-4">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-none bg-[#0a0a0a] border border-[#0a0a0a] overflow-hidden shadow-none shrink-0 relative">
-                                        {/* Meander corners */}
-                                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 pointer-events-none" />
-                                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/30 pointer-events-none" />
-                                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/30 pointer-events-none" />
-                                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 pointer-events-none" />
-                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover" />
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-none bg-black border-[1.5px] border-[var(--gold-primary)]/50 overflow-hidden shadow-[0_0_15px_rgba(255,215,0,0.1)] shrink-0 relative group">
+                                        {/* 2030 Corner brackets */}
+                                        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[var(--gold-primary)] pointer-events-none z-10" />
+                                        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[var(--gold-primary)] pointer-events-none z-10" />
+                                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[var(--gold-primary)] pointer-events-none z-10" />
+                                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[var(--gold-primary)] pointer-events-none z-10" />
+                                        
+                                        <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--gold-primary)]/30 shadow-[0_0_10px_var(--gold-primary)] z-10 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:animate-scan" />
+                                        
+                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                 </div>
                             </div>
@@ -4555,14 +4569,18 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-none overflow-hidden border border-white/20 bg-black relative">
-                        {/* Meander corners */}
-                        <div className="hidden" />
-                        <div className="hidden" />
-                        <div className="hidden" />
-                        <div className="hidden" />
+                    <div className="w-28 h-28 rounded-none overflow-hidden border border-[var(--gold-primary)]/40 bg-black relative shadow-[0_0_20px_rgba(255,215,0,0.15)] group">
+                        {/* 2030 Corner brackets */}
+                        <div className="absolute top-0 left-0 w-3 h-3 border-t-[1.5px] border-l-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-3 h-3 border-t-[1.5px] border-r-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-[1.5px] border-l-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
+                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-[1.5px] border-r-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
+                        
+                        {/* Scanning effect */}
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--gold-primary)]/30 shadow-[0_0_10px_var(--gold-primary)] z-10 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:animate-scan" />
+
                         {resolvedPublicProfilePic ? (
-                            <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="eager" decoding="async" />
+                            <img src={resolvedPublicProfilePic} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" loading="eager" decoding="async" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-white/5 text-4xl font-bold uppercase text-white/40">
                                 {publicUser.username?.[0]}
@@ -4572,13 +4590,13 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
 
                     <div className="text-center space-y-1">
-                    <div className="flex items-center justify-center gap-1.5">
-                        <h1 className="text-2xl font-black text-white uppercase tracking-wider">{publicUser.username}</h1>
+                    <div className="flex items-center justify-center gap-2 bg-black/50 border border-white/5 backdrop-blur-md px-4 py-1.5 rounded-none shadow-sm">
+                        <h1 className="text-xl sm:text-2xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
                     </div>
                     {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] ? (
-                        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">
-                            {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
+                        <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gold-primary)] font-black tracking-widest uppercase mt-2">
+                            {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5 drop-shadow-[0_0_5px_var(--gold-primary)]" })}
                             {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
                         </div>
                     ) : (
@@ -6386,7 +6404,7 @@ const App = () => {
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
-        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} />;
+        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} onViewProfile={(u) => window.location.href = `/?profile=${u.username || u._id}`} />;
     }
 
     return (
@@ -7163,6 +7181,10 @@ const App = () => {
                             onClearComments={(postId) => {
                                 setPosts(prev => prev.map(p => p._id === postId ? { ...p, comments: [] } : p));
                                 setSelectedPost(prev => prev ? { ...prev, comments: [] } : null);
+                            }}
+                            onViewProfile={(u) => {
+                                setSelectedPost(null);
+                                viewProfile(u);
                             }}
                         />
                     )}
