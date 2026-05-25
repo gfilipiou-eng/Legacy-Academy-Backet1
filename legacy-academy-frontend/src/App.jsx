@@ -6692,9 +6692,9 @@ const App = () => {
                                                 try {
                                                     const res = await axios.post('/auth/forgot-password', { email: formData.email });
                                                     if (res.data.success && res.data.message.includes('missing')) {
-                                                        setAuthError('Server Error: Email system disabled.');
+                                                        addToast('Email system is currently disabled on the server. Please contact support.', 'error');
                                                     } else {
-                                                        setAuthError('Password reset link sent! Check your email.'); // Used error box for success to avoid alert
+                                                        addToast('Password reset link sent! Check your email.', 'success');
                                                         setTimeout(() => setAuthMode('login'), 3000);
                                                     }
                                                 } catch (e) {
