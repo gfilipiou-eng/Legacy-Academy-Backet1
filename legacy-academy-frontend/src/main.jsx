@@ -16,7 +16,7 @@ if (import.meta.env.PROD || process.env.NODE_ENV === 'production' || window.loca
 
 // Ensure you replace this with your actual Google Client ID from Google Cloud Console
 // It should look like: 93245251788-xxxxxxxxxxxxxxxx.apps.googleusercontent.com
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "93245251788-VALE_EDW_TO_YPOLOIPO.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "93245251788-a0299sb30oru85jkdo5kiuajq6278qvh.apps.googleusercontent.com";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
