@@ -9,6 +9,12 @@ import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import http from 'http';
 import { Server } from 'socket.io';
+import helmet from 'helmet';
+import compression from 'compression';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
+import hpp from 'hpp';
+import rateLimit from 'express-rate-limit';
 import Message from "./models/Message.js";
 import { verifyToken } from "./middleware/auth.js";
 
@@ -25,7 +31,7 @@ if (process.env.REQUEST_DUMP_AUTO === 'true') {
   console.warn(`🔧 REQUEST_DUMP_AUTO enabled: REQUEST_DUMP=true, TTL=${process.env.REQUEST_DUMP_TTL_MINUTES} minute(s)`);
 }
 
-const SERVER_VERSION = "V6.2 (Deploy Kick)";
+const SERVER_VERSION = "V22 (Security & Smart Enhancements)";
 console.log("🟢 Server initialization started...");
 console.log("🚀 DEPLOYMENT VERSION:", SERVER_VERSION);
 console.log("Environment: ", process.env.NODE_ENV || 'production');
@@ -47,6 +53,33 @@ console.log("Loading email service...");
 import "./config/email.js";
 
 const app = express();
+
+// --- SMART & SECURE MIDDLEWARES ---
+
+// 1. HTTP Security Headers (Helps prevent XSS, Clickjacking, MIME sniffing)
+app.use(helmet({
+  crossOriginResourcePolicy: false, // Don't block our frontend
+}));
+
+// 2. Response Compression (Smart/Fast API)
+app.use(compression()); // Compresses responses (gzip) to make the app lightning fast
+
+// 3. Rate Limiting (Protects against DDoS & Brute Force)
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 500, // Limit each IP to 500 requests per windowMs
+  message: { message: 'Too many requests from this IP, please try again after 10 minutes.' }
+});
+app.use('/api/', limiter);
+
+// 4. Data Sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// 5. Data Sanitization against XSS (Cross-Site Scripting)
+app.use(xss());
+
+// 6. Prevent HTTP Parameter Pollution
+app.use(hpp());
 
 // Ensure uploads directory exists for persistent assets
 const uploadsPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'uploads');

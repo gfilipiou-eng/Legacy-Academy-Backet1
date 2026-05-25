@@ -11,6 +11,12 @@ import { verifyToken } from "./middleware/auth.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import helmet from 'helmet';
+import compression from 'compression';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
+import hpp from 'hpp';
+import rateLimit from 'express-rate-limit';
 
 import http from 'http';
 import { Server } from 'socket.io';
@@ -23,6 +29,33 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// --- SMART & SECURE MIDDLEWARES ---
+
+// 1. HTTP Security Headers
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
+
+// 2. Response Compression (Smart/Fast API)
+app.use(compression());
+
+// 3. Rate Limiting (Protects against DDoS & Brute Force)
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 500, // Limit each IP to 500 requests per windowMs
+  message: { message: 'Too many requests from this IP, please try again after 10 minutes.' }
+});
+app.use('/api/', limiter);
+
+// 4. Data Sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// 5. Data Sanitization against XSS
+app.use(xss());
+
+// 6. Prevent HTTP Parameter Pollution
+app.use(hpp());
 
 // Middleware
 app.use(express.json({ limit: '500mb' })); // Essential for parsing JSON bodies + large file support
