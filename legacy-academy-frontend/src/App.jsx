@@ -5,6 +5,7 @@ import EnhancedButton from './components/EnhancedButton';
 
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useGoogleLogin } from '@react-oauth/google';
 import { Icons } from './components/Icons';
 import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
@@ -4837,24 +4838,40 @@ const App = () => {
         startTransition(() => setUser(userData));
     }, []);
 
-    const handleGoogleSignIn = async () => {
-        setAuthLoading(true);
-        try {
-            // Failsafe Google Protocol Sandbox integration using the user's real email!
-            const res = await axios.post('/auth/google', {
-                email: "bagugan2009@gmail.com",
-                name: "Filip Google",
-                picture: "https://lh3.googleusercontent.com/a/ACg8ocL3-vA-eD2q1bW3a6A"
-            });
-            localStorage.setItem('token', res.data.token);
-            commitAuthenticatedUser(res.data.user);
-            addToast("Connected via Secure Google Protocol!", "success");
-        } catch (e) {
-            console.error("Google Sign In Failed", e);
-            alert("Google Authentication Failed.");
-        } finally {
-            setAuthLoading(false);
-        }
+    const googleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setAuthLoading(true);
+            try {
+                // Fetch user info from Google using access token
+                const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+                
+                // Send real Google info to backend
+                const res = await axios.post('/auth/google', {
+                    email: userInfo.data.email,
+                    name: userInfo.data.name,
+                    picture: userInfo.data.picture
+                });
+                localStorage.setItem('token', res.data.token);
+                commitAuthenticatedUser(res.data.user);
+                addToast("Connected via Secure Google Protocol!", "success");
+            } catch (err) {
+                console.error("Google Auth Failed", err);
+                alert("Google Authentication Failed.");
+            } finally {
+                setAuthLoading(false);
+            }
+        },
+        onError: errorResponse => {
+            console.error("Google Sign In Error:", errorResponse);
+            addToast("Google Sign-In Cancelled", "error");
+        },
+        prompt: 'select_account' // Forces the account selection screen
+    });
+
+    const handleGoogleSignIn = () => {
+        googleLogin();
     };
 
     const [posts, setPosts] = useState([]);
