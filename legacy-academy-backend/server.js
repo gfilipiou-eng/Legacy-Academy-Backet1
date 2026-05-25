@@ -30,11 +30,15 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Trust proxy for rate limiting behind Render's load balancer
+app.set('trust proxy', 1);
+
 // --- SMART & SECURE MIDDLEWARES ---
 
 // 1. HTTP Security Headers
 app.use(helmet({
   crossOriginResourcePolicy: false,
+  crossOriginOpenerPolicy: false,
 }));
 
 // 2. Response Compression (Smart/Fast API)
