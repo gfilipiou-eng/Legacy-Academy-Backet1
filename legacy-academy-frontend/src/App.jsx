@@ -3706,8 +3706,8 @@ const ProfileModal = ({
 
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center">
-                                    <div className="font-black text-white text-xl sm:text-2xl flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap">
-                                        <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
+                                    <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap">
+                                        <span className="truncate font-black text-white text-xl sm:text-2xl">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
                                             {isFounderProfile ? (
                                                 <svg
@@ -3736,14 +3736,16 @@ const ProfileModal = ({
                                                     />
                                                 </svg>
                                             )}
-                                            {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
-                                                <div className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 ${selectedProfileDescriptor.accentClass}`}>
-                                                    <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
-                                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.18em]">{selectedProfileDescriptor.label}</span>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
+                                    {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
+                                        <div className="mt-3 flex justify-center">
+                                            <div className={`inline-flex items-center gap-2 rounded-none border px-3 py-1.5 ${selectedProfileDescriptor.accentClass}`}>
+                                                <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
+                                                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
+                                            </div>
+                                        </div>
+                                    )}
                                     {displayFounderAffiliation && (
                                         <div className="mt-2">
                                             <FounderAffiliationBadge username={displayFounderAffiliation} className="max-w-full" />
@@ -3807,21 +3809,29 @@ const ProfileModal = ({
                                 </div>
                             </div>
 
-                            {/* ACTION BUTTONS: Enhanced layout */}
-                            <div className="px-2 mb-4 space-y-2 mt-2">
+                            {/* ACTION BUTTONS */}
+                            <div className="px-2 mb-6 space-y-3 mt-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-black rounded-none border border-white/20 text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors">
-                                            {t('EDIT_PROFILE')}
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 relative overflow-hidden py-4 bg-black/70 backdrop-blur-xl rounded-none border border-white/15 text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.22em] transition-colors hover:bg-white/5 hover:border-white/30">
+                                            <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/20" />
+                                            <span className="relative z-10 flex items-center justify-center gap-2.5">
+                                                <Icons.Settings className="w-4 h-4" />
+                                                {t('EDIT_PROFILE')}
+                                            </span>
                                         </button>
                                     ) : (
                                         <>
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 py-3.5 rounded-none text-[11px] font-black uppercase tracking-widest border transition-colors ${isFollowing ? 'bg-black border-white/20 text-white hover:bg-white/5' : 'bg-white border-white text-black hover:bg-gray-200'}`}
+                                                className={`flex-1 relative overflow-hidden py-4 rounded-none text-[11px] sm:text-[12px] font-black uppercase tracking-[0.22em] border transition-colors ${isFollowing ? 'bg-black/70 backdrop-blur-xl border-white/15 text-white hover:bg-red-500/10 hover:border-red-500/40' : 'bg-white border-white text-black hover:bg-neutral-200'}`}
                                             >
-                                                {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
+                                                <div className={`pointer-events-none absolute inset-x-3 top-0 h-px ${isFollowing ? 'bg-white/20' : 'bg-black/10'}`} />
+                                                <span className="relative z-10 flex items-center justify-center gap-2.5">
+                                                    {isFollowing ? <Icons.UserMinus className="w-4 h-4" /> : (hasRequested ? <Icons.Clock className="w-4 h-4" /> : <Icons.UserPlus className="w-4 h-4" />)}
+                                                    {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
+                                                </span>
                                             </button>
                                             <button
                                                 onClick={() => {
@@ -3829,43 +3839,53 @@ const ProfileModal = ({
                                                     setTimeout(() => onOpenChat(displayUser), 50);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black border border-white/20 rounded-none shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white hover:bg-white/5 transition-colors"
+                                                className="flex items-center justify-center gap-2.5 px-5 py-4 bg-black/70 backdrop-blur-xl border border-white/15 rounded-none shrink-0 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.22em] text-white hover:bg-white/5 hover:border-white/30 transition-colors relative overflow-hidden"
                                             >
-                                                <div className="relative flex items-center justify-center">
-                                                    <Icons.MessageSquare className="w-5 h-5 whispers-icon text-white/80" />
+                                                <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/20" />
+                                                <div className="relative z-10 flex items-center justify-center">
+                                                    <Icons.MessageSquare className="w-5 h-5 text-white" />
                                                 </div>
-                                                <span className="whispers-label">{t('WHISPERS')}</span>
+                                                <span className="relative z-10">{t('WHISPERS')}</span>
                                             </button>
                                         </>
                                     )}
                                 </div>
                                 {!isMe && currentUser?.role === 'Founder' && (
-                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-none hover:bg-red-600/20 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest">
+                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3.5 bg-red-950/20 border border-red-500/20 rounded-none hover:bg-red-900/40 hover:border-red-500/50 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                        <Icons.Shield className="w-4 h-4" />
                                         {t('BAN_3_DAYS') || 'BAN 3 ΗΜΕΡΕΣ'}
                                     </button>
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-black rounded-none mb-4 border border-white/20">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 bg-black/70 backdrop-blur-xl rounded-none mb-5 border border-white/15">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO'].map(tab => {
-                                    const renderIcon = () => {
-                                        if (tab === 'ALL') return <Icons.Grid className="w-3.5 h-3.5 shrink-0" />;
-                                        if (tab === 'POSTS') return <Icons.Compose className="w-3.5 h-3.5 shrink-0" />;
-                                        if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 shrink-0"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
-                                        if (tab === 'VIDEO') return <Icons.Play className="w-3 h-3 shrink-0 fill-current" />;
+                                    const renderIcon = (isActive) => {
+                                        const iconClass = `w-4 h-4 shrink-0 transition-colors duration-300 ${isActive ? 'text-black' : 'text-white/70 group-hover:text-white'}`;
+                                        if (tab === 'ALL') return <Icons.Grid className={iconClass} />;
+                                        if (tab === 'POSTS') return <Icons.Compose className={iconClass} />;
+                                        if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
+                                        if (tab === 'VIDEO') return <Icons.Play className={`${iconClass} fill-current`} />;
                                         return null;
                                     };
+                                    const isActive = activeTab === tab;
                                     return (
                                         <button
                                             key={tab}
                                             onClick={() => setActiveTab(tab)}
-                                            className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-none flex items-center justify-center gap-2 transition-colors ${activeTab === tab
-                                                ? 'bg-white/10 text-white shadow-none border border-white/10'
-                                                : 'text-white/40 hover:text-white hover:bg-white/5 border border-transparent'
+                                            className={`min-h-[72px] px-3 py-3 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.18em] rounded-none flex flex-col items-center justify-center gap-2 transition-colors duration-300 relative group overflow-hidden border ${isActive
+                                                ? 'bg-white text-black border-white'
+                                                : 'bg-black/40 text-white/80 border-white/10 hover:bg-white/5 hover:border-white/25'
                                                 }`}
                                         >
-                                            {renderIcon()}
-                                            <span className="hidden sm:inline">{t('TAB_' + tab, tab)}</span>
+                                            {isActive && (
+                                                <>
+                                                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t-2 border-l-2 border-black/30 pointer-events-none" />
+                                                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b-2 border-r-2 border-black/30 pointer-events-none" />
+                                                </>
+                                            )}
+                                            {renderIcon(isActive)}
+                                            <span className={`leading-none text-center transition-colors duration-300 ${isActive ? 'text-black' : 'text-white group-hover:text-white'}`}>{t('TAB_' + tab, tab)}</span>
                                         </button>
                                     );
                                 })}
@@ -4609,18 +4629,17 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
 
                 <div className="text-center space-y-1">
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
                         <h1 className="text-xl sm:text-2xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
+                        {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
+                            <div className={`inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass}`}>
+                                {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
+                                <span className="text-[10px] font-black uppercase tracking-[0.18em]">{t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}</span>
+                            </div>
+                        )}
                     </div>
-                    {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] ? (
-                        <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gold-primary)] font-black tracking-widest uppercase mt-2">
-                            {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5 drop-shadow-[0_0_5px_var(--gold-primary)]" })}
-                            {t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}
-                        </div>
-                    ) : (
-                        <span className="text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
-                    )}
+                    <span className="text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                     {publicFounderAffiliation && (
                         <div className="mt-2 flex justify-center">
                             <FounderAffiliationBadge username={publicFounderAffiliation} />
@@ -7450,19 +7469,17 @@ const App = () => {
                               </div>
                             
                             {/* Profile Name & Badge */}
-                            <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none mb-1">
+                            <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none mb-1 flex-wrap">
                                 {shareModalProfile.username}
                                 <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6" />
+                                {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
+                                    <div className={`inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 ${PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].accentClass}`}>
+                                        {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
+                                        <span className="text-[10px] font-black uppercase tracking-[0.18em]">{t(`DESC_${shareModalProfile.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].label)}</span>
+                                    </div>
+                                )}
                             </div>
-                            
-                            {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] ? (
-                                <div className="flex items-center justify-center gap-1.5 text-gray-400 text-sm font-bold uppercase tracking-widest mb-4">
-                                    {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].Icon, { className: "w-4 h-4" })}
-                                    {t(`DESC_${shareModalProfile.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].label)}
-                                </div>
-                            ) : (
-                                <div className="mb-4"></div>
-                            )}
+                            <div className="mb-4" />
                             {getFounderAffiliation(shareModalProfile) && (
                                 <FounderAffiliationBadge username={getFounderAffiliation(shareModalProfile)} className="mb-4" />
                             )}
