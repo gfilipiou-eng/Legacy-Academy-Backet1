@@ -6398,8 +6398,20 @@ const App = () => {
 
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
-                                <div className="flex flex-col items-center mb-8">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-36 w-auto object-contain transform-gpu" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+                                <div className="flex flex-col items-center mb-8 relative">
+                                    {/* Main Logo Container */}
+                                    <div className="relative flex justify-center items-center h-36">
+                                        <img src="/logo.png" alt="Legacy Academy" className={`h-36 w-auto object-contain transform-gpu transition-opacity duration-300 ${authLoading ? 'opacity-20' : 'opacity-100'}`} style={{ imageRendering: '-webkit-optimize-contrast' }} />
+                                        
+                                        {/* Massive Vergina Sun Loader overlapping Logo */}
+                                        {authLoading && (
+                                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                <div className="w-24 h-24 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
+                                                    <Icons.VerginaSun />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--gold-primary)]/60">
@@ -6448,7 +6460,8 @@ const App = () => {
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     setAuthError(e.response?.data?.message || "Invalid clearance codes or account not found.");
-                                                } finally { setAuthLoading(false); }
+                                                    setAuthLoading(false); // Only stop loading if error
+                                                } 
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 <span className="relative">{authLoading ? "AUTHENTICATING..." : "SIGN IN"}</span>
@@ -6563,7 +6576,8 @@ const App = () => {
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
-                                                } finally { setAuthLoading(false); }
+                                                    setAuthLoading(false);
+                                                } 
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 <span className="relative">{authLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}</span>
