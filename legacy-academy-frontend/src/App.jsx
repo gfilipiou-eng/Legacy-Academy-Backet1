@@ -605,18 +605,9 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 };
 
 const DefaultAvatar = ({ name, size = "normal" }) => {
-    const COLORS = [
-        'from-red-500 to-orange-600', 'from-blue-500 to-cyan-600', 'from-emerald-500 to-green-600',
-        'from-violet-500 to-purple-600', 'from-[var(--gold-primary)] to-[var(--gold-secondary)]', 'from-rose-500 to-pink-600',
-        'from-indigo-500 to-blue-600', 'from-teal-500 to-emerald-600'
-    ];
-    const hash = name ? name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
-    const gradient = COLORS[hash % COLORS.length];
-
     return (
-        <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-inner relative overflow-hidden`}>
-            <div className="absolute inset-0 bg-white/10 mix-blend-overlay" />
-            {name ? <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase select-none`}>{name.substring(0, 1)}</span> : <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-80`} />}
+        <div className="w-full h-full bg-[#0a0a0a] flex items-center justify-center text-white relative overflow-hidden">
+            {name ? <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase select-none text-white/50`}>{name.substring(0, 1)}</span> : <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-40 text-white`} />}
         </div>
     );
 };
@@ -1070,12 +1061,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-3xl border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="w-11 h-11 rounded-none bg-black overflow-hidden  shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
-                                {/* Meander corners */}
-                                <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-white/40 pointer-events-none z-10" />
-                                <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-white/40 pointer-events-none z-10" />
-                                <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-white/40 pointer-events-none z-10" />
-                                <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-white/40 pointer-events-none z-10" />
+                            <div className="w-11 h-11 rounded-none bg-black overflow-hidden shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                                 
                                 <ProfileAvatar user={author} />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
@@ -3709,24 +3695,18 @@ const ProfileModal = ({
                             </button>
                         </div>
                     ) : (
-                        <div className={`p-4 sm:p-6 pb-20 ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
-                            <div className="flex items-start justify-between mb-3 sm:mb-4">
+                        <div className={`p-4 sm:p-6 pb-20 flex flex-col items-center ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
+                            <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-none bg-black border-[1.5px] border-[var(--gold-primary)]/50 overflow-hidden shadow-[0_0_15px_rgba(255,215,0,0.1)] shrink-0 relative group">
-                                        {/* 2030 Corner brackets */}
-                                        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[var(--gold-primary)] pointer-events-none z-10" />
-                                        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[var(--gold-primary)] pointer-events-none z-10" />
-                                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[var(--gold-primary)] pointer-events-none z-10" />
-                                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[var(--gold-primary)] pointer-events-none z-10" />
-                                        
+                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-none bg-black overflow-hidden shadow-none shrink-0 relative group">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mb-6 px-2">
-                                <div className="flex flex-col mb-4">
-                                    <div className="font-black text-white text-lg sm:text-xl flex items-center gap-2 leading-none uppercase tracking-tighter flex-wrap">
+                            <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
+                                <div className="flex flex-col mb-4 items-center">
+                                    <div className="font-black text-white text-xl sm:text-2xl flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap">
                                         <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
                                             {isFounderProfile ? (
