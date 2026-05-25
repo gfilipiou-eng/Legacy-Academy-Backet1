@@ -3878,10 +3878,10 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 bg-black/70 backdrop-blur-xl rounded-none mb-5 border border-white/15">
+                            <div className="grid grid-cols-4 gap-2 p-2 bg-white/[0.05] backdrop-blur-2xl rounded-2xl mb-5 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO'].map(tab => {
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-4 h-4 shrink-0 transition-colors duration-300 ${isActive ? 'text-[var(--gold-primary)]' : 'text-white/70 group-hover:text-white'}`;
+                                        const iconClass = `w-4 h-4 shrink-0 transition-colors duration-200 ${isActive ? 'text-[var(--gold-primary)]' : 'text-white/70'}`;
                                         if (tab === 'ALL') return <Icons.Grid className={iconClass} />;
                                         if (tab === 'POSTS') return <Icons.Compose className={iconClass} />;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -3892,22 +3892,26 @@ const ProfileModal = ({
                                     return (
                                         <button
                                             key={tab}
+                                            type="button"
                                             onClick={() => setActiveTab(tab)}
-                                            style={{ WebkitTapHighlightColor: 'transparent' }}
-                                            className={`min-h-[72px] px-3 py-3 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.18em] rounded-none flex flex-col items-center justify-center gap-2 transition-colors duration-300 relative group overflow-hidden border select-none touch-manipulation ${isActive
-                                                ? 'bg-[rgba(212,175,55,0.10)] text-white border-[rgba(212,175,55,0.45)]'
-                                                : 'bg-black/40 text-white/80 border-white/10 hover:bg-white/[0.06] hover:border-white/25'
+                                            onPointerUp={(e) => {
+                                                e.preventDefault();
+                                                setActiveTab(tab);
+                                            }}
+                                            style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
+                                            className={`min-w-0 min-h-[58px] sm:min-h-[62px] px-2 sm:px-3 py-2.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.14em] rounded-xl flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 transition-all duration-200 relative overflow-hidden border select-none whitespace-nowrap appearance-none focus:outline-none active:scale-[0.99] cursor-pointer ${isActive
+                                                ? 'bg-white/[0.10] text-white border-[var(--gold-primary)]/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
+                                                : 'bg-transparent text-white/80 border-transparent hover:bg-white/[0.05] hover:border-white/10'
                                                 }`}
                                         >
                                             {isActive && (
                                                 <>
-                                                    <div className="absolute inset-x-2 top-0 h-px bg-[var(--gold-primary)]/70 pointer-events-none" />
-                                                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t-2 border-l-2 border-[var(--gold-primary)]/70 pointer-events-none" />
-                                                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b-2 border-r-2 border-[var(--gold-primary)]/70 pointer-events-none" />
+                                                    <div className="absolute inset-x-3 top-0 h-px bg-[var(--gold-primary)]/65 pointer-events-none" />
+                                                    <div className="absolute inset-x-4 bottom-0 h-px bg-white/10 pointer-events-none" />
                                                 </>
                                             )}
                                             {renderIcon(isActive)}
-                                            <span className={`leading-none text-center transition-colors duration-300 ${isActive ? 'text-white' : 'text-white group-hover:text-white'}`}>{t('TAB_' + tab, tab)}</span>
+                                            <span className={`leading-none text-center transition-colors duration-200 truncate ${isActive ? 'text-white' : 'text-white/90'}`}>{t('TAB_' + tab, tab)}</span>
                                         </button>
                                     );
                                 })}
@@ -4979,8 +4983,9 @@ const App = () => {
         };
     }, [publicProfileUsername]);
 
-    const [user, setUser] = useState(null);
     const viewPostId = searchParams.get('postId');
+    const isPublicExperience = Boolean(publicProfileUsername || viewPostId);
+    const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
 
@@ -5388,7 +5393,7 @@ const App = () => {
     const lastInitializedId = useRef(null);
 
     useEffect(() => {
-        if (user && user._id !== lastInitializedId.current) {
+        if (user && !isPublicExperience && user._id !== lastInitializedId.current) {
             lastInitializedId.current = user._id;
 
             // 🔥 INITIAL FETCH
@@ -5406,23 +5411,23 @@ const App = () => {
             startUserPoll();     // Every 10s (for online status)
             startPostPoll();     // Every 30s as fallback
             startNotificationPoll(); // Every 60s as fallback
-        } else if (!user) {
+        } else if (!user || isPublicExperience) {
             lastInitializedId.current = null;
             stopHeartbeat();
             stopUserPoll();
             stopPostPoll();
             stopNotificationPoll();
         }
-    }, [user]);
+    }, [user, isPublicExperience]);
 
     // Fetch posts on tab change only (login/refresh handled by user init effect)
     useEffect(() => {
-        if (user) fetchPosts();
-    }, [activeTab]);
+        if (user && !isPublicExperience) fetchPosts();
+    }, [activeTab, user, isPublicExperience]);
 
     // 🔥 GLOBAL REAL-TIME LISTENERS
     useEffect(() => {
-        if (!user) return;
+        if (!user || isPublicExperience) return;
 
         const onNotificationRecv = (data) => {
             console.log("📡 [SOCKET] Real-time notification received", data);
@@ -5589,7 +5594,7 @@ const App = () => {
             socket.off('user.status', onUserStatus);
             socket.off('user.updated', onUserUpdated);
         };
-    }, [user, selectedPost?._id]);
+    }, [user, selectedPost?._id, isPublicExperience]);
 
 
     // FIX: Optimized search filtering with useMemo
@@ -5705,6 +5710,7 @@ const App = () => {
         }
     }, [users, reconcileIntelligence]);
     const fetchPosts = async () => {
+        if (!user || isPublicExperience) return;
         if (selectedPostRef.current) return;
         if (!postsRef.current || postsRef.current.length === 0) {
             setIsLoadingFeed(true);
@@ -5725,6 +5731,7 @@ const App = () => {
     };
 
     const fetchUsers = async (specificId = null) => {
+        if (!user || isPublicExperience) return;
         try {
             if (specificId) {
                 // Targeted refresh for instant online status
@@ -5843,7 +5850,7 @@ const App = () => {
 
     // Notifications
     const fetchNotifications = async (silent = false) => {
-        if (!user) return;
+        if (!user || isPublicExperience) return;
         try {
             const res = await axios.get(`/users/notifications`);
             if (!silent && res.data.length > (user.notifications?.length || 0)) {
@@ -5895,12 +5902,14 @@ const App = () => {
     const _postInterval = useRef(null);
 
     const startNotificationPoll = () => {
+        if (!user || isPublicExperience) return;
         if (_notifInterval.current) clearInterval(_notifInterval.current);
         _notifInterval.current = setInterval(fetchNotifications, 90000); // 90s fallback
     };
     const stopNotificationPoll = () => { if (_notifInterval.current) { clearInterval(_notifInterval.current); _notifInterval.current = null; } };
 
     const startHeartbeat = () => {
+        if (!user || isPublicExperience) return;
         stopHeartbeat();
         const doHb = () => { if (!user) return; axios.put('/users/heartbeat').catch(() => { }); };
         doHb();
@@ -5909,12 +5918,14 @@ const App = () => {
     const stopHeartbeat = () => { if (_hbInterval.current) { clearInterval(_hbInterval.current); _hbInterval.current = null; } };
 
     const startUserPoll = () => {
+        if (!user || isPublicExperience) return;
         if (_userInterval.current) clearInterval(_userInterval.current);
         _userInterval.current = setInterval(fetchUsers, 30000); // 30s — was 4s (too aggressive!)
     };
     const stopUserPoll = () => { if (_userInterval.current) { clearInterval(_userInterval.current); _userInterval.current = null; } };
 
     const startPostPoll = () => {
+        if (!user || isPublicExperience) return;
         if (_postInterval.current) clearInterval(_postInterval.current);
         _postInterval.current = setInterval(fetchPosts, 60000); // 60s fallback
     };
