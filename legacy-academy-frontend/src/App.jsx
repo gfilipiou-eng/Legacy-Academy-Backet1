@@ -6439,9 +6439,9 @@ const App = () => {
                                                 )}
                                                 <input type="file" ref={registerFileRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
                                             </div>
-                                            {[{ id: 'r-username', type: 'text', icon: <Icons.User className="w-4 h-4" />, ph: t('USERNAME'), val: formData.username, max: 19 },
-                                              { id: 'r-email', type: 'email', icon: <Icons.Mail className="w-4 h-4" />, ph: t('EMAIL'), val: formData.email },
-                                            ].map(f => (
+                                            {[{ id: 'r-username', type: 'text', icon: <Icons.User className="w-4 h-4" />, ph: 'Username', val: formData.username, max: 19 },
+          { id: 'r-email', type: 'email', icon: <Icons.Mail className="w-4 h-4" />, ph: 'Email Address', val: formData.email },
+        ].map(f => (
                                                 <div key={f.id} className="relative group">
                                                     <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                     <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
@@ -6453,17 +6453,17 @@ const App = () => {
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder={t('PASSWORD')} id="r-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                                 <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 z-10">{showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}</button>
                                             </div>
                                             <div className="relative group">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <textarea placeholder={t('BIO_PH')} id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-transparent py-3.5 px-4 text-white text-sm font-medium outline-none placeholder:text-white/20 resize-none h-20 z-10" />
+                                                <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-transparent py-3.5 px-4 text-white text-sm font-medium outline-none placeholder:text-white/20 resize-none h-20 z-10" />
                                                 <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/15 z-10">{(formData.bio || '').length}/500</div>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest px-1">{t('SELECT_LANGUAGE', 'Select Language')}</label>
+                                                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest px-1">SELECT LANGUAGE</label>
                                                 <div className="grid grid-cols-4 gap-2">
                                                     {[
                                                         { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -6503,11 +6503,11 @@ const App = () => {
                                                     localStorage.setItem('themeColor', '#ffd700');
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
-                                                    alert(e.response?.data?.message || e.response?.data || t('REQUEST_FAILED'));
+                                                    alert(e.response?.data?.message || e.response?.data || 'Action failed. Please try again.');
                                                 } finally { setAuthLoading(false); }
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                <span className="relative">{authLoading ? t('CREATING_ACCOUNT') : t('REGISTER')}</span>
+                                                <span className="relative">{authLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}</span>
                                             </button>
                                             <div className="flex items-center my-3.5">
                                                  <div className="flex-1 h-[1px] bg-white/5" />
@@ -6524,32 +6524,32 @@ const App = () => {
                                                  </svg>
                                                  <span>GOOGLE REGISTER</span>
                                              </button>
-                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</button>
+                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>BACK TO LOGIN</button>
                                         </>
                                     )}
                                     {authMode === 'forgot' && (
                                         <>
-                                            <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">{t('RESET_LINK_DESC')}</p>
+                                            <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">Enter your email address to receive a secure password reset link.</p>
                                             <div className="relative group">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type="email" placeholder="Email" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type="email" placeholder="Email Address" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                             </div>
                                             <button disabled={authLoading} onClick={async () => {
                                                 setAuthLoading(true);
                                                 try {
                                                     await axios.post('/auth/forgot-password', { email: formData.email });
-                                                    alert(t('RESET_LINK_SENT'));
+                                                    alert('Password reset link sent! Check your email.');
                                                     setAuthMode('login');
                                                 } catch (e) {
-                                                    alert(t('REQUEST_FAILED'));
+                                                    alert('Action failed. Please try again.');
                                                 } finally { setAuthLoading(false); }
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                <span className="relative">{authLoading ? t('SENDING') : t('SEND_RESET_LINK')}</span>
+                                                <span className="relative">{authLoading ? 'SENDING...' : 'SEND RESET LINK'}</span>
                                             </button>
-                                             <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>{t('BACK_TO_LOGIN')}</button>
+                                             <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>BACK TO LOGIN</button>
                                         </>
                                     )}
                                 </div>
