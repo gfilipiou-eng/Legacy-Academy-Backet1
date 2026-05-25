@@ -172,7 +172,42 @@ const getYouTubeEmbedUrl = (url) => {
     return id ? `https://www.youtube.com/embed/${id}` : null;
 };
 
-const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-[#1D9BF0] font-medium hover:underline cursor-pointer">{part}</span> : part) : (text ? [text] : []);
+const parseText = (text, onHashtagClick) => {
+    if (!text) return [];
+    
+    // First, split by URLs to protect them from hashtag splitting
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    
+    return parts.map((part, i) => {
+        if (part.match(urlRegex)) {
+            // It's a URL, render it directly
+            return <a key={`url-${i}`} href={part} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{part}</a>;
+        }
+        
+        // It's normal text, now we can safely parse hashtags
+        const hashtagRegex = /(#[\p{L}\p{N}_]+)/gu;
+        const subParts = part.split(hashtagRegex);
+        
+        return subParts.map((subPart, j) => {
+            if (subPart.startsWith('#')) {
+                return (
+                    <span 
+                        key={`hash-${i}-${j}`} 
+                        onClick={(e) => { 
+                            e.stopPropagation(); 
+                            if (onHashtagClick) onHashtagClick(subPart); 
+                        }} 
+                        className="text-[#1D9BF0] font-medium hover:underline cursor-pointer"
+                    >
+                        {subPart}
+                    </span>
+                );
+            }
+            return subPart;
+        });
+    });
+};
 
 const formatUserHandle = (username) =>
     '@' + String(username || 'agent').toLowerCase().replace(/\s+/g, '');
@@ -321,7 +356,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             }}
             className={`inline-flex items-center gap-1.5 text-white font-bold tracking-widest uppercase hover:underline cursor-pointer ${textSizeClass} ${className}`}
         >
-            <div className={`${avatarSizeClass} overflow-hidden bg-black border border-white/20 shrink-0 flex items-center justify-center`}>
+            <div className={`${avatarSizeClass} overflow-hidden bg-black  shrink-0 flex items-center justify-center`}>
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
@@ -512,7 +547,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 
                 <div className="flex flex-col gap-4">
                     {audioBlob ? (
-                        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/20 rounded-none animate-pulse">
+                        <div className="flex items-center justify-between p-4 bg-white/5  rounded-none animate-pulse">
                             <div className="flex items-center gap-3">
                                 <div className="w-2.5 h-2.5 rounded-none bg-white" />
                                 <span className="text-xs font-black text-white uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
@@ -534,7 +569,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                                 value={value}
                                 onChange={(e) => onChange(e.target.value)}
                                 placeholder={t('WRITE_COMMENT')}
-                                className="w-full h-32 bg-black border border-white/20 rounded-none p-5 text-base text-white font-medium resize-none focus:border-white outline-none placeholder-gray-600 shadow-none"
+                                className="w-full h-32 bg-black  rounded-none p-5 text-base text-white font-medium resize-none focus:border-white outline-none placeholder-gray-600 shadow-none"
                             />
                             <div className="absolute bottom-3 right-3 text-[10px] font-black text-gray-700 uppercase tracking-widest">{value.length} / 500</div>
                         </div>
@@ -545,7 +580,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <button
                                 type="button"
                                 onClick={startRecording}
-                                className="p-4 bg-black border border-white/20 rounded-none text-gray-400 shadow-none group"
+                                className="p-4 bg-black  rounded-none text-gray-400 shadow-none group"
                             >
                                 <Icons.Mic className="w-6 h-6 group-hover:scale-110 " />
                             </button>
@@ -679,7 +714,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                             left: `${coords.left}px`,
                             zIndex: 10001
                         }}
-                        className="w-48 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 animate-fade-in"
+                        className="w-48 bg-[#1a1a1a]  rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 animate-fade-in"
                     >
                         {isOwner && (
                             <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl   w-full text-left group/item">
@@ -764,7 +799,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
             >
                 <div 
-                    className="w-9 h-9 rounded-none overflow-hidden shrink-0 border border-white/10 bg-black cursor-pointer hover:opacity-80 transition-opacity"
+                    className="w-9 h-9 rounded-none overflow-hidden shrink-0  bg-black cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
                 >
                     <ProfileAvatar
@@ -992,7 +1027,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
     return (
         <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden  duration-300">
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black border border-white/20 rounded-none z-[2600] shadow-none group">
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black  rounded-none z-[2600] shadow-none group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 " />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]">
@@ -1028,14 +1063,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </div>
                             )
                         )
-                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-black border border-white/10 w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
+                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-black  w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
                 </div>
 
                 {/* Info Section */}
                 <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-3xl border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="w-11 h-11 rounded-none bg-black overflow-hidden border border-white/20 shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                            <div className="w-11 h-11 rounded-none bg-black overflow-hidden  shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                                 {/* Meander corners */}
                                 <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-white/40 pointer-events-none z-10" />
                                 <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-white/40 pointer-events-none z-10" />
@@ -1088,7 +1123,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                             </div>
                             <div className="flex items-center gap-2 w-full">
-                                <div className="w-9 h-9 rounded-none bg-black overflow-hidden shrink-0 border border-white/20">
+                                <div className="w-9 h-9 rounded-none bg-black overflow-hidden shrink-0 ">
                                     <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
@@ -1098,7 +1133,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             <span className="text-[10px] font-black text-black uppercase tracking-widest">{t('TRANSMITTING')}</span>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button onClick={() => stopRecording(true)} className="p-2 bg-black border border-white/20 rounded-none text-white hover:bg-white/10"><Icons.X className="w-4 h-4" /></button>
+                                            <button onClick={() => stopRecording(true)} className="p-2 bg-black  rounded-none text-white hover:bg-white/10"><Icons.X className="w-4 h-4" /></button>
                                             <button onClick={() => stopRecording(false)} className="px-3 py-2 bg-black rounded-none text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10">{t('STOP')}</button>
                                         </div>
                                     </div>
@@ -1109,7 +1144,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             <span className="text-[10px] font-black text-white uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
                                         </div>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-none text-white border border-white/20 hover:bg-white/10">
+                                            <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-none text-white  hover:bg-white/10">
                                                 <Icons.X className="w-4 h-4" />
                                             </button>
                                             <button onClick={() => {
@@ -1122,7 +1157,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                         </div>
                                     </div>
                                 ) : (
-                                    <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-black border border-white/20 rounded-none overflow-hidden min-h-[46px]">
+                                    <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-black  rounded-none overflow-hidden min-h-[46px]">
                                         <input
                                             id={`comment-input-${post._id}`}
                                             placeholder={t('FOUNDER_PLACEHOLDER')}
@@ -1146,19 +1181,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <div className="px-4 sm:px-6 py-6 bg-transparent border-b border-white/10 z-10 relative">
                             <div className="space-y-4">
                                 <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left whitespace-pre-wrap break-words">
-                                    {(parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
+                                    {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
                                         onClose();
                                         // Need a way to search hashtag, maybe just window location
-                                    }) || []).map((part, i) => {
-                                        if (typeof part !== 'string') return <React.Fragment key={i}>{part}</React.Fragment>;
-                                        const urlRegex = /(https?:\/\/[^\s]+)/g;
-                                        const parts = part.split(urlRegex);
-                                        return parts.map((p, j) => {
-                                            if (p.match(urlRegex)) {
-                                                return <a key={`${i}-${j}`} href={p} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{p}</a>;
-                                            }
-                                            return p;
-                                        });
                                     })}
                                     {(translatedText || post.desc) && (translatedText || post.desc).length > 500 && (
                                         <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-white text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
@@ -1473,7 +1498,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             <div className="flex justify-start items-start gap-2.5">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); toggleMute(e); }}
-                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto     group/btn shadow-xl"
+                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl  text-white pointer-events-auto     group/btn shadow-xl"
                                 >
                                     {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 " /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 " />}
                                 </button>
@@ -1502,7 +1527,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                                 onExpand(); // Fallback for youtube or missing ref
                                             }
                                         }}
-                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 text-white pointer-events-auto     group/btn shadow-xl"
+                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl  text-white pointer-events-auto     group/btn shadow-xl"
                                     >
                                         <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 " />
                                     </button>
@@ -1571,7 +1596,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             onClick={handleClick}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-none bg-black overflow-hidden border border-white/20 shadow-md">
+                <div className="w-12 h-12 rounded-none bg-black overflow-hidden  shadow-md">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-none p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
@@ -1613,12 +1638,12 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
                         <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 shadow-lg uppercase tracking-widest">{t('ACCEPT')}</button>
-                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black rounded-lg    uppercase tracking-widest">{t('REJECT')}</button>
+                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5  text-gray-400 text-[10px] font-black rounded-lg    uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
             </div>
             {note.postImage && (
-                <div className="w-12 h-12 rounded-xl bg-gray-800 border border-white/10 overflow-hidden shrink-0 group-hover:scale-105 ">
+                <div className="w-12 h-12 rounded-xl bg-gray-800  overflow-hidden shrink-0 group-hover:scale-105 ">
                     <img src={resolveMediaUrl(note.postImage)} className="w-full h-full object-cover opacity-60" />
                 </div>
             )}
@@ -1632,7 +1657,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none overflow-hidden bg-black border border-white/20 shadow-none relative group">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none overflow-hidden bg-black  shadow-none relative group">
                     <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
@@ -1793,7 +1818,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-none border border-white/10 transition-all duration-300 will-change-transform overflow-hidden`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-none  transition-all duration-300 will-change-transform overflow-hidden`}
         >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -1826,7 +1851,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-none bg-black/60 shadow-none cursor-pointer overflow-hidden border border-white/20" onClick={() => onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-none bg-black/60 shadow-none cursor-pointer overflow-hidden " onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -1857,17 +1882,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {post.desc && (
                                 <div className="space-y-2">
                                     <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1">
-                                        {(parseHashtags(translatedText || post.desc, (tag) => onHashtagClick(tag)) || []).map((part, i) => {
-                                            if (typeof part !== 'string') return <React.Fragment key={i}>{part}</React.Fragment>;
-                                            const urlRegex = /(https?:\/\/[^\s]+)/g;
-                                            const parts = part.split(urlRegex);
-                                            return parts.map((p, j) => {
-                                                if (p.match(urlRegex)) {
-                                                    return <a key={`${i}-${j}`} href={p} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{p}</a>;
-                                                }
-                                                return p;
-                                            });
-                                        })}
+                                        {parseText(translatedText || post.desc, (tag) => onHashtagClick(tag))}
                                     </p>
                                     <button
                                         onClick={handleTranslate}
@@ -1881,7 +1896,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-none overflow-hidden border border-white/20 bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
+                                <div className="rounded-none overflow-hidden  bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
                                     {isYouTubeUrl(post.videoUrl) ? (
                                         <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
                                     ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
@@ -1975,7 +1990,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {showComments && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
                                 <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-none overflow-hidden shrink-0 border border-white/10 bg-black">
+                                    <div className="w-10 h-10 rounded-none overflow-hidden shrink-0  bg-black">
                                         <ProfileAvatar user={user} />
                                     </div>
                                     <div className="flex-1 flex flex-col gap-3">
@@ -1984,10 +1999,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 value={commentText}
                                                 onChange={(e) => setCommentText(e.target.value)}
                                                 placeholder={t('WRITE_COMMENT')}
-                                                className="w-full bg-black border border-white/20 rounded-none p-4 text-sm text-white outline-none focus:border-white min-h-[100px] resize-none pb-12"
+                                                className="w-full bg-black  rounded-none p-4 text-sm text-white outline-none focus:border-white min-h-[100px] resize-none pb-12"
                                             />
                                             <div className="absolute bottom-2 left-2 flex gap-2">
-                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-none  ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'bg-black border border-white/20 text-gray-500'}`}>
+                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-none  ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'bg-black  text-gray-500'}`}>
                                                     <Icons.Mic className="w-5 h-5" />
                                                 </button>
                                                 <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-white border border-white text-black rounded-none hover:opacity-90  ">
@@ -2002,7 +2017,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                     <span className="text-[10px] font-black text-white uppercase">VOICE READY</span>
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5  text-white rounded-none border border-white/20 hover:bg-white/10"><Icons.Trash className="w-4 h-4" /></button>
+                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5  text-white rounded-none  hover:bg-white/10"><Icons.Trash className="w-4 h-4" /></button>
                                                     <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-white text-black font-black text-[10px] rounded-none">SEND</button>
                                                 </div>
                                             </div>
@@ -2341,7 +2356,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     return (
         <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none border border-white/20 flex overflow-hidden shadow-none">
+            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none  flex overflow-hidden shadow-none">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
@@ -2361,7 +2376,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('SEARCH_USERS_PH')}
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)]  placeholder:text-gray-600"
+                                className="w-full bg-white/5  text-white rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)]  placeholder:text-gray-600"
                             />
                         </div>
                     </div>
@@ -2376,7 +2391,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden border border-white/20"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-none border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-none border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2395,7 +2410,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-none overflow-hidden shrink-0 border border-white/20 bg-black"><ProfileAvatar user={activeChat} /></div>
+                                <div className="w-10 h-10 rounded-none overflow-hidden shrink-0  bg-black"><ProfileAvatar user={activeChat} /></div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
@@ -2469,7 +2484,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                         <img
                                                             src={resolveMediaUrl(imageUrl)}
                                                             alt=""
-                                                            className="max-w-full max-h-[300px] rounded-[14px] object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10"
+                                                            className="max-w-full max-h-[300px] rounded-[14px] object-cover cursor-pointer hover:opacity-90 transition-opacity "
                                                             onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
                                                             loading="lazy"
                                                             onError={(e) => e.target.style.display = 'none'} // Hide if broken
@@ -2513,7 +2528,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             {imagePreview && (
                                 <div className="absolute bottom-full left-0 right-0 p-3 bg-black/90 backdrop-blur-xl border-t border-white/10">
                                     <div className="relative inline-block">
-                                        <img src={imagePreview} alt="" className="h-24 max-w-[200px] rounded-xl object-cover border border-white/10 shadow-xl" />
+                                        <img src={imagePreview} alt="" className="h-24 max-w-[200px] rounded-xl object-cover  shadow-xl" />
                                         <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg   ">
                                             <Icons.X className="w-3 h-3 text-white" />
                                         </button>
@@ -2527,7 +2542,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="flex-1 relative flex items-center bg-[#111] border border-white/20 rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)]  group overflow-hidden">
+                                    <div className="flex-1 relative flex items-center bg-[#111]  rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)]  group overflow-hidden">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
@@ -2772,7 +2787,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col backdrop-blur-3xl will-change-transform"
+                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh]  rounded-[2rem] overflow-hidden flex flex-col backdrop-blur-3xl will-change-transform"
                 style={{ backgroundColor: 'var(--glass-bg)' }}
             >
 
@@ -2996,7 +3011,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <div className="w-[48px] h-[48px] rounded-none overflow-hidden shrink-0 border border-white/20">
+                            <div className="w-[48px] h-[48px] rounded-none overflow-hidden shrink-0 ">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                         </div>
@@ -3089,7 +3104,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
     return (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
+            <div className="relative w-full max-w-2xl max-h-[80vh] bg-[#0a0a0a]  rounded-[2rem] overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
                 <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between gap-3">
                     <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-widest truncate min-w-0">{title}</h2>
                     <button onClick={() => { onClose(); }} className="p-2  rounded-full  text-gray-400  shrink-0  touch-manipulation">
@@ -3356,7 +3371,7 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-none overflow-hidden flex flex-col border border-white/10 ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-none overflow-hidden flex flex-col  ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
 
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
@@ -3399,7 +3414,7 @@ const ProfileModal = ({
                                     onViewProfile(u);
                                     setActiveList(null);
                                 }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent">
-                                      <div className="w-11 h-11 rounded-none bg-black overflow-hidden border border-white/20">
+                                      <div className="w-11 h-11 rounded-none bg-black overflow-hidden ">
                                           <ProfileAvatar user={u} />
                                       </div>
                                       <div className="flex flex-col">
@@ -3453,7 +3468,7 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
-                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    className="flex-1 py-4 bg-[#121212]  rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {profileUploading ? (
                                         <div className="w-4 h-4 text-white/50">
                                             <Icons.Loader />
@@ -3470,7 +3485,7 @@ const ProfileModal = ({
 
                             <div className="flex gap-2 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    className="flex-1 py-4 bg-[#121212]  rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {coverUploading ? (
                                         <div className="w-4 h-4 text-white/50">
                                             <Icons.Loader />
@@ -3500,7 +3515,7 @@ const ProfileModal = ({
                                         }
                                         finally { setCoverUploading(false); }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]  border border-white/10  rounded-none text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
+                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]    rounded-none text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
                                         <Icons.X className="w-5 h-5" />
                                     </button>
                                 )}
@@ -3536,7 +3551,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none " placeholder={t('USERNAME_PH')} />
+                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5  rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none " placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -3546,7 +3561,7 @@ const ProfileModal = ({
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 "
+                                        className="w-full bg-white/5  rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 "
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
@@ -3608,7 +3623,7 @@ const ProfileModal = ({
                                                     setFounderAffiliation(sanitizeAffiliation(e.target.value));
                                                 }}
                                                 placeholder="affiliated_username"
-                                                className="w-full bg-black/40 border border-white/10 rounded-2xl py-3 pl-8 pr-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none"
+                                                className="w-full bg-black/40  rounded-2xl py-3 pl-8 pr-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none"
                                             />
                                         </div>
                                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-2 pl-1">Links to another profile (e.g., your company).</div>
@@ -3761,20 +3776,20 @@ const ProfileModal = ({
                                 </div>
 
                                 <div className="text-[14px] sm:text-[15px] text-white/90 leading-relaxed max-w-[90%] whitespace-pre-wrap font-medium mb-5 break-words">
-                                    {parseHashtags(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
+                                    {parseText(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                 </div>
 
                                 {/* STATS GRID — 4 equal columns, no scroll */}
                                 <div className="grid grid-cols-4 gap-2 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-lg">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md  rounded-2xl shadow-lg">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
                                         <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-lg">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md  rounded-2xl shadow-lg">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = safeId(displayUser);
@@ -3790,7 +3805,7 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all shadow-lg touch-manipulation select-none relative z-10">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3.5 bg-black/40 backdrop-blur-md  rounded-2xl cursor-pointer hover:bg-white/5 transition-all shadow-lg touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
                                         </span>
@@ -3802,7 +3817,7 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all shadow-lg touch-manipulation select-none relative z-10">
+                                    }} className="flex flex-col items-center justify-center gap-0.5 py-3.5 bg-black/40 backdrop-blur-md  rounded-2xl cursor-pointer hover:bg-white/5 transition-all shadow-lg touch-manipulation select-none relative z-10">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
                                         </span>
@@ -3816,7 +3831,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-4 space-y-2 mt-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-black border border-white/10 rounded-full text-white text-[11px] font-black uppercase tracking-widest">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-black  rounded-full text-white text-[11px] font-black uppercase tracking-widest">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -3834,7 +3849,7 @@ const ProfileModal = ({
                                                     setTimeout(() => onOpenChat(displayUser), 50); // Ανοίγουμε το Chat Modal μετά από 50ms
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black border border-white/10 rounded-full shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white"
+                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black  rounded-full shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white"
                                             >
                                                 <div className="relative flex items-center justify-center">
                                                     <Icons.MessageSquare className="w-5 h-5 whispers-icon text-white/80" />
@@ -3890,7 +3905,7 @@ const ProfileModal = ({
                                     <button onClick={() => onFollow(displayUser)} className="px-8 py-3 bg-[var(--gold-primary)] text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105   uppercase shadow-lg shadow-[var(--gold-primary)]/20">
                                         {hasRequested ? t('REQUESTED') : t('FOLLOW_TO_VIEW')}
                                     </button>
-                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400    ">
+                                    <button onClick={onClose} className="mt-2 px-6 py-2 rounded-xl  text-[10px] font-black uppercase tracking-[0.2em] text-gray-400    ">
                                         {t('CLOSE', 'ΚΛΕΙΣΙΜΟ')}
                                     </button>
                                 </div>
@@ -3902,7 +3917,7 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-16 h-16 rounded-none overflow-hidden bg-black border border-white/20 shadow-none relative group">
+                                                        <div className="w-16 h-16 rounded-none overflow-hidden bg-black  shadow-none relative group">
                                                             <ProfileAvatar user={currentUser} className="opacity-80" />
                                                             <div className="absolute inset-0 flex items-center justify-center">
                                                                 <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
@@ -3992,7 +4007,7 @@ const ProfileModal = ({
                                                     <div key={dateKey} className="group animate-fade-in">
                                                         <div className="flex items-center justify-center mb-10 mt-8 relative">
                                                             <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                            <div className="px-6 py-2 bg-[#050505] border border-white/10 flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                                                            <div className="px-6 py-2 bg-[#050505]  flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
                                                                 <div className="w-1 h-1 bg-white/40 rotate-45" />
                                                                 <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/80">{dateKey}</span>
                                                                 <div className="w-1 h-1 bg-white/40 rotate-45" />
@@ -4140,12 +4155,12 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl  shadow-2xl flex flex-col max-h-[85vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-4">
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex flex-col gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-none bg-black overflow-hidden shrink-0 border border-white/20">
+                              <div className="w-10 h-10 rounded-none bg-black overflow-hidden shrink-0 ">
                                   <ProfileAvatar user={user} />
                               </div>
                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
@@ -4161,7 +4176,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                     onChange={(e) => setDesc(e.target.value)}
                                     maxLength={300}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner font-bold"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl  rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner font-bold"
                                 />
                                 <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
                                     {desc.length} / 300
@@ -4181,7 +4196,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
                         {preview ? (
-                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black border border-white/10 shadow-inner flex items-center justify-center">
+                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black  shadow-inner flex items-center justify-center">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain" controls />
                                 ) : isAudio ? (
@@ -4335,7 +4350,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[85vh]">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-6 sm:p-8 rounded-3xl  shadow-2xl flex flex-col max-h-[85vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-6">
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
                     <div className="flex flex-col gap-4">
@@ -4350,7 +4365,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     onChange={e => setDesc(e.target.value)}
                                     maxLength={300}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl  rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner"
                                 />
                                 <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
                                     {desc.length} / 300
@@ -4375,7 +4390,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     id="edit-youtube"
                                     value={youtubeUrl}
                                     placeholder="https://youtube.com/..."
-                                    className="relative w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40   shadow-inner"
+                                    className="relative w-full bg-black/40  rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40   shadow-inner"
                                     onChange={(e) => {
                                         const v = e.target.value || '';
                                         setYoutubeUrl(v);
@@ -4397,7 +4412,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                         <div onClick={() => fileRef.current?.click()} className="cursor-pointer mb-4">
                             {preview ? (
-                                <div className="w-full min-h-[200px] aspect-video rounded-2xl overflow-hidden relative bg-black/60 border border-white/10 shadow-2xl flex items-center justify-center group/preview">
+                                <div className="w-full min-h-[200px] aspect-video rounded-2xl overflow-hidden relative bg-black/60  shadow-2xl flex items-center justify-center group/preview">
                                     {isVideo ? (
                                         <video src={preview} className="w-full h-full object-contain" controls />
                                     ) : (
@@ -4410,7 +4425,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                             setIsVideo(false);
                                             if (fileRef.current) fileRef.current.value = '';
                                         }}
-                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl  text-white  shadow-xl border border-white/10 opacity-0 group-hover/preview:opacity-100"
+                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl  text-white  shadow-xl  opacity-0 group-hover/preview:opacity-100"
                                     >
                                         <Icons.X className="w-4 h-4" />
                                     </button>
@@ -4575,7 +4590,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
             <div className="relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
-                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black border border-white/10 rounded-none text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-none">
+                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black  rounded-none text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-none">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
@@ -4650,7 +4665,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
 
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-black border border-white/20 rounded-none cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-black  rounded-none cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
                     <div className="space-y-1 text-left">
                         <h3 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
                         <p className="text-xs text-gray-400 font-bold leading-snug">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
@@ -4716,7 +4731,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     )}
 
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-none overflow-hidden border border-white/10 shrink-0 bg-black/40">
+                                        <div className="w-9 h-9 rounded-none overflow-hidden  shrink-0 bg-black/40">
                                             {postAuthorPic ? (
                                                 <img src={postAuthorPic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
                                             ) : (
@@ -4757,7 +4772,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                                     {/* MEDIA */}
                                     {(post.image || post.thumbnailUrl || post.videoUrl) && (
-                                        <div className="w-full rounded-none overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
+                                        <div className="w-full rounded-none overflow-hidden  bg-black mb-2 flex items-center justify-center">
                                             {isYouTubePost ? (
                                                 <div className="w-full aspect-video bg-black" onClick={(e) => e.stopPropagation()}>
                                                     <NeuralVideoPlayer
@@ -6550,7 +6565,7 @@ const App = () => {
                                     )}
                                     {authMode === 'register' && (
                                         <>
-                                            <div onClick={() => registerFileRef.current.click()} className="w-20 h-20 mx-auto rounded-[18px] bg-white/5 border border-white/10 overflow-hidden cursor-pointer relative group mb-2 flex items-center justify-center">
+                                            <div onClick={() => registerFileRef.current.click()} className="w-20 h-20 mx-auto rounded-[18px] bg-white/5  overflow-hidden cursor-pointer relative group mb-2 flex items-center justify-center">
                                                 {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : (
                                                     <div className="flex flex-col items-center gap-1 text-white/20 group-hover:text-white/40 transition-colors">
                                                         <Icons.Camera className="w-6 h-6" />
@@ -6767,12 +6782,12 @@ const App = () => {
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
                     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                        <div className="bg-[#050505] border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden relative">
+                        <div className="bg-[#050505]  rounded-[20px] max-w-[400px] w-full overflow-hidden relative">
                             {/* Decorative Top Line */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
                             
                             <div className="p-8 text-center flex flex-col items-center">
-                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center border border-white/10 mb-6 relative">
+                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center  mb-6 relative">
                                     <Icons.Lock className="w-8 h-8 text-[var(--gold-primary)]" />
                                 </div>
                                 
@@ -6781,7 +6796,7 @@ const App = () => {
                                     Legacy Academy Intel is a premium network. To create an account and access the intelligence feed, an active subscription is required.
                                 </p>
                                 
-                                <div className="bg-white/5 border border-white/10 rounded-xl p-4 w-full mb-8">
+                                <div className="bg-white/5  rounded-xl p-4 w-full mb-8">
                                     <div className="text-3xl font-black text-white mb-1">4€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ month</span></div>
                                     <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
                                 </div>
@@ -6808,7 +6823,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black border border-white/20 transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black  transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
@@ -6881,7 +6896,7 @@ const App = () => {
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black border border-white/20 rounded-none py-4 pl-12 pr-4 font-bold outline-none focus:border-white shadow-none" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black  rounded-none py-4 pl-12 pr-4 font-bold outline-none focus:border-white shadow-none" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
@@ -6934,7 +6949,7 @@ const App = () => {
                                                                              />
                                                                          )
                                                                     ) : (
-                                                                        <div className="w-full h-full bg-black flex items-center justify-center p-6 text-center border border-white/10">
+                                                                        <div className="w-full h-full bg-black flex items-center justify-center p-6 text-center ">
                                                                             <span className="font-black text-white/90 text-lg uppercase tracking-tighter leading-tight italic line-clamp-6">{post.desc}</span>
                                                                         </div>
                                                                     )}
@@ -6942,7 +6957,7 @@ const App = () => {
                                                                     
                                                                     <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 z-10">
                                                                         <div className="flex items-center gap-2 mb-1">
-                                                                            <div className="w-6 h-6 rounded-none overflow-hidden border border-white/20">
+                                                                            <div className="w-6 h-6 rounded-none overflow-hidden ">
                                                                                 <ProfileAvatar user={post.author} />
                                                                             </div>
                                                                             <span className="text-[11px] font-bold text-white uppercase tracking-wider truncate shadow-sm">
@@ -6977,8 +6992,8 @@ const App = () => {
                                             ) : activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
-                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none border border-white/20 cursor-pointer hover:border-white transition-colors">
-                                                            <div className="w-10 h-10 rounded-none bg-gray-800 overflow-hidden border border-white/20">
+                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none  cursor-pointer hover:border-white transition-colors">
+                                                            <div className="w-10 h-10 rounded-none bg-gray-800 overflow-hidden ">
                                                                 <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
@@ -7018,7 +7033,7 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 mt-4 relative">
                                                                 <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                                <div className="px-6 py-2 bg-[#050505] border border-white/10 flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                                                                <div className="px-6 py-2 bg-[#050505]  flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
                                                                     <div className="w-1 h-1 bg-white/40 rotate-45" />
                                                                     <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/80">{dateKey}</span>
                                                                     <div className="w-1 h-1 bg-white/40 rotate-45" />
@@ -7062,7 +7077,7 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] shadow-2xl backdrop-blur-xl"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10  flex items-center justify-center text-[var(--gold-primary)] shadow-2xl backdrop-blur-xl"
                         >
                             <Icons.ArrowUp className="w-7 h-7 sm:w-7 sm:h-7" />
                         </button>
@@ -7159,7 +7174,7 @@ const App = () => {
 
                                 <section className="space-y-3 relative group">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5  flex items-center justify-center text-[var(--gold-primary)]">
                                             <Icons.ShieldCheck className="w-5 h-5" />
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S1_TITLE')}</h3>
@@ -7169,7 +7184,7 @@ const App = () => {
 
                                 <section className="space-y-3 relative group">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5  flex items-center justify-center text-[var(--gold-primary)]">
                                             <Icons.Activity className="w-5 h-5" />
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S2_TITLE')}</h3>
@@ -7179,7 +7194,7 @@ const App = () => {
 
                                 <section className="space-y-3 relative group">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5  flex items-center justify-center text-[var(--gold-primary)]">
                                             <Icons.Zap className="w-5 h-5" />
                                         </div>
                                         <h3 className="text-[var(--gold-primary)] font-black uppercase text-sm tracking-widest">{t('TERMS_S3_TITLE')}</h3>
@@ -7202,7 +7217,7 @@ const App = () => {
                         title={t('PRIVACY_POLICY')}
                         content={
                             <div className="space-y-8">
-                                <div className="p-3 sm:p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-3 sm:gap-5">
+                                <div className="p-3 sm:p-4 bg-white/5  rounded-2xl flex items-center gap-3 sm:gap-5">
                                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center text-[var(--gold-primary)] shrink-0">
                                         <Icons.Lock className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
@@ -7211,7 +7226,7 @@ const App = () => {
 
                                 <section className="space-y-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5  flex items-center justify-center text-[var(--gold-primary)]">
                                             <Icons.HardDrive className="w-4 h-4" />
                                         </div>
                                         <h3 className="text-white font-black uppercase text-sm tracking-tighter">{t('PRIVACY_S1_TITLE')}</h3>
@@ -7221,7 +7236,7 @@ const App = () => {
 
                                 <section className="space-y-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5  flex items-center justify-center text-[var(--gold-primary)]">
                                             <Icons.Fingerprint className="w-4 h-4" />
                                         </div>
                                         <h3 className="text-white font-black uppercase text-sm tracking-tighter">{t('PRIVACY_S2_TITLE')}</h3>
@@ -7231,7 +7246,7 @@ const App = () => {
 
                                 <section className="space-y-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--gold-primary)]">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5  flex items-center justify-center text-[var(--gold-primary)]">
                                             <Icons.User className="w-4 h-4" />
                                         </div>
                                         <h3 className="text-white font-black uppercase text-sm tracking-tighter">{t('PRIVACY_S3_TITLE')}</h3>
@@ -7283,14 +7298,14 @@ const App = () => {
                         <Icons.X className="w-6 h-6 text-white" />
                     </button>
                     
-                    <div className="bg-black border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-2xl">
+                    <div className="bg-black  rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-2xl">
                         <div id="share-card-content" className="bg-[#0a0a0a] p-6 pb-8 relative overflow-hidden flex flex-col items-center text-center">
                             {/* Watermark */}
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-2xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Author */}
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-12 rounded-none bg-gray-800 overflow-hidden border border-white/10 shrink-0">
+                                <div className="w-12 h-12 rounded-none bg-gray-800 overflow-hidden  shrink-0">
                                     <ProfileAvatar user={shareModalPost.author} />
                                 </div>
                                 <div>
@@ -7336,7 +7351,7 @@ const App = () => {
                             
                             {/* Media - FULL COVER/CONTAIN */}
                             {(shareModalPost.image || shareModalPost.thumbnailUrl || shareModalPost.videoUrl) && (
-                                <div className="w-full rounded-[14px] overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
+                                <div className="w-full rounded-[14px] overflow-hidden  bg-black mb-2 flex items-center justify-center">
                                     {shareModalPost.videoUrl && !shareModalPost.image && !shareModalPost.thumbnailUrl ? (
                                         <video 
                                             src={resolveMediaUrl(shareModalPost.videoUrl, 1200)} 
@@ -7392,13 +7407,13 @@ const App = () => {
                         <Icons.X className="w-6 h-6 text-white" />
                     </button>
                     
-                    <div className="bg-black border border-white/20 rounded-[20px] max-w-[360px] w-full overflow-hidden shadow-2xl">
+                    <div className="bg-black  rounded-[20px] max-w-[360px] w-full overflow-hidden shadow-2xl">
                         <div id="share-card-content" className="bg-[#0a0a0a] relative overflow-hidden flex flex-col items-center pt-10 pb-8 px-6 text-center">
                             {/* Watermark */}
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Profile Image */}
-                              <div className="w-24 h-24 rounded-none bg-black overflow-hidden border border-white/20 shrink-0 mb-4">
+                              <div className="w-24 h-24 rounded-none bg-black overflow-hidden  shrink-0 mb-4">
                                   <ProfileAvatar user={shareModalProfile} size="large" />
                               </div>
                             
