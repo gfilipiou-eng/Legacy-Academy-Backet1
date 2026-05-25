@@ -4583,7 +4583,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {String(resolvedPublicCoverPic).match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
                         <video src={resolvedPublicCoverPic} autoPlay loop muted playsInline preload="metadata" className="w-full h-full object-cover opacity-60" />
                     ) : (
-                        <img src={resolvedPublicCoverPic} className="w-full h-full object-cover opacity-60 blur-[1px]" alt="" loading="eager" decoding="async" />
+                        <img 
+                            src={resolvedPublicCoverPic} 
+                            className="w-full h-full object-cover opacity-60 blur-[1px] cursor-pointer" 
+                            alt="" 
+                            loading="eager" 
+                            decoding="async" 
+                            onClick={() => setZoomImage(resolvedPublicCoverPic)}
+                        />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
@@ -4604,7 +4611,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 <div className="relative mt-8 mb-4">
                     <div className="w-28 h-28 rounded-none overflow-hidden bg-black relative shadow-none group">
                         {resolvedPublicProfilePic ? (
-                            <img src={resolvedPublicProfilePic} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" loading="eager" decoding="async" />
+                            <img 
+                                src={resolvedPublicProfilePic} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer" 
+                                alt="" 
+                                loading="eager" 
+                                decoding="async" 
+                                onClick={() => setZoomImage(resolvedPublicProfilePic)}
+                            />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-white/5 text-4xl font-bold uppercase text-white/40">
                                 {publicUser.username?.[0]}
@@ -7106,7 +7120,7 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:bg-white/20 transition-all duration-300"
                         >
                             <Icons.Compose className="w-7 h-7 sm:w-7 sm:h-7" />
                         </button>
