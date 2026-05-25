@@ -4844,6 +4844,7 @@ const App = () => {
     }, []);
 
     const googleLogin = useGoogleLogin({
+        flow: 'implicit',
         onSuccess: async (tokenResponse) => {
             setAuthLoading(true);
             try {
