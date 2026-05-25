@@ -6747,7 +6747,7 @@ const App = () => {
                                                             <div
                                                                 key={post._id || i}
                                                                 onClick={() => setSelectedPost(post)}
-                                                                className="flex-shrink-0 w-[280px] sm:w-[320px] premium-post-card shadow-none cursor-pointer snap-center relative group"
+                                                                className="flex-shrink-0 w-[280px] sm:w-[320px] bg-black border border-white/20 rounded-none shadow-none overflow-hidden cursor-pointer hover:border-white transition-colors duration-300 snap-center relative group"
                                                             >
                                                                 {/* Meander corners */}
                                                                 <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 pointer-events-none z-20" />
