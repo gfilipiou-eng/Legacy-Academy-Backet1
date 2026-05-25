@@ -11,11 +11,7 @@ import { verifyToken } from "./middleware/auth.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import helmet from 'helmet';
 import compression from 'compression';
-import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
-import hpp from 'hpp';
 import rateLimit from 'express-rate-limit';
 
 import http from 'http';
@@ -35,23 +31,8 @@ const app = express();
 // 0. Enable CORS first!
 app.use(cors());
 
-// 1. HTTP Security Headers
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-  crossOriginOpenerPolicy: false,
-}));
-
 // 2. Response Compression (Smart/Fast API)
 app.use(compression());
-
-// 4. Data Sanitization against NoSQL query injection
-app.use(mongoSanitize());
-
-// 5. Data Sanitization against XSS
-app.use(xss());
-
-// 6. Prevent HTTP Parameter Pollution
-app.use(hpp());
 
 // Middleware
 app.use(express.json({ limit: '500mb' })); // Essential for parsing JSON bodies + large file support

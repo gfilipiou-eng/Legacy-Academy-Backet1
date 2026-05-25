@@ -101,6 +101,11 @@ router.post("/login", async (req, res) => {
             return res.status(404).json({ message: "User not found ❌" });
         }
 
+        if (!user.password) {
+            console.log(`Login failed for ${req.body.email}: No password set (likely Google Auth)`);
+            return res.status(400).json({ message: "Please use Google Sign-In for this account." });
+        }
+
         const validPassword = await bcrypt.compare(
             req.body.password,
             user.password

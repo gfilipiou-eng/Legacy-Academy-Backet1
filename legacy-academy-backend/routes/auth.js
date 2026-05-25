@@ -49,12 +49,16 @@ router.post("/register", upload.single("image"), async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        if (!user) return res.status(404).json("Agent not found.");
+        if (!user) return res.status(404).json({ message: "Agent not found." });
+
+        if (!user.password) {
+            return res.status(400).json({ message: "Please use Google Sign-In for this account." });
+        }
 
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) return res.status(400).json("Invalid clearance codes.");
 
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || "default_Legacy_Academy_Secret", { expiresIn: '30d' });
 
         const { password, ...others } = user._doc;
         res.status(200).json({ user: others, token });
