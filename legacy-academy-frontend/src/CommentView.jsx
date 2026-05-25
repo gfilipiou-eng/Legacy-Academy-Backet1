@@ -234,9 +234,9 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-3xl z-[9999] flex flex-col font-sans overflow-hidden border border-white/10">
+    <div className="fixed inset-0 bg-black z-[9999] flex flex-col font-sans overflow-hidden">
       {/* Header */}
-      <header className="shrink-0 h-16 border-b border-white/10 bg-black/80 backdrop-blur-3xl flex items-center justify-between px-4 z-50">
+      <header className="shrink-0 h-16 border-b border-white/10 bg-black flex items-center justify-between px-4 z-50">
         <div className="flex items-center gap-3">
           <button onClick={onClose} className="p-2 rounded-full transition-all ">
             <Icons.Back className="w-6 h-6 text-white" />
@@ -255,7 +255,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
         <div className="px-4 py-2 border-b border-white/10 mb-2">
           <div className="flex gap-3 sm:gap-4">
             <div className="shrink-0 flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shadow-lg">
+              <div className="w-12 h-12 rounded-none overflow-hidden border border-white/10 shadow-lg">
                 <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
               </div>
             </div>
@@ -342,7 +342,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
               return (
                 <div key={i} className="flex gap-3 group animate-slide-down">
-                  <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden border border-white/10 shadow-lg">
+                  <div className="shrink-0 w-10 h-10 rounded-none overflow-hidden border border-white/10 shadow-lg">
                     <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -417,7 +417,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
 
       {/* Sticky Input Field - higher on mobile so it sits above navbar */}
       <div className="shrink-0 p-4 pb-[max(8rem,calc(env(safe-area-inset-bottom,20px)+90px))] sm:pb-12 bg-transparent">
-        <form onSubmit={handleSubmit} className="relative flex items-center bg-black/80 backdrop-blur-3xl border border-white/20 rounded-2xl p-1.5 focus-within:border-[var(--gold-primary)] transition-all group shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
+        <form onSubmit={handleSubmit} className="relative flex items-center bg-black border border-white/20 rounded-none p-1.5 focus-within:border-[var(--gold-primary)] transition-all group">
           <textarea
             rows="1"
             value={commentText}

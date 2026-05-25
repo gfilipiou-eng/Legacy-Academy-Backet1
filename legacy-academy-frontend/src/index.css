@@ -663,26 +663,6 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   border-radius: 0;
 }
 
-.premium-post-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.premium-post-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: 10;
-}
-
 .liquid-image-card {
   background: #000000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -691,16 +671,6 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   position: relative;
   overflow: hidden;
   will-change: transform, box-shadow;
-}
-
-.liquid-image-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 10;
 }
 
 @media (hover: hover) {

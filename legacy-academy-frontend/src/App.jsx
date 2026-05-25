@@ -1767,8 +1767,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-none border border-white/10 transition-all duration-300 will-change-transform overflow-hidden`}
         >
             {/* Subtle Ancient Greek Meander Top Border */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.5) 4px, rgba(255,255,255,0.5) 5px)' }} />
-            <div className="absolute bottom-0 left-0 right-0 h-1.5 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.5) 4px, rgba(255,255,255,0.5) 5px)' }} />
+            <div className="hidden" />
+            <div className="hidden" />
 
 
             {/* UPLOADING OVERLAY */}
@@ -4543,7 +4543,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
             <div className="relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
-                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-none text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-none">
+                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black border border-white/10 rounded-none text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-none">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
@@ -4554,7 +4554,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-none overflow-hidden border border-white/20 bg-black/40 backdrop-blur-md relative">
+                    <div className="w-28 h-28 rounded-none overflow-hidden border border-white/20 bg-black relative">
                         {/* Meander corners */}
                         <div className="hidden" />
                         <div className="hidden" />
@@ -4744,17 +4744,19 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     />
                                                 </div>
                                             ) : isNativeVideoPost ? (
-                                                <video 
-                                                    src={resolveMediaUrl(post.videoUrl || post.image)}
-                                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                                    className="w-full h-auto object-contain max-h-[400px]" 
-                                                    controls
-                                                    controlsList="nodownload"
-                                                    preload="metadata"
-                                                    playsInline
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    onPlay={(e) => e.stopPropagation()}
-                                                />
+                                                <div className="w-full relative" onClick={(e) => e.stopPropagation()}>
+                                                    <video 
+                                                        src={resolveMediaUrl(post.videoUrl || post.image)}
+                                                        poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                                        className="w-full h-auto object-contain max-h-[400px]" 
+                                                        controls
+                                                        controlsList="nodownload"
+                                                        preload="metadata"
+                                                        playsInline
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        onPlay={(e) => e.stopPropagation()}
+                                                    />
+                                                </div>
                                             ) : (
                                                 <img 
                                                     src={resolveMediaUrl(post.image || post.thumbnailUrl)} 
@@ -6769,7 +6771,6 @@ const App = () => {
                                                         className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4"
                                                         onWheel={(e) => {
                                                             if (e.deltaY !== 0) {
-                                                                e.preventDefault();
                                                                 e.currentTarget.scrollLeft += e.deltaY;
                                                             }
                                                         }}
@@ -7180,7 +7181,7 @@ const App = () => {
                             
                             {/* Author */}
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-12 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10 shrink-0">
+                                <div className="w-12 h-12 rounded-none bg-gray-800 overflow-hidden border border-white/10 shrink-0">
                                     <ProfileAvatar user={shareModalPost.author} />
                                 </div>
                                 <div>
