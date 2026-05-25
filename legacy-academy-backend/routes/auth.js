@@ -93,8 +93,8 @@ router.post("/forgot-password", async (req, res) => {
 
         // Send email
         try {
-            const { sendPasswordResetEmail } = await import('../config/email.js');
-            await sendPasswordResetEmail(email, resetToken, user.username);
+            const emailModule = await import('../utils/email.js');
+            await emailModule.sendPasswordResetEmail(email, resetToken, user.username);
             res.status(200).json({ success: true, message: "Password reset email sent successfully!" });
         } catch (emailError) {
             console.error("Email send failed:", emailError);
