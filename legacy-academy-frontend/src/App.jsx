@@ -556,7 +556,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             className="flex-1 py-4 bg-white text-black font-black text-xs uppercase tracking-[0.15em] rounded-none disabled:opacity-50 flex items-center justify-center gap-3 hover:bg-gray-200"
                         >
                             {loading ? (
-                                <div className="w-5 h-5 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                <div className="w-5 h-5 text-black/50">
                                     <Icons.Loader />
                                 </div>
                             ) : <Icons.Send className="w-5 h-5" />}
@@ -1803,7 +1803,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
                 <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-none animate-fade-in pointer-events-none">
-                    <div className="w-16 h-16 text-[var(--gold-primary)] animate-spin mb-4" style={{ animationDuration: '4s' }}>
+                    <div className="w-16 h-16 text-[var(--gold-primary)] mb-4">
                         <Icons.Loader />
                     </div>
                     <div className="text-white font-black uppercase tracking-[0.2em] animate-pulse text-lg drop-shadow-none">
@@ -3414,7 +3414,7 @@ const ProfileModal = ({
                             <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-none bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                        <div className="w-8 h-8 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                        <div className="w-8 h-8 text-white/50">
                                             <Icons.Loader />
                                         </div>
                                     </div>
@@ -3455,7 +3455,7 @@ const ProfileModal = ({
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
                                     className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {profileUploading ? (
-                                        <div className="w-4 h-4 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                        <div className="w-4 h-4 text-white/50">
                                             <Icons.Loader />
                                         </div>
                                     ) : (
@@ -3472,7 +3472,7 @@ const ProfileModal = ({
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
                                     className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {coverUploading ? (
-                                        <div className="w-4 h-4 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                        <div className="w-4 h-4 text-white/50">
                                             <Icons.Loader />
                                         </div>
                                     ) : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
@@ -3685,7 +3685,7 @@ const ProfileModal = ({
                             }} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-none hover:bg-gray-200 transition-colors duration-300">
                                 {isProfileSaving ? (
                                     <div className="flex items-center justify-center gap-2">
-                                        <div className="w-4 h-4 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                        <div className="w-4 h-4 text-black/50">
                                             <Icons.Loader />
                                         </div>
                                         {t('SAVING') || 'SAVING...'}
@@ -3976,18 +3976,7 @@ const ProfileModal = ({
                                     <div className="space-y-6 pb-20">
                                         {loadingPosts ? (
                                             <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                <svg viewBox="0 0 100 100" className="w-12 h-12 text-white animate-spin" style={{ animationDuration: '4s' }}>
-                                                    <circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" strokeWidth="2" />
-                                                    <circle cx="50" cy="50" r="6" fill="currentColor" />
-                                                    <g fill="currentColor">
-                                                        {[...Array(8)].map((_, i) => (
-                                                            <polygon key={`long-${i}`} points="47,34 50,2 53,34" transform={`rotate(${i * 45} 50 50)`} />
-                                                        ))}
-                                                        {[...Array(8)].map((_, i) => (
-                                                            <polygon key={`short-${i}`} points="48,34 50,14 52,34" transform={`rotate(${i * 45 + 22.5} 50 50)`} />
-                                                        ))}
-                                                    </g>
-                                                </svg>
+                                                <Icons.Loader className="w-12 h-12 text-[var(--gold-primary)]" />
                                                 <div className="text-white font-black uppercase tracking-[0.2em] text-[10px]">{t('DECRYPTING_FEED')}</div>
                                             </div>
                                         ) : userPosts.length === 0 ? (
@@ -4535,7 +4524,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     if (loadingUser && !publicUser) {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
-                <div className="w-12 h-12 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
+                <div className="w-12 h-12 text-[var(--gold-primary)]">
                     <Icons.Loader />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-white/50">GATHERING INTEL...</span>
@@ -4682,18 +4671,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 <div className="w-full space-y-4">
                     {loadingPosts ? (
                         <div className="flex flex-col items-center justify-center p-12 gap-4 border border-dashed border-white/10 rounded-none bg-white/[0.01]">
-                            <svg viewBox="0 0 100 100" className="w-10 h-10 text-white/40 animate-spin" style={{ animationDuration: '4s' }}>
-                                <circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" strokeWidth="2" />
-                                <circle cx="50" cy="50" r="6" fill="currentColor" />
-                                <g fill="currentColor">
-                                    {[...Array(8)].map((_, i) => (
-                                        <polygon key={`long-${i}`} points="47,34 50,2 53,34" transform={`rotate(${i * 45} 50 50)`} />
-                                    ))}
-                                    {[...Array(8)].map((_, i) => (
-                                        <polygon key={`short-${i}`} points="48,34 50,14 52,34" transform={`rotate(${i * 45 + 22.5} 50 50)`} />
-                                    ))}
-                                </g>
-                            </svg>
+                            <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)]" />
                             <div className="text-center text-xs text-white/35 font-bold uppercase tracking-widest">
                                 {t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')}
                             </div>
@@ -6531,7 +6509,7 @@ const App = () => {
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
-                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                    <div className="w-5 h-5 text-black">
                                                         <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">SIGN IN</span>}
@@ -6651,7 +6629,7 @@ const App = () => {
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
-                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                    <div className="w-5 h-5 text-black">
                                                         <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">CREATE ACCOUNT</span>}
@@ -6712,7 +6690,7 @@ const App = () => {
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
-                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                    <div className="w-5 h-5 text-black">
                                                         <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">SEND RESET LINK</span>}
@@ -6758,7 +6736,7 @@ const App = () => {
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
-                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                    <div className="w-5 h-5 text-black">
                                                         <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">UPDATE PASSWORD</span>}
@@ -6980,18 +6958,7 @@ const App = () => {
                                         <div className="space-y-6">
                                             {isLoadingFeed ? (
                                                 <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                    <svg viewBox="0 0 100 100" className="w-12 h-12 text-white animate-spin" style={{ animationDuration: '4s' }}>
-                                                        <circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" strokeWidth="2" />
-                                                        <circle cx="50" cy="50" r="6" fill="currentColor" />
-                                                        <g fill="currentColor">
-                                                            {[...Array(8)].map((_, i) => (
-                                                                <polygon key={`long-${i}`} points="47,34 50,2 53,34" transform={`rotate(${i * 45} 50 50)`} />
-                                                            ))}
-                                                            {[...Array(8)].map((_, i) => (
-                                                                <polygon key={`short-${i}`} points="48,34 50,14 52,34" transform={`rotate(${i * 45 + 22.5} 50 50)`} />
-                                                            ))}
-                                                        </g>
-                                                    </svg>
+                                                    <Icons.Loader className="w-12 h-12 text-[var(--gold-primary)]" />
                                                     <div className="text-white font-black uppercase tracking-[0.2em] text-xs">{t('DECRYPTING_FEED')}</div>
                                                 </div>
                                             ) : activeTab === 'search' && searchQuery && (
