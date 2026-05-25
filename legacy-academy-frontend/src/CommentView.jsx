@@ -234,7 +234,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#050505] z-[9999] flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-3xl z-[9999] flex flex-col font-sans overflow-hidden border border-white/10">
       {/* Header */}
       <header className="shrink-0 h-16 border-b border-white/10 bg-black/80 backdrop-blur-3xl flex items-center justify-between px-4 z-50">
         <div className="flex items-center gap-3">
@@ -354,7 +354,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                       </div>
                       <span className="text-[9px] text-gray-600 font-bold uppercase">{formatDate(c.createdAt, t, lang)}</span>
                     </div>
-                    <div className="bg-white/[0.05] rounded-2xl rounded-tl-none p-3 border border-white/5 shadow-sm transition-all">
+                    <div className="bg-white/[0.05] rounded-none p-3 border border-white/5 shadow-sm transition-all">
                       {editingCommentId === c._id ? (
                         <div className="flex flex-col gap-2">
                           <textarea
