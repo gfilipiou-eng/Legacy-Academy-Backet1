@@ -6399,18 +6399,8 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
-                                    {/* Main Logo Container */}
                                     <div className="relative flex justify-center items-center h-36">
-                                        <img src="/logo.png" alt="Legacy Academy" className={`h-36 w-auto object-contain transform-gpu transition-opacity duration-300 ${authLoading ? 'opacity-20' : 'opacity-100'}`} style={{ imageRendering: '-webkit-optimize-contrast' }} />
-                                        
-                                        {/* Massive Vergina Sun Loader overlapping Logo */}
-                                        {authLoading && (
-                                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                <div className="w-24 h-24 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
-                                                    <Icons.VerginaSun />
-                                                </div>
-                                            </div>
-                                        )}
+                                        <img src="/logo.png" alt="Legacy Academy" className={`h-36 w-auto object-contain transform-gpu transition-opacity duration-300 ${authLoading ? 'opacity-50' : 'opacity-100'}`} style={{ imageRendering: '-webkit-optimize-contrast' }} />
                                     </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
@@ -6462,9 +6452,13 @@ const App = () => {
                                                     setAuthError(e.response?.data?.message || "Invalid clearance codes or account not found.");
                                                     setAuthLoading(false); // Only stop loading if error
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                <span className="relative">{authLoading ? "AUTHENTICATING..." : "SIGN IN"}</span>
+                                                {authLoading ? (
+                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                        <Icons.VerginaSun />
+                                                    </div>
+                                                ) : <span className="relative">SIGN IN</span>}
                                             </button>
                                             <div className="flex justify-between text-xs text-white/30 px-1 pt-2 font-bold tracking-wide">
                                                  <button type="button" onClick={() => { handleAuthModeChange('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Create Account</button>
@@ -6578,9 +6572,13 @@ const App = () => {
                                                     setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                <span className="relative">{authLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}</span>
+                                                {authLoading ? (
+                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                        <Icons.VerginaSun />
+                                                    </div>
+                                                ) : <span className="relative">CREATE ACCOUNT</span>}
                                             </button>
                                             <div className="flex items-center my-3.5">
                                                  <div className="flex-1 h-[1px] bg-white/5" />
@@ -6636,9 +6634,13 @@ const App = () => {
                                                 } catch (e) {
                                                     setAuthError(e.response?.data?.message || 'Failed to send reset link.');
                                                 } finally { setAuthLoading(false); }
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                <span className="relative">{authLoading ? 'SENDING...' : 'SEND RESET LINK'}</span>
+                                                {authLoading ? (
+                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                        <Icons.VerginaSun />
+                                                    </div>
+                                                ) : <span className="relative">SEND RESET LINK</span>}
                                             </button>
                                              <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
                                         </form>
