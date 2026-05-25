@@ -1850,7 +1850,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                             const parts = part.split(urlRegex);
                                             return parts.map((p, j) => {
                                                 if (p.match(urlRegex)) {
-                                                    return <a key={`${i}-${j}`} href={p} target="_blank" rel="noopener noreferrer" className="text-white hover:underline font-bold" onClick={(e) => e.stopPropagation()}>{p}</a>;
+                                                    return <a key={`${i}-${j}`} href={p} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{p}</a>;
                                                 }
                                                 return p;
                                             });
@@ -3691,8 +3691,6 @@ const ProfileModal = ({
                                         <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[var(--gold-primary)] pointer-events-none z-10" />
                                         <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[var(--gold-primary)] pointer-events-none z-10" />
                                         
-                                        <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--gold-primary)]/30 shadow-[0_0_10px_var(--gold-primary)] z-10 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:animate-scan" />
-                                        
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                 </div>
@@ -4592,9 +4590,6 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         <div className="absolute top-0 right-0 w-3 h-3 border-t-[1.5px] border-r-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-3 h-3 border-b-[1.5px] border-l-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
                         <div className="absolute bottom-0 right-0 w-3 h-3 border-b-[1.5px] border-r-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
-                        
-                        {/* Scanning effect */}
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--gold-primary)]/30 shadow-[0_0_10px_var(--gold-primary)] z-10 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:animate-scan" />
 
                         {resolvedPublicProfilePic ? (
                             <img src={resolvedPublicProfilePic} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" loading="eager" decoding="async" />
