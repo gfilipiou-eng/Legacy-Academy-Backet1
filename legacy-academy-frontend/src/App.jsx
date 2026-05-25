@@ -6791,10 +6791,6 @@ const App = () => {
                                     Purchase Access
                                 </button>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs flex items-center justify-center gap-2">
-                                    <Icons.Activity className="w-5 h-5" /> Pay with Apple / Google
-                                </button>
-                                
                                 <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-widest font-black hover:text-white transition-colors">
                                     Return to Login
                                 </button>
