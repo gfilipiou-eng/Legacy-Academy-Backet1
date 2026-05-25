@@ -30,27 +30,15 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Trust proxy for rate limiting behind Render's load balancer
-app.set('trust proxy', 1);
-
 // --- SMART & SECURE MIDDLEWARES ---
 
 // 1. HTTP Security Headers
 app.use(helmet({
   crossOriginResourcePolicy: false,
-  crossOriginOpenerPolicy: false,
 }));
 
 // 2. Response Compression (Smart/Fast API)
 app.use(compression());
-
-// 3. Rate Limiting (Protects against DDoS & Brute Force)
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 500, // Limit each IP to 500 requests per windowMs
-  message: { message: 'Too many requests from this IP, please try again after 10 minutes.' }
-});
-app.use('/api/', limiter);
 
 // 4. Data Sanitization against NoSQL query injection
 app.use(mongoSanitize());
