@@ -833,4 +833,38 @@ router.delete("/:id", verifyToken, async (req, res) => {
     }
 });
 
+// DELETE USER (Delete account)
+router.delete("/:id", verifyToken, async (req, res) => {
+    if (req.user.id === req.params.id || req.user.role === "Founder" || req.user.role === "Admin") {
+        try {
+            const user = await User.findById(req.params.id);
+            if (!user) return res.status(404).json("User not found");
+
+            // Delete user's profile pic from Cloudinary if exists
+            if (user.profilePic) {
+                deleteCloudinaryFile(user.profilePic).catch(() => { });
+            }
+            if (user.coverPic) {
+                deleteCloudinaryFile(user.coverPic).catch(() => { });
+            }
+
+            // Optional: Delete user's posts
+            // await Post.deleteMany({ author: req.params.id });
+
+            await User.findByIdAndDelete(req.params.id);
+            
+            // Broadcast deletion
+            const io = req.app.get('io');
+            if (io) io.emit('user.deleted', { userId: req.params.id });
+
+            res.status(200).json("Account has been deleted");
+        } catch (err) {
+            console.error("Delete User Error:", err);
+            res.status(500).json(err);
+        }
+    } else {
+        return res.status(403).json("You can delete only your account!");
+    }
+});
+
 export default router;

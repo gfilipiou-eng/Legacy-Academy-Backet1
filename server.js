@@ -136,7 +136,7 @@ app.get("/", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     status: "healthy",
-    deployed: "V6 (Paranoid Fixes)",
+    deployed: "V19 (Fix Delete User 404 Route)",
     timestamp: new Date(),
     uptime: process.uptime()
   });
