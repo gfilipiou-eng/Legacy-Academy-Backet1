@@ -172,7 +172,7 @@ const getYouTubeEmbedUrl = (url) => {
     return id ? `https://www.youtube.com/embed/${id}` : null;
 };
 
-const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-blue-400 font-medium hover:underline cursor-pointer">{part}</span> : part) : text;
+const parseHashtags = (text, onClick) => text ? text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, i) => part.startsWith('#') ? <span key={i} onClick={(e) => { e.stopPropagation(); if (onClick) onClick(part); }} className="text-[#1D9BF0] font-medium hover:underline cursor-pointer">{part}</span> : part) : (text ? [text] : []);
 
 const formatUserHandle = (username) =>
     '@' + String(username || 'agent').toLowerCase().replace(/\s+/g, '');
@@ -1146,10 +1146,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <div className="px-4 sm:px-6 py-6 bg-transparent border-b border-white/10 z-10 relative">
                             <div className="space-y-4">
                                 <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left whitespace-pre-wrap break-words">
-                                    {parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
+                                    {(parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
                                         onClose();
                                         // Need a way to search hashtag, maybe just window location
-                                    }).map((part, i) => {
+                                    }) || []).map((part, i) => {
                                         if (typeof part !== 'string') return <React.Fragment key={i}>{part}</React.Fragment>;
                                         const urlRegex = /(https?:\/\/[^\s]+)/g;
                                         const parts = part.split(urlRegex);
@@ -1857,7 +1857,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {post.desc && (
                                 <div className="space-y-2">
                                     <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1">
-                                        {parseHashtags(translatedText || post.desc, (tag) => onHashtagClick(tag)).map((part, i) => {
+                                        {(parseHashtags(translatedText || post.desc, (tag) => onHashtagClick(tag)) || []).map((part, i) => {
                                             if (typeof part !== 'string') return <React.Fragment key={i}>{part}</React.Fragment>;
                                             const urlRegex = /(https?:\/\/[^\s]+)/g;
                                             const parts = part.split(urlRegex);
@@ -5055,7 +5055,14 @@ const App = () => {
     // SCROLL TO TOP ON LOGIN / TAB CHANGE
     useEffect(() => {
         if (mainScrollRef.current) {
-            mainScrollRef.current.scrollTo(0, 0);
+            // Force reset of scroll position with a slight delay to allow rendering to complete
+            setTimeout(() => {
+                if (mainScrollRef.current) {
+                    mainScrollRef.current.scrollTo(0, 0);
+                    mainScrollRef.current.scrollTop = 0;
+                }
+                window.scrollTo(0, 0);
+            }, 50);
         }
     }, [user?._id, activeTab]);
 
@@ -5064,6 +5071,7 @@ const App = () => {
             mainScrollRef.current.scrollTo({ top: 0, behavior: 'auto' });
             setShowScrollTop(false);
         }
+        window.scrollTo(0, 0);
     }, [authMode, user]);
 
     const toggleDate = (dateKey) => {
@@ -6775,8 +6783,12 @@ const App = () => {
                                     <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
                                 </div>
                                 
-                                <button onClick={() => alert("Payment gateway integration pending.")} className="w-full py-4 bg-[var(--gold-primary)] text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 shadow-[0_0_20px_rgba(255,215,0,0.3)] mb-4 text-xs">
+                                <button onClick={() => alert("Payment gateway integration pending.")} className="w-full py-4 bg-[var(--gold-primary)] text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
                                     Purchase Access
+                                </button>
+                                
+                                <button onClick={() => alert("Apple/Android Pay integration pending.")} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs flex items-center justify-center gap-2">
+                                    <Icons.Activity className="w-5 h-5" /> Pay with Apple / Google
                                 </button>
                                 
                                 <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-widest font-black hover:text-white transition-colors">
