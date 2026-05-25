@@ -234,7 +234,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-3xl z-[9999] flex flex-col font-sans overflow-hidden border border-white/10">
+    <div className="fixed inset-0 bg-[#000] z-[9999] flex flex-col font-sans overflow-hidden border border-white/10">
       {/* Header */}
       <header className="shrink-0 h-16 border-b border-white/10 bg-black/80 backdrop-blur-3xl flex items-center justify-between px-4 z-50">
         <div className="flex items-center gap-3">

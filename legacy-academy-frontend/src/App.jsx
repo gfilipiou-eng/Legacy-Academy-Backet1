@@ -986,9 +986,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black border border-white/20 rounded-none z-[2600] shadow-none group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 " />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-black/40 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative">
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#000] rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_0_50px_rgba(0,0,0,0.8)]">
                 {/* Image Section */}
-                <div className="w-full md:flex-1 bg-transparent flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-[#050505] flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
                             <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} />
@@ -1023,8 +1023,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Info Section */}
-                <div className="w-full md:w-[450px] flex flex-col bg-transparent border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
-                    <div className="p-3 sm:p-4 border-b border-white/20 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
+                <div className="w-full md:w-[450px] flex flex-col bg-[#050505] border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
+                    <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div className="w-11 h-11 rounded-none bg-black overflow-hidden border border-white/20 shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                                 {/* Meander corners */}
@@ -1134,7 +1134,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             </div>
                         </div>
                         {/* Description Section */}
-                        <div className="px-4 sm:px-6 py-6 bg-transparent border-b border-white/20 z-10 relative">
+                        <div className="px-4 sm:px-6 py-6 bg-black border-b border-white/10 z-10 relative">
                             <div className="space-y-4">
                                 <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left">
                                     {parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc))}
@@ -1603,7 +1603,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     const { t } = useTranslation(user);
     return (
-        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-black/40">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none overflow-hidden bg-black border border-white/20 shadow-none relative group">
