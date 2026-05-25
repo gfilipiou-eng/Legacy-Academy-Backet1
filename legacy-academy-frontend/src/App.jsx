@@ -6427,7 +6427,7 @@ const App = () => {
                                                  </svg>
                                                  <span>GOOGLE SIGN-IN</span>
                                              </button>
-                                        </>
+                                        </form>
                                     )}
                                     {authMode === 'register' && (
                                         <>
