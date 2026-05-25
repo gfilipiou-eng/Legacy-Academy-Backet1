@@ -90,4 +90,27 @@ export const Icons = {
     Fingerprint: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M2 12a10 10 0 0 1 13-9" /><path d="M6 12a6 6 0 0 1 7.3-5.7" /><path d="M10.2 12a2 2 0 1 1 3.5 1.5L11 17" /><path d="M15 12a4.9 4.9 0 0 1 2 4" /><path d="M8 12a8 8 0 0 1 10.3-7.6" /><path d="M12 17v4" /><path d="M8 21h8" /></svg>,
     Cpu: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M15 2v2M9 2v2M20 15h2M20 9h2M15 20v2M9 20v2M2 15h2M2 9h2" /></svg>,
     Star: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
+    VerginaSun: p => (
+        <svg viewBox="0 0 100 100" fill="currentColor" {...p}>
+            <circle cx="50" cy="50" r="12" />
+            <path d="M50 32 L47 20 L50 5 L53 20 Z" />
+            <path d="M50 68 L47 80 L50 95 L53 80 Z" />
+            <path d="M32 50 L20 47 L5 50 L20 53 Z" />
+            <path d="M68 50 L80 47 L95 50 L80 53 Z" />
+            <path d="M37 37 L28 28 L18 18 L32 25 Z" />
+            <path d="M63 63 L72 72 L82 82 L68 75 Z" />
+            <path d="M63 37 L72 28 L82 18 L68 25 Z" />
+            <path d="M37 63 L28 72 L18 82 L32 75 Z" />
+            
+            <path d="M43 33 L38 23 L32 12 L41 23 Z" />
+            <path d="M57 67 L62 77 L68 88 L59 77 Z" />
+            <path d="M57 33 L62 23 L68 12 L59 23 Z" />
+            <path d="M43 67 L38 77 L32 88 L41 77 Z" />
+            
+            <path d="M33 43 L23 38 L12 32 L23 41 Z" />
+            <path d="M67 57 L77 62 L88 68 L77 59 Z" />
+            <path d="M67 43 L77 38 L88 32 L77 41 Z" />
+            <path d="M33 57 L23 62 L12 68 L23 59 Z" />
+        </svg>
+    ),
 };

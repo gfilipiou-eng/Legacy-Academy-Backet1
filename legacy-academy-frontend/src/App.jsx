@@ -555,7 +555,11 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             disabled={(audioBlob ? false : !value.trim()) || loading}
                             className="flex-1 py-4 bg-white text-black font-black text-xs uppercase tracking-[0.15em] rounded-none disabled:opacity-50 flex items-center justify-center gap-3 hover:bg-gray-200"
                         >
-                            {loading ? <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-none animate-spin" /> : <Icons.Send className="w-5 h-5" />}
+                            {loading ? (
+                                <div className="w-5 h-5 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                    <Icons.VerginaSun />
+                                </div>
+                            ) : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
                         </button>
                     </div>
@@ -1764,7 +1768,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
                 <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-none animate-fade-in pointer-events-none">
-                    <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-none animate-spin mb-4 shadow-none" />
+                    <div className="w-16 h-16 text-[var(--gold-primary)] animate-spin mb-4" style={{ animationDuration: '4s' }}>
+                        <Icons.VerginaSun />
+                    </div>
                     <div className="text-white font-black uppercase tracking-[0.2em] animate-pulse text-lg drop-shadow-none">
                         {t('TRANSMITTING_PERCENT', { percent: post.uploadProgress || 0 })}
                     </div>
@@ -3369,7 +3375,9 @@ const ProfileModal = ({
                             <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-none bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                        <div className="w-8 h-8 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                            <Icons.VerginaSun />
+                                        </div>
                                     </div>
                                 ) : (
                                     <ProfileAvatar user={displayUser} size="large" key={imgKey} />
@@ -3407,7 +3415,11 @@ const ProfileModal = ({
                             <div className="flex gap-2 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
                                     className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
-                                    {profileUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : (
+                                    {profileUploading ? (
+                                        <div className="w-4 h-4 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                            <Icons.VerginaSun />
+                                        </div>
+                                    ) : (
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
                                             <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
                                             <circle cx="12" cy="13" r="3"></circle>
@@ -3420,7 +3432,11 @@ const ProfileModal = ({
                             <div className="flex gap-2 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
                                     className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
-                                    {coverUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
+                                    {coverUploading ? (
+                                        <div className="w-4 h-4 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                            <Icons.VerginaSun />
+                                        </div>
+                                    ) : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
                                 {displayUser?.coverPic && (
@@ -3628,7 +3644,14 @@ const ProfileModal = ({
                                     setIsProfileSaving(false);
                                 }
                             }} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-none hover:bg-gray-200 transition-colors duration-300">
-                                {isProfileSaving ? <div className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" /> {t('SAVING') || 'SAVING...'}</div> : (t('SAVE') || 'SAVE')}
+                                {isProfileSaving ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
+                                            <Icons.VerginaSun />
+                                        </div>
+                                        {t('SAVING') || 'SAVING...'}
+                                    </div>
+                                ) : (t('SAVE') || 'SAVE')}
                             </button>
                         </div>
                     ) : (
@@ -4454,7 +4477,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     if (loadingUser && !publicUser) {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
-                <div className="w-12 h-12 rounded-full border-4 border-[var(--gold-primary)]/20 border-t-[var(--gold-primary)] animate-spin" />
+                <div className="w-12 h-12 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
+                    <Icons.VerginaSun />
+                </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-white/50">GATHERING INTEL...</span>
             </div>
         );

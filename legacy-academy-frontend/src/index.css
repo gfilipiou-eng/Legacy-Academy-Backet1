@@ -627,12 +627,17 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 }
 
 @media screen and (max-width: 768px) {
-
   input,
   textarea,
   select,
   button {
     font-size: 16px !important;
+  }
+  
+  /* Make mobile experience feel more sturdy/native */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
   }
 }
 
@@ -867,6 +872,20 @@ span:hover {
     width: 65% !important;
     max-width: 280px !important;
   }
+}
+
+/* Hardware accelerated animations for buttery smooth UI */
+.hardware-accelerate {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Sturdy button feel */
+.sturdy-active:active {
+  transform: scale(0.97) !important;
+  opacity: 0.8;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s;
 }
 
 /* Smooth menu item animations */
