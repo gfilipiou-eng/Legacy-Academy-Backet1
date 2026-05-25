@@ -280,7 +280,27 @@ const getFounderAffiliation = (userLike) => {
     }
     return '';
 };
-const founderAffiliationHref = (username) => `/?profile=${encodeURIComponent(sanitizeAffiliation(username))}`;
+const founderAffiliationHref = (username) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('profile', sanitizeAffiliation(username));
+    const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
+    const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+    params.set('lang', savedLang);
+    params.set('theme', savedTheme);
+    return `/?${params.toString()}`;
+};
+const buildPublicUrl = (type, value, extraParams = {}) => {
+    const params = new URLSearchParams(window.location.search);
+    const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
+    const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+    params.set(type, value);
+    params.set('lang', savedLang);
+    params.set('theme', savedTheme);
+    Object.entries(extraParams).forEach(([key, val]) => {
+        if (val !== undefined && val !== null && val !== '') params.set(key, val);
+    });
+    return `/?${params.toString()}`;
+};
 const founderAffiliationUserCache = new Map();
 const founderAffiliationPendingRequests = new Map();
 
@@ -3861,7 +3881,7 @@ const ProfileModal = ({
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 bg-black/70 backdrop-blur-xl rounded-none mb-5 border border-white/15">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO'].map(tab => {
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-4 h-4 shrink-0 transition-colors duration-300 ${isActive ? 'text-black' : 'text-white/70 group-hover:text-white'}`;
+                                        const iconClass = `w-4 h-4 shrink-0 transition-colors duration-300 ${isActive ? 'text-[var(--gold-primary)]' : 'text-white/70 group-hover:text-white'}`;
                                         if (tab === 'ALL') return <Icons.Grid className={iconClass} />;
                                         if (tab === 'POSTS') return <Icons.Compose className={iconClass} />;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -3873,19 +3893,21 @@ const ProfileModal = ({
                                         <button
                                             key={tab}
                                             onClick={() => setActiveTab(tab)}
-                                            className={`min-h-[72px] px-3 py-3 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.18em] rounded-none flex flex-col items-center justify-center gap-2 transition-colors duration-300 relative group overflow-hidden border ${isActive
-                                                ? 'bg-white text-black border-white'
-                                                : 'bg-black/40 text-white/80 border-white/10 hover:bg-white/5 hover:border-white/25'
+                                            style={{ WebkitTapHighlightColor: 'transparent' }}
+                                            className={`min-h-[72px] px-3 py-3 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.18em] rounded-none flex flex-col items-center justify-center gap-2 transition-colors duration-300 relative group overflow-hidden border select-none touch-manipulation ${isActive
+                                                ? 'bg-[rgba(212,175,55,0.10)] text-white border-[rgba(212,175,55,0.45)]'
+                                                : 'bg-black/40 text-white/80 border-white/10 hover:bg-white/[0.06] hover:border-white/25'
                                                 }`}
                                         >
                                             {isActive && (
                                                 <>
-                                                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t-2 border-l-2 border-black/30 pointer-events-none" />
-                                                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b-2 border-r-2 border-black/30 pointer-events-none" />
+                                                    <div className="absolute inset-x-2 top-0 h-px bg-[var(--gold-primary)]/70 pointer-events-none" />
+                                                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t-2 border-l-2 border-[var(--gold-primary)]/70 pointer-events-none" />
+                                                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b-2 border-r-2 border-[var(--gold-primary)]/70 pointer-events-none" />
                                                 </>
                                             )}
                                             {renderIcon(isActive)}
-                                            <span className={`leading-none text-center transition-colors duration-300 ${isActive ? 'text-black' : 'text-white group-hover:text-white'}`}>{t('TAB_' + tab, tab)}</span>
+                                            <span className={`leading-none text-center transition-colors duration-300 ${isActive ? 'text-white' : 'text-white group-hover:text-white'}`}>{t('TAB_' + tab, tab)}</span>
                                         </button>
                                     );
                                 })}
@@ -4533,9 +4555,10 @@ const applyZoom = (zoom) => {
 };
 
 const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, t }) => {
-    const themeColor = publicUser?.settings?.theme || '#ffd700';
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
+    const urlThemeParam = searchParams.get('theme');
+    const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#ffd700';
     const [zoomImage, setZoomImage] = useState(null);
 
     if (loadingUser && !publicUser) {
@@ -4572,7 +4595,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const publicFounderAffiliation = getFounderAffiliation(publicUser);
 
     return (
-        <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text">
+        <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
             {/* AMBIENT BACKGROUND GLOWS REMOVED FOR TETRAGONO */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
@@ -4599,18 +4622,18 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
             <div className="relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
-                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-black  rounded-none text-white hover:bg-white/10 transition-colors flex items-center justify-center shadow-none">
+                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-none text-white hover:bg-white/[0.09] transition-colors flex items-center justify-center shadow-none">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
                 {/* SIGN UP CALL TO ACTION */}
-                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-white text-black font-black text-[9px] uppercase tracking-widest rounded-none hover:scale-105 transition-transform shadow-none">
+                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-white/[0.08] backdrop-blur-xl border border-white/10 text-white font-black text-[9px] uppercase tracking-widest rounded-none hover:bg-white/[0.12] transition-colors shadow-none">
                     {t('JOIN_ACADEMY_PRICE', 'JOIN ACADEMY • 4€/MO')}
                 </button>
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-none overflow-hidden bg-black relative shadow-none group">
+                    <div className="w-28 h-28 rounded-none overflow-hidden bg-white/[0.05] backdrop-blur-xl border border-white/10 relative shadow-none group">
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
@@ -4649,7 +4672,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* BIO CARD */}
                 {publicUser.bio && (
-                    <div className="w-full mt-6 p-5 bg-[#0a0a0a] rounded-none text-center shadow-none relative group">
+                    <div className="w-full mt-6 p-5 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none relative group">
                         <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed italic select-text">
                             "{publicUser.bio}"
                         </p>
@@ -4658,27 +4681,27 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* STATS BAR */}
                 <div className="w-full grid grid-cols-3 gap-3 mt-6">
-                    <div className="p-4 bg-black rounded-none text-center shadow-none">
+                    <div className="p-4 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none">
                         <span className="block text-lg font-black text-white tabular-nums">{publicPosts?.length || 0}</span>
                         <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('POSTS') || 'POSTS'}</span>
                     </div>
-                    <div className="p-4 bg-black rounded-none text-center shadow-none">
+                    <div className="p-4 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none">
                         <span className="block text-lg font-black text-white tabular-nums">{publicUser.followers?.length || 0}</span>
                         <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                     </div>
-                    <div className="p-4 bg-black rounded-none text-center shadow-none">
+                    <div className="p-4 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none">
                         <span className="block text-lg font-black text-white tabular-nums">{publicUser.following?.length || 0}</span>
                         <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWING') || 'FOLLOWING'}</span>
                     </div>
                 </div>
 
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-[var(--gold-primary)] text-black rounded-none cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-white/[0.06] backdrop-blur-2xl border border-[var(--gold-primary)]/35 text-white rounded-none cursor-pointer hover:bg-white/[0.09] transition-colors flex items-center justify-between gap-4 group">
                     <div className="space-y-1 text-left">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
-                        <p className="text-xs font-bold leading-snug opacity-80">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
+                        <p className="text-xs font-bold leading-snug text-white/75">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-none bg-black text-white flex items-center justify-center shadow-none group-hover:scale-110 transition-transform shrink-0">
+                    <div className="w-10 h-10 rounded-none bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/35 text-[var(--gold-primary)] flex items-center justify-center shadow-none group-hover:scale-110 transition-transform shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </div>
                 </div>
@@ -4718,10 +4741,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             const isAuthorFounder = postAuthor?.role === 'Founder';
 
                             return (
-                                <div key={post._id} className="w-full p-5 bg-black border border-white/20 flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:border-white transition-colors" onClick={() => {
+                                <div key={post._id} className="w-full p-5 bg-white/[0.04] backdrop-blur-2xl border border-white/10 flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:bg-white/[0.06] hover:border-white/20 transition-colors" onClick={() => {
                                     if (post._id) {
                                         const searchParams = new URLSearchParams(window.location.search);
                                         searchParams.set('postId', post._id);
+                                        const savedLang = searchParams.get('lang') || localStorage.getItem('language') || 'en';
+                                        const savedTheme = searchParams.get('theme') || localStorage.getItem('themeColor') || themeColor;
+                                        searchParams.set('lang', savedLang);
+                                        searchParams.set('theme', savedTheme);
                                         window.open(`${window.location.origin}${window.location.pathname}?${searchParams.toString()}`, '_blank');
                                     }
                                 }}>
@@ -4736,7 +4763,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2 cursor-pointer hover:text-white transition-colors z-10 w-fit"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                window.location.href = `/?profile=${publicUser.username}`;
+                                                window.location.href = buildPublicUrl('profile', publicUser.username);
                                             }}
                                         >
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
@@ -4749,7 +4776,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             className="w-9 h-9 rounded-none overflow-hidden shrink-0 bg-black/40 cursor-pointer z-10"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                window.location.href = `/?profile=${postAuthorUsername}`;
+                                                window.location.href = buildPublicUrl('profile', postAuthorUsername);
                                             }}
                                         >
                                             {postAuthorPic ? (
@@ -4765,7 +4792,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 className="flex items-center gap-1 cursor-pointer hover:underline w-fit"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    window.location.href = `/?profile=${postAuthorUsername}`;
+                                                    window.location.href = buildPublicUrl('profile', postAuthorUsername);
                                                 }}
                                             >
                                                 <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
@@ -4885,6 +4912,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const urlLang = searchParams.get('lang');
+    const urlTheme = searchParams.get('theme');
     
     // Check and set language from URL if present before any rendering
     useEffect(() => {
@@ -4894,6 +4922,12 @@ const App = () => {
             // It will be applied by useTranslation hook inside App component
         }
     }, [urlLang]);
+    useEffect(() => {
+        if (urlTheme) {
+            localStorage.setItem('themeColor', urlTheme);
+            applyTheme(urlTheme);
+        }
+    }, [urlTheme]);
 
     const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile'));
     const [publicUser, setPublicUser] = useState(null);
@@ -6493,7 +6527,7 @@ const App = () => {
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
-        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} onViewProfile={(u) => window.location.href = `/?profile=${u.username || u._id}`} />;
+        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} onViewProfile={(u) => window.location.href = buildPublicUrl('profile', u.username || u._id)} />;
     }
 
     return (
@@ -7432,7 +7466,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?post=${shareModalPost._id}&lang=${currentLanguage}`;
+                                    const shareUrl = `${window.location.origin}${buildPublicUrl('post', shareModalPost._id, { lang: currentLanguage })}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Post', url: shareUrl }); } catch (e) { }
                                     } else {
@@ -7506,7 +7540,7 @@ const App = () => {
                         <div className="p-4 bg-white/5 border-t border-white/10 flex gap-3">
                             <button 
                                 onClick={async () => {
-                                    const shareUrl = `${window.location.origin}/?profile=${encodeURIComponent(shareModalProfile.username)}&lang=${currentLanguage}`;
+                                    const shareUrl = `${window.location.origin}${buildPublicUrl('profile', shareModalProfile.username, { lang: currentLanguage })}`;
                                     if (navigator.share) {
                                         try { await navigator.share({ title: 'Legacy Profile', url: shareUrl }); } catch (e) { }
                                     } else {
