@@ -6768,13 +6768,12 @@ const App = () => {
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
                     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                        <div className="bg-[#050505] border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-[0_0_50px_rgba(255,215,0,0.15)] relative">
+                        <div className="bg-[#050505] border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden relative">
                             {/* Decorative Top Line */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
                             
                             <div className="p-8 text-center flex flex-col items-center">
-                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center border border-[var(--gold-primary)]/30 mb-6 relative">
-                                    <div className="absolute inset-0 bg-[var(--gold-primary)]/10 rounded-full animate-pulse" />
+                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center border border-white/10 mb-6 relative">
                                     <Icons.Lock className="w-8 h-8 text-[var(--gold-primary)]" />
                                 </div>
                                 
@@ -6822,7 +6821,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-16 sm:h-20 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden' }} />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-14 sm:h-20 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden' }} />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
