@@ -6378,23 +6378,23 @@ const App = () => {
 
                                 <div className="space-y-3">
                                     {authMode === 'login' && (
-                                        <>
-                                            <div className="relative group">
+                                        <form onSubmit={(e) => { e.preventDefault(); /* login logic handled by button onClick */ }}>
+                                            <div className="relative group mb-3">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
                                                 <input type="email" placeholder="Email address" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                             </div>
-                                            <div className="relative group">
+                                            <div className="relative group mb-3">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
                                                 <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
-                                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
+                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
                                             </div>
-                                            <button disabled={authLoading} onClick={async () => {
+                                            <button type="button" disabled={authLoading} onClick={async () => {
                                                 setAuthLoading(true);
                                                 try {
                                                     const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
@@ -6528,7 +6528,7 @@ const App = () => {
                                         </>
                                     )}
                                     {authMode === 'forgot' && (
-                                        <>
+                                        <form onSubmit={(e) => { e.preventDefault(); /* submit handled by button */ }}>
                                             <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">Enter your email address to receive a secure password reset link.</p>
                                             <div className="relative group">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
@@ -6536,7 +6536,7 @@ const App = () => {
                                                 <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
                                                 <input type="email" placeholder="Email Address" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                             </div>
-                                            <button disabled={authLoading} onClick={async () => {
+                                            <button type="button" disabled={authLoading} onClick={async () => {
                                                 setAuthLoading(true);
                                                 try {
                                                     await axios.post('/auth/forgot-password', { email: formData.email });
@@ -6550,7 +6550,7 @@ const App = () => {
                                                 <span className="relative">{authLoading ? 'SENDING...' : 'SEND RESET LINK'}</span>
                                             </button>
                                              <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>BACK TO LOGIN</button>
-                                        </>
+                                        </form>
                                     )}
                                 </div>
                             </div>
