@@ -2612,11 +2612,10 @@ const SettingRow = ({ label, desc, children, hoverColor = '' }) => (
 );
 
 const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
-        const { t, i18n, lang } = useTranslation(user);
-        const [saving, setSaving] = useState(false);
-        const [activeDevices, setActiveDevices] = useState(1);
-        const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
-        const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
+    const { t, i18n, lang } = useTranslation(user);
+    const [saving, setSaving] = useState(false);
+    const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
+    const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
@@ -2637,13 +2636,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     }, [user]);
 
     useEffect(() => {
-            if (user && isOpen) {
-                // Fetch active devices
-                axios.get('/users/me/active-connections')
-                    .then(res => setActiveDevices(res.data.activeDevices))
-                    .catch(e => console.error('Could not fetch active devices'));
-
-                setIsPrivate(user.isPrivate || false);
+        if (user && isOpen) {
+            setIsPrivate(user.isPrivate || false);
             setIsFollowersOnly(user.isFollowersOnly || false);
             const nextShareValue = pendingShareToggleRef.current !== null
                 ? pendingShareToggleRef.current
@@ -2884,22 +2878,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <button onClick={() => setShowDanger(true)} className="w-full py-4 bg-white/[0.02]  rounded-2xl border border-white/5 text-gray-500   text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3">
                                     {t('UNCOVER_RESTRICTED_OPS')}
                                 </button>
-                                )}
+                            )}
 
-                                <div className="w-full flex items-center justify-between p-4 bg-white/[0.03] rounded-2xl border border-white/5">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                                            <Icons.Smartphone className="w-4 h-4 text-blue-500" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-black text-white/80 uppercase tracking-[0.2em]">{t('ACTIVE_DEVICES')}</span>
-                                            <span className="text-[10px] text-gray-500 font-medium">{t('SESSION_MONITORING')}</span>
-                                        </div>
-                                    </div>
-                                    <span className="text-sm font-black text-[var(--gold-primary)]">{activeDevices}</span>
-                                </div>
-
-                                <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03]  rounded-2xl border border-white/5   group ">
+                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03]  rounded-2xl border border-white/5   group ">
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:text-white">
                                         <Icons.Logout className="w-4 h-4 text-red-500" />
