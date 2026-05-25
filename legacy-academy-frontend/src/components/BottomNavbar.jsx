@@ -24,9 +24,9 @@ const BottomNavbar = memo(({
     const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'opacity-100 drop-shadow-md' : 'opacity-80'}`;
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 w-full z-[99] pointer-events-none bg-black">
+        <nav className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10">
             <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
-                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 pointer-events-auto flex items-center justify-between relative gap-2">
+                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}

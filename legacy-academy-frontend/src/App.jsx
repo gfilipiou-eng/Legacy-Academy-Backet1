@@ -3390,7 +3390,7 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-32 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
+                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-10 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
                     {activeList ? (
                         <div className="p-4 space-y-4">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -6801,7 +6801,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 pb-32 sm:pb-28 relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
                         <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
@@ -7062,19 +7062,17 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-32 right-20 sm:bottom-28 sm:right-32 z-[950] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)]   shadow-2xl backdrop-blur-xl  "
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[var(--gold-primary)] shadow-2xl backdrop-blur-xl"
                         >
                             <Icons.ArrowUp className="w-7 h-7 sm:w-7 sm:h-7" />
                         </button>
                     )}
 
-                    {/* BOTTOM NAV REMOVED IN FAVOR OF DRAWER */}
-
                     {/* CREATE FAB (Bluesky Style) */}
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-32 right-4 sm:bottom-28 sm:right-10 z-[1000] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl  "
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#0f73ff] flex items-center justify-center text-white shadow-2xl"
                         >
                             <Icons.Compose className="w-7 h-7 sm:w-7 sm:h-7" />
                         </button>

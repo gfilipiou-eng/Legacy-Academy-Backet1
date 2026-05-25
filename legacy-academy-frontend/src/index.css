@@ -136,7 +136,7 @@ body::before {
     padding: 0.4rem !important;
   }
   body {
-    padding-bottom: 96px; /* matches new larger rectangular navbar height */
+    /* Removed padding-bottom to fix scrollbar issue */
   }
 }
 
