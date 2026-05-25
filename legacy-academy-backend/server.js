@@ -32,9 +32,13 @@ const app = express();
 
 // --- SMART & SECURE MIDDLEWARES ---
 
+// 0. Enable CORS first!
+app.use(cors());
+
 // 1. HTTP Security Headers
 app.use(helmet({
   crossOriginResourcePolicy: false,
+  crossOriginOpenerPolicy: false,
 }));
 
 // 2. Response Compression (Smart/Fast API)
@@ -52,7 +56,6 @@ app.use(hpp());
 // Middleware
 app.use(express.json({ limit: '500mb' })); // Essential for parsing JSON bodies + large file support
 app.use(express.urlencoded({ extended: true, limit: '500mb' }));
-app.use(cors());
 
 // --- SOCKET.IO SETUP ---
 const server = http.createServer(app);
