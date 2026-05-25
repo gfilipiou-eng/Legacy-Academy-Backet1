@@ -89,8 +89,13 @@ if (typeof document !== 'undefined') {
             -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
             outline: none !important;
         }
+        button, a, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], summary, label {
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+        }
         html, body {
             -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+            overscroll-behavior-y: none;
         }
         .liquid-glass-nav {
             background: rgba(0, 0, 0, 0.15) !important;
@@ -3894,10 +3899,6 @@ const ProfileModal = ({
                                             key={tab}
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
-                                            onPointerUp={(e) => {
-                                                e.preventDefault();
-                                                setActiveTab(tab);
-                                            }}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
                                             className={`min-w-0 min-h-[58px] sm:min-h-[62px] px-2 sm:px-3 py-2.5 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.14em] rounded-xl flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 transition-all duration-200 relative overflow-hidden border select-none whitespace-nowrap appearance-none focus:outline-none active:scale-[0.99] cursor-pointer ${isActive
                                                 ? 'bg-white/[0.10] text-white border-[var(--gold-primary)]/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
@@ -4180,7 +4181,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
         }
     };
     return (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[3200] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose} />
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-sm glass-panel bg-black/30 backdrop-blur-3xl p-5 sm:p-6 rounded-3xl  shadow-2xl flex flex-col max-h-[85vh]">
                 <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-4">
@@ -7220,7 +7221,13 @@ const App = () => {
                         onShare={handleShare}
                         onShareProfile={setShareModalProfile}
                         onHashtagClick={handleHashtagClick}
-                        onOpenCreate={() => { setCreateModeStory(true); setIsCreateOpen(true); }}
+                        onOpenCreate={() => {
+                            setIsProfileOpen(false);
+                            requestAnimationFrame(() => {
+                                setCreateModeStory(true);
+                                setIsCreateOpen(true);
+                            });
+                        }}
                         loadingActions={loadingActions}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
