@@ -6421,7 +6421,8 @@ const App = () => {
     return (
         <div className="app-container">
             {!user ? (
-                <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+                <>
+                    <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
                     {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
                         {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
@@ -6785,6 +6786,7 @@ const App = () => {
                         </div>
                     </div>
                 )}
+                </>
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
