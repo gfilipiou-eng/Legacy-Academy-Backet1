@@ -4535,6 +4535,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const themeColor = publicUser?.settings?.theme || '#ffd700';
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
+    const [zoomImage, setZoomImage] = useState(null);
 
     if (loadingUser && !publicUser) {
         return (
@@ -4601,13 +4602,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-none overflow-hidden border border-[var(--gold-primary)]/40 bg-black relative shadow-[0_0_20px_rgba(255,215,0,0.15)] group">
-                        {/* 2030 Corner brackets */}
-                        <div className="absolute top-0 left-0 w-3 h-3 border-t-[1.5px] border-l-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
-                        <div className="absolute top-0 right-0 w-3 h-3 border-t-[1.5px] border-r-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-[1.5px] border-l-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
-                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-[1.5px] border-r-[1.5px] border-[var(--gold-primary)] z-20 pointer-events-none" />
-
+                    <div className="w-28 h-28 rounded-none overflow-hidden bg-black relative shadow-none group">
                         {resolvedPublicProfilePic ? (
                             <img src={resolvedPublicProfilePic} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" loading="eager" decoding="async" />
                         ) : (
@@ -4618,8 +4613,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
                 </div>
 
-                    <div className="text-center space-y-1">
-                    <div className="flex items-center justify-center gap-2 bg-black/50 border border-white/5 backdrop-blur-md px-4 py-1.5 rounded-none shadow-sm">
+                <div className="text-center space-y-1">
+                    <div className="flex items-center justify-center gap-2">
                         <h1 className="text-xl sm:text-2xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
                     </div>
@@ -4640,8 +4635,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* BIO CARD */}
                 {publicUser.bio && (
-                    <div className="w-full mt-6 p-5 bg-white/[0.03] backdrop-blur-md border border-white/5 rounded-3xl text-center shadow-lg relative group">
-                        <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    <div className="w-full mt-6 p-5 bg-[#0a0a0a] rounded-none text-center shadow-none relative group">
                         <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed italic select-text">
                             "{publicUser.bio}"
                         </p>
@@ -4650,27 +4644,27 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* STATS BAR */}
                 <div className="w-full grid grid-cols-3 gap-3 mt-6">
-                    <div className="p-4 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl text-center shadow-md">
+                    <div className="p-4 bg-black rounded-none text-center shadow-none">
                         <span className="block text-lg font-black text-white tabular-nums">{publicPosts?.length || 0}</span>
                         <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('POSTS') || 'POSTS'}</span>
                     </div>
-                    <div className="p-4 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl text-center shadow-md">
+                    <div className="p-4 bg-black rounded-none text-center shadow-none">
                         <span className="block text-lg font-black text-white tabular-nums">{publicUser.followers?.length || 0}</span>
                         <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
                     </div>
-                    <div className="p-4 bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-2xl text-center shadow-md">
+                    <div className="p-4 bg-black rounded-none text-center shadow-none">
                         <span className="block text-lg font-black text-white tabular-nums">{publicUser.following?.length || 0}</span>
                         <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWING') || 'FOLLOWING'}</span>
                     </div>
                 </div>
 
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-black  rounded-none cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-[var(--gold-primary)] text-black rounded-none cursor-pointer hover:scale-[1.02] transition-transform flex items-center justify-between gap-4 group">
                     <div className="space-y-1 text-left">
-                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
-                        <p className="text-xs text-gray-400 font-bold leading-snug">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
+                        <p className="text-xs font-bold leading-snug opacity-80">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-none bg-white text-black flex items-center justify-center shadow-none group-hover:scale-110 transition-transform shrink-0">
+                    <div className="w-10 h-10 rounded-none bg-black text-white flex items-center justify-center shadow-none group-hover:scale-110 transition-transform shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </div>
                 </div>
@@ -4678,8 +4672,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* POST SHOWCASE SECTION TITLE */}
                 <div className="w-full flex items-center gap-3 mt-10 mb-6">
                     <div className="w-1.5 h-4 bg-white rounded-none" />
-                    <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.3em]">{t('INTELLIGENCE_BRIEFINGS', 'INTELLIGENCE BRIEFINGS')}</span>
-                    <div className="h-[1px] flex-1 bg-white/5" />
+                    <span className="text-[9px] font-black text-white uppercase tracking-[0.3em]">{t('INTELLIGENCE_BRIEFINGS', 'INTELLIGENCE BRIEFINGS')}</span>
+                    <div className="h-[1px] flex-1 bg-white/20" />
                 </div>
 
                 {/* simplified, READ-ONLY POST LIST */}
@@ -4710,7 +4704,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             const isAuthorFounder = postAuthor?.role === 'Founder';
 
                             return (
-                                <div key={post._id} className="w-full p-5 premium-post-card flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer" onClick={() => {
+                                <div key={post._id} className="w-full p-5 bg-black border border-white/20 flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:border-white transition-colors" onClick={() => {
                                     if (post._id) {
                                         const searchParams = new URLSearchParams(window.location.search);
                                         searchParams.set('postId', post._id);
@@ -4797,17 +4791,22 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             ) : (
                                                 <img 
                                                     src={resolveMediaUrl(post.image || post.thumbnailUrl)} 
-                                                    className="w-full h-auto object-contain max-h-[400px]" 
+                                                    className="w-full h-auto object-contain max-h-[400px] cursor-pointer" 
                                                     alt="" 
                                                     loading="lazy"
                                                     decoding="async"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl));
+                                                    }}
                                                 />
                                             )}
                                         </div>
                                     )}
 
                                     {/* simplified READ-ONLY STATS */}
-                                    <div className="flex items-center gap-4 mt-2 border-t border-white/5 pt-4 text-gray-500 text-[10px] font-black uppercase tracking-wider">
+                                    <div className="flex items-center gap-4 mt-2 border-t border-white/10 pt-4 text-gray-500 text-[10px] font-black uppercase tracking-wider">
                                         <div className="flex items-center gap-1.5">
                                             <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" strokeWidth="2.5" className="w-4 h-4 text-red-500"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
                                             <span className="tabular-nums">{post.likes?.length || 0}</span>
@@ -4827,6 +4826,26 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     )}
                 </div>
             </div>
+
+            {/* FULL SCREEN IMAGE ZOOM MODAL */}
+            {zoomImage && (
+                <div 
+                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 cursor-zoom-out"
+                    onClick={() => setZoomImage(null)}
+                >
+                    <button 
+                        onClick={() => setZoomImage(null)} 
+                        className="absolute top-4 right-4 p-3 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-colors z-50"
+                    >
+                        <Icons.X className="w-6 h-6" />
+                    </button>
+                    <img 
+                        src={zoomImage} 
+                        className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
+                        alt="Zoomed"
+                    />
+                </div>
+            )}
         </div>
     );
 };
@@ -6816,7 +6835,7 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10">
+                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
                         <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">

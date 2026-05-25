@@ -24,7 +24,11 @@ const BottomNavbar = memo(({
     const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'opacity-100 drop-shadow-md' : 'opacity-80'}`;
 
     return (
-        <nav className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10">
+        <nav 
+            className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10"
+            onTouchMove={(e) => e.preventDefault()}
+            onWheel={(e) => e.preventDefault()}
+        >
             <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
                 <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
                 <button
