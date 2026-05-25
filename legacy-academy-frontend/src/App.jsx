@@ -703,8 +703,9 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
 const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
-const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false }) => {
-    const color = (isFounder || forceGold) ? "#FFD700" : "#1D9BF0";
+const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false }) => {
+    // If it's explicitly a normal user, use Blue. Otherwise, check if Founder or forced Gold.
+    const color = (isFounder || forceGold) && !isUser ? "#FFD700" : "#1D9BF0";
 
     return (
         <svg viewBox="0 0 22 22" className={`${className} shrink-0`} style={{ overflow: 'visible' }}>
@@ -773,7 +774,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     <span className={`font-black text-[10px] uppercase tracking-[0.15em] truncate ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-white'}`}>
                         {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} className="w-3.5 h-3.5" />
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5" />
                 </div>
 
                 {isEditing ? (
@@ -1041,7 +1042,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             <div className="flex flex-col min-w-0 flex-1 pr-2">
                                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
                                     <span className="font-bold text-white text-[14px] leading-tight break-words">{author?.username}</span>
-                                    <VerifiedBadge isFounder={author?.role === 'Founder'} className="w-4 h-4 shrink-0" />
+                                    <VerifiedBadge isFounder={author?.role === 'Founder'} isUser={author?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
                                     <span className="text-gray-500 text-[12px] break-all">{formatUserHandle(author?.username)}</span>
                                 </div>
                             </div>
@@ -1564,7 +1565,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
                     <span className="font-black text-white group-hover:text-white uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
-                    <VerifiedBadge isFounder={isFounderSender} className="w-3.5 h-3.5 ml-1" />
+                    <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5 ml-1" />
                     {note?.fromDescriptor && (
                         <span className="text-gray-400 text-[10px] ml-1 uppercase tracking-widest font-bold">
                             • {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
@@ -1810,7 +1811,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <div className="flex flex-col gap-2 min-w-0">
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
                                         <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer break-words leading-tight" onClick={() => onViewProfile(author)}>{author?.username}</span>
-                                        <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
+                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
                                         <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -2348,7 +2349,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden border border-white/20"><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-none border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -2370,7 +2371,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
-                                        <VerifiedBadge isFounder={activeChat?.role === 'Founder'} className="w-4 h-4 shrink-0" />
+                                        <VerifiedBadge isFounder={activeChat?.role === 'Founder'} isUser={activeChat?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
                                     </div>
                                     {(() => {
                                         const chatUser = allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat;
@@ -2975,7 +2976,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         <div className="flex flex-col mt-1">
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-[17px] text-white leading-tight break-words">{user?.username}</span>
-                                <VerifiedBadge isFounder={user?.role === 'Founder'} className="w-4 h-4 shrink-0" />
+                                <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
                             </div>
                             <span className="text-[15px] text-gray-500 leading-tight mt-0.5 break-words">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                         </div>
@@ -4573,7 +4574,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <div className="text-center space-y-1">
                     <div className="flex items-center justify-center gap-1.5">
                         <h1 className="text-2xl font-black text-white uppercase tracking-wider">{publicUser.username}</h1>
-                        <VerifiedBadge isFounder={isFounder} className="w-5 h-5 shrink-0" />
+                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
                     </div>
                     {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] ? (
                         <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">
@@ -4706,7 +4707,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center gap-1">
                                                 <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
-                                                <VerifiedBadge isFounder={isAuthorFounder} className="w-3.5 h-3.5" />
+                                                <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder} className="w-3.5 h-3.5" />
                                             </div>
                                             <div className="flex flex-wrap items-center gap-2">
                                                 {postAuthor?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor] ? (
@@ -7187,7 +7188,7 @@ const App = () => {
                                 <div>
                                     <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none">
                                         {shareModalPost.author?.username}
-                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} className="w-4 h-4" />
+                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4" />
                                     </div>
                                     {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
                                         <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">
@@ -7296,7 +7297,7 @@ const App = () => {
                             {/* Profile Name & Badge */}
                             <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none mb-1">
                                 {shareModalProfile.username}
-                                <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} className="w-6 h-6" />
+                                <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6" />
                             </div>
                             
                             {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] ? (
