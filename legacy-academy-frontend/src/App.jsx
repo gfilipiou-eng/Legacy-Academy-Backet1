@@ -1807,10 +1807,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <VerifiedBadge isFounder={isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
                                         <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
                                     </div>
-                                    <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3 w-max">
-                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
-                                        <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{formatDate(post.createdAt, t, lang)}</span>
-                                        <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(post.createdAt, t, lang)}</span>
+                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
                                     </div>
                                 </div>
                             </div>
@@ -3944,11 +3944,12 @@ const ProfileModal = ({
                                             Object.keys(groupedUserPosts).map(dateKey => {
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
-                                                        <div className="flex items-center justify-center mb-10 mt-8 opacity-90">
-                                                            <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3">
-                                                                <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none" />
-                                                                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{dateKey}</span>
-                                                                <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none" />
+                                                        <div className="flex items-center justify-center mb-10 mt-8 relative">
+                                                            <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                                            <div className="px-6 py-2 bg-[#050505] border border-white/10 flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                                                                <div className="w-1 h-1 bg-white/40 rotate-45" />
+                                                                <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/80">{dateKey}</span>
+                                                                <div className="w-1 h-1 bg-white/40 rotate-45" />
                                                             </div>
                                                         </div>
                                                         <AnimatePresence>
@@ -4696,10 +4697,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) && (
                                                     <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
                                                 )}
-                                                <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3 w-max">
-                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
-                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
-                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none"></div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
+                                                    <div className="w-1 h-1 bg-white/40 rotate-45"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -6877,11 +6878,12 @@ const App = () => {
                                                     const dateKey = group.key;
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
-                                                            <div className="flex items-center justify-center mb-10 opacity-90">
-                                                                <div className="px-5 py-2.5 rounded-none bg-black border border-white/20 flex items-center gap-3">
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none" />
-                                                                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 font-mono">{dateKey}</span>
-                                                                    <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-none" />
+                                                            <div className="flex items-center justify-center mb-10 mt-4 relative">
+                                                                <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                                                <div className="px-6 py-2 bg-[#050505] border border-white/10 flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                                                                    <div className="w-1 h-1 bg-white/40 rotate-45" />
+                                                                    <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/80">{dateKey}</span>
+                                                                    <div className="w-1 h-1 bg-white/40 rotate-45" />
                                                                 </div>
                                                             </div>
 
