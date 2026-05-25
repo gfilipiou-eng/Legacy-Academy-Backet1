@@ -1640,7 +1640,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none p-[2px] bg-[var(--gold-primary)] shadow-[0_0_10px_rgba(255,215,0,0.3)] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
                             <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img src={resolveMediaUrl(storyMediaUrl, null, false, true)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
