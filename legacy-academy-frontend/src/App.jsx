@@ -4673,7 +4673,13 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             const isAuthorFounder = postAuthor?.role === 'Founder';
 
                             return (
-                                <div key={post._id} className="w-full p-5 premium-post-card flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer" onClick={() => {}}>
+                                <div key={post._id} className="w-full p-5 premium-post-card flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer" onClick={() => {
+                                    if (post._id) {
+                                        const searchParams = new URLSearchParams(window.location.search);
+                                        searchParams.set('postId', post._id);
+                                        window.open(`${window.location.origin}${window.location.pathname}?${searchParams.toString()}`, '_blank');
+                                    }
+                                }}>
                                     {/* Meander corners */}
                                     <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20 pointer-events-none" />
                                     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20 pointer-events-none" />
@@ -6757,7 +6763,14 @@ const App = () => {
                                                             {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
-                                                    <div className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory">
+                                                    <div 
+                                                        className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory"
+                                                        onWheel={(e) => {
+                                                            if (e.deltaY !== 0) {
+                                                                e.currentTarget.scrollLeft += e.deltaY;
+                                                            }
+                                                        }}
+                                                    >
                                                         {[...(posts || [])].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 6).map((post, i) => (
                                                             <div
                                                                 key={post._id || i}
