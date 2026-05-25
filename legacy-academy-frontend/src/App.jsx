@@ -6436,22 +6436,22 @@ const App = () => {
                 <>
                     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
                     {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#050505] z-0">
                         {/* High-res Medusa/Ancient Greek Image with slow zoom (Ken Burns) */}
                         <img 
-                            src="https://images.unsplash.com/photo-1618389041494-8ab59eecdb2c?auto=format&fit=crop&w=2000&q=80"
-                            className="absolute inset-0 w-full h-full object-cover object-center opacity-60 mix-blend-luminosity"
+                            src="https://images.unsplash.com/photo-1600096194534-95cf5ece04cf?auto=format&fit=crop&w=2000&q=80"
+                            className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
                             style={{ 
                                 animation: 'kenburns 30s infinite alternate ease-in-out',
                                 transformOrigin: 'top center',
-                                filter: 'grayscale(100%) contrast(1.2)'
+                                filter: 'grayscale(100%) contrast(1.1)'
                             }}
-                            alt="Medusa Background"
+                            alt="Ancient Greek Background"
                         />
                         {/* Light overlays so the image is fully visible but text is readable */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/30" />
-                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-[0.08] mix-blend-color" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black/20" />
+                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-[0.05] mix-blend-color" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
                         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
