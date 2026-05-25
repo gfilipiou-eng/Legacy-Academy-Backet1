@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import upload from "../middleware/upload.js";
 import axios from "axios";
+import crypto from "crypto";
 
 const router = express.Router();
 
@@ -82,7 +83,6 @@ router.post("/forgot-password", async (req, res) => {
         }
 
         // Generate reset token
-        const crypto = await import('crypto');
         const resetToken = crypto.randomBytes(32).toString('hex');
         const tokenExpiry = Date.now() + 3600000; // 1 hour
 
@@ -99,6 +99,10 @@ router.post("/forgot-password", async (req, res) => {
             res.status(200).json({ success: true, message: "Password reset email sent successfully!" });
         } catch (emailError) {
             console.error("Email send failed:", emailError.message);
+            // If it's a configuration error, let the frontend know for debugging
+            if (emailError.message.includes('missing')) {
+                return res.status(200).json({ success: true, message: "Email configuration missing on server. Check Render env variables." });
+            }
             res.status(200).json({ success: true, message: "Reset initiated. Check your email." });
         }
     } catch (err) {

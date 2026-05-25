@@ -6565,11 +6565,15 @@ const App = () => {
                                             <button type="button" disabled={authLoading} onClick={async () => {
                                                 setAuthLoading(true);
                                                 try {
-                                                    await axios.post('/auth/forgot-password', { email: formData.email });
-                                                    alert('Password reset link sent! Check your email.');
-                                                    setAuthMode('login');
+                                                    const res = await axios.post('/auth/forgot-password', { email: formData.email });
+                                                    if (res.data.success && res.data.message.includes('missing')) {
+                                                        alert('Server error: Email configuration missing on backend.');
+                                                    } else {
+                                                        alert(res.data.message || 'Password reset link sent! Check your email.');
+                                                        setAuthMode('login');
+                                                    }
                                                 } catch (e) {
-                                                    alert('Action failed. Please try again.');
+                                                    alert(e.response?.data?.message || 'Action failed. Please try again.');
                                                 } finally { setAuthLoading(false); }
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

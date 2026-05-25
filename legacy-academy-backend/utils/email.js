@@ -2,14 +2,24 @@ import nodemailer from 'nodemailer';
 
 // Create a reusable transporter object using the default SMTP transport
 export const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD, // Use App Password, not regular password
     },
+    connectionTimeout: 5000, // Fail fast if connection hangs
+    greetingTimeout: 5000,
+    socketTimeout: 5000,
 });
 
 export const sendPasswordResetEmail = async (to, resetToken, username) => {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+        console.warn('⚠️ EMAIL_USER or EMAIL_APP_PASSWORD is not set in environment variables. Email will NOT be sent.');
+        // Throw an error so the caller knows it failed, but don't hang!
+        throw new Error('Email configuration missing on server.');
+    }
     // Determine the frontend URL based on environment
     const frontendUrl = process.env.NODE_ENV === 'production' 
         ? 'https://legacyacademyintel.vercel.app' 
