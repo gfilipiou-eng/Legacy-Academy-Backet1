@@ -153,6 +153,11 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.get("/api/users/me/active-connections", verifyToken, (req, res) => {
+  const count = activeSocketsPerUser.get(req.user.id) || 1;
+  res.json({ activeDevices: count });
+});
+
 // Routes
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
