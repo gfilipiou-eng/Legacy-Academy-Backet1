@@ -270,7 +270,11 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                 )}
                 <span className="text-gray-500 text-[13px] break-all">{`@${String(post.author?.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
                 <span className="text-gray-600 text-[13px] shrink-0">·</span>
-                <span className="text-gray-500 text-[12px] sm:text-[13px] font-medium whitespace-nowrap shrink-0">{formatDate(post.createdAt, t, lang)}</span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                  <span className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
+                  <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                </div>
               </div>
               <p className="text-white text-[15px] sm:text-[16px] font-medium leading-relaxed whitespace-pre-wrap break-words pr-2">
                 {post.desc || post.text || 'No description provided.'}
@@ -352,7 +356,11 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
                           </>
                         )}
                       </div>
-                      <span className="text-[9px] text-gray-600 font-bold uppercase">{formatDate(c.createdAt, t, lang)}</span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">{formatDate(c.createdAt, t, lang)}</span>
+                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                      </div>
                     </div>
                     <div className="bg-white/[0.05] rounded-none p-3 border border-white/5 shadow-sm transition-all">
                       {editingCommentId === c._id ? (

@@ -830,9 +830,11 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 )}
 
                 <div className="flex flex-wrap gap-3 mt-2 items-center text-[10px] text-gray-500">
-                    <span className="font-bold uppercase tracking-tight">
-                        {formatDate(comment.createdAt, t, lang)}
-                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                        <span className="font-black uppercase tracking-[0.2em]">{formatDate(comment.createdAt, t, lang)}</span>
+                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                    </div>
                     {canEdit && !isEditing && (
                         <button
                             type="button"
@@ -1580,7 +1582,11 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 </div>
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
                 <div className="flex items-center gap-3 mt-2">
-                    <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt, t, lang)}</div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                        <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt, t, lang)}</div>
+                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                    </div>
                     {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
                 </div>
 
@@ -2455,7 +2461,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     m.text && !imageUrl ? <p className="leading-relaxed font-medium text-white/95 relative z-10">{m.text}</p> : (m.text && imageUrl ? <p className="mt-2 leading-relaxed font-medium text-white/95 relative z-10">{m.text}</p> : null)
                                                 )}
                                                 <div className="flex justify-end items-center gap-1.5 mt-1 opacity-70 relative z-10">
-                                                    <span className="text-[10px] font-medium tracking-wide text-gray-400">{formatDate(m.createdAt, t, lang)}</span>
+                                                    <div className="flex items-center gap-1.5 shrink-0">
+                                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">{formatDate(m.createdAt, t, lang)}</span>
+                                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                    </div>
                                                     {isOwn && (
                                                         <Icons.Check className={`w-3.5 h-3.5 ${m.isRead ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`} />
                                                     )}
@@ -3908,7 +3918,11 @@ const ProfileModal = ({
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{formatDate(s.createdAt, t, lang)}</span>
+                                                            <div className="flex items-center gap-1.5 mt-1 shrink-0">
+                                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">{formatDate(s.createdAt, t, lang)}</span>
+                                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                            </div>
                                                         </div>
                                                     );
                                                 })}
@@ -7163,17 +7177,27 @@ const App = () => {
                                             {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3" })}
                                             {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
                                             <span className="opacity-50 mx-1">•</span>
-                                            <span className="text-gray-500">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
+                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                            </div>
                                         </div>
                                     ) : getFounderAffiliation(shareModalPost.author) ? (
                                         <div className="flex items-center gap-2 mt-1">
                                             <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" />
                                             <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50">•</span>
-                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
+                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <div className="text-gray-500 text-xs mt-1 uppercase tracking-widest font-bold">
-                                            {formatDate(shareModalPost.createdAt, t, currentLanguage)}
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
+                                            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
                                         </div>
                                     )}
                                 </div>
