@@ -414,21 +414,15 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   }
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
+/* Hide Scrollbars Everywhere (Global) */
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
   background: transparent;
 }
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--f1-red);
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .animate-pop-in {

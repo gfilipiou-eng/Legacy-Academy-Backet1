@@ -4853,12 +4853,19 @@ const App = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
+    const [authError, setAuthError] = useState('');
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
 
     const handleAuthInputChange = (e) => {
+        setAuthError(''); // Clear error on typing
         const { id, value } = e.target;
         const key = id.replace('l-', '').replace('r-', '').replace('f-', '');
         setFormData(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleAuthModeChange = (mode) => {
+        setAuthError('');
+        setAuthMode(mode);
     };
 
     const commitAuthenticatedUser = useCallback((userData) => {
@@ -6420,22 +6427,35 @@ const App = () => {
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
                                             </div>
+                                            
+                                            {authError && (
+                                                <div className="mb-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
+                                                    <Icons.AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                                                    <span className="text-red-400 text-[10px] font-black uppercase tracking-widest leading-tight">{authError}</span>
+                                                </div>
+                                            )}
+
                                             <button type="button" disabled={authLoading} onClick={async () => {
+                                                if (!formData.email || !formData.password) {
+                                                    setAuthError('Email and Password are required.');
+                                                    return;
+                                                }
                                                 setAuthLoading(true);
+                                                setAuthError('');
                                                 try {
                                                     const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
                                                     localStorage.setItem('token', res.data.token);
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
-                                                    alert(e.response?.data?.message || "Invalid Credentials.");
+                                                    setAuthError(e.response?.data?.message || "Invalid clearance codes or account not found.");
                                                 } finally { setAuthLoading(false); }
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 <span className="relative">{authLoading ? "AUTHENTICATING..." : "SIGN IN"}</span>
                                             </button>
                                             <div className="flex justify-between text-xs text-white/30 px-1 pt-2 font-bold tracking-wide">
-                                                 <button type="button" onClick={() => { setAuthMode('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Create Account</button>
-                                                 <button type="button" onClick={() => { setAuthMode('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Forgot Password?</button>
+                                                 <button type="button" onClick={() => { handleAuthModeChange('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Create Account</button>
+                                                 <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Forgot Password?</button>
                                             </div>
                                             <div className="flex items-center my-3.5">
                                                  <div className="flex-1 h-[1px] bg-white/5" />
@@ -6512,8 +6532,21 @@ const App = () => {
                                                     ))}
                                                 </div>
                                             </div>
-                                            <button disabled={authLoading} onClick={async () => {
+
+                                            {authError && (
+                                                <div className="mt-3 mb-1 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
+                                                    <Icons.AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                                                    <span className="text-red-400 text-[10px] font-black uppercase tracking-widest leading-tight">{authError}</span>
+                                                </div>
+                                            )}
+
+                                            <button type="button" disabled={authLoading} onClick={async () => {
+                                                if (!formData.email || !formData.password || !formData.username) {
+                                                    setAuthError('Email, Password, and Username are required.');
+                                                    return;
+                                                }
                                                 setAuthLoading(true);
+                                                setAuthError('');
                                                 try {
                                                     const fd = new FormData();
                                                     fd.append('username', formData.username?.trim());
@@ -6529,7 +6562,7 @@ const App = () => {
                                                     localStorage.setItem('themeColor', '#ffd700');
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
-                                                    alert(e.response?.data?.message || e.response?.data || 'Action failed. Please try again.');
+                                                    setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
                                                 } finally { setAuthLoading(false); }
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -6550,36 +6583,50 @@ const App = () => {
                                                  </svg>
                                                  <span>GOOGLE REGISTER</span>
                                              </button>
-                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>BACK TO LOGIN</button>
+                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
                                         </>
                                     )}
                                     {authMode === 'forgot' && (
                                         <form onSubmit={(e) => { e.preventDefault(); /* submit handled by button */ }}>
                                             <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">Enter your email address to receive a secure password reset link.</p>
-                                            <div className="relative group">
+                                            <div className="relative group mb-3">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
                                                 <input type="email" placeholder="Email Address" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                             </div>
+
+                                            {authError && (
+                                                <div className="mb-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
+                                                    <Icons.AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                                                    <span className="text-red-400 text-[10px] font-black uppercase tracking-widest leading-tight">{authError}</span>
+                                                </div>
+                                            )}
+
                                             <button type="button" disabled={authLoading} onClick={async () => {
+                                                if (!formData.email) {
+                                                    setAuthError('Email is required.');
+                                                    return;
+                                                }
                                                 setAuthLoading(true);
+                                                setAuthError('');
                                                 try {
                                                     const res = await axios.post('/auth/forgot-password', { email: formData.email });
                                                     if (res.data.success && res.data.message.includes('missing')) {
-                                                        alert('Server error: Email configuration missing on backend.');
+                                                        setAuthError('Server Error: Email system disabled.');
                                                     } else {
+                                                        // Show success message somehow, or just return to login
                                                         alert(res.data.message || 'Password reset link sent! Check your email.');
                                                         setAuthMode('login');
                                                     }
                                                 } catch (e) {
-                                                    alert(e.response?.data?.message || 'Action failed. Please try again.');
+                                                    setAuthError(e.response?.data?.message || 'Failed to send reset link.');
                                                 } finally { setAuthLoading(false); }
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 <span className="relative">{authLoading ? 'SENDING...' : 'SEND RESET LINK'}</span>
                                             </button>
-                                             <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => setAuthMode('login')}>BACK TO LOGIN</button>
+                                             <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
                                         </form>
                                     )}
                                 </div>
