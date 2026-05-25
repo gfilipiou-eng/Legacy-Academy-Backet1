@@ -423,12 +423,33 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   height: 4px;
 }
 
-::-webkit-scrollbar-track {
+/* Vertical Scrollbar specific styles to avoid navbar overlap */
+::-webkit-scrollbar:vertical {
+  width: 4px;
+}
+::-webkit-scrollbar-track:vertical {
   background: #000000;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 84px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:vertical {
+  background: var(--gold-primary);
+  border-radius: 0;
+  border-bottom: 84px solid transparent;
+  background-clip: padding-box;
+  transition: all 0.3s;
 }
 
-::-webkit-scrollbar-thumb {
+/* Horizontal Scrollbar specific styles */
+::-webkit-scrollbar:horizontal {
+  height: 4px;
+}
+::-webkit-scrollbar-track:horizontal {
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb:horizontal {
   background: var(--gold-primary);
   border-radius: 0;
   transition: all 0.3s;

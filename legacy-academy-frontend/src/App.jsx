@@ -1637,16 +1637,20 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const authorPic = s.author?.profilePic ? resolveMediaUrl(s.author.profilePic, null, false, false, false) : '/logo.png';
                 const authorName = s.author?.username || 'Agent';
                 const storyMediaUrl = s.thumbnailUrl || s.image || s.videoUrl;
-                const displayImg = storyMediaUrl ? resolveMediaUrl(storyMediaUrl, null, false, true) : authorPic;
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
                         <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none p-[2px] bg-[var(--gold-primary)] shadow-[0_0_10px_rgba(255,215,0,0.3)] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative">
-                                <img src={displayImg} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                <div className="absolute top-1 left-1 w-5 h-5 rounded-none overflow-hidden border border-white/50 shadow-sm">
-                                    <img src={authorPic} className="w-full h-full object-cover" alt="" />
-                                </div>
+                            <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative flex items-center justify-center">
+                                {storyMediaUrl ? (
+                                    <img src={resolveMediaUrl(storyMediaUrl, null, false, true)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                ) : (
+                                    <div className="w-full h-full bg-[#111] p-1 flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity">
+                                        <span className="text-white text-[7px] font-bold text-center break-words line-clamp-4 leading-tight">
+                                            {s.desc}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                             {isNativeVideo && (
                                 <div className="absolute bottom-[-4px] right-[-4px] w-5 h-5 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
@@ -3167,7 +3171,7 @@ const ProfileModal = ({
     }, [profileUser, currentUser, userData, allUsers]);
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
-    const isFounderProfile = displayUser?.role === 'Founder' || currentUser?.role === 'Founder' || profileUser?.role === 'Founder';
+    const isFounderProfile = displayUser?.role === 'Founder';
     const canShowProfileShareButton = (isMe
         ? currentUser?.settings?.showProfileShareButton
         : displayUser?.settings?.showProfileShareButton) !== false;
@@ -3699,7 +3703,7 @@ const ProfileModal = ({
                                     <div className="font-black text-white text-lg sm:text-xl flex items-center gap-2 leading-none uppercase tracking-tighter flex-wrap">
                                         <span className="truncate">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            {isFounderProfile && (
+                                            {isFounderProfile ? (
                                                 <svg
                                                     aria-label="Verified Founder"
                                                     viewBox="0 0 22 22"
@@ -3708,6 +3712,19 @@ const ProfileModal = ({
                                                 >
                                                     <path
                                                         fill="#FFD700"
+                                                        stroke="none"
+                                                        d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
+                                                    />
+                                                </svg>
+                                            ) : (
+                                                <svg
+                                                    aria-label="Verified User"
+                                                    viewBox="0 0 22 22"
+                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0"
+                                                    style={{ overflow: 'visible' }}
+                                                >
+                                                    <path
+                                                        fill="#1D9BF0"
                                                         stroke="none"
                                                         d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
                                                     />
@@ -4977,7 +4994,14 @@ const App = () => {
     const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
     const [loadingActions, setLoadingActions] = useState({}); // per-post loading state for optimistic UI
     const [followLoading, setFollowLoading] = useState({}); // per-user follow loading state
-    const [authMode, setAuthMode] = useState('login');
+    const [authMode, setAuthMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const path = window.location.pathname;
+            const token = new URLSearchParams(window.location.search).get('token');
+            if (path === '/reset-password' && token) return 'reset';
+        }
+        return 'login';
+    });
     const [chatTarget, setChatTarget] = useState(null);
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
@@ -6504,7 +6528,8 @@ const App = () => {
                                                 ) : <span className="relative">SIGN IN</span>}
                                             </button>
                                             <div className="flex justify-between text-xs text-white/30 px-1 pt-2 font-bold tracking-wide">
-                                                 <button type="button" onClick={() => { handleAuthModeChange('register'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Create Account</button>
+                                                 {/* Create Account hidden for now - Premium prep */}
+                                                 <div></div>
                                                  <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Forgot Password?</button>
                                             </div>
                                             <div className="flex items-center my-3.5">
@@ -6670,9 +6695,8 @@ const App = () => {
                                                     if (res.data.success && res.data.message.includes('missing')) {
                                                         setAuthError('Server Error: Email system disabled.');
                                                     } else {
-                                                        // Show success message somehow, or just return to login
-                                                        alert(res.data.message || 'Password reset link sent! Check your email.');
-                                                        setAuthMode('login');
+                                                        setAuthError('Password reset link sent! Check your email.'); // Used error box for success to avoid alert
+                                                        setTimeout(() => setAuthMode('login'), 3000);
                                                     }
                                                 } catch (e) {
                                                     setAuthError(e.response?.data?.message || 'Failed to send reset link.');
@@ -6686,6 +6710,52 @@ const App = () => {
                                                 ) : <span className="relative">SEND RESET LINK</span>}
                                             </button>
                                              <button type="button" className="w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
+                                        </form>
+                                    )}
+                                    {authMode === 'reset' && (
+                                        <form onSubmit={(e) => { e.preventDefault(); }}>
+                                            <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">Enter your new clearance codes.</p>
+                                            <div className="relative group mb-3">
+                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
+                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
+                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="New Password" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
+                                                    {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
+                                                </button>
+                                            </div>
+
+                                            {authError && (
+                                                <div className="mb-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
+                                                    <Icons.AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                                                    <span className="text-red-400 text-[10px] font-black uppercase tracking-widest leading-tight">{authError}</span>
+                                                </div>
+                                            )}
+
+                                            <button type="button" disabled={authLoading} onClick={async () => {
+                                                if (!formData.password) {
+                                                    setAuthError('New password is required.');
+                                                    return;
+                                                }
+                                                setAuthLoading(true);
+                                                setAuthError('');
+                                                try {
+                                                    const searchParams = new URLSearchParams(window.location.search);
+                                                    const res = await axios.post('/auth/reset-password', { token: searchParams.get('token'), newPassword: formData.password });
+                                                    setAuthError('Password reset successful! Redirecting...');
+                                                    setTimeout(() => { window.location.href = '/'; }, 2000);
+                                                } catch (e) {
+                                                    setAuthError(e.response?.data?.message || 'Failed to reset password. Link may be expired.');
+                                                } finally { setAuthLoading(false); }
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                {authLoading ? (
+                                                    <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
+                                                        <Icons.Loader />
+                                                    </div>
+                                                ) : <span className="relative">UPDATE PASSWORD</span>}
+                                            </button>
+                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => { window.location.href = '/'; }}>BACK TO LOGIN</button>
                                         </form>
                                     )}
                                 </div>
@@ -6788,11 +6858,6 @@ const App = () => {
                                                     </div>
                                                     <div 
                                                         className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4"
-                                                        onWheel={(e) => {
-                                                            if (e.deltaY !== 0) {
-                                                                e.currentTarget.scrollLeft += e.deltaY;
-                                                            }
-                                                        }}
                                                     >
                                                         {[...(posts || [])].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 6).map((post, i) => (
                                                             <div
