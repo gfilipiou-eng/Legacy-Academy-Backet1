@@ -4983,8 +4983,12 @@ const App = () => {
     const [authMode, setAuthMode] = useState(() => {
         if (typeof window !== 'undefined') {
             const path = window.location.pathname;
-            const token = new URLSearchParams(window.location.search).get('token');
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            const sessionId = params.get('session_id'); // From Stripe Redirect
+            
             if (path === '/reset-password' && token) return 'reset';
+            if (sessionId) return 'register'; // Auto-open Register if coming from Stripe
         }
         return 'login';
     });
@@ -6783,11 +6787,11 @@ const App = () => {
                                     <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
                                 </div>
                                 
-                                <button onClick={() => alert("Payment gateway integration pending.")} className="w-full py-4 bg-[var(--gold-primary)] text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
                                     Purchase Access
                                 </button>
                                 
-                                <button onClick={() => alert("Apple/Android Pay integration pending.")} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs flex items-center justify-center gap-2">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs flex items-center justify-center gap-2">
                                     <Icons.Activity className="w-5 h-5" /> Pay with Apple / Google
                                 </button>
                                 
