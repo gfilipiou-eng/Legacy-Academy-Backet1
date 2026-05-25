@@ -1145,8 +1145,21 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         {/* Description Section */}
                         <div className="px-4 sm:px-6 py-6 bg-transparent border-b border-white/10 z-10 relative">
                             <div className="space-y-4">
-                                <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left">
-                                    {parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc))}
+                                <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left whitespace-pre-wrap break-words">
+                                    {parseHashtags((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
+                                        onClose();
+                                        // Need a way to search hashtag, maybe just window location
+                                    }).map((part, i) => {
+                                        if (typeof part !== 'string') return <React.Fragment key={i}>{part}</React.Fragment>;
+                                        const urlRegex = /(https?:\/\/[^\s]+)/g;
+                                        const parts = part.split(urlRegex);
+                                        return parts.map((p, j) => {
+                                            if (p.match(urlRegex)) {
+                                                return <a key={`${i}-${j}`} href={p} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{p}</a>;
+                                            }
+                                            return p;
+                                        });
+                                    })}
                                     {(translatedText || post.desc) && (translatedText || post.desc).length > 500 && (
                                         <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-white text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
                                             {isExpanded ? t('READ_LESS') : t('READ_MORE')}
@@ -4997,6 +5010,7 @@ const App = () => {
         }
         return 'login';
     });
+    const [showPaywall, setShowPaywall] = useState(false);
     const [chatTarget, setChatTarget] = useState(null);
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
@@ -6523,9 +6537,8 @@ const App = () => {
                                                 ) : <span className="relative">SIGN IN</span>}
                                             </button>
                                             <div className="flex justify-between text-xs text-white/30 px-1 pt-2 font-bold tracking-wide">
-                                                 {/* Create Account hidden for now - Premium prep */}
-                                                 <div></div>
-                                                 <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold">Forgot Password?</button>
+                                                 <button type="button" onClick={() => setShowPaywall(true)} className="cursor-pointer hover:text-[var(--gold-primary)] transition-colors bg-transparent border-none outline-none p-0 font-bold text-[var(--gold-primary)]/80 uppercase tracking-widest text-[9px]">Create Account</button>
+                                                 <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold uppercase tracking-widest text-[9px]">Forgot Password?</button>
                                             </div>
                                             <div className="flex items-center my-3.5">
                                                  <div className="flex-1 h-[1px] bg-white/5" />
@@ -6759,6 +6772,41 @@ const App = () => {
                         <div className="text-center mt-6 text-[10px] text-white/15 uppercase tracking-[0.3em] font-black">Legacy Academy © 2026</div>
                     </div>
                 </div>
+
+                {/* PAYWALL MODAL */}
+                {showPaywall && (
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
+                        <div className="bg-[#050505] border border-white/20 rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-[0_0_50px_rgba(255,215,0,0.15)] relative">
+                            {/* Decorative Top Line */}
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
+                            
+                            <div className="p-8 text-center flex flex-col items-center">
+                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center border border-[var(--gold-primary)]/30 mb-6 relative">
+                                    <div className="absolute inset-0 bg-[var(--gold-primary)]/10 rounded-full animate-pulse" />
+                                    <Icons.Lock className="w-8 h-8 text-[var(--gold-primary)]" />
+                                </div>
+                                
+                                <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-2">Restricted Access</h2>
+                                <p className="text-sm text-gray-400 font-medium leading-relaxed mb-8 px-4">
+                                    Legacy Academy Intel is a premium network. To create an account and access the intelligence feed, an active subscription is required.
+                                </p>
+                                
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-4 w-full mb-8">
+                                    <div className="text-3xl font-black text-white mb-1">4€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ month</span></div>
+                                    <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
+                                </div>
+                                
+                                <button onClick={() => alert("Payment gateway integration pending.")} className="w-full py-4 bg-[var(--gold-primary)] text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 shadow-[0_0_20px_rgba(255,215,0,0.3)] mb-4 text-xs">
+                                    Purchase Access
+                                </button>
+                                
+                                <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-widest font-black hover:text-white transition-colors">
+                                    Return to Login
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
