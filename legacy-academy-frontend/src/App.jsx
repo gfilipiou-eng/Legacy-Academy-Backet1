@@ -6436,26 +6436,25 @@ const App = () => {
                 <>
                     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
                     {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#050505] z-0">
-                        {/* High-res Medusa/Ancient Greek Image with slow zoom (Ken Burns) */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
+                        {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
                         <img 
-                            src="https://images.unsplash.com/photo-1600096194534-95cf5ece04cf?auto=format&fit=crop&w=2000&q=80"
-                            className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
+                            src="https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=2000&q=80"
+                            className="absolute inset-0 w-full h-full object-cover object-top opacity-80"
                             style={{ 
                                 animation: 'kenburns 30s infinite alternate ease-in-out',
-                                transformOrigin: 'top center',
-                                filter: 'grayscale(100%) contrast(1.1)'
+                                transformOrigin: 'top center'
                             }}
-                            alt="Ancient Greek Background"
+                            alt="Ancient Greece Background"
                         />
                         {/* Light overlays so the image is fully visible but text is readable */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black/20" />
-                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-[0.05] mix-blend-color" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-[0.15] mix-blend-color" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
-                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
-                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/5 blur-[120px] md:animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/20 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
+                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/10 blur-[120px] md:animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
                     </div>
 
                     {/* MAIN GLASS CARD */}
@@ -6821,7 +6820,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-14 sm:h-20 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden' }} />
+                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden' }} />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
