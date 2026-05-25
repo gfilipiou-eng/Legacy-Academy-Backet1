@@ -1535,7 +1535,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 
     };
 
-    const isFounderSender = note?.sender?.role === 'Founder';
+    const isFounderSender = note?.sender?.role === 'Founder' || note?.fromRole === 'Founder';
 
     return (
         <motion.div
@@ -1559,6 +1559,11 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
                     <span className="font-black text-white group-hover:text-white uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
                     <VerifiedBadge isFounder={isFounderSender} className="w-3.5 h-3.5 ml-1" />
+                    {note?.fromDescriptor && (
+                        <span className="text-gray-400 text-[10px] ml-1 uppercase tracking-widest font-bold">
+                            • {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
+                        </span>
+                    )}
                     <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
                         {note.type === 'follow' ? t('NOTIF_FOLLOW') :
                             note.type === 'like' ? t('NOTIF_LIKE') :

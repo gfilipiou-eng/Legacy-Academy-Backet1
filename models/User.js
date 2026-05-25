@@ -49,6 +49,8 @@ const UserSchema = new mongoose.Schema({
     from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     fromUsername: { type: String },
     fromProfilePic: { type: String },
+    fromRole: { type: String },
+    fromDescriptor: { type: String },
     post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
     text: { type: String },
     read: { type: Boolean, default: false },

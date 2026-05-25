@@ -92,6 +92,8 @@ const UserSchema = new mongoose.Schema(
                 from: { type: String },
                 fromUsername: { type: String },
                 fromProfilePic: { type: String },
+                fromRole: { type: String },
+                fromDescriptor: { type: String },
                 read: { type: Boolean, default: false },
                 createdAt: { type: Date, default: Date.now },
                 post: { type: String }

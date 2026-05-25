@@ -159,43 +159,48 @@ router.get("/public/posts/:username", async (req, res) => {
     }
 });
 
-// GET NOTIFICATIONS (with auto-heal for 'Someone' usernames)
-router.get("/notifications", verifyToken, async (req, res) => {
-    try {
-        const userId = req.user.id || req.user.userId;
-        const user = await User.findById(userId).lean();
-        if (!user) return res.status(200).json([]);
+        // GET NOTIFICATIONS (with auto-heal for 'Someone' usernames)
+        router.get("/notifications", verifyToken, async (req, res) => {
+            try {
+                const userId = req.user.id || req.user.userId;
+                const user = await User.findById(userId).lean();
+                if (!user) return res.status(200).json([]);
 
-        const followers = (user.followers || []).map(id => String(id));
+                const followers = (user.followers || []).map(id => String(id));
 
-        // Collect IDs that need healing (stored as 'Someone' or blank)
-        const needsHeal = (user.notifications || []).filter(n =>
-            n.from && (!n.fromUsername || n.fromUsername === 'Someone' || n.fromUsername === 'Unknown')
-        );
+                // Collect IDs that need healing (stored as 'Someone' or blank)
+                const needsHeal = (user.notifications || []).filter(n =>
+                    n.from && (!n.fromUsername || n.fromUsername === 'Someone' || n.fromUsername === 'Unknown')
+                );
 
-        // Heal in background: look up real usernames and patch DB
-        if (needsHeal.length > 0) {
-            const uniqueIds = [...new Set(needsHeal.map(n => String(n.from)))];
-            const actors = await User.find({ _id: { $in: uniqueIds } }).select('_id username profilePic').lean();
-            const actorMap = {};
-            actors.forEach(a => { actorMap[String(a._id)] = a; });
+                // Heal in background: look up real usernames and patch DB
+                if (needsHeal.length > 0) {
+                    const uniqueIds = [...new Set(needsHeal.map(n => String(n.from)))];
+                    const actors = await User.find({ _id: { $in: uniqueIds } }).select('_id username profilePic role profileDescriptor').lean();
+                    const actorMap = {};
+                    actors.forEach(a => { actorMap[String(a._id)] = a; });
 
-            // Patch each broken notification in DB
-            for (const n of needsHeal) {
-                const actor = actorMap[String(n.from)];
-                if (actor) {
-                    await User.updateOne(
-                        { _id: userId, "notifications._id": n._id },
-                        { $set: { "notifications.$.fromUsername": actor.username, "notifications.$.fromProfilePic": actor.profilePic || '' } }
-                    );
+                    // Patch each broken notification in DB
+                    for (const n of needsHeal) {
+                        const actor = actorMap[String(n.from)];
+                        if (actor) {
+                            await User.updateOne(
+                                { _id: userId, "notifications._id": n._id },
+                                { $set: { 
+                                    "notifications.$.fromUsername": actor.username, 
+                                    "notifications.$.fromProfilePic": actor.profilePic || '',
+                                    "notifications.$.fromRole": actor.role || 'User',
+                                    "notifications.$.fromDescriptor": actor.profileDescriptor || ''
+                                } }
+                            );
+                        }
+                    }
                 }
-            }
-        }
 
-        // Re-fetch after potential healing
-        const freshUser = needsHeal.length > 0 ? await User.findById(userId).lean() : user;
+                // Re-fetch after potential healing
+                const freshUser = needsHeal.length > 0 ? await User.findById(userId).lean() : user;
 
-        const filteredNotifications = (freshUser.notifications || []).filter(n => {
+                const filteredNotifications = (freshUser.notifications || []).filter(n => {
             if (n.type === 'follow_request') {
                 const fId = String(n.from);
                 if (followers.includes(fId)) return false;
@@ -268,6 +273,8 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                                 from: String(currentId),
                                 fromUsername: currentUser.username,
                                 fromProfilePic: currentUser.profilePic,
+                                fromRole: currentUser.role,
+                                fromDescriptor: currentUser.profileDescriptor,
                                 read: false,
                                 createdAt: new Date()
                             }],
@@ -281,7 +288,9 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                     io.to(String(targetId)).emit('notification.received', {
                         type: 'follow_request',
                         fromUsername: currentUser.username,
-                        fromProfilePic: currentUser.profilePic
+                        fromProfilePic: currentUser.profilePic,
+                        fromRole: currentUser.role,
+                        fromDescriptor: currentUser.profileDescriptor
                     });
                 }
             }
@@ -298,6 +307,8 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                         from: String(currentId),
                         fromUsername: currentUser.username,
                         fromProfilePic: currentUser.profilePic,
+                        fromRole: currentUser.role,
+                        fromDescriptor: currentUser.profileDescriptor,
                         read: false,
                         createdAt: new Date()
                     }],
@@ -311,7 +322,9 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
             io.to(String(targetId)).emit('notification.received', {
                 type: 'follow',
                 fromUsername: currentUser.username,
-                fromProfilePic: currentUser.profilePic
+                fromProfilePic: currentUser.profilePic,
+                fromRole: currentUser.role,
+                fromDescriptor: currentUser.profileDescriptor
             });
         }
         await currentUser.updateOne({ $addToSet: { following: String(targetId) } });
@@ -376,13 +389,18 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
             $addToSet: { following: String(userId) },
             $push: {
                 notifications: {
-                    type: 'follow_accepted',
-                    from: String(userId),
-                    fromUsername: user.username,
-                    fromProfilePic: user.profilePic || '',
-                    text: `Accepted your follow request.`,
-                    read: false,
-                    createdAt: new Date()
+                    $each: [{
+                        type: 'follow_accepted',
+                        from: String(userId),
+                        fromUsername: user.username,
+                        fromProfilePic: user.profilePic || '',
+                        fromRole: user.role,
+                        fromDescriptor: user.profileDescriptor,
+                        text: `Accepted your follow request.`,
+                        read: false,
+                        createdAt: new Date()
+                    }],
+                    $position: 0
                 }
             }
         });
@@ -392,7 +410,9 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
             io.to(String(requesterId)).emit('notification.received', {
                 type: 'follow_accepted',
                 fromUsername: user.username,
-                fromProfilePic: user.profilePic
+                fromProfilePic: user.profilePic,
+                fromRole: user.role,
+                fromDescriptor: user.profileDescriptor
             });
             const updatedReq = await User.findById(requesterId).select('-password');
             const updatedMe = await User.findById(userId).select('-password');

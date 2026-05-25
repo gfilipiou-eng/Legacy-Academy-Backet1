@@ -99,19 +99,21 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
 
             if (isReposting && String(updatedPost.author) !== userId) {
                 // Fetch real actor info (JWT only has id+role)
-                const actor = await User.findById(userId).select('username profilePic').lean();
+                const actor = await User.findById(userId).select('username profilePic role profileDescriptor').lean();
                 const fromUsername = actor?.username || 'Unknown';
                 const fromProfilePic = actor?.profilePic || '';
+                const fromRole = actor?.role || 'User';
+                const fromDescriptor = actor?.profileDescriptor || '';
 
                 await User.findByIdAndUpdate(updatedPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{ type: 'repost', from: userId, fromUsername, fromProfilePic, post: updatedPost._id, read: false, createdAt: new Date() }],
+                            $each: [{ type: 'repost', from: userId, fromUsername, fromProfilePic, fromRole, fromDescriptor, post: updatedPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-                io.to(String(updatedPost.author)).emit('notification.received', { type: 'repost', fromUsername, fromProfilePic, postId: updatedPost._id });
+                io.to(String(updatedPost.author)).emit('notification.received', { type: 'repost', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: updatedPost._id });
             }
         }
 
@@ -221,19 +223,21 @@ router.put("/:id/like", verifyToken, async (req, res) => {
 
             if (isLiking && String(updatedPost.author) !== userId) {
                 // Fetch real actor info
-                const actor = await User.findById(userId).select('username profilePic').lean();
+                const actor = await User.findById(userId).select('username profilePic role profileDescriptor').lean();
                 const fromUsername = actor?.username || 'Unknown';
                 const fromProfilePic = actor?.profilePic || '';
+                const fromRole = actor?.role || 'User';
+                const fromDescriptor = actor?.profileDescriptor || '';
 
                 await User.findByIdAndUpdate(updatedPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{ type: 'like', from: userId, fromUsername, fromProfilePic, post: updatedPost._id, read: false, createdAt: new Date() }],
+                            $each: [{ type: 'like', from: userId, fromUsername, fromProfilePic, fromRole, fromDescriptor, post: updatedPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-                io.to(String(updatedPost.author)).emit('notification.received', { type: 'like', fromUsername, fromProfilePic, postId: updatedPost._id });
+                io.to(String(updatedPost.author)).emit('notification.received', { type: 'like', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: updatedPost._id });
             }
         }
 
@@ -275,19 +279,21 @@ router.put("/:id/dislike", verifyToken, async (req, res) => {
 
             if (isDisliking && String(updatedPost.author) !== userId) {
                 // Fetch real actor info
-                const actor = await User.findById(userId).select('username profilePic').lean();
+                const actor = await User.findById(userId).select('username profilePic role profileDescriptor').lean();
                 const fromUsername = actor?.username || 'Unknown';
                 const fromProfilePic = actor?.profilePic || '';
+                const fromRole = actor?.role || 'User';
+                const fromDescriptor = actor?.profileDescriptor || '';
 
                 await User.findByIdAndUpdate(updatedPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{ type: 'dislike', from: userId, fromUsername, fromProfilePic, post: updatedPost._id, read: false, createdAt: new Date() }],
+                            $each: [{ type: 'dislike', from: userId, fromUsername, fromProfilePic, fromRole, fromDescriptor, post: updatedPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-                io.to(String(updatedPost.author)).emit('notification.received', { type: 'dislike', fromUsername, fromProfilePic, postId: updatedPost._id });
+                io.to(String(updatedPost.author)).emit('notification.received', { type: 'dislike', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: updatedPost._id });
             }
         }
 
@@ -318,19 +324,21 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
 
             if (String(post.author) !== String(req.user.id)) {
                 // Fetch real actor info
-                const actor = await User.findById(req.user.id).select('username profilePic').lean();
+                const actor = await User.findById(req.user.id).select('username profilePic role profileDescriptor').lean();
                 const fromUsername = actor?.username || 'Unknown';
                 const fromProfilePic = actor?.profilePic || '';
+                const fromRole = actor?.role || 'User';
+                const fromDescriptor = actor?.profileDescriptor || '';
 
                 await User.findByIdAndUpdate(post.author, {
                     $push: {
                         notifications: {
-                            $each: [{ type: 'comment', from: req.user.id, fromUsername, fromProfilePic, post: post._id, read: false, createdAt: new Date() }],
+                            $each: [{ type: 'comment', from: req.user.id, fromUsername, fromProfilePic, fromRole, fromDescriptor, post: post._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-                io.to(String(post.author)).emit('notification.received', { type: 'comment', fromUsername, fromProfilePic, postId: post._id });
+                io.to(String(post.author)).emit('notification.received', { type: 'comment', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: post._id });
             }
         }
 
