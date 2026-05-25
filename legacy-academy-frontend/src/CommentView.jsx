@@ -215,7 +215,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
     return (
       <div className="fixed inset-0 bg-black flex flex-col items-center justify-center space-y-4 z-[9999]">
         <div className="w-12 h-12 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
-            <Icons.VerginaSun />
+            <Icons.Loader />
         </div>
         <div className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.3em] animate-pulse">Establishing Secure Link...</div>
       </div>
@@ -438,7 +438,7 @@ const CommentView = ({ postId, user: currentUser, onClose }) => {
           >
             {isSubmitting ? (
               <div className="w-5 h-5 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
-                  <Icons.VerginaSun />
+                  <Icons.Loader />
               </div>
             ) : (
               <Icons.Send className="w-5 h-5 fill-black" />

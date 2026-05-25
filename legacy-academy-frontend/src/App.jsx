@@ -557,7 +557,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                         >
                             {loading ? (
                                 <div className="w-5 h-5 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
-                                    <Icons.VerginaSun />
+                                    <Icons.Loader />
                                 </div>
                             ) : <Icons.Send className="w-5 h-5" />}
                             {t('SEND_COMMENT')}
@@ -1547,19 +1547,19 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 p-3  rounded-2xl  cursor-pointer border-b border-white/5 group"
+            className="flex items-center gap-3 p-3 rounded-none cursor-pointer border-b border-white/5 group"
             onClick={handleClick}
         >
             <div className="relative">
-                <div className="w-12 h-12 rounded-[16px] bg-gray-800 overflow-hidden border border-white/10  shadow-md">
+                <div className="w-12 h-12 rounded-none bg-black overflow-hidden border border-white/20 shadow-md">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
-                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-full p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-black"><Icons.MessageSquare className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
-                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-full p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
-                {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
-                {note.type === 'security_alert' && <div className="absolute -bottom-1 -right-1 bg-orange-600 rounded-full p-1 border-2 border-black animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.6)]"><Icons.ShieldCheck className="w-3 h-3 text-white" /></div>}
+                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-none p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-none p-1 border-2 border-black"><Icons.MessageSquare className="w-3 h-3 text-white fill-current" /></div>}
+                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-none p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
+                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-none p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
+                {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-none p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
+                {note.type === 'security_alert' && <div className="absolute -bottom-1 -right-1 bg-orange-600 rounded-none p-1 border-2 border-black animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.6)]"><Icons.ShieldCheck className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
@@ -1775,7 +1775,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             {post.isUploading && (
                 <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-none animate-fade-in pointer-events-none">
                     <div className="w-16 h-16 text-[var(--gold-primary)] animate-spin mb-4" style={{ animationDuration: '4s' }}>
-                        <Icons.VerginaSun />
+                        <Icons.Loader />
                     </div>
                     <div className="text-white font-black uppercase tracking-[0.2em] animate-pulse text-lg drop-shadow-none">
                         {t('TRANSMITTING_PERCENT', { percent: post.uploadProgress || 0 })}
@@ -3369,11 +3369,11 @@ const ProfileModal = ({
                                 <div key={u._id} onClick={() => {
                                     onViewProfile(u);
                                     setActiveList(null);
-                                }} className="flex items-center gap-3 p-3  rounded-2xl cursor-pointer   border border-transparent">
-                                    <div className="w-11 h-11 rounded-[14px] bg-gray-800 overflow-hidden border border-white/10">
-                                        <ProfileAvatar user={u} />
-                                    </div>
-                                    <div className="flex flex-col">
+                                }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent">
+                                      <div className="w-11 h-11 rounded-none bg-black overflow-hidden border border-white/20">
+                                          <ProfileAvatar user={u} />
+                                      </div>
+                                      <div className="flex flex-col">
                                         <div className="font-bold text-white text-sm">{u?.username}</div>
                                         <div className="text-[10px] text-gray-500 font-bold uppercase">@{u?.username?.toLowerCase()}</div>
                                     </div>
@@ -3386,7 +3386,7 @@ const ProfileModal = ({
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <div className="w-8 h-8 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
-                                            <Icons.VerginaSun />
+                                            <Icons.Loader />
                                         </div>
                                     </div>
                                 ) : (
@@ -3427,7 +3427,7 @@ const ProfileModal = ({
                                     className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {profileUploading ? (
                                         <div className="w-4 h-4 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
-                                            <Icons.VerginaSun />
+                                            <Icons.Loader />
                                         </div>
                                     ) : (
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
@@ -3444,7 +3444,7 @@ const ProfileModal = ({
                                     className="flex-1 py-4 bg-[#121212] border border-white/10 rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
                                     {coverUploading ? (
                                         <div className="w-4 h-4 text-white/50 animate-spin" style={{ animationDuration: '4s' }}>
-                                            <Icons.VerginaSun />
+                                            <Icons.Loader />
                                         </div>
                                     ) : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
@@ -3657,7 +3657,7 @@ const ProfileModal = ({
                                 {isProfileSaving ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <div className="w-4 h-4 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
-                                            <Icons.VerginaSun />
+                                            <Icons.Loader />
                                         </div>
                                         {t('SAVING') || 'SAVING...'}
                                     </div>
@@ -4113,10 +4113,10 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex flex-col gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-[14px] bg-gray-800 overflow-hidden shrink-0 border border-white/10">
-                                <ProfileAvatar user={user} />
-                            </div>
-                            <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
+                              <div className="w-10 h-10 rounded-none bg-black overflow-hidden shrink-0 border border-white/20">
+                                  <ProfileAvatar user={user} />
+                              </div>
+                              <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
@@ -4493,7 +4493,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
                 <div className="w-12 h-12 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
-                    <Icons.VerginaSun />
+                    <Icons.Loader />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-white/50">GATHERING INTEL...</span>
             </div>
@@ -4556,10 +4556,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 <div className="relative mt-8 mb-4">
                     <div className="w-28 h-28 rounded-none overflow-hidden border border-white/20 bg-black/40 backdrop-blur-md relative">
                         {/* Meander corners */}
-                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/50 pointer-events-none" />
-                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/50 pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/50 pointer-events-none" />
-                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/50 pointer-events-none" />
+                        <div className="hidden" />
+                        <div className="hidden" />
+                        <div className="hidden" />
+                        <div className="hidden" />
                         {resolvedPublicProfilePic ? (
                             <img src={resolvedPublicProfilePic} className="w-full h-full object-cover" alt="" loading="eager" decoding="async" />
                         ) : (
@@ -4681,10 +4681,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     }
                                 }}>
                                     {/* Meander corners */}
-                                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20 pointer-events-none" />
-                                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20 pointer-events-none" />
-                                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 pointer-events-none" />
-                                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 pointer-events-none" />
+                                    <div className="hidden" />
+                                    <div className="hidden" />
+                                    <div className="hidden" />
+                                    <div className="hidden" />
                                     
                                     {isRepost && (
                                         <div className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2">
@@ -4737,7 +4737,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     {(post.image || post.thumbnailUrl || post.videoUrl) && (
                                         <div className="w-full rounded-none overflow-hidden border border-white/10 bg-black mb-2 flex items-center justify-center">
                                             {isYouTubePost ? (
-                                                <div className="w-full aspect-video bg-black">
+                                                <div className="w-full aspect-video bg-black" onClick={(e) => e.stopPropagation()}>
                                                     <NeuralVideoPlayer
                                                         src={post.videoUrl || post.thumbnailUrl || post.image}
                                                         className="w-full h-full"
@@ -4752,6 +4752,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     controlsList="nodownload"
                                                     preload="metadata"
                                                     playsInline
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    onPlay={(e) => e.stopPropagation()}
                                                 />
                                             ) : (
                                                 <img 
@@ -6476,7 +6478,7 @@ const App = () => {
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
-                                                        <Icons.VerginaSun />
+                                                        <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">SIGN IN</span>}
                                             </button>
@@ -6596,7 +6598,7 @@ const App = () => {
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
-                                                        <Icons.VerginaSun />
+                                                        <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">CREATE ACCOUNT</span>}
                                             </button>
@@ -6658,7 +6660,7 @@ const App = () => {
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-black animate-spin" style={{ animationDuration: '4s' }}>
-                                                        <Icons.VerginaSun />
+                                                        <Icons.Loader />
                                                     </div>
                                                 ) : <span className="relative">SEND RESET LINK</span>}
                                             </button>
@@ -6764,9 +6766,10 @@ const App = () => {
                                                         </h3>
                                                     </div>
                                                     <div 
-                                                        className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4 snap-x snap-mandatory"
+                                                        className="flex gap-4 p-1 overflow-x-auto custom-scrollbar pb-4"
                                                         onWheel={(e) => {
                                                             if (e.deltaY !== 0) {
+                                                                e.preventDefault();
                                                                 e.currentTarget.scrollLeft += e.deltaY;
                                                             }
                                                         }}
@@ -6778,10 +6781,10 @@ const App = () => {
                                                                 className="flex-shrink-0 w-[280px] sm:w-[320px] liquid-image-card cursor-pointer snap-center group"
                                                             >
                                                                 {/* Meander corners */}
-                                                                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 pointer-events-none z-20" />
-                                                                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/30 pointer-events-none z-20" />
-                                                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/30 pointer-events-none z-20" />
-                                                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 pointer-events-none z-20" />
+                                                                <div className="hidden" />
+                                                                <div className="hidden" />
+                                                                <div className="hidden" />
+                                                                <div className="hidden" />
                                                                 
                                                                 <div className="w-full aspect-[4/5] relative bg-black overflow-hidden">
                                                                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -7285,9 +7288,9 @@ const App = () => {
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Profile Image */}
-                            <div className="w-24 h-24 rounded-[14px] bg-gray-800 overflow-hidden border border-white/20 shrink-0 mb-4">
-                                <ProfileAvatar user={shareModalProfile} size="large" />
-                            </div>
+                              <div className="w-24 h-24 rounded-none bg-black overflow-hidden border border-white/20 shrink-0 mb-4">
+                                  <ProfileAvatar user={shareModalProfile} size="large" />
+                              </div>
                             
                             {/* Profile Name & Badge */}
                             <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none mb-1">
