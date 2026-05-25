@@ -3811,7 +3811,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-4 space-y-2 mt-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-black  rounded-full text-white text-[11px] font-black uppercase tracking-widest">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 py-3.5 bg-black rounded-none border border-white/20 text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors">
                                             {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
@@ -3819,17 +3819,17 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 py-3.5 rounded-full text-[11px] font-black uppercase tracking-widest border ${isFollowing ? 'bg-black border-white/10 text-white' : 'bg-white border-white text-black'}`}
+                                                className={`flex-1 py-3.5 rounded-none text-[11px] font-black uppercase tracking-widest border transition-colors ${isFollowing ? 'bg-black border-white/20 text-white hover:bg-white/5' : 'bg-white border-white text-black hover:bg-gray-200'}`}
                                             >
                                                 {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                             </button>
                                             <button
                                                 onClick={() => {
-                                                    onClose(); // Κλείνουμε πρώτα το profile modal για να μην υπάρχει conflict στα gestures του mobile
-                                                    setTimeout(() => onOpenChat(displayUser), 50); // Ανοίγουμε το Chat Modal μετά από 50ms
+                                                    onClose();
+                                                    setTimeout(() => onOpenChat(displayUser), 50);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black  rounded-full shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white"
+                                                className="flex items-center justify-center gap-2 px-4 py-3.5 bg-black border border-white/20 rounded-none shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white hover:bg-white/5 transition-colors"
                                             >
                                                 <div className="relative flex items-center justify-center">
                                                     <Icons.MessageSquare className="w-5 h-5 whispers-icon text-white/80" />
@@ -3840,17 +3840,18 @@ const ProfileModal = ({
                                     )}
                                 </div>
                                 {!isMe && currentUser?.role === 'Founder' && (
-                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-full text-red-500 font-black text-[10px] uppercase tracking-widest    ">
+                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3 bg-red-600/10 border border-red-500/30 rounded-none hover:bg-red-600/20 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest">
                                         {t('BAN_3_DAYS') || 'BAN 3 ΗΜΕΡΕΣ'}
                                     </button>
                                 )}
                             </div>
 
-                            <div className="flex gap-2 p-1 bg-white/[0.02] rounded-2xl mb-4 border border-white/5 backdrop-blur-xl">
-                                {['ALL', 'POSTS', 'VIDEO'].map(tab => {
+                            <div className="flex gap-2 p-1 bg-black rounded-none mb-4 border border-white/20">
+                                {['ALL', 'POSTS', 'PHOTOS', 'VIDEO'].map(tab => {
                                     const renderIcon = () => {
                                         if (tab === 'ALL') return <Icons.Grid className="w-3.5 h-3.5 shrink-0" />;
                                         if (tab === 'POSTS') return <Icons.Compose className="w-3.5 h-3.5 shrink-0" />;
+                                        if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 shrink-0"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
                                         if (tab === 'VIDEO') return <Icons.Play className="w-3 h-3 shrink-0 fill-current" />;
                                         return null;
                                     };
@@ -3858,13 +3859,13 @@ const ProfileModal = ({
                                         <button
                                             key={tab}
                                             onClick={() => setActiveTab(tab)}
-                                            className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl flex items-center justify-center gap-2 duration-300 ${activeTab === tab
-                                                ? 'bg-white/10 text-white shadow-sm'
-                                                : 'text-white/40 hover:text-white hover:bg-white/5'
+                                            className={`flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-none flex items-center justify-center gap-2 transition-colors ${activeTab === tab
+                                                ? 'bg-white/10 text-white shadow-none border border-white/10'
+                                                : 'text-white/40 hover:text-white hover:bg-white/5 border border-transparent'
                                                 }`}
                                         >
                                             {renderIcon()}
-                                            <span>{t('TAB_' + tab)}</span>
+                                            <span className="hidden sm:inline">{t('TAB_' + tab, tab)}</span>
                                         </button>
                                     );
                                 })}
