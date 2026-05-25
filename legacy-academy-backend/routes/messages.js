@@ -1,14 +1,15 @@
 import express from "express";
+import mongoose from "mongoose";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
-import { deleteCloudinaryFiles } from "../utils/cloudinaryCleanup.js";
 import { handleBotMention } from "../utils/botHandlers.js";
+import { cleanupExpiredMessages } from "../utils/messageRetention.js";
 
 const router = express.Router();
 
-// Mark message as read (1-Minute Burn Timer)
+// Mark message as read
 const markMessageRead = async (req, res) => {
     try {
         const messageId = req.params.messageId;
@@ -17,8 +18,6 @@ const markMessageRead = async (req, res) => {
         if (!msg) return res.status(200).json({ success: true, message: "Handshake completed: Message already archived." });
         if (String(msg.recipient) !== String(userId)) return res.status(403).json("Not authorized");
 
-        // WHISPER PROTOCOL: Burn after 5 seconds instead of 1 minute!
-        // We set readAt now. Cleanup happens on GET.
         msg.isRead = true;
         msg.readAt = new Date();
         await msg.save();
@@ -37,6 +36,8 @@ router.get("/:messageId/read", verifyToken, markMessageRead);
 // FIXED: Middleware order swapped to ensure Multer runs before Auth (for FormData body access if needed)
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     try {
+        await cleanupExpiredMessages({ app: req.app });
+
         // Validation: Ensure req.body exists (multer should populate it)
         if (!req.body) {
             console.error("Messages Error: req.body is undefined");
@@ -144,8 +145,6 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     }
 });
 
-import mongoose from "mongoose";
-
 // GET CONVERSATION
 const getConversation = async (req, res) => {
     try {
@@ -156,41 +155,15 @@ const getConversation = async (req, res) => {
             return res.status(200).json([]); // Return empty conversation for invalid IDs
         }
 
-        // WHISPER CLEANUP: Delete messages read > 5 seconds ago
-        const fiveSecondsAgo = new Date(Date.now() - 5 * 1000);
-
-        // Find messages to delete FIRST (to get their media URLs)
-        const expiredMessages = await Message.find({
-            $or: [
-                { sender: currentUserId, recipient: otherUserId },
-                { sender: otherUserId, recipient: currentUserId }
-            ],
-            isRead: true,
-            readAt: { $lt: fiveSecondsAgo },
-            isLocked: { $ne: true }
+        await cleanupExpiredMessages({
+            app: req.app,
+            query: {
+                $or: [
+                    { sender: currentUserId, recipient: otherUserId },
+                    { sender: otherUserId, recipient: currentUserId }
+                ],
+            },
         });
-
-        // 🗑️ CLOUDINARY CLEANUP: Delete media from expired messages
-        if (expiredMessages.length > 0) {
-            const mediaToDelete = [];
-            expiredMessages.forEach(m => {
-                if (m.audio) mediaToDelete.push(m.audio);
-                if (m.image) mediaToDelete.push(m.image);
-            });
-            deleteCloudinaryFiles(mediaToDelete).catch(() => { });
-
-        // Now delete the messages
-            await Message.deleteMany({ _id: { $in: expiredMessages.map(m => m._id) } });
-
-            // FIRE REAL-TIME CLEAR EVENT SO BOTH CLIENTS DROP IT
-            const io = req.app.get('io');
-            if (io) {
-                expiredMessages.forEach(m => {
-                    io.to(String(m.sender)).emit('message.deleted', { messageId: m._id, conversationWith: m.recipient });
-                    io.to(String(m.recipient)).emit('message.deleted', { messageId: m._id, conversationWith: m.sender });
-                });
-            }
-        }
 
         const messages = await Message.find({
             $or: [
@@ -242,7 +215,15 @@ router.patch("/:messageId/lock", verifyToken, async (req, res) => {
         msg.isLocked = locked;
         await msg.save();
 
-        res.status(200).json({ success: true, isLocked: msg.isLocked });
+        const deletedMessages = !msg.isLocked
+            ? await cleanupExpiredMessages({ app: req.app, query: { _id: msg._id } })
+            : [];
+
+        res.status(200).json({
+            success: true,
+            isLocked: msg.isLocked,
+            deleted: deletedMessages.length > 0,
+        });
     } catch (err) {
         res.status(500).json(err);
     }

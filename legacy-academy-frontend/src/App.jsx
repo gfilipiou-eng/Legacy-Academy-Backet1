@@ -4559,7 +4559,7 @@ const applyZoom = (zoom) => {
     localStorage.setItem('uiZoom', String(z));
 };
 
-const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, t }) => {
+const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, onNavigateProfile, onOpenPost, t }) => {
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
     const urlThemeParam = searchParams.get('theme');
@@ -4746,15 +4746,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             const isAuthorFounder = postAuthor?.role === 'Founder';
 
                             return (
-                                <div key={post._id} className="w-full p-5 bg-white/[0.04] backdrop-blur-2xl border border-white/10 flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:bg-white/[0.06] hover:border-white/20 transition-colors" onClick={() => {
+                                <div key={post._id} className="w-full p-5 bg-white/[0.04] backdrop-blur-2xl border border-white/10 flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:bg-white/[0.06] hover:border-white/20 active:scale-[0.995] transition-all touch-manipulation" onClick={() => {
                                     if (post._id) {
-                                        const searchParams = new URLSearchParams(window.location.search);
-                                        searchParams.set('postId', post._id);
-                                        const savedLang = searchParams.get('lang') || localStorage.getItem('language') || 'en';
-                                        const savedTheme = searchParams.get('theme') || localStorage.getItem('themeColor') || themeColor;
-                                        searchParams.set('lang', savedLang);
-                                        searchParams.set('theme', savedTheme);
-                                        window.open(`${window.location.origin}${window.location.pathname}?${searchParams.toString()}`, '_blank');
+                                        onOpenPost?.(post._id);
                                     }
                                 }}>
                                     {/* Meander corners */}
@@ -4768,7 +4762,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2 cursor-pointer hover:text-white transition-colors z-10 w-fit"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                window.location.href = buildPublicUrl('profile', publicUser.username);
+                                                onNavigateProfile?.(publicUser.username);
                                             }}
                                         >
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
@@ -4781,7 +4775,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             className="w-9 h-9 rounded-none overflow-hidden shrink-0 bg-black/40 cursor-pointer z-10"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                window.location.href = buildPublicUrl('profile', postAuthorUsername);
+                                                onNavigateProfile?.(postAuthorUsername);
                                             }}
                                         >
                                             {postAuthorPic ? (
@@ -4797,7 +4791,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 className="flex items-center gap-1 cursor-pointer hover:underline w-fit"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    window.location.href = buildPublicUrl('profile', postAuthorUsername);
+                                                    onNavigateProfile?.(postAuthorUsername);
                                                 }}
                                             >
                                                 <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
@@ -4939,6 +4933,44 @@ const App = () => {
     const [publicPosts, setPublicPosts] = useState([]);
     const [publicUserLoading, setPublicUserLoading] = useState(false);
     const [publicPostsLoading, setPublicPostsLoading] = useState(false);
+    const [viewPostId, setViewPostId] = useState(searchParams.get('postId'));
+
+    const syncUrlState = useCallback(() => {
+        const params = new URLSearchParams(window.location.search);
+        setPublicProfileUsername(params.get('profile'));
+        setViewPostId(params.get('postId'));
+    }, []);
+
+    const navigatePublicProfile = useCallback((username) => {
+        const params = new URLSearchParams(window.location.search);
+        params.delete('postId');
+        const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
+        const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+        params.set('profile', username);
+        params.set('lang', savedLang);
+        params.set('theme', savedTheme);
+        const nextUrl = `/?${params.toString()}`;
+        window.history.pushState({}, '', nextUrl);
+        syncUrlState();
+    }, [syncUrlState]);
+
+    const openPublicPost = useCallback((postId) => {
+        const params = new URLSearchParams(window.location.search);
+        const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
+        const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+        params.set('postId', postId);
+        params.set('lang', savedLang);
+        params.set('theme', savedTheme);
+        const nextUrl = `/?${params.toString()}`;
+        window.history.pushState({}, '', nextUrl);
+        syncUrlState();
+    }, [syncUrlState]);
+
+    useEffect(() => {
+        const handlePopState = () => syncUrlState();
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, [syncUrlState]);
 
     useEffect(() => {
         if (!publicProfileUsername) return;
@@ -4984,7 +5016,6 @@ const App = () => {
         };
     }, [publicProfileUsername]);
 
-    const viewPostId = searchParams.get('postId');
     const isPublicExperience = Boolean(publicProfileUsername || viewPostId);
     const [user, setUser] = useState(null);
     const [imgKey, setImgKey] = useState(Date.now());
@@ -6519,6 +6550,17 @@ const App = () => {
         );
     }, [posts, profileUser]);
 
+    // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
+    if (viewPostId) {
+        return <CommentView postId={viewPostId} user={user} onClose={() => {
+            const params = new URLSearchParams(window.location.search);
+            params.delete('postId');
+            const nextSearch = params.toString();
+            window.history.pushState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`);
+            syncUrlState();
+        }} onViewProfile={(u) => navigatePublicProfile(u.username || u._id)} />;
+    }
+
     // IF DIRECT LINK TO PUBLIC PROFILE
     if (publicProfileUsername) {
         return (
@@ -6529,17 +6571,17 @@ const App = () => {
                 loadingUser={publicUserLoading}
                 loadingPosts={publicPostsLoading}
                 onClose={() => {
-                    setPublicProfileUsername(null);
-                    window.history.pushState({}, '', window.location.pathname);
+                    const params = new URLSearchParams(window.location.search);
+                    params.delete('profile');
+                    const nextSearch = params.toString();
+                    window.history.pushState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`);
+                    syncUrlState();
                 }}
+                onNavigateProfile={navigatePublicProfile}
+                onOpenPost={openPublicPost}
                 t={t}
             />
         );
-    }
-
-    // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
-    if (viewPostId) {
-        return <CommentView postId={viewPostId} user={user} onClose={() => window.close()} onViewProfile={(u) => window.location.href = buildPublicUrl('profile', u.username || u._id)} />;
     }
 
     return (

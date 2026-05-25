@@ -8,6 +8,7 @@ import messageRoute from "./routes/messages.js"; // New route file needed
 import Message from "./models/Message.js";
 import User from "./models/User.js";
 import { verifyToken } from "./middleware/auth.js";
+import { cleanupExpiredMessages, MESSAGE_RETENTION_SWEEP_MS } from "./utils/messageRetention.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -55,6 +56,7 @@ const io = new Server(server, {
 // Map to track user status by socket ID
 const userSocketMap = new Map(); // socket.id -> userId
 const activeSocketsPerUser = new Map(); // Track multiple tabs/devices per user
+let messageRetentionInterval = null;
 
 app.set('io', io);
 
@@ -117,7 +119,25 @@ io.on('connection', (socket) => {
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("Connected to MongoDB"))
+  .then(async () => {
+    console.log("Connected to MongoDB");
+
+    await cleanupExpiredMessages({ io }).catch((err) => {
+      console.error("Initial message retention cleanup failed:", err);
+    });
+
+    if (!messageRetentionInterval) {
+      messageRetentionInterval = setInterval(async () => {
+        try {
+          await cleanupExpiredMessages({ io });
+        } catch (err) {
+          console.error("Scheduled message retention cleanup failed:", err);
+        }
+      }, MESSAGE_RETENTION_SWEEP_MS);
+
+      messageRetentionInterval.unref?.();
+    }
+  })
   .catch((err) => console.log(err));
 
 app.get("/api/health", (req, res) => {

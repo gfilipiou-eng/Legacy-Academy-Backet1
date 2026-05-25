@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 
+export const MESSAGE_TTL_MS = 24 * 60 * 60 * 1000;
+
+export const getMessageExpiresAt = (baseDate = new Date()) =>
+    new Date(new Date(baseDate).getTime() + MESSAGE_TTL_MS);
+
 const MessageSchema = new mongoose.Schema(
     {
         sender: {
@@ -36,8 +41,34 @@ const MessageSchema = new mongoose.Schema(
             type: Date,
             default: null,
         },
+        expiresAt: {
+            type: Date,
+            default: () => getMessageExpiresAt(),
+        },
     },
     { timestamps: true }
+);
+
+MessageSchema.pre("validate", function syncExpiry(next) {
+    if (this.isLocked) {
+        this.expiresAt = null;
+        return next();
+    }
+
+    const baseDate = this.createdAt instanceof Date ? this.createdAt : new Date();
+    this.expiresAt = getMessageExpiresAt(baseDate);
+    next();
+});
+
+MessageSchema.index(
+    { expiresAt: 1 },
+    {
+        expireAfterSeconds: 0,
+        partialFilterExpression: {
+            isLocked: { $ne: true },
+            expiresAt: { $type: "date" },
+        },
+    }
 );
 
 export default mongoose.model("Message", MessageSchema);
