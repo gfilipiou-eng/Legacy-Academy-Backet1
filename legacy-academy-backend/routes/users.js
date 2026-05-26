@@ -131,7 +131,9 @@ router.get("/username/:username", async (req, res) => {
     try {
         const usernameParam = decodeURIComponent(req.params.username).trim();
         const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
-        const user = await User.findOne({ username: { $regex: safeRegex } }).select('-password');
+        const query = { $or: [{ username: { $regex: safeRegex } }] };
+        if (usernameParam.match(/^[0-9a-fA-F]{24}$/)) query.$or.push({ _id: usernameParam });
+        const user = await User.findOne(query).select('-password');
         if (!user) return res.status(404).json("User not found");
         res.status(200).json(user);
     } catch (err) {
@@ -144,7 +146,9 @@ router.get("/public/posts/:username", async (req, res) => {
     try {
         const usernameParam = decodeURIComponent(req.params.username).trim();
         const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
-        const user = await User.findOne({ username: { $regex: safeRegex } });
+        const query = { $or: [{ username: { $regex: safeRegex } }] };
+        if (usernameParam.match(/^[0-9a-fA-F]{24}$/)) query.$or.push({ _id: usernameParam });
+        const user = await User.findOne(query);
         if (!user) return res.status(404).json("Agent not found.");
         const posts = await Post.find({
             $or: [

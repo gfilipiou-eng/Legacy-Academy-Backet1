@@ -86,7 +86,7 @@ if (typeof document !== 'undefined') {
             padding-bottom: env(safe-area-inset-bottom, 20px) !important;
         }
         * {
-            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+            -webkit-tap-highlight-color: transparent !important;
             outline: none !important;
         }
         button, a, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], summary, label {
@@ -94,8 +94,9 @@ if (typeof document !== 'undefined') {
             -webkit-touch-callout: none;
         }
         html, body {
-            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+            -webkit-tap-highlight-color: transparent !important;
             overscroll-behavior-y: none;
+            overscroll-behavior-x: none;
         }
         .liquid-glass-nav {
             background: rgba(0, 0, 0, 0.15) !important;
@@ -468,6 +469,22 @@ const formatDate = (dateString, t, lang) => {
  * Robustly converts any ID (string, number, or object) to a clean hex string.
  * Prevents the "[object Object]" bug that causes state corruption.
  */
+const CyberDate = ({ date, t, lang }) => {
+    if (!date) return null;
+    const formatted = formatDate(date, t, lang);
+    const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    
+    return (
+        <div className="px-6 py-2 bg-[#050505] flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)] rounded-[14px] border border-white/5 w-fit mt-1">
+            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+            <span className="text-[10px] sm:text-[12px] font-black tracking-[0.2em] text-white/80">
+                {capitalized}
+            </span>
+            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+        </div>
+    );
+};
+
 const safeId = (id) => {
     if (id === null || id === undefined) return null;
     if (typeof id === 'string') return id;
@@ -1829,7 +1846,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 rounded-none  transition-all duration-300 will-change-transform overflow-hidden`}
+            className={`premium-post-card group relative p-5 sm:p-7 mb-8 transition-all duration-300 will-change-transform overflow-hidden`}
         >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -1871,7 +1888,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="flex-1 flex flex-col min-w-0">
                         {/* Header */}
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
-                            <div className="min-w-0 flex-1 pr-1">
+                            <div className="min-w-0 flex-1 pr-1 cursor-pointer" onClick={() => onOpenDetail(post)}>
                                 <div className="flex flex-col gap-2 min-w-0">
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
                                         <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer break-words leading-tight" onClick={() => onViewProfile(author)}>{author?.username}</span>
@@ -1879,9 +1896,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(post.createdAt, t, lang)}</span>
-                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                        <CyberDate date={post.createdAt} t={t} lang={lang} />
                                     </div>
                                 </div>
                             </div>
@@ -1889,10 +1904,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />
                         </div>
 
-                        <div className="space-y-3 mt-1">
+                        <div className="space-y-3 mt-1 cursor-pointer" onClick={() => onOpenDetail(post)}>
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1">
+                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}>
                                         {parseText(translatedText || post.desc, (tag) => onHashtagClick(tag))}
                                     </p>
                                     <button
@@ -2692,6 +2707,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
     const latestUserRef = useRef(user);
+    const normalizeLanguageCode = (value) => String(value || '').toLowerCase().split('-')[0];
+    const activeLanguage = normalizeLanguageCode(lang || i18n.resolvedLanguage || i18n.language || user?.settings?.language || localStorage.getItem('language') || 'en');
     const [zoomLevel, setZoomLevel] = useState(
         Math.min(
             1,
@@ -2785,6 +2802,32 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         }
     };
 
+    const handleLanguageSelect = async (nextLanguage) => {
+        const normalizedLanguage = normalizeLanguageCode(nextLanguage);
+        if (!normalizedLanguage || normalizedLanguage === activeLanguage || saving) return;
+
+        localStorage.setItem('language', normalizedLanguage);
+
+        const baseUser = latestUserRef.current || user || {};
+        if (baseUser?._id) {
+            const optimisticUser = {
+                ...baseUser,
+                settings: {
+                    ...(baseUser?.settings || {}),
+                    language: normalizedLanguage,
+                },
+            };
+            latestUserRef.current = optimisticUser;
+            onUpdateUser?.(optimisticUser);
+        }
+
+        if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
+            await i18n.changeLanguage(normalizedLanguage);
+        }
+
+        await handleSave('language', normalizedLanguage);
+    };
+
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 overflow-hidden">
@@ -2871,8 +2914,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             const val = parseFloat(e.target.value);
                                             setZoomLevel(val);
                                             applyZoom(val);
-                                            handleSave('zoom', val);
                                         }}
+                                        onPointerUp={() => handleSave('zoom', zoomLevel)}
+                                        onKeyUp={() => handleSave('zoom', zoomLevel)}
                                         className="w-full accent-[var(--gold-primary)]"
                                     />
                                 </div>
@@ -2919,11 +2963,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'cy', flag: '🇨🇾', label: 'CY', name: 'Κυπριακά' }, { id: 'es', flag: '🇪🇸', label: 'ES', name: 'Español' },
                                 { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
-                                <button key={l.id} onClick={() => { i18n.changeLanguage(l.id); handleSave('language', l.id); localStorage.setItem('language', l.id); }}
-                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${lang === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_rgba(212,175,55,0.2)] scale-[1.02]' : 'border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-white/10'}`}
+                                <button key={l.id} type="button" disabled={saving || activeLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
+                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${activeLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_rgba(212,175,55,0.2)] scale-[1.02]' : 'border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-white/10'} ${saving ? 'pointer-events-none' : ''}`}
                                 >
-                                    <div className={`text-xl transition-transform duration-300 ${lang === l.id ? 'scale-110 drop-shadow-md' : 'opacity-80 grayscale-[0.2]'}`}>{l.flag}</div>
-                                    <div className={`text-[9px] font-black uppercase tracking-widest ${lang === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.label}</div>
+                                    <div className={`text-xl transition-transform duration-300 ${activeLanguage === l.id ? 'scale-110 drop-shadow-md' : 'opacity-80 grayscale-[0.2]'}`}>{l.flag}</div>
+                                    <div className={`text-[9px] font-black uppercase tracking-widest ${activeLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.label}</div>
                                 </button>
                             ))}
                         </div>
@@ -3615,7 +3659,7 @@ const ProfileModal = ({
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <div className="font-black text-[12px] sm:text-[13px] uppercase tracking-wide truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
-                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-black/65' : 'text-white/45'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
+                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-black/65' : 'text-gray-400'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
                                                     </div>
                                                 </div>
                                             </button>
@@ -4755,7 +4799,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             const isAuthorFounder = postAuthor?.role === 'Founder';
 
                             return (
-                                <div key={post._id} className="w-full p-5 bg-white/[0.04] backdrop-blur-2xl border border-white/10 flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:bg-white/[0.06] hover:border-white/20 active:scale-[0.995] transition-all touch-manipulation" onClick={() => {
+                                <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-3xl rounded-[32px] border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:bg-white/[0.04] hover:border-white/10 active:scale-[0.995] transition-all touch-manipulation" onClick={(e) => {
+                                    const selection = window.getSelection();
+                                    if (selection && selection.toString().length > 0) return;
                                     if (post._id) {
                                         onOpenPost?.(post._id);
                                     }
@@ -4816,9 +4862,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
                                                 )}
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(post.createdAt, t, urlLangParam || 'en')}</span>
-                                                    <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                    <CyberDate date={post.createdAt} t={t} lang={urlLangParam || 'en'} />
                                                 </div>
                                             </div>
                                         </div>
@@ -7473,9 +7517,7 @@ const App = () => {
                                             {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
                                             <span className="opacity-50 mx-1">•</span>
                                             <div className="flex items-center gap-2">
-                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
-                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                             </div>
                                         </div>
                                     ) : getFounderAffiliation(shareModalPost.author) ? (
@@ -7483,16 +7525,12 @@ const App = () => {
                                             <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" />
                                             <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50">•</span>
                                             <div className="flex items-center gap-2">
-                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
-                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                             </div>
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-2 mt-1">
-                                            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">{formatDate(shareModalPost.createdAt, t, currentLanguage)}</span>
-                                            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                            <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                         </div>
                                     )}
                                 </div>
