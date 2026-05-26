@@ -426,36 +426,44 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
       </div>
 
       {/* Sticky Input Field - higher on mobile so it sits above navbar */}
-      <div className="shrink-0 p-4 pb-[max(8rem,calc(env(safe-area-inset-bottom,20px)+90px))] sm:pb-12 bg-transparent">
-        <form onSubmit={handleSubmit} className="relative flex items-center bg-black border border-white/20 rounded-none p-1.5 focus-within:border-[var(--gold-primary)] transition-all group">
-          <textarea
-            rows="1"
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder={t('ENGAGE') || "Add Intel..."}
-            className="flex-1 min-w-0 bg-transparent py-4 px-4 text-sm text-white outline-none resize-none placeholder-gray-600 min-h-14 h-14 sm:h-12 sm:min-h-12 sm:py-3 flex items-center"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit();
-              }
-            }}
-          />
-          <button
-            type="submit"
-            disabled={!commentText.trim() || isSubmitting}
-            className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg disabled:opacity-30 disabled:scale-100 transition-all"
-          >
-            {isSubmitting ? (
-              <div className="w-5 h-5 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
-                  <Icons.Loader />
-              </div>
-            ) : (
-              <Icons.Send className="w-5 h-5 fill-black" />
-            )}
-          </button>
-        </form>
-      </div>
+      {user ? (
+        <div className="shrink-0 p-4 pb-[max(8rem,calc(env(safe-area-inset-bottom,20px)+90px))] sm:pb-12 bg-transparent">
+          <form onSubmit={handleSubmit} className="relative flex items-center bg-black border border-white/20 rounded-none p-1.5 focus-within:border-[var(--gold-primary)] transition-all group">
+            <textarea
+              rows="1"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder={t('ENGAGE') || "Add Intel..."}
+              className="flex-1 min-w-0 bg-transparent py-4 px-4 text-sm text-white outline-none resize-none placeholder-gray-600 min-h-14 h-14 sm:h-12 sm:min-h-12 sm:py-3 flex items-center"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+            />
+            <button
+              type="submit"
+              disabled={!commentText.trim() || isSubmitting}
+              className="w-12 h-12 bg-[var(--gold-primary)] text-black rounded-xl flex items-center justify-center shadow-lg disabled:opacity-30 disabled:scale-100 transition-all"
+            >
+              {isSubmitting ? (
+                <div className="w-5 h-5 text-black/50 animate-spin" style={{ animationDuration: '4s' }}>
+                    <Icons.Loader />
+                </div>
+              ) : (
+                <Icons.Send className="w-5 h-5 fill-black" />
+              )}
+            </button>
+          </form>
+        </div>
+      ) : (
+        <div className="shrink-0 p-4 pb-[max(8rem,calc(env(safe-area-inset-bottom,20px)+90px))] sm:pb-12 bg-transparent text-center">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 bg-black/40 py-4 px-4 border border-white/10 rounded-xl">
+                {t('LOGIN_TO_COMMENT', 'CONNECT TO THE NETWORK TO ADD INTEL')}
+            </div>
+        </div>
+      )}
     </div>
   );
 };
