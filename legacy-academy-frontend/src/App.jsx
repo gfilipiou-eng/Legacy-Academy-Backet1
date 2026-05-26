@@ -4265,7 +4265,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex flex-col gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-none bg-black overflow-hidden shrink-0 ">
+                              <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 ">
                                   <ProfileAvatar user={user} />
                               </div>
                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
@@ -7186,7 +7186,7 @@ const App = () => {
                                                                     
                                                                     <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 z-10">
                                                                         <div className="flex items-center gap-2 mb-1">
-                                                                            <div className="w-6 h-6 rounded-none overflow-hidden ">
+                                                                            <div className="w-6 h-6 rounded-full overflow-hidden ">
                                                                                 <ProfileAvatar user={post.author} />
                                                                             </div>
                                                                             <span className="text-[11px] font-bold text-white uppercase tracking-wider truncate shadow-sm">
@@ -7222,7 +7222,7 @@ const App = () => {
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none  cursor-pointer hover:border-white transition-colors">
-                                                            <div className="w-10 h-10 rounded-none bg-gray-800 overflow-hidden ">
+                                                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden ">
                                                                 <ProfileAvatar user={u} />
                                                             </div>
                                                             <div className="flex-1">
