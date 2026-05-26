@@ -17,7 +17,7 @@ if (hasCloudinary) {
             const isVideo = file.mimetype.startsWith('video');
             return {
                 folder: "legacyacademy",
-                allowed_formats: ["jpg", "png", "jpeg", "mp4", "mov", "avi", "webm", "mp3", "wav", "ogg"],
+                allowed_formats: ["jpg", "png", "jpeg", "webp", "gif", "heic", "heif", "mp4", "mov", "avi", "webm", "mp3", "wav", "ogg", "m4v"],
                 resource_type: "auto",
                 transformation: [
                     {

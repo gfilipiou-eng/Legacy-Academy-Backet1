@@ -1676,7 +1676,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none overflow-hidden bg-black  shadow-none relative group">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[16px] overflow-hidden bg-black border border-white/10 shadow-lg relative group">
                     <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
@@ -1697,8 +1697,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-none p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative flex items-center justify-center">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[18px] p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="w-full h-full rounded-[16px] overflow-hidden border border-black bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img src={resolveMediaUrl(storyMediaUrl, null, false, true)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
                                 ) : (
@@ -3416,7 +3416,7 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-none overflow-hidden flex flex-col bg-black`}>
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[24px] overflow-hidden flex flex-col bg-black border border-white/5 shadow-2xl`}>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
@@ -3761,7 +3761,7 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-center ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-none bg-black overflow-hidden shadow-none shrink-0 relative group">
+                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-[24px] bg-black overflow-hidden shadow-xl shrink-0 relative group border border-white/10">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                 </div>
@@ -3986,11 +3986,11 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-white/5 to-white/20 shadow-lg relative group">
-                                                            <div className="w-full h-full rounded-full overflow-hidden bg-[#050505] flex items-center justify-center relative">
+                                                        <div className="w-[70px] h-[70px] rounded-[18px] p-[2px] bg-gradient-to-tr from-white/5 to-white/20 shadow-lg relative group">
+                                                            <div className="w-full h-full rounded-[16px] overflow-hidden bg-[#050505] flex items-center justify-center relative">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40" />
                                                                 <div className="absolute inset-0 flex items-center justify-center">
-                                                                    <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform shadow-sm">
+                                                                    <div className="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center border border-white/40 group-hover:scale-110 transition-transform shadow-sm">
                                                                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
                                                                             <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -4013,8 +4013,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black relative">
+                                                            <div className="w-[70px] h-[70px] rounded-[18px] p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-[16px] overflow-hidden border-2 border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
@@ -4708,7 +4708,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             </div>
                         )}
                     </div>
-                    <span className="text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                    <span className="text-xs text-gray-500 font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                     {publicFounderAffiliation && (
                         <div className="mt-2 flex justify-center">
                             <FounderAffiliationBadge username={publicFounderAffiliation} />
@@ -4802,14 +4802,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     
                                     {isRepost && (
                                         <div 
-                                            className="text-[9px] font-black text-white/50 uppercase tracking-widest flex items-center gap-1.5 -mb-2 cursor-pointer hover:text-white transition-colors z-10 w-fit"
+                                            className="text-[9px] font-black text-white/50 tracking-widest flex items-center gap-1.5 -mb-2 cursor-pointer hover:text-white transition-colors z-10 w-fit"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onNavigateProfile?.(publicUser.username);
                                             }}
                                         >
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
-                                            @{publicUser.username} {t('REPOSTED', 'REPOSTED')}
+                                            @{publicUser.username} <span className="uppercase">{t('REPOSTED', 'REPOSTED')}</span>
                                         </div>
                                     )}
 
@@ -4837,7 +4837,18 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     onNavigateProfile?.(postAuthorUsername);
                                                 }}
                                             >
-                                                <span className="font-bold text-xs text-white uppercase tracking-wider">{postAuthorUsername}</span>
+                                                <span className="text-[12px] font-bold text-white tracking-wide">{postAuthorUsername}</span>
+                                                {isAuthorFounder ? (
+                                                    <svg aria-label="Verified Founder" viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0" style={{ overflow: 'visible' }}>
+                                                        <path fill="#FFD700" stroke="none" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
+                                                    </svg>
+                                                ) : (
+                                                    <svg aria-label="Verified User" viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0" style={{ overflow: 'visible' }}>
+                                                        <path fill="#1D9BF0" stroke="none" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
+                                                    </svg>
+                                                )}
+                                            </div>
+                                                <span className="font-bold text-xs text-white tracking-wider">{postAuthorUsername}</span>
                                                 <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder} className="w-3.5 h-3.5" />
                                             </div>
                                             <div className="flex flex-wrap items-center gap-2">
