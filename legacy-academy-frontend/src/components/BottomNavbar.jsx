@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useRef, useEffect } from 'react';
 import { Icons } from './Icons';
 
 const BottomNavbar = memo(({
@@ -14,6 +14,18 @@ const BottomNavbar = memo(({
         () => (alerts || []).filter((n) => !n.read).length,
         [alerts]
     );
+    const navRef = useRef(null);
+
+    // React's synthetic onWheel is passive by default in modern browsers,
+    // so preventDefault() is ignored. We attach a native non-passive listener instead.
+    useEffect(() => {
+        const el = navRef.current;
+        if (!el) return;
+        const blockWheel = (e) => e.preventDefault();
+        el.addEventListener('wheel', blockWheel, { passive: false });
+        return () => el.removeEventListener('wheel', blockWheel);
+    }, []);
+
     // Futuristic base: flat, sharp, no bounce, geometric.
     const navItemBaseClass = 'flex-1 max-w-[112px] sm:max-w-[120px] h-[76px] sm:h-[84px] flex items-center justify-center transition-all duration-300 ease-in-out';
     
@@ -25,9 +37,9 @@ const BottomNavbar = memo(({
 
     return (
         <nav 
+            ref={navRef}
             className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10"
             onTouchMove={(e) => e.preventDefault()}
-            onWheel={(e) => e.preventDefault()}
         >
             <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
                 <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
