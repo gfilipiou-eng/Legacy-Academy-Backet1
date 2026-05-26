@@ -73,7 +73,7 @@ const formatDate = (dateString, t, lang) => {
 };
 
 const ProfileAvatarBase = ({ user }) => {
-  if (!user) return <div className="w-full h-full bg-gray-800" />;
+  if (!user) return <div className="w-full h-full rounded-full bg-gray-800" />;
   const url = user.profilePic || user.authorProfilePic;
   const name = user.username || user.authorName || 'Agent';
   const timestamp = Date.now();
@@ -90,7 +90,7 @@ const ProfileAvatarBase = ({ user }) => {
     return (
       <video
         src={mediaUrl}
-        className="w-full h-full object-cover"
+        className="w-full h-full rounded-full object-cover"
         autoPlay
         muted
         loop
@@ -102,7 +102,7 @@ const ProfileAvatarBase = ({ user }) => {
   return (
     <img
       src={mediaUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`}
-      className="w-full h-full object-cover"
+      className="w-full h-full rounded-full object-cover"
       alt={name}
       onError={(e) => {
         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=333&color=fff`;

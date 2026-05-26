@@ -657,7 +657,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 
 const DefaultAvatar = ({ name, size = "normal" }) => {
     return (
-        <div className="w-full h-full bg-[#0a0a0a] flex items-center justify-center text-white relative overflow-hidden">
+        <div className="w-full h-full rounded-full bg-[#0a0a0a] flex items-center justify-center text-white relative overflow-hidden">
             {name ? <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase select-none text-white/50`}>{name.substring(0, 1)}</span> : <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-40 text-white`} />}
         </div>
     );
@@ -678,14 +678,13 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    // Strip rounded-full from className to prevent anti-aliasing gaps. Parent container's overflow-hidden handles the clipping.
-    let baseClass = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-500';
+    let baseClass = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-full';
     if (className && className.includes('object-cover')) {
         baseClass = className; // If they provide full classes, use them, otherwise add defaults.
     } else if (className) {
         baseClass = `${baseClass} ${className}`;
     }
-    const finalClassName = baseClass.replace(/rounded-full/g, '').replace(/rounded-none/g, '');
+    const finalClassName = baseClass.replace(/rounded-none/g, '') + ' rounded-full';
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
@@ -847,7 +846,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
             >
                 <div 
-                    className="w-9 h-9 rounded-none overflow-hidden shrink-0  bg-black cursor-pointer hover:opacity-80 transition-opacity"
+                    className="w-9 h-9 rounded-full overflow-hidden shrink-0  bg-black cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
                 >
                     <ProfileAvatar
@@ -1167,7 +1166,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                             </div>
                             <div className="flex items-center gap-2 w-full">
-                                <div className="w-9 h-9 rounded-none bg-black overflow-hidden shrink-0 ">
+                                <div className="w-9 h-9 rounded-full bg-black overflow-hidden shrink-0 ">
                                     <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
@@ -2037,7 +2036,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {showComments && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
                                 <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-none overflow-hidden shrink-0  bg-black">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0  bg-black">
                                         <ProfileAvatar user={user} />
                                     </div>
                                     <div className="flex-1 flex flex-col gap-3">
@@ -3086,7 +3085,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <div className="w-[48px] h-[48px] rounded-none overflow-hidden shrink-0 ">
+                            <div className="w-[48px] h-[48px] rounded-full overflow-hidden shrink-0 ">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                         </div>
@@ -3493,7 +3492,7 @@ const ProfileModal = ({
                                     onViewProfile(u);
                                     setActiveList(null);
                                 }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent">
-                                      <div className="w-11 h-11 rounded-none bg-black overflow-hidden ">
+                                      <div className="w-11 h-11 rounded-full bg-black overflow-hidden ">
                                           <ProfileAvatar user={u} />
                                       </div>
                                       <div className="flex flex-col">
@@ -4823,13 +4822,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             const isAuthorFounder = postAuthor?.role === 'Founder';
 
                             return (
-                                <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-3xl rounded-[32px] border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col gap-4 relative group text-left overflow-hidden cursor-pointer hover:bg-white/[0.04] hover:border-white/10 active:scale-[0.995] transition-all touch-manipulation" onClick={(e) => {
-                                    const selection = window.getSelection();
-                                    if (selection && selection.toString().length > 0) return;
-                                    if (post._id) {
-                                        onOpenPost?.(post._id);
-                                    }
-                                }}>
+                                <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-3xl rounded-[32px] border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col gap-4 relative group text-left overflow-hidden transition-all">
                                     {/* Meander corners */}
                                     <div className="hidden" />
                                     <div className="hidden" />
