@@ -178,31 +178,36 @@ const getYouTubeEmbedUrl = (url) => {
     return id ? `https://www.youtube.com/embed/${id}` : null;
 };
 
-const parseText = (text, onHashtagClick) => {
+const parseText = (text, onHashtagClick, onMentionClick) => {
     if (!text) return [];
     
     // First, split by URLs to protect them from hashtag splitting
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const parts = text.split(urlRegex);
     
     return parts.map((part, i) => {
         if (part.match(urlRegex)) {
             // It's a URL, render it directly
-            return <a key={`url-${i}`} href={part} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{part}</a>;
+            const href = part.startsWith('http') ? part : `https://${part}`;
+            return <a key={`url-${i}`} href={href} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{part}</a>;
         }
         
-        // It's normal text, now we can safely parse hashtags
-        const hashtagRegex = /(#[\p{L}\p{N}_]+)/gu;
-        const subParts = part.split(hashtagRegex);
+        // It's normal text, now we can safely parse hashtags and mentions
+        const tagRegex = /([#@][\p{L}\p{N}_]+)/gu;
+        const subParts = part.split(tagRegex);
         
         return subParts.map((subPart, j) => {
-            if (subPart.startsWith('#')) {
+            if (subPart.startsWith('#') || subPart.startsWith('@')) {
                 return (
                     <span 
-                        key={`hash-${i}-${j}`} 
+                        key={`tag-${i}-${j}`} 
                         onClick={(e) => { 
                             e.stopPropagation(); 
-                            if (onHashtagClick) onHashtagClick(subPart); 
+                            if (onMentionClick) {
+                                onMentionClick(subPart.slice(1), subPart.startsWith('#'));
+                            } else if (onHashtagClick && subPart.startsWith('#')) {
+                                onHashtagClick(subPart);
+                            }
                         }} 
                         className="text-[#1D9BF0] font-medium hover:underline cursor-pointer"
                     >
@@ -665,7 +670,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
 
     const isFounder = user?.role === 'Founder';
     // Strip rounded-full from className to prevent anti-aliasing gaps. Parent container's overflow-hidden handles the clipping.
-    const finalClassName = `w-full h-full object-cover ${className || ''}`.replace(/rounded-full/g, '');
+    const finalClassName = `w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${className || ''}`.replace(/rounded-full/g, '');
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
@@ -874,7 +879,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         {comment.text && (
                             <div className="group/cmt relative">
                                 <span className={`inline-block pb-1 text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
-                                    {translatedText || comment.text}
+                                    {parseText(translatedText || comment.text, null, (username) => {
+                                        const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                        if (u && onViewProfile) onViewProfile(u);
+                                    })}
                                 </span>
                                 {comment.text.length > 3 && (
                                     <button
@@ -1895,11 +1903,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />
                         </div>
 
-                        <div className="space-y-3 mt-1 cursor-pointer" onClick={() => onOpenDetail(post)}>
+                        <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); onOpenDetail(post); }}>
-                                        {parseText(translatedText || post.desc, (tag) => onHashtagClick(tag))}
+                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
+                                        {parseText(translatedText || post.desc, (tag) => onHashtagClick?.(tag), (username, isHashtag) => {
+                                            const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                            if (u && onViewProfile) onViewProfile(u);
+                                            else if (isHashtag && onHashtagClick) onHashtagClick('#' + username);
+                                        })}
                                     </p>
                                     <button
                                         onClick={handleTranslate}
@@ -2408,7 +2420,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-full bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2427,7 +2439,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black border border-white/10"><ProfileAvatar user={activeChat} /></div>
+                                <div className="w-10 h-10 rounded-none overflow-hidden shrink-0 bg-black border border-white/10"><ProfileAvatar user={activeChat} /></div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
@@ -3600,7 +3612,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/5  rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none " placeholder={t('USERNAME_PH')} />
+                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -3610,7 +3622,7 @@ const ProfileModal = ({
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
-                                        className="w-full bg-white/5  rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 "
+                                        className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 transition-all duration-300"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
