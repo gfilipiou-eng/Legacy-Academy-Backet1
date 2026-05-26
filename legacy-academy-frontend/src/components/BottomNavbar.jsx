@@ -96,7 +96,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>     
-                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-none border-2 border-black drop-shadow-md' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-none border border-black shadow-none'}`}>
+                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-black drop-shadow-md' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-black shadow-none'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

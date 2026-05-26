@@ -1060,13 +1060,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden  duration-300">
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black  rounded-none z-[2600] shadow-none group">
-                <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 " />
+        <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black rounded-none z-[2600] shadow-none group">
+                <Icons.X className="w-6 h-6 text-white group-hover:rotate-90" />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]">
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
                 {/* Image Section */}
-                <div className="w-full md:flex-1 bg-transparent flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
                         isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
                             <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} />
@@ -1104,7 +1104,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-3xl border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="w-11 h-11 rounded-none bg-black overflow-hidden shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                            <div className="w-11 h-11 rounded-full bg-black overflow-hidden shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                                 
                                 <ProfileAvatar user={author} />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
@@ -1212,7 +1212,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left whitespace-pre-wrap break-words">
                                     {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
                                         onClose();
-                                        // Need a way to search hashtag, maybe just window location
+                                        if (onHashtagClick) onHashtagClick(tag);
+                                    }, (username) => {
+                                        onClose();
+                                        const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                        if (u && onViewProfile) onViewProfile(u);
                                     })}
                                     {(translatedText || post.desc) && (translatedText || post.desc).length > 500 && (
                                         <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-white text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
@@ -1684,7 +1688,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[16px] overflow-hidden bg-black border border-white/10 shadow-lg relative group">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-black border border-white/10 shadow-lg relative group">
                     <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
@@ -1705,8 +1709,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[18px] p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-[16px] overflow-hidden border border-black bg-black relative flex items-center justify-center">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img src={resolveMediaUrl(storyMediaUrl, null, false, true)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
                                 ) : (
@@ -1878,7 +1882,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-none bg-black/60 shadow-none cursor-pointer overflow-hidden " onClick={() => onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none cursor-pointer overflow-hidden " onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -7508,34 +7512,34 @@ const App = () => {
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-2xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Author */}
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-12 rounded-none bg-gray-800 overflow-hidden  shrink-0">
+                            <div className="flex items-center gap-3 mb-4 w-full justify-center">
+                                <div className="w-12 h-12 rounded-full bg-gray-800 overflow-hidden shrink-0">
                                     <ProfileAvatar user={shareModalPost.author} />
                                 </div>
-                                <div>
-                                    <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none">
-                                        {shareModalPost.author?.username}
-                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4" />
+                                <div className="flex flex-col items-start text-left max-w-[calc(100%-60px)]">
+                                    <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none w-full">
+                                        <span className="truncate">{shareModalPost.author?.username}</span>
+                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
                                     </div>
                                     {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
-                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold">
-                                            {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3" })}
-                                            {t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}
-                                            <span className="opacity-50 mx-1">•</span>
-                                            <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold flex-wrap">
+                                            {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3 shrink-0" })}
+                                            <span className="truncate max-w-[120px]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
+                                            <span className="opacity-50 mx-1 shrink-0">•</span>
+                                            <div className="flex items-center gap-2 shrink-0">
                                                 <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                             </div>
                                         </div>
                                     ) : getFounderAffiliation(shareModalPost.author) ? (
-                                        <div className="flex items-center gap-2 mt-1">
+                                        <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" />
-                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50">•</span>
-                                            <div className="flex items-center gap-2">
+                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50 shrink-0">•</span>
+                                            <div className="flex items-center gap-2 shrink-0">
                                                 <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-2 mt-1">
+                                        <div className="flex items-center gap-2 mt-1 shrink-0">
                                             <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                         </div>
                                     )}
@@ -7611,14 +7615,16 @@ const App = () => {
                             <div className="absolute top-4 right-6 opacity-10 font-black italic text-xl tracking-tighter text-white">LEGACY</div>
                             
                             {/* Profile Image */}
-                              <div className="w-24 h-24 rounded-none bg-black overflow-hidden  shrink-0 mb-4">
+                              <div className="w-24 h-24 rounded-full bg-black overflow-hidden  shrink-0 mb-4">
                                   <ProfileAvatar user={shareModalProfile} size="large" />
                               </div>
                             
                             {/* Profile Name & Badge */}
-                            <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none mb-1 flex-wrap">
-                                {shareModalProfile.username}
-                                <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6" />
+                            <div className="flex flex-col items-center justify-center gap-2 mb-1">
+                                <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none">
+                                    {shareModalProfile.username}
+                                    <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6 shrink-0" />
+                                </div>
                                 {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
                                     <div className={`inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 ${PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].accentClass}`}>
                                         {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
