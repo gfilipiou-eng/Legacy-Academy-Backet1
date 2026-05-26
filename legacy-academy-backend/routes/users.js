@@ -151,6 +151,7 @@ router.get("/public/posts/:username", async (req, res) => {
         const user = await User.findOne(query);
         if (!user) return res.status(404).json("Agent not found.");
         const posts = await Post.find({
+            isStory: { $ne: true },
             $or: [
                 { author: user._id },
                 { reposts: String(user._id) },

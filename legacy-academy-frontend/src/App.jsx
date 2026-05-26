@@ -2415,8 +2415,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3 h-3 rounded-none border-2 border-black ${online ? 'bg-green-500' : 'bg-gray-600'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-medium ${online ? 'text-green-500' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-full bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -2434,7 +2434,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-none overflow-hidden shrink-0  bg-black"><ProfileAvatar user={activeChat} /></div>
+                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black border border-white/10"><ProfileAvatar user={activeChat} /></div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
@@ -2444,7 +2444,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         const chatUser = allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat;
                                         const isChatUserOnline = isUserOnline(chatUser, user);
                                         return (
-                                            <div className={`text-[10px] ${isChatUserOnline ? 'text-green-400 font-bold uppercase tracking-widest shadow-green-500/20' : 'text-gray-500 uppercase tracking-tighter'}`}>
+                                            <div className={`text-[10px] flex items-center gap-1.5 ${isChatUserOnline ? 'text-green-500/90 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
+                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} />
                                                 {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
                                             </div>
                                         );
