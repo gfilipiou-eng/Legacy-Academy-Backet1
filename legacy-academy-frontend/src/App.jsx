@@ -472,14 +472,11 @@ const formatDate = (dateString, t, lang) => {
 const CyberDate = ({ date, t, lang }) => {
     if (!date) return null;
     const formatted = formatDate(date, t, lang);
-    const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
     
     return (
-        <div className="flex items-center gap-2 mt-1">
-            <span className="text-[12px] sm:text-[13px] font-black uppercase tracking-[0.1em] text-white/80 opacity-90">
-                {capitalized}
-            </span>
-        </div>
+        <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">
+            {formatted}
+        </span>
     );
 };
 
@@ -904,9 +901,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
                 <div className="flex flex-wrap gap-3 mt-2 items-center text-[10px] text-gray-500">
                     <div className="flex items-center gap-1.5 shrink-0">
-                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                        <span className="font-black uppercase tracking-[0.2em]">{formatDate(comment.createdAt, t, lang)}</span>
-                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                        <CyberDate date={comment.createdAt} t={t} lang={lang} />
                     </div>
                     {canEdit && !isEditing && (
                         <button
@@ -1654,9 +1649,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
                 <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center gap-1.5 shrink-0">
-                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                        <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{formatDate(note.createdAt, t, lang)}</div>
-                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                        <CyberDate date={note.createdAt} t={t} lang={lang} />
                     </div>
                     {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
                 </div>
@@ -2531,9 +2524,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 )}
                                                 <div className="flex justify-end items-center gap-1.5 mt-1 opacity-70 relative z-10">
                                                     <div className="flex items-center gap-1.5 shrink-0">
-                                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">{formatDate(m.createdAt, t, lang)}</span>
-                                                        <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                        <CyberDate date={m.createdAt} t={t} lang={lang} />
                                                     </div>
                                                     {isOwn && (
                                                         <Icons.Check className={`w-3.5 h-3.5 ${m.isRead ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`} />
@@ -2547,7 +2538,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div ref={scrollRef} />
                             </div>
                             {/* Hidden image input */}
-                            <input type="file" ref={imageInputRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={handleImageSelect} />
+                            <input type="file" ref={imageInputRef} hidden accept="image/*, video/*" onChange={handleImageSelect} />
 
                             {/* IMAGE PREVIEW STRIP */}
                             {imagePreview && (
@@ -3425,7 +3416,11 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
-            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-none overflow-hidden flex flex-col  ${displayUser?.coverPic ? 'bg-black' : 'bg-black/40 backdrop-blur-2xl'}`}>
+            <motion.div initial={{ y: '100dvh' }} animate={{ y: 0 }} exit={{ y: '100dvh' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-none overflow-hidden flex flex-col bg-black`}>
+
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                </div>
 
                 {displayUser?.coverPic && (
                     <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
@@ -3491,7 +3486,7 @@ const ProfileModal = ({
                                     <ProfileAvatar user={displayUser} size="large" key={imgKey} />
                                 )}
                             </div>
-                            <input type="file" ref={fileRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={async (e) => {
+                            <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
@@ -3574,7 +3569,7 @@ const ProfileModal = ({
                                     </button>
                                 )}
                             </div>
-                            <input type="file" ref={coverFileRef} hidden accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*" onChange={async (e) => {
+                            <input type="file" ref={coverFileRef} hidden accept="image/*, video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     // Ο Founder έχει όριο 500MB, οι άλλοι έχουν 90MB
@@ -3988,19 +3983,23 @@ const ProfileModal = ({
                                     {(isMe || userStories.length > 0) && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-16 h-16 rounded-none overflow-hidden bg-black  shadow-none relative group">
-                                                            <ProfileAvatar user={currentUser} className="opacity-80" />
-                                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
-                                                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                                </svg>
+                                                        <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-white/5 to-white/20 shadow-lg relative group">
+                                                            <div className="w-full h-full rounded-full overflow-hidden bg-[#050505] flex items-center justify-center relative">
+                                                                <ProfileAvatar user={currentUser} className="opacity-40" />
+                                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                                    <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform shadow-sm">
+                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
+                                                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">{t('ADD_STORY')}</span>
+                                                        <span className="text-[9px] font-black text-white/50 uppercase tracking-widest mt-1">{t('ADD_STORY')}</span>
                                                     </div>
                                                 )}
                                                 {userStories.map(s => {
@@ -4014,8 +4013,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-16 h-16 rounded-none p-[2px] bg-white shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-none overflow-hidden border border-black bg-black relative">
+                                                            <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
@@ -4051,9 +4050,7 @@ const ProfileModal = ({
                                                                 )}
                                                             </div>
                                                             <div className="flex items-center gap-1.5 mt-1 shrink-0">
-                                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-                                                                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">{formatDate(s.createdAt, t, lang)}</span>
-                                                                <div className="w-1 h-1 bg-white/40 rotate-45"></div>
+                                                                <CyberDate date={s.createdAt} t={t} lang={lang} />
                                                             </div>
                                                         </div>
                                                     );
@@ -4081,10 +4078,8 @@ const ProfileModal = ({
                                                     <div key={dateKey} className="group animate-fade-in">
                                                         <div className="flex items-center justify-center mb-10 mt-8 relative">
                                                             <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                            <div className="px-6 py-2 bg-[#050505]  flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-                                                                <div className="w-1 h-1 bg-white/40 rotate-45" />
-                                                                <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/80">{dateKey}</span>
-                                                                <div className="w-1 h-1 bg-white/40 rotate-45" />
+                                                            <div className="flex items-center gap-2 mt-1 z-10 relative">
+                                                                <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{dateKey}</span>
                                                             </div>
                                                         </div>
                                                         <AnimatePresence>
@@ -4290,7 +4285,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 <span className="text-xs font-bold uppercase tracking-widest">{t('UPLOAD_MEDIA')}</span>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*, audio/mpeg, audio/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
                     </div>
                     <div className="flex gap-4 items-center mb-4">
                         <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl  border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 '}`}>
@@ -4510,7 +4505,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('UPLOAD_MEDIA')}</span>
                                 </div>
                             )}
-                            <input type="file" ref={fileRef} accept="image/png, image/jpeg, image/*, video/mp4, video/quicktime, video/*, audio/mpeg, audio/*" hidden onChange={handleFileChange} />
+                            <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
                         </div>
 
                         <div className="flex gap-4">
@@ -6757,7 +6752,7 @@ const App = () => {
                                                         <span className="text-[8px] uppercase tracking-wider font-black">Photo</span>
                                                     </div>
                                                 )}
-                                                <input type="file" ref={registerFileRef} hidden accept="image/png, image/jpeg, image/webp, image/gif, image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
+                                                <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
                                             </div>
                                             {[{ id: 'r-username', type: 'text', icon: <Icons.User className="w-4 h-4" />, ph: 'Username', val: formData.username, max: 19 },
           { id: 'r-email', type: 'email', icon: <Icons.Mail className="w-4 h-4" />, ph: 'Email Address', val: formData.email },
@@ -7218,10 +7213,8 @@ const App = () => {
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="flex items-center justify-center mb-10 mt-4 relative">
                                                                 <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                                <div className="px-6 py-2 bg-[#050505]  flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-                                                                    <div className="w-1 h-1 bg-white/40 rotate-45" />
-                                                                    <span className="text-[12px] font-black uppercase tracking-[0.2em] text-white/80">{dateKey}</span>
-                                                                    <div className="w-1 h-1 bg-white/40 rotate-45" />
+                                                                <div className="flex items-center gap-2 mt-1 z-10 relative">
+                                                                    <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{dateKey}</span>
                                                                 </div>
                                                             </div>
 
