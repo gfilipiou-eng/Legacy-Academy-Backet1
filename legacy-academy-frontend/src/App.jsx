@@ -197,17 +197,26 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
         const subParts = part.split(tagRegex);
         
         return subParts.map((subPart, j) => {
-            if (subPart.startsWith('#') || subPart.startsWith('@')) {
+            if (subPart.startsWith('#')) {
                 return (
                     <span 
                         key={`tag-${i}-${j}`} 
                         onClick={(e) => { 
                             e.stopPropagation(); 
-                            if (onMentionClick) {
-                                onMentionClick(subPart.slice(1), subPart.startsWith('#'));
-                            } else if (onHashtagClick && subPart.startsWith('#')) {
-                                onHashtagClick(subPart);
-                            }
+                            if (onHashtagClick) onHashtagClick(subPart);
+                        }} 
+                        className="text-[#1D9BF0] font-medium hover:underline cursor-pointer"
+                    >
+                        {subPart}
+                    </span>
+                );
+            } else if (subPart.startsWith('@')) {
+                return (
+                    <span 
+                        key={`tag-${i}-${j}`} 
+                        onClick={(e) => { 
+                            e.stopPropagation(); 
+                            if (onMentionClick) onMentionClick(subPart.slice(1));
                         }} 
                         className="text-[#1D9BF0] font-medium hover:underline cursor-pointer"
                     >
@@ -670,7 +679,13 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
 
     const isFounder = user?.role === 'Founder';
     // Strip rounded-full from className to prevent anti-aliasing gaps. Parent container's overflow-hidden handles the clipping.
-    const finalClassName = `w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${className || ''}`.replace(/rounded-full/g, '');
+    let baseClass = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-500';
+    if (className && className.includes('object-cover')) {
+        baseClass = className; // If they provide full classes, use them, otherwise add defaults.
+    } else if (className) {
+        baseClass = `${baseClass} ${className}`;
+    }
+    const finalClassName = baseClass.replace(/rounded-full/g, '').replace(/rounded-none/g, '');
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
@@ -1911,10 +1926,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {post.desc && (
                                 <div className="space-y-2">
                                     <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
-                                        {parseText(translatedText || post.desc, (tag) => onHashtagClick?.(tag), (username, isHashtag) => {
+                                        {parseText(translatedText || post.desc, (tag) => onHashtagClick?.(tag), (username) => {
                                             const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
                                             if (u && onViewProfile) onViewProfile(u);
-                                            else if (isHashtag && onHashtagClick) onHashtagClick('#' + username);
                                         })}
                                     </p>
                                     <button
@@ -2424,7 +2438,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-none bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-full bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2443,7 +2457,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-none overflow-hidden shrink-0 bg-black border border-white/10"><ProfileAvatar user={activeChat} /></div>
+                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black border border-white/10"><ProfileAvatar user={activeChat} /></div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {activeChat?.username}
@@ -3491,7 +3505,7 @@ const ProfileModal = ({
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 space-y-8 animate-fade-in">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-none bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
+                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <div className="w-8 h-8 text-white/50">
@@ -3569,8 +3583,14 @@ const ProfileModal = ({
                                         }
                                         
                                         try {
-                                            const res = await axios.delete('/users/cover-pic');
+                                            const res = await axios.put(`/users/${displayUser?._id}`, { coverPic: "" });
+                                            // Force it locally if backend ignores empty string
                                             const updatedUser = res.data;
+                                            if (updatedUser.coverPic) updatedUser.coverPic = "";
+                                            
+                                            // Fallback: also try the specific delete endpoint just in case
+                                            try { await axios.delete('/users/cover-pic'); } catch (e) {}
+
                                             localStorage.setItem('user', JSON.stringify(updatedUser));
                                             if (onUpdateUser) onUpdateUser(updatedUser);
                                             if (addToast) addToast('Background removed', 'success');
@@ -3616,7 +3636,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -4695,7 +4715,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-none overflow-hidden bg-white/[0.05] backdrop-blur-xl border border-white/10 relative shadow-none group">
+                    <div className="w-28 h-28 rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-xl border border-white/10 relative shadow-none group">
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
@@ -4831,7 +4851,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                                     <div className="flex items-center gap-3">
                                         <div 
-                                            className="w-9 h-9 rounded-none overflow-hidden shrink-0 bg-black/40 cursor-pointer z-10"
+                                            className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-black/40 cursor-pointer z-10"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onNavigateProfile?.(postAuthorUsername);
@@ -4882,7 +4902,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                                     {/* CONTENT */}
                                     {post.desc && (
-                                        <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed whitespace-pre-wrap select-text">
+                                        <p 
+                                            className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed whitespace-pre-wrap select-text cursor-text"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             {post.desc}
                                         </p>
                                     )}
@@ -5041,7 +5064,9 @@ const App = () => {
         if (!publicProfileUsername) return;
 
         let isActive = true;
-        const normalizedUsername = decodeURIComponent(String(publicProfileUsername || '')).trim();
+        let decoded = '';
+        try { decoded = decodeURIComponent(String(publicProfileUsername || '')); } catch(e) { decoded = String(publicProfileUsername || ''); }
+        const normalizedUsername = decoded.trim().replace(/^@+/, '');
 
         const loadPublicProfile = async () => {
             setPublicUserLoading(true);
@@ -5064,7 +5089,7 @@ const App = () => {
             }
 
             if (postsResult.status === 'fulfilled') {
-                setPublicPosts(Array.isArray(postsResult.value?.data) ? postsResult.value.data : []);
+                setPublicPosts(Array.isArray(postsResult.value?.data) ? postsResult.value.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true') : []);
             } else {
                 console.error("Failed to load public posts:", postsResult.reason);
                 setPublicPosts([]);
@@ -6704,13 +6729,13 @@ const App = () => {
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type="email" placeholder="Email address" id="l-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type="email" placeholder="Email address" id="l-email" name="l-email" aria-label="Email address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                             </div>
                                             <div className="relative group mb-3">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" name="l-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
@@ -6785,20 +6810,20 @@ const App = () => {
                                                     <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                     <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10">{f.icon}</span>
-                                                    <input type={f.type} placeholder={f.ph} id={f.id} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-transparent py-3.5 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-transparent py-3.5 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                                 </div>
                                             ))}
                                             <div className="relative group">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                                 <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 z-10">{showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}</button>
                                             </div>
                                             <div className="relative group">
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <textarea placeholder="Bio (Optional)" id="r-bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-transparent py-3.5 px-4 text-white text-sm font-medium outline-none placeholder:text-white/20 resize-none h-20 z-10" />
+                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-transparent py-3.5 px-4 text-white text-sm font-medium outline-none placeholder:text-white/20 resize-none h-20 z-10" />
                                                 <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/15 z-10">{(formData.bio || '').length}/500</div>
                                             </div>
                                             <div className="flex flex-col gap-2">
@@ -6891,7 +6916,7 @@ const App = () => {
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type="email" placeholder="Email Address" id="f-email" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type="email" placeholder="Email Address" id="f-email" name="f-email" aria-label="Email Address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                             </div>
 
                                             {authError && (
@@ -6937,7 +6962,7 @@ const App = () => {
                                                 <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
                                                 <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="New Password" id="r-password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="New Password" id="r-password" name="r-password" aria-label="New Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
                                                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
@@ -7027,7 +7052,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-none bg-black  transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-black transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
@@ -7279,9 +7304,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10  flex items-center justify-center text-[var(--gold-primary)] shadow-2xl backdrop-blur-xl"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-16 sm:right-32 z-[950] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-2xl backdrop-blur-xl transition-all duration-300"
                         >
-                            <Icons.ArrowUp className="w-7 h-7 sm:w-7 sm:h-7" />
+                            <Icons.ArrowUp className="w-5 h-5 sm:w-7 sm:h-7" />
                         </button>
                     )}
 
@@ -7289,9 +7314,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:bg-white/20 transition-all duration-300"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:bg-white/20 transition-all duration-300"
                         >
-                            <Icons.Compose className="w-7 h-7 sm:w-7 sm:h-7" />
+                            <Icons.Compose className="w-5 h-5 sm:w-7 sm:h-7" />
                         </button>
                     )}
 

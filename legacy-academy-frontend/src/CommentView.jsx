@@ -374,6 +374,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                       {editingCommentId === c._id ? (
                         <div className="flex flex-col gap-2">
                           <textarea
+                            id={`edit-comment-${c._id}`}
+                            name="edit-comment"
+                            aria-label="Edit comment"
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
                             className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[var(--gold-primary)]/50 min-h-[60px] resize-none"
