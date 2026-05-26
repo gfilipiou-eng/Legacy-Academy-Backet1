@@ -475,12 +475,10 @@ const CyberDate = ({ date, t, lang }) => {
     const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
     
     return (
-        <div className="px-6 py-2 bg-[#050505] flex items-center gap-4 relative z-10 shadow-[0_0_20px_rgba(0,0,0,0.8)] rounded-[14px] border border-white/5 w-fit mt-1">
-            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
-            <span className="text-[10px] sm:text-[12px] font-black tracking-[0.2em] text-white/80">
+        <div className="flex items-center gap-2 mt-1">
+            <span className="text-[12px] sm:text-[13px] font-black uppercase tracking-[0.1em] text-white/80 opacity-90">
                 {capitalized}
             </span>
-            <div className="w-1 h-1 bg-white/40 rotate-45"></div>
         </div>
     );
 };
@@ -3927,14 +3925,14 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-4 gap-2 p-2 bg-white/[0.05] backdrop-blur-2xl rounded-2xl mb-5 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                            <div className="grid grid-cols-4 gap-1 p-1 bg-transparent border-t border-white/10 mb-5">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO'].map(tab => {
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-4 h-4 shrink-0 transition-colors duration-200 ${isActive ? 'text-[var(--gold-primary)]' : 'text-white/70'}`;
-                                        if (tab === 'ALL') return <Icons.Grid className={iconClass} />;
-                                        if (tab === 'POSTS') return <Icons.Compose className={iconClass} />;
+                                        const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-500'}`;
+                                        if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
+                                        if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
-                                        if (tab === 'VIDEO') return <Icons.Play className={`${iconClass} fill-current`} />;
+                                        if (tab === 'VIDEO') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconClass} fill-current`}><polygon points="5 3 19 12 5 21 5 3" /></svg>;
                                         return null;
                                     };
                                     const isActive = activeTab === tab;
@@ -3946,23 +3944,17 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`min-w-0 min-h-[66px] sm:min-h-[70px] px-1.5 sm:px-2.5 py-2.5 font-black uppercase rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all duration-200 relative overflow-hidden border select-none appearance-none focus:outline-none active:scale-[0.99] cursor-pointer ${isActive
-                                                ? 'bg-white/[0.10] text-white border-[var(--gold-primary)]/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
-                                                : 'bg-transparent text-white/80 border-transparent hover:bg-white/[0.05] hover:border-white/10'
+                                            className={`min-w-0 min-h-[66px] sm:min-h-[70px] px-1.5 sm:px-2.5 py-2.5 font-black uppercase flex flex-col items-center justify-center gap-2 transition-all duration-200 relative overflow-hidden select-none appearance-none focus:outline-none active:scale-[0.99] cursor-pointer bg-transparent border-t-2 ${isActive
+                                                ? 'border-white text-white'
+                                                : 'border-transparent text-gray-500 hover:text-white/80'
                                                 }`}
                                         >
-                                            {isActive && (
-                                                <>
-                                                    <div className="absolute inset-x-3 top-0 h-px bg-[var(--gold-primary)]/65 pointer-events-none" />
-                                                    <div className="absolute inset-x-4 bottom-0 h-px bg-white/10 pointer-events-none" />
-                                                </>
-                                            )}
                                             {renderIcon(isActive)}
                                             <span
                                                 className={`max-w-full text-center leading-none transition-colors duration-200 whitespace-nowrap ${isLongTabLabel
-                                                    ? 'text-[6.5px] sm:text-[8px] md:text-[9px] tracking-[0.02em]'
-                                                    : 'text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.06em]'
-                                                    } ${isActive ? 'text-white' : 'text-white/90'}`}
+                                                    ? 'text-[7.5px] sm:text-[9px] md:text-[10px] tracking-[0.02em]'
+                                                    : 'text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.06em]'
+                                                    } ${isActive ? 'text-white font-black' : 'text-gray-500 font-bold'}`}
                                             >
                                                 {tabLabel}
                                             </span>
