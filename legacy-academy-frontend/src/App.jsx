@@ -4848,18 +4848,15 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     </svg>
                                                 )}
                                             </div>
-                                                <span className="font-bold text-xs text-white tracking-wider">{postAuthorUsername}</span>
-                                                <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder} className="w-3.5 h-3.5" />
-                                            </div>
                                             <div className="flex flex-wrap items-center gap-2">
                                                 {postAuthor?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor] ? (
                                                     <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
                                                         {React.createElement(PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
                                                         {t(`DESC_${postAuthor.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].label)}
                                                     </div>
-                                                ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) && (
+                                                ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) ? (
                                                     <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
-                                                )}
+                                                ) : null}
                                                 <div className="flex items-center gap-3">
                                                     <CyberDate date={post.createdAt} t={t} lang={urlLangParam || 'en'} />
                                                 </div>
