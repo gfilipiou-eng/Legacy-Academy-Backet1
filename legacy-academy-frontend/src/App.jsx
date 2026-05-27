@@ -3970,7 +3970,7 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="flex overflow-x-auto no-scrollbar snap-x w-full gap-1 p-1 bg-transparent border-t border-white/10 mb-5">
+                            <div className="grid grid-cols-5 gap-1 p-1 bg-transparent border-t border-white/10 mb-5">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map(tab => {
                                     const renderIcon = (isActive) => {
                                         const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-500'}`;
@@ -3990,7 +3990,7 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`flex-1 min-w-[72px] shrink-0 snap-center min-h-[66px] sm:min-h-[70px] px-1.5 sm:px-2.5 py-2.5 font-black uppercase flex flex-col items-center justify-center gap-2 transition-all duration-200 relative overflow-hidden select-none appearance-none focus:outline-none active:scale-[0.99] cursor-pointer bg-transparent border-t-2 ${isActive
+                                            className={`min-w-0 min-h-[66px] sm:min-h-[70px] px-1.5 sm:px-2.5 py-2.5 font-black uppercase flex flex-col items-center justify-center gap-2 transition-all duration-200 relative overflow-hidden select-none appearance-none focus:outline-none active:scale-[0.99] cursor-pointer bg-transparent border-t-2 ${isActive
                                                 ? 'border-white text-white'
                                                 : 'border-transparent text-gray-500 hover:text-white/80'
                                                 }`}
