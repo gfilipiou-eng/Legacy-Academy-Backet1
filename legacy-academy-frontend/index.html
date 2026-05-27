@@ -7,7 +7,30 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <style>
+    /* ── PORTRAIT-ONLY on small phones ── */
+    #landscape-block {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #000;
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      font-family: sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    @media screen and (orientation: landscape) and (max-height: 500px) {
+      #landscape-block { display: flex; }
+    }
+  </style>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Legacy Academy Intel">
@@ -22,7 +45,19 @@
 </head>
 
 <body>
+  <!-- Landscape blocker for small phones -->
+  <div id="landscape-block">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+    <span>Στρέψε σε Κατακόρυφο</span>
+    <span style="font-size:11px;opacity:0.4;font-weight:600">Rotate to Portrait</span>
+  </div>
   <div id="root"></div>
+  <script>
+    // Try to lock orientation to portrait
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('portrait').catch(() => {});
+    }
+  </script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
