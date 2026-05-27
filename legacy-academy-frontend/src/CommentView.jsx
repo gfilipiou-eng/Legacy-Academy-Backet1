@@ -299,34 +299,36 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between mt-4 text-gray-500 w-[90%] max-w-sm ml-[-8px]">
-                <div className="flex items-center gap-1 transition-colors cursor-pointer">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                    <Icons.MessageSquare className="w-[18px] h-[18px]" />
-                  </div>
-                  <span className="text-xs">{post.comments?.length || 0}</span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/10 text-gray-400 cursor-pointer">
+                  <Icons.MessageSquare className="w-5 h-5" />
+                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
                 </div>
-                <div className="flex items-center gap-1 transition-colors cursor-pointer" onClick={async () => {
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border border-green-500/20' : 'text-gray-400 hover:bg-green-500/10 hover:text-green-400 border border-transparent'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/repost`);
                     fetchPost();
                   } catch (e) { }
                 }}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${post.reposts?.includes(currentUser?._id) ? 'text-green-500' : ''}`}>
-                    <Icons.RefreshCcw className="w-[18px] h-[18px]" />
-                  </div>
-                  <span className={`text-xs ${post.reposts?.includes(currentUser?._id) ? 'text-green-500' : ''}`}>{post.reposts?.length || 0}</span>
+                  <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.includes(currentUser?._id) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
+                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                 </div>
-                <div className="flex items-center gap-1 transition-colors cursor-pointer">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${post.likes?.includes(currentUser?._id) ? 'text-red-500' : ''}`}>
-                    <Icons.Heart className={`w-[18px] h-[18px] ${post.likes?.includes(currentUser?._id) ? 'fill-current' : ''}`} />
-                  </div>
-                  <span className={`text-xs ${post.likes?.includes(currentUser?._id) ? 'text-red-500' : ''}`}>{post.likes?.length || 0}</span>
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border border-red-500/20' : 'text-gray-400 hover:bg-red-500/10 hover:text-red-400 border border-transparent'}`} onClick={async () => {
+                  try {
+                    await axios.put(`/posts/${post._id}/like`);
+                    fetchPost();
+                  } catch (e) { }
+                }}>
+                  <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.includes(currentUser?._id) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
+                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                 </div>
-                <div className="flex items-center gap-1 transition-colors cursor-pointer">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${post.dislikes?.includes(currentUser?._id) ? 'text-[var(--gold-primary)]' : ''}`}>
-                    <Icons.ThumbsDown className={`w-[18px] h-[18px] ${post.dislikes?.includes(currentUser?._id) ? 'fill-current' : ''}`} />
-                  </div>
-                  <span className={`text-xs ${post.dislikes?.includes(currentUser?._id) ? 'text-[var(--gold-primary)]' : ''}`}>{post.dislikes?.length || 0}</span>
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' : 'text-gray-400 hover:bg-blue-500/10 hover:text-blue-400 border border-transparent'}`} onClick={async () => {
+                  try {
+                    await axios.put(`/posts/${post._id}/dislike`);
+                    fetchPost();
+                  } catch (e) { }
+                }}>
+                  <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.includes(currentUser?._id) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
+                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
                 </div>
               </div>
             </div>
@@ -396,21 +398,21 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                             </div>
                           )}
 
-                          <div className="flex gap-2 mt-2 opacity-0 transition-opacity">
+                          <div className="flex gap-3 mt-3 opacity-0 transition-opacity">
                             {canEdit && (
                               <button
                                 onClick={() => { setEditingCommentId(c._id); setEditText(c.text || ''); }}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500  text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all "
+                                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[0_4px_15px_rgba(59,130,246,0.4)] transition-all hover:scale-105 active:scale-95"
                               >
-                                <Icons.Edit className="w-3 h-3" /> <span className="hidden sm:inline">{t('EDIT') || "EDIT"}</span>
+                                <Icons.Edit className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('EDIT') || "EDIT"}</span>
                               </button>
                             )}
                             {canDelete && (
                               <button
                                 onClick={() => handleDelete(c._id)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-orange-600  text-white text-[9px] font-black uppercase tracking-wider shadow-[0_0_10px_rgba(220,38,38,0.5)] transition-all "
+                                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-red-600 to-orange-600 text-white text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[0_4px_15px_rgba(220,38,38,0.4)] transition-all hover:scale-105 active:scale-95"
                               >
-                                <Icons.Trash className="w-3 h-3" /> <span className="hidden sm:inline">{t('DELETE') || "DELETE"}</span>
+                                <Icons.Trash className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('DELETE') || "DELETE"}</span>
                               </button>
                             )}
                           </div>

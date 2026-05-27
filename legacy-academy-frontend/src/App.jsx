@@ -939,10 +939,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <button
                             type="button"
                             onClick={() => onDelete?.(post._id, comment._id)}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-red-400   "
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors"
                             title={t('DELETE')}
                         >
-                            <Icons.Trash className="w-3 h-3" /> <span className="hidden sm:inline">{t('DELETE')}</span>
+                            <Icons.Trash className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('DELETE')}</span>
                         </button>
                     )}
                 </div>
@@ -1980,10 +1980,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {/* COMMENTS */}
                             <button
                                 onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/10 border border-transparent hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
                             >
                                 <Icons.MessageSquare className="w-5 h-5" />
-                                <span className="text-[11px] font-black tabular-nums">{post.comments?.length || 0}</span>
+                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
                             </button>
 
                             {/* REPOSTS */}
@@ -1993,10 +1993,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                                     onRepost && onRepost(post._id);
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20 scale-105 shadow-[0_0_10px_rgba(34,197,94,0.2)]' : 'text-gray-400 hover:text-green-400'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
                             >
-                                <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]' : ''}`} />
-                                <span className="text-[11px] font-black tabular-nums">{post.reposts?.length || 0}</span>
+                                <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
+                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                             </button>
 
                             {/* LIKE */}
@@ -2008,10 +2008,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onLike(post._id);
 
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20 scale-105 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'text-gray-400 hover:text-red-400'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
                             >
-                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]' : ''}`} />
-                                <span className="text-[11px] font-black tabular-nums">{post.likes?.length || 0}</span>
+                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
+                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                             </button>
 
                             {/* DISLIKE */}
@@ -2023,10 +2023,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onDislike(post._id);
 
                                 }}
-                                className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-none transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20 scale-105 shadow-[0_0_10px_rgba(59,130,246,0.2)]' : 'text-gray-400 hover:text-blue-400'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
                             >
-                                <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
-                                <span className="text-[11px] font-black tabular-nums">{post.dislikes?.length || 0}</span>
+                                <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
+                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
                             </button>
 
                             {/* SHARE */}
@@ -7054,7 +7054,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-black transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:shadow-lg transition-all duration-500 ease-out z-50 p-2.5 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
@@ -7299,9 +7299,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-16 sm:right-32 z-[950] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-2xl backdrop-blur-xl transition-all duration-300"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.ArrowUp className="w-5 h-5 sm:w-7 sm:h-7" />
+                            <Icons.ArrowUp className="w-6 h-6 sm:w-8 sm:h-8" />
                         </button>
                     )}
 
@@ -7309,9 +7309,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:bg-white/20 transition-all duration-300"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.Compose className="w-5 h-5 sm:w-7 sm:h-7" />
+                            <Icons.Compose className="w-6 h-6 sm:w-8 sm:h-8" />
                         </button>
                     )}
 

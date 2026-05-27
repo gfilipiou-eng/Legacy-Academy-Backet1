@@ -27,10 +27,10 @@ const BottomNavbar = memo(({
     }, []);
 
     // Futuristic base: flat, sharp, no bounce, geometric.
-    const navItemBaseClass = 'flex-1 max-w-[112px] sm:max-w-[120px] h-[76px] sm:h-[84px] flex items-center justify-center transition-all duration-300 ease-in-out';
+    const navItemBaseClass = 'flex-1 max-w-[112px] sm:max-w-[120px] h-[64px] sm:h-[72px] flex items-center justify-center transition-all duration-500 ease-out rounded-[24px]';
     
-    // Active state: Sharp white background, no scale, no Y-translation. Just a solid block with a subtle neon-like white glow.
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-none' : 'bg-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]'}`;
+    // Active state: Apple-like subtle glass pill
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'bg-white/10 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(255,255,255,0.1)] border border-white/20' : 'bg-transparent text-white/40 hover:text-white/80 hover:bg-white/5'}`;
     
     // Icons: Always maintain the same size. NEVER change fill (which causes the "changing shapes" issue). Only change stroke thickness and glow.
     const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'opacity-100 drop-shadow-md' : 'opacity-80'}`;
@@ -38,11 +38,11 @@ const BottomNavbar = memo(({
     return (
         <nav 
             ref={navRef}
-            className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10"
+            className="w-full z-[99] bg-black/80 backdrop-blur-3xl shrink-0 relative mt-auto border-t border-white/10"
             onTouchMove={(e) => e.preventDefault()}
         >
-            <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
-                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
+            <div className="flex justify-center px-3 sm:px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+                <div className="w-full bottom-nav-glass rounded-[32px] px-2.5 sm:px-3 py-2.5 flex items-center justify-between relative gap-2 bg-white/5 border border-white/5 shadow-2xl backdrop-blur-2xl">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
@@ -75,8 +75,8 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-center" 
                 >
-                    <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex items-center justify-center rounded-none bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:bg-gray-100 transition-colors duration-300">
-                        <Icons.Plus className="w-11 h-11 sm:w-12 sm:h-12 font-black stroke-[2.5]" shapeRendering="geometricPrecision" />
+                    <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full bg-white text-black shadow-[0_8px_32px_rgba(255,255,255,0.25)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out">
+                        <Icons.Plus className="w-8 h-8 sm:w-9 sm:h-9 font-black stroke-[3]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
