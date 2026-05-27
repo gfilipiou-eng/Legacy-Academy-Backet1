@@ -1931,7 +1931,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
+                                    <p className="text-[17px] sm:text-[19px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
                                         {parseText(translatedText || post.desc, (tag) => onHashtagClick?.(tag), (username) => {
                                             const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
                                             if (u && onViewProfile) onViewProfile(u);
@@ -3394,10 +3394,17 @@ const ProfileModal = ({
         }
 
         const isVideo = isYouTubeUrl(p.videoUrl) || (p.videoUrl && p.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (p.image && p.image.match(/\.(mp4|mov|webm)$/i));
+        const hasPhoto = p.image && !p.image.match(/\.(mp4|mov|webm)$/i);
+        const hasMedia = p.image || p.videoUrl;
+        const uid = safeId(profileUser);
+        const isRepost = Array.isArray(p.reposts) && p.reposts.some(id => isSameId(id, uid)) && !isSameId(p.author, uid);
+
         if (activeTab === 'VIDEO') return isVideo;
-        if (activeTab === 'POSTS') return !isVideo;
+        if (activeTab === 'PHOTOS') return hasPhoto;
+        if (activeTab === 'POSTS') return !hasMedia;
+        if (activeTab === 'REPOSTS') return isRepost;
         return true;
-    }), [userSpecificPosts, activeTab]);
+    }), [userSpecificPosts, activeTab, profileUser]);
 
     // AUTO-EXPAND ALL FOLDERS IN PROFILE BY DEFAULT
     useEffect(() => {
@@ -3963,14 +3970,15 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-4 gap-1 p-1 bg-transparent border-t border-white/10 mb-5">
-                                {['ALL', 'POSTS', 'PHOTOS', 'VIDEO'].map(tab => {
+                            <div className="grid grid-cols-5 gap-1 p-1 bg-transparent border-t border-white/10 mb-5">
+                                {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map(tab => {
                                     const renderIcon = (isActive) => {
                                         const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-500'}`;
                                         if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
                                         if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
                                         if (tab === 'VIDEO') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconClass} fill-current`}><polygon points="5 3 19 12 5 21 5 3" /></svg>;
+                                        if (tab === 'REPOSTS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" /><path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" /></svg>;
                                         return null;
                                     };
                                     const isActive = activeTab === tab;
@@ -4115,62 +4123,72 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="grid grid-cols-3 gap-[1.5px] bg-black">
-                                                {userPosts.map(p => {
-                                                    const hasMedia = p.image || p.videoUrl;
-                                                    const isVideo = p.videoUrl;
-                                                    return (
-                                                        <div 
-                                                            key={p._id} 
-                                                            className={hasMedia ? "aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group" : "col-span-3 border-b border-white/10 p-4 cursor-pointer hover:bg-white/5 transition-colors"}
-                                                            onClick={() => {
-                                                                if (hasMedia) {
-                                                                    onOpenDetail?.(p);
-                                                                } else {
-                                                                    onOpenDetail?.(p);
-                                                                }
-                                                            }}
-                                                        >
-                                                            {hasMedia ? (
-                                                                <>
-                                                                    {isVideo ? (
-                                                                        <>
-                                                                            <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
-                                                                            <div className="absolute top-1 right-1">
-                                                                                <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
-                                                                            </div>
-                                                                        </>
-                                                                    ) : (
-                                                                        <img src={resolveMediaUrl(p.image, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
-                                                                    )}
-                                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
-                                                                </>
-                                                            ) : (
-                                                                <PostCard 
-                                                                    post={p} 
-                                                                    user={currentUser} 
-                                                                    allUsers={allUsers} 
-                                                                    onLike={onLike} 
-                                                                    onDislike={onDislike} 
-                                                                    onRepost={onRepost} 
-                                                                    onComment={onComment} 
-                                                                    onDelete={onDeletePost} 
-                                                                    onViewProfile={onViewProfile} 
-                                                                    onOpenDetail={onOpenDetail} 
-                                                                    onOpenChat={onOpenChat} 
-                                                                    onEditComment={onEditComment} 
-                                                                    onDeleteComment={onDeleteComment} 
-                                                                    onEditPost={onEditPost} 
-                                                                    onShare={onShare} 
-                                                                    onShareProfile={onShareProfile} 
-                                                                    onHashtagClick={onHashtagClick} 
-                                                                    loadingActions={loadingActions} 
-                                                                    forcePause={false} 
-                                                                />
-                                                            )}
+                                            <div className="flex flex-col w-full bg-black">
+                                                {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
+                                                    <div key={dateLabel} className="mb-8 w-full">
+                                                        <div className="px-4 py-3 sticky top-0 z-10 bg-black/80 backdrop-blur-md flex items-center justify-between border-b border-white/5">
+                                                            <h3 className="text-[13px] font-black text-white">{dateLabel}</h3>
+                                                            <Icons.ChevronRight className="w-4 h-4 text-white/30" />
                                                         </div>
-                                                    );
-                                                })}
+                                                        <div className="grid grid-cols-3 gap-[1.5px] bg-black">
+                                                            {groupPosts.map(p => {
+                                                                const hasMedia = p.image || p.videoUrl;
+                                                                const isVideo = p.videoUrl;
+                                                                return (
+                                                                    <div 
+                                                                        key={p._id} 
+                                                                        className={hasMedia ? "aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group" : "col-span-3 border-b border-white/10 p-4 cursor-pointer hover:bg-white/5 transition-colors"}
+                                                                        onClick={() => {
+                                                                            if (hasMedia) {
+                                                                                onOpenDetail?.(p);
+                                                                            } else {
+                                                                                onOpenDetail?.(p);
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        {hasMedia ? (
+                                                                            <>
+                                                                                {isVideo ? (
+                                                                                    <>
+                                                                                        <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
+                                                                                        <div className="absolute top-1 right-1">
+                                                                                            <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
+                                                                                        </div>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <img src={resolveMediaUrl(p.image, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
+                                                                                )}
+                                                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                                                                            </>
+                                                                        ) : (
+                                                                            <PostCard 
+                                                                                post={p} 
+                                                                                user={currentUser} 
+                                                                                allUsers={allUsers} 
+                                                                                onLike={onLike} 
+                                                                                onDislike={onDislike} 
+                                                                                onRepost={onRepost} 
+                                                                                onComment={onComment} 
+                                                                                onDelete={onDeletePost} 
+                                                                                onViewProfile={onViewProfile} 
+                                                                                onOpenDetail={onOpenDetail} 
+                                                                                onOpenChat={onOpenChat} 
+                                                                                onEditComment={onEditComment} 
+                                                                                onDeleteComment={onDeleteComment} 
+                                                                                onEditPost={onEditPost} 
+                                                                                onShare={onShare} 
+                                                                                onShareProfile={onShareProfile} 
+                                                                                onHashtagClick={onHashtagClick} 
+                                                                                loadingActions={loadingActions} 
+                                                                                forcePause={false} 
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
                                         )}
                                     </div>
@@ -4663,6 +4681,19 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#ffd700';
     const [zoomImage, setZoomImage] = useState(null);
 
+    const groupedPublicPosts = React.useMemo(() => {
+        const groups = {};
+        const langCode = urlLangParam || localStorage.getItem('language') || 'el';
+        publicPosts.forEach(p => {
+            const date = new Date(p.createdAt);
+            const locale = langCode === 'el' ? 'el-GR' : langCode === 'de' ? 'de-DE' : 'en-US';
+            const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(p);
+        });
+        return groups;
+    }, [publicPosts, urlLangParam]);
+
     if (loadingUser && !publicUser) {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
@@ -4829,50 +4860,60 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-3 gap-[1.5px] bg-black w-full overflow-hidden rounded-[24px]">
-                            {publicPosts.map(p => {
-                                const hasMedia = p.image || p.videoUrl;
-                                const isVideo = p.videoUrl;
-                                return (
-                                    <div 
-                                        key={p._id} 
-                                        className={hasMedia ? "aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group" : "col-span-3 border-b border-white/10 p-4 cursor-pointer hover:bg-white/5 transition-colors"}
-                                        onClick={() => {
-                                            if (hasMedia) {
-                                                setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true));
-                                            } else {
-                                                onOpenPost?.(p._id);
-                                            }
-                                        }}
-                                    >
-                                        {hasMedia ? (
-                                            <>
-                                                {isVideo ? (
-                                                    <>
-                                                        <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
-                                                        <div className="absolute top-1 right-1">
-                                                            <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
-                                                )}
-                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
-                                            </>
-                                        ) : (
-                                            <div className="flex gap-3 text-left w-full h-full items-start">
-                                                <div className="w-10 h-10 rounded-[12px] bg-black overflow-hidden shrink-0 border border-white/10">
-                                                    <img src={resolveMediaUrl(publicUser?.profilePic, 'https://i.ibb.co/zH9PZ1q/default-avatar.png')} className="w-full h-full object-cover" loading="lazy" />
-                                                </div>
-                                                <div className="min-w-0 flex-1">
-                                                    <div className="font-bold text-white text-sm mb-1">{publicUser?.username}</div>
-                                                    <span className="text-white/80 text-sm whitespace-pre-wrap break-words leading-relaxed">{p.desc}</span>
-                                                </div>
-                                            </div>
-                                        )}
+                        <div className="flex flex-col w-full">
+                            {Object.entries(groupedPublicPosts).map(([dateLabel, groupPosts]) => (
+                                <div key={dateLabel} className="mb-8 w-full">
+                                    <div className="px-4 py-3 sticky top-0 z-10 bg-black/80 backdrop-blur-md flex items-center justify-between border-b border-white/5">
+                                        <h3 className="text-[13px] font-black text-white">{dateLabel}</h3>
+                                        <Icons.ChevronRight className="w-4 h-4 text-white/30" />
                                     </div>
-                                );
-                            })}
+                                    <div className="grid grid-cols-3 gap-[1.5px] bg-black w-full overflow-hidden rounded-[24px]">
+                                        {groupPosts.map(p => {
+                                            const hasMedia = p.image || p.videoUrl;
+                                            const isVideo = p.videoUrl;
+                                            return (
+                                                <div 
+                                                    key={p._id} 
+                                                    className={hasMedia ? "aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group" : "col-span-3 border-b border-white/10 p-4 cursor-pointer hover:bg-white/5 transition-colors"}
+                                                    onClick={() => {
+                                                        if (hasMedia) {
+                                                            setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true));
+                                                        } else {
+                                                            onOpenPost?.(p._id);
+                                                        }
+                                                    }}
+                                                >
+                                                    {hasMedia ? (
+                                                        <>
+                                                            {isVideo ? (
+                                                                <>
+                                                                    <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
+                                                                    <div className="absolute top-1 right-1">
+                                                                        <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                                                        </>
+                                                    ) : (
+                                                        <div className="flex gap-3 text-left w-full h-full items-start">
+                                                            <div className="w-10 h-10 rounded-[12px] bg-black overflow-hidden shrink-0 border border-white/10">
+                                                                <img src={resolveMediaUrl(publicUser?.profilePic, 'https://i.ibb.co/zH9PZ1q/default-avatar.png')} className="w-full h-full object-cover" loading="lazy" />
+                                                            </div>
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="font-bold text-white text-sm mb-1">{publicUser?.username}</div>
+                                                                <span className="text-white/80 text-sm whitespace-pre-wrap break-words leading-relaxed">{p.desc}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>
