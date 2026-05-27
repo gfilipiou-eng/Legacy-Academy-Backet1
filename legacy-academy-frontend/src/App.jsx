@@ -235,7 +235,7 @@ const formatUserHandle = (username) =>
 const THEME_PALETTE = [
     { value: '#cc0000', labelKey: 'COLOR_RED' },
     { value: '#ffd700', labelKey: 'COLOR_GOLD' },
-    { value: '#d4af37', labelKey: 'COLOR_GOLD_LIQUID' },
+    { value: '#39ff14', labelKey: 'COLOR_NEON_GREEN' },
     { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
     { value: '#00bfff', labelKey: 'COLOR_WATER' },
     { value: '#10b981', labelKey: 'COLOR_GREEN' },
