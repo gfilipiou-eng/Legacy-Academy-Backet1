@@ -298,12 +298,12 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               )}
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-between mt-4 text-gray-500 w-[90%] max-w-sm ml-[-8px]">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 hover:bg-white/10 text-gray-400 cursor-pointer">
+              <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
+                <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/10 text-gray-400 cursor-pointer border border-transparent hover:border-white/10">
                   <Icons.MessageSquare className="w-5 h-5" />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
                 </div>
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border border-green-500/20' : 'text-gray-400 hover:bg-green-500/10 hover:text-green-400 border border-transparent'}`} onClick={async () => {
+                <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 cursor-pointer border border-transparent ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:bg-green-500/10 hover:border-green-500/20 hover:text-green-400'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/repost`);
                     fetchPost();
@@ -312,7 +312,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                   <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.includes(currentUser?._id) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                 </div>
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border border-red-500/20' : 'text-gray-400 hover:bg-red-500/10 hover:text-red-400 border border-transparent'}`} onClick={async () => {
+                <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 cursor-pointer border border-transparent ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/like`);
                     fetchPost();
@@ -321,7 +321,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                   <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.includes(currentUser?._id) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                 </div>
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' : 'text-gray-400 hover:bg-blue-500/10 hover:text-blue-400 border border-transparent'}`} onClick={async () => {
+                <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 cursor-pointer border border-transparent ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:bg-blue-500/10 hover:border-blue-500/20 hover:text-blue-400'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/dislike`);
                     fetchPost();

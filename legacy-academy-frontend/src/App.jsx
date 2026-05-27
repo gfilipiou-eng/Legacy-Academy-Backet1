@@ -7054,7 +7054,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 hover:shadow-lg transition-all duration-500 ease-out z-50 p-2.5 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-black transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
