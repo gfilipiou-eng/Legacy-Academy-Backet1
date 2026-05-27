@@ -929,10 +929,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <button
                             type="button"
                             onClick={() => setIsEditing(true)}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-gray-400   "
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-blue-400 hover:bg-blue-500/10 transition-colors"
                             title={t('EDIT')}
                         >
-                            <Icons.Edit className="w-3 h-3" /> <span className="hidden sm:inline">{t('EDIT')}</span>
+                            <Icons.Edit className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('EDIT')}</span>
                         </button>
                     )}
                     {canDelete && (
