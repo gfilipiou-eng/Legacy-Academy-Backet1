@@ -3796,7 +3796,7 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-center ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-[24px] bg-black overflow-hidden shadow-xl shrink-0 relative group border border-white/10">
+                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-black overflow-hidden shadow-xl shrink-0 relative group border border-white/10">
                                         <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                 </div>
@@ -4021,8 +4021,8 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-[70px] h-[70px] rounded-[18px] p-[2px] bg-gradient-to-tr from-white/5 to-white/20 shadow-lg relative group">
-                                                            <div className="w-full h-full rounded-[16px] overflow-hidden bg-[#050505] flex items-center justify-center relative">
+                                                        <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-white/5 to-white/20 shadow-lg relative group">
+                                                            <div className="w-full h-full rounded-full overflow-hidden bg-[#050505] flex items-center justify-center relative">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40" />
                                                                 <div className="absolute inset-0 flex items-center justify-center">
                                                                     <div className="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center border border-white/40 group-hover:scale-110 transition-transform shadow-sm">
@@ -4048,8 +4048,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[70px] h-[70px] rounded-[18px] p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-[16px] overflow-hidden border-2 border-black bg-black relative">
+                                                            <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
