@@ -263,5 +263,8 @@
   "PRIVACY_S3_DESC": "Vous avez le droit total de supprimer votre empreinte numérique à tout moment. Lors de la suppression, toutes les entrées neuronales associées sont effacées de notre matrice active.",
   "GOT_IT": "COMPRIS",
   "ACTIVE_DEVICES": "Appareils Actifs",
-  "SESSION_MONITORING": "Surveillance de session"
+  "SESSION_MONITORING": "Surveillance de session",
+  "COLOR_GOLD_LIQUID": "Or Liquide",
+  "COLOR_METALLIC": "Métallique",
+  "COLOR_WATER": "Eau"
 }

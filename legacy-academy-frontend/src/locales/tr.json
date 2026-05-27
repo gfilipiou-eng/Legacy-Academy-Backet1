@@ -263,5 +263,8 @@
   "PRIVACY_S3_DESC": "Dijital ayak izinizi istediğiniz zaman silme hakkınız vardır. Silme durumunda tüm ilgili kayıtlar aktif matrisimizden silinir.",
   "GOT_IT": "ANLADIM",
   "ACTIVE_DEVICES": "Aktif Cihazlar",
-  "SESSION_MONITORING": "Oturum izleme"
+  "SESSION_MONITORING": "Oturum izleme",
+  "COLOR_GOLD_LIQUID": "Sıvı Altın",
+  "COLOR_METALLIC": "Metalik",
+  "COLOR_WATER": "Su"
 }

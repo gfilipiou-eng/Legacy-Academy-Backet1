@@ -263,5 +263,8 @@
   "PRIVACY_S3_DESC": "Tienes el derecho completo de eliminar tu huella digital en cualquier momento. Al eliminar, todas las entradas neuronales relacionadas se borran de nuestra matriz activa.",
   "GOT_IT": "ENTENDIDO",
   "ACTIVE_DEVICES": "Dispositivos Activos",
-  "SESSION_MONITORING": "Monitoreo de sesión"
+  "SESSION_MONITORING": "Monitoreo de sesión",
+  "COLOR_GOLD_LIQUID": "Oro Líquido",
+  "COLOR_METALLIC": "Metálico",
+  "COLOR_WATER": "Agua"
 }
