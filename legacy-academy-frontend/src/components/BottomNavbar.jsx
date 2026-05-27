@@ -38,11 +38,13 @@ const BottomNavbar = memo(({
     return (
         <nav 
             ref={navRef}
-            className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10"
+            className="w-full z-[99] bg-black/85 backdrop-blur-3xl shrink-0 relative mt-auto border-t"
+            style={{ borderTopColor: 'color-mix(in srgb, var(--gold-primary) 25%, transparent)', boxShadow: '0 -10px 40px -10px color-mix(in srgb, var(--gold-primary) 15%, transparent)' }}
             onTouchMove={(e) => e.preventDefault()}
         >
-            <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
-                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
+            <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] relative overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: 'color-mix(in srgb, var(--gold-primary) 5%, transparent)' }} />
+                <div className="w-full rounded-none px-2.5 sm:px-3 py-2 flex items-center justify-between relative gap-2 z-10">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
@@ -73,10 +75,10 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onCreate}
-                    className="flex flex-col items-center justify-center" 
+                    className="flex flex-col items-center justify-center relative z-20" 
                 >
-                    <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex items-center justify-center rounded-none bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:bg-gray-100 transition-colors duration-300">
-                        <Icons.Plus className="w-11 h-11 sm:w-12 sm:h-12 font-black stroke-[2.5]" shapeRendering="geometricPrecision" />
+                    <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full bg-white text-black shadow-[0_4px_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all duration-300">
+                        <Icons.Plus className="w-8 h-8 sm:w-9 sm:h-9 font-black stroke-[3]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 

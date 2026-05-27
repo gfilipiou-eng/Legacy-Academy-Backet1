@@ -235,10 +235,13 @@ const formatUserHandle = (username) =>
 const THEME_PALETTE = [
     { value: '#cc0000', labelKey: 'COLOR_RED' },
     { value: '#ffd700', labelKey: 'COLOR_GOLD' },
+    { value: '#d4af37', labelKey: 'COLOR_GOLD_LIQUID' },
     { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
+    { value: '#00bfff', labelKey: 'COLOR_WATER' },
     { value: '#10b981', labelKey: 'COLOR_GREEN' },
     { value: '#ff5500', labelKey: 'COLOR_ORANGE' },
     { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
+    { value: '#c0c0c0', labelKey: 'COLOR_METALLIC' },
 ];
 const PROFILE_DESCRIPTOR_OPTIONS = [
     {
