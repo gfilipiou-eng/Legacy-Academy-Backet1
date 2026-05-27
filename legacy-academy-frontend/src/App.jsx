@@ -3497,7 +3497,7 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto no-scrollbar relative overscroll-y-contain pb-10 z-10`} style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-10 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
                     {activeList ? (
                         <div className="p-4 space-y-4">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -3970,7 +3970,7 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="sticky top-0 z-30 flex overflow-x-auto no-scrollbar snap-x w-full gap-1 p-1 bg-black/90 backdrop-blur-xl border-t border-white/10 mb-5">
+                            <div className="flex overflow-x-auto no-scrollbar snap-x w-full gap-1 p-1 bg-transparent border-t border-white/10 mb-5">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map(tab => {
                                     const renderIcon = (isActive) => {
                                         const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-500'}`;
