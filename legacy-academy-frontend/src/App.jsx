@@ -4115,43 +4115,38 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            Object.keys(groupedUserPosts).map(dateKey => {
-                                                return (
-                                                    <div key={dateKey} className="group animate-fade-in">
-                                                        <AnimatePresence>
-                                                            <div className="overflow-hidden">
-                                                                <div className="flex flex-col mb-8">
-                                                                    {groupedUserPosts[dateKey].map(p => (
-                                                                        <div key={p._id} className="relative">
-                                                                            <PostCard
-                                                                                post={p}
-                                                                                user={currentUser}
-                                                                                allUsers={allUsers}
-                                                                                onLike={onLike}
-                                                                                onDislike={onDislike}
-                                                                                onRepost={onRepost}
-                                                                                onComment={onComment}
-                                                                                onDelete={onDeletePost}
-                                                                                onViewProfile={onViewProfile}
-                                                                                onOpenDetail={onOpenDetail}
-                                                                                onOpenChat={onOpenChat}
-                                                                                onEditComment={onEditComment}
-                                                                                onDeleteComment={onDeleteComment}
-                                                                                onEditPost={onEditPost}
-                                                                                onShare={onShare}
-                                                                                onHashtagClick={onHashtagClick}
-                                                                                loadingActions={loadingActions}
-                                                                                reposter={String(p.author?._id || p.author) !== String(displayUser?._id) ? displayUser : null}
-                                                                                forcePause={!!selectedPost}
-                                                                            />
+                                            <div className="grid grid-cols-3 gap-[1.5px] bg-black">
+                                                {userPosts.map(p => {
+                                                    const hasMedia = p.image || p.videoUrl;
+                                                    const isVideo = p.videoUrl;
+                                                    return (
+                                                        <div 
+                                                            key={p._id} 
+                                                            className="aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group"
+                                                            onClick={() => onOpenDetail(p)}
+                                                        >
+                                                            {hasMedia ? (
+                                                                isVideo ? (
+                                                                    <>
+                                                                        <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
+                                                                        <div className="absolute top-1 right-1">
+                                                                            <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
                                                                         </div>
-                                                                    ))}
+                                                                    </>
+                                                                ) : (
+                                                                    <img src={resolveMediaUrl(p.image, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
+                                                                )
+                                                            ) : (
+                                                                <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-[#111]">
+                                                                    <Icons.FileText className="w-4 h-4 text-white/30 mb-1" />
+                                                                    <span className="text-white/60 text-[8px] sm:text-[9px] font-bold line-clamp-3 leading-tight break-words">{p.desc}</span>
                                                                 </div>
-                                                            </div>
-                                                        </AnimatePresence>
-                                                    </div>
-                                                );
-                                            })
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         )}
                                     </div>
                                 </>
@@ -4809,160 +4804,44 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
                         </div>
                     ) : (
-                        publicPosts.map(post => {
-                            const publicPostMediaUrl = post.videoUrl || post.thumbnailUrl || post.image || '';
-                            const isYouTubePost = isYouTubeUrl(publicPostMediaUrl);
-                            const isNativeVideoPost = (!isYouTubePost) && (
-                                (post.videoUrl && post.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)(\?.*)?$/i)) ||
-                                (post.image && post.image.match(/\.(mp4|mov|webm|avi|m4v)(\?.*)?$/i))
-                            );
-                            const isRepost = String(post.author?._id || post.author) !== String(publicUser._id);
-                            const postAuthor = isRepost && typeof post.author === 'object' ? post.author : publicUser;
-                            const postAuthorUsername = postAuthor?.username || 'Agent';
-                            const postAuthorPic = isRepost ? resolveMediaUrl(postAuthor?.profilePic, 80, true) : resolvedPublicProfilePic;
-                            const isAuthorFounder = postAuthor?.role === 'Founder';
-
-                            return (
-                                <div key={post._id} className="w-full p-5 bg-white/[0.02] backdrop-blur-3xl rounded-[32px] border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex flex-col gap-4 relative group text-left overflow-hidden transition-all">
-                                    {/* Meander corners */}
-                                    <div className="hidden" />
-                                    <div className="hidden" />
-                                    <div className="hidden" />
-                                    <div className="hidden" />
-                                    
-                                    {isRepost && (
-                                        <div 
-                                            className="text-[9px] font-black text-white/50 tracking-widest flex items-center gap-1.5 -mb-2 cursor-pointer hover:text-white transition-colors z-10 w-fit"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onNavigateProfile?.(publicUser.username);
-                                            }}
-                                        >
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
-                                            @{publicUser.username} <span className="uppercase">{t('REPOSTED', 'REPOSTED')}</span>
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-center gap-3">
-                                        <div 
-                                            className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-black/40 cursor-pointer z-10"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onNavigateProfile?.(postAuthorUsername);
-                                            }}
-                                        >
-                                            {postAuthorPic ? (
-                                                <img src={postAuthorPic} className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center bg-white/5 text-sm font-bold uppercase text-white/40">
-                                                    {postAuthorUsername?.[0]}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex flex-col gap-1.5 z-10">
-                                            <div 
-                                                className="flex items-center gap-1 cursor-pointer hover:underline w-fit"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    onNavigateProfile?.(postAuthorUsername);
-                                                }}
-                                            >
-                                                <span className="text-[12px] font-bold text-white tracking-wide">{postAuthorUsername}</span>
-                                                {isAuthorFounder ? (
-                                                    <svg aria-label="Verified Founder" viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0" style={{ overflow: 'visible' }}>
-                                                        <path fill="#FFD700" stroke="none" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
-                                                    </svg>
-                                                ) : (
-                                                    <svg aria-label="Verified User" viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0" style={{ overflow: 'visible' }}>
-                                                        <path fill="#1D9BF0" stroke="none" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
-                                                    </svg>
-                                                )}
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                {postAuthor?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor] ? (
-                                                    <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold tracking-widest uppercase">
-                                                        {React.createElement(PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].Icon, { className: "w-2.5 h-2.5" })}
-                                                        {t(`DESC_${postAuthor.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[postAuthor.profileDescriptor].label)}
+                        <div className="grid grid-cols-3 gap-[1.5px] bg-black w-full overflow-hidden rounded-[24px]">
+                            {publicPosts.map(p => {
+                                const hasMedia = p.image || p.videoUrl;
+                                const isVideo = p.videoUrl;
+                                return (
+                                    <div 
+                                        key={p._id} 
+                                        className="aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group"
+                                        onClick={() => {
+                                            if (hasMedia) {
+                                                setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true));
+                                            } else {
+                                                onOpenPost?.(p);
+                                            }
+                                        }}
+                                    >
+                                        {hasMedia ? (
+                                            isVideo ? (
+                                                <>
+                                                    <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
+                                                    <div className="absolute top-1 right-1">
+                                                        <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
                                                     </div>
-                                                ) : (getFounderAffiliation(postAuthor) || (postAuthor === publicUser && publicFounderAffiliation)) ? (
-                                                    <FounderAffiliationBadge username={getFounderAffiliation(postAuthor) || publicFounderAffiliation} size="sm" />
-                                                ) : null}
-                                                <div className="flex items-center gap-3">
-                                                    <CyberDate date={post.createdAt} t={t} lang={urlLangParam || 'en'} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* CONTENT */}
-                                    {post.desc && (
-                                        <p 
-                                            className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed whitespace-pre-wrap select-text cursor-text"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            {post.desc}
-                                        </p>
-                                    )}
-
-                                    {/* MEDIA */}
-                                    {(post.image || post.thumbnailUrl || post.videoUrl) && (
-                                        <div className="w-full rounded-none overflow-hidden  bg-black mb-2 flex items-center justify-center">
-                                            {isYouTubePost ? (
-                                                <div className="w-full aspect-video bg-black" onClick={(e) => e.stopPropagation()}>
-                                                    <NeuralVideoPlayer
-                                                        src={post.videoUrl || post.thumbnailUrl || post.image}
-                                                        className="w-full h-full"
-                                                    />
-                                                </div>
-                                            ) : isNativeVideoPost ? (
-                                                <div className="w-full relative" onClick={(e) => e.stopPropagation()}>
-                                                    <video 
-                                                        src={resolveMediaUrl(post.videoUrl || post.image)}
-                                                        poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                                        className="w-full h-auto object-contain max-h-[400px]" 
-                                                        controls
-                                                        controlsList="nodownload"
-                                                        preload="metadata"
-                                                        playsInline
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        onPlay={(e) => e.stopPropagation()}
-                                                    />
-                                                </div>
+                                                </>
                                             ) : (
-                                                <img 
-                                                    src={resolveMediaUrl(post.image || post.thumbnailUrl)} 
-                                                    className="w-full h-auto object-contain max-h-[400px] cursor-pointer" 
-                                                    alt="" 
-                                                    loading="lazy"
-                                                    decoding="async"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl));
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {/* simplified READ-ONLY STATS */}
-                                    <div className="flex items-center gap-4 mt-2 border-t border-white/10 pt-4 text-gray-500 text-[10px] font-black uppercase tracking-wider">
-                                        <div className="flex items-center gap-1.5">
-                                            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" strokeWidth="2.5" className="w-4 h-4 text-red-500"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-                                            <span className="tabular-nums">{post.likes?.length || 0}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-                                            <span className="tabular-nums">{post.comments?.length || 0}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4 text-green-500"><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
-                                            <span className="tabular-nums">{post.reposts?.length || 0}</span>
-                                        </div>
+                                                <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
+                                            )
+                                        ) : (
+                                            <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-[#111]">
+                                                <Icons.FileText className="w-4 h-4 text-white/30 mb-1" />
+                                                <span className="text-white/60 text-[8px] sm:text-[9px] font-bold line-clamp-3 leading-tight break-words">{p.desc}</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
                                     </div>
-                                </div>
-                            );
-                        })
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
             </div>

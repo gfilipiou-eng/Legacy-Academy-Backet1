@@ -29,22 +29,20 @@ const BottomNavbar = memo(({
     // Futuristic base: flat, sharp, no bounce, geometric.
     const navItemBaseClass = 'flex-1 max-w-[112px] sm:max-w-[120px] h-[76px] sm:h-[84px] flex items-center justify-center transition-all duration-300 ease-in-out';
     
-    // Active state: Sharp white background, no scale, no Y-translation. Just a solid block with a subtle neon-like white glow.
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.15)] rounded-none' : 'bg-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]'}`;
+    // Active state: Transparent background, no blocks.
+    const navItemClass = (isActive) => `${navItemBaseClass} bg-transparent transition-all duration-300`;
     
-    // Icons: Always maintain the same size. NEVER change fill (which causes the "changing shapes" issue). Only change stroke thickness and glow.
-    const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'opacity-100 drop-shadow-md' : 'opacity-80'}`;
+    // Icons: Use theme color when active.
+    const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'text-[var(--gold-primary)] opacity-100 drop-shadow-[0_0_8px_color-mix(in_srgb,var(--gold-primary)_50%,transparent)]' : 'text-gray-500 hover:text-gray-300'}`;
 
     return (
         <nav 
             ref={navRef}
-            className="w-full z-[99] bg-black/85 backdrop-blur-3xl shrink-0 relative mt-auto border-t"
-            style={{ borderTopColor: 'color-mix(in srgb, var(--gold-primary) 25%, transparent)', boxShadow: '0 -10px 40px -10px color-mix(in srgb, var(--gold-primary) 15%, transparent)' }}
+            className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10"
             onTouchMove={(e) => e.preventDefault()}
         >
-            <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: 'color-mix(in srgb, var(--gold-primary) 5%, transparent)' }} />
-                <div className="w-full rounded-none px-2.5 sm:px-3 py-2 flex items-center justify-between relative gap-2 z-10">
+            <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
+                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
@@ -98,7 +96,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>     
-                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-black drop-shadow-md' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-black shadow-none'}`}>
+                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border-[2.5px] border-[var(--gold-primary)] drop-shadow-[0_0_8px_color-mix(in_srgb,var(--gold-primary)_50%,transparent)]' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/20 shadow-none'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
