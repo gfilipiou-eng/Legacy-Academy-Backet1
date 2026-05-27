@@ -4122,27 +4122,52 @@ const ProfileModal = ({
                                                     return (
                                                         <div 
                                                             key={p._id} 
-                                                            className="aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group"
-                                                            onClick={() => onOpenDetail(p)}
+                                                            className={hasMedia ? "aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group" : "col-span-3 border-b border-white/10 p-4 cursor-pointer hover:bg-white/5 transition-colors"}
+                                                            onClick={() => {
+                                                                if (hasMedia) {
+                                                                    onOpenDetail?.(p);
+                                                                } else {
+                                                                    onOpenDetail?.(p);
+                                                                }
+                                                            }}
                                                         >
                                                             {hasMedia ? (
-                                                                isVideo ? (
-                                                                    <>
-                                                                        <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
-                                                                        <div className="absolute top-1 right-1">
-                                                                            <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
-                                                                        </div>
-                                                                    </>
-                                                                ) : (
-                                                                    <img src={resolveMediaUrl(p.image, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
-                                                                )
+                                                                <>
+                                                                    {isVideo ? (
+                                                                        <>
+                                                                            <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
+                                                                            <div className="absolute top-1 right-1">
+                                                                                <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
+                                                                            </div>
+                                                                        </>
+                                                                    ) : (
+                                                                        <img src={resolveMediaUrl(p.image, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
+                                                                    )}
+                                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                                                                </>
                                                             ) : (
-                                                                <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-[#111]">
-                                                                    <Icons.FileText className="w-4 h-4 text-white/30 mb-1" />
-                                                                    <span className="text-white/60 text-[8px] sm:text-[9px] font-bold line-clamp-3 leading-tight break-words">{p.desc}</span>
-                                                                </div>
+                                                                <PostCard 
+                                                                    post={p} 
+                                                                    user={currentUser} 
+                                                                    allUsers={allUsers} 
+                                                                    onLike={onLike} 
+                                                                    onDislike={onDislike} 
+                                                                    onRepost={onRepost} 
+                                                                    onComment={onComment} 
+                                                                    onDelete={onDeletePost} 
+                                                                    onViewProfile={onViewProfile} 
+                                                                    onOpenDetail={onOpenDetail} 
+                                                                    onOpenChat={onOpenChat} 
+                                                                    onEditComment={onEditComment} 
+                                                                    onDeleteComment={onDeleteComment} 
+                                                                    onEditPost={onEditPost} 
+                                                                    onShare={onShare} 
+                                                                    onShareProfile={onShareProfile} 
+                                                                    onHashtagClick={onHashtagClick} 
+                                                                    loadingActions={loadingActions} 
+                                                                    forcePause={false} 
+                                                                />
                                                             )}
-                                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
                                                         </div>
                                                     );
                                                 })}
@@ -4811,33 +4836,40 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 return (
                                     <div 
                                         key={p._id} 
-                                        className="aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group"
+                                        className={hasMedia ? "aspect-square relative cursor-pointer overflow-hidden bg-[#1a1a1a] group" : "col-span-3 border-b border-white/10 p-4 cursor-pointer hover:bg-white/5 transition-colors"}
                                         onClick={() => {
                                             if (hasMedia) {
                                                 setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true));
                                             } else {
-                                                onOpenPost?.(p);
+                                                onOpenPost?.(p._id);
                                             }
                                         }}
                                     >
                                         {hasMedia ? (
-                                            isVideo ? (
-                                                <>
-                                                    <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
-                                                    <div className="absolute top-1 right-1">
-                                                        <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
-                                            )
+                                            <>
+                                                {isVideo ? (
+                                                    <>
+                                                        <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-full object-cover" muted playsInline />
+                                                        <div className="absolute top-1 right-1">
+                                                            <Icons.Play className="w-3 h-3 text-white drop-shadow-md" fill="white" />
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-full object-cover" loading="lazy" />
+                                                )}
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                                            </>
                                         ) : (
-                                            <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-[#111]">
-                                                <Icons.FileText className="w-4 h-4 text-white/30 mb-1" />
-                                                <span className="text-white/60 text-[8px] sm:text-[9px] font-bold line-clamp-3 leading-tight break-words">{p.desc}</span>
+                                            <div className="flex gap-3 text-left w-full h-full items-start">
+                                                <div className="w-10 h-10 rounded-[12px] bg-black overflow-hidden shrink-0 border border-white/10">
+                                                    <img src={resolveMediaUrl(publicUser?.profilePic, 'https://i.ibb.co/zH9PZ1q/default-avatar.png')} className="w-full h-full object-cover" loading="lazy" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="font-bold text-white text-sm mb-1">{publicUser?.username}</div>
+                                                    <span className="text-white/80 text-sm whitespace-pre-wrap break-words leading-relaxed">{p.desc}</span>
+                                                </div>
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
                                     </div>
                                 );
                             })}
