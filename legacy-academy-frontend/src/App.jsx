@@ -382,7 +382,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-none' : 'w-6 h-6 rounded-none';
+    const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-full' : 'w-6 h-6 rounded-full';
     const iconSizeClass = size === 'sm' ? 'w-2.5 h-2.5' : 'w-3 h-3';
     const textSizeClass = size === 'sm' ? 'text-[9px]' : 'text-[10px]';
     const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, size === 'large' ? 600 : 80, true);
@@ -3452,13 +3452,13 @@ const ProfileModal = ({
                 </div>
 
                 {displayUser?.coverPic && (
-                    <div className="absolute inset-0 z-0 pointer-events-none animate-fade-in">
+                    <div className="absolute top-0 left-0 right-0 h-[220px] z-0 pointer-events-none animate-fade-in overflow-hidden">
                         {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
-                            <video src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback className="w-full h-full object-cover opacity-[0.85]" />
+                            <video src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} autoPlay loop muted playsInline preload="metadata" disablePictureInPicture disableRemotePlayback className="w-full h-full object-cover opacity-60" />
                         ) : (
-                            <img src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} className="w-full h-full object-cover opacity-[0.85] blur-[1px]" alt="" />
+                            <img src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} className="w-full h-full object-cover opacity-60 blur-[1px]" alt="" />
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     </div>
                 )}
 
@@ -4111,12 +4111,6 @@ const ProfileModal = ({
                                             Object.keys(groupedUserPosts).map(dateKey => {
                                                 return (
                                                     <div key={dateKey} className="group animate-fade-in">
-                                                        <div className="flex items-center justify-center mb-10 mt-8 relative">
-                                                            <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                            <div className="flex items-center gap-2 mt-1 z-10 relative">
-                                                                <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{dateKey}</span>
-                                                            </div>
-                                                        </div>
                                                         <AnimatePresence>
                                                             <div className="overflow-hidden">
                                                                 <div className="flex flex-col mb-8">
@@ -5067,24 +5061,39 @@ const App = () => {
             setPublicUser(null);
             setPublicPosts([]);
 
-            const [userResult, postsResult] = await Promise.allSettled([
-                axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 12000 }),
-                axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 12000 })
-            ]);
+            let userRes = null;
+            let postsRes = null;
+            let retries = 3;
+
+            while (retries > 0) {
+                const [userResult, postsResult] = await Promise.allSettled([
+                    axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 }),
+                    axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 })
+                ]);
+                
+                userRes = userResult;
+                postsRes = postsResult;
+
+                if (userResult.status === 'fulfilled') {
+                    break;
+                }
+                retries--;
+                if (retries > 0) await new Promise(r => setTimeout(r, 1500));
+            }
 
             if (!isActive) return;
 
-            if (userResult.status === 'fulfilled') {
-                setPublicUser(userResult.value?.data || null);
+            if (userRes.status === 'fulfilled') {
+                setPublicUser(userRes.value?.data || null);
             } else {
-                console.error("Failed to load public profile:", userResult.reason);
+                console.error("Failed to load public profile:", userRes.reason);
                 setPublicUser(null);
             }
 
-            if (postsResult.status === 'fulfilled') {
-                setPublicPosts(Array.isArray(postsResult.value?.data) ? postsResult.value.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true') : []);
+            if (postsRes.status === 'fulfilled') {
+                setPublicPosts(Array.isArray(postsRes.value?.data) ? postsRes.value.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true') : []);
             } else {
-                console.error("Failed to load public posts:", postsResult.reason);
+                console.error("Failed to load public posts:", postsRes.reason);
                 setPublicPosts([]);
             }
 
@@ -7253,13 +7262,6 @@ const App = () => {
                                                     const dateKey = group.key;
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
-                                                            <div className="flex items-center justify-center mb-10 mt-4 relative">
-                                                                <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                                                <div className="flex items-center gap-2 mt-1 z-10 relative">
-                                                                    <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{dateKey}</span>
-                                                                </div>
-                                                            </div>
-
                                                             <div className="space-y-8">
                                                                 <AnimatePresence mode="popLayout">
                                                                     {group.posts.map(p => (
