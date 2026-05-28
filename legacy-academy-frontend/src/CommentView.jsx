@@ -27,8 +27,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false) => {
         parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
       } else if (isAvatar) {
         transform = `w_400,h_400,c_fill,g_face,q_auto:best,f_auto`;
-      } else if (width) {
-        transform = `w_${width},c_fill,g_face,q_auto:best,f_auto`;
+      } else if (width && !isNaN(width)) {
+        transform = `w_${width},c_limit,q_auto:best,f_auto`;
       } else {
         transform = `c_limit,w_1920,q_auto:best,f_auto`;
       }

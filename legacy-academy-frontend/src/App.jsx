@@ -66,10 +66,10 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
             } else if (width === 2000 || isCover) {
                 // Founder 4K Background / High-Res Cover
                 transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
-            } else if (width) {
+            } else if (width && !isNaN(width)) {
                 transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
             } else {
-                transform = `q_auto,f_auto`;
+                transform = `c_limit,w_1920,q_auto:best,f_auto`;
             }
 
             return parts[0] + '/upload/' + transform + '/' + parts[1];
@@ -1912,7 +1912,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="flex-1 flex flex-col min-w-0">
                         {/* Header */}
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
-                            <div className="min-w-0 flex-1 pr-1 cursor-pointer" onClick={() => onOpenDetail(post)}>
+                            <div className="min-w-0 flex-1 pr-1">
                                 <div className="flex flex-col gap-2 min-w-0">
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
                                         <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer break-words leading-tight" onClick={() => onViewProfile(author)}>{author?.username}</span>
