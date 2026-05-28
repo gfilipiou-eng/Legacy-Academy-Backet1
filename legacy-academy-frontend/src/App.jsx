@@ -1759,7 +1759,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false }) => {
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -1979,24 +1979,29 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                         {/* ── POST ACTIONS BAR ── */}
                         <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
-
-                            {/* COMMENTS */}
-                            <button
-                                onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/10 border border-transparent hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
-                            >
-                                <Icons.MessageSquare className="w-5 h-5" />
-                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                            </button>
+                            {!isReadOnly && (
+                                <>
+                                    {/* COMMENTS */}
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/10 border border-transparent hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                    >
+                                        <Icons.MessageSquare className="w-5 h-5" />
+                                        <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
+                                    </button>
+                                </>
+                            )}
 
                             {/* REPOSTS */}
                             <button
+                                disabled={isReadOnly}
                                 onClick={(e) => {
                                     e.stopPropagation();
-
-                                    onRepost && onRepost(post._id);
+                                    if (!isReadOnly) {
+                                        onRepost && onRepost(post._id);
+                                    }
                                 }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
                                 <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
@@ -2004,14 +2009,16 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* LIKE */}
                             <button
+                                disabled={isReadOnly}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    const isLiked = post.likes?.some(id => isSameId(id, user?._id));
-                                    playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
-                                    onLike(post._id);
-
+                                    if (!isReadOnly) {
+                                        const isLiked = post.likes?.some(id => isSameId(id, user?._id));
+                                        playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
+                                        onLike(post._id);
+                                    }
                                 }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                     <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
                                 <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
@@ -2019,14 +2026,16 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* DISLIKE */}
                             <button
+                                disabled={isReadOnly}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
-                                    playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
-                                    onDislike(post._id);
-
+                                    if (!isReadOnly) {
+                                        const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
+                                        playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
+                                        onDislike(post._id);
+                                    }
                                 }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
                                 <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
@@ -2036,7 +2045,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                         </div>
 
-                        {showComments && (
+                        {showComments && !isReadOnly && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
                                 <div className="flex gap-4">
                                     <div className="w-10 h-10 rounded-full overflow-hidden shrink-0  bg-black">
@@ -4813,6 +4822,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         const mediaUrl = resolveMediaUrl(post.image || post.thumbnailUrl || post.videoUrl, null, false, true);
                                         if (mediaUrl) setZoomImage(mediaUrl);
                                     }}
+                                    isReadOnly={true}
                                 />
                             ))}
                         </div>
