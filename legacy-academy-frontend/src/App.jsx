@@ -4378,17 +4378,12 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             if (isSubmitting) return;
                             const file = fileRef.current?.files?.[0];
 
-                            // Auto-extract from description if they pasted it there instead of the dedicated box
-                            const ytMatch = getYouTubeId(desc);
-                            const youtube = ytMatch ? `https://youtube.com/watch?v=${ytMatch}` : '';
-
-                            if (!desc && !file && !youtube) return;
+                            if (!desc && !file) return;
 
                             setIsSubmitting(true);
                             const fd = new FormData();
                             fd.append('desc', desc);
-                            if (youtube) fd.append('videoUrl', youtube);
-                            else if (file) fd.append('image', file);
+                            if (file) fd.append('image', file);
                             fd.append('isStory', isStory);
 
                             // Trigger optimistic upload
@@ -4462,22 +4457,9 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         fd.append('desc', desc);
         const file = fileRef.current?.files[0];
 
-        // Auto-extract from description if they pasted it there
-        let finalYtUrl = youtubeUrl;
-        const ytMatch = getYouTubeId(desc);
-        if (!finalYtUrl && ytMatch) finalYtUrl = `https://youtube.com/watch?v=${ytMatch}`;
-
-        // Use state/extracted instead of direct DOM access for consistency
-        if (typeof finalYtUrl === 'string' && finalYtUrl.trim()) {
-            fd.append('videoUrl', finalYtUrl.trim());
-        }
-
         if (file) {
             fd.append('image', file);
-        } else if (!preview && !youtubeUrl) {
-            // If user cleared everything, we might want to tell backend to remove media
-            // Depending on backend, a specific flag or empty videoUrl might do it.
-        }
+        } 
 
         try {
             setSaving(true);
@@ -4524,34 +4506,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-3">
-                            <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">
-                                YouTube URL
-                            </div>
-                            <div className="relative group">
-                                <div className="absolute -inset-0.5 bg-white/5 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                                <input
-                                    id="edit-youtube"
-                                    value={youtubeUrl}
-                                    placeholder="https://youtube.com/..."
-                                    className="relative w-full bg-black/40  rounded-2xl px-4 py-3 text-sm text-white outline-none placeholder-gray-700 focus:border-[var(--gold-primary)]/40   shadow-inner"
-                                    onChange={(e) => {
-                                        const v = e.target.value || '';
-                                        setYoutubeUrl(v);
-                                        const id = getYouTubeId(v);
-                                        if (id) {
-                                            const thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-                                            setPreview(thumb);
-                                            setIsVideo(false);
-                                        } else if (!v) {
-                                            if (!fileRef.current?.files[0]) {
-                                                setPreview(null);
-                                                setIsVideo(false);
-                                            }
-                                        }
-                                    }} />
-                            </div>
-                        </div>
+                        {/* YouTube URL removed */}
 
                         {/* Preview only, no file upload for edit */}
                         {preview && (
