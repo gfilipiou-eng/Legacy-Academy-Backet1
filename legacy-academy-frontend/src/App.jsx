@@ -1977,73 +1977,85 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
                         </div>
 
-                        {/* ── POST ACTIONS BAR ── */}
-                        <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
-                            {!isReadOnly && (
-                                <>
-                                    {/* COMMENTS */}
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/10 border border-transparent hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
-                                    >
-                                        <Icons.MessageSquare className="w-5 h-5" />
-                                        <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                                    </button>
-                                </>
-                            )}
+                        {/* ── POST ACTIONS/STATS BAR ── */}
+                        {!isReadOnly ? (
+                            <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
+                                {/* COMMENTS */}
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/10 border border-transparent hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    <Icons.MessageSquare className="w-5 h-5" />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
+                                </button>
 
-                            {/* REPOSTS */}
-                            <button
-                                disabled={isReadOnly}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!isReadOnly) {
+                                {/* REPOSTS */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         onRepost && onRepost(post._id);
-                                    }
-                                }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
-                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
-                            </button>
+                                    }}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
+                                >
+                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
+                                </button>
 
-                            {/* LIKE */}
-                            <button
-                                disabled={isReadOnly}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!isReadOnly) {
+                                {/* LIKE */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         const isLiked = post.likes?.some(id => isSameId(id, user?._id));
                                         playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                         onLike(post._id);
-                                    }
-                                }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
-                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
-                            </button>
+                                    }}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
+                                >
+                                        <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
+                                </button>
 
-                            {/* DISLIKE */}
-                            <button
-                                disabled={isReadOnly}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!isReadOnly) {
+                                {/* DISLIKE */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
                                         playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                         onDislike(post._id);
-                                    }
-                                }}
-                                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
-                                <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
-                            </button>
+                                    }}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
+                                >
+                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
+                                </button>
 
-                            {/* SHARE */}
+                                {/* SHARE */}
 
-                        </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
+                                {/* REPOSTS (read-only) */}
+                                <div className="flex items-center justify-center gap-2 px-4 py-2 text-gray-400">
+                                    <Icons.RefreshCcw className={`w-5 h-5 ${post.reposts?.length ? 'text-green-500' : ''}`} />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
+                                </div>
+
+                                {/* LIKES (read-only) */}
+                                <div className="flex items-center justify-center gap-2 px-4 py-2 text-gray-400">
+                                    <Icons.Heart className={`w-5 h-5 ${post.likes?.length ? 'text-red-500' : ''}`} />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
+                                </div>
+
+                                {/* DISLIKES (read-only) */}
+                                <div className="flex items-center justify-center gap-2 px-4 py-2 text-gray-400">
+                                    <Icons.ThumbsDown className={`w-5 h-5 ${post.dislikes?.length ? 'text-blue-500' : ''}`} />
+                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
+                                </div>
+
+                                {/* Filler to balance */}
+                                <div className="w-12"></div>
+                            </div>
+                        )}
 
                         {showComments && !isReadOnly && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
