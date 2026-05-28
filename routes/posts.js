@@ -109,18 +109,81 @@ router.put("/:id/dislike", verifyToken, handleDislike);
 
 // SHARE HANDLER
 const handleShare = async (req, res) => {
-  try {
-    const userId = req.user.id || req.user.userId;
-    const post = await Post.findByIdAndUpdate(
-      req.params.id,
-      { $addToSet: { shares: userId } },
-      { new: true }
-    );
-    if (!post) return res.status(404).json("Post not found");
-    res.status(200).json({ shares: post.shares });
-  } catch (e) { res.status(500).json(e); }
+    try {
+        const userId = req.user.id || req.user.userId;
+        const post = await Post.findByIdAndUpdate(
+            req.params.id,
+            { $addToSet: { shares: userId } },
+            { new: true }
+        );
+        if (!post) return res.status(404).json("Post not found");
+        res.status(200).json({ shares: post.shares });
+    } catch (e) { res.status(500).json(e); }
 };
 router.post("/:id/share", verifyToken, handleShare);
+
+// REPOST POST (Toggle repost status)
+router.route("/:id/repost").all(verifyToken, async (req, res) => {
+    try {
+        const targetId = String(req.params.id).trim();
+        const originalPost = await Post.findById(targetId);
+        if (!originalPost) return res.status(404).json(`Post not found: ${targetId}`);
+
+        const userId = String(req.user.id || req.user.userId);
+        const isReposting = !(originalPost.reposts || []).some(id => String(id) === userId);
+
+        let newReposts = (originalPost.reposts || []).map(id => String(id));
+        if (isReposting) {
+            newReposts.push(userId);
+        } else {
+            newReposts = newReposts.filter(id => id !== userId);
+        }
+
+        const updatedOriginalPost = await Post.findByIdAndUpdate(
+            targetId,
+            { $set: { reposts: [...new Set(newReposts)] } },
+            { new: true }
+        );
+
+        if (isReposting) {
+            // Create repost post
+            const currentUser = await User.findById(userId).select('username profilePic role');
+            const newRepost = new Post({
+                author: originalPost.author,
+                username: originalPost.username,
+                profilePic: originalPost.profilePic,
+                role: originalPost.role,
+                desc: originalPost.desc,
+                image: originalPost.image,
+                videoUrl: originalPost.videoUrl,
+                thumbnailUrl: originalPost.thumbnailUrl,
+                audioUrl: originalPost.audioUrl,
+                isRepost: true,
+                repostedBy: userId,
+                originalPost: targetId,
+                isStory: originalPost.isStory
+            });
+            await newRepost.save();
+            await newRepost.populate('author repostedBy', 'username profilePic role');
+        } else {
+            // Delete repost post
+            await Post.deleteOne({ originalPost: targetId, repostedBy: userId, isRepost: true });
+        }
+
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('post.reposted', { postId: targetId, reposts: updatedOriginalPost.reposts });
+        }
+
+        res.status(200).json({ 
+            message: isReposting ? "Reposted" : "Unreposted", 
+            reposts: updatedOriginalPost.reposts 
+        });
+    } catch (err) {
+        console.error("Repost error:", err);
+        res.status(500).json(err);
+    }
+});
 
 // COMMENT ROUTES - MUST BE BEFORE GENERIC /:id ROUTES
 // Update: Allow file upload for voice comments w/ Safe Wrapper
@@ -413,12 +476,13 @@ router.delete("/:id/comments", verifyToken, async (req, res) => {
 // GET ALL POSTS (With Privacy Filter)
 // GET ALL POSTS (With Privacy Filter)
 router.get("/", verifyToken, async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit) || 100;
-    const posts = await Post.find()
-      .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
-      .sort({ createdAt: -1 })
-      .lean();
+    try {
+        const limit = parseInt(req.query.limit) || 100;
+        const posts = await Post.find()
+            .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
+            .populate('repostedBy', 'username profilePic role')
+            .sort({ createdAt: -1 })
+            .lean();
 
     const currentUserId = String(req.user?.id || req.user?.userId || '');
     const isFounder = req.user?.role === 'Founder';
@@ -438,28 +502,28 @@ router.get("/", verifyToken, async (req, res) => {
 
 // GET POSTS BY USER ID
 router.get("/user/:userId", verifyToken, async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const author = await User.findById(userId).select('isPrivate isFollowersOnly followers role');
-    if (!author) return res.status(404).json("Agent not found.");
-    const currentUserId = String(req.user?.id || req.user?.userId || '');
-    const isFounder = req.user?.role === 'Founder';
-    const isOwner = String(userId) === currentUserId;
-    const isFollower = Array.isArray(author?.followers) && author.followers.some(id => String(id) === currentUserId);
-    const isPrivate = !!(author?.isPrivate || author?.isFollowersOnly);
-    if (isPrivate && !isOwner && !isFollower && !isFounder) {
-      return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
-    }
-    const posts = await Post.find({
-      $or: [
-        { author: userId },
-        { reposts: userId },
-        { reposts: new mongoose.Types.ObjectId(userId) }
-      ]
-    })
-      .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
-      .sort({ createdAt: -1 })
-      .lean();
+    try {
+        const { userId } = req.params;
+        const author = await User.findById(userId).select('isPrivate isFollowersOnly followers role');
+        if (!author) return res.status(404).json("Agent not found.");
+        const currentUserId = String(req.user?.id || req.user?.userId || '');
+        const isFounder = req.user?.role === 'Founder';
+        const isOwner = String(userId) === currentUserId;
+        const isFollower = Array.isArray(author?.followers) && author.followers.some(id => String(id) === currentUserId);
+        const isPrivate = !!(author?.isPrivate || author?.isFollowersOnly);
+        if (isPrivate && !isOwner && !isFollower && !isFounder) {
+            return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
+        }
+        const posts = await Post.find({
+            $or: [
+                { author: userId },
+                { repostedBy: userId }
+            ]
+        })
+            .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
+            .populate('repostedBy', 'username profilePic role')
+            .sort({ createdAt: -1 })
+            .lean();
 
     res.status(200).json(posts);
   } catch (err) {
@@ -761,8 +825,8 @@ router.get("/feed", verifyToken, async (req, res) => {
 
 // GET SINGLE POST (With Privacy Filter)
 router.get("/:id", verifyToken, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id).populate('author', 'username profilePic role isPrivate isFollowersOnly followers');
+    try {
+        const post = await Post.findById(req.params.id).populate('author', 'username profilePic role isPrivate isFollowersOnly followers').populate('repostedBy', 'username profilePic role');
     if (!post) return res.status(404).json("Post not found");
 
     const currentUserId = req.user.id || req.user.userId;

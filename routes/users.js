@@ -286,16 +286,18 @@ router.get("/public/posts/:username", async (req, res) => {
         const user = await User.findOne({ username: { $regex: safeRegex } });
         if (!user) return res.status(404).json("Agent not found.");
         const posts = await Post.find({
+            isStory: { $ne: true },
             $or: [
                 { author: user._id },
-                { reposts: String(user._id) },
-                { reposts: user._id }
+                { repostedBy: user._id }
             ]
-        }).populate('author', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });
+        }).populate('author repostedBy', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
+        console.error("Public posts error:", err);
         res.status(500).json([]);
     }
+
 });
 
 // ACCEPT follow request
