@@ -20,6 +20,11 @@ const PostSchema = new mongoose.Schema({
   profilePic: String, // Denormalized user profile pic
   role: String,   // User Role at creation
 
+  // REPOST
+  isRepost: { type: Boolean, default: false },
+  repostedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  originalPost: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
+
   // ENGAGEMENT
   likes: { type: Array, default: [] },
   dislikes: { type: Array, default: [] },
@@ -38,7 +43,7 @@ const PostSchema = new mongoose.Schema({
 
   // PREMIUM FEATURES
   isBoosted: { type: Boolean, default: false },  // Paid boost
-  boostExpiry: Date,  // When boost expires
+  boostExpires: Date,  // When boost expires
   visibility: { type: String, enum: ['public', 'followers', 'private'], default: 'public' },
   isPrivate: { type: Boolean, default: false }, // Denormalized for quick feed filtering
   isFollowersOnly: { type: Boolean, default: false }, // Denormalized for quick feed filtering

@@ -4389,6 +4389,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [desc, setDesc] = useState(post?.desc || '');
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
+    const [youtubeUrl, setYoutubeUrl] = useState('');
     const [saving, setSaving] = useState(false);
     const fileRef = useRef(null);
 
@@ -4398,6 +4399,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
             const isYT = isYouTubeUrl(post.videoUrl);
             setIsVideo(isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false)));
+            setYoutubeUrl(isYT ? post.videoUrl : '');
         }
     }, [post]);
 
@@ -4844,6 +4846,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         {groupPosts.map(p => {
                                             const hasMedia = p.image || p.videoUrl;
                                             const isVideo = p.videoUrl;
+                                            const isRepost = p.isRepost;
+                                            const reposter = p.repostedBy;
+                                            const postAuthor = p.author;
                                             return (
                                                 <div 
                                                     key={p._id} 
@@ -4856,12 +4861,20 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                         }
                                                     }}
                                                 >
+                                                    {isRepost && reposter && (
+                                                        <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
+                                                            <Icons.RefreshCcw className="w-3.5 h-3.5" />
+                                                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                                                                {reposter.username} REPOSTED
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     <div className="flex gap-3 text-left w-full items-start mb-3">
                                                         <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 border border-white/10">
-                                                            <img src={resolveMediaUrl(publicUser?.profilePic, 'https://i.ibb.co/zH9PZ1q/default-avatar.png')} className="w-full h-full object-cover" loading="lazy" />
+                                                            <img src={resolveMediaUrl(postAuthor?.profilePic || publicUser?.profilePic, 'https://i.ibb.co/zH9PZ1q/default-avatar.png')} className="w-full h-full object-cover" loading="lazy" />
                                                         </div>
                                                         <div className="min-w-0 flex-1">
-                                                            <div className="font-bold text-white text-sm mb-0.5">{publicUser?.username}</div>
+                                                            <div className="font-bold text-white text-sm mb-0.5">{postAuthor?.username || publicUser?.username}</div>
                                                             <span className="text-white/40 text-xs">{new Date(p.createdAt).toLocaleDateString()}</span>
                                                         </div>
                                                     </div>

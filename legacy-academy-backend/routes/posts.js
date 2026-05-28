@@ -50,6 +50,7 @@ router.get("/", verifyToken, async (req, res) => {
         const limit = parseInt(req.query.limit) || 20;
         const posts = await Post.find()
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
+            .populate("repostedBy", "username profilePic role")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 })
             .lean();
@@ -74,30 +75,55 @@ router.get("/", verifyToken, async (req, res) => {
 router.route("/:id/repost").all(verifyToken, async (req, res) => {
     try {
         const targetId = String(req.params.id).trim();
-        const currentPost = await Post.findById(targetId);
-        if (!currentPost) return res.status(404).json(`Post not found: ${targetId}`);
+        const originalPost = await Post.findById(targetId);
+        if (!originalPost) return res.status(404).json(`Post not found: ${targetId}`);
 
         const userId = String(req.user.id);
-        const isReposting = !(currentPost.reposts || []).some(id => String(id) === userId);
+        const isReposting = !(originalPost.reposts || []).some(id => String(id) === userId);
 
-        let newReposts = (currentPost.reposts || []).map(id => String(id));
+        let newReposts = (originalPost.reposts || []).map(id => String(id));
         if (isReposting) {
             newReposts.push(userId);
         } else {
             newReposts = newReposts.filter(id => id !== userId);
         }
 
-        const updatedPost = await Post.findByIdAndUpdate(
+        const updatedOriginalPost = await Post.findByIdAndUpdate(
             targetId,
             { $set: { reposts: [...new Set(newReposts)] } },
             { new: true }
         );
 
+        if (isReposting) {
+            // Create repost post
+            const currentUser = await User.findById(userId).select('username profilePic role');
+            const newRepost = new Post({
+                author: originalPost.author,
+                username: originalPost.username,
+                profilePic: originalPost.profilePic,
+                role: originalPost.role,
+                desc: originalPost.desc,
+                image: originalPost.image,
+                videoUrl: originalPost.videoUrl,
+                thumbnailUrl: originalPost.thumbnailUrl,
+                audioUrl: originalPost.audioUrl,
+                isRepost: true,
+                repostedBy: userId,
+                originalPost: targetId,
+                isStory: originalPost.isStory
+            });
+            await newRepost.save();
+            await newRepost.populate('author repostedBy', 'username profilePic role');
+        } else {
+            // Delete repost post
+            await Post.deleteOne({ originalPost: targetId, repostedBy: userId, isRepost: true });
+        }
+
         const io = req.app.get('io');
         if (io) {
-            io.emit('post.reposted', { postId: targetId, reposts: updatedPost.reposts });
+            io.emit('post.reposted', { postId: targetId, reposts: updatedOriginalPost.reposts });
 
-            if (isReposting && String(updatedPost.author) !== userId) {
+            if (isReposting && String(updatedOriginalPost.author) !== userId) {
                 // Fetch real actor info (JWT only has id+role)
                 const actor = await User.findById(userId).select('username profilePic role profileDescriptor').lean();
                 const fromUsername = actor?.username || 'Unknown';
@@ -105,19 +131,19 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
                 const fromRole = actor?.role || 'User';
                 const fromDescriptor = actor?.profileDescriptor || '';
 
-                await User.findByIdAndUpdate(updatedPost.author, {
+                await User.findByIdAndUpdate(updatedOriginalPost.author, {
                     $push: {
                         notifications: {
-                            $each: [{ type: 'repost', from: userId, fromUsername, fromProfilePic, fromRole, fromDescriptor, post: updatedPost._id, read: false, createdAt: new Date() }],
+                            $each: [{ type: 'repost', from: userId, fromUsername, fromProfilePic, fromRole, fromDescriptor, post: updatedOriginalPost._id, read: false, createdAt: new Date() }],
                             $position: 0
                         }
                     }
                 });
-                io.to(String(updatedPost.author)).emit('notification.received', { type: 'repost', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: updatedPost._id });
+                io.to(String(updatedOriginalPost.author)).emit('notification.received', { type: 'repost', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: updatedOriginalPost._id });
             }
         }
 
-        res.status(200).json({ message: isReposting ? "Reposted" : "Unreposted", reposts: updatedPost.reposts });
+        res.status(200).json({ message: isReposting ? "Reposted" : "Unreposted", reposts: updatedOriginalPost.reposts });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -141,11 +167,11 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
         const posts = await Post.find({
             $or: [
                 { author: targetUserId },
-                { reposts: targetUserId },
-                { reposts: new mongoose.Types.ObjectId(targetUserId) }
+                { repostedBy: targetUserId }
             ]
         })
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
+            .populate("repostedBy", "username profilePic role")
             .populate("comments.user", "username profilePic role")
             .sort({ createdAt: -1 })
             .lean();
