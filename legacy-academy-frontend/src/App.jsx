@@ -4859,7 +4859,6 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         );
                     })()}
                 </div>
-                </div>
             </div>
 
             {/* FULL SCREEN IMAGE ZOOM MODAL */}
