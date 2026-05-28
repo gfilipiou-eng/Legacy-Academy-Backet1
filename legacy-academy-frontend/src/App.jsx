@@ -4810,41 +4810,48 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 {t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')}
                             </div>
                         </div>
-                    ) : publicPosts.length === 0 ? (
-                        <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
-                            {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
-                        </div>
-                    ) : (
-                        <div className="flex flex-col w-full">
-                            {publicPosts.map(p => (
-                                <PostCard 
-                                    key={p._id} 
-                                    post={p} 
-                                    user={null} 
-                                    allUsers={[]} 
-                                    forcePause={false} 
-                                    onHashtagClick={() => {}} 
-                                    onLike={() => {}} 
-                                    onDislike={() => {}} 
-                                    onRepost={() => {}} 
-                                    onComment={() => {}} 
-                                    onDelete={() => {}} 
-                                    onViewProfile={() => {}} 
-                                    onOpenDetail={() => {}} 
-                                    onOpenChat={() => {}} 
-                                    onEditComment={() => {}} 
-                                    onDeleteComment={() => {}} 
-                                    onEditPost={() => {}} 
-                                    onShare={() => {}} 
-                                    onMediaClick={(post) => {
-                                        const mediaUrl = resolveMediaUrl(post.image || post.thumbnailUrl || post.videoUrl, null, false, true);
-                                        if (mediaUrl) setZoomImage(mediaUrl);
-                                    }}
-                                    isReadOnly={true}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    ) : (() => {
+                        const uid = safeId(publicUser);
+                        const displayPosts = publicPosts.filter(p => 
+                            isSameId(p.author, uid) || p.isRepost
+                        );
+                        return displayPosts.length === 0 ? (
+                            <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                                {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col w-full">
+                                {displayPosts.map(p => (
+                                    <PostCard 
+                                        key={p._id} 
+                                        post={p} 
+                                        user={null} 
+                                        allUsers={[]} 
+                                        forcePause={false} 
+                                        onHashtagClick={() => {}} 
+                                        onLike={() => {}} 
+                                        onDislike={() => {}} 
+                                        onRepost={() => {}} 
+                                        onComment={() => {}} 
+                                        onDelete={() => {}} 
+                                        onViewProfile={() => {}} 
+                                        onOpenDetail={() => {}} 
+                                        onOpenChat={() => {}} 
+                                        onEditComment={() => {}} 
+                                        onDeleteComment={() => {}} 
+                                        onEditPost={() => {}} 
+                                        onShare={() => {}} 
+                                        onMediaClick={(post) => {
+                                            const mediaUrl = resolveMediaUrl(post.image || post.thumbnailUrl || post.videoUrl, null, false, true);
+                                            if (mediaUrl) setZoomImage(mediaUrl);
+                                        }}
+                                        isReadOnly={true}
+                                    />
+                                ))}
+                            </div>
+                        );
+                    })()}
+                </div>
                 </div>
             </div>
 
