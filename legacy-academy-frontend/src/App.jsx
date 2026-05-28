@@ -1759,7 +1759,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null }) => {
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -1949,7 +1949,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {(post.image || post.videoUrl) && (
                                 <div className="rounded-none overflow-hidden  bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
                                     {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause} />
                                     ) : post.image && (
                                         imgError ? (
                                             <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
@@ -1963,8 +1963,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 className="w-full h-auto object-contain bg-[#050505]"
                                                 loading="lazy"
                                                 decoding="async"
-                                                onClick={() => onOpenDetail(post)}
-                                                onDoubleClick={handleDoubleTap}
+                                                onClick={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)}
+                                                onDoubleClick={onMediaClick ? () => onMediaClick(post) : handleDoubleTap}
                                                 onError={() => {
                                                     setImgError(true);
                                                     // Auto-cleanup broken link (Only for Author/Founder)
@@ -4809,6 +4809,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     onDeleteComment={() => {}} 
                                     onEditPost={() => {}} 
                                     onShare={() => {}} 
+                                    onMediaClick={(post) => {
+                                        const mediaUrl = resolveMediaUrl(post.image || post.thumbnailUrl || post.videoUrl, null, false, true);
+                                        if (mediaUrl) setZoomImage(mediaUrl);
+                                    }}
                                 />
                             ))}
                         </div>
