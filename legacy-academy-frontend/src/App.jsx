@@ -4861,14 +4861,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                             return (
                                                 <div 
                                                     key={p._id} 
-                                                    className="w-full border border-white/10 p-4 rounded-3xl bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-colors"
-                                                    onClick={() => {
-                                                        if (hasMedia) {
-                                                            setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true));
-                                                        } else {
-                                                            onOpenPost?.(p._id);
-                                                        }
-                                                    }}
+                                                    className="w-full border border-white/10 p-4 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
                                                 >
                                                     {isRepost && reposter && (
                                                         <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
@@ -4896,7 +4889,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                                                     {hasMedia && (
                                                         <>
-                                                            <div className="w-full relative rounded-2xl overflow-hidden bg-[#1a1a1a]">
+                                                            <div 
+                                                                className="w-full relative rounded-2xl overflow-hidden bg-[#1a1a1a] cursor-pointer"
+                                                                onClick={() => setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true))}
+                                                            >
                                                                 {isVideo ? (
                                                                     <>
                                                                         <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" muted playsInline />
