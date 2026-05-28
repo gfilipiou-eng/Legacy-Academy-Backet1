@@ -154,12 +154,12 @@ router.get("/public/posts/:username", async (req, res) => {
             isStory: { $ne: true },
             $or: [
                 { author: user._id },
-                { repostedBy: user._id },
-                { reposts: user._id }
+                { repostedBy: user._id }
             ]
         }).populate('author repostedBy', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
+        console.error("Public posts error:", err);
         res.status(500).json([]);
     }
 });
