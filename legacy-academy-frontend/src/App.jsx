@@ -1901,7 +1901,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none cursor-pointer overflow-hidden " onClick={() => onViewProfile(author)}>
+                        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none overflow-hidden ${isReadOnly ? '' : 'cursor-pointer'}`} onClick={() => !isReadOnly && onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -1913,7 +1913,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className="min-w-0 flex-1 pr-1">
                                 <div className="flex flex-col gap-2 min-w-0">
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
-                                        <span className="font-bold text-white text-[13px] sm:text-[15px] hover:underline cursor-pointer break-words leading-tight" onClick={() => onViewProfile(author)}>{author?.username}</span>
+                                        <span className={`font-bold text-white text-[13px] sm:text-[15px] break-words leading-tight ${isReadOnly ? '' : 'hover:underline cursor-pointer'}`} onClick={() => !isReadOnly && onViewProfile(author)}>{author?.username}</span>
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
                                         <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
                                     </div>
@@ -1923,26 +1923,29 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 </div>
                             </div>
 
-                            <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />
+                            {!isReadOnly && <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />}
                         </div>
 
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
                                     <p className="text-[17px] sm:text-[19px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
-                                        {parseText(translatedText || post.desc, (tag) => onHashtagClick?.(tag), (username) => {
+                                        {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
+                                            if (isReadOnly) return;
                                             const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
                                             if (u && onViewProfile) onViewProfile(u);
                                         })}
                                     </p>
-                                    <button
-                                        onClick={handleTranslate}
-                                        disabled={isTranslating}
-                                        className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
-                                    >
-                                        <Icons.Globe className={`w-3 h-3 ${isTranslating ? 'animate-spin' : ''}`} />
-                                        {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
-                                    </button>
+                                    {!isReadOnly && (
+                                        <button
+                                            onClick={handleTranslate}
+                                            disabled={isTranslating}
+                                            className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
+                                        >
+                                            <Icons.Globe className={`w-3 h-3 ${isTranslating ? 'animate-spin' : ''}`} />
+                                            {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
+                                        </button>
+                                    )}
                                 </div>
                             )}
 
