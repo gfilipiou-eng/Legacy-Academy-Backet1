@@ -1901,7 +1901,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none overflow-hidden ${isReadOnly ? '' : 'cursor-pointer'}`} onClick={() => !isReadOnly && onViewProfile(author)}>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none overflow-hidden cursor-pointer" onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -1913,7 +1913,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className="min-w-0 flex-1 pr-1">
                                 <div className="flex flex-col gap-2 min-w-0">
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
-                                        <span className={`font-bold text-white text-[13px] sm:text-[15px] break-words leading-tight ${isReadOnly ? '' : 'hover:underline cursor-pointer'}`} onClick={() => !isReadOnly && onViewProfile(author)}>{author?.username}</span>
+                                        <span className="font-bold text-white text-[13px] sm:text-[15px] break-words leading-tight hover:underline cursor-pointer" onClick={() => onViewProfile(author)}>{author?.username}</span>
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
                                         <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
                                     </div>
@@ -4837,7 +4837,11 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         onRepost={() => {}} 
                                         onComment={() => {}} 
                                         onDelete={() => {}} 
-                                        onViewProfile={() => {}} 
+                                        onViewProfile={(author) => {
+                                            if (author?.username) {
+                                                navigatePublicProfile(author.username);
+                                            }
+                                        }} 
                                         onOpenDetail={() => {}} 
                                         onOpenChat={() => {}} 
                                         onEditComment={() => {}} 
