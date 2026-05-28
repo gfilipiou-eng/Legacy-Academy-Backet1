@@ -285,6 +285,7 @@ router.get("/public/posts/:username", async (req, res) => {
         const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
         const user = await User.findOne({ username: { $regex: safeRegex } });
         if (!user) return res.status(404).json("Agent not found.");
+        console.log("🔍 [PUBLIC POSTS] Looking for posts for user:", user.username, "user ID:", user._id);
         const posts = await Post.find({
             isStory: { $ne: true },
             $or: [
@@ -292,6 +293,7 @@ router.get("/public/posts/:username", async (req, res) => {
                 { repostedBy: user._id }
             ]
         }).populate('author repostedBy', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });
+        console.log("🔍 [PUBLIC POSTS] Found posts:", posts.length, posts.map(p => ({ _id: p._id, isRepost: p.isRepost, repostedBy: p.repostedBy, author: p.author })));
         res.status(200).json(posts);
     } catch (err) {
         console.error("Public posts error:", err);

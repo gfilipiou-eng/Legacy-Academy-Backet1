@@ -131,6 +131,7 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
 
         const userId = String(req.user.id || req.user.userId);
         const isReposting = !(originalPost.reposts || []).some(id => String(id) === userId);
+        console.log("🔄 [REPOST] User", userId, "is reposting post", targetId, "isReposting:", isReposting);
 
         let newReposts = (originalPost.reposts || []).map(id => String(id));
         if (isReposting) {
@@ -147,6 +148,7 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
 
         if (isReposting) {
             // Create repost post
+            console.log("🔄 [REPOST] Creating repost post for user:", userId);
             const currentUser = await User.findById(userId).select('username profilePic role');
             const newRepost = new Post({
                 author: originalPost.author,
@@ -165,9 +167,12 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
             });
             await newRepost.save();
             await newRepost.populate('author repostedBy', 'username profilePic role');
+            console.log("🔄 [REPOST] Repost post created successfully:", newRepost._id);
         } else {
             // Delete repost post
-            await Post.deleteOne({ originalPost: targetId, repostedBy: userId, isRepost: true });
+            console.log("🔄 [REPOST] Deleting repost post for user:", userId);
+            const deleted = await Post.deleteOne({ originalPost: targetId, repostedBy: userId, isRepost: true });
+            console.log("🔄 [REPOST] Repost post deleted count:", deleted.deletedCount);
         }
 
         const io = req.app.get('io');
