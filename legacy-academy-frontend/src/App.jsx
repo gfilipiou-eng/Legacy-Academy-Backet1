@@ -4721,19 +4721,38 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
                 )}
 
-                {/* STATS BAR */}
-                <div className="w-full grid grid-cols-3 gap-3 mt-6">
-                    <div className="p-4 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none">
-                        <span className="block text-lg font-black text-white tabular-nums">{publicPosts?.length || 0}</span>
-                        <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('POSTS') || 'POSTS'}</span>
+                {/* STATS GRID — 4 equal columns */}
+                <div className="grid grid-cols-4 gap-2 w-full mt-6">
+                    {/* POSTS */}
+                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md rounded-2xl shadow-lg">
+                        <span className="font-black text-white text-base leading-none tabular-nums">{publicPosts?.length || 0}</span>
+                        <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                     </div>
-                    <div className="p-4 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none">
-                        <span className="block text-lg font-black text-white tabular-nums">{publicUser.followers?.length || 0}</span>
-                        <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWERS') || 'FOLLOWERS'}</span>
+
+                    {/* REPOSTS */}
+                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md rounded-2xl shadow-lg">
+                        <span className="font-black text-white text-base leading-none tabular-nums">
+                            {publicPosts.filter(p => p.isRepost).length}
+                        </span>
+                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-400" />
                     </div>
-                    <div className="p-4 bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-none text-center shadow-none">
-                        <span className="block text-lg font-black text-white tabular-nums">{publicUser.following?.length || 0}</span>
-                        <span className="text-[8px] text-gray-500 font-black uppercase tracking-wider">{t('FOLLOWING') || 'FOLLOWING'}</span>
+
+                    {/* FOLLOWERS */}
+                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md rounded-2xl shadow-lg">
+                        <span className="font-black text-white text-base leading-none tabular-nums">
+                            {publicUser.followers?.length || 0}
+                        </span>
+                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
+                            {t('FOLLOWERS') || 'FOLLOWERS'}
+                        </span>
+                    </div>
+
+                    {/* FOLLOWING */}
+                    <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md rounded-2xl shadow-lg">
+                        <span className="font-black text-white text-base leading-none tabular-nums">
+                            {publicUser.following?.length || 0}
+                        </span>
+                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                     </div>
                 </div>
 
@@ -4755,85 +4774,30 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <div className="h-[1px] flex-1 bg-white/20" />
                 </div>
 
-                {/* simplified, READ-ONLY POST LIST */}
-                <div className="w-full space-y-4">
+                {/* Posts with same style as regular profile */}
+                <div className="w-full space-y-6 pb-20">
                     {loadingPosts ? (
-                        <div className="flex flex-col items-center justify-center p-12 gap-4 border border-dashed border-white/10 rounded-none bg-white/[0.01]">
+                        <div className="flex flex-col items-center justify-center p-12 gap-4 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
                             <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)]" />
                             <div className="text-center text-xs text-white/35 font-bold uppercase tracking-widest">
                                 {t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')}
                             </div>
                         </div>
                     ) : publicPosts.length === 0 ? (
-                        <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-none bg-white/[0.01]">
+                        <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
                             {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
                         </div>
                     ) : (
                         <div className="flex flex-col w-full">
-                            {Object.entries(groupedPublicPosts).map(([dateLabel, groupPosts]) => (
-                                <div key={dateLabel} className="mb-8 w-full">
-                                    <div className="px-4 py-3 sticky top-0 z-10 bg-black/80 backdrop-blur-md flex items-center justify-between border-b border-white/5">
-                                        <h3 className="text-[13px] font-black text-white">{dateLabel}</h3>
-                                        <Icons.ChevronRight className="w-4 h-4 text-white/30" />
-                                    </div>
-                                    <div className="flex flex-col gap-6 w-full">
-                                        {groupPosts.map(p => {
-                                            const hasMedia = p.image || p.videoUrl;
-                                            const isVideo = p.videoUrl;
-                                            const isRepost = p.isRepost;
-                                            const reposter = p.repostedBy;
-                                            const postAuthor = p.author;
-                                            return (
-                                                <div 
-                                                    key={p._id} 
-                                                    className="w-full border border-white/10 p-4 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
-                                                >
-                                                    {isRepost && reposter && (
-                                                        <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
-                                                            <Icons.RefreshCcw className="w-3.5 h-3.5" />
-                                                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                                                                {reposter.username} REPOSTED
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                    <div className="flex gap-3 text-left w-full items-start mb-3">
-                                                        <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 border border-white/10">
-                                                            <img src={resolveMediaUrl(postAuthor?.profilePic || publicUser?.profilePic, 'https://i.ibb.co/zH9PZ1q/default-avatar.png')} className="w-full h-full object-cover" loading="lazy" />
-                                                        </div>
-                                                        <div className="min-w-0 flex-1">
-                                                            <div className="font-bold text-white text-sm mb-0.5">{postAuthor?.username || publicUser?.username}</div>
-                                                            <span className="text-white/40 text-xs">{new Date(p.createdAt).toLocaleDateString()}</span>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    {p.desc && (
-                                                        <div className="text-white/90 text-sm whitespace-pre-wrap break-words leading-relaxed mb-4">
-                                                            {p.desc}
-                                                        </div>
-                                                    )}
-
-                                                    {hasMedia && (
-                                                        <div 
-                                                            className="w-full relative rounded-2xl overflow-hidden bg-[#1a1a1a] cursor-pointer"
-                                                            onClick={() => setZoomImage(resolveMediaUrl(p.image || p.thumbnailUrl || p.videoUrl, null, false, true))}
-                                                        >
-                                                            {isVideo ? (
-                                                                <>
-                                                                    <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" muted playsInline />
-                                                                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-md p-1.5 rounded-full">
-                                                                        <Icons.Play className="w-4 h-4 text-white" />
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" loading="lazy" />
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
+                            {publicPosts.map(p => (
+                                <PostCard 
+                                    key={p._id} 
+                                    post={p} 
+                                    user={null} 
+                                    allUsers={[]} 
+                                    forcePause={false} 
+                                    onHashtagClick={() => {}} 
+                                />
                             ))}
                         </div>
                     )}
