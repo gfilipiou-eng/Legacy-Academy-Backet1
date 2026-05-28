@@ -4749,7 +4749,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
                     <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md rounded-2xl shadow-lg">
-                        <span className="font-black text-white text-base leading-none tabular-nums">{publicPosts?.length || 0}</span>
+                        <span className="font-black text-white text-base leading-none tabular-nums">
+                            {(() => {
+                                const uid = safeId(publicUser);
+                                return (publicPosts || []).filter(p =>
+                                    isSameId(p.author, uid) && !p.isRepost
+                                ).length;
+                            })()}
+                        </span>
                         <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                     </div>
 
@@ -4759,8 +4766,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             {(() => {
                                 const uid = safeId(publicUser);
                                 return (publicPosts || []).filter(p =>
-                                    Array.isArray(p.reposts) && p.reposts.some(id => isSameId(id, uid)) &&
-                                    !isSameId(p.author, uid)
+                                    p.isRepost && isSameId(p.repostedBy, uid)
                                 ).length;
                             })()}
                         </span>
@@ -4816,7 +4822,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     ) : (() => {
                         const uid = safeId(publicUser);
                         const displayPosts = publicPosts.filter(p => 
-                            isSameId(p.author, uid) || p.isRepost
+                            isSameId(p.author, uid) || (p.isRepost && isSameId(p.repostedBy, uid))
                         );
                         return displayPosts.length === 0 ? (
                             <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
