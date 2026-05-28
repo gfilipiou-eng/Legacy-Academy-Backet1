@@ -1760,6 +1760,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 };
 
 const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false }) => {
+    console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
     const [isRecordingComment, setIsRecordingComment] = useState(false);
@@ -4608,6 +4609,9 @@ const applyZoom = (zoom) => {
 };
 
 const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, onNavigateProfile, onOpenPost, t }) => {
+    console.log("🔗 [PUBLIC PROFILE] username:", username);
+    console.log("🔗 [PUBLIC PROFILE] publicUser:", publicUser);
+    console.log("🔗 [PUBLIC PROFILE] publicPosts:", publicPosts?.map(p => ({ _id: p._id, isRepost: p.isRepost, repostedBy: p.repostedBy, author: p.author })));
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
     const urlThemeParam = searchParams.get('theme');
