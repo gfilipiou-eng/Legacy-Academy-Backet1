@@ -4753,7 +4753,13 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* REPOSTS */}
                     <div className="flex flex-col items-center justify-center gap-1 py-3 bg-black/40 backdrop-blur-md rounded-2xl shadow-lg">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {publicPosts.filter(p => p.isRepost).length}
+                            {(() => {
+                                const uid = safeId(publicUser);
+                                return (publicPosts || []).filter(p =>
+                                    Array.isArray(p.reposts) && p.reposts.some(id => isSameId(id, uid)) &&
+                                    !isSameId(p.author, uid)
+                                ).length;
+                            })()}
                         </span>
                         <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-400" />
                     </div>
