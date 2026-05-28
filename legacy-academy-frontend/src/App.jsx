@@ -1083,37 +1083,50 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
                 {/* Image Section */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black flex flex-col items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
-                        isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
-                            <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full h-full" forcePause={isWritingComment} />
-                        ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                            <NeuralVideoPlayer
-                                src={resolveMediaUrl(post.videoUrl || post.image)}
-                                poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                className="w-full h-full"
-                                forcePause={isWritingComment}
-                            />
-                        ) : (
-                            !imgError ? (
-                                <img
-                                    src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                    className="max-w-full max-h-full object-contain cursor-pointer"
-                                    onClick={onClose}
-                                    decoding="async"
-                                    onError={() => {
-                                        setImgError(true);
-                                        const canDelete = isOwner || user?.role === 'Founder';
-                                        if (canDelete && post.image) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
-                                    }}
+                        <>
+                            {isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
+                                <NeuralVideoPlayer src={post.videoUrl || post.thumbnailUrl || post.image} className="w-full flex-1" forcePause={isWritingComment} />
+                            ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                <NeuralVideoPlayer
+                                    src={resolveMediaUrl(post.videoUrl || post.image)}
+                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                    className="w-full flex-1"
+                                    forcePause={isWritingComment}
                                 />
                             ) : (
-                                <div className="flex flex-col items-center justify-center p-10 text-gray-500">
-                                    <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
-                                    <span className="text-xs font-black uppercase tracking-widest opacity-50">Image unavailable</span>
-                                </div>
-                            )
-                        )
+                                !imgError ? (
+                                    <img
+                                        src={resolveMediaUrl(post.image || post.thumbnailUrl)}
+                                        className="max-w-full max-h-full object-contain cursor-pointer"
+                                        onClick={onClose}
+                                        decoding="async"
+                                        onError={() => {
+                                            setImgError(true);
+                                            const canDelete = isOwner || user?.role === 'Founder';
+                                            if (canDelete && post.image) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500">
+                                        <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
+                                        <span className="text-xs font-black uppercase tracking-widest opacity-50">Image unavailable</span>
+                                    </div>
+                                )
+                            )}
+                            {isYouTubeUrl(post.videoUrl) && (
+                                <a
+                                    href={post.videoUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[12px] text-[#1D9BF0] hover:underline p-4 block"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    {post.videoUrl}
+                                </a>
+                            )}
+                        </>
                     ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-black  w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
                 </div>
 
@@ -1949,35 +1962,48 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             )}
 
                             {(post.image || post.videoUrl) && (
-                                <div className="rounded-none overflow-hidden  bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
-                                    {isYouTubeUrl(post.videoUrl) ? (
-                                        <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
-                                    ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
-                                    ) : post.image && (
-                                        imgError ? (
-                                            <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
-                                                <Icons.Image className="w-8 h-8 opacity-20" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
-                                            </div>
-                                        ) : (
-                                            <img
-                                                src={resolveMediaUrl(post.image)}
-                                                alt="Media"
-                                                className="w-full h-auto object-contain bg-[#050505]"
-                                                loading="lazy"
-                                                decoding="async"
-                                                onClick={() => onOpenDetail(post)}
-                                                onDoubleClick={handleDoubleTap}
-                                                onError={() => {
-                                                    setImgError(true);
-                                                    // Auto-cleanup broken link (Only for Author/Founder)
-                                                    if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
-                                                }}
-                                            />
-                                        )
+                                <>
+                                    <div className="rounded-none overflow-hidden  bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3">
+                                        {isYouTubeUrl(post.videoUrl) ? (
+                                            <NeuralVideoPlayer src={post.videoUrl} className="w-full aspect-video" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                        ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto" onExpand={() => onOpenDetail(post)} forcePause={forcePause} />
+                                        ) : post.image && (
+                                            imgError ? (
+                                                <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
+                                                    <Icons.Image className="w-8 h-8 opacity-20" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={resolveMediaUrl(post.image)}
+                                                    alt="Media"
+                                                    className="w-full h-auto object-contain bg-[#050505]"
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    onClick={() => onOpenDetail(post)}
+                                                    onDoubleClick={handleDoubleTap}
+                                                    onError={() => {
+                                                        setImgError(true);
+                                                        // Auto-cleanup broken link (Only for Author/Founder)
+                                                        if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                                    }}
+                                                />
+                                            )
+                                        )}
+                                    </div>
+                                    {isYouTubeUrl(post.videoUrl) && (
+                                        <a
+                                            href={post.videoUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-[12px] text-[#1D9BF0] hover:underline mt-2 block"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            {post.videoUrl}
+                                        </a>
                                     )}
-                                </div>
+                                </>
                             )}
                         </div>
 
@@ -4527,35 +4553,18 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                             </div>
                         </div>
 
-
-                        <div onClick={() => fileRef.current?.click()} className="cursor-pointer mb-4">
-                            {preview ? (
+                        {/* Preview only, no file upload for edit */}
+                        {preview && (
+                            <div className="cursor-pointer mb-4">
                                 <div className="w-full min-h-[200px] aspect-video rounded-2xl overflow-hidden relative bg-black/60  shadow-2xl flex items-center justify-center group/preview">
                                     {isVideo ? (
                                         <video src={preview} className="w-full h-full object-contain" controls />
                                     ) : (
                                         <img src={preview} className="w-full h-full object-contain" alt="Neural Preview" />
                                     )}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setPreview(null);
-                                            setIsVideo(false);
-                                            if (fileRef.current) fileRef.current.value = '';
-                                        }}
-                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-xl  text-white  shadow-xl  opacity-0 group-hover/preview:opacity-100"
-                                    >
-                                        <Icons.X className="w-4 h-4" />
-                                    </button>
                                 </div>
-                            ) : (
-                                <div className="w-full py-10 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3    text-gray-500 cursor-pointer group">
-                                    <Icons.Image className="w-8 h-8 opacity-30 group-hover:scale-110 group-hover:text-white" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('UPLOAD_MEDIA')}</span>
-                                </div>
-                            )}
-                            <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
-                        </div>
+                            </div>
+                        )}
 
                         <div className="flex gap-4">
                             <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
@@ -4886,18 +4895,31 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     )}
 
                                                     {hasMedia && (
-                                                        <div className="w-full relative rounded-2xl overflow-hidden bg-[#1a1a1a]">
-                                                            {isVideo ? (
-                                                                <>
-                                                                    <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" muted playsInline />
-                                                                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-md p-1.5 rounded-full">
-                                                                        <Icons.Play className="w-4 h-4 text-white" />
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" loading="lazy" />
+                                                        <>
+                                                            <div className="w-full relative rounded-2xl overflow-hidden bg-[#1a1a1a]">
+                                                                {isVideo ? (
+                                                                    <>
+                                                                        <video src={resolveMediaUrl(p.videoUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" muted playsInline />
+                                                                        <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-md p-1.5 rounded-full">
+                                                                            <Icons.Play className="w-4 h-4 text-white" />
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <img src={resolveMediaUrl(p.image || p.thumbnailUrl, null, false, false, true)} className="w-full h-auto max-h-[500px] object-cover" loading="lazy" />
+                                                                )}
+                                                            </div>
+                                                            {isYouTubeUrl(p.videoUrl) && (
+                                                                <a
+                                                                    href={p.videoUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-[12px] text-[#1D9BF0] hover:underline mt-2 block"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    {p.videoUrl}
+                                                                </a>
                                                             )}
-                                                        </div>
+                                                        </>
                                                     )}
                                                 </div>
                                             );
