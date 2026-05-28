@@ -4797,6 +4797,18 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     allUsers={[]} 
                                     forcePause={false} 
                                     onHashtagClick={() => {}} 
+                                    onLike={() => {}} 
+                                    onDislike={() => {}} 
+                                    onRepost={() => {}} 
+                                    onComment={() => {}} 
+                                    onDelete={() => {}} 
+                                    onViewProfile={() => {}} 
+                                    onOpenDetail={() => {}} 
+                                    onOpenChat={() => {}} 
+                                    onEditComment={() => {}} 
+                                    onDeleteComment={() => {}} 
+                                    onEditPost={() => {}} 
+                                    onShare={() => {}} 
                                 />
                             ))}
                         </div>
