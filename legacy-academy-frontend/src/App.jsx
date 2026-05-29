@@ -1716,6 +1716,22 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] rounded-full overflow-hidden relative group">
+                    {/* Animated Bubbles */}
+                    <div className="absolute inset-0 overflow-hidden rounded-full">
+                        {[0,1,2,3,4].map(i => (
+                            <div 
+                                key={i}
+                                className="absolute rounded-full bg-white/10 animate-float"
+                                style={{ 
+                                    left: `${15 + i * 18}%`, 
+                                    width: `${6 + (i % 3) * 4}px`, 
+                                    height: `${6 + (i % 3) * 4}px`,
+                                    animationDelay: `${i * 0.6}s`, 
+                                    bottom: '-10px'
+                                }}
+                            />
+                        ))}
+                    </div>
                     {/* Liquid Glass Background */}
                     <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                     {/* Inner Profile Avatar */}
@@ -1723,7 +1739,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         <ProfileAvatar user={user} className="opacity-60" key={imgKey} cacheKey={imgKey} />
                     </div>
                     {/* Add Icon */}
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
                         <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
                             <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -4228,6 +4244,22 @@ const ProfileModal = ({
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                                         <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] rounded-full relative group">
+                                                            {/* Animated Bubbles */}
+                                                            <div className="absolute inset-0 overflow-hidden rounded-full">
+                                                                {[0,1,2,3,4].map(i => (
+                                                                    <div 
+                                                                        key={i}
+                                                                        className="absolute rounded-full bg-white/10 animate-float"
+                                                                        style={{ 
+                                                                            left: `${15 + i * 18}%`, 
+                                                                            width: `${6 + (i % 3) * 4}px`, 
+                                                                            height: `${6 + (i % 3) * 4}px`,
+                                                                            animationDelay: `${i * 0.6}s`, 
+                                                                            bottom: '-10px'
+                                                                        }}
+                                                                    />
+                                                                ))}
+                                                            </div>
                                                             {/* Liquid Glass Background */}
                                                             <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                                                             {/* Inner Profile Avatar */}
@@ -4235,7 +4267,7 @@ const ProfileModal = ({
                                                                 <ProfileAvatar user={currentUser} className="opacity-40" />
                                                             </div>
                                                             {/* Add Icon */}
-                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                            <div className="absolute inset-0 flex items-center justify-center z-10">
                                                                 <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
                                                                     <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
                                                                         <line x1="12" y1="5" x2="12" y2="19"></line>
