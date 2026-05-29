@@ -237,7 +237,7 @@ const THEME_PALETTE = [
     { value: '#ffd700', labelKey: 'COLOR_GOLD' },
     { value: '#39ff14', labelKey: 'COLOR_NEON_GREEN' },
     { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
-    { value: '#0ea5e9', labelKey: 'COLOR_GALAZIO' },
+    { value: '#0ea5e9', labelKey: 'COLOR_WATER' },
     { value: '#10b981', labelKey: 'COLOR_GREEN' },
     { value: '#ff5500', labelKey: 'COLOR_ORANGE' },
     { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
@@ -2991,10 +2991,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     className="theme-swatch-btn flex flex-col items-center gap-1.5"
                                                 >
                                                     <span
-                                                        className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all ${active ? 'border-white ring-2 ring-white/90 ring-offset-2 ring-offset-black' : 'border-white/25 opacity-85 hover:opacity-100'}`}
+                                                        className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all ${active ? 'border-[var(--gold-primary)]' : 'border-white/25 opacity-85 hover:opacity-100'}`}
                                                         style={{ backgroundColor: value }}
                                                     />
-                                                    <span className={`text-[9px] font-bold uppercase tracking-wide text-center leading-tight max-w-[72px] ${active ? 'text-white' : 'text-gray-500'}`}>
+                                                    <span className={`text-[9px] font-bold uppercase tracking-wide text-center leading-tight max-w-[72px] ${active ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
                                                         {t(labelKey) || t('COLOR_WHITE')}
                                                     </span>
                                                 </button>
@@ -3017,9 +3017,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
                                 <button key={l.id} type="button" style={{ WebkitTapHighlightColor: 'transparent' }} disabled={activeLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer touch-manipulation relative overflow-hidden ${activeLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/20 shadow-[0_0_25px_rgba(212,175,55,0.4)] scale-[1.05]' : 'border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-white/20 hover:scale-105'}`}
+                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer touch-manipulation relative overflow-hidden ${activeLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/20' : 'border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-white/20'}`}
                                 >
-                                    <div className={`text-xl transition-all duration-300 ${activeLanguage === l.id ? 'scale-125 drop-shadow-lg text-shadow' : 'opacity-90'}`}>{l.flag}</div>
+                                    <div className={`text-xl transition-all duration-300 ${activeLanguage === l.id ? '' : 'opacity-90'}`}>{l.flag}</div>
                                     <div className={`text-[9px] font-black uppercase tracking-widest ${activeLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{l.label}</div>
                                 </button>
                             ))}
