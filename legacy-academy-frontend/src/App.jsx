@@ -3018,6 +3018,49 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         })}
                                     </div>
                                 </div>
+                                <div className="space-y-2">
+                                    <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
+                                        {t('BACKGROUND')}
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {[
+                                            { value: 'dark', labelKey: 'DARK_MODE', color: '#000000' },
+                                            { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14' }
+                                        ].map(({ value, labelKey, color }) => {
+                                            const active = (user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark') === value;
+                                            return (
+                                                <button
+                                                    key={value}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        applyBackground(value);
+                                                        handleSave('background', value);
+                                                    }}
+                                                    className={`relative overflow-hidden rounded-2xl border transition-all duration-200 ${
+                                                        active 
+                                                            ? 'border-[var(--gold-primary)] shadow-[0_0_20px_rgba(212,175,55,0.15)]' 
+                                                            : 'border-white/10 hover:border-white/20'
+                                                    }`}
+                                                >
+                                                    <div 
+                                                        className="w-full h-16 relative"
+                                                        style={{ backgroundColor: color }}
+                                                    >
+                                                        {value === 'dark-blue' && (
+                                                            <div className="absolute inset-0 opacity-50">
+                                                                <div className="absolute top-2 left-2 w-8 h-8 rounded-full bg-blue-500/20 blur-xl"></div>
+                                                                <div className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-blue-400/15 blur-2xl"></div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className={`p-2 text-center ${active ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
+                                                        <div className="text-[9px] font-bold uppercase tracking-wide">{t(labelKey)}</div>
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -4648,6 +4691,18 @@ const applyTheme = (color) => {
     localStorage.setItem('themeGlowSoft', glowSoft);
 };
 
+const applyBackground = (mode) => {
+    // Remove existing classes
+    document.body.classList.remove('bg-dark', 'bg-dark-blue');
+    // Add new class
+    if (mode === 'dark-blue') {
+        document.body.classList.add('bg-dark-blue');
+    } else {
+        document.body.classList.add('bg-dark');
+    }
+    localStorage.setItem('backgroundMode', mode);
+};
+
 const applyDisplayMode = (mode) => {
     if (mode === 'light') {
         mode = 'dark';
@@ -5466,6 +5521,8 @@ const App = () => {
         const userSettings = userData;
         const savedTheme = userSettings?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
+        const savedBackground = userSettings?.settings?.background || localStorage.getItem('backgroundMode') || 'dark';
+        applyBackground(savedBackground);
         applyDisplayMode('dark');
         const savedZoom = userSettings?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
         applyZoom(savedZoom);
@@ -5474,6 +5531,9 @@ const App = () => {
         const handleStorageChange = (e) => {
             if (e.key === 'themeColor' && e.newValue) {
                 applyTheme(e.newValue);
+            }
+            if (e.key === 'backgroundMode' && e.newValue) {
+                applyBackground(e.newValue);
             }
             if (e.key === 'user' && e.newValue) {
                 console.log("🔄 [SYNC] User data changed in another tab, updating...");
@@ -5492,6 +5552,13 @@ const App = () => {
             applyTheme(user.settings.theme);
         }
     }, [user?.settings?.theme]);
+
+    // Sync background when user object updates (e.g. from backend)
+    useEffect(() => {
+        if (user?.settings?.background) {
+            applyBackground(user.settings.background);
+        }
+    }, [user?.settings?.background]);
 
     useEffect(() => {
         applyDisplayMode('dark');
