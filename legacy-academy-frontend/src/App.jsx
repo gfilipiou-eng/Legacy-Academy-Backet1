@@ -3360,16 +3360,23 @@ const ProfileModal = ({
         if (!isOpen || !profileUser?._id) return;
         const profileUserId = String(profileUser._id);
 
-        const handleReposted = ({ postId, reposts }) => {
-            setUserSpecificPosts(prev => prev.map(p => {
-                if (String(p._id) !== String(postId)) return p;
-                return { ...p, reposts };
-            }).filter(p => {
-                const isOwn = String(p.author?._id || p.author) === profileUserId;
-                if (isOwn) return true;
-                const newReposts = (p._id === String(postId) ? reposts : p.reposts) || [];
-                return newReposts.some(id => String(id) === profileUserId);
-            }));
+        const handleReposted = ({ postId, reposts, newRepostPost, isReposting }) => {
+            setUserSpecificPosts(prev => {
+                let updated = prev.map(p => {
+                    if (String(p._id) !== String(postId)) return p;
+                    return { ...p, reposts };
+                });
+                
+                if (isReposting && newRepostPost && String(newRepostPost.repostedBy?._id || newRepostPost.repostedBy) === profileUserId) {
+                    // Add repost post to profile
+                    updated = [newRepostPost, ...updated.filter(p => String(p._id) !== String(newRepostPost._id))];
+                } else if (!isReposting) {
+                    // Remove repost post from profile
+                    updated = updated.filter(p => !(p.isRepost && String(p.originalPost) === String(postId) && String(p.repostedBy?._id || p.repostedBy) === profileUserId));
+                }
+                
+                return updated;
+            });
         };
 
         socket.on('post.reposted', handleReposted);
@@ -6033,11 +6040,27 @@ const App = () => {
 
         try {
             const res = await axios.put(`/posts/${safeId}/repost`);
-            const { reposts } = res.data;
+            const { reposts, newRepostPost, isReposting, originalPostId } = res.data;
             if (Array.isArray(reposts)) {
+                // Update original post's repost count
                 setPosts(prev => prev.map(p => String(p._id) === safeId ? { ...p, reposts } : p));
                 if (selectedPost && String(selectedPost._id) === safeId) {
                     setSelectedPost(prev => ({ ...prev, reposts }));
+                }
+
+                if (isReposting && newRepostPost) {
+                    // Add new repost post to the beginning of posts list
+                    setPosts(prev => [newRepostPost, ...prev.filter(p => String(p._id) !== String(newRepostPost._id))]);
+                    // Also update userSpecificPosts if needed
+                    if (userSpecificPosts) {
+                        setUserSpecificPosts(prev => [newRepostPost, ...(prev || []).filter(p => String(p._id) !== String(newRepostPost._id))]);
+                    }
+                } else if (!isReposting) {
+                    // Remove repost post
+                    setPosts(prev => prev.filter(p => !(p.isRepost && String(p.originalPost) === originalPostId && String(p.repostedBy) === userId)));
+                    if (userSpecificPosts) {
+                        setUserSpecificPosts(prev => (prev || []).filter(p => !(p.isRepost && String(p.originalPost) === originalPostId && String(p.repostedBy) === userId)));
+                    }
                 }
             }
         } catch (e) {

@@ -146,11 +146,12 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
             { new: true }
         );
 
+        let newRepostPost = null;
         if (isReposting) {
             // Create repost post
             console.log("🔄 [REPOST] Creating repost post for user:", userId);
             const currentUser = await User.findById(userId).select('username profilePic role');
-            const newRepost = new Post({
+            newRepostPost = new Post({
                 author: originalPost.author,
                 username: originalPost.username,
                 profilePic: originalPost.profilePic,
@@ -165,9 +166,9 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
                 originalPost: targetId,
                 isStory: originalPost.isStory
             });
-            await newRepost.save();
-            await newRepost.populate('author repostedBy', 'username profilePic role');
-            console.log("🔄 [REPOST] Repost post created successfully:", newRepost._id);
+            await newRepostPost.save();
+            await newRepostPost.populate('author repostedBy', 'username profilePic role');
+            console.log("🔄 [REPOST] Repost post created successfully:", newRepostPost._id);
         } else {
             // Delete repost post
             console.log("🔄 [REPOST] Deleting repost post for user:", userId);
@@ -177,12 +178,15 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
 
         const io = req.app.get('io');
         if (io) {
-            io.emit('post.reposted', { postId: targetId, reposts: updatedOriginalPost.reposts });
+            io.emit('post.reposted', { postId: targetId, reposts: updatedOriginalPost.reposts, newRepostPost, isReposting });
         }
 
         res.status(200).json({ 
             message: isReposting ? "Reposted" : "Unreposted", 
-            reposts: updatedOriginalPost.reposts 
+            reposts: updatedOriginalPost.reposts,
+            newRepostPost,
+            isReposting,
+            originalPostId: targetId
         });
     } catch (err) {
         console.error("Repost error:", err);
