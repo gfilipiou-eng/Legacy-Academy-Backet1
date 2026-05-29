@@ -4655,15 +4655,12 @@ const applyDisplayMode = (mode) => {
 };
 
 const applyZoom = (zoom) => {
-    const appContent = document.getElementById('app-content');
+    const appContent = document.getElementById('zoomable-content');
     const z = Math.max(0.95, Math.min(1, Number(zoom) || 1));
     if (appContent) {
         appContent.style.transformOrigin = 'top center';
         appContent.style.transform = `scale(${z})`;
-        // Calculate adjusted height so it fills the space properly
-        appContent.style.height = `${100 / z}%`;
-        appContent.style.width = `${100 / z}%`;
-        appContent.style.marginLeft = `-${((100 / z) - 100) / 2}%`;
+        // No adjustments needed since we're only scaling content
     }
     localStorage.setItem('uiZoom', String(z));
 };
@@ -7069,7 +7066,7 @@ const App = () => {
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
                         </header>
-                        <div className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto">
+                        <div id="zoomable-content" className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto">
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
