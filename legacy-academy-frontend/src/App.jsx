@@ -23,7 +23,7 @@ const GREEK_PHONETIC = {
     'A': 'Α', 'B': 'Β', 'C': 'Ψ', 'D': 'Δ', 'E': 'Ε', 'F': 'Φ', 'G': 'Γ', 'H': 'Η', 'I': 'Ι', 'J': 'Ξ', 'K': 'Κ', 'L': 'Λ', 'M': 'Μ', 'N': 'Ν', 'O': 'Ο', 'P': 'Π', 'Q': 'Θ', 'R': 'Ρ', 'S': 'Σ', 'T': 'Τ', 'U': 'Υ', 'V': 'Ω', 'W': 'Σ', 'X': 'Χ', 'Y': 'Υ', 'Z': 'Ζ'
 };
 
-const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false, isCover = false) => {
+const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false, isCover = false, cacheKey = null) => {
     if (!path) return '';
     let url = path;
     if (!path.startsWith('http') && !path.startsWith('blob:')) {
@@ -48,33 +48,41 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
 
             // 4K Background Support: Keep high quality for cover images
             if (isCover) {
-                return cleanUrl.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/w_2000,c_limit,q_auto:best/$1');
-            }
-            let transform = '';
-            // SAVE CREDITS: Use 'q_auto' (Balanced) for high visual fidelity with storage savings
-            // Increased widths to avoid pixelation on high-PPI displays
-            if (isPoster && isVideo) {
-                transform = `so_0.0,f_auto,q_auto,w_800,c_limit`;
-                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
-            } else if (isAvatar && isVideo) {
-                // Animated avatars: WebP (animated) + 350px
-                transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
-                parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
-            } else if (isAvatar) {
-                // 600px + q_auto:best for maximum quality as requested
-                transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
-            } else if (width === 2000 || isCover) {
-                // Founder 4K Background / High-Res Cover
-                transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
-            } else if (width && !isNaN(width)) {
-                transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                url = cleanUrl.replace(/\/upload\/.*?(v\d+\/)/i, '/upload/w_2000,c_limit,q_auto:best/$1');
             } else {
-                transform = `c_limit,w_1920,q_auto:best,f_auto`;
-            }
+                let transform = '';
+                // SAVE CREDITS: Use 'q_auto' (Balanced) for high visual fidelity with storage savings
+                // Increased widths to avoid pixelation on high-PPI displays
+                if (isPoster && isVideo) {
+                    transform = `so_0.0,f_auto,q_auto,w_800,c_limit`;
+                    parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
+                } else if (isAvatar && isVideo) {
+                    // Animated avatars: WebP (animated) + 350px
+                    transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
+                    parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
+                } else if (isAvatar) {
+                    // 600px + q_auto:best for maximum quality as requested
+                    transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
+                } else if (width === 2000 || isCover) {
+                    // Founder 4K Background / High-Res Cover
+                    transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                } else if (width && !isNaN(width)) {
+                    transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                } else {
+                    transform = `c_limit,w_1920,q_auto:best,f_auto`;
+                }
 
-            return parts[0] + '/upload/' + transform + '/' + parts[1];
+                url = parts[0] + '/upload/' + transform + '/' + parts[1];
+            }
         }
     }
+
+    // Add cache-busting parameter if provided
+    if (cacheKey && url && !url.startsWith('blob:')) {
+        const sep = url.includes('?') ? '&' : '?';
+        url = `${url}${sep}v=${cacheKey}`;
+    }
+
     return url;
 };
 
@@ -666,7 +674,7 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
     );
 };
 
-const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = false }) => {
+const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = false, cacheKey = null }) => {
     const [imgError, setImgError] = useState(false);
 
     if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
@@ -674,10 +682,10 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const rawUrl = user.profilePic || user.fromProfilePic;
     const name = user.username || user.fromUsername;
 
-    // Reset error state if url changes
-    useEffect(() => { setImgError(false); }, [String(rawUrl || '')]);
+    // Reset error state if url or cache key changes
+    useEffect(() => { setImgError(false); }, [String(rawUrl || ''), cacheKey]);
 
-    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 350 : 150, !String(rawUrl || '').includes('/video/upload/'));
+    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 350 : 150, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
@@ -1708,7 +1716,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-black border border-white/10 shadow-lg relative group">
-                    <ProfileAvatar user={user} className="opacity-80" key={imgKey} />
+                    <ProfileAvatar user={user} className="opacity-80" key={imgKey} cacheKey={imgKey} />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1759,7 +1767,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null }) => {
     console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
@@ -1909,7 +1917,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none overflow-hidden cursor-pointer" onClick={() => onViewProfile(author)}>
-                            <ProfileAvatar user={author} className="w-full h-full object-cover" />
+                            <ProfileAvatar user={author} className="w-full h-full object-cover" cacheKey={cacheKey} />
                         </div>
                     </div>
 
@@ -3603,7 +3611,7 @@ const ProfileModal = ({
                                         </div>
                                     </div>
                                 ) : (
-                                    <ProfileAvatar user={displayUser} size="large" key={imgKey} />
+                                    <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} />
                                 )}
                             </div>
                             <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
@@ -3888,7 +3896,7 @@ const ProfileModal = ({
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
                                     <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-black overflow-hidden shadow-xl shrink-0 relative group border border-white/10">
-                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                 </div>
                             </div>
@@ -4234,6 +4242,7 @@ const ProfileModal = ({
                                                                         loadingActions={loadingActions} 
                                                                         forcePause={false} 
                                                                         isDeleting={deletingPostIds?.has(p._id)}
+                                                                        cacheKey={imgKey}
                                                                     />
                                                                 </div>
                                                             ))}
@@ -7220,7 +7229,7 @@ const App = () => {
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none  cursor-pointer hover:border-white transition-colors">
                                                             <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden ">
-                                                                <ProfileAvatar user={u} />
+                                                                <ProfileAvatar user={u} cacheKey={imgKey} />
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-1.5">
@@ -7274,7 +7283,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} />
                                                                         </motion.div>
                                                                     ))}
                                                                 </AnimatePresence>
