@@ -82,31 +82,36 @@ body.bg-white::before {
   filter: blur(60px);
 }
 
-/* Make sure all basic text elements in white mode are dark gray, not blue */
-body.bg-white,
-body.bg-white h1,
-body.bg-white h2,
-body.bg-white h3,
-body.bg-white h4,
-body.bg-white h5,
-body.bg-white h6,
-body.bg-white p,
-body.bg-white span,
-body.bg-white div {
+/* Header text is white in dark/dark-blue, dark gray in white */
+body.bg-white .header-bg h1,
+body.bg-white .header-bg h2,
+body.bg-white .header-bg h3,
+body.bg-white .header-bg span {
   color: #1e293b !important;
 }
 
-/* Preserve gold primary color for selected items in white mode */
-body.bg-white .text-\[var\(--gold-primary\)\] {
+/* Preserve gold primary color for selected items in ALL modes */
+.text-\[var\(--gold-primary\)\] {
   color: var(--gold-primary) !important;
 }
 
-/* Preserve theme colors (red, green, etc.) for buttons/badges */
-body.bg-white .text-red-500,
-body.bg-white .text-green-500,
-body.bg-white .text-blue-500,
-body.bg-white .text-yellow-500 {
+/* Preserve theme colors (red, green, blue, yellow) for buttons/badges in all modes */
+.text-red-500,
+.text-green-500,
+.text-blue-500,
+.text-yellow-500 {
   color: inherit !important;
+}
+
+/* Fix for dark/dark-blue mode - basic text is white */
+body.bg-dark,
+body.bg-dark-blue {
+  color: #e7e9ea !important;
+}
+
+/* Fix for white mode - basic text is dark gray */
+body.bg-white {
+  color: #1e293b !important;
 }
 
 /* Slider styling for all modes */
@@ -244,8 +249,19 @@ body.bg-white .border-white\/20 {
 
 /* White Mode Glass Panels */
 body.bg-white .glass-panel {
-  background: rgba(255, 255, 255, 0.75) !important;
-  border-color: rgba(15, 23, 42, 0.12) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* Glass Panel styling for dark/dark-blue */
+body.bg-dark .glass-panel,
+body.bg-dark-blue .glass-panel {
+  background: rgba(0,0,0,0.85) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
 }
 
 /* White Mode Icons */
