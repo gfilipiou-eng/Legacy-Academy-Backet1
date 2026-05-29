@@ -2851,7 +2851,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     const handleLanguageSelect = async (nextLanguage) => {
         const normalizedLanguage = normalizeLanguageCode(nextLanguage);
-        if (!normalizedLanguage || normalizedLanguage === activeLanguage || saving) return;
+        if (!normalizedLanguage || normalizedLanguage === activeLanguage) return;
 
         localStorage.setItem('language', normalizedLanguage);
 
@@ -2869,10 +2869,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         }
 
         if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
-            await i18n.changeLanguage(normalizedLanguage);
+            i18n.changeLanguage(normalizedLanguage);
         }
 
-        await handleSave('language', normalizedLanguage);
+        handleSave('language', normalizedLanguage);
     };
 
     if (!isOpen) return null;
@@ -3525,7 +3525,12 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }} className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[24px] overflow-hidden flex flex-col bg-black border border-white/5 shadow-2xl`}>
+            <motion.div 
+                initial={{ opacity: 0, y: 50, scale: 0.95 }} 
+                animate={{ opacity: 1, y: 0, scale: 1 }} 
+                exit={{ opacity: 0, y: 50, scale: 0.95 }} 
+                transition={{ type: 'spring', stiffness: 400, damping: 40, mass: 0.8 }} 
+                className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[24px] overflow-hidden flex flex-col bg-black border border-white/5 shadow-2xl`}>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
@@ -4643,12 +4648,15 @@ const applyDisplayMode = (mode) => {
 };
 
 const applyZoom = (zoom) => {
-    const root = document.getElementById('root') || document.body;
+    const appContent = document.getElementById('app-content');
     const z = Math.max(0.95, Math.min(1, Number(zoom) || 1));
-    if (root) {
-        root.style.transformOrigin = '';
-        root.style.transform = '';
-        root.style.zoom = z === 1 ? '' : String(z);
+    if (appContent) {
+        appContent.style.transformOrigin = 'top center';
+        appContent.style.transform = `scale(${z})`;
+        appContent.style.transformBox = 'content-box';
+        // Adjust height/width to prevent overflow
+        appContent.style.width = `${100 / z}%`;
+        appContent.style.marginLeft = `${((100 / z) - 100) / 2}%`;
     }
     localStorage.setItem('uiZoom', String(z));
 };
@@ -7019,7 +7027,8 @@ const App = () => {
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none">
+                    <div id="app-content" className="flex-1 overflow-hidden relative">
+                        <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
                         <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
@@ -7267,13 +7276,14 @@ const App = () => {
                             )}
                         </div>
                     </main>
+                    </div>
 
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.ArrowUp className="w-6 h-6 sm:w-8 sm:h-8" />
+                            <Icons.ArrowUp className="w-10 h-10 sm:w-12 sm:h-12" />
                         </button>
                     )}
 
@@ -7281,9 +7291,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.Compose className="w-6 h-6 sm:w-8 sm:h-8" />
+                            <Icons.Compose className="w-10 h-10 sm:w-12 sm:h-12" />
                         </button>
                     )}
 
