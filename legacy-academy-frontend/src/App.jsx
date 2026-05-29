@@ -7281,9 +7281,9 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.ArrowUp className="w-10 h-10 sm:w-12 sm:h-12" />
+                            <Icons.ArrowUp className="w-8 h-8 sm:w-10 sm:h-10" />
                         </button>
                     )}
 
@@ -7291,9 +7291,9 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.Compose className="w-10 h-10 sm:w-12 sm:h-12" />
+                            <Icons.Compose className="w-8 h-8 sm:w-10 sm:h-10" />
                         </button>
                     )}
 
