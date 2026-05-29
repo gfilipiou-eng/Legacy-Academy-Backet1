@@ -120,21 +120,36 @@ body.bg-white .bottom-nav-glass {
   border-top-color: rgba(15, 23, 42, 0.1) !important;
 }
 
-/* White Mode Text Adjustments */
+/* Dark and Dark Blue Mode Text Adjustments (ensure white text) */
+body.bg-dark .text-white,
+body.bg-dark-blue .text-white {
+  color: white !important;
+}
+body.bg-dark .text-gray-300,
+body.bg-dark-blue .text-gray-300 {
+  color: #d1d5db !important;
+}
+body.bg-dark .text-gray-400,
+body.bg-dark-blue .text-gray-400 {
+  color: #9ca3af !important;
+}
+body.bg-dark .text-gray-500,
+body.bg-dark-blue .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+/* White Mode Text Adjustments (ensure dark readable text) */
 body.bg-white .text-white {
-  color: #0f172a !important;
+  color: #1e293b !important; /* slate-800 - nice dark gray, not blue */
 }
-
 body.bg-white .text-gray-300 {
-  color: #475569 !important;
-}
-
-body.bg-white .text-gray-400 {
   color: #64748b !important;
 }
-
-body.bg-white .text-gray-500 {
+body.bg-white .text-gray-400 {
   color: #94a3b8 !important;
+}
+body.bg-white .text-gray-500 {
+  color: #cbd5e1 !important;
 }
 
 /* White Mode Borders */
