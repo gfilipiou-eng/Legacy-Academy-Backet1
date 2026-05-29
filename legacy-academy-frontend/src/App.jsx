@@ -3153,6 +3153,17 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
+                            { 
+                                id: 'subscription', 
+                                icon: (props) => (
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+                                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                                        <line x1="2" y1="10" x2="22" y2="10" />
+                                    </svg>
+                                ), 
+                                label: 'Subscription', 
+                                action: () => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05" 
+                            },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
                         ].map((item, index) => (
                             <button
