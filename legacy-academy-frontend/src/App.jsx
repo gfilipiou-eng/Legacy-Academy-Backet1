@@ -4660,6 +4660,10 @@ const applyZoom = (zoom) => {
     if (appContent) {
         appContent.style.transformOrigin = 'top center';
         appContent.style.transform = `scale(${z})`;
+        // Calculate adjusted height so it fills the space properly
+        appContent.style.height = `${100 / z}%`;
+        appContent.style.width = `${100 / z}%`;
+        appContent.style.marginLeft = `-${((100 / z) - 100) / 2}%`;
     }
     localStorage.setItem('uiZoom', String(z));
 };
