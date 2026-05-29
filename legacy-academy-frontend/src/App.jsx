@@ -1715,13 +1715,21 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-black border border-white/10 shadow-lg relative group">
-                    <ProfileAvatar user={user} className="opacity-80" key={imgKey} cacheKey={imgKey} />
+                <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] rounded-full overflow-hidden relative group">
+                    {/* Liquid Glass Background */}
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                    {/* Inner Profile Avatar */}
+                    <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                        <ProfileAvatar user={user} className="opacity-60" key={imgKey} cacheKey={imgKey} />
+                    </div>
+                    {/* Add Icon */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white group-hover:scale-125 transition-transform">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
+                        <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
                     </div>
                 </div>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
@@ -4121,16 +4129,20 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-white/5 to-white/20 shadow-lg relative group">
-                                                            <div className="w-full h-full rounded-full overflow-hidden bg-[#050505] flex items-center justify-center relative">
+                                                        <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] rounded-full relative group">
+                                                            {/* Liquid Glass Background */}
+                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                                            {/* Inner Profile Avatar */}
+                                                            <div className="absolute inset-[4px] rounded-full overflow-hidden bg-[#050505]">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40" />
-                                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                                    <div className="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center border border-white/40 group-hover:scale-110 transition-transform shadow-sm">
-                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
-                                                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                                        </svg>
-                                                                    </div>
+                                                            </div>
+                                                            {/* Add Icon */}
+                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                                <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
+                                                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                    </svg>
                                                                 </div>
                                                             </div>
                                                         </div>
