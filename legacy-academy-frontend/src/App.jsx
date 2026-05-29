@@ -3038,10 +3038,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
                                         {t('BACKGROUND')}
                                     </div>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-3 gap-3">
                                         {[
                                             { value: 'dark', labelKey: 'DARK_MODE', color: '#000000' },
-                                            { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14' }
+                                            { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14' },
+                                            { value: 'white', labelKey: 'WHITE_MODE', color: '#ffffff' }
                                         ].map(({ value, labelKey, color }) => {
                                             const active = (user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark') === value;
                                             return (
@@ -3069,7 +3070,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div className={`p-2 text-center ${active ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
+                                                    <div className={`p-2 text-center ${active ? 'text-[var(--gold-primary)]' : (value === 'white' ? 'text-gray-700' : 'text-gray-400')}`}>
                                                         <div className="text-[9px] font-bold uppercase tracking-wide">{t(labelKey)}</div>
                                                     </div>
                                                 </button>
@@ -4780,10 +4781,12 @@ const applyTheme = (color) => {
 
 const applyBackground = (mode) => {
     // Remove existing classes
-    document.body.classList.remove('bg-dark', 'bg-dark-blue');
+    document.body.classList.remove('bg-dark', 'bg-dark-blue', 'bg-white');
     // Add new class
     if (mode === 'dark-blue') {
         document.body.classList.add('bg-dark-blue');
+    } else if (mode === 'white') {
+        document.body.classList.add('bg-white');
     } else {
         document.body.classList.add('bg-dark');
     }

@@ -275,5 +275,10 @@
   "SUBSCRIPTION_EXPIRED": "Η συνδρομή έληξε",
   "SUBSCRIPTION": "Συνδρομή",
   "RENEW_SUBSCRIPTION": "Ανανέωση Συνδρομής",
-  "EXTEND_SUBSCRIPTION": "Επέκταση Πρόσβασης"
+  "EXTEND_SUBSCRIPTION": "Επέκταση Πρόσβασης",
+  "THEME": "ΘΕΜΑ",
+  "BACKGROUND": "ΥΠΟΒΑΘΡΟ",
+  "DARK_MODE": "Σκούρο Φόντο",
+  "DARK_BLUE_MODE": "Μπλε Σκούρο Φόντο",
+  "WHITE_MODE": "Λευκό Φόντο"
 }
