@@ -3088,6 +3088,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
     };
 
+    // Calculate remaining subscription days
+    const getRemainingDays = () => {
+        if (!user?.subscriptionEndDate) return null;
+        const end = new Date(user.subscriptionEndDate);
+        const now = new Date();
+        const diff = end - now;
+        if (diff <= 0) return 0;
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    };
+
+    const remainingDays = getRemainingDays();
+
     return (
         <div className="fixed inset-0 z-[2000] flex pointer-events-none">
             {/* BACKDROP */}
@@ -3161,8 +3173,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                         <line x1="2" y1="10" x2="22" y2="10" />
                                     </svg>
                                 ), 
-                                label: 'Subscription', 
-                                action: () => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05" 
+                                label: t('SUBSCRIPTION') || 'Subscription', 
+                                action: () => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05",
+                                isSubscription: true
                             },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
                         ].map((item, index) => (
@@ -3177,6 +3190,20 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             >
                                 <item.icon className="w-[26px] h-[26px] text-white shrink-0 group-hover:scale-105 transition-transform" strokeWidth={2} />
                                 <span className="text-xl font-bold text-white tracking-wide">{item.label}</span>
+
+                                {item.isSubscription && remainingDays !== null && (
+                                    <div className="ml-auto flex items-center gap-2">
+                                        {remainingDays === 0 ? (
+                                            <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
+                                                {t('SUBSCRIPTION_EXPIRED') || 'Expired'}
+                                            </span>
+                                        ) : (
+                                            <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">
+                                                {t('SUBSCRIPTION_REMAINING', { days: remainingDays }) || `${remainingDays}d`}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
 
                                 {item.badge > 0 && (
                                     <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[var(--gold-primary)] rounded-full flex items-center justify-center">

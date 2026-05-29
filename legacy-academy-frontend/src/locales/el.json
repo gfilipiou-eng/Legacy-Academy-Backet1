@@ -286,5 +286,8 @@
   "SHARE_PROFILE_DESC": "Απενεργοποιήστε το αν θέλετε να κρύψετε το κουμπί κοινοποίησης από το προφίλ σας.",
   "COLOR_NEON_GREEN": "Πράσινο",
   "COLOR_METALLIC": "Μεταλλικό",
-  "COLOR_WATER": "Νερό"
+  "COLOR_WATER": "Νερό",
+  "SUBSCRIPTION_REMAINING": "Υπολοιπόμενο: {{days}} ημέρες",
+  "SUBSCRIPTION_EXPIRED": "Η συνδρομή έληξε",
+  "SUBSCRIPTION": "Συνδρομή"
 }

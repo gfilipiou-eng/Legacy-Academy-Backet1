@@ -86,6 +86,10 @@ const UserSchema = new mongoose.Schema(
             zoom: { type: Number, default: 1 },
             showProfileShareButton: { type: Boolean, default: true }
         },
+        subscriptionEndDate: {
+            type: Date,
+            default: null
+        },
         notifications: [
             {
                 type: { type: String, enum: ['like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'message', 'system', 'security_alert'] },

@@ -286,5 +286,8 @@
   "GOT_IT": "GOT IT",
   "COLOR_NEON_GREEN": "Green",
   "COLOR_METALLIC": "Metallic",
-  "COLOR_WATER": "Water"
+  "COLOR_WATER": "Water",
+  "SUBSCRIPTION_REMAINING": "Remaining: {{days}} days",
+  "SUBSCRIPTION_EXPIRED": "Subscription expired",
+  "SUBSCRIPTION": "Subscription"
 }
