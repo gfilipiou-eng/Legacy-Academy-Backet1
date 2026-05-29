@@ -82,12 +82,42 @@ body.bg-white::before {
   filter: blur(60px);
 }
 
-/* White Mode Header/Navbar */
+/* Header/Navbar for all modes */
+body.bg-dark .header-bg {
+  background: rgba(0, 0, 0, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+body.bg-dark-blue .header-bg {
+  background: rgba(5, 10, 20, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
 body.bg-white .header-bg {
   background: rgba(255, 255, 255, 0.8) !important;
   border-color: rgba(15, 23, 42, 0.15) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+/* Bottom Navbar for all modes */
+body.bg-dark .bottom-nav-glass {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.bg-dark-blue .bottom-nav-glass {
+  background: rgba(5, 10, 20, 0.95) !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.bg-white .bottom-nav-glass {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-top-color: rgba(15, 23, 42, 0.1) !important;
 }
 
 /* White Mode Text Adjustments */
@@ -124,6 +154,36 @@ body.bg-white .glass-panel {
 body.bg-white .text-gray-300 svg,
 body.bg-white .text-white svg {
   color: #0f172a !important;
+}
+
+/* Adjustments for White Mode in Bottom Navbar */
+body.bg-white .bg-black {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Dark Blue Mode - subtle adjustments */
+body.bg-dark-blue .bg-black {
+  background: rgba(5, 10, 20, 1) !important;
+}
+
+/* Add story button for White Mode */
+body.bg-white .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] {
+  background: #0f172a !important;
+  color: white !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* Make sure white mode text and icons in bottom nav are dark */
+body.bg-white .text-gray-500 {
+  color: #64748b !important;
+}
+
+body.bg-white .text-gray-300 {
+  color: #475569 !important;
+}
+
+body.bg-white .hover\:text-gray-300:hover {
+  color: #334155 !important;
 }
 
 @keyframes float {
