@@ -64,7 +64,7 @@ body.bg-dark-blue::before {
 
 body.bg-white {
   --app-bg: #ffffff;
-  --app-text: #0f172a;
+  --app-text: #1e293b;
   position: relative;
 }
 
@@ -75,11 +75,75 @@ body.bg-white::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
-              radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.06) 0%, transparent 40%);
+  background: radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
+              radial-gradient(circle at 85% 85%, rgba(148, 163, 184, 0.08) 0%, transparent 40%);
   pointer-events: none;
   z-index: -1;
   filter: blur(60px);
+}
+
+/* Make sure all basic text elements in white mode are dark gray, not blue */
+body.bg-white,
+body.bg-white h1,
+body.bg-white h2,
+body.bg-white h3,
+body.bg-white h4,
+body.bg-white h5,
+body.bg-white h6,
+body.bg-white p,
+body.bg-white span,
+body.bg-white div {
+  color: #1e293b !important;
+}
+
+/* Preserve gold primary color for selected items in white mode */
+body.bg-white .text-\[var\(--gold-primary\)\] {
+  color: var(--gold-primary) !important;
+}
+
+/* Preserve theme colors (red, green, etc.) for buttons/badges */
+body.bg-white .text-red-500,
+body.bg-white .text-green-500,
+body.bg-white .text-blue-500,
+body.bg-white .text-yellow-500 {
+  color: inherit !important;
+}
+
+/* Slider styling for all modes */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--gold-primary);
+  cursor: pointer;
+  margin-top: -7px;
+  box-shadow: 0 0 12px rgba(212,175,55,0.4);
+}
+
+body.bg-white input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.1);
+  border-radius: 4px;
+}
+
+body.bg-dark input[type="range"]::-webkit-slider-runnable-track,
+body.bg-dark-blue input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 /* Header/Navbar for all modes */
@@ -120,22 +184,41 @@ body.bg-white .bottom-nav-glass {
   border-top-color: rgba(15, 23, 42, 0.1) !important;
 }
 
-/* Dark and Dark Blue Mode Text Adjustments (ensure white text) */
-body.bg-dark .text-white,
-body.bg-dark-blue .text-white {
-  color: white !important;
+/* Dark and Dark Blue Mode Text Adjustments (ensure all text is white/light) */
+body.bg-dark,
+body.bg-dark h1,
+body.bg-dark h2,
+body.bg-dark h3,
+body.bg-dark h4,
+body.bg-dark h5,
+body.bg-dark h6,
+body.bg-dark p,
+body.bg-dark span,
+body.bg-dark div,
+body.bg-dark-blue,
+body.bg-dark-blue h1,
+body.bg-dark-blue h2,
+body.bg-dark-blue h3,
+body.bg-dark-blue h4,
+body.bg-dark-blue h5,
+body.bg-dark-blue h6,
+body.bg-dark-blue p,
+body.bg-dark-blue span,
+body.bg-dark-blue div {
+  color: #e7e9ea !important;
 }
-body.bg-dark .text-gray-300,
-body.bg-dark-blue .text-gray-300 {
-  color: #d1d5db !important;
-}
-body.bg-dark .text-gray-400,
-body.bg-dark-blue .text-gray-400 {
-  color: #9ca3af !important;
-}
-body.bg-dark .text-gray-500,
-body.bg-dark-blue .text-gray-500 {
-  color: #6b7280 !important;
+/* Preserve theme colors (red, green, gold, etc.) for dark/dark-blue modes */
+body.bg-dark .text-\[var\(--gold-primary\)\],
+body.bg-dark-blue .text-\[var\(--gold-primary\)\],
+body.bg-dark .text-red-500,
+body.bg-dark-blue .text-red-500,
+body.bg-dark .text-green-500,
+body.bg-dark-blue .text-green-500,
+body.bg-dark .text-blue-500,
+body.bg-dark-blue .text-blue-500,
+body.bg-dark .text-yellow-500,
+body.bg-dark-blue .text-yellow-500 {
+  color: inherit !important;
 }
 
 /* White Mode Text Adjustments (ensure dark readable text) */
