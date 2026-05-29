@@ -1865,18 +1865,18 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ 
-                opacity: isDeleting ? 0 : 1, 
-                y: isDeleting ? 50 : 0, 
-                scale: isDeleting ? 0.8 : 1, 
-                filter: isDeleting ? 'blur(10px)' : 'none'
-            }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className={`premium-post-card group relative p-4 sm:p-6 mb-6 transition-all duration-300 will-change-transform overflow-hidden`}
-        >
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ 
+        opacity: isDeleting ? 0 : 1, 
+        y: isDeleting ? 50 : 0, 
+        scale: isDeleting ? 0.8 : 1, 
+        filter: isDeleting ? 'blur(10px)' : 'none'
+      }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
+      className={`premium-post-card group relative p-3 sm:p-5 mb-5 transition-all duration-300 will-change-transform overflow-hidden`}
+    >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
             <div className="hidden" />
@@ -4200,14 +4200,14 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col w-full bg-black">
+                                            <div className="flex flex-col w-full bg-black px-2 sm:px-0">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
-                                                    <div key={dateLabel} className="mb-8 w-full">
+                                                    <div key={dateLabel} className="mb-6 w-full">
                                                         <div className="px-4 py-3 sticky top-0 z-10 bg-black/80 backdrop-blur-md flex items-center justify-between border-b border-white/5">
                                                             <h3 className="text-[13px] font-black text-white">{dateLabel}</h3>
                                                             <Icons.ChevronRight className="w-4 h-4 text-white/30" />
                                                         </div>
-                                                        <div className="flex flex-col gap-6">
+                                                        <div className="flex flex-col gap-4">
                                                             {groupPosts.map(p => (
                                                                 <div 
                                                                     key={p._id} 
