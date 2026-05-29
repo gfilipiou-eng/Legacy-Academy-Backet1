@@ -3153,22 +3153,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
     const [isClosing, setIsClosing] = useState(false);
 
-    if (!isOpen && !isClosing) return null;
-
-    const handleClose = () => {
-        setIsClosing(true);
-        setTimeout(() => {
-            onClose();
-            setIsClosing(false);
-        }, 200);
-    };
-
-    const handleLink = (tab) => {
-        onNavigate(tab);
-        handleClose();
-
-    };
-
     // Calculate remaining subscription time with smart display
     const [remainingTime, setRemainingTime] = useState({ days: 0, hours: 0, totalMs: 0 });
     
@@ -3198,6 +3182,22 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
     }, [isOpen, user?.subscriptionEndDate]);
 
     const { days: remainingDays, hours: remainingHours, totalMs: remainingTotalMs } = calculateRemainingTime();
+
+    if (!isOpen && !isClosing) return null;
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+            setIsClosing(false);
+        }, 200);
+    };
+
+    const handleLink = (tab) => {
+        onNavigate(tab);
+        handleClose();
+
+    };
 
     return (
         <div className="fixed inset-0 z-[2000] flex pointer-events-none">
