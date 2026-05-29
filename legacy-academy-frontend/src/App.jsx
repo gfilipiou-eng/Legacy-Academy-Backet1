@@ -237,7 +237,7 @@ const THEME_PALETTE = [
     { value: '#ffd700', labelKey: 'COLOR_GOLD' },
     { value: '#39ff14', labelKey: 'COLOR_NEON_GREEN' },
     { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
-    { value: '#00bfff', labelKey: 'COLOR_WATER' },
+    { value: '#0ea5e9', labelKey: 'COLOR_GALAZIO' },
     { value: '#10b981', labelKey: 'COLOR_GREEN' },
     { value: '#ff5500', labelKey: 'COLOR_ORANGE' },
     { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
@@ -1875,7 +1875,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className={`premium-post-card group relative p-5 sm:p-7 mb-8 transition-all duration-300 will-change-transform overflow-hidden`}
+            className={`premium-post-card group relative p-4 sm:p-6 mb-6 transition-all duration-300 will-change-transform overflow-hidden`}
         >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -4660,10 +4660,6 @@ const applyZoom = (zoom) => {
     if (appContent) {
         appContent.style.transformOrigin = 'top center';
         appContent.style.transform = `scale(${z})`;
-        appContent.style.transformBox = 'content-box';
-        // Adjust height/width to prevent overflow
-        appContent.style.width = `${100 / z}%`;
-        appContent.style.marginLeft = `${((100 / z) - 100) / 2}%`;
     }
     localStorage.setItem('uiZoom', String(z));
 };
