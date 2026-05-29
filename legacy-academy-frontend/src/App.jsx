@@ -3153,17 +3153,35 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
     };
 
-    // Calculate remaining subscription days
-    const getRemainingDays = () => {
-        if (!user?.subscriptionEndDate) return null;
+    // Calculate remaining subscription time with smart display
+    const [remainingTime, setRemainingTime] = useState({ days: 0, hours: 0, totalMs: 0 });
+    
+    const calculateRemainingTime = () => {
+        if (!user?.subscriptionEndDate) return { days: null, hours: null, totalMs: 0 };
         const end = new Date(user.subscriptionEndDate);
         const now = new Date();
         const diff = end - now;
-        if (diff <= 0) return 0;
-        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        if (diff <= 0) return { days: 0, hours: 0, totalMs: 0 };
+        
+        const totalDays = diff / (1000 * 60 * 60 * 24);
+        const days = Math.floor(totalDays);
+        const hours = Math.ceil((totalDays - days) * 24);
+        
+        return { days, hours, totalMs: diff };
     };
 
-    const remainingDays = getRemainingDays();
+    // Live update subscription time
+    useEffect(() => {
+        if (!isOpen || !user?.subscriptionEndDate) return;
+        
+        const update = () => setRemainingTime(calculateRemainingTime());
+        update();
+        
+        const interval = setInterval(update, 60000); // Update every minute
+        return () => clearInterval(interval);
+    }, [isOpen, user?.subscriptionEndDate]);
+
+    const { days: remainingDays, hours: remainingHours, totalMs: remainingTotalMs } = calculateRemainingTime();
 
     return (
         <div className="fixed inset-0 z-[2000] flex pointer-events-none">
@@ -3257,15 +3275,52 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 <span className="text-xl font-bold text-white tracking-wide">{item.label}</span>
 
                                 {item.isSubscription && remainingDays !== null && (
-                                    <div className="ml-auto flex items-center gap-2">
+                                    <div className="ml-auto flex flex-col items-end gap-1">
                                         {remainingDays === 0 ? (
-                                            <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
-                                                {t('SUBSCRIPTION_EXPIRED') || 'Expired'}
-                                            </span>
+                                            <>
+                                                <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
+                                                    {t('SUBSCRIPTION_EXPIRED') || 'Expired'}
+                                                </span>
+                                                <button 
+                                                    onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"; 
+                                                    }}
+                                                    className="text-[9px] font-bold text-red-400 uppercase tracking-wider hover:text-red-300 transition-colors"
+                                                >
+                                                    {t('RENEW_SUBSCRIPTION')}
+                                                </button>
+                                            </>
                                         ) : (
-                                            <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">
-                                                {t('SUBSCRIPTION_REMAINING', { days: remainingDays }) || `${remainingDays}d`}
-                                            </span>
+                                            <>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">
+                                                        {remainingDays > 0 
+                                                            ? `${remainingDays}d${remainingHours > 0 ? ` ${remainingHours}h` : ''}` 
+                                                            : `${remainingHours}h`
+                                                        }
+                                                    </span>
+                                                </div>
+                                                {/* Progress bar (smart based on subscription length) */}
+                                                <div className="w-20 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                                    <div 
+                                                        className="h-full rounded-full transition-all duration-1000"
+                                                        style={{ 
+                                                            width: `${Math.min(100, (remainingDays > 30 ? (remainingDays / 30) * 100 : 100))}%`,
+                                                            backgroundColor: remainingDays <= 7 ? '#ef4444' : remainingDays <= 14 ? '#f59e0b' : 'var(--gold-primary)'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <button 
+                                                    onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"; 
+                                                    }}
+                                                    className="text-[9px] font-bold text-[var(--gold-primary)]/70 uppercase tracking-wider hover:text-[var(--gold-primary)] transition-colors"
+                                                >
+                                                    {t('EXTEND_SUBSCRIPTION')}
+                                                </button>
+                                            </>
                                         )}
                                     </div>
                                 )}

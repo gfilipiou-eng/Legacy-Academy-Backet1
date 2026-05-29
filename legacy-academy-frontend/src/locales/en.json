@@ -292,5 +292,7 @@
   "COLOR_WATER": "Water",
   "SUBSCRIPTION_REMAINING": "Remaining: {{days}} days",
   "SUBSCRIPTION_EXPIRED": "Subscription expired",
-  "SUBSCRIPTION": "Subscription"
+  "SUBSCRIPTION": "Subscription",
+  "RENEW_SUBSCRIPTION": "Renew Subscription",
+  "EXTEND_SUBSCRIPTION": "Extend Access"
 }

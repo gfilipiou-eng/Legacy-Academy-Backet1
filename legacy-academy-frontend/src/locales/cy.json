@@ -270,5 +270,10 @@
   "SESSION_MONITORING": "Monitro sesiwn",
   "COLOR_GOLD_LIQUID": "Aur Hylifol",
   "COLOR_METALLIC": "Metalaidd",
-  "COLOR_WATER": "Γαλάζιο"
+  "COLOR_WATER": "Γαλάζιο",
+  "SUBSCRIPTION_REMAINING": "Υπολοιπόμενο: {{days}} ημέρες",
+  "SUBSCRIPTION_EXPIRED": "Η συνδρομή έληξε",
+  "SUBSCRIPTION": "Συνδρομή",
+  "RENEW_SUBSCRIPTION": "Ανανέωση Συνδρομής",
+  "EXTEND_SUBSCRIPTION": "Επέκταση Πρόσβασης"
 }
