@@ -3007,7 +3007,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     className="theme-swatch-btn flex flex-col items-center gap-1.5"
                                                 >
                                                     <span
-                                                        className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all duration-200 ${active ? 'border-[var(--gold-primary)] border-[3px] scale-110 shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'border-white/25 opacity-85 hover:opacity-100 hover:scale-105'}`}
+                                                        className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all duration-200 ${active ? 'border-[var(--gold-primary)] border-[3px] scale-115' : 'border-white/25 opacity-85 hover:opacity-100 hover:scale-105'}`}
                                                         style={{ backgroundColor: value }}
                                                     />
                                                     <span className={`text-[9px] font-bold uppercase tracking-wide text-center leading-tight max-w-[72px] ${active ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
