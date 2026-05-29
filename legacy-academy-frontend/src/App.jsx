@@ -1759,7 +1759,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false }) => {
     console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
@@ -1867,8 +1867,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     return (
         <motion.div
             initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ 
+                opacity: isDeleting ? 0 : 1, 
+                y: isDeleting ? 50 : 0, 
+                scale: isDeleting ? 0.8 : 1, 
+                filter: isDeleting ? 'blur(10px)' : 'none'
+            }}
             exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
             className={`premium-post-card group relative p-5 sm:p-7 mb-8 transition-all duration-300 will-change-transform overflow-hidden`}
         >
             {/* Subtle Ancient Greek Meander Top Border */}
@@ -3010,11 +3016,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'cy', flag: '🇨🇾', label: 'CY', name: 'Κυπριακά' }, { id: 'es', flag: '🇪🇸', label: 'ES', name: 'Español' },
                                 { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
-                                <button key={l.id} type="button" disabled={saving || activeLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${activeLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_15px_rgba(212,175,55,0.2)] scale-[1.02]' : 'border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-white/10'} ${saving ? 'pointer-events-none' : ''}`}
+                                <button key={l.id} type="button" style={{ WebkitTapHighlightColor: 'transparent' }} disabled={activeLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
+                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer touch-manipulation relative overflow-hidden ${activeLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/20 shadow-[0_0_25px_rgba(212,175,55,0.4)] scale-[1.05]' : 'border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-white/20 hover:scale-105'}`}
                                 >
-                                    <div className={`text-xl transition-transform duration-300 ${activeLanguage === l.id ? 'scale-110 drop-shadow-md' : 'opacity-80 grayscale-[0.2]'}`}>{l.flag}</div>
-                                    <div className={`text-[9px] font-black uppercase tracking-widest ${activeLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>{l.label}</div>
+                                    <div className={`text-xl transition-all duration-300 ${activeLanguage === l.id ? 'scale-125 drop-shadow-lg text-shadow' : 'opacity-90'}`}>{l.flag}</div>
+                                    <div className={`text-[9px] font-black uppercase tracking-widest ${activeLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{l.label}</div>
                                 </button>
                             ))}
                         </div>
@@ -3265,7 +3271,7 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds }) => {
     const { t, lang } = useTranslation(currentUser);
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
@@ -3526,10 +3532,10 @@ const ProfileModal = ({
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
             <motion.div 
-                initial={{ opacity: 0, y: 50, scale: 0.95 }} 
-                animate={{ opacity: 1, y: 0, scale: 1 }} 
-                exit={{ opacity: 0, y: 50, scale: 0.95 }} 
-                transition={{ type: 'spring', stiffness: 400, damping: 40, mass: 0.8 }} 
+                initial={{ opacity: 0, y: "100%" }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: "100%" }} 
+                transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
                 className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[24px] overflow-hidden flex flex-col bg-black border border-white/5 shadow-2xl`}>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -3568,7 +3574,7 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-10 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
+                <div className={`flex-1 overflow-y-auto custom-scrollbar relative overscroll-y-contain pb-20 z-10 ${displayUser?.coverPic ? 'bg-transparent' : 'bg-transparent'}`}>
                     {activeList ? (
                         <div className="p-4 space-y-4">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -4227,6 +4233,7 @@ const ProfileModal = ({
                                                                         onHashtagClick={onHashtagClick} 
                                                                         loadingActions={loadingActions} 
                                                                         forcePause={false} 
+                                                                        isDeleting={deletingPostIds?.has(p._id)}
                                                                     />
                                                                 </div>
                                                             ))}
@@ -5153,6 +5160,7 @@ const App = () => {
     };
 
     const [posts, setPosts] = useState([]);
+    const [deletingPostIds, setDeletingPostIds] = useState(new Set());
     const [lastDeletedPostId, setLastDeletedPostId] = useState(null);
     const [users, setUsers] = useState([]);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
@@ -6545,12 +6553,21 @@ const App = () => {
     };
 
     const handleDeletePost = async (postId) => {
-        // OPTIMISTIC SHATTER
+        // First mark as deleting for animation
+        setDeletingPostIds(prev => new Set([...prev, postId]));
+        // Wait for animation (500ms)
+        await new Promise(resolve => setTimeout(resolve, 500));
+        // Now remove from state
         setPosts(prev => prev.filter(p => p._id !== postId));
         setLastDeletedPostId(postId); // Propagate to modals
+        // Remove from deleting set
+        setDeletingPostIds(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(postId);
+            return newSet;
+        });
         try {
             await axios.delete(`/posts/${postId}`);
-
             cyberDeleteEffect();
         } catch (e) {
             fetchPosts(); // Re-sync on failure
@@ -7260,7 +7277,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} />
                                                                         </motion.div>
                                                                     ))}
                                                                 </AnimatePresence>
@@ -7336,6 +7353,7 @@ const App = () => {
                             });
                         }}
                         loadingActions={loadingActions}
+                        deletingPostIds={deletingPostIds}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
