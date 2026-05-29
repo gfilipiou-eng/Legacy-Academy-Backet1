@@ -3055,7 +3055,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     }}
                                                     className={`relative overflow-hidden rounded-2xl border transition-all duration-200 ${
                                                         active 
-                                                            ? 'border-[var(--gold-primary)] shadow-[0_0_20px_rgba(212,175,55,0.15)]' 
+                                                            ? 'border-[var(--gold-primary)] border-[2px]' 
                                                             : 'border-white/10 hover:border-white/20'
                                                     }`}
                                                 >
@@ -7222,7 +7222,7 @@ const App = () => {
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
-                        <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
+                        <header className="header-bg relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
