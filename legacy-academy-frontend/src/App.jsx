@@ -3537,7 +3537,7 @@ const ProfileModal = ({
 
     return (
 
-        <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center">
+        <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center overflow-x-hidden">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={onClose} />
             <motion.div 
                 initial={{ opacity: 0, y: "100%" }} 
