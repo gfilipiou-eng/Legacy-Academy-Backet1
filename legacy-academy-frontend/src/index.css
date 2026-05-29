@@ -287,6 +287,13 @@ body.bg-white .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] {
   box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
 }
 
+/* Ensure Plus icon (add story) on bottom navbar is black in dark/dark-blue modes */
+body.bg-dark .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] svg,
+body.bg-dark-blue .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
 /* Make sure white mode text and icons in bottom nav are dark */
 body.bg-white .text-gray-500 {
   color: #64748b !important;
