@@ -5846,8 +5846,8 @@ const App = () => {
             if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
                 console.log("📨 [SOCKET] Live message sound trigger");
                 
-                // Show a toast if chat window is not open with this user
-                if (!activeChat || String(activeChat._id) !== String(msg.sender)) {
+                // Show a toast if chat window is not open
+                if (!isChatOpen) {
                     addToast(`${t('NOTIF_MESSAGE', 'New message from')} ${msg.senderName || 'Agent'}`, 'info');
                 }
             }
@@ -5983,7 +5983,7 @@ const App = () => {
             socket.off('user.status', onUserStatus);
             socket.off('user.updated', onUserUpdated);
         };
-    }, [user, selectedPost?._id, isPublicExperience]);
+    }, [user, selectedPost?._id, isPublicExperience, isChatOpen]);
 
 
     // FIX: Optimized search filtering with useMemo
