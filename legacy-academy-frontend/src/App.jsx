@@ -854,10 +854,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
-                className={`flex gap-3 items-start relative py-3 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
+                className={`flex gap-3 items-start relative py-4 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
             >
                 <div 
-                    className="w-9 h-9 rounded-full overflow-hidden shrink-0  bg-black cursor-pointer hover:opacity-80 transition-opacity"
+                    className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
                 >
                     <ProfileAvatar
@@ -868,12 +868,12 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end text-right' : 'items-start'}`}>
                 <div className="flex items-center gap-2 mb-1 max-w-full">
                     <span 
-                        className={`font-black text-[10px] uppercase tracking-[0.15em] truncate cursor-pointer hover:underline ${isCommentAuthor ? 'text-[var(--gold-primary)]' : 'text-white'}`}
+                        className={`font-bold text-sm truncate cursor-pointer hover:underline text-white`}
                         onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
                     >
                         {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5" />
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4" />
                 </div>
 
                 {isEditing ? (
@@ -882,28 +882,28 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             autoFocus
                             value={editText}
                             onChange={e => setEditText(e.target.value)}
-                            className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none mb-2 focus:border-[var(--gold-primary)]/60 min-h-[60px] resize-none"
+                            className="w-full bg-transparent border border-white/15 rounded-xl px-4 py-3 text-sm text-white outline-none mb-2 focus:border-white/40 min-h-[80px] resize-none"
                         />
                         <div className="flex gap-2 mt-2 justify-end">
                             <button
                                 onClick={handleSave}
-                                className="px-3 py-1.5 rounded-full bg-[var(--gold-primary)] text-[10px] font-black text-black hover:brightness-110  uppercase tracking-wider"
+                                className="px-4 py-2 rounded-full bg-white text-[12px] font-bold text-black hover:brightness-90 uppercase tracking-wide"
                             >
                                 {t('SAVE')}
                             </button>
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="px-3 py-1.5 rounded-full bg-white/5 text-[10px] font-black text-gray-400   uppercase tracking-wider"
+                                className="px-4 py-2 rounded-full bg-white/10 text-[12px] font-bold text-white hover:bg-white/15 uppercase tracking-wide"
                             >
                                 {t('CANCEL')}
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-1 w-full">
+                    <div className="flex flex-col gap-2 w-full">
                         {comment.text && (
                             <div className="group/cmt relative">
-                                <span className={`inline-block pb-1 text-[13px] text-white/90 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
+                                <span className={`inline-block pb-1 text-[15px] text-white/95 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
                                     {parseText(translatedText || comment.text, null, (username) => {
                                         const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
                                         if (u && onViewProfile) onViewProfile(u);
@@ -913,18 +913,18 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                     <button
                                         onClick={handleTranslate}
                                         disabled={isTranslating}
-                                        className="ml-2 inline-flex items-center gap-1 text-[9px] font-black text-[var(--gold-primary)]/40   uppercase tracking-tighter"
+                                        className="ml-2 inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 hover:text-white uppercase tracking-tight"
                                     >
-                                        <Icons.Globe className={`w-2.5 h-2.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                        <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
                                         {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
                                     </button>
                                 )}
                             </div>
                         )}
                         {comment.audioUrl && (
-                            <div className="flex flex-col gap-1 mt-1">
-                                <div className="flex items-center gap-1 text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-[0.18em]">
-                                    <div className="w-1 h-1 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
+                            <div className="flex flex-col gap-1 mt-1 w-full">
+                                <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
                                 </div>
                                 <VoiceNotePlayer src={resolveMediaUrl(comment.audioUrl)} t={t} />
                             </div>
@@ -932,7 +932,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     </div>
                 )}
 
-                <div className="flex flex-wrap gap-3 mt-2 items-center text-[10px] text-gray-500">
+                <div className="flex flex-wrap gap-4 mt-2 items-center text-[11px] text-gray-500">
                     <div className="flex items-center gap-1.5 shrink-0">
                         <CyberDate date={comment.createdAt} t={t} lang={lang} />
                     </div>
@@ -940,20 +940,20 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <button
                             type="button"
                             onClick={() => setIsEditing(true)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-blue-400 hover:bg-blue-500/10 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[11px] font-bold text-gray-500 hover:text-white hover:bg-white/10 transition-colors"
                             title={t('EDIT')}
                         >
-                            <Icons.Edit className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('EDIT')}</span>
+                            <Icons.Edit className="w-3.5 h-3.5" /> <span>{t('EDIT')}</span>
                         </button>
                     )}
                     {canDelete && (
                         <button
                             type="button"
                             onClick={() => onDelete?.(post._id, comment._id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[11px] font-bold text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                             title={t('DELETE')}
                         >
-                            <Icons.Trash className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('DELETE')}</span>
+                            <Icons.Trash className="w-3.5 h-3.5" /> <span>{t('DELETE')}</span>
                         </button>
                     )}
                 </div>
@@ -1178,55 +1178,55 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
-                            <div className="flex items-center gap-2 w-full">
-                                <div className="w-9 h-9 rounded-full bg-black overflow-hidden shrink-0 ">
+                            <div className="flex items-center gap-3 w-full">
+                                <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0">
                                     <ProfileAvatar user={user} />
                                 </div>
                                 {isRecordingComment ? (
-                                    <div className="flex-1 min-w-0 bg-white text-black border border-white rounded-none p-2 flex items-center justify-between">
+                                    <div className="flex-1 min-w-0 bg-white/90 text-black border border-white/30 rounded-2xl p-3 flex items-center justify-between">
                                         <div className="flex items-center gap-2 pl-1 shrink-0">
-                                            <div className="w-2.5 h-2.5 rounded-none bg-red-500 animate-pulse" />
-                                            <span className="text-[10px] font-black text-black uppercase tracking-widest">{t('TRANSMITTING')}</span>
+                                            <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+                                            <span className="text-[11px] font-bold text-black uppercase tracking-widest">{t('TRANSMITTING')}</span>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button onClick={() => stopRecording(true)} className="p-2 bg-black  rounded-none text-white hover:bg-white/10"><Icons.X className="w-4 h-4" /></button>
-                                            <button onClick={() => stopRecording(false)} className="px-3 py-2 bg-black rounded-none text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10">{t('STOP')}</button>
+                                            <button onClick={() => stopRecording(true)} className="p-2 bg-black rounded-full text-white hover:bg-black/80 transition-colors"><Icons.X className="w-4 h-4" /></button>
+                                            <button onClick={() => stopRecording(false)} className="px-4 py-2 bg-black rounded-full text-white font-bold text-[11px] uppercase tracking-widest hover:bg-black/80 transition-colors">{t('STOP')}</button>
                                         </div>
                                     </div>
                                 ) : commentAudio ? (
-                                    <div className="flex-1 min-w-0 flex items-center justify-between px-2 bg-black border border-white/40 rounded-none p-1">
+                                    <div className="flex-1 min-w-0 flex items-center justify-between px-3 bg-black/80 border border-white/20 rounded-2xl p-2">
                                         <div className="flex items-center gap-2 pl-2 min-w-0">
-                                            <div className="w-2 h-2 rounded-none bg-white animate-pulse shrink-0" />
-                                            <span className="text-[10px] font-black text-white uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
+                                            <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse shrink-0" />
+                                            <span className="text-[11px] font-bold text-white uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
                                         </div>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            <button onClick={() => setCommentAudio(null)} className="w-9 h-9 flex items-center justify-center rounded-none text-white  hover:bg-white/10">
+                                            <button onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors">
                                                 <Icons.X className="w-4 h-4" />
                                             </button>
                                             <button onClick={() => {
                                                 const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
                                                 if (commentText.trim()) fd.append('text', commentText.trim());
                                                 onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                            }} className="w-9 h-9 flex items-center justify-center bg-white rounded-none text-black">
+                                            }} className="w-10 h-10 flex items-center justify-center bg-white rounded-full text-black hover:brightness-90 transition-colors">
                                                 <Icons.Send className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
                                 ) : (
-                                    <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-black  rounded-none overflow-hidden min-h-[46px]">
+                                    <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[48px]">
                                         <input
                                             id={`comment-input-${post._id}`}
                                             placeholder={t('FOUNDER_PLACEHOLDER')}
                                             value={commentText}
                                             onChange={(e) => setCommentText(e.target.value)}
-                                            className="flex-1 min-w-0 bg-transparent py-3 px-3 text-sm text-white outline-none placeholder-gray-600 font-bold"
+                                            className="flex-1 min-w-0 bg-transparent py-3 px-4 text-base text-white outline-none placeholder-gray-500 font-medium"
                                         />
-                                        <div className="flex gap-1 pr-1 shrink-0">
-                                            <button type="button" onClick={toggleCommentRecording} className={`w-9 h-9 flex items-center justify-center rounded-none ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'text-gray-500'}`}>
-                                                <Icons.Mic className="w-4 h-4" />
+                                        <div className="flex gap-1 pr-2 shrink-0">
+                                            <button type="button" onClick={toggleCommentRecording} className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'text-gray-500 hover:text-white hover:bg-white/10'}`}>
+                                                <Icons.Mic className="w-5 h-5" />
                                             </button>
-                                            <button type="submit" disabled={!commentText.trim()} className="w-9 h-9 flex items-center justify-center rounded-none bg-white text-black disabled:opacity-25   shrink-0">
-                                                <Icons.Send className="w-4 h-4" />
+                                            <button type="submit" disabled={!commentText.trim()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-25 hover:brightness-90 transition-colors shrink-0">
+                                                <Icons.Send className="w-5 h-5" />
                                             </button>
                                         </div>
                                     </form>
@@ -2127,9 +2127,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         )}
 
                         {showComments && !isReadOnly && (
-                            <div className="mt-4 pt-4 border-t border-white/5 space-y-6 animate-fade-in relative z-20">
-                                <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0  bg-black">
+                            <div className="mt-4 pt-4 border-t border-white/5 space-y-4 animate-fade-in relative z-20">
+                                <div className="flex gap-3">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black">
                                         <ProfileAvatar user={user} />
                                     </div>
                                     <div className="flex-1 flex flex-col gap-3">
@@ -2138,34 +2138,34 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 value={commentText}
                                                 onChange={(e) => setCommentText(e.target.value)}
                                                 placeholder={t('WRITE_COMMENT')}
-                                                className="w-full bg-black  rounded-none p-4 text-sm text-white outline-none focus:border-white min-h-[100px] resize-none pb-12"
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-base text-white outline-none focus:border-white/40 min-h-[100px] resize-none pb-12 transition-all"
                                             />
                                             <div className="absolute bottom-2 left-2 flex gap-2">
-                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-none  ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'bg-black  text-gray-500'}`}>
+                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-full transition-colors ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'bg-transparent text-gray-500 hover:text-white hover:bg-white/10'}`}>
                                                     <Icons.Mic className="w-5 h-5" />
                                                 </button>
-                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-white border border-white text-black rounded-none hover:opacity-90  ">
+                                                <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-white text-black rounded-full hover:brightness-90 transition-colors">
                                                     <Icons.Send className="w-5 h-5" />
                                                 </button>
                                             </div>
                                         </div>
                                         {commentAudio && (
-                                            <div className="p-3 bg-white/10 border border-white/30 rounded-none flex items-center justify-between mt-3">
+                                            <div className="p-3 bg-white/10 border border-white/30 rounded-2xl flex items-center justify-between mt-3">
                                                 <div className="flex items-center gap-3">
                                                     <Icons.Mic className="w-4 h-4 text-white" />
                                                     <span className="text-[10px] font-black text-white uppercase">VOICE READY</span>
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5  text-white rounded-none  hover:bg-white/10"><Icons.Trash className="w-4 h-4" /></button>
-                                                    <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-white text-black font-black text-[10px] rounded-none">SEND</button>
+                                                    <button onClick={() => setCommentAudio(null)} className="p-1.5 text-white rounded-full hover:bg-white/10 transition-colors"><Icons.Trash className="w-4 h-4" /></button>
+                                                    <button onClick={() => { const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm'); onComment(post._id, fd); setCommentAudio(null); }} className="px-4 py-1 bg-white text-black font-black text-[10px] rounded-full hover:brightness-90 transition-colors">SEND</button>
                                                 </div>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                                <div className="space-y-6 pt-4">
+                                <div className="space-y-4 pt-4">
                                     {(post.comments || []).slice().reverse().map(c => (
-                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} />
+                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} onViewProfile={onViewProfile} />
                                     ))}
                                 </div>
                             </div>
