@@ -33,9 +33,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
-    // 🔥 SECURITY/UI CLEANUP: Hide media from old, deactivated Cloudinary accounts
-    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/') || cleanUrl.includes('res.cloudinary.com/ddehek3eo/')) {
-        return null; // Force hide to avoid 404/401 errors and keep UI clean
+    // 🔥 SECURITY/UI CLEANUP: Hide media from the old, deactivated Cloudinary account (dfggkqhdb)
+    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/')) {
+        return null; // Force hide to avoid 401 errors and keep UI clean
     }
 
     // AUTO-OPTIMIZE CLOUDINARY
@@ -3817,7 +3817,7 @@ const ProfileModal = ({
                                         }
                                         finally { setCoverUploading(false); }
                                     }} disabled={coverUploading}
-                                        className="w-[56px] h-[56px] shrink-0 bg-[#121212] rounded-2xl text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400 border border-white/10">
+                                        className="w-[56px] h-[56px] shrink-0 bg-transparent rounded-2xl text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400 border border-white/10">
                                         <Icons.X className="w-6 h-6" />
                                     </button>
                                 )}
@@ -7321,7 +7321,7 @@ const App = () => {
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black/80 backdrop-blur-md rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-white/50 border border-white/10 text-white" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black/70 backdrop-blur-xl rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-white/50 border border-white/10 text-white" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
@@ -7445,7 +7445,7 @@ const App = () => {
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
-                                                            <button className="px-3 py-1.5 bg-white text-black rounded-none text-[10px] font-black uppercase tracking-widest">{t('VIEW')}</button>
+                                                            <button className="px-3 py-1.5 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest">{t('VIEW')}</button>
                                                         </div>
                                                     ))}
                                                 </div>
