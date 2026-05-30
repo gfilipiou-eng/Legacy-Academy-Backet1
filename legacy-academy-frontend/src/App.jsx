@@ -2539,7 +2539,30 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 </div>
 
                 {/* CHAT WINDOW */}
-                <div className={`flex-1 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
+                <div className={`flex-1 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
+                    {/* Cosmic Background */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                        {/* Animated Stars */}
+                        <div className="absolute inset-0">
+                            {Array.from({ length: 50 }).map((_, i) => (
+                                <div 
+                                    key={i}
+                                    className="absolute rounded-full bg-white"
+                                    style={{
+                                        left: `${Math.random() * 100}%`,
+                                        top: `${Math.random() * 100}%`,
+                                        width: `${Math.random() * 2 + 1}px`,
+                                        height: `${Math.random() * 2 + 1}px`,
+                                        opacity: `${Math.random() * 0.6 + 0.2}`,
+                                        animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
+                                        animationDelay: `${Math.random() * 2}s`
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        {/* Nebula Effect */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(139,92,246,0.08)_0%,transparent_50%),radial-gradient(circle_at_80%_80%,rgba(34,211,238,0.06)_0%,transparent_45%),radial-gradient(circle_at_40%_20%,rgba(249,115,22,0.05)_0%,transparent_40%)]" />
+                    </div>
                     {activeChat ? (
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
@@ -2614,10 +2637,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 )}
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-sm relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-gradient-to-br from-[#101010] to-[#1a1a1a] text-white border-white/10 rounded-br-sm' : 'bg-black text-white border-white/10 rounded-bl-sm'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/80' : ''} hover:scale-[1.02] transition-transform duration-200`}
+                                                    className={`max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-xl relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white border-cyan-500/30 rounded-br-sm shadow-[0_0_20px_rgba(6,182,212,0.15)]' : 'bg-gradient-to-br from-[#0f0f23] via-[#1a1a3e] to-[#0d1b2a] text-white border-purple-500/30 rounded-bl-sm shadow-[0_0_20px_rgba(147,51,234,0.12)]'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/90 shadow-[0_0_25px_rgba(245,158,11,0.3)]' : ''} hover:scale-[1.02] transition-all duration-300`}
                                                 >
-                                                {/* Subtle iOS Glass Effect overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none rounded-[22px]" />
+                                                {/* Glass/Sparkle overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-transparent to-white/[0.02] pointer-events-none rounded-[22px]" />
+                                                {/* Animated glow border */}
+                                                <div className="absolute inset-0 rounded-[22px] p-[1px] pointer-events-none overflow-hidden">
+                                                    <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50 animate-shimmer" />
+                                                </div>
                                                 {/* IMAGE ATTACHMENT */}
                                                 {imageUrl && (
                                                     <div className="mb-2 relative z-10">
