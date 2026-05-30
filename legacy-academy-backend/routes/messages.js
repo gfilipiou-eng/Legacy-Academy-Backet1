@@ -135,7 +135,8 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
             // --- BOT AUTOMATION ---
             console.log("🤖 [MESSAGE_ROUTE] Triggering bot mention handler...");
-            await handleBotMention(savedMessage, io);
+            // Fire and forget so it doesn't block the response
+            handleBotMention(savedMessage, io).catch(err => console.error("Bot Handler Error:", err));
         }
 
         res.status(200).json(savedMessage);
