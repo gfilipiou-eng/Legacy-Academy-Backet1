@@ -7002,8 +7002,22 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
-                                    <div className="relative flex justify-center items-center w-full h-40 md:h-48 mb-2">
-                                        <img src={`/logo.png?t=${Date.now()}`} alt="Legacy Academy" className={`h-full w-auto max-w-[90%] object-contain transform-gpu transition-opacity duration-300 drop-shadow-none ${authLoading ? 'opacity-50' : 'opacity-100'}`} style={{ imageRendering: 'pixelated', imageRendering: '-webkit-optimize-contrast', backfaceVisibility: 'hidden', transform: 'translateZ(0)', willChange: 'transform' }} />
+                                    <div className="relative flex justify-center items-center w-full h-48 md:h-56 mb-2">
+                                        {/* Liquid Glass Background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 via-purple-500/5 to-cyan-400/10 blur-3xl animate-pulse rounded-full scale-75" />
+                                        <div className="absolute w-40 h-40 md:w-48 md:h-48 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(255,215,0,0.1)] animate-float-gentle flex items-center justify-center">
+                                            <img 
+                                                src={`/logo.png?t=${Date.now()}`} 
+                                                alt="Legacy Academy" 
+                                                className={`h-[90%] w-auto object-contain transform-gpu transition-all duration-500 drop-shadow-[0_0_20px_rgba(255,215,0,0.3)] hover:scale-105 hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.5)] ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
+                                                style={{ 
+                                                    imageRendering: '-webkit-optimize-contrast', 
+                                                    backfaceVisibility: 'hidden', 
+                                                    transform: 'translateZ(0)', 
+                                                    willChange: 'transform' 
+                                                }} 
+                                            />
+                                        </div>
                                     </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
@@ -7357,7 +7371,20 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <img src={`/logo.png?t=${Date.now()}`} alt="Legacy Academy" className="h-48 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: 'pixelated', imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden', transform: 'translateZ(0)', willChange: 'transform' }} />
+                                    <div className="relative flex items-center justify-center">
+                                        <div className="absolute -inset-4 bg-gradient-to-br from-[var(--gold-primary)]/10 via-purple-500/5 to-cyan-400/10 blur-2xl rounded-full" />
+                                        <img 
+                                            src={`/logo.png?t=${Date.now()}`} 
+                                            alt="Legacy Academy" 
+                                            className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 drop-shadow-[0_0_20px_rgba(255,215,0,0.25)] hover:scale-105 hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.4)]" 
+                                            style={{ 
+                                                imageRendering: '-webkit-optimize-contrast', 
+                                                backfaceVisibility: 'hidden', 
+                                                transform: 'translateZ(0)', 
+                                                willChange: 'transform' 
+                                            }} 
+                                        />
+                                    </div>
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
