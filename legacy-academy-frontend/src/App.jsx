@@ -33,9 +33,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
-    // 🔥 SECURITY/UI CLEANUP: Hide media from the old, deactivated Cloudinary account (dfggkqhdb)
-    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/')) {
-        return null; // Force hide to avoid 401 errors and keep UI clean
+    // 🔥 SECURITY/UI CLEANUP: Hide media from old, deactivated Cloudinary accounts
+    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/') || cleanUrl.includes('res.cloudinary.com/ddehek3eo/')) {
+        return null; // Force hide to avoid 404/401 errors and keep UI clean
     }
 
     // AUTO-OPTIMIZE CLOUDINARY
@@ -3492,8 +3492,6 @@ const ProfileModal = ({
     const [profileUploading, setProfileUploading] = useState(false);
     const [isProfileSaving, setIsProfileSaving] = useState(false);
 
-    useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
-
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
         const profileUserId = safeId(profileUser);
@@ -3549,6 +3547,8 @@ const ProfileModal = ({
             setFounderAffiliation(getFounderAffiliation(displayUser));
         }
     }, [displayUser, isEditing]);
+
+    useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
 
     const userStories = React.useMemo(() => (posts || []).filter(p => {
         const pId = String(p.author?._id || p.author);
