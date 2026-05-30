@@ -9,11 +9,11 @@
   background-color: #000000;
   --gold-primary: #D4AF37;
   --gold-secondary: #AA8B2C;
-  --gold-glow: rgba(212, 175, 55, 0.2);
-  --gold-glow-soft: rgba(212, 175, 55, 0.05);
+  --gold-glow: rgba(212, 175, 55, 0);
+  --gold-glow-soft: rgba(212, 175, 55, 0);
   --gold-primary-rgb: 212, 175, 55;
   --ai-cyan: #00f2ff;
-  --ai-glow: rgba(0, 242, 255, 0.3);
+  --ai-glow: rgba(0, 242, 255, 0);
   --carbon-black: #050505;
   --glass-bg: rgba(10, 10, 10, 0.85);
   --glass-border: rgba(255, 255, 255, 0.08);
@@ -55,11 +55,25 @@ body.bg-dark-blue::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 20% 20%, rgba(30, 60, 114, 0.3) 0%, transparent 40%),
-              radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 40%);
+  background: 
+    radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(30, 64, 175, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(147, 197, 253, 0.1) 0%, transparent 60%);
   pointer-events: none;
   z-index: -1;
-  filter: blur(80px);
+  filter: blur(100px);
+  animation: darkBlueBg 15s ease-in-out infinite;
+}
+
+@keyframes darkBlueBg {
+  0%, 100% { 
+    background-position: 10% 10%, 90% 90%, 50% 50%;
+    background-size: 100% 100%;
+  }
+  50% { 
+    background-position: 20% 20%, 80% 80%, 45% 55%;
+    background-size: 110% 110%;
+  }
 }
 
 @keyframes float {
@@ -94,35 +108,19 @@ button:active {
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6),
-              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  box-shadow: none;
 }
 
 .liquid-glass-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7),
-              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  box-shadow: none;
   transform: translateY(-1px) scale(1.02);
 }
 
 /* Subtle Glow for Active Elements */
 .active-glow {
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2),
-              0 8px 32px rgba(0, 0, 0, 0.6);
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -10;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(0, 242, 255, 0.02) 0%, transparent 40%);
-  pointer-events: none;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
+  box-shadow: none;
 }
 
 /* AI Style Glassmorphism */
@@ -131,7 +129,7 @@ body::before {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  box-shadow: none;
 }
 
 .ai-card {
@@ -143,16 +141,16 @@ body::before {
 
 .ai-card:hover {
   border-color: rgba(255, 215, 0, 0.2);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 1px rgba(255, 215, 0, 0.1);
+  box-shadow: none;
 }
 
 /* Glowing text and icons */
 .glow-gold {
-  text-shadow: 0 0 10px var(--gold-glow);
+  text-shadow: none;
 }
 
 .glow-cyan {
-  text-shadow: 0 0 10px var(--ai-glow);
+  text-shadow: none;
 }
 
 /* Premium Navigation */
@@ -773,8 +771,8 @@ html, body {
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  border-radius: 32px;
+  box-shadow: none;
+  border-radius: 24px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -785,12 +783,19 @@ html, body {
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  border-radius: 32px;
+  box-shadow: none;
+  border-radius: 24px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  will-change: transform, box-shadow;
+  will-change: transform;
+}
+
+@media (max-width: 640px) {
+  .premium-post-card {
+    border-radius: 16px;
+    padding: 0.75rem !important;
+  }
 }
 
 @media (hover: hover) {
