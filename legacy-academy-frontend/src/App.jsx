@@ -2583,7 +2583,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         const isChatUserOnline = isUserOnline(chatUser, user);
                                         return (
                                             <div className={`text-[10px] flex items-center gap-1.5 ${isChatUserOnline ? 'text-green-500/90 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
-                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} />
+                                                <div className={`w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${isChatUserOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} />
                                                 {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
                                             </div>
                                         );
@@ -4166,7 +4166,7 @@ const ProfileModal = ({
                                     )}
                                     <div className="text-gray-400 text-sm font-bold mt-1 flex items-center gap-2">
                                         @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
-                                        <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
+                                        <div className={`w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                 </div>
 
