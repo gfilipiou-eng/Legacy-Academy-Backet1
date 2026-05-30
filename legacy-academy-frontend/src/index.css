@@ -62,250 +62,6 @@ body.bg-dark-blue::before {
   filter: blur(80px);
 }
 
-body.bg-white {
-  --app-bg: #ffffff;
-  --app-text: #1e293b;
-  position: relative;
-}
-
-body.bg-white::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
-              radial-gradient(circle at 85% 85%, rgba(148, 163, 184, 0.08) 0%, transparent 40%);
-  pointer-events: none;
-  z-index: -1;
-  filter: blur(60px);
-}
-
-/* Header text is white in dark/dark-blue, dark gray in white */
-body.bg-white .header-bg h1,
-body.bg-white .header-bg h2,
-body.bg-white .header-bg h3,
-body.bg-white .header-bg span {
-  color: #1e293b !important;
-}
-
-/* Preserve gold primary color for selected items in ALL modes */
-.text-\[var\(--gold-primary\)\] {
-  color: var(--gold-primary) !important;
-}
-
-/* Preserve theme colors (red, green, blue, yellow) for buttons/badges in all modes */
-.text-red-500,
-.text-green-500,
-.text-blue-500,
-.text-yellow-500 {
-  color: inherit !important;
-}
-
-/* Fix for dark/dark-blue mode - basic text is white */
-body.bg-dark,
-body.bg-dark-blue {
-  color: #e7e9ea !important;
-}
-
-/* Fix for white mode - basic text is dark gray */
-body.bg-white {
-  color: #1e293b !important;
-}
-
-/* Slider styling for all modes */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  background: transparent;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  background: var(--gold-primary);
-  cursor: pointer;
-  margin-top: -7px;
-}
-
-body.bg-white input[type="range"]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  cursor: pointer;
-  background: rgba(15, 23, 42, 0.1);
-  border-radius: 4px;
-}
-
-body.bg-dark input[type="range"]::-webkit-slider-runnable-track,
-body.bg-dark-blue input[type="range"]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-/* Header/Navbar for all modes */
-body.bg-dark .header-bg {
-  background: rgba(0, 0, 0, 0.85) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-body.bg-dark-blue .header-bg {
-  background: rgba(5, 10, 20, 0.9) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-body.bg-white .header-bg {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(15, 23, 42, 0.15) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Bottom Navbar for all modes */
-body.bg-dark .bottom-nav-glass {
-  background: rgba(0, 0, 0, 0.9) !important;
-  border-top-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.bg-dark-blue .bottom-nav-glass {
-  background: rgba(5, 10, 20, 0.95) !important;
-  border-top-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-body.bg-white .bottom-nav-glass {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-top-color: rgba(15, 23, 42, 0.1) !important;
-}
-
-/* Dark and Dark Blue Mode Text Adjustments (ensure all text is white/light) */
-body.bg-dark,
-body.bg-dark h1,
-body.bg-dark h2,
-body.bg-dark h3,
-body.bg-dark h4,
-body.bg-dark h5,
-body.bg-dark h6,
-body.bg-dark p,
-body.bg-dark span,
-body.bg-dark div,
-body.bg-dark-blue,
-body.bg-dark-blue h1,
-body.bg-dark-blue h2,
-body.bg-dark-blue h3,
-body.bg-dark-blue h4,
-body.bg-dark-blue h5,
-body.bg-dark-blue h6,
-body.bg-dark-blue p,
-body.bg-dark-blue span,
-body.bg-dark-blue div {
-  color: #e7e9ea !important;
-}
-/* Preserve theme colors (red, green, gold, etc.) for dark/dark-blue modes */
-body.bg-dark .text-\[var\(--gold-primary\)\],
-body.bg-dark-blue .text-\[var\(--gold-primary\)\],
-body.bg-dark .text-red-500,
-body.bg-dark-blue .text-red-500,
-body.bg-dark .text-green-500,
-body.bg-dark-blue .text-green-500,
-body.bg-dark .text-blue-500,
-body.bg-dark-blue .text-blue-500,
-body.bg-dark .text-yellow-500,
-body.bg-dark-blue .text-yellow-500 {
-  color: inherit !important;
-}
-
-/* White Mode Text Adjustments (ensure dark readable text) */
-body.bg-white .text-white {
-  color: #1e293b !important; /* slate-800 - nice dark gray, not blue */
-}
-body.bg-white .text-gray-300 {
-  color: #64748b !important;
-}
-body.bg-white .text-gray-400 {
-  color: #94a3b8 !important;
-}
-body.bg-white .text-gray-500 {
-  color: #cbd5e1 !important;
-}
-
-/* White Mode Borders */
-body.bg-white .border-white\/5,
-body.bg-white .border-white\/10,
-body.bg-white .border-white\/20 {
-  border-color: rgba(15, 23, 42, 0.08) !important;
-}
-
-/* White Mode Glass Panels */
-body.bg-white .glass-panel {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-color: rgba(15, 23, 42, 0.15) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-}
-
-/* Glass Panel styling for dark/dark-blue */
-body.bg-dark .glass-panel,
-body.bg-dark-blue .glass-panel {
-  background: rgba(0,0,0,0.85) !important;
-  border-color: rgba(255,255,255,0.15) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-}
-
-/* White Mode Icons */
-body.bg-white .text-gray-300 svg,
-body.bg-white .text-white svg {
-  color: #0f172a !important;
-}
-
-/* Adjustments for White Mode in Bottom Navbar */
-body.bg-white .bg-black {
-  background: rgba(255, 255, 255, 0.02) !important;
-}
-
-/* Dark Blue Mode - subtle adjustments */
-body.bg-dark-blue .bg-black {
-  background: rgba(5, 10, 20, 1) !important;
-}
-
-/* Add story button for White Mode */
-body.bg-white .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] {
-  background: #0f172a !important;
-  color: white !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-}
-
-/* Ensure Plus icon (add story) on bottom navbar is black in dark/dark-blue modes */
-body.bg-dark .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] svg,
-body.bg-dark-blue .shadow-\[0_4px_20px_rgba\(255\,255\,255\,0\.3\)\] svg {
-  color: #000000 !important;
-  stroke: #000000 !important;
-}
-
-/* Make sure white mode text and icons in bottom nav are dark */
-body.bg-white .text-gray-500 {
-  color: #64748b !important;
-}
-
-body.bg-white .text-gray-300 {
-  color: #475569 !important;
-}
-
-body.bg-white .hover\:text-gray-300:hover {
-  color: #334155 !important;
-}
-
 @keyframes float {
   0% { transform: translateY(0) scale(1); opacity: 0.6; }
   50% { opacity: 0.9; transform: translateY(-35px) scale(1.15); }
@@ -517,16 +273,44 @@ body::before {
 }
 
 /* Simple black/white active state */
-.liquid-droplet-active { position: relative; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: none; border-radius: inherit; }
+.liquid-droplet-active {
+  position: relative;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  
+  /* Safari Compositing Fixes for animations */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
 
 /* Simple center action button */
-.liquid-gold-btn { background: linear-gradient(135deg, #ffffff 0%, var(--gold-primary) 25%, var(--gold-secondary) 100%) !important; color: #000000 !important; box-shadow: none !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; position: relative; overflow: hidden; }
+.liquid-gold-btn {
+  background: #ffffff !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  position: relative;
+  overflow: hidden;
+  
+  /* Safari Compositing Fixes */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: none;
+}
 
 /* Disabled glow effect on nav buttons */
 .nav-btn-glow {
   position: relative;
 }
-.nav-btn-glow::after { display: none !important; }
+.nav-btn-glow::after {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* Orange theme — readable text; accents use --gold-primary */
 body.theme-orange-black {
@@ -974,11 +758,11 @@ html, body {
 }
 
 .shadow-glow-f1 {
-  box-shadow: none !important;
+  box-shadow: 0 0 12px rgba(29, 155, 240, 0.25);
 }
 
 .shadow-glow-gold {
-  box-shadow: none !important;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
 }
 
 .premium-post-card {

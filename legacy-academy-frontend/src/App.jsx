@@ -1089,7 +1089,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black rounded-none z-[2600] shadow-none group">
                 <Icons.X className="w-6 h-6 text-white group-hover:rotate-90" />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_4px_20px_rgba(0,0,0,0.5)]" onClick={(e) => e.stopPropagation()}>
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
                 {/* Image Section */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {(post.image || post.videoUrl || post.thumbnailUrl) ? (
@@ -1160,21 +1160,21 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
                                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
                                 >
-                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 ' : ''}`} />
+                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
                                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
                                 >
-                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 ' : ''}`} />
+                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
                                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
                                 >
-                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 ' : ''}`} />
+                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
@@ -1512,7 +1512,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                 <div className={`w-full h-full absolute inset-0 pointer-events-none transform-gpu transition-opacity duration-1000 overflow-hidden bg-black ${isActuallyPlaying ? 'opacity-100' : 'opacity-0'}`}>
                     {/* Ghost Layer - Precision masking (120% zoom instead of 115%) to avoid cutting content */}
                     <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] pointer-events-none select-none transform-gpu backface-hidden">
-                        <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-none" />
+                        <div id={playerUniqueId} className="w-full h-full pointer-events-none shadow-[0_0_100px_black_inset]" />
                     </div>
                 </div>
             )}
@@ -1612,18 +1612,18 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             </div>
                             <div
                                 ref={seekRef}
-                                className="w-full h-1.5 bg-white/10 backdrop-blur-sm rounded-full cursor-pointer relative group/seek shadow-none border border-white/5"
+                                className="w-full h-1.5 bg-white/10 backdrop-blur-sm rounded-full cursor-pointer relative group/seek shadow-[0_0_10px_rgba(0,0,0,0.5)] border border-white/5"
                                 onMouseDown={handleMouseDown}
                                 onTouchStart={handleMouseDown}
                             >
                                 <div className="absolute inset-x-0 -inset-y-4 group-hover/seek:bg-white/5 rounded-full" />
                                 <motion.div
-                                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffea70] shadow-none rounded-full"
+                                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffea70] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
                                     style={{ width: `${progress}%` }}
                                     transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
                                 />
                                 <motion.div
-                                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-none scale-0 group-hover/seek:scale-100 hidden sm:block"
+                                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_5px_rgba(255,255,255,0.8)] scale-0 group-hover/seek:scale-100 hidden sm:block"
                                     style={{ left: `${progress}%`, marginLeft: '-6px' }}
                                 />
                             </div>
@@ -1664,7 +1664,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-none p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
                 {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-none p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
                 {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-none p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
-                {note.type === 'security_alert' && <div className="absolute -bottom-1 -right-1 bg-orange-600 rounded-none p-1 border-2 border-black animate-pulse shadow-none"><Icons.ShieldCheck className="w-3 h-3 text-white" /></div>}
+                {note.type === 'security_alert' && <div className="absolute -bottom-1 -right-1 bg-orange-600 rounded-none p-1 border-2 border-black animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.6)]"><Icons.ShieldCheck className="w-3 h-3 text-white" /></div>}
             </div>
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
@@ -1733,14 +1733,14 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         ))}
                     </div>
                     {/* Liquid Glass Background */}
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-none"></div>
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                     {/* Inner Profile Avatar */}
                     <div className="absolute inset-[4px] rounded-full overflow-hidden">
                         <ProfileAvatar user={user} className="opacity-60" key={imgKey} cacheKey={imgKey} />
                     </div>
                     {/* Add Icon */}
                     <div className="absolute inset-0 flex items-center justify-center z-10">
-                        <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-none group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                        <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
                             <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -2039,7 +2039,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }}
                                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
                                 >
-                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 ' : ''}`} />
+                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                                 </button>
 
@@ -2053,7 +2053,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }}
                                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
                                 >
-                                        <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 ' : ''}`} />
+                                        <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                                 </button>
 
@@ -2067,7 +2067,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }}
                                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
                                 >
-                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 ' : ''}`} />
+                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
                                 </button>
 
@@ -2468,7 +2468,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     return (
         <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black/50 sm:rounded-none  flex overflow-hidden shadow-none">
+            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none  flex overflow-hidden shadow-none">
                 <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
@@ -2503,7 +2503,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-full bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-none' : 'bg-gray-500'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-full bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2533,7 +2533,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         const isChatUserOnline = isUserOnline(chatUser, user);
                                         return (
                                             <div className={`text-[10px] flex items-center gap-1.5 ${isChatUserOnline ? 'text-green-500/90 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
-                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500 shadow-none' : 'bg-gray-600'}`} />
+                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} />
                                                 {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
                                             </div>
                                         );
@@ -3038,11 +3038,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
                                         {t('BACKGROUND')}
                                     </div>
-                                    <div className="grid grid-cols-3 gap-3">
+                                    <div className="grid grid-cols-2 gap-3">
                                         {[
                                             { value: 'dark', labelKey: 'DARK_MODE', color: '#000000' },
-                                            { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14' },
-                                            { value: 'white', labelKey: 'WHITE_MODE', color: '#ffffff' }
+                                            { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14' }
                                         ].map(({ value, labelKey, color }) => {
                                             const active = (user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark') === value;
                                             return (
@@ -3055,7 +3054,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     }}
                                                     className={`relative overflow-hidden rounded-2xl border transition-all duration-200 ${
                                                         active 
-                                                            ? 'border-[var(--gold-primary)] border-[2px]' 
+                                                            ? 'border-[var(--gold-primary)] shadow-[0_0_20px_rgba(212,175,55,0.15)]' 
                                                             : 'border-white/10 hover:border-white/20'
                                                     }`}
                                                 >
@@ -3070,7 +3069,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div className={`p-2 text-center ${active ? 'text-[var(--gold-primary)]' : (value === 'white' ? 'text-gray-700' : 'text-gray-400')}`}>
+                                                    <div className={`p-2 text-center ${active ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
                                                         <div className="text-[9px] font-bold uppercase tracking-wide">{t(labelKey)}</div>
                                                     </div>
                                                 </button>
@@ -3857,7 +3856,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-none rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -3867,7 +3866,7 @@ const ProfileModal = ({
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
-                                        className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-none rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 transition-all duration-300"
+                                        className="w-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] outline-none resize-none h-32 transition-all duration-300"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
@@ -3902,7 +3901,7 @@ const ProfileModal = ({
                                                     e.stopPropagation();
                                                     setProfileDescriptor(option.value);
                                                 }}
-                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-none' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-200 cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
                                                 <div className="flex items-center gap-3 min-w-0">
                                                     <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
@@ -4073,7 +4072,7 @@ const ProfileModal = ({
                                     )}
                                     <div className="text-gray-400 text-sm font-bold mt-1 flex items-center gap-2">
                                         @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
-                                        <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-none' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
+                                        <div className={`w-2 h-2 rounded-full border border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                 </div>
 
@@ -4262,14 +4261,14 @@ const ProfileModal = ({
                                                                 ))}
                                                             </div>
                                                             {/* Liquid Glass Background */}
-                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-none"></div>
+                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                                                             {/* Inner Profile Avatar */}
                                                             <div className="absolute inset-[4px] rounded-full overflow-hidden bg-[#050505]">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40" />
                                                             </div>
                                                             {/* Add Icon */}
                                                             <div className="absolute inset-0 flex items-center justify-center z-10">
-                                                                <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-none group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                                                                <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
                                                                     <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
                                                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -4529,7 +4528,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 </div>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-none group/note">
+                        <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note">
                             <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
                             <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
                                 {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
@@ -4781,12 +4780,10 @@ const applyTheme = (color) => {
 
 const applyBackground = (mode) => {
     // Remove existing classes
-    document.body.classList.remove('bg-dark', 'bg-dark-blue', 'bg-white');
+    document.body.classList.remove('bg-dark', 'bg-dark-blue');
     // Add new class
     if (mode === 'dark-blue') {
         document.body.classList.add('bg-dark-blue');
-    } else if (mode === 'white') {
-        document.body.classList.add('bg-white');
     } else {
         document.body.classList.add('bg-dark');
     }
@@ -7217,12 +7214,12 @@ const App = () => {
                 )}
                 </>
             ) : (
-                <div className="h-[100dvh] bg-transparent text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0 bg-[var(--app-bg)] opacity-70"></div>
+                <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                    <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
-                        <header className="header-bg relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
+                        <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
@@ -7473,7 +7470,7 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-none backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-white/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
                             <Icons.ArrowUp className="w-8 h-8 sm:w-10 sm:h-10" />
                         </button>
@@ -7483,7 +7480,7 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-none hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 shrink-0 flex-none backdrop-blur-2xl border border-white/20 flex items-center justify-center text-white shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
                             <Icons.Compose className="w-8 h-8 sm:w-10 sm:h-10" />
                         </button>
