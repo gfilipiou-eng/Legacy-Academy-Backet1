@@ -131,7 +131,6 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--gold-primary);
   cursor: pointer;
   margin-top: -7px;
-  box-shadow: 0 0 12px rgba(212,175,55,0.4);
 }
 
 body.bg-white input[type="range"]::-webkit-slider-runnable-track {
@@ -518,44 +517,16 @@ body::before {
 }
 
 /* Simple black/white active state */
-.liquid-droplet-active {
-  position: relative;
-  background: #ffffff;
-  color: #000000;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  
-  /* Safari Compositing Fixes for animations */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
+.liquid-droplet-active { position: relative; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: none; border-radius: inherit; }
 
 /* Simple center action button */
-.liquid-gold-btn {
-  background: #ffffff !important;
-  color: #000000 !important;
-  box-shadow: none !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  position: relative;
-  overflow: hidden;
-  
-  /* Safari Compositing Fixes */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transition: none;
-}
+.liquid-gold-btn { background: linear-gradient(135deg, #ffffff 0%, var(--gold-primary) 25%, var(--gold-secondary) 100%) !important; color: #000000 !important; box-shadow: none !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; position: relative; overflow: hidden; }
 
 /* Disabled glow effect on nav buttons */
 .nav-btn-glow {
   position: relative;
 }
-.nav-btn-glow::after {
-  opacity: 0;
-  pointer-events: none;
-}
+.nav-btn-glow::after { display: none !important; }
 
 /* Orange theme — readable text; accents use --gold-primary */
 body.theme-orange-black {
@@ -1003,11 +974,11 @@ html, body {
 }
 
 .shadow-glow-f1 {
-  box-shadow: 0 0 12px rgba(29, 155, 240, 0.25);
+  box-shadow: none !important;
 }
 
 .shadow-glow-gold {
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
+  box-shadow: none !important;
 }
 
 .premium-post-card {

@@ -63,7 +63,7 @@ export const VoiceNotePlayer = ({ src, t = (k) => k }) => {
             <button
                 type="button"
                 onClick={togglePlay}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 transition-all shadow-[0_0_15px_rgba(var(--gold-primary-rgb),0.3)] group-hover/voice:shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.5)]  ${isPlaying ? 'bg-white text-black' : 'bg-[var(--gold-primary)] text-black'}`}
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 transition-all shadow-none group-hover/voice:shadow-none  ${isPlaying ? 'bg-white text-black' : 'bg-[var(--gold-primary)] text-black'}`}
             >
                 {isPlaying ? <Icons.Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" /> : <Icons.Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-1" />}
             </button>

@@ -33,15 +33,15 @@ const BottomNavbar = memo(({
     const navItemClass = (isActive) => `${navItemBaseClass} bg-transparent transition-all duration-300`;
     
     // Icons: Use theme color when active.
-    const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'text-[var(--gold-primary)] opacity-100 drop-shadow-[0_0_8px_color-mix(in_srgb,var(--gold-primary)_50%,transparent)]' : 'text-gray-500 hover:text-gray-300'}`;
+    const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'text-[var(--gold-primary)] opacity-100 ' : 'text-gray-500 hover:text-gray-300'}`;
 
     return (
         <nav 
             ref={navRef}
-            className="w-full z-[99] bg-black shrink-0 relative mt-auto border-t border-white/10"
+            className="fixed bottom-[calc(14px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-3"
             onTouchMove={(e) => e.preventDefault()}
         >
-            <div className="flex justify-center px-3 sm:px-4 pt-4 pb-[calc(12px+env(safe-area-inset-bottom))] bg-black">
+            <div className="w-full max-w-2xl mx-auto bg-[#111111]/60 backdrop-blur-3xl border border-white/15 rounded-[2rem] pointer-events-auto flex justify-around items-center px-2 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
                 <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
                 <button
                     type="button"
@@ -62,7 +62,7 @@ const BottomNavbar = memo(({
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill="none" strokeWidth={activeTab === 'alerts' ? '2.5' : '1.5'} shapeRendering="geometricPrecision" />
                     </div>
                     {unreadCount > 0 && (
-                        <div className="absolute top-1 right-2 sm:right-3 min-w-[20px] h-[20px] bg-red-600 rounded-none flex items-center justify-center border border-black shadow-[0_0_10px_rgba(220,38,38,0.8)] z-10">     
+                        <div className="absolute top-1 right-2 sm:right-3 min-w-[20px] h-[20px] bg-red-600 rounded-none flex items-center justify-center border border-black shadow-none z-10">     
                             <span className="text-[10px] font-black text-white leading-none tracking-tighter">
                                 {unreadCount > 9 ? '9+' : unreadCount}
                             </span>
@@ -75,7 +75,7 @@ const BottomNavbar = memo(({
                     onClick={onCreate}
                     className="flex flex-col items-center justify-center relative z-20" 
                 >
-                    <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full bg-white text-black shadow-[0_4px_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all duration-300">
+                    <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full bg-white text-black shadow-md hover:scale-105 active:scale-95 transition-all duration-300">
                         <Icons.Plus className="w-8 h-8 sm:w-9 sm:h-9 font-black stroke-[3]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
@@ -96,7 +96,7 @@ const BottomNavbar = memo(({
                     className="flex flex-col items-center justify-center flex-1"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>     
-                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border-[2.5px] border-[var(--gold-primary)] drop-shadow-[0_0_8px_color-mix(in_srgb,var(--gold-primary)_50%,transparent)]' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/20 shadow-none'}`}>
+                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border-[2.5px] border-[var(--gold-primary)] ' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/20 shadow-none'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
