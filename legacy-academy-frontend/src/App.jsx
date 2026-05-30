@@ -7003,23 +7003,19 @@ const App = () => {
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
                                     <div className="relative flex justify-center items-center w-full h-48 md:h-56 mb-2">
-                                        {/* Liquid Glass Background */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/15 via-purple-500/10 to-cyan-400/10 blur-3xl animate-pulse rounded-full scale-75" />
-                                        {/* Outer Glow Ring */}
-                                        <div className="absolute w-44 h-44 md:w-52 md:h-52 rounded-full border border-[var(--gold-primary)]/40 shadow-[0_0_60px_rgba(255,215,0,0.25)] animate-pulse" />
-                                        <div className="absolute w-40 h-40 md:w-48 md:h-48 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_80px_rgba(255,215,0,0.4),inset_0_0_30px_rgba(255,215,0,0.05)] animate-float-gentle flex items-center justify-center">
-                                            <img 
-                                                src={`/logo.png?t=${Date.now()}`} 
-                                                alt="Legacy Academy" 
-                                                className={`h-[90%] w-auto object-contain transform-gpu transition-all duration-500 drop-shadow-[0_0_40px_rgba(255,215,0,0.6)] hover:scale-105 hover:drop-shadow-[0_0_60px_rgba(255,215,0,0.85)] ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
-                                                style={{ 
-                                                    imageRendering: '-webkit-optimize-contrast', 
-                                                    backfaceVisibility: 'hidden', 
-                                                    transform: 'translateZ(0)', 
-                                                    willChange: 'transform' 
-                                                }} 
-                                            />
-                                        </div>
+                                        {/* Simple Soft Glow */}
+                                        <div className="absolute inset-0 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full scale-90" />
+                                        <img 
+                                            src={`/logo.png?t=${Date.now()}`} 
+                                            alt="Legacy Academy" 
+                                            className={`h-36 md:h-44 w-auto object-contain transform-gpu transition-all duration-500 drop-shadow-[0_0_35px_rgba(255,215,0,0.5)] hover:scale-105 hover:drop-shadow-[0_0_50px_rgba(255,215,0,0.7)] ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
+                                            style={{ 
+                                                imageRendering: '-webkit-optimize-contrast', 
+                                                backfaceVisibility: 'hidden', 
+                                                transform: 'translateZ(0)', 
+                                                willChange: 'transform' 
+                                            }} 
+                                        />
                                     </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
@@ -7374,22 +7370,19 @@ const App = () => {
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
                                     <div className="relative flex items-center justify-center">
-                                        <div className="absolute -inset-4 bg-gradient-to-br from-[var(--gold-primary)]/15 via-purple-500/10 to-cyan-400/10 blur-2xl rounded-full animate-pulse" />
-                                        {/* Outer Glow Ring */}
-                                        <div className="absolute w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-full border border-[var(--gold-primary)]/40 shadow-[0_0_60px_rgba(255,215,0,0.25)] animate-pulse" />
-                                        <div className="relative flex items-center justify-center">
-                                            <img 
-                                                src={`/logo.png?t=${Date.now()}`} 
-                                                alt="Legacy Academy" 
-                                                className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 drop-shadow-[0_0_40px_rgba(255,215,0,0.6)] hover:scale-105 hover:drop-shadow-[0_0_60px_rgba(255,215,0,0.85)]" 
-                                                style={{ 
-                                                    imageRendering: '-webkit-optimize-contrast', 
-                                                    backfaceVisibility: 'hidden', 
-                                                    transform: 'translateZ(0)', 
-                                                    willChange: 'transform' 
-                                                }} 
-                                            />
-                                        </div>
+                                        {/* Simple Soft Glow */}
+                                        <div className="absolute -inset-6 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full" />
+                                        <img 
+                                            src={`/logo.png?t=${Date.now()}`} 
+                                            alt="Legacy Academy" 
+                                            className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 drop-shadow-[0_0_35px_rgba(255,215,0,0.5)] hover:scale-105 hover:drop-shadow-[0_0_50px_rgba(255,215,0,0.7)]" 
+                                            style={{ 
+                                                imageRendering: '-webkit-optimize-contrast', 
+                                                backfaceVisibility: 'hidden', 
+                                                transform: 'translateZ(0)', 
+                                                willChange: 'transform' 
+                                            }} 
+                                        />
                                     </div>
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
