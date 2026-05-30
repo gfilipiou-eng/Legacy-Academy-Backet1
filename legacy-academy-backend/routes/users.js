@@ -47,6 +47,36 @@ router.post("/profile-pic", verifyToken, upload.single("image"), async (req, res
     }
 });
 
+// REMOVE PROFILE PICTURE
+router.delete("/profile-pic", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("Agent not found.");
+
+        const oldPic = user.profilePic;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $unset: { profilePic: "" } },
+            { new: true }
+        ).select("-password");
+
+        if (oldPic) {
+            deleteCloudinaryFile(oldPic).catch(() => { });
+        }
+
+        // Broadcast real-time update
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Profile Pic Delete Error:", err);
+        res.status(500).json(err);
+    }
+});
+
 // REMOVE COVER PICTURE (Premium Background)
 router.delete("/cover-pic", verifyToken, async (req, res) => {
     try {

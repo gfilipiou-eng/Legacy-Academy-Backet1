@@ -3780,6 +3780,35 @@ const ProfileModal = ({
                                     )}
                                     {profileUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE')}
                                 </button>
+                                {displayUser?.profilePic && (
+                                    <button onClick={async (e) => {
+                                        e.preventDefault();
+                                        setProfileUploading(true);
+                                        
+                                        if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                            setUserData(prev => ({ ...prev, profilePic: null }));
+                                        }
+                                        
+                                        try {
+                                            const res = await axios.put(`/users/${displayUser?._id}`, { profilePic: "" });
+                                            const updatedUser = res.data;
+                                            if (updatedUser.profilePic) updatedUser.profilePic = "";
+                                            
+                                            try { await axios.delete('/users/profile-pic'); } catch (e) {}
+
+                                            localStorage.setItem('user', JSON.stringify(updatedUser));
+                                            if (onUpdateUser) onUpdateUser(updatedUser);
+                                            if (addToast) addToast('Profile picture removed', 'success');
+                                        } catch (err) { 
+                                            console.error(err);
+                                            alert("Failed to remove profile picture."); 
+                                        }
+                                        finally { setProfileUploading(false); }
+                                    }} disabled={profileUploading}
+                                        className="w-[56px] h-[56px] shrink-0 bg-transparent text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
+                                        <Icons.X className="w-6 h-6" />
+                                    </button>
+                                )}
                             </div>
 
                             <div className="flex gap-3 w-full mt-4">
@@ -3817,7 +3846,7 @@ const ProfileModal = ({
                                         }
                                         finally { setCoverUploading(false); }
                                     }} disabled={coverUploading}
-                                        className="w-[56px] h-[56px] shrink-0 bg-transparent rounded-2xl text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400 border border-white/10">
+                                        className="w-[56px] h-[56px] shrink-0 bg-transparent text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
                                         <Icons.X className="w-6 h-6" />
                                     </button>
                                 )}
