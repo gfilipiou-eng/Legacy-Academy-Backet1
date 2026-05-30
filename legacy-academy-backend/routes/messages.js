@@ -36,6 +36,7 @@ router.get("/:messageId/read", verifyToken, markMessageRead);
 // FIXED: Middleware order swapped to ensure Multer runs before Auth (for FormData body access if needed)
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     try {
+        // Cleanup (safe)
         try {
             await cleanupExpiredMessages({ app: req.app });
         } catch (cleanupErr) {
@@ -43,12 +44,6 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         }
 
         // Validation: Ensure req.body exists (multer should populate it)
-        if (!req.body) {
-            console.error("Messages Error: req.body is undefined");
-            return res.status(400).json({ error: "Request body missing", detail: "Multipart parsing failed" });
-        }
-
-        // FAIL-SAFE BODY ACCESS
         const body = req.body || {};
         const recipientId = body.recipient;
         const text = body.text;
@@ -61,38 +56,56 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         // File handling - ROBUST type detection (mimetype + extension + cloudinary URL)
         let audioUrl = "";
         let imageUrl = "";
-        if (req.file) {
-            const filePath = req.file.path || req.file.secure_url || req.file.url || "";
-            const mime = (req.file.mimetype || "").toLowerCase();
-            const origName = (req.file.originalname || "").toLowerCase();
+        try {
+            if (req.file) {
+                const filePath = req.file.path || req.file.secure_url || req.file.url || "";
+                const mime = (req.file.mimetype || "").toLowerCase();
+                const origName = (req.file.originalname || "").toLowerCase();
 
-            // Triple-check: mimetype OR file extension OR cloudinary URL pattern
-            const isImage = mime.startsWith("image")
-                || /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|heif|avif)$/i.test(origName)
-                || filePath.includes("/image/upload/");
+                // Triple-check: mimetype OR file extension OR cloudinary URL pattern
+                const isImage = mime.startsWith("image")
+                    || /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|heif|avif)$/i.test(origName)
+                    || filePath.includes("/image/upload/");
 
-            console.log(`[MESSAGE FILE] mime=${mime}, name=${origName}, path=${filePath}, isImage=${isImage}`);
+                console.log(`[MESSAGE FILE] mime=${mime}, name=${origName}, path=${filePath}, isImage=${isImage}`);
 
-            if (isImage) {
-                imageUrl = filePath;
-            } else {
-                audioUrl = filePath;
+                if (isImage) {
+                    imageUrl = filePath;
+                } else {
+                    audioUrl = filePath;
+                }
             }
+        } catch (fileErr) {
+            console.error('File handling error:', fileErr);
         }
 
         if (!recipientId || !mongoose.Types.ObjectId.isValid(recipientId)) {
             return res.status(400).json("Invalid or missing recipient ID");
         }
 
-        const recipientUser = await User.findById(recipientId);
+        // Check recipient (safe)
+        let recipientUser;
+        try {
+            recipientUser = await User.findById(recipientId);
+        } catch (recipientErr) {
+            console.error('Recipient fetch error:', recipientErr);
+            return res.status(404).json("Target user no longer exists");
+        }
+        
         if (!recipientUser) return res.status(404).json("Target user no longer exists");
 
-        const dmGuard = !!(recipientUser.settings?.dmFollowersOnly);
-        if (dmGuard) {
-            const isFollower = Array.isArray(recipientUser.followers) && recipientUser.followers.some(id => String(id) === String(currentUserId));
-            if (!isFollower && req.user.role !== 'Founder') {
-                return res.status(403).json("Messages restricted to followers");
+        // DM guard (safe)
+        try {
+            const dmGuard = !!(recipientUser.settings?.dmFollowersOnly);
+            if (dmGuard) {
+                const isFollower = Array.isArray(recipientUser.followers) && recipientUser.followers.some(id => String(id) === String(currentUserId));
+                if (!isFollower && req.user.role !== 'Founder') {
+                    return res.status(403).json("Messages restricted to followers");
+                }
             }
+        } catch (guardErr) {
+            console.error('DM guard error:', guardErr);
+            // Continue even if guard fails
         }
 
         const newMessage = new Message({
@@ -105,7 +118,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
         const savedMessage = await newMessage.save();
 
-        // 🔥 REAL-TIME EMIT & PERSISTENCE
+        // 🔥 REAL-TIME EMIT & PERSISTENCE (fire and forget all of it)
         const io = req.app.get('io');
         if (io) {
             try {
@@ -114,7 +127,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
                 io.to(String(currentUserId)).emit('message.received', savedMessage); // Live sync for sender's other devices
                 if (senderUser) {
                     // Save to DB for historical/offline access
-                    await User.findByIdAndUpdate(recipientId, {
+                    User.findByIdAndUpdate(recipientId, {
                         $push: {
                             notifications: {
                                 $each: [{
@@ -128,7 +141,7 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
                                 $position: 0
                             }
                         }
-                    });
+                    }).catch(notifSaveErr => console.error('Notification save error:', notifSaveErr));
 
                     // Emit real-time signal
                     io.to(String(recipientId)).emit('notification.received', {
@@ -150,7 +163,8 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         res.status(200).json(savedMessage);
     } catch (err) {
         console.error("Message Error:", err);
-        res.status(500).json("Transmission failed: Secure link interrupted.");
+        // Even if we have an error, try to send a basic response
+        res.status(500).json("Transmission failed.");
     }
 });
 
