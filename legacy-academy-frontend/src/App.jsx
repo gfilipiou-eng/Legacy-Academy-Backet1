@@ -33,9 +33,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
-    // 🔥 SECURITY/UI CLEANUP: Hide media from old, deactivated Cloudinary accounts
-    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/') || cleanUrl.includes('res.cloudinary.com/ddehek3eo/')) {
-        return null; // Force hide to avoid 404/401 errors and keep UI clean
+    // 🔥 SECURITY/UI CLEANUP: Hide media from the old, deactivated Cloudinary account (dfggkqhdb)
+    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/')) {
+        return null; // Force hide to avoid 401 errors and keep UI clean
     }
 
     // AUTO-OPTIMIZE CLOUDINARY
