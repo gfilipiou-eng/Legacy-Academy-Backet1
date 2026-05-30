@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@media screen and (orientation: landscape) {
+  html, body, #root {
+    transform: rotate(0deg);
+    transform-origin: center;
+  }
+}
+
 /* App.jsx will override these with the user's selected theme color via document.documentElement.style.setProperty */
 :root {
   background-color: #000000;

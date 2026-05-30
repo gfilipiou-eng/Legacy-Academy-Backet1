@@ -3765,15 +3765,15 @@ const ProfileModal = ({
                                 }
                             }} />
 
-                            <div className="flex gap-2 w-full">
+                            <div className="flex gap-3 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
-                                    className="flex-1 py-4 bg-[#121212]  rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    className="flex-1 py-4 bg-[#121212] rounded-2xl text-[11px] text-white font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/10 border border-white/10">
                                     {profileUploading ? (
                                         <div className="w-4 h-4 text-white/50">
                                             <Icons.Loader />
                                         </div>
                                     ) : (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
                                             <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
                                             <circle cx="12" cy="13" r="3"></circle>
                                         </svg>
@@ -3782,14 +3782,14 @@ const ProfileModal = ({
                                 </button>
                             </div>
 
-                            <div className="flex gap-2 w-full mt-4">
+                            <div className="flex gap-3 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212]  rounded-none text-[11px] text-gray-300 font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/5">
+                                    className="flex-1 py-4 bg-[#121212] rounded-2xl text-[11px] text-white font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/10 border border-white/10">
                                     {coverUploading ? (
                                         <div className="w-4 h-4 text-white/50">
                                             <Icons.Loader />
                                         </div>
-                                    ) : <Icons.Image className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
+                                    ) : <Icons.Image className="w-5 h-5 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
                                     {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
                                 </button>
                                 {displayUser?.coverPic && (
@@ -3797,18 +3797,15 @@ const ProfileModal = ({
                                         e.preventDefault();
                                         setCoverUploading(true);
                                         
-                                        // 🔥 SAFE OPTIMISTIC UPDATE: Only update local display, NO onUpdateUser!
                                         if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
                                             setUserData(prev => ({ ...prev, coverPic: null }));
                                         }
                                         
                                         try {
                                             const res = await axios.put(`/users/${displayUser?._id}`, { coverPic: "" });
-                                            // Force it locally if backend ignores empty string
                                             const updatedUser = res.data;
                                             if (updatedUser.coverPic) updatedUser.coverPic = "";
                                             
-                                            // Fallback: also try the specific delete endpoint just in case
                                             try { await axios.delete('/users/cover-pic'); } catch (e) {}
 
                                             localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -3820,8 +3817,8 @@ const ProfileModal = ({
                                         }
                                         finally { setCoverUploading(false); }
                                     }} disabled={coverUploading}
-                                        className="w-[52px] h-[52px] shrink-0 bg-[#121212]    rounded-none text-gray-400  flex items-center justify-center  duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
-                                        <Icons.X className="w-5 h-5" />
+                                        className="w-[56px] h-[56px] shrink-0 bg-[#121212] rounded-2xl text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400 border border-white/10">
+                                        <Icons.X className="w-6 h-6" />
                                     </button>
                                 )}
                             </div>
@@ -3909,7 +3906,7 @@ const ProfileModal = ({
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <div className="font-black text-[12px] sm:text-[13px] uppercase tracking-wide truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
-                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-black/65' : 'text-gray-400'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
+                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-gray-700' : 'text-gray-400'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
                                                     </div>
                                                 </div>
                                             </button>
@@ -4002,7 +3999,7 @@ const ProfileModal = ({
                                 } finally {
                                     setIsProfileSaving(false);
                                 }
-                            }} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-none hover:bg-gray-200 transition-colors duration-300">
+                            }} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-gray-200 transition-colors duration-300">
                                 {isProfileSaving ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <div className="w-4 h-4 text-black/50">
@@ -4132,7 +4129,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-6 space-y-3 mt-2">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 relative overflow-hidden py-4 bg-black/70 backdrop-blur-xl rounded-none border border-white/15 text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.22em] transition-colors hover:bg-white/5 hover:border-white/30">
+                                        <button onClick={() => setIsEditing(true)} className="flex-1 relative overflow-hidden py-4 bg-black/70 backdrop-blur-xl rounded-2xl border border-white/15 text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.22em] transition-colors hover:bg-white/5 hover:border-white/30">
                                             <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/20" />
                                             <span className="relative z-10 flex items-center justify-center gap-2.5">
                                                 <Icons.Settings className="w-4 h-4" />
@@ -4144,7 +4141,7 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 relative overflow-hidden py-4 rounded-none text-[11px] sm:text-[12px] font-black uppercase tracking-[0.22em] border transition-colors ${isFollowing ? 'bg-black/70 backdrop-blur-xl border-white/15 text-white hover:bg-red-500/10 hover:border-red-500/40' : 'bg-white border-white text-black hover:bg-neutral-200'}`}
+                                                className={`flex-1 relative overflow-hidden py-4 rounded-2xl text-[11px] sm:text-[12px] font-black uppercase tracking-[0.22em] border transition-colors ${isFollowing ? 'bg-black/70 backdrop-blur-xl border-white/15 text-white hover:bg-red-500/10 hover:border-red-500/40' : 'bg-white border-white text-black hover:bg-neutral-200'}`}
                                             >
                                                 <div className={`pointer-events-none absolute inset-x-3 top-0 h-px ${isFollowing ? 'bg-white/20' : 'bg-black/10'}`} />
                                                 <span className="relative z-10 flex items-center justify-center gap-2.5">
@@ -4158,7 +4155,7 @@ const ProfileModal = ({
                                                     setTimeout(() => onOpenChat(displayUser), 50);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="flex items-center justify-center gap-2.5 px-5 py-4 bg-black/70 backdrop-blur-xl border border-white/15 rounded-none shrink-0 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.22em] text-white hover:bg-white/5 hover:border-white/30 transition-colors relative overflow-hidden"
+                                                className="flex items-center justify-center gap-2.5 px-5 py-4 bg-black/70 backdrop-blur-xl border border-white/15 rounded-2xl shrink-0 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.22em] text-white hover:bg-white/5 hover:border-white/30 transition-colors relative overflow-hidden"
                                             >
                                                 <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/20" />
                                                 <div className="relative z-10 flex items-center justify-center">
@@ -4170,10 +4167,23 @@ const ProfileModal = ({
                                     )}
                                 </div>
                                 {!isMe && currentUser?.role === 'Founder' && (
-                                    <button onClick={() => window.confirm(t('CONFIRM_BAN') || 'Confirm ban?') && axios.post(`/users/${displayUser?._id}/ban`, { days: 3 })} className="w-full px-6 py-3.5 bg-red-950/20 border border-red-500/20 rounded-none hover:bg-red-900/40 hover:border-red-500/50 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
-                                        <Icons.Shield className="w-4 h-4" />
-                                        {t('BAN_3_DAYS') || 'BAN 3 ΗΜΕΡΕΣ'}
-                                    </button>
+                                    <div className="flex gap-3">
+                                        <select 
+                                            onChange={(e) => {
+                                                if (window.confirm(t('CONFIRM_BAN') || 'Confirm ban?')) {
+                                                    axios.post(`/users/${displayUser?._id}/ban`, { days: parseInt(e.target.value) });
+                                                }
+                                            }}
+                                            defaultValue=""
+                                            className="flex-1 px-4 py-3.5 bg-red-950/20 border border-red-500/20 rounded-2xl hover:bg-red-900/40 hover:border-red-500/50 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest appearance-none cursor-pointer"
+                                        >
+                                            <option value="" disabled>{t('BAN_DAYS') || 'BAN DAYS'}</option>
+                                            <option value="1">{t('BAN_1_DAY') || 'BAN 1 DAY'}</option>
+                                            <option value="3">{t('BAN_3_DAYS') || 'BAN 3 DAYS'}</option>
+                                            <option value="7">{t('BAN_7_DAYS') || 'BAN 7 DAYS'}</option>
+                                            <option value="30">{t('BAN_30_DAYS') || 'BAN 30 DAYS'}</option>
+                                        </select>
+                                    </div>
                                 )}
                             </div>
 
@@ -5118,6 +5128,20 @@ const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const urlLang = searchParams.get('lang');
     const urlTheme = searchParams.get('theme');
+    
+    // Lock screen orientation to portrait
+    useEffect(() => {
+        const lockOrientation = async () => {
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('portrait');
+                }
+            } catch (e) {
+                // Ignore errors if orientation lock not supported
+            }
+        };
+        lockOrientation();
+    }, []);
     
     // Check and set language from URL if present before any rendering
     useEffect(() => {
@@ -7297,7 +7321,7 @@ const App = () => {
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black  rounded-none py-4 pl-12 pr-4 font-bold outline-none focus:border-white shadow-none" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black/80 backdrop-blur-md rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-white/50 border border-white/10 text-white" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
