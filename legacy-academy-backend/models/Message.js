@@ -49,15 +49,14 @@ const MessageSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-MessageSchema.pre("validate", function syncExpiry(next) {
+MessageSchema.pre("validate", function syncExpiry() {
     if (this.isLocked) {
         this.expiresAt = null;
-        return next();
+        return;
     }
 
     const baseDate = this.createdAt instanceof Date ? this.createdAt : new Date();
     this.expiresAt = getMessageExpiresAt(baseDate);
-    next();
 });
 
 MessageSchema.index(
