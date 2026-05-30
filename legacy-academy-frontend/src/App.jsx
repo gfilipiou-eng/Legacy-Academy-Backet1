@@ -3485,11 +3485,14 @@ const ProfileModal = ({
     const [userSpecificPosts, setUserSpecificPosts] = useState(preloadedPosts || []);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [expandedDates, setExpandedDates] = useState({});
+    const [coverPicError, setCoverPicError] = useState(false);
     const fileRef = useRef(null);
     const coverFileRef = useRef(null);
     const [coverUploading, setCoverUploading] = useState(false);
     const [profileUploading, setProfileUploading] = useState(false);
     const [isProfileSaving, setIsProfileSaving] = useState(false);
+
+    useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -3710,9 +3713,6 @@ const ProfileModal = ({
     const selectedProfileDescriptor = PROFILE_DESCRIPTOR_MAP[normalizeProfileDescriptor(displayUser?.profileDescriptor || '')];
     const SelectedProfileDescriptorIcon = selectedProfileDescriptor?.Icon;
     const displayFounderAffiliation = getFounderAffiliation(displayUser);
-    const [coverPicError, setCoverPicError] = useState(false);
-
-    useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
 
     return (
 
