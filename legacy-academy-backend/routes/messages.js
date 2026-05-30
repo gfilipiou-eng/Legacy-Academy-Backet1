@@ -32,9 +32,18 @@ router.patch("/:messageId/read", verifyToken, markMessageRead);
 router.post("/:messageId/read", verifyToken, markMessageRead);
 router.get("/:messageId/read", verifyToken, markMessageRead);
 
-// SEND MESSAGE (Using upload.single('file') for audio support)
+// Flexible upload wrapper to prevent Multer "Unexpected field" crashes (e.g. when frontend sends "audio" or "whisper")
+const flexibleUpload = (req, res, next) => {
+    upload.any()(req, res, (err) => {
+        if (err) console.error("Multer warning/error:", err.message);
+        if (req.files && req.files.length > 0) req.file = req.files[0];
+        next();
+    });
+};
+
+// SEND MESSAGE (Using flexibleUpload for robust audio/file support)
 // FIXED: Middleware order swapped to ensure Multer runs before Auth (for FormData body access if needed)
-router.post("/", upload.single("file"), verifyToken, async (req, res) => {
+router.post("/", flexibleUpload, verifyToken, async (req, res) => {
     try {
         // Cleanup (safe)
         try {
@@ -162,9 +171,9 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
 
         res.status(200).json(savedMessage);
     } catch (err) {
-        console.error("Message Error:", err);
+        console.error("Message Error Details:", err.stack || err);
         // Even if we have an error, try to send a basic response
-        res.status(500).json("Transmission failed.");
+        res.status(500).json({ error: "Transmission failed.", details: err.message });
     }
 });
 
