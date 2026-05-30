@@ -33,9 +33,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
-    // 🔥 SECURITY/UI CLEANUP: Hide media from the old, deactivated Cloudinary account (dfggkqhdb)
-    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/')) {
-        return null; // Force hide to avoid 401 errors and keep UI clean
+    // 🔥 SECURITY/UI CLEANUP: Hide media from old, deactivated Cloudinary accounts
+    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/') || cleanUrl.includes('res.cloudinary.com/ddehek3eo/')) {
+        return null; // Force hide to avoid 404/401 errors and keep UI clean
     }
 
     // AUTO-OPTIMIZE CLOUDINARY
@@ -6906,7 +6906,7 @@ const App = () => {
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
                                     <div className="relative flex justify-center items-center w-full h-40 md:h-48 mb-2">
-                                        <img src="/logo.png" alt="Legacy Academy" className={`h-full w-auto max-w-[90%] object-contain transform-gpu transition-opacity duration-300 drop-shadow-none ${authLoading ? 'opacity-50' : 'opacity-100'}`} style={{ imageRendering: 'pixelated', imageRendering: '-webkit-optimize-contrast', backfaceVisibility: 'hidden', transform: 'translateZ(0)', willChange: 'transform' }} />
+                                        <img src={`/logo.png?t=${Date.now()}`} alt="Legacy Academy" className={`h-full w-auto max-w-[90%] object-contain transform-gpu transition-opacity duration-300 drop-shadow-none ${authLoading ? 'opacity-50' : 'opacity-100'}`} style={{ imageRendering: 'pixelated', imageRendering: '-webkit-optimize-contrast', backfaceVisibility: 'hidden', transform: 'translateZ(0)', willChange: 'transform' }} />
                                     </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
@@ -7260,7 +7260,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <img src="/logo.png" alt="Legacy Academy" className="h-48 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: 'pixelated', imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden', transform: 'translateZ(0)', willChange: 'transform' }} />
+                                    <img src={`/logo.png?t=${Date.now()}`} alt="Legacy Academy" className="h-48 w-auto object-contain transform-gpu drop-shadow-none" style={{ imageRendering: 'pixelated', imageRendering: '-webkit-optimize-contrast', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden', transform: 'translateZ(0)', willChange: 'transform' }} />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
