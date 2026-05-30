@@ -1298,9 +1298,15 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [isActuallyPlaying, setIsActuallyPlaying] = useState(false);
+    const [videoError, setVideoError] = useState(false);
     const playerUniqueId = useMemo(() => `yt-${Math.random().toString(36).substr(2, 9)}`, []);
 
     const ytId = getYouTubeId(src);
+
+    // Reset video error when src changes
+    useEffect(() => {
+        setVideoError(false);
+    }, [src]);
 
     // Initialize YouTube API once
     useEffect(() => {
@@ -1496,6 +1502,17 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 
     const youtubeThumb = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : null;
 
+    if (videoError) {
+        return (
+            <div className={`relative flex items-center justify-center bg-white/5 ${className || ''}`}>
+                <div className="w-full h-40 flex flex-col items-center justify-center text-gray-600 gap-2">
+                    <Icons.Image className="w-8 h-8 opacity-20" />
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Media Expired</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div
             className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${className || ''}`}
@@ -1539,6 +1556,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             onTimeUpdate={handleTimeUpdate}
                             onPlay={() => { setIsPlaying(true); if (videoRef.current) setDuration(videoRef.current.duration); }}
                             onPause={() => setIsPlaying(false)}
+                            onError={() => setVideoError(true)}
                             className="w-full h-auto object-contain cursor-pointer max-h-[75vh] md:max-h-[85vh] duration-500 will-change-transform transform-gpu"
                         />
                     )}
@@ -1702,7 +1720,11 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             </div>
             {note.postImage && (
                 <div className="w-12 h-12 rounded-xl bg-gray-800  overflow-hidden shrink-0 group-hover:scale-105 ">
-                    <img src={resolveMediaUrl(note.postImage)} className="w-full h-full object-cover opacity-60" />
+                    <img 
+                        src={resolveMediaUrl(note.postImage)} 
+                        className="w-full h-full object-cover opacity-60" 
+                        onError={(e) => { e.target.style.display = 'none'; }} 
+                    />
                 </div>
             )}
         </motion.div>
@@ -1763,7 +1785,12 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
                             <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
-                                    <img src={resolveMediaUrl(storyMediaUrl, null, false, true)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                    <img 
+                                        src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
+                                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                                        alt="" 
+                                        onError={(e) => { e.target.style.display = 'none'; }} 
+                                    />
                                 ) : (
                                     <div className="w-full h-full bg-[#111] p-1 flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity">
                                         <span className="text-white text-[7px] font-bold text-center break-words line-clamp-4 leading-tight">
@@ -3656,6 +3683,9 @@ const ProfileModal = ({
     const selectedProfileDescriptor = PROFILE_DESCRIPTOR_MAP[normalizeProfileDescriptor(displayUser?.profileDescriptor || '')];
     const SelectedProfileDescriptorIcon = selectedProfileDescriptor?.Icon;
     const displayFounderAffiliation = getFounderAffiliation(displayUser);
+    const [coverPicError, setCoverPicError] = useState(false);
+
+    useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
 
     return (
 
@@ -3672,12 +3702,23 @@ const ProfileModal = ({
                     <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                 </div>
 
-                {displayUser?.coverPic && (
+                {displayUser?.coverPic && !coverPicError && (
                     <div className="absolute top-0 left-0 right-0 h-[220px] z-0 pointer-events-none animate-fade-in overflow-hidden">
                         {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
-                            <video src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} autoPlay loop muted playsInline preload="metadata" disablePictureInPicture disableRemotePlayback className="w-full h-full object-cover opacity-60" />
+                            <video 
+                                src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} 
+                                autoPlay loop muted playsInline preload="metadata" 
+                                disablePictureInPicture disableRemotePlayback 
+                                className="w-full h-full object-cover opacity-60" 
+                                onError={() => setCoverPicError(true)} 
+                            />
                         ) : (
-                            <img src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} className="w-full h-full object-cover opacity-60 blur-[1px]" alt="" />
+                            <img 
+                                src={resolveMediaUrl(displayUser.coverPic, null, false, false, true)} 
+                                className="w-full h-full object-cover opacity-60 blur-[1px]" 
+                                alt="" 
+                                onError={() => setCoverPicError(true)} 
+                            />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     </div>
