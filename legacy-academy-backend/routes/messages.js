@@ -36,7 +36,11 @@ router.get("/:messageId/read", verifyToken, markMessageRead);
 // FIXED: Middleware order swapped to ensure Multer runs before Auth (for FormData body access if needed)
 router.post("/", upload.single("file"), verifyToken, async (req, res) => {
     try {
-        await cleanupExpiredMessages({ app: req.app });
+        try {
+            await cleanupExpiredMessages({ app: req.app });
+        } catch (cleanupErr) {
+            console.error('Cleanup error:', cleanupErr);
+        }
 
         // Validation: Ensure req.body exists (multer should populate it)
         if (!req.body) {
@@ -104,33 +108,37 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
         // 🔥 REAL-TIME EMIT & PERSISTENCE
         const io = req.app.get('io');
         if (io) {
-            const senderUser = await User.findById(currentUserId).select('username profilePic');
-            io.to(String(recipientId)).emit('message.received', savedMessage);
-            io.to(String(currentUserId)).emit('message.received', savedMessage); // Live sync for sender's other devices
-            if (senderUser) {
-                // Save to DB for historical/offline access
-                await User.findByIdAndUpdate(recipientId, {
-                    $push: {
-                        notifications: {
-                            $each: [{
-                                type: 'message',
-                                from: currentUserId,
-                                fromUsername: senderUser.username,
-                                fromProfilePic: senderUser.profilePic,
-                                read: false,
-                                createdAt: new Date()
-                            }],
-                            $position: 0
+            try {
+                const senderUser = await User.findById(currentUserId).select('username profilePic');
+                io.to(String(recipientId)).emit('message.received', savedMessage);
+                io.to(String(currentUserId)).emit('message.received', savedMessage); // Live sync for sender's other devices
+                if (senderUser) {
+                    // Save to DB for historical/offline access
+                    await User.findByIdAndUpdate(recipientId, {
+                        $push: {
+                            notifications: {
+                                $each: [{
+                                    type: 'message',
+                                    from: currentUserId,
+                                    fromUsername: senderUser.username,
+                                    fromProfilePic: senderUser.profilePic,
+                                    read: false,
+                                    createdAt: new Date()
+                                }],
+                                $position: 0
+                            }
                         }
-                    }
-                });
+                    });
 
-                // Emit real-time signal
-                io.to(String(recipientId)).emit('notification.received', {
-                    type: 'message',
-                    fromUsername: senderUser.username,
-                    fromProfilePic: senderUser.profilePic
-                });
+                    // Emit real-time signal
+                    io.to(String(recipientId)).emit('notification.received', {
+                        type: 'message',
+                        fromUsername: senderUser.username,
+                        fromProfilePic: senderUser.profilePic
+                    });
+                }
+            } catch (notifErr) {
+                console.error('Notification error:', notifErr);
             }
 
             // --- BOT AUTOMATION ---

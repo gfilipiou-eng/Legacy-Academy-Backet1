@@ -75,6 +75,8 @@ const detectLanguage = (text) => {
 export const handleBotMention = async (message, io) => {
     try {
         console.log(`🤖 [NOVA_AI] Engaging Hybrid DNA link... Targeting: ${message.recipient}`);
+        if (!message || !message.recipient || !message.sender) return;
+        
         const recipient = await User.findById(message.recipient);
         if (!recipient || !recipient.isBot) return;
 
