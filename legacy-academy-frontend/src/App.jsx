@@ -3723,10 +3723,9 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col bg-neutral-950/50 backdrop-blur-3xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in`}>
+                className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col bg-black border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in`}>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                    <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                     <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] pointer-events-none" />
                     <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] rounded-full bg-white/5 blur-[100px] pointer-events-none" />
                 </div>
@@ -5001,7 +5000,6 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
         <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
             {/* AMBIENT BACKGROUND GLOWS FOR LIQUID GLASS AESTHETIC */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                 <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-[var(--gold-primary)]/10 blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }} />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-white/5 blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '12s' }} />
             </div>
@@ -7014,13 +7012,13 @@ const App = () => {
                                         {/* Simple Soft Glow */}
                                         <div className="absolute inset-0 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full scale-90" />
                                         <img 
-                                            src={`/logo.png?t=${Date.now()}`} 
+                                            src="/logo.png?t=1780262935819" 
                                             alt="Legacy Academy" 
-                                            className={`h-36 md:h-44 w-auto object-contain transform-gpu transition-all duration-500 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
+                                            className={`h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
                                             style={{ 
                                                 imageRendering: '-webkit-optimize-contrast', 
                                                 backfaceVisibility: 'hidden', 
-                                                transform: 'translateZ(0)', 
+                                                transform: 'translateZ(0px)', 
                                                 willChange: 'transform' 
                                             }} 
                                         />
@@ -7381,13 +7379,13 @@ const App = () => {
                                         {/* Simple Soft Glow */}
                                         <div className="absolute -inset-6 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full" />
                                         <img 
-                                            src={`/logo.png?t=${Date.now()}`} 
+                                            src="/logo.png?t=1780262935819" 
                                             alt="Legacy Academy" 
                                             className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105" 
                                             style={{ 
                                                 imageRendering: '-webkit-optimize-contrast', 
                                                 backfaceVisibility: 'hidden', 
-                                                transform: 'translateZ(0)', 
+                                                transform: 'translateZ(0px)', 
                                                 willChange: 'transform' 
                                             }} 
                                         />
