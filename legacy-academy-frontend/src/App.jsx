@@ -7008,7 +7008,7 @@ const App = () => {
                                         <img 
                                             src={`/logo.png?t=${Date.now()}`} 
                                             alt="Legacy Academy" 
-                                            className={`h-36 md:h-44 w-auto object-contain transform-gpu transition-all duration-500 drop-shadow-[0_0_35px_rgba(255,215,0,0.5)] hover:scale-105 hover:drop-shadow-[0_0_50px_rgba(255,215,0,0.7)] ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
+                                            className={`h-36 md:h-44 w-auto object-contain transform-gpu transition-all duration-500 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
                                             style={{ 
                                                 imageRendering: '-webkit-optimize-contrast', 
                                                 backfaceVisibility: 'hidden', 
@@ -7375,7 +7375,7 @@ const App = () => {
                                         <img 
                                             src={`/logo.png?t=${Date.now()}`} 
                                             alt="Legacy Academy" 
-                                            className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 drop-shadow-[0_0_35px_rgba(255,215,0,0.5)] hover:scale-105 hover:drop-shadow-[0_0_50px_rgba(255,215,0,0.7)]" 
+                                            className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105" 
                                             style={{ 
                                                 imageRendering: '-webkit-optimize-contrast', 
                                                 backfaceVisibility: 'hidden', 
