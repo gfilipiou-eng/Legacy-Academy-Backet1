@@ -5042,7 +5042,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer" 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer rounded-full" 
                                 alt="" 
                                 loading="eager" 
                                 decoding="async" 
