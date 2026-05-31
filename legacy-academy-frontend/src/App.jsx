@@ -1086,8 +1086,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
     return (
         <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black rounded-none z-[2600] shadow-none group">
-                <Icons.X className="w-6 h-6 text-white group-hover:rotate-90" />
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full z-[2600] transition-all duration-300 group">
+                <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
             </button>
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
                 {/* Image Section */}
@@ -5206,9 +5206,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 >
                     <button 
                         onClick={() => setZoomImage(null)} 
-                        className="absolute top-4 right-4 p-3 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-colors z-50"
+                        className="absolute top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 z-50 group"
                     >
-                        <Icons.X className="w-6 h-6" />
+                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
                     </button>
                     <img 
                         src={zoomImage} 
@@ -7841,8 +7841,8 @@ const App = () => {
             
             {shareModalPost && (
                 <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                    <button onClick={() => setShareModalPost(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-[14px] hover:bg-white/20 transition">
-                        <Icons.X className="w-6 h-6 text-white" />
+                    <button onClick={() => setShareModalPost(null)} className="absolute top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 group">
+                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
                     </button>
                     
                     <div className="bg-black  rounded-[20px] max-w-[400px] w-full overflow-hidden shadow-2xl">
@@ -7944,8 +7944,8 @@ const App = () => {
             {/* Profile Share Modal */}
             {shareModalProfile && (
                 <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                    <button onClick={() => setShareModalProfile(null)} className="absolute top-4 right-4 p-3 bg-white/10 rounded-[14px] hover:bg-white/20 transition">
-                        <Icons.X className="w-6 h-6 text-white" />
+                    <button onClick={() => setShareModalProfile(null)} className="absolute top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 group">
+                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
                     </button>
                     
                     <div className="bg-black  rounded-[20px] max-w-[360px] w-full overflow-hidden shadow-2xl">

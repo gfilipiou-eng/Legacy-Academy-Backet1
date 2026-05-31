@@ -53,3 +53,35 @@ export const cleanupExpiredMessages = async ({ app, io, query = {} } = {}) => {
 
     return expiredMessages;
 };
+
+export const cleanupSnapchatMessages = async ({ app, io, currentUserId, chatUserId }) => {
+    // Find messages between these two users that are read and not locked
+    const messagesToDelete = await Message.find({
+        isLocked: { $ne: true },
+        isRead: true,
+        $or: [
+            { sender: currentUserId, recipient: chatUserId },
+            { sender: chatUserId, recipient: currentUserId }
+        ]
+    });
+
+    if (messagesToDelete.length === 0) return [];
+
+    const mediaToDelete = [];
+    messagesToDelete.forEach((message) => {
+        if (message.audio) mediaToDelete.push(message.audio);
+        if (message.image) mediaToDelete.push(message.image);
+    });
+
+    await deleteCloudinaryFiles(mediaToDelete).catch(() => { });
+    await Message.deleteMany({ _id: { $in: messagesToDelete.map((m) => m._id) } });
+
+    const socketServer = io || app?.get?.("io");
+    if (socketServer) {
+        const messageIds = messagesToDelete.map(m => m._id);
+        socketServer.to(String(currentUserId)).emit("messages.cleared", { messageIds });
+        socketServer.to(String(chatUserId)).emit("messages.cleared", { messageIds });
+    }
+
+    return messagesToDelete;
+};
