@@ -22,6 +22,40 @@ const markMessageRead = async (req, res) => {
         msg.readAt = new Date();
         await msg.save();
 
+        // Snapchat Mode: If the message is not locked, schedule a 5-second burn timer
+        if (!msg.isLocked) {
+            setTimeout(async () => {
+                try {
+                    const message = await Message.findById(messageId);
+                    if (message && !message.isLocked) {
+                        const mediaToDelete = [];
+                        if (message.audio) mediaToDelete.push(message.audio);
+                        if (message.image) mediaToDelete.push(message.image);
+                        if (mediaToDelete.length > 0) {
+                            const { deleteCloudinaryFiles } = await import("../utils/cloudinaryCleanup.js");
+                            await deleteCloudinaryFiles(mediaToDelete).catch(() => { });
+                        }
+                        await Message.deleteOne({ _id: messageId });
+
+                        // Notify both users' clients to remove the message in real-time
+                        const io = req.app.get('io');
+                        if (io) {
+                            io.to(String(message.sender)).emit("message.deleted", {
+                                messageId: message._id,
+                                conversationWith: message.recipient,
+                            });
+                            io.to(String(message.recipient)).emit("message.deleted", {
+                                messageId: message._id,
+                                conversationWith: message.sender,
+                            });
+                        }
+                    }
+                } catch (burnErr) {
+                    console.error("[BURN PROTOCOL ERROR]", burnErr);
+                }
+            }, 5000);
+        }
+
         res.status(200).json({ success: true, isRead: true });
     } catch (err) {
         res.status(500).json(err);
