@@ -823,6 +823,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const postAuthorId = post.author?._id || post.author;
 
     const foundUserInList = allUsers?.find(u => isSameId(u._id, currentCommentAuthorId));
+    const commentAuthor = isCommentAuthor
+        ? user
+        : (foundUserInList || comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic });
     const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
@@ -858,10 +861,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             >
                 <div 
                     className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
+                    onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                 >
                     <ProfileAvatar
-                    user={isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic })}
+                    user={commentAuthor}
                 />
             </div>
 
@@ -869,9 +872,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 <div className="flex items-center gap-2 mb-1 max-w-full">
                     <span 
                         className={`font-bold text-sm truncate cursor-pointer hover:underline text-white`}
-                        onClick={() => onViewProfile && onViewProfile(isCommentAuthor ? user : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic }))}
+                        onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                     >
-                        {isCommentAuthor ? (user?.username || 'User') : (comment.user?.username || comment.authorName || 'User')}
+                        {commentAuthor?.username || 'User'}
                     </span>
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4" />
                 </div>
@@ -1831,9 +1834,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const isCurrentUserFounder = user?.role === 'Founder';
 
     const authorId = post.author?._id || post.author;
-    const author = (post.author && typeof post.author === 'object' && post.author.username)
+    const baseAuthor = (post.author && typeof post.author === 'object' && post.author.username)
         ? post.author
         : (allUsers?.find(u => isSameId(u._id, authorId)) || { username: 'Unknown', _id: authorId });
+
+    const author = isSameId(authorId, user?._id)
+        ? { ...baseAuthor, ...user }
+        : ((allUsers?.find(u => isSameId(u._id, authorId))) ? { ...baseAuthor, ...(allUsers.find(u => isSameId(u._id, authorId))) } : baseAuthor);
 
     // 🔥 ROBUST REPOSTER RESOLUTION
     let resolvedReposter = reposter;
@@ -2269,13 +2276,27 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     };
 
     const hasInitializedRef = useRef(false);
+    const prevActiveChatIdRef = useRef(null);
 
     useEffect(() => {
         if (!isOpen) {
+            if (prevActiveChatIdRef.current) {
+                axios.post('/messages/cleanup', { chatUserId: prevActiveChatIdRef.current }).catch(() => {});
+                prevActiveChatIdRef.current = null;
+            }
             hasInitializedRef.current = false;
             setActiveChat(null);
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen && activeChat?._id) {
+            if (prevActiveChatIdRef.current && prevActiveChatIdRef.current !== activeChat._id) {
+                axios.post('/messages/cleanup', { chatUserId: prevActiveChatIdRef.current }).catch(() => {});
+            }
+            prevActiveChatIdRef.current = activeChat._id;
+        }
+    }, [isOpen, activeChat?._id]);
 
     useEffect(() => {
         if (isOpen && initialChatUser && !hasInitializedRef.current) {

@@ -5,7 +5,7 @@ import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 import { handleBotMention } from "../utils/botHandlers.js";
-import { cleanupExpiredMessages } from "../utils/messageRetention.js";
+import { cleanupExpiredMessages, cleanupSnapchatMessages } from "../utils/messageRetention.js";
 
 const router = express.Router();
 
@@ -178,6 +178,12 @@ const getConversation = async (req, res) => {
             return res.status(200).json([]); // Return empty conversation for invalid IDs
         }
 
+        await cleanupSnapchatMessages({
+            app: req.app,
+            currentUserId,
+            chatUserId: otherUserId
+        });
+
         await cleanupExpiredMessages({
             app: req.app,
             query: {
@@ -247,6 +253,24 @@ router.patch("/:messageId/lock", verifyToken, async (req, res) => {
             isLocked: msg.isLocked,
             deleted: deletedMessages.length > 0,
         });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+router.post("/cleanup", verifyToken, async (req, res) => {
+    try {
+        const currentUserId = req.user.id;
+        const { chatUserId } = req.body;
+        if (!chatUserId) {
+            return res.status(400).json("chatUserId is required");
+        }
+        const deleted = await cleanupSnapchatMessages({
+            app: req.app,
+            currentUserId,
+            chatUserId
+        });
+        res.status(200).json({ success: true, count: deleted.length });
     } catch (err) {
         res.status(500).json(err);
     }

@@ -78,9 +78,16 @@ export const cleanupSnapchatMessages = async ({ app, io, currentUserId, chatUser
 
     const socketServer = io || app?.get?.("io");
     if (socketServer) {
-        const messageIds = messagesToDelete.map(m => m._id);
-        socketServer.to(String(currentUserId)).emit("messages.cleared", { messageIds });
-        socketServer.to(String(chatUserId)).emit("messages.cleared", { messageIds });
+        messagesToDelete.forEach((message) => {
+            socketServer.to(String(message.sender)).emit("message.deleted", {
+                messageId: message._id,
+                conversationWith: message.recipient,
+            });
+            socketServer.to(String(message.recipient)).emit("message.deleted", {
+                messageId: message._id,
+                conversationWith: message.sender,
+            });
+        });
     }
 
     return messagesToDelete;
