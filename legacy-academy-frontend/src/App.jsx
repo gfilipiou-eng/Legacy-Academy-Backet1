@@ -2196,6 +2196,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         isLocked: message?.isLocked ?? false
     }), []);
 
+    const chatUser = React.useMemo(() => {
+        if (!activeChat) return null;
+        return allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat;
+    }, [activeChat, allUsers]);
+
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for target user on mount/change
     useEffect(() => {
         if (isOpen && activeChat?._id && fetchSpecificUser) {
@@ -2593,14 +2598,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black border border-white/10"><ProfileAvatar user={activeChat} /></div>
+                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black border border-white/10">
+                                    <ProfileAvatar user={chatUser} />
+                                </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
-                                        {activeChat?.username}
-                                        <VerifiedBadge isFounder={activeChat?.role === 'Founder'} isUser={activeChat?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
+                                        {chatUser?.username}
+                                        <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
                                     </div>
                                     {(() => {
-                                        const chatUser = allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat;
                                         const isChatUserOnline = isUserOnline(chatUser, user);
                                         return (
                                             <div className={`text-[10px] flex items-center gap-1.5 ${isChatUserOnline ? 'text-green-500/90 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
@@ -2658,7 +2664,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 )}
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-xl relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] text-white border-cyan-500/30 rounded-br-sm shadow-[0_0_20px_rgba(6,182,212,0.15)]' : 'bg-gradient-to-br from-[#0f0f23] via-[#1a1a3e] to-[#0d1b2a] text-white border-purple-500/30 rounded-bl-sm shadow-[0_0_20px_rgba(147,51,234,0.12)]'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/90 shadow-[0_0_25px_rgba(245,158,11,0.3)]' : ''} hover:scale-[1.02] transition-all duration-300`}
+                                                    className={`max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-xl relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-cyan-950/40 border-cyan-500/30 text-white rounded-br-sm shadow-[0_8px_32px_rgba(6,182,212,0.15)]' : 'bg-purple-950/30 border-purple-500/20 text-white rounded-bl-sm shadow-[0_8px_32px_rgba(147,51,234,0.1)]'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/90 shadow-[0_0_25px_rgba(245,158,11,0.3)]' : ''} hover:scale-[1.02] transition-all duration-300`}
                                                 >
                                                 {/* Glass/Sparkle overlay */}
                                                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-transparent to-white/[0.02] pointer-events-none rounded-[22px]" />
@@ -2728,7 +2734,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="flex-1 relative flex items-center bg-[#111]  rounded-[1.3rem] px-4 py-1 focus-within:border-[var(--gold-primary)]  group overflow-hidden">
+                                    <div className="flex-1 relative flex items-center bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-1 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(255,215,0,0.1)] transition-all duration-300 group overflow-hidden">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
