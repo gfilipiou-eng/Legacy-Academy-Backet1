@@ -405,7 +405,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`profile-link-glass inline-flex max-w-full items-center gap-2 rounded-full px-2.5 py-1.5 text-white font-black tracking-widest uppercase cursor-pointer transition-all duration-300 hover:border-white/24 hover:bg-white/[0.08] hover:scale-[1.02] active:scale-[0.98] ${textSizeClass} ${className}`}
+            className={`profile-link-glass inline-flex max-w-full items-center justify-center gap-2 rounded-full px-2.5 py-1.5 text-white font-black tracking-widest uppercase cursor-pointer transition-all duration-300 hover:border-white/24 hover:bg-white/[0.08] hover:scale-[1.02] active:scale-[0.98] ${textSizeClass} ${className}`}
         >
             <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/20 shadow-[0_8px_18px_rgba(0,0,0,0.25)]`}>
                 {resolvedProfilePic ? (
@@ -417,7 +417,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 )}
             </div>
             <Icons.Link className={`relative z-10 ${iconSizeClass} shrink-0 text-[var(--gold-primary)]`} />
-            <span className="relative z-10 min-w-0 whitespace-nowrap text-white">@{normalizedUsername}</span>
+            <span className="relative z-10 min-w-0 whitespace-normal break-all leading-tight text-white">@{normalizedUsername}</span>
         </button>
     );
 };
@@ -3996,7 +3996,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-0 text-white text-base sm:text-sm leading-[54px] font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -4007,7 +4007,7 @@ const ProfileModal = ({
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="w-full bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300"
+                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>

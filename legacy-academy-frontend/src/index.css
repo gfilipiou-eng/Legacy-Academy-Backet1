@@ -385,6 +385,25 @@ button:active {
     linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.08), transparent);
 }
 
+.profile-edit-field {
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: hidden;
+  caret-color: var(--gold-primary);
+  background-clip: padding-box;
+}
+
+input.profile-edit-field {
+  display: block;
+  line-height: 54px !important;
+  height: 54px;
+}
+
+textarea.profile-edit-field {
+  overflow-y: auto;
+  line-height: 1.45 !important;
+}
+
 .app-main-scroll {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
