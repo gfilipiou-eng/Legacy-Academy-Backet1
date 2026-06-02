@@ -3996,7 +3996,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-0 text-white text-base sm:text-sm leading-[54px] font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -5067,7 +5067,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const publicFounderAffiliation = getFounderAffiliation(publicUser);
 
     return (
-        <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
+        <div className="min-h-screen bg-black text-white relative overflow-x-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
             {/* AMBIENT BACKGROUND GLOWS FOR LIQUID GLASS AESTHETIC */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-[var(--gold-primary)]/10 blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }} />

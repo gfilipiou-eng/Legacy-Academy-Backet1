@@ -388,20 +388,28 @@ button:active {
 .profile-edit-field {
   -webkit-appearance: none;
   appearance: none;
-  overflow: hidden;
   caret-color: var(--gold-primary);
   background-clip: padding-box;
+  box-sizing: border-box;
 }
 
 input.profile-edit-field {
   display: block;
-  line-height: 54px !important;
   height: 54px;
+  line-height: normal !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  /* Mobile Safari: overflow:hidden clips the text — use visible instead */
+  overflow: visible;
+  /* Vertically centre text without line-height trick */
+  display: flex;
+  align-items: center;
 }
 
 textarea.profile-edit-field {
   overflow-y: auto;
-  line-height: 1.45 !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box;
 }
 
 .app-main-scroll {
