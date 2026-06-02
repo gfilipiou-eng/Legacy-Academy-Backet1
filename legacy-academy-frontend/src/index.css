@@ -394,22 +394,23 @@ button:active {
 }
 
 input.profile-edit-field {
+  /* display:flex on <input> breaks cursor/text position in mobile Safari — must be block */
   display: block;
   height: 54px;
-  line-height: normal !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  /* Mobile Safari: overflow:hidden clips the text — use visible instead */
-  overflow: visible;
-  /* Vertically centre text without line-height trick */
-  display: flex;
-  align-items: center;
+  /* Use symmetric padding to vertically centre text; avoid line-height tricks */
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+  line-height: 1.2 !important;
+  overflow: hidden;
+  /* Prevent iOS zoom on focus (font-size < 16px triggers auto-zoom) */
+  font-size: 16px !important;
 }
 
 textarea.profile-edit-field {
   overflow-y: auto;
   line-height: 1.5 !important;
   box-sizing: border-box;
+  font-size: 16px !important;
 }
 
 .app-main-scroll {
