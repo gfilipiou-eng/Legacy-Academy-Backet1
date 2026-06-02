@@ -26,27 +26,22 @@ const BottomNavbar = memo(({
         return () => el.removeEventListener('wheel', blockWheel);
     }, []);
 
-    // Futuristic base: flat, sharp, no bounce, geometric.
-    const navItemBaseClass = 'flex-1 max-w-[112px] sm:max-w-[120px] h-[76px] sm:h-[84px] flex items-center justify-center transition-all duration-300 ease-in-out';
-    
-    // Active state: Transparent background, no blocks.
-    const navItemClass = (isActive) => `${navItemBaseClass} bg-transparent transition-all duration-300`;
-    
-    // Icons: Use theme color when active.
-    const iconClass = (isActive) => `transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 ${isActive ? 'text-[var(--gold-primary)] opacity-100 ' : 'text-gray-500 hover:text-gray-300'}`;
+    const navItemBaseClass = 'relative h-[56px] sm:h-[62px] w-full max-w-[92px] sm:max-w-[108px] flex items-center justify-center rounded-[1.35rem] transition-all duration-300 ease-out overflow-hidden';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'bottom-nav-item-active text-white' : 'bottom-nav-item text-white/52 hover:text-white/82'}`;
+    const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-7 h-7 sm:w-8 sm:h-8 ${isActive ? 'scale-105 drop-shadow-[0_0_10px_rgba(var(--gold-primary-rgb),0.35)]' : ''}`;
 
     return (
         <nav 
             ref={navRef}
-            className="fixed bottom-[calc(14px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-3"
+            className="fixed bottom-[calc(12px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-2.5 sm:px-4"
             onTouchMove={(e) => e.preventDefault()}
         >
-            <div className="w-full max-w-2xl mx-auto bg-[#111111]/60 backdrop-blur-3xl border border-white/15 rounded-[2rem] pointer-events-auto flex justify-around items-center px-2 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
-                <div className="w-full bottom-nav-glass rounded-none px-2.5 sm:px-3 py-3 flex items-center justify-between relative gap-2">
+            <div className="bottom-nav-glass w-full max-w-[620px] mx-auto rounded-[2rem] sm:rounded-[2.25rem] pointer-events-auto px-2.5 sm:px-3 py-2.5 flex items-center justify-between relative gap-1.5 sm:gap-2.5">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
-                    className="flex flex-col items-center justify-center flex-1"
+                    aria-label="Home"
+                    className="flex items-center justify-center flex-1 min-w-0"
                 >
                     <div className={navItemClass(activeTab === 'home')}>        
                         <Icons.Home className={iconClass(activeTab === 'home')} fill="none" strokeWidth={activeTab === 'home' ? '2.5' : '1.5'} shapeRendering="geometricPrecision" />
@@ -56,13 +51,14 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={() => onTabChange('alerts')}
-                    className="flex flex-col items-center justify-center relative flex-1"
+                    aria-label="Alerts"
+                    className="flex items-center justify-center relative flex-1 min-w-0"
                 >
                     <div className={navItemClass(activeTab === 'alerts')}>      
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill="none" strokeWidth={activeTab === 'alerts' ? '2.5' : '1.5'} shapeRendering="geometricPrecision" />
                     </div>
                     {unreadCount > 0 && (
-                        <div className="absolute top-1 right-2 sm:right-3 min-w-[20px] h-[20px] bg-red-600 rounded-none flex items-center justify-center border border-black shadow-none z-10">     
+                        <div className="absolute top-1 right-[16%] sm:right-[18%] min-w-[19px] h-[19px] px-1 bg-red-500 rounded-full flex items-center justify-center border border-white/70 shadow-[0_8px_18px_rgba(239,68,68,0.35)] z-20">
                             <span className="text-[10px] font-black text-white leading-none tracking-tighter">
                                 {unreadCount > 9 ? '9+' : unreadCount}
                             </span>
@@ -73,17 +69,19 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onCreate}
-                    className="flex flex-col items-center justify-center relative z-20" 
+                    aria-label="Create"
+                    className="flex items-center justify-center relative z-20 px-1"
                 >
-                    <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] flex items-center justify-center rounded-full bg-white text-black shadow-md hover:scale-105 active:scale-95 transition-all duration-300">
-                        <Icons.Plus className="w-8 h-8 sm:w-9 sm:h-9 font-black stroke-[3]" shapeRendering="geometricPrecision" />
+                    <div className="bottom-nav-create w-[62px] h-[62px] sm:w-[70px] sm:h-[70px] flex items-center justify-center rounded-full text-black hover:scale-105 active:scale-95 transition-all duration-300">
+                        <Icons.Plus className="w-8 h-8 sm:w-9 sm:h-9 font-black stroke-[3.2]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
                 <button
                     type="button"
                     onClick={() => onTabChange('search')}
-                    className="flex flex-col items-center justify-center flex-1"
+                    aria-label="Search"
+                    className="flex items-center justify-center flex-1 min-w-0"
                 >
                     <div className={navItemClass(activeTab === 'search')}>      
                         <Icons.Search className={iconClass(activeTab === 'search')} fill="none" strokeWidth={activeTab === 'search' ? '2.5' : '1.5'} shapeRendering="geometricPrecision" />
@@ -93,15 +91,15 @@ const BottomNavbar = memo(({
                 <button
                     type="button"
                     onClick={onProfile}
-                    className="flex flex-col items-center justify-center flex-1"
+                    aria-label="Profile"
+                    className="flex items-center justify-center flex-1 min-w-0"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>     
-                        <div className={`overflow-hidden bg-black transition-all duration-300 ${activeTab === 'profile' ? 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border-[2.5px] border-[var(--gold-primary)] ' : 'w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/20 shadow-none'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${activeTab === 'profile' ? 'profile-nav-avatar-active' : 'profile-nav-avatar'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
                 </button>
-                </div>
             </div>
         </nav>
     );

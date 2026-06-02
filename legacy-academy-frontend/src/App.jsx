@@ -405,9 +405,9 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex items-center gap-1.5 text-white font-bold tracking-widest uppercase hover:underline cursor-pointer ${textSizeClass} ${className}`}
+            className={`profile-link-glass inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-white font-black tracking-widest uppercase cursor-pointer transition-all duration-300 hover:border-white/24 hover:bg-white/[0.08] hover:scale-[1.02] active:scale-[0.98] ${textSizeClass} ${className}`}
         >
-            <div className={`${avatarSizeClass} overflow-hidden bg-black  shrink-0 flex items-center justify-center`}>
+            <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/20 shadow-[0_8px_18px_rgba(0,0,0,0.25)]`}>
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
@@ -416,8 +416,8 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                     </span>
                 )}
             </div>
-            <Icons.Link className={`${iconSizeClass} shrink-0 opacity-70 text-white`} />
-            <span className="truncate max-w-[180px] text-white">@{normalizedUsername}</span>
+            <Icons.Link className={`relative z-10 ${iconSizeClass} shrink-0 text-[var(--gold-primary)]`} />
+            <span className="relative z-10 truncate max-w-[180px] text-white">@{normalizedUsername}</span>
         </button>
     );
 };
@@ -4041,10 +4041,24 @@ const ProfileModal = ({
                                     })}
                                 </div>
                                 {isFounderProfile && (
-                                    <div className="mt-4 pt-4 border-t border-white/10">
-                                        <label className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest pl-1 mb-2 block">FOUNDER AFFILIATION</label>
-                                        <div className="relative">
-                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-black">@</div>
+                                    <div className="profile-link-glass mt-4 rounded-3xl p-4">
+                                        <div className="relative z-10 flex items-center justify-between gap-3 mb-3">
+                                            <label className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">FOUNDER AFFILIATION</label>
+                                            {founderAffiliation && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setFounderAffiliation('');
+                                                    }}
+                                                    className="text-[9px] font-black uppercase tracking-widest text-white/45 hover:text-white transition-colors px-2 py-1"
+                                                >
+                                                    {t('CLEAR', 'Clear')}
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="relative z-10">
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/8 border border-white/10 text-[var(--gold-primary)] font-black flex items-center justify-center">@</div>
                                             <input 
                                                 type="text" 
                                                 value={founderAffiliation}
@@ -4052,10 +4066,13 @@ const ProfileModal = ({
                                                     setFounderAffiliation(sanitizeAffiliation(e.target.value));
                                                 }}
                                                 placeholder="affiliated_username"
-                                                className="w-full bg-white/[0.02] border border-white/10 rounded-2xl py-3 pl-8 pr-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300"
+                                                className="w-full bg-black/25 border border-white/10 rounded-2xl py-3.5 pl-14 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 focus:border-[var(--gold-primary)] focus:bg-black/35 outline-none transition-all duration-300"
                                             />
                                         </div>
-                                        <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-2 pl-1">Links to another profile (e.g., your company).</div>
+                                        <div className="relative z-10 mt-3 flex items-center gap-2 text-[9px] text-white/42 font-bold uppercase tracking-wider">
+                                            <Icons.Link className="w-3.5 h-3.5 text-[var(--gold-primary)] shrink-0" />
+                                            <span className="leading-relaxed">Links to another profile, brand, or company page.</span>
+                                        </div>
                                     </div>
                                 )}
                             </div>
