@@ -405,7 +405,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`profile-link-glass inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-white font-black tracking-widest uppercase cursor-pointer transition-all duration-300 hover:border-white/24 hover:bg-white/[0.08] hover:scale-[1.02] active:scale-[0.98] ${textSizeClass} ${className}`}
+            className={`profile-link-glass inline-flex max-w-full items-center gap-2 rounded-full px-2.5 py-1.5 text-white font-black tracking-widest uppercase cursor-pointer transition-all duration-300 hover:border-white/24 hover:bg-white/[0.08] hover:scale-[1.02] active:scale-[0.98] ${textSizeClass} ${className}`}
         >
             <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/20 shadow-[0_8px_18px_rgba(0,0,0,0.25)]`}>
                 {resolvedProfilePic ? (
@@ -417,7 +417,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 )}
             </div>
             <Icons.Link className={`relative z-10 ${iconSizeClass} shrink-0 text-[var(--gold-primary)]`} />
-            <span className="relative z-10 truncate max-w-[180px] text-white">@{normalizedUsername}</span>
+            <span className="relative z-10 min-w-0 whitespace-nowrap text-white">@{normalizedUsername}</span>
         </button>
     );
 };
@@ -3494,11 +3494,27 @@ const ProfileModal = ({
     const [isEditing, setIsEditing] = useState(false);
     const [userData, setUserData] = useState(profileUser);
     const [activeList, setActiveList] = useState(null);
+    const optimisticProfileEditRef = useRef(null);
 
     // 🔥 SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
     useEffect(() => {
         if (profileUser) {
             const latest = (allUsers || []).find(u => isSameId(u._id, profileUser._id)) || profileUser;
+            const pending = optimisticProfileEditRef.current;
+            if (pending && isSameId(pending.user?._id, latest?._id)) {
+                if (Date.now() < pending.until) {
+                    setUserData({
+                        ...latest,
+                        ...pending.user,
+                        settings: {
+                            ...(latest?.settings || {}),
+                            ...(pending.user?.settings || {})
+                        }
+                    });
+                    return;
+                }
+                optimisticProfileEditRef.current = null;
+            }
             setUserData(latest);
         }
     }, [profileUser, allUsers]);
@@ -3980,7 +3996,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="w-full bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -3990,6 +4006,7 @@ const ProfileModal = ({
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
+                                        spellCheck={false}
                                         className="w-full bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300"
                                         placeholder={t('BIO_PH')}
                                     />
@@ -4098,6 +4115,10 @@ const ProfileModal = ({
                                         profileDescriptor: nextProfileDescriptor,
                                         founderAffiliation: nextFounderAffiliation
                                     };
+                                    optimisticProfileEditRef.current = {
+                                        user: optimisticUser,
+                                        until: Date.now() + 15000
+                                    };
                                     setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
                                     if (isSameId(displayUser?._id, currentUser?._id)) {
                                         onUpdateUser?.(optimisticUser);
@@ -4123,6 +4144,10 @@ const ProfileModal = ({
                                                 ...(res.data?.settings || {})
                                             }
                                         };
+                                        optimisticProfileEditRef.current = {
+                                            user: mergedUpdatedUser,
+                                            until: Date.now() + 5000
+                                        };
                                         if (isSameId(displayUser?._id, currentUser?._id)) {
                                             localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
                                         }
@@ -4133,6 +4158,7 @@ const ProfileModal = ({
                                     }
                                 } catch (e) {
                                     console.error(e);
+                                    optimisticProfileEditRef.current = null;
                                     if (displayUser) {
                                         setUserData(prev => ({ ...(prev || {}), ...(previousUserSnapshot || {}) }));
                                         if (isSameId(displayUser?._id, currentUser?._id) && previousUserSnapshot) {
