@@ -95,7 +95,7 @@ const BottomNavbar = memo(({
                     className="flex items-center justify-center flex-1 min-w-0 group"
                 >
                     <div className={navItemClass(activeTab === 'profile')}>     
-                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 rounded-[0.9rem] ${activeTab === 'profile' ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 rounded-full ${activeTab === 'profile' ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
@@ -108,3 +108,4 @@ const BottomNavbar = memo(({
 BottomNavbar.displayName = 'BottomNavbar';
 
 export default BottomNavbar;
+
