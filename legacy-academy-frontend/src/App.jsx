@@ -1751,9 +1751,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] rounded-[1.2rem] overflow-hidden relative group">
+                <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full overflow-hidden relative group">
                     {/* Animated Bubbles */}
-                    <div className="absolute inset-0 overflow-hidden rounded-[1.2rem]">
+                    <div className="absolute inset-0 overflow-hidden rounded-full">
                         {[0,1,2,3,4].map(i => (
                             <div 
                                 key={i}
@@ -1769,9 +1769,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         ))}
                     </div>
                     {/* Liquid Glass Background */}
-                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                     {/* Inner Profile Avatar */}
-                    <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden">
+                    <div className="absolute inset-[3px] rounded-full overflow-hidden">
                         <ProfileAvatar user={user} className="opacity-60 object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
                     </div>
                     {/* Add Icon */}
@@ -1794,9 +1794,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
-                            <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden bg-black relative flex items-center justify-center">
+                        <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                            <div className="absolute inset-[3px] rounded-full overflow-hidden bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img 
                                         src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
@@ -4473,9 +4473,9 @@ const ProfileModal = ({
                                                                 ))}
                                                             </div>
                                                             {/* Liquid Glass Background */}
-                                                            <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                                                             {/* Inner Profile Avatar */}
-                                                            <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden bg-[#050505]">
+                                                            <div className="absolute inset-[3px] rounded-full overflow-hidden bg-[#050505]">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40 object-cover w-full h-full" />
                                                             </div>
                                                             {/* Add Icon */}
@@ -4500,8 +4500,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] rounded-[1.2rem] p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-[1.1rem] overflow-hidden border-2 border-black bg-black relative">
+                                                            <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
