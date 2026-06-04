@@ -7412,7 +7412,7 @@ const App = () => {
                                     <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.6)]">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
                                     Purchase Access
                                 </button>
                                 
