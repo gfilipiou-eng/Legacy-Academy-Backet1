@@ -7550,6 +7550,7 @@ const App = () => {
                                     )}
                                 </div>
                             ) : (
+                                <>
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} imgKey={imgKey} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
@@ -7560,6 +7561,8 @@ const App = () => {
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
+                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-text)] flex items-center gap-2">
+                                                            <div className="w-1 h-3 bg-[var(--app-text)] rounded-none" />
                                                             {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
