@@ -693,23 +693,23 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    let baseClass = 'w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 rounded-full border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.4)]';
+    let baseClass = 'w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 rounded-full';
     if (className && className.includes('object-cover')) {
         baseClass = className; // If they provide full classes, use them, otherwise add defaults.
     } else if (className) {
         baseClass = `${baseClass} ${className}`;
     }
-    const finalClassName = baseClass.replace(/rounded-none/g, '') + ' rounded-full';
+    const finalClassName = baseClass.replace(/rounded-none/g, ''); // Removed forced rounded-full
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
             <div className={`w-full h-full bg-gray-900 ${finalClassName}`} onClick={onClick}>
-                <div className="w-full h-full relative overflow-hidden bg-black rounded-full">
+                <div className={`w-full h-full relative overflow-hidden bg-black ${finalClassName}`}>
                     <video
                         src={mediaUrl}
-                        className="w-full h-full object-cover pointer-events-none rounded-full"
+                        className={`w-full h-full object-cover pointer-events-none ${finalClassName}`}
                         autoPlay
                         muted
                         loop
@@ -736,7 +736,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
             onError={() => setImgError(true)}
         />
     ) : (
-        <div className="w-full h-full overflow-hidden rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
+        <div className={`w-full h-full overflow-hidden ${finalClassName}`}>
             <DefaultAvatar name={name} size={size} />
         </div>
     );
@@ -1976,8 +1976,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/60 shadow-none overflow-hidden cursor-pointer" onClick={() => onViewProfile(author)}>
-                            <ProfileAvatar user={author} className="w-full h-full object-cover" cacheKey={cacheKey} />
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
+                            {/* Liquid Glass Background */}
+                            <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                            {/* Inner Profile Avatar */}
+                            <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden">
+                                <ProfileAvatar user={author} className="opacity-90 object-cover w-full h-full" cacheKey={cacheKey} />
+                            </div>
                         </div>
                     </div>
 
@@ -4186,8 +4191,11 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-center ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white/[0.05] p-1.5 backdrop-blur-md border border-white/10 shadow-2xl shrink-0 relative group">
-                                        <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <div className="w-28 h-28 sm:w-32 sm:h-32 relative group shrink-0">
+                                        <div className="absolute inset-0 rounded-[1.8rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                        <div className="absolute inset-[4px] rounded-[1.6rem] overflow-hidden">
+                                            <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -4445,9 +4453,9 @@ const ProfileModal = ({
                                                                 ))}
                                                             </div>
                                                             {/* Liquid Glass Background */}
-                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                                            <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                                                             {/* Inner Profile Avatar */}
-                                                            <div className="absolute inset-[4px] rounded-full overflow-hidden bg-[#050505]">
+                                                            <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden bg-[#050505]">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40 object-cover w-full h-full" />
                                                             </div>
                                                             {/* Add Icon */}
@@ -4472,8 +4480,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[70px] h-[70px] rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black relative">
+                                                            <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] rounded-[1.2rem] p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-[1.1rem] overflow-hidden border-2 border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
