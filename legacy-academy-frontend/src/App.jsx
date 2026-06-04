@@ -1744,9 +1744,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
         <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] rounded-full overflow-hidden relative group">
+                <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] rounded-[1.2rem] overflow-hidden relative group">
                     {/* Animated Bubbles */}
-                    <div className="absolute inset-0 overflow-hidden rounded-full">
+                    <div className="absolute inset-0 overflow-hidden rounded-[1.2rem]">
                         {[0,1,2,3,4].map(i => (
                             <div 
                                 key={i}
@@ -1762,19 +1762,17 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         ))}
                     </div>
                     {/* Liquid Glass Background */}
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                     {/* Inner Profile Avatar */}
-                    <div className="absolute inset-[4px] rounded-full overflow-hidden">
-                        <ProfileAvatar user={user} className="opacity-60" key={imgKey} cacheKey={imgKey} />
+                    <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden">
+                        <ProfileAvatar user={user} className="opacity-60 object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
                     </div>
                     {/* Add Icon */}
                     <div className="absolute inset-0 flex items-center justify-center z-10">
-                        <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
                     </div>
                 </div>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
@@ -1789,8 +1787,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black relative flex items-center justify-center">
+                        <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] rounded-[1.2rem] p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="w-full h-full rounded-[1.1rem] overflow-hidden border border-black bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img 
                                         src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
@@ -4450,16 +4448,14 @@ const ProfileModal = ({
                                                             <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
                                                             {/* Inner Profile Avatar */}
                                                             <div className="absolute inset-[4px] rounded-full overflow-hidden bg-[#050505]">
-                                                                <ProfileAvatar user={currentUser} className="opacity-40" />
+                                                                <ProfileAvatar user={currentUser} className="opacity-40 object-cover w-full h-full" />
                                                             </div>
                                                             {/* Add Icon */}
                                                             <div className="absolute inset-0 flex items-center justify-center z-10">
-                                                                <div className="w-[40px] h-[40px] sm:w-[48px] sm:h-[48px] rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_4px_20px_rgba(255,255,255,0.2)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
-                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8">
-                                                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                                    </svg>
-                                                                </div>
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                                                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                </svg>
                                                             </div>
                                                         </div>
                                                         <span className="text-[9px] font-black text-white/50 uppercase tracking-widest mt-1">{t('ADD_STORY')}</span>
