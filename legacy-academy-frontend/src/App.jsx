@@ -1137,10 +1137,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-3xl border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="w-11 h-11 rounded-full bg-black overflow-hidden shadow-none shrink-0 cursor-pointer relative group" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
-                                
-                                <ProfileAvatar user={author} />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                            <div className="w-11 h-11 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                                <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                    <ProfileAvatar user={author} />
+                                </div>
                             </div>
                             <div className="flex flex-col min-w-0 flex-1 pr-2">
                                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
@@ -1189,8 +1190,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                             </div>
                             <div className="flex items-center gap-3 w-full">
-                                <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0">
-                                    <ProfileAvatar user={user} />
+                                <div className="w-10 h-10 relative group shrink-0">
+                                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                    <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                        <ProfileAvatar user={user} />
+                                    </div>
                                 </div>
                                 {isRecordingComment ? (
                                     <div className="flex-1 min-w-0 bg-white/90 text-black border border-white/30 rounded-2xl p-3 flex items-center justify-between">
@@ -2147,8 +2151,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         {showComments && !isReadOnly && (
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-4 animate-fade-in relative z-20">
                                 <div className="flex gap-3">
-                                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black">
-                                        <ProfileAvatar user={user} />
+                                    <div className="w-10 h-10 relative group shrink-0">
+                                        <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                        <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                            <ProfileAvatar user={user} />
+                                        </div>
                                     </div>
                                     <div className="flex-1 flex flex-col gap-3">
                                         <div className="relative">
@@ -2567,7 +2574,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 rounded-full bg-black overflow-hidden "><ProfileAvatar user={u} /></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div><div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2609,8 +2616,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
-                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black border border-white/10">
-                                    <ProfileAvatar user={chatUser} />
+                                <div className="w-10 h-10 relative group shrink-0">
+                                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                    <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                        <ProfileAvatar user={chatUser} />
+                                    </div>
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
@@ -3841,8 +3851,11 @@ const ProfileModal = ({
                                     onViewProfile(u);
                                     setActiveList(null);
                                 }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent">
-                                      <div className="w-11 h-11 rounded-full bg-black overflow-hidden ">
-                                          <ProfileAvatar user={u} />
+                                      <div className="w-11 h-11 relative group shrink-0">
+                                          <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                          <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                              <ProfileAvatar user={u} />
+                                          </div>
                                       </div>
                                       <div className="flex flex-col">
                                         <div className="font-bold text-white text-sm">{u?.username}</div>
@@ -4702,8 +4715,11 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <div className="flex flex-col gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 ">
-                                  <ProfileAvatar user={user} />
+                              <div className="w-10 h-10 relative group shrink-0">
+                                  <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                  <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                      <ProfileAvatar user={user} />
+                                  </div>
                               </div>
                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{user?.username}</span>
                         </div>
@@ -7632,8 +7648,11 @@ const App = () => {
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none  cursor-pointer hover:border-white transition-colors">
-                                                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden ">
-                                                                <ProfileAvatar user={u} cacheKey={imgKey} />
+                                                            <div className="w-10 h-10 relative group shrink-0">
+                                                                <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                                                <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                                                                    <ProfileAvatar user={u} cacheKey={imgKey} />
+                                                                </div>
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-1.5">
