@@ -234,9 +234,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black z-[9999] flex flex-col font-sans overflow-hidden">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-3xl z-[9999] flex flex-col font-sans overflow-hidden">
       {/* Header */}
-      <header className="shrink-0 h-16 border-b border-white/10 bg-black flex items-center justify-between px-4 z-50">
+      <header className="shrink-0 h-16 border-b border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-between px-4 z-50">
         <div className="flex items-center gap-3">
           <button onClick={onClose} className="p-2 rounded-full transition-all ">
             <Icons.Back className="w-6 h-6 text-white" />
@@ -259,8 +259,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                 className="w-12 h-12 relative group cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
               >
-                <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
-                <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden">
+                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                <div className="absolute inset-[3px] rounded-full overflow-hidden">
                     <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
                 </div>
               </div>
@@ -356,8 +356,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               return (
                 <div key={i} className="flex gap-3 group animate-slide-down">
                   <div className="shrink-0 w-10 h-10 relative group cursor-pointer hover:opacity-80 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
-                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
-                    <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                    <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                         <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
                     </div>
                   </div>
@@ -378,7 +378,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                         <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(c.createdAt, t, lang)}</span>
                       </div>
                     </div>
-                    <div className="bg-white/[0.05] rounded-none p-3 border border-white/5 shadow-sm transition-all">
+                    <div className="bg-white/[0.03] backdrop-blur-lg rounded-2xl p-4 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:border-[#1D9BF0]/40 hover:shadow-[0_0_20px_rgba(29,155,240,0.2),0_0_10px_rgba(225,6,0,0.1)] group/comment">
                       {editingCommentId === c._id ? (
                         <div className="flex flex-col gap-2">
                           <textarea
@@ -404,7 +404,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                             </div>
                           )}
 
-                          <div className="flex gap-3 mt-3 opacity-0 transition-opacity">
+                          <div className="flex gap-3 mt-3 opacity-0 group-hover/comment:opacity-100 transition-opacity">
                             {canEdit && (
                               <button
                                 onClick={() => { setEditingCommentId(c._id); setEditText(c.text || ''); }}
@@ -445,3 +445,5 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
 };
 
 export default CommentView;
+
+

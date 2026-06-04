@@ -13,7 +13,10 @@
 
 /* App.jsx will override these with the user's selected theme color via document.documentElement.style.setProperty */
 :root {
-  background-color: #000000;
+  --c-black: 0 0 0;
+  --c-white: 255 255 255;
+  --c-dark-bg: 5 5 5;
+  background-color: rgb(var(--c-black));
   --gold-primary: #D4AF37;
   --gold-secondary: #AA8B2C;
   --gold-glow: rgba(212, 175, 55, 0);
@@ -24,8 +27,16 @@
   --carbon-black: #050505;
   --glass-bg: rgba(10, 10, 10, 0.85);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --app-bg: #000000;
-  --app-text: #f0f0f0;
+  --app-bg: rgb(var(--c-black));
+  --app-text: rgb(var(--c-white));
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --c-black: 255 255 255;
+    --c-white: 15 15 15;
+    --c-dark-bg: 245 245 245;
+  }
 }
 
 html {
