@@ -672,7 +672,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 
 const DefaultAvatar = ({ name, size = "normal" }) => {
     return (
-        <div className="w-full h-full rounded-full bg-[#0a0a0a] flex items-center justify-center text-white relative overflow-hidden">
+        <div className="w-full h-full rounded-[1.1rem] bg-[#0a0a0a] flex items-center justify-center text-white relative overflow-hidden">
             {name ? <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase select-none text-white/50`}>{name.substring(0, 1)}</span> : <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-40 text-white`} />}
         </div>
     );
@@ -693,7 +693,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    let baseClass = 'w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 rounded-full';
+    let baseClass = 'w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 rounded-[1.1rem]';
     if (className && className.includes('object-cover')) {
         baseClass = className; // If they provide full classes, use them, otherwise add defaults.
     } else if (className) {
@@ -864,13 +864,16 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 className={`flex gap-3 items-start relative py-4 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
             >
                 <div 
-                    className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-black cursor-pointer hover:opacity-80 transition-opacity"
+                    className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                 >
-                    <ProfileAvatar
-                    user={commentAuthor}
-                />
-            </div>
+                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                    <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                        <ProfileAvatar
+                        user={commentAuthor}
+                        />
+                    </div>
+                </div>
 
             <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end text-right' : 'items-start'}`}>
                 <div className="flex items-center gap-2 mb-1 max-w-full">
@@ -1787,8 +1790,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] rounded-[1.2rem] p-[2px] bg-[var(--gold-primary)] shadow-none relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="w-full h-full rounded-[1.1rem] overflow-hidden border border-black bg-black relative flex items-center justify-center">
+                        <div className="w-[60px] h-[80px] sm:w-[68px] sm:h-[88px] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
+                            <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                            <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img 
                                         src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
@@ -3312,8 +3316,11 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <div className="w-[48px] h-[48px] rounded-full overflow-hidden shrink-0 ">
-                                <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                            <div className="w-[48px] h-[48px] relative group shrink-0">
+                                <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                                <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden">
+                                    <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                                </div>
                             </div>
                         </div>
 

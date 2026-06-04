@@ -86,11 +86,11 @@ const ProfileAvatarBase = ({ user }) => {
     mediaUrl += `${sep}t=${timestamp}`;
   }
 
-  if (rawIsVideo && mediaUrl) {
+    if (rawIsVideo && mediaUrl) {
     return (
       <video
         src={mediaUrl}
-        className="w-full h-full rounded-full object-cover"
+        className="w-full h-full object-cover"
         autoPlay
         muted
         loop
@@ -102,7 +102,7 @@ const ProfileAvatarBase = ({ user }) => {
   return (
     <img
       src={mediaUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`}
-      className="w-full h-full rounded-full object-cover"
+      className="w-full h-full object-cover"
       alt={name}
       onError={(e) => {
         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=333&color=fff`;
@@ -256,10 +256,13 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
           <div className="flex gap-3 sm:gap-4">
             <div className="shrink-0 flex flex-col items-center">
               <div 
-                className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shadow-lg cursor-pointer hover:opacity-80 transition-opacity"
+                className="w-12 h-12 relative group cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
               >
-                <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+                <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                <div className="absolute inset-[3px] rounded-[1.1rem] overflow-hidden">
+                    <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+                </div>
               </div>
             </div>
             <div className="flex-1 flex flex-col min-w-0">
@@ -352,8 +355,11 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
 
               return (
                 <div key={i} className="flex gap-3 group animate-slide-down">
-                  <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden border border-white/10 shadow-lg cursor-pointer hover:opacity-80 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
-                    <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
+                  <div className="shrink-0 w-10 h-10 relative group cursor-pointer hover:opacity-80 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
+                    <div className="absolute inset-0 rounded-[1.2rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)]"></div>
+                    <div className="absolute inset-[2.5px] rounded-[1.1rem] overflow-hidden">
+                        <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
