@@ -12,6 +12,13 @@ if (import.meta.env.PROD || process.env.NODE_ENV === 'production' || window.loca
     console.warn = () => { };
     console.debug = () => { };
     console.error = () => { };
+} else {
+    // Hide specific uncatchable console errors from external libs
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+        if (typeof args[0] === 'string' && args[0].includes('Cross-Origin-Opener-Policy')) return;
+        originalConsoleError(...args);
+    };
 }
 
 // Ensure you replace this with your actual Google Client ID from Google Cloud Console

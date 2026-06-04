@@ -348,12 +348,13 @@ button:active {
 input.profile-edit-field {
   /* display:flex on <input> breaks cursor/text position in mobile Safari — must be block */
   display: block;
-  height: 54px;
+  min-height: 54px;
+  height: auto;
   /* Use symmetric padding to vertically centre text; avoid line-height tricks */
   padding-top: 14px !important;
   padding-bottom: 14px !important;
   line-height: 1.2 !important;
-  overflow: hidden;
+  transform: translateZ(0); /* Fix Safari cursor jumping bounds */
   /* Prevent iOS zoom on focus (font-size < 16px triggers auto-zoom) */
   font-size: 16px !important;
 }
@@ -876,9 +877,7 @@ html, body {
   contain: paint;
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
-  --c-white: 255 255 255;
-  --c-black: 0 0 0;
-  background: #050505;
+  background: rgb(var(--c-white) / 0.03);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -911,8 +910,8 @@ html, body {
 
 @media (hover: hover) {
   .premium-post-card:hover, .liquid-image-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgb(var(--c-white) / 0.06);
+    border-color: rgb(var(--c-white) / 0.1);
   }
 }
 

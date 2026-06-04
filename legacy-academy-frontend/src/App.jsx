@@ -4379,6 +4379,11 @@ const ProfileModal = ({
                                                 if (window.confirm(t('CONFIRM_BAN') || 'Confirm ban?')) {
                                                     axios.post(`/users/${displayUser?._id}/ban`, { days: parseInt(e.target.value) });
                                                 }
+                                            }}
+                                            defaultValue=""
+                                            className="flex-1 px-4 py-3.5 bg-red-950/20 border border-red-500/20 rounded-2xl hover:bg-red-900/40 hover:border-red-500/50 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest appearance-none cursor-pointer"
+                                        >
+                                            <option value="" disabled>{t('BAN_DAYS') || 'BAN DAYS'}</option>
                                             <option value="1">{t('BAN_1_DAY') || 'BAN 1 DAY'}</option>
                                             <option value="3">{t('BAN_3_DAYS') || 'BAN 3 DAYS'}</option>
                                             <option value="7">{t('BAN_7_DAYS') || 'BAN 7 DAYS'}</option>
@@ -7545,20 +7550,16 @@ const App = () => {
                                     )}
                                 </div>
                             ) : (
-                                <>
-
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} imgKey={imgKey} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-black/70 backdrop-blur-xl rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-white/50 border border-white/10 text-white" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-[var(--app-bg)]/70 backdrop-blur-xl rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)]/50 border border-white/10 text-[var(--app-text)] placeholder-[var(--app-text)] placeholder-opacity-50" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
-                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white flex items-center gap-2">
-                                                            <div className="w-1 h-3 bg-white rounded-none" />
                                                             {t('TRENDING_NOW') || 'TOP POSTS'}
                                                         </h3>
                                                     </div>
