@@ -867,7 +867,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                 >
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                     <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                         <ProfileAvatar
                         user={commentAuthor}
@@ -1138,7 +1138,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div className="w-11 h-11 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
-                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                 <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                     <ProfileAvatar user={author} />
                                 </div>
@@ -1191,7 +1191,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             </div>
                             <div className="flex items-center gap-3 w-full">
                                 <div className="w-10 h-10 relative group shrink-0">
-                                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                     <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                         <ProfileAvatar user={user} />
                                     </div>
@@ -1769,7 +1769,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         ))}
                     </div>
                     {/* Liquid Glass Background */}
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                     {/* Inner Profile Avatar */}
                     <div className="absolute inset-[3px] rounded-full overflow-hidden">
                         <ProfileAvatar user={user} className="opacity-60 object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
@@ -1795,7 +1795,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
                         <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                             <div className="absolute inset-[3px] rounded-full overflow-hidden bg-black relative flex items-center justify-center">
                                 {storyMediaUrl ? (
                                     <img 
@@ -1986,7 +1986,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="shrink-0 flex flex-col items-center">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
                             {/* Liquid Glass Background */}
-                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                             {/* Inner Profile Avatar */}
                             <div className="absolute inset-[3px] rounded-full overflow-hidden">
                                 <ProfileAvatar user={author} className="opacity-90 object-cover w-full h-full" cacheKey={cacheKey} />
@@ -2152,7 +2152,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-4 animate-fade-in relative z-20">
                                 <div className="flex gap-3">
                                     <div className="w-10 h-10 relative group shrink-0">
-                                        <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                        <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                         <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                             <ProfileAvatar user={user} />
                                         </div>
@@ -2574,7 +2574,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div><div className="absolute inset-[3px] rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div><div className="absolute inset-[3px] rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -2617,7 +2617,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
                                 <div className="w-10 h-10 relative group shrink-0">
-                                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                     <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                         <ProfileAvatar user={chatUser} />
                                     </div>
@@ -3327,7 +3327,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                     >
                         <div className="flex justify-between items-start mb-2">
                             <div className="w-[48px] h-[48px] relative group shrink-0">
-                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                 <div className="absolute inset-[3px] rounded-full overflow-hidden">
                                     <ProfileAvatar user={user} className="w-full h-full object-cover" />
                                 </div>
@@ -3852,7 +3852,7 @@ const ProfileModal = ({
                                     setActiveList(null);
                                 }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent">
                                       <div className="w-11 h-11 relative group shrink-0">
-                                          <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                          <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                           <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                               <ProfileAvatar user={u} />
                                           </div>
@@ -4212,7 +4212,7 @@ const ProfileModal = ({
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
                                     <div className="w-28 h-28 sm:w-32 sm:h-32 relative group shrink-0">
-                                        <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                        <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                         <div className="absolute inset-[4px] rounded-full overflow-hidden">
                                             <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         </div>
@@ -4473,7 +4473,7 @@ const ProfileModal = ({
                                                                 ))}
                                                             </div>
                                                             {/* Liquid Glass Background */}
-                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                                             {/* Inner Profile Avatar */}
                                                             <div className="absolute inset-[3px] rounded-full overflow-hidden bg-[#050505]">
                                                                 <ProfileAvatar user={currentUser} className="opacity-40 object-cover w-full h-full" />
@@ -4716,7 +4716,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <div className="flex flex-col gap-4 mb-4">
                         <div className="flex items-center gap-3">
                               <div className="w-10 h-10 relative group shrink-0">
-                                  <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                  <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                   <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                       <ProfileAvatar user={user} />
                                   </div>
@@ -5137,7 +5137,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] relative group hover:border-[#1D9BF0]/80 hover:shadow-[0_0_40px_rgba(29,155,240,0.5),inset_0_0_20px_rgba(225,6,0,0.4)] transition-all duration-500">
+                    <div className="w-28 h-28 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] relative group transition-all duration-500">
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
@@ -7459,12 +7459,12 @@ const App = () => {
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
                         <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
-                        <header className="relative w-full z-[20] bg-black border-b border-white/20 shrink-0">
+                        <header className="relative w-full z-[20] bg-[#000000] text-[#ffffff] border-b border-white/20 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-black border border-transparent hover:border-[#1D9BF0]/50 hover:shadow-[0_0_15px_rgba(29,155,240,0.5),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-black transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
@@ -7477,8 +7477,7 @@ const App = () => {
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
                                     <div className="relative flex items-center justify-center">
-                                        {/* Simple Soft Glow */}
-                                        <div className="absolute -inset-6 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full" />
+                                        {/* Simple Soft Glow Removed */}
                                         <img 
                                             src="/logo.png?t=1780262935819" 
                                             alt="Legacy Academy" 
@@ -7649,7 +7648,7 @@ const App = () => {
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
                                                         <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none  cursor-pointer hover:border-white transition-colors">
                                                             <div className="w-10 h-10 relative group shrink-0">
-                                                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                                                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                                                 <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                                                     <ProfileAvatar user={u} cacheKey={imgKey} />
                                                                 </div>
@@ -8116,6 +8115,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 

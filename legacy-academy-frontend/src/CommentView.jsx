@@ -259,7 +259,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                 className="w-12 h-12 relative group cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
               >
-                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                 <div className="absolute inset-[3px] rounded-full overflow-hidden">
                     <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
                 </div>
@@ -356,7 +356,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               return (
                 <div key={i} className="flex gap-3 group animate-slide-down">
                   <div className="shrink-0 w-10 h-10 relative group cursor-pointer hover:opacity-80 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 group-hover:border-[#1D9BF0] shadow-[0_8px_32px_rgba(0,0,0,0.8)] group-hover:shadow-[0_0_20px_rgba(29,155,240,0.4),0_0_10px_rgba(225,6,0,0.3)] transition-all duration-500"></div>
+                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                     <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                         <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
                     </div>
@@ -378,7 +378,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                         <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(c.createdAt, t, lang)}</span>
                       </div>
                     </div>
-                    <div className="bg-white/[0.03] backdrop-blur-lg rounded-2xl p-4 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:border-[#1D9BF0]/40 hover:shadow-[0_0_20px_rgba(29,155,240,0.2),0_0_10px_rgba(225,6,0,0.1)] group/comment">
+                    <div className="bg-white/[0.03] backdrop-blur-lg rounded-2xl p-4 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all group/comment">
                       {editingCommentId === c._id ? (
                         <div className="flex flex-col gap-2">
                           <textarea
@@ -445,5 +445,6 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
 };
 
 export default CommentView;
+
 
 
