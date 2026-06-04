@@ -257,42 +257,42 @@ const PROFILE_DESCRIPTOR_OPTIONS = [
         label: 'Entrepreneur',
         description: 'Building something big',
         Icon: Icons.Briefcase,
-        accentClass: 'bg-orange-500/10 text-orange-200 border-orange-400/20'
+        accentClass: 'bg-orange-500/10 text-orange-500 border-orange-400/20'
     },
     {
         value: 'creator',
         label: 'Creator',
         description: 'Making content and ideas',
         Icon: Icons.Camera,
-        accentClass: 'bg-sky-500/10 text-sky-200 border-sky-400/20'
+        accentClass: 'bg-sky-500/10 text-sky-500 border-sky-400/20'
     },
     {
         value: 'popular',
         label: 'Popular',
         description: 'Always in demand',
         Icon: Icons.Sparkles,
-        accentClass: 'bg-fuchsia-500/10 text-fuchsia-200 border-fuchsia-400/20'
+        accentClass: 'bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-400/20'
     },
     {
         value: 'pet-lover',
         label: 'Dog Lover',
         description: 'Pets are family',
         Icon: Icons.PawPrint,
-        accentClass: 'bg-emerald-500/10 text-emerald-200 border-emerald-400/20'
+        accentClass: 'bg-emerald-500/10 text-emerald-500 border-emerald-400/20'
     },
     {
         value: 'community',
         label: 'Community',
         description: 'People first energy',
         Icon: Icons.Users,
-        accentClass: 'bg-violet-500/10 text-violet-200 border-violet-400/20'
+        accentClass: 'bg-violet-500/10 text-violet-500 border-violet-400/20'
     },
     {
         value: 'visionary',
         label: 'Visionary',
         description: 'Future focused mindset',
         Icon: Icons.Zap,
-        accentClass: 'bg-amber-500/10 text-amber-200 border-amber-400/20'
+        accentClass: 'bg-amber-500/10 text-amber-500 border-amber-400/20'
     }
 ];
 const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
@@ -3009,10 +3009,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         }
 
         if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
-            i18n.changeLanguage(normalizedLanguage);
+            // Use setTimeout to allow UI to update (button highlight) before blocking on language loading and save
+            setTimeout(() => {
+                i18n.changeLanguage(normalizedLanguage);
+                handleSave('language', normalizedLanguage);
+            }, 10);
+        } else {
+            handleSave('language', normalizedLanguage);
         }
-
-        handleSave('language', normalizedLanguage);
     };
 
     if (!isOpen) return null;
@@ -4274,7 +4278,7 @@ const ProfileModal = ({
                                 </div>
 
                                 <div className="w-full max-w-[90%] mb-6 p-4 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/5 text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-white/10">
-                                    <p className="text-[13px] sm:text-[14px] text-gray-300 font-medium leading-relaxed select-text italic">
+                                    <p className="text-[13px] sm:text-[14px] text-[var(--app-text)] opacity-90 font-medium leading-relaxed select-text italic">
                                         {parseText(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                     </p>
                                 </div>
@@ -4375,11 +4379,6 @@ const ProfileModal = ({
                                                 if (window.confirm(t('CONFIRM_BAN') || 'Confirm ban?')) {
                                                     axios.post(`/users/${displayUser?._id}/ban`, { days: parseInt(e.target.value) });
                                                 }
-                                            }}
-                                            defaultValue=""
-                                            className="flex-1 px-4 py-3.5 bg-red-950/20 border border-red-500/20 rounded-2xl hover:bg-red-900/40 hover:border-red-500/50 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest appearance-none cursor-pointer"
-                                        >
-                                            <option value="" disabled>{t('BAN_DAYS') || 'BAN DAYS'}</option>
                                             <option value="1">{t('BAN_1_DAY') || 'BAN 1 DAY'}</option>
                                             <option value="3">{t('BAN_3_DAYS') || 'BAN 3 DAYS'}</option>
                                             <option value="7">{t('BAN_7_DAYS') || 'BAN 7 DAYS'}</option>
@@ -4389,10 +4388,11 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-5 gap-1.5 p-1.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl w-full mb-6 mt-4 shadow-inner">
+                            <div className="grid grid-cols-5 gap-1 sm:gap-1.5 p-1.5 bg-[#050505]/40 backdrop-blur-2xl border border-white/10 rounded-[24px] w-full mb-6 mt-4 shadow-[inset_0_0_20px_rgba(255,255,255,0.02),0_8px_32px_rgba(0,0,0,0.5)]">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map(tab => {
+                                    const isActive = activeTab === tab;
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-500'}`;
+                                        const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-[#ffffff]' : 'text-gray-500'}`;
                                         if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
                                         if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -4400,7 +4400,7 @@ const ProfileModal = ({
                                         if (tab === 'REPOSTS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" /><path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" /></svg>;
                                         return null;
                                     };
-                                    const isActive = activeTab === tab;
+                                    
                                     const tabLabel = t('TAB_' + tab, tab);
                                     const isLongTabLabel = tabLabel.length >= 10;
                                     return (
@@ -4409,20 +4409,23 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`min-w-0 min-h-[50px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-300 rounded-xl relative select-none appearance-none focus:outline-none active:scale-[0.99] cursor-pointer ${isActive
-                                                ? 'bg-white/10 border border-white/15 text-white shadow-lg'
-                                                : 'bg-transparent text-gray-500 hover:text-white/80 hover:bg-white/[0.02]'
+                                            className={`min-w-0 min-h-[50px] sm:min-h-[60px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1 sm:gap-1.5 transition-all duration-500 rounded-xl sm:rounded-2xl relative select-none appearance-none focus:outline-none active:scale-[0.95] cursor-pointer overflow-hidden group ${isActive
+                                                ? 'bg-gradient-to-b from-[#ffffff]/20 to-[#ffffff]/5 border border-[#ffffff]/20 text-[#ffffff] shadow-[0_4px_20px_rgba(255,255,255,0.1)] scale-105 z-10'
+                                                : 'bg-transparent text-gray-500 hover:text-white/90 hover:bg-white/5 hover:scale-[1.02]'
                                                 }`}
                                         >
-                                            {renderIcon(isActive)}
-                                            <span
-                                                className={`max-w-full text-center leading-none transition-colors duration-200 whitespace-nowrap ${isLongTabLabel
-                                                    ? 'text-[7.5px] sm:text-[9px] md:text-[10px] tracking-[0.02em]'
-                                                    : 'text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.06em]'
-                                                    } ${isActive ? 'text-white font-black' : 'text-gray-500 font-bold'}`}
-                                            >
-                                                {tabLabel}
-                                            </span>
+                                            {isActive && <div className="absolute inset-0 bg-gradient-to-t from-[var(--gold-primary)]/10 to-transparent opacity-50 pointer-events-none" />}
+                                            <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 w-full">
+                                                {renderIcon(isActive)}
+                                                <span
+                                                    className={`max-w-full text-center leading-none transition-colors duration-200 whitespace-nowrap ${isLongTabLabel
+                                                        ? 'text-[7.5px] sm:text-[9px] md:text-[10px] tracking-[0.02em]'
+                                                        : 'text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.06em]'
+                                                        } ${isActive ? 'text-[#ffffff] drop-shadow-md' : 'text-gray-500'} font-bold`}
+                                                >
+                                                    {tabLabel}
+                                                </span>
+                                            </div>
                                         </button>
                                     );
                                 })}
@@ -5177,7 +5180,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* BIO CARD */}
                 {publicUser.bio && (
                     <div className="w-full mt-6 p-5 bg-white/[0.03] backdrop-blur-2xl border border-white/5 rounded-2xl text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-white/10">
-                        <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed italic select-text">
+                        <p className="text-xs sm:text-sm text-[var(--app-text)] opacity-90 font-medium leading-relaxed italic select-text">
                             "{publicUser.bio}"
                         </p>
                     </div>
