@@ -264,18 +264,8 @@ button:active {
 
 .bottom-nav-glass {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.19), rgba(255, 255, 255, 0.055) 38%, rgba(255, 255, 255, 0.11)),
-    rgba(8, 8, 10, 0.58);
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.48),
-    0 2px 10px rgba(255, 255, 255, 0.08) inset,
-    0 -16px 44px rgba(var(--gold-primary-rgb), 0.08) inset;
-  backdrop-filter: blur(34px) saturate(190%) contrast(1.06);
-  -webkit-backdrop-filter: blur(34px) saturate(190%) contrast(1.06);
-  
-  /* Safari/WebKit Scroll Performance & Repaint Isolation */
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
@@ -284,105 +274,56 @@ button:active {
 }
 
 .bottom-nav-glass::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  z-index: -1;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.28), transparent 30%),
-    radial-gradient(circle at 78% 100%, rgba(var(--gold-primary-rgb), 0.16), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 46%);
-  pointer-events: none;
+  display: none;
 }
 
 .bottom-nav-glass::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    linear-gradient(110deg, transparent 8%, rgba(255, 255, 255, 0.18) 18%, transparent 31%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 36%);
-  opacity: 0.45;
-  mix-blend-mode: screen;
+  display: none;
 }
 
 .bottom-nav-item {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid transparent;
+  background: transparent;
+  border: none;
 }
 
 .bottom-nav-item-active {
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)),
-    rgba(var(--gold-primary-rgb), 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.24),
-    0 0 0 1px rgba(var(--gold-primary-rgb), 0.16) inset,
-    0 1px 1px rgba(255, 255, 255, 0.24) inset;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #1D9BF0 !important;
 }
 
 .bottom-nav-item-active::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 8px;
-  width: 26px;
-  height: 3px;
-  border-radius: 999px;
-  transform: translateX(-50%);
-  background: var(--gold-primary);
-  box-shadow: 0 0 16px rgba(var(--gold-primary-rgb), 0.65);
+  display: none;
 }
 
 .bottom-nav-create {
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(214, 214, 214, 0.9)),
-    radial-gradient(circle at 30% 20%, rgba(var(--gold-primary-rgb), 0.38), transparent 46%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.44),
-    0 0 0 7px rgba(255, 255, 255, 0.055),
-    0 1px 2px rgba(255, 255, 255, 0.9) inset;
+  background: #1D9BF0;
+  border: none;
+  box-shadow: 0 4px 12px rgba(29, 155, 240, 0.4);
+  color: white;
 }
 
 .profile-nav-avatar {
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none;
 }
 
 .profile-nav-avatar-active {
-  border: 2px solid var(--gold-primary);
-  box-shadow:
-    0 0 0 3px rgba(var(--gold-primary-rgb), 0.16),
-    0 10px 24px rgba(0, 0, 0, 0.34);
+  border: 2px solid #1D9BF0;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 1), 0 0 0 4px #1D9BF0;
 }
 
 .profile-link-glass {
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.035)),
-    rgba(7, 7, 8, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.34),
-    0 1px 1px rgba(255, 255, 255, 0.12) inset;
-  backdrop-filter: blur(24px) saturate(175%);
-  -webkit-backdrop-filter: blur(24px) saturate(175%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
 }
 
 .profile-link-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 16% 0%, rgba(var(--gold-primary-rgb), 0.18), transparent 28%),
-    linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  display: none;
 }
 
 .profile-edit-field {
@@ -786,11 +727,13 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 }
 
 .story-ring-active {
-  @apply border-2 border-transparent p-0.5;
+  @apply border-2 border-transparent p-[3px];
   background-image: linear-gradient(black, black),
-    linear-gradient(to right, var(--f1-red), #ff4d4d, white);
+    linear-gradient(to top right, #f9ce34, #ee2a7b, #6228d7);
   background-origin: border-box;
   background-clip: content-box, border-box;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(238, 42, 123, 0.2);
 }
 
 .liquid-glass-card {

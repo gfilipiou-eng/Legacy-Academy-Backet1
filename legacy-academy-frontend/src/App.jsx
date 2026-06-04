@@ -394,8 +394,8 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
     }, [normalizedUsername, linkedUser]);
 
     const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-full' : 'w-6 h-6 rounded-full';
-    const iconSizeClass = size === 'sm' ? 'w-2.5 h-2.5' : 'w-3 h-3';
-    const textSizeClass = size === 'sm' ? 'text-[9px]' : 'text-[10px]';
+    const iconSizeClass = size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5';
+    const textSizeClass = size === 'sm' ? 'text-[11px]' : 'text-[13px]';
     const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, size === 'large' ? 600 : 80, true);
 
     return (
@@ -405,19 +405,21 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`profile-link-glass inline-flex max-w-full items-center justify-center gap-2 rounded-full px-2.5 py-1.5 text-white font-black tracking-widest uppercase cursor-pointer transition-all duration-300 hover:border-white/24 hover:bg-white/[0.08] hover:scale-[1.02] active:scale-[0.98] ${textSizeClass} ${className}`}
+            className={`inline-flex max-w-full items-center justify-center gap-1.5 rounded-full pl-1.5 pr-3 py-1.5 bg-[#eff3f4]/10 hover:bg-[#eff3f4]/20 border border-transparent hover:border-white/10 text-[#eff3f4] font-semibold cursor-pointer transition-colors duration-200 active:scale-[0.98] ${textSizeClass} ${className}`}
         >
-            <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/20 shadow-[0_8px_18px_rgba(0,0,0,0.25)]`}>
+            <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm`}>
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
-                    <span className="text-[8px] font-black text-white/80">
+                    <span className="text-[10px] font-bold text-white/80">
                         {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                     </span>
                 )}
             </div>
-            <Icons.Link className={`relative z-10 ${iconSizeClass} shrink-0 text-[var(--gold-primary)]`} />
-            <span className="relative z-10 min-w-0 whitespace-normal break-all leading-tight text-white">@{normalizedUsername}</span>
+            <div className="flex items-center gap-0.5 min-w-0">
+                <span className="relative z-10 min-w-0 truncate leading-tight text-white tracking-normal">@{normalizedUsername}</span>
+                <Icons.Verified className={`relative z-10 ${iconSizeClass} shrink-0 text-[#1D9BF0] ml-0.5`} />
+            </div>
         </button>
     );
 };
@@ -685,11 +687,11 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     // Reset error state if url or cache key changes
     useEffect(() => { setImgError(false); }, [String(rawUrl || ''), cacheKey]);
 
-    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 350 : 150, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
+    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 600 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    let baseClass = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-full';
+    let baseClass = 'w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 rounded-full border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.4)]';
     if (className && className.includes('object-cover')) {
         baseClass = className; // If they provide full classes, use them, otherwise add defaults.
     } else if (className) {
@@ -702,10 +704,10 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     if (isVideo) {
         return (
             <div className={`w-full h-full bg-gray-900 ${finalClassName}`} onClick={onClick}>
-                <div className="w-full h-full relative overflow-hidden bg-black">
+                <div className="w-full h-full relative overflow-hidden bg-black rounded-full">
                     <video
                         src={mediaUrl}
-                        className="w-full h-full object-cover pointer-events-none"
+                        className="w-full h-full object-cover pointer-events-none rounded-full"
                         autoPlay
                         muted
                         loop
@@ -732,7 +734,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
             onError={() => setImgError(true)}
         />
     ) : (
-        <div className="w-full h-full overflow-hidden">
+        <div className="w-full h-full overflow-hidden rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
             <DefaultAvatar name={name} size={size} />
         </div>
     );
@@ -7070,8 +7072,8 @@ const App = () => {
                     </div>
 
                     {/* MAIN GLASS CARD */}
-                    <div className="relative w-full max-w-[400px] mx-4 z-10">
-                        <div className="relative bg-white/[0.04] backdrop-blur-[40px] border border-white/[0.08] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div className="relative w-[92%] sm:w-full max-w-[420px] mx-auto z-10 mt-safe-top pt-8 pb-12">
+                        <div className="relative bg-black/40 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
                             <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                             <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
@@ -7410,7 +7412,7 @@ const App = () => {
                                     <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-black font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs shadow-[0_0_20px_rgba(var(--gold-primary-rgb),0.6)]">
                                     Purchase Access
                                 </button>
                                 
