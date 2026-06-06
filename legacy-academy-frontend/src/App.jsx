@@ -4127,7 +4127,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden text-ellipsis align-middle" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden align-middle" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -4514,8 +4514,8 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`min-w-0 min-h-[50px] sm:min-h-[60px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1 sm:gap-1.5 transition-all duration-500 rounded-xl sm:rounded-2xl relative select-none appearance-none focus:outline-none active:scale-[0.95] cursor-pointer overflow-hidden group ${isActive
-                                                ? 'bg-gradient-to-b from-[#ffffff]/20 to-[#ffffff]/5 border border-[#ffffff]/20 text-[#ffffff] shadow-[0_4px_20px_rgba(255,255,255,0.1)] scale-105 z-10'
+                                            className={`profile-tab-btn min-w-0 min-h-[50px] sm:min-h-[60px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1 sm:gap-1.5 transition-all duration-500 rounded-xl sm:rounded-2xl relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group ${isActive
+                                                ? 'profile-tab-btn-active bg-gradient-to-b from-[#ffffff]/20 to-[#ffffff]/5 border border-[#ffffff]/20 text-[#ffffff] shadow-[0_4px_20px_rgba(255,255,255,0.1)] scale-105 z-10'
                                                 : 'bg-transparent text-gray-500 hover:text-white/90 hover:bg-white/5 hover:scale-[1.02]'
                                                 }`}
                                         >
