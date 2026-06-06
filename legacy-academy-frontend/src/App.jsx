@@ -95,13 +95,6 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
-    // 🔥 SECURITY/UI CLEANUP: Hide media from ALL old/deactivated Cloudinary accounts
-    if (cleanUrl.includes('res.cloudinary.com/')) {
-        // Let's only allow a specific, valid cloudinary account if needed, otherwise hide all broken cloudinary links
-        // For now, since we're seeing 404s, let's hide all cloudinary media to avoid errors
-        return null;
-    }
-
     // AUTO-OPTIMIZE CLOUDINARY
     if (cleanUrl.includes('cloudinary.com') && cleanUrl.includes('/upload/')) {
         const parts = cleanUrl.split('/upload/');
@@ -2090,7 +2083,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         </span>
                     </div>
                 )}
-                <div className={`flex ${headerGapClass} w-full max-w-full overflow-hidden`}>
+                <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center pl-0.5 sm:pl-0">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
@@ -2104,14 +2097,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     </div>
 
                     {/* RIGHT COL: CONTENT */}
-                    <div className="flex-1 flex flex-col min-w-0 w-full">
+                    <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-visible">
                         {/* Header */}
-                        <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0 w-full">
-                            <div className="min-w-0 flex-1 pr-1">
-                                <div className={`flex flex-col ${metaGapClass} min-w-0 w-full`}>
-                                    <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0 w-full">
+                        <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0 w-full max-w-full">
+                            <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
+                                <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
+                                    <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
-                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0 mt-0.5 sm:mt-0" />
+                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" />
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
