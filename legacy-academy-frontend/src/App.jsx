@@ -2000,10 +2000,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
                             <div className="min-w-0 flex-1 pr-1">
                                 <div className="flex flex-col gap-2 min-w-0">
-                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
-                                        <span className="font-bold text-white text-[13px] sm:text-[15px] break-words leading-tight hover:underline cursor-pointer" onClick={() => onViewProfile(author)}>{author?.username}</span>
+                                    <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0">
+                                        <span className="font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable" onClick={() => onViewProfile(author)}>{author?.username}</span>
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
-                                        <span className="text-gray-500 text-[13px] break-all">{formatUserHandle(author?.username)}</span>
+                                        <span className="text-sky-200/70 text-[12px] sm:text-[13px] leading-tight overflow-wrap-readable">{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <CyberDate date={post.createdAt} t={t} lang={lang} />
@@ -2017,7 +2017,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[17px] sm:text-[19px] text-white/95 leading-relaxed font-medium whitespace-pre-wrap break-words pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
+                                    <p className="text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-readable pr-1 sm:pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
                                         {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
                                             if (isReadOnly) return;
                                             const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
@@ -4227,7 +4227,7 @@ const ProfileModal = ({
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center">
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap">
-                                        <span className="truncate font-black text-white text-xl sm:text-2xl">{displayUser?.username || "Unknown Agent"}</span>
+                                        <span className="profile-headline font-black text-white text-xl sm:text-2xl">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0">
                                             {isFounderProfile ? (
                                                 <svg
@@ -4271,14 +4271,14 @@ const ProfileModal = ({
                                             <FounderAffiliationBadge username={displayFounderAffiliation} className="max-w-full" />
                                         </div>
                                     )}
-                                    <div className="text-gray-400 text-sm font-bold mt-1.5 flex items-center gap-2">
+                                    <div className="profile-handle-row text-gray-400 text-sm font-bold mt-1.5 flex items-center gap-2">
                                         @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
                                         <div className={`w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
                                     </div>
                                 </div>
 
-                                <div className="w-full max-w-[90%] mb-6 p-4 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/5 text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-white/10">
-                                    <p className="text-[13px] sm:text-[14px] text-[var(--app-text)] opacity-90 font-medium leading-relaxed select-text italic">
+                                <div className="profile-copy-block mb-6 backdrop-blur-xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
+                                    <p className="profile-copy-text text-[var(--app-text)] opacity-90 font-medium select-text italic">
                                         {parseText(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
                                     </p>
                                 </div>
@@ -4568,7 +4568,7 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col w-full bg-black px-2 sm:px-0">
+                                            <div className="profile-feed-shell flex flex-col w-full">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
                                                     <div key={dateLabel} className="mb-6 w-full">
                                                         <div className="px-5 py-3 sticky top-0 z-10 bg-black/40 backdrop-blur-xl flex items-center justify-between border-b border-white/5 rounded-2xl mb-4 shadow-sm">
@@ -5031,7 +5031,7 @@ const applyDisplayMode = (mode) => {
         isBlueDark ? 'var(--twitter-blue)' : 'var(--gold-primary)'
     );
 
-    document.body.classList.remove('light-mode', 'dark-mode', 'blue-dark-mode');
+    document.body.classList.remove('dark-mode', 'blue-dark-mode');
     if (isBlueDark) document.body.classList.add('blue-dark-mode');
     else document.body.classList.add('dark-mode');
 
@@ -5163,9 +5163,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
                 </div>
 
-                <div className="text-center space-y-1">
+                    <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                        <h1 className="text-xl sm:text-2xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
+                        <h1 className="profile-headline text-xl sm:text-2xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
                             <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
@@ -5174,7 +5174,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             </div>
                         )}
                     </div>
-                    <span className="text-xs text-gray-500 font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                    <span className="profile-headline text-xs text-gray-500 font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                     {publicFounderAffiliation && (
                         <div className="mt-2 flex justify-center">
                             <FounderAffiliationBadge username={publicFounderAffiliation} />
@@ -5184,8 +5184,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* BIO CARD */}
                 {publicUser.bio && (
-                    <div className="w-full mt-6 p-5 bg-white/[0.03] backdrop-blur-2xl border border-white/5 rounded-2xl text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-white/10">
-                        <p className="text-xs sm:text-sm text-[var(--app-text)] opacity-90 font-medium leading-relaxed italic select-text">
+                    <div className="profile-copy-block mt-6 p-5 backdrop-blur-2xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
+                        <p className="profile-copy-text text-xs sm:text-sm text-[var(--app-text)] opacity-90 font-medium italic select-text">
                             "{publicUser.bio}"
                         </p>
                     </div>
@@ -5844,7 +5844,7 @@ const App = () => {
         const userSettings = userData;
         const savedTheme = userSettings?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
-        const savedBackground = userSettings?.settings?.background || localStorage.getItem('backgroundMode') || 'dark';
+        const savedBackground = userSettings?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
         applyBackground(savedBackground);
         applyDisplayMode('dark');
         const savedZoom = userSettings?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;

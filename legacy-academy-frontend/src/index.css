@@ -31,14 +31,6 @@
   --app-text: rgb(var(--c-white));
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --c-black: 248 249 250; /* Soft off-white */
-    --c-white: 15 23 42; /* Slate-900 for rich text */
-    --c-dark-bg: 235 238 240; /* Soft panel background */
-  }
-}
-
 html {
   background-color: var(--app-bg);
 }
@@ -689,6 +681,44 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   word-break: break-all;
 }
 
+.overflow-wrap-readable {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.profile-headline {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.profile-handle-row {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.profile-copy-block {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid rgba(96, 165, 250, 0.16);
+  background:
+    linear-gradient(180deg, rgba(10, 19, 37, 0.9), rgba(4, 8, 18, 0.96)),
+    rgba(255, 255, 255, 0.02);
+}
+
+.profile-copy-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.7;
+}
+
+.profile-feed-shell {
+  width: 100%;
+  background: transparent;
+}
+
 .mobile-os-action-btn:active {
   transform: scale(1.15);
   background: rgba(255, 255, 255, 0.1);
@@ -905,6 +935,21 @@ html, body {
   .premium-post-card {
     border-radius: 16px;
     padding: 0.75rem !important;
+  }
+
+  .profile-copy-block {
+    padding: 1rem;
+    border-radius: 20px;
+  }
+
+  .profile-copy-text {
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .profile-feed-shell {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
