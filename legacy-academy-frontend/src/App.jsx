@@ -3955,30 +3955,30 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent`}>
+                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full max-w-full box-border`}>
                     {activeList ? (
-                        <div className="p-4 space-y-4">
+                        <div className="p-4 space-y-4 w-full max-w-full box-border">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
                             {getListUsers().map(u => (
                                 <div key={u._id} onClick={() => {
                                     onViewProfile(u);
                                     setActiveList(null);
-                                }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent">
+                                }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent w-full max-w-full">
                                       <div className="w-11 h-11 relative group shrink-0">
                                           <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                           <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
                                               <ProfileAvatar user={u} />
                                           </div>
                                       </div>
-                                      <div className="flex flex-col">
-                                        <div className="font-bold text-white text-sm">{u?.username}</div>
-                                        <div className="text-[10px] text-gray-500 font-bold uppercase">@{u?.username?.toLowerCase()}</div>
+                                      <div className="flex flex-col min-w-0">
+                                        <div className="font-bold text-white text-sm break-words min-w-0">{u?.username}</div>
+                                        <div className="text-[10px] text-gray-500 font-bold uppercase min-w-0">@{u?.username?.toLowerCase()}</div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : isEditing ? (
-                        <div className="p-6 space-y-8 animate-fade-in">
+                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border">
                             <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
@@ -4134,20 +4134,20 @@ const ProfileModal = ({
                                 }
                             }} />
 
-                            <div className="space-y-2 text-left">
+                            <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden align-middle touch-manipulation" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-x-hidden overflow-y-auto align-middle touch-manipulation break-words" placeholder={t('USERNAME_PH')} />
                             </div>
 
-                            <div className="space-y-2 text-left">
+                            <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
-                                <div className="relative">
+                                <div className="relative w-full max-w-full box-border">
                                     <textarea
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto break-words whitespace-pre-wrap align-top touch-manipulation"
+                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap align-top touch-manipulation"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
