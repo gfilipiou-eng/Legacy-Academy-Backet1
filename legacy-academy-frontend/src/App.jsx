@@ -2090,7 +2090,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 )}
                 <div className={`flex ${headerGapClass}`}>
                     {/* LEFT COL: AVATAR */}
-                    <div className="shrink-0 flex flex-col items-center">
+                    <div className="shrink-0 flex flex-col items-center pl-0.5 sm:pl-0">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
                             {/* Liquid Glass Background */}
                             <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
@@ -4680,7 +4680,7 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="profile-feed-shell flex flex-col w-full">
+                                            <div className="profile-feed-shell flex flex-col w-full px-2 sm:px-0">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
                                                     <div key={dateLabel} className="animate-fade-in group mb-8 sm:mb-12 w-full">
                                                         <div className="space-y-6 sm:space-y-8">
@@ -4698,7 +4698,7 @@ const ProfileModal = ({
                                                                             x: -20,
                                                                             transition: { duration: 0.4 }
                                                                         }}
-                                                                        className="relative"
+                                                                        className="relative px-0.5 sm:px-0"
                                                                     >
                                                                         <PostCard
                                                                             post={p}
