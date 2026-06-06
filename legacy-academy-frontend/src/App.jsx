@@ -2046,7 +2046,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative p-3 sm:p-5 mb-5 transition-all duration-300 will-change-transform overflow-hidden`}
+      className={`premium-post-card group relative p-3 sm:p-5 mb-5 transition-all duration-300 will-change-transform overflow-hidden transform-gpu touch-manipulation`}
     >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -2112,7 +2112,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-readable pr-1 sm:pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
+                                    <p className="text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
                                         {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
                                             if (isReadOnly) return;
                                             const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
@@ -4127,7 +4127,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden align-middle" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden align-middle touch-manipulation" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -4138,7 +4138,7 @@ const ProfileModal = ({
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto break-words whitespace-pre-wrap align-top"
+                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto break-words whitespace-pre-wrap align-top touch-manipulation"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
