@@ -3978,7 +3978,7 @@ const ProfileModal = ({
                             ))}
                         </div>
                     ) : isEditing ? (
-                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border">
+                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                             <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
@@ -4136,12 +4136,12 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-x-hidden overflow-y-auto align-middle touch-manipulation break-words" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-x-hidden overflow-y-auto align-middle touch-manipulation break-words" placeholder={t('USERNAME_PH')} style={{ overflowX: 'hidden', overflowY: 'auto', boxSizing: 'border-box', width: '100%', maxWidth: '100%', overscrollBehavior: 'contain' }} />
                             </div>
 
                             <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
-                                <div className="relative w-full max-w-full box-border">
+                                <div className="relative w-full max-w-full box-border" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                                     <textarea
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
@@ -4149,6 +4149,7 @@ const ProfileModal = ({
                                         spellCheck={false}
                                         className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap align-top touch-manipulation"
                                         placeholder={t('BIO_PH')}
+                                        style={{ overflowX: 'hidden', overflowY: 'auto', boxSizing: 'border-box', width: '100%', maxWidth: '100%', overscrollBehavior: 'contain' }}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
                                 </div>
