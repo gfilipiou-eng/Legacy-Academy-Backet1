@@ -7687,8 +7687,8 @@ const App = () => {
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
-                                                    <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10 pointer-events-none" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-[var(--app-bg)]/70 backdrop-blur-xl rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-[var(--gold-primary)]/50 border border-white/10 text-[var(--app-text)] placeholder-[var(--app-text)] placeholder-opacity-50" />
+                                                    <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white z-10 pointer-events-none" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl rounded-2xl py-4 pl-12 pr-4 font-bold outline-none focus:border-white/30 border border-white/20 text-white placeholder-white placeholder-opacity-50 shadow-[0_0_30px_rgba(255,255,255,0.1)]" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
