@@ -2054,7 +2054,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-hidden transform-gpu touch-manipulation w-full max-w-full`}
+      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-visible transform-gpu touch-manipulation w-full max-w-full`}
+      style={{ overflow: 'visible' }}
     >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -2075,7 +2076,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             )}
 
             {/* CARD CONTENT */}
-            <div className="relative z-10 flex flex-col w-full max-w-full overflow-hidden">
+            <div className="relative z-10 flex flex-col w-full max-w-full overflow-visible">
                 {resolvedReposter && (
                     <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
                         <Icons.RefreshCcw className="w-3.5 h-3.5" />
