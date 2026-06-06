@@ -1964,9 +1964,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const cardSpacingClass = compact ? 'p-3 sm:p-4 mb-4' : 'p-3 sm:p-5 mb-5';
     const headerGapClass = compact ? 'gap-3 sm:gap-4' : 'gap-3 sm:gap-4';
     const metaGapClass = compact ? 'gap-2' : 'gap-2';
-    const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable';
-    const handleClass = compact ? 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight overflow-wrap-readable' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight overflow-wrap-readable';
-    const bodyTextClass = compact ? 'text-[15px] sm:text-[19px] text-white/95 leading-6 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1';
+    const nameClass = compact ? 'font-bold text-white text-[14px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable';
+    const handleClass = compact ? 'text-sky-100/80 text-[13px] sm:text-[13px] leading-tight overflow-wrap-readable' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight overflow-wrap-readable';
+    const bodyTextClass = compact ? 'text-[16px] sm:text-[19px] text-white leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-300 border border-transparent active:scale-[0.98]' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 border border-transparent';
     const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
@@ -4683,9 +4683,9 @@ const ProfileModal = ({
                                             <div className="profile-feed-shell flex flex-col w-full">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
                                                     <div key={dateLabel} className="mb-6 w-full">
-                                                        <div className="px-3 sm:px-5 py-3 sticky top-0 z-10 bg-black/40 backdrop-blur-xl flex items-center justify-between border-b border-white/5 rounded-2xl mb-4 shadow-sm">
-                                                            <h3 className="text-[13px] font-black text-white">{dateLabel}</h3>
-                                                            <Icons.ChevronRight className="w-4 h-4 text-white/30" />
+                                                        <div className="px-3 sm:px-5 py-3 sticky top-0 z-10 bg-black/72 backdrop-blur-2xl flex items-center justify-between border border-white/10 rounded-2xl mb-4 shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
+                                                            <h3 className="text-[14px] sm:text-[13px] font-black text-white tracking-[0.02em]">{dateLabel}</h3>
+                                                            <Icons.ChevronRight className="w-4 h-4 text-white/60" />
                                                         </div>
                                                         <div className="flex flex-col gap-3 sm:gap-4 overflow-x-hidden">
                                                             {groupPosts.map(p => (
