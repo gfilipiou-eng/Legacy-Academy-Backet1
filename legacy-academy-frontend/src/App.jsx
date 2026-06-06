@@ -95,9 +95,11 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
     const cleanUrl = String(url || '').trim();
     if (!cleanUrl || cleanUrl === 'undefined' || cleanUrl === 'null' || cleanUrl === '[object Object]') return null;
 
-    // 🔥 SECURITY/UI CLEANUP: Hide media from the old, deactivated Cloudinary account (dfggkqhdb)
-    if (cleanUrl.includes('res.cloudinary.com/dfggkqhdb/')) {
-        return null; // Force hide to avoid 401 errors and keep UI clean
+    // 🔥 SECURITY/UI CLEANUP: Hide media from ALL old/deactivated Cloudinary accounts
+    if (cleanUrl.includes('res.cloudinary.com/')) {
+        // Let's only allow a specific, valid cloudinary account if needed, otherwise hide all broken cloudinary links
+        // For now, since we're seeing 404s, let's hide all cloudinary media to avoid errors
+        return null;
     }
 
     // AUTO-OPTIMIZE CLOUDINARY
@@ -1964,8 +1966,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const cardSpacingClass = compact ? 'p-3 sm:p-4 mb-4' : 'p-3 sm:p-5 mb-5';
     const headerGapClass = compact ? 'gap-3 sm:gap-4' : 'gap-3 sm:gap-4';
     const metaGapClass = compact ? 'gap-2' : 'gap-2';
-    const nameClass = compact ? 'font-bold text-white text-[14px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words';
-    const handleClass = compact ? 'text-sky-100/80 text-[13px] sm:text-[13px] leading-tight break-words' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words';
+    const nameClass = compact ? 'font-bold text-white text-[14px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full';
+    const handleClass = compact ? 'text-sky-100/80 text-[13px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
     const bodyTextClass = compact ? 'text-[16px] sm:text-[19px] text-white leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-300 border border-transparent active:scale-[0.98]' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 border border-transparent';
@@ -4696,7 +4698,7 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="profile-feed-shell flex flex-col w-full px-2 sm:px-0">
+                                            <div className="profile-feed-shell flex flex-col w-full px-1 sm:px-0">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
                                                     <div key={dateLabel} className="animate-fade-in group mb-8 sm:mb-12 w-full">
                                                         <div className="space-y-6 sm:space-y-8">
