@@ -1964,9 +1964,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const cardSpacingClass = compact ? 'p-3 sm:p-4 mb-4' : 'p-3 sm:p-5 mb-5';
     const headerGapClass = compact ? 'gap-3 sm:gap-4' : 'gap-3 sm:gap-4';
     const metaGapClass = compact ? 'gap-2' : 'gap-2';
-    const nameClass = compact ? 'font-bold text-white text-[14px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer overflow-wrap-readable';
-    const handleClass = compact ? 'text-sky-100/80 text-[13px] sm:text-[13px] leading-tight overflow-wrap-readable' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight overflow-wrap-readable';
-    const bodyTextClass = compact ? 'text-[16px] sm:text-[19px] text-white leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1';
+    const nameClass = compact ? 'font-bold text-white text-[14px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words';
+    const handleClass = compact ? 'text-sky-100/80 text-[13px] sm:text-[13px] leading-tight break-words' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words';
+    const bodyTextClass = compact ? 'text-[16px] sm:text-[19px] text-white leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-300 border border-transparent active:scale-[0.98]' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 border border-transparent';
     const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
@@ -2058,7 +2058,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-hidden transform-gpu touch-manipulation`}
+      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-hidden transform-gpu touch-manipulation w-full max-w-full`}
     >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -2079,7 +2079,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             )}
 
             {/* CARD CONTENT */}
-            <div className="relative z-10 flex flex-col">
+            <div className="relative z-10 flex flex-col w-full max-w-full overflow-hidden">
                 {resolvedReposter && (
                     <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
                         <Icons.RefreshCcw className="w-3.5 h-3.5" />
@@ -2088,7 +2088,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         </span>
                     </div>
                 )}
-                <div className={`flex ${headerGapClass}`}>
+                <div className={`flex ${headerGapClass} w-full max-w-full overflow-hidden`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center pl-0.5 sm:pl-0">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
@@ -2102,7 +2102,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     </div>
 
                     {/* RIGHT COL: CONTENT */}
-                    <div className="flex-1 flex flex-col min-w-0">
+                    <div className="flex-1 flex flex-col min-w-0 w-full">
                         {/* Header */}
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
                             <div className="min-w-0 flex-1 pr-1">
@@ -4862,7 +4862,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                     onChange={(e) => setDesc(e.target.value)}
                                     maxLength={300}
                                     placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl  rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner font-bold"
+                                    className="relative w-full bg-black/60 backdrop-blur-3xl  rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner font-bold break-words whitespace-pre-wrap"
                                 />
                                 <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
                                     {desc.length} / 300
