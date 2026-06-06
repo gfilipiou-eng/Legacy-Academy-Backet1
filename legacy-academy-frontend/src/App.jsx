@@ -2104,12 +2104,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     {/* RIGHT COL: CONTENT */}
                     <div className="flex-1 flex flex-col min-w-0 w-full">
                         {/* Header */}
-                        <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0 w-full">
                             <div className="min-w-0 flex-1 pr-1">
-                                <div className={`flex flex-col ${metaGapClass} min-w-0`}>
-                                    <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0">
+                                <div className={`flex flex-col ${metaGapClass} min-w-0 w-full`}>
+                                    <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0 w-full">
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
-                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0" />
+                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0 mt-0.5 sm:mt-0" />
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -4337,15 +4337,15 @@ const ProfileModal = ({
                             </div>
 
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
-                                <div className="flex flex-col mb-4 items-center">
-                                    <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap">
-                                        <span className="profile-headline font-black text-white text-xl sm:text-2xl">{displayUser?.username || "Unknown Agent"}</span>
-                                        <div className="flex items-center gap-1 shrink-0">
+                                <div className="flex flex-col mb-4 items-center w-full max-w-full">
+                                    <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
+                                        <span className="profile-headline font-black text-white text-xl sm:text-2xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
+                                        <div className="flex items-center gap-1 shrink-0 flex-shrink-0">
                                             {isFounderProfile ? (
                                                 <svg
                                                     aria-label="Verified Founder"
                                                     viewBox="0 0 22 22"
-                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0"
+                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0"
                                                     style={{ overflow: 'visible' }}
                                                 >
                                                     <path
@@ -4358,7 +4358,7 @@ const ProfileModal = ({
                                                 <svg
                                                     aria-label="Verified User"
                                                     viewBox="0 0 22 22"
-                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0"
+                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0"
                                                     style={{ overflow: 'visible' }}
                                                 >
                                                     <path
