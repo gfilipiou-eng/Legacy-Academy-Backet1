@@ -3913,7 +3913,7 @@ const ProfileModal = ({
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
                 className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col bg-black border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in`}
-                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', contain: 'layout paint size', position: 'relative', isolation: 'isolate' }}>>
+                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] pointer-events-none" />
@@ -3965,7 +3965,7 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full max-w-full box-border`} style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden', overflowY: 'auto', overscrollBehaviorY: 'contain', contain: 'layout paint size', position: 'relative', isolation: 'isolate' }}>
+                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full max-w-full box-border`} style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden', overflowY: 'auto', overscrollBehaviorY: 'contain' }}>
                     {activeList ? (
                         <div className="p-4 space-y-4 w-full max-w-full box-border">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -3988,7 +3988,7 @@ const ProfileModal = ({
                             ))}
                         </div>
                     ) : isEditing ? (
-                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', position: 'relative', overflow: 'hidden', contain: 'layout paint size', isolation: 'isolate' }}>
+                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                             <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
