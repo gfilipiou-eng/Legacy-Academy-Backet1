@@ -3,12 +3,36 @@ import axios from "axios";
 /**
  * Translation Engine - Uses Google Translate unofficial API with multiple fallback endpoints
  */
+const URL_PLACEHOLDER_PREFIX = "ZXQURLTOKEN";
+const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+
+const protectUrls = (text) => {
+    const preservedUrls = [];
+    const protectedText = String(text || "").replace(urlRegex, (match) => {
+        const token = `${URL_PLACEHOLDER_PREFIX}${preservedUrls.length}END`;
+        preservedUrls.push(match);
+        return token;
+    });
+
+    return { protectedText, preservedUrls };
+};
+
+const restoreUrls = (text, preservedUrls) => {
+    let restoredText = String(text || "");
+    preservedUrls.forEach((url, index) => {
+        const token = `${URL_PLACEHOLDER_PREFIX}${index}END`;
+        restoredText = restoredText.replaceAll(token, url);
+    });
+    return restoredText;
+};
+
 export const translateText = async (text, targetLang = 'en') => {
     if (!text || text.trim().length === 0) return text;
 
     // Normalize language code
     let target = (targetLang || 'en').toLowerCase().split('-')[0];
     if (target === 'cy') target = 'el'; // Cypriot → Greek
+    const { protectedText, preservedUrls } = protectUrls(text);
 
     // Try multiple Google Translate endpoints for reliability
     const attempts = [
@@ -20,7 +44,7 @@ export const translateText = async (text, targetLang = 'en') => {
                     sl: 'auto',
                     tl: target,
                     dt: 't',
-                    q: text
+                    q: protectedText
                 },
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
@@ -41,7 +65,7 @@ export const translateText = async (text, targetLang = 'en') => {
         // Endpoint 2: clients5 dict endpoint (fallback)
         async () => {
             const res = await axios.get('https://clients5.google.com/translate_a/t', {
-                params: { client: 'dict-chrome-ex', sl: 'auto', tl: target, q: text },
+                params: { client: 'dict-chrome-ex', sl: 'auto', tl: target, q: protectedText },
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
                 },
@@ -60,8 +84,9 @@ export const translateText = async (text, targetLang = 'en') => {
         try {
             const result = await attempt();
             if (result) {
-                console.log(`🌍 [TRANS] OK (${text.length} chars) -> ${target}: "${result.substring(0, 60)}"`);
-                return result;
+                const restored = restoreUrls(result, preservedUrls);
+                console.log(`🌍 [TRANS] OK (${text.length} chars) -> ${target}: "${restored.substring(0, 60)}"`);
+                return restored;
             }
         } catch (err) {
             console.warn(`🌍 [TRANS] Attempt failed: ${err.message}`);

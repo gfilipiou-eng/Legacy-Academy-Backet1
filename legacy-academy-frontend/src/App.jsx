@@ -4682,43 +4682,50 @@ const ProfileModal = ({
                                         ) : (
                                             <div className="profile-feed-shell flex flex-col w-full">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
-                                                    <div key={dateLabel} className="mb-6 w-full">
-                                                        <div className="px-3 sm:px-5 py-3 sticky top-0 z-10 bg-black/72 backdrop-blur-2xl flex items-center justify-between border border-white/10 rounded-2xl mb-4 shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
-                                                            <h3 className="text-[14px] sm:text-[13px] font-black text-white tracking-[0.02em]">{dateLabel}</h3>
-                                                            <Icons.ChevronRight className="w-4 h-4 text-white/60" />
-                                                        </div>
-                                                        <div className="flex flex-col gap-3 sm:gap-4 overflow-x-hidden">
-                                                            {groupPosts.map(p => (
-                                                                <div 
-                                                                    key={p._id} 
-                                                                    className="w-full"
-                                                                >
-                                                                    <PostCard 
-                                                                        post={p} 
-                                                                        user={currentUser} 
-                                                                        allUsers={allUsers} 
-                                                                        onLike={onLike} 
-                                                                        onDislike={onDislike} 
-                                                                        onRepost={onRepost} 
-                                                                        onComment={onComment} 
-                                                                        onDelete={onDeletePost} 
-                                                                        onViewProfile={onViewProfile} 
-                                                                        onOpenDetail={onOpenDetail} 
-                                                                        onOpenChat={onOpenChat} 
-                                                                        onEditComment={onEditComment} 
-                                                                        onDeleteComment={onDeleteComment} 
-                                                                        onEditPost={onEditPost} 
-                                                                        onShare={onShare} 
-                                                                        onShareProfile={onShareProfile} 
-                                                                        onHashtagClick={onHashtagClick} 
-                                                                        loadingActions={loadingActions} 
-                                                                        forcePause={false} 
-                                                                        isDeleting={deletingPostIds?.has(p._id)}
-                                                                        cacheKey={imgKey}
-                                                                        compact={true}
-                                                                    />
-                                                                </div>
-                                                            ))}
+                                                    <div key={dateLabel} className="animate-fade-in group mb-8 sm:mb-12 w-full">
+                                                        <div className="space-y-6 sm:space-y-8">
+                                                            <AnimatePresence mode="popLayout">
+                                                                {groupPosts.map(p => (
+                                                                    <motion.div
+                                                                        key={p._id}
+                                                                        initial={{ opacity: 0, y: 30 }}
+                                                                        animate={{ opacity: 1, y: 0 }}
+                                                                        viewport={{ once: true, margin: "-50px" }}
+                                                                        exit={{
+                                                                            opacity: 0,
+                                                                            scale: 1.1,
+                                                                            filter: 'blur(20px) contrast(2)',
+                                                                            x: -20,
+                                                                            transition: { duration: 0.4 }
+                                                                        }}
+                                                                        className="relative"
+                                                                    >
+                                                                        <PostCard
+                                                                            post={p}
+                                                                            user={currentUser}
+                                                                            allUsers={allUsers}
+                                                                            onLike={onLike}
+                                                                            onDislike={onDislike}
+                                                                            onRepost={onRepost}
+                                                                            onComment={onComment}
+                                                                            onDelete={onDeletePost}
+                                                                            onViewProfile={onViewProfile}
+                                                                            onOpenDetail={onOpenDetail}
+                                                                            onOpenChat={onOpenChat}
+                                                                            onEditComment={onEditComment}
+                                                                            onDeleteComment={onDeleteComment}
+                                                                            onEditPost={onEditPost}
+                                                                            onShare={onShare}
+                                                                            onShareProfile={onShareProfile}
+                                                                            onHashtagClick={onHashtagClick}
+                                                                            loadingActions={loadingActions}
+                                                                            forcePause={false}
+                                                                            isDeleting={deletingPostIds?.has(p._id)}
+                                                                            cacheKey={imgKey}
+                                                                        />
+                                                                    </motion.div>
+                                                                ))}
+                                                            </AnimatePresence>
                                                         </div>
                                                     </div>
                                                 ))}
