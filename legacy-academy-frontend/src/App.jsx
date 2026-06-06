@@ -248,6 +248,20 @@ const getYouTubeEmbedUrl = (url) => {
     return id ? `https://www.youtube.com/embed/${id}` : null;
 };
 
+const formatDisplayUrl = (rawUrl) => {
+    if (!rawUrl) return '';
+    try {
+        const parsed = new URL(rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`);
+        const host = parsed.hostname.replace(/^www\./i, '');
+        const cleanPath = parsed.pathname.replace(/\/+$/, '') || '/';
+        const shortPath = cleanPath === '/' ? '' : cleanPath.split('/').slice(0, 2).join('/');
+        const suffix = cleanPath.length > 28 ? '...' : '';
+        return `${host}${shortPath}${suffix}`;
+    } catch {
+        return String(rawUrl || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+    }
+};
+
 const parseText = (text, onHashtagClick, onMentionClick) => {
     if (!text) return [];
     
@@ -259,7 +273,26 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
         if (part.match(urlRegex)) {
             // It's a URL, render it directly
             const href = part.startsWith('http') ? part : `https://${part}`;
-            return <a key={`url-${i}`} href={href} target="_blank" rel="noopener noreferrer" className="text-[#1D9BF0] hover:underline font-normal" onClick={(e) => e.stopPropagation()}>{part}</a>;
+            const displayUrl = formatDisplayUrl(part);
+            return (
+                <a
+                    key={`url-${i}`}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex max-w-full items-center gap-2 rounded-2xl border border-sky-400/20 bg-sky-500/10 px-3 py-2 align-middle text-left text-sky-100 no-underline transition-all duration-200 hover:border-sky-300/40 hover:bg-sky-500/15 hover:text-white"
+                    onClick={(e) => e.stopPropagation()}
+                    title={href}
+                >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-300">
+                        <Icons.Link className="w-4 h-4" />
+                    </span>
+                    <span className="min-w-0">
+                        <span className="block truncate text-[12px] font-black uppercase tracking-[0.14em] text-sky-200/75">Link</span>
+                        <span className="block truncate text-[13px] font-semibold normal-case tracking-normal text-white">{displayUrl}</span>
+                    </span>
+                </a>
+            );
         }
         
         // It's normal text, now we can safely parse hashtags and mentions
@@ -2958,6 +2991,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const latestUserRef = useRef(user);
     const normalizeLanguageCode = (value) => String(value || '').toLowerCase().split('-')[0];
     const activeLanguage = normalizeLanguageCode(lang || i18n.resolvedLanguage || i18n.language || user?.settings?.language || localStorage.getItem('language') || 'en');
+    const [pendingLanguage, setPendingLanguage] = useState(activeLanguage);
     const [zoomLevel, setZoomLevel] = useState(
         Math.min(
             1,
@@ -2991,6 +3025,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             );
         }
     }, [user, isOpen]);
+
+    useEffect(() => {
+        setPendingLanguage(activeLanguage);
+    }, [activeLanguage]);
 
     const handleSave = async (key, val) => {
         setSaving(true);
@@ -3053,9 +3091,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     const handleLanguageSelect = async (nextLanguage) => {
         const normalizedLanguage = normalizeLanguageCode(nextLanguage);
-        if (!normalizedLanguage || normalizedLanguage === activeLanguage) return;
+        if (!normalizedLanguage || normalizedLanguage === pendingLanguage) return;
 
         localStorage.setItem('language', normalizedLanguage);
+        setPendingLanguage(normalizedLanguage);
 
         const baseUser = latestUserRef.current || user || {};
         if (baseUser?._id) {
@@ -3070,14 +3109,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             onUpdateUser?.(optimisticUser);
         }
 
-        if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
-            // Use setTimeout to allow UI to update (button highlight) before blocking on language loading and save
-            setTimeout(() => {
-                i18n.changeLanguage(normalizedLanguage);
-                handleSave('language', normalizedLanguage);
-            }, 10);
-        } else {
-            handleSave('language', normalizedLanguage);
+        try {
+            if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
+                await i18n.changeLanguage(normalizedLanguage);
+            }
+            await handleSave('language', normalizedLanguage);
+        } catch (error) {
+            setPendingLanguage(activeLanguage);
         }
     };
 
@@ -3188,7 +3226,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                         applyTheme(value);
                                                         handleSave('theme', value);
                                                     }}
-                                                    className="theme-swatch-btn flex flex-col items-center gap-1.5"
+                                                    className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-1.5"
                                                 >
                                                     <span
                                                         className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all duration-200 ${active ? 'border-[var(--gold-primary)] border-[3px] scale-115' : 'border-white/25 opacity-85 hover:opacity-100 hover:scale-105'}`}
@@ -3220,7 +3258,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                         applyBackground(value);
                                                         handleSave('background', value);
                                                     }}
-                                                    className={`relative overflow-hidden rounded-2xl border transition-all duration-200 ${
+                                                    className={`settings-tile-btn relative overflow-hidden rounded-2xl border transition-all duration-200 ${
                                                         active 
                                                             ? 'border-[var(--gold-primary)]' 
                                                             : 'border-white/10 hover:border-white/20'
@@ -3259,11 +3297,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 { id: 'cy', flag: '🇨🇾', label: 'CY', name: 'Κυπριακά' }, { id: 'es', flag: '🇪🇸', label: 'ES', name: 'Español' },
                                 { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
                             ].map(l => (
-                                <button key={l.id} type="button" style={{ WebkitTapHighlightColor: 'transparent' }} disabled={activeLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer touch-manipulation relative overflow-hidden ${activeLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/20' : 'border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-white/20'}`}
+                                <button key={l.id} type="button" style={{ WebkitTapHighlightColor: 'transparent' }} disabled={pendingLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
+                                    className={`settings-tile-btn py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer touch-manipulation relative overflow-hidden ${pendingLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/20 shadow-[0_12px_24px_rgba(0,0,0,0.28)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-white/20'}`}
                                 >
-                                    <div className={`text-xl transition-all duration-300 ${activeLanguage === l.id ? '' : 'opacity-90'}`}>{l.flag}</div>
-                                    <div className={`text-[9px] font-black uppercase tracking-widest ${activeLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{l.label}</div>
+                                    <div className={`text-xl transition-all duration-300 ${pendingLanguage === l.id ? 'scale-110' : 'opacity-90'}`}>{l.flag}</div>
+                                    <div className={`text-[9px] font-black uppercase tracking-widest ${pendingLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{l.label}</div>
                                 </button>
                             ))}
                         </div>
@@ -4089,7 +4127,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden text-ellipsis" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-hidden text-ellipsis align-middle" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left">
@@ -4100,7 +4138,7 @@ const ProfileModal = ({
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto break-words whitespace-pre-wrap"
+                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto break-words whitespace-pre-wrap align-top"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
@@ -4108,8 +4146,8 @@ const ProfileModal = ({
                             </div>
 
                             <div className="space-y-3 text-left">
-                                <div className="flex items-center justify-between gap-3 pl-1">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('WHAT_BEST_DESCRIBES_YOU', 'WHAT BEST DESCRIBES YOU?')}</label>
+                                <div className="flex items-start sm:items-center justify-between gap-3 pl-1">
+                                    <label className="flex-1 min-w-0 whitespace-normal text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">{t('WHAT_BEST_DESCRIBES_YOU', 'WHAT BEST DESCRIBES YOU?')}</label>
                                     {profileDescriptor && (
                                         <button
                                             type="button"
@@ -4117,7 +4155,7 @@ const ProfileModal = ({
                                                 e.stopPropagation();
                                                 setProfileDescriptor('');
                                             }}
-                                            className="text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white cursor-pointer touch-manipulation p-2 -mr-2"
+                                            className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] text-[10px] font-black uppercase tracking-widest text-white/55 hover:text-white hover:bg-white/[0.08] cursor-pointer touch-manipulation px-3 py-2 transition-all duration-200 active:scale-[0.97]"
                                         >
                                             {t('CLEAR', 'Clear')}
                                         </button>
@@ -4135,7 +4173,7 @@ const ProfileModal = ({
                                                     e.stopPropagation();
                                                     setProfileDescriptor(option.value);
                                                 }}
-                                                className={`text-left rounded-2xl border px-3 py-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                                className={`settings-tile-btn text-left rounded-2xl border px-3 py-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
                                             >
                                                 <div className="flex items-center gap-3 min-w-0">
                                                     <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
@@ -4151,9 +4189,9 @@ const ProfileModal = ({
                                     })}
                                 </div>
                                 {isFounderProfile && (
-                                    <div className="profile-link-glass mt-4 rounded-3xl p-4">
-                                        <div className="relative z-10 flex items-center justify-between gap-3 mb-3">
-                                            <label className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest">FOUNDER AFFILIATION</label>
+                                    <div className="profile-link-glass profile-affiliation-card mt-4 rounded-3xl p-4">
+                                        <div className="relative z-10 flex items-start sm:items-center justify-between gap-3 mb-3">
+                                            <label className="flex-1 min-w-0 whitespace-normal text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest leading-relaxed">FOUNDER AFFILIATION</label>
                                             {founderAffiliation && (
                                                 <button
                                                     type="button"
@@ -4161,14 +4199,14 @@ const ProfileModal = ({
                                                         e.stopPropagation();
                                                         setFounderAffiliation('');
                                                     }}
-                                                    className="text-[9px] font-black uppercase tracking-widest text-white/45 hover:text-white transition-colors px-2 py-1"
+                                                    className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] text-[9px] font-black uppercase tracking-widest text-white/55 hover:text-white hover:bg-white/[0.08] transition-all duration-200 px-3 py-2 active:scale-[0.97]"
                                                 >
                                                     {t('CLEAR', 'Clear')}
                                                 </button>
                                             )}
                                         </div>
                                         <div className="relative z-10">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/8 border border-white/10 text-[var(--gold-primary)] font-black flex items-center justify-center">@</div>
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-2xl bg-white/8 border border-white/10 text-[var(--gold-primary)] font-black flex items-center justify-center">@</div>
                                             <input 
                                                 type="text" 
                                                 value={founderAffiliation}
@@ -4176,12 +4214,12 @@ const ProfileModal = ({
                                                     setFounderAffiliation(sanitizeAffiliation(e.target.value));
                                                 }}
                                                 placeholder="affiliated_username"
-                                                className="w-full bg-black/25 border border-white/10 rounded-2xl py-3.5 pl-14 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 focus:border-[var(--gold-primary)] focus:bg-black/35 outline-none transition-all duration-300"
+                                                className="profile-edit-field w-full bg-black/25 border border-white/10 rounded-2xl py-3.5 pl-14 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 focus:border-[var(--gold-primary)] focus:bg-black/35 outline-none transition-all duration-300"
                                             />
                                         </div>
-                                        <div className="relative z-10 mt-3 flex items-center gap-2 text-[9px] text-white/42 font-bold uppercase tracking-wider">
+                                        <div className="relative z-10 mt-3 flex items-start gap-2 text-[9px] text-white/42 font-bold uppercase tracking-wider">
                                             <Icons.Link className="w-3.5 h-3.5 text-[var(--gold-primary)] shrink-0" />
-                                            <span className="leading-relaxed">Links to another profile, brand, or company page.</span>
+                                            <span className="leading-relaxed whitespace-normal">Links to another profile, brand, or company page.</span>
                                         </div>
                                     </div>
                                 )}
@@ -8081,7 +8119,9 @@ const App = () => {
                             
                             {/* Text */}
                             {shareModalPost.desc && (
-                                <p className="text-white text-base leading-relaxed mb-4 whitespace-pre-wrap">{shareModalPost.desc}</p>
+                                <div className="text-white text-base leading-relaxed mb-4 whitespace-pre-wrap break-words overflow-wrap-readable text-left w-full">
+                                    {parseText(shareModalPost.desc)}
+                                </div>
                             )}
                             
                             {/* Media - FULL COVER/CONTAIN */}

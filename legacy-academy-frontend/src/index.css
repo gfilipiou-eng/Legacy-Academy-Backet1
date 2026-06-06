@@ -320,13 +320,17 @@ button:active {
 .profile-link-glass {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.96));
+  border: 1px solid rgba(96, 165, 250, 0.16);
+  border-radius: 24px;
 }
 
 .profile-link-glass::before {
   display: none;
+}
+
+.profile-affiliation-card {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .profile-edit-field {
@@ -335,6 +339,13 @@ button:active {
   caret-color: var(--gold-primary);
   background-clip: padding-box;
   box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  transform: none !important;
+  -webkit-transform: none !important;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 input.profile-edit-field {
@@ -345,17 +356,24 @@ input.profile-edit-field {
   /* Use symmetric padding to vertically centre text; avoid line-height tricks */
   padding-top: 14px !important;
   padding-bottom: 14px !important;
-  line-height: 1.2 !important;
-  transform: translateZ(0); /* Fix Safari cursor jumping bounds */
+  line-height: 1.35 !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  vertical-align: middle;
   /* Prevent iOS zoom on focus (font-size < 16px triggers auto-zoom) */
   font-size: 16px !important;
 }
 
 textarea.profile-edit-field {
+  display: block;
   overflow-y: auto;
-  line-height: 1.5 !important;
+  line-height: 1.55 !important;
   box-sizing: border-box;
   font-size: 16px !important;
+  padding: 1rem !important;
+  vertical-align: top;
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-main-scroll {
@@ -450,6 +468,15 @@ body.theme-orange-black {
 .theme-swatch-btn {
   overflow: visible;
   padding: 0.15rem;
+}
+
+.settings-tile-btn {
+  transform: translateY(0);
+  will-change: transform, background-color, border-color;
+}
+
+.settings-tile-btn:active {
+  transform: scale(0.98);
 }
 
 .theme-swatch-dot {
