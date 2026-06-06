@@ -162,6 +162,15 @@ if (typeof document !== 'undefined') {
             -webkit-tap-highlight-color: transparent !important;
             overscroll-behavior-y: none;
             overscroll-behavior-x: none;
+            box-sizing: border-box;
+            overflow-x: hidden !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
         }
         .liquid-glass-nav {
             background: rgba(0, 0, 0, 0.15) !important;
