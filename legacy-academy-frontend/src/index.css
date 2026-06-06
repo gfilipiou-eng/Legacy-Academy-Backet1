@@ -349,21 +349,22 @@ button:active {
   text-rendering: geometricPrecision;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  text-align: left;
 }
 
 input.profile-edit-field {
   /* display:flex on <input> breaks cursor/text position in mobile Safari — must be block */
   display: block;
   min-height: 54px;
-  height: 54px;
-  /* Use symmetric padding to vertically centre text; avoid line-height tricks */
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  height: auto;
+  /* Real padding keeps the caret inside the field more reliably on mobile keyboards */
+  padding-top: 0.875rem !important;
+  padding-bottom: 0.875rem !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
   vertical-align: middle;
-  line-height: 54px !important;
-  text-overflow: clip;
+  line-height: 1.2 !important;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   transform-origin: left center;
@@ -376,15 +377,17 @@ input.profile-edit-field {
 textarea.profile-edit-field {
   display: block;
   overflow-y: auto;
+  overflow-x: hidden;
   line-height: 1.55 !important;
   box-sizing: border-box;
   font-size: 16px !important;
-  padding: 1rem !important;
+  padding: 1rem 1rem 2.75rem !important;
   vertical-align: top;
   touch-action: auto;
   -webkit-overflow-scrolling: touch;
   text-align: left;
   min-height: 8rem;
+  word-break: break-word;
   transform-origin: top left;
   -webkit-transform-origin: top left;
   translate: 0 0;
@@ -397,6 +400,8 @@ textarea.profile-edit-field {
   -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .profile-tab-btn::after {
@@ -410,7 +415,7 @@ textarea.profile-edit-field {
 }
 
 .profile-tab-btn:active {
-  transform: scale(0.96);
+  transform: translateY(1px) scale(0.985);
 }
 
 .profile-tab-btn:active::after {
@@ -789,6 +794,8 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 .profile-feed-shell {
   width: 100%;
   background: transparent;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .mobile-os-action-btn:active {
