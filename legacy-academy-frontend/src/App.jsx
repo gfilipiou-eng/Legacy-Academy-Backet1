@@ -4485,31 +4485,38 @@ const ProfileModal = ({
                                     )}
                                 </div>
                                 {!isMe && currentUser?.role === 'Founder' && (
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-col gap-3">
                                         <select 
                                             onChange={(e) => {
-                                                if (window.confirm(t('CONFIRM_BAN') || 'Confirm ban?')) {
-                                                    axios.post(`/users/${displayUser?._id}/ban`, { days: parseInt(e.target.value) });
+                                                if (e.target.value === 'forever') {
+                                                    if (window.confirm(t('CONFIRM_BAN_FOREVER') || 'Are you sure you want to permanently delete this user? This action is irreversible!')) {
+                                                        axios.delete(`/users/${displayUser?._id}`);
+                                                    }
+                                                } else {
+                                                    if (window.confirm(t('CONFIRM_BAN') || 'Confirm ban?')) {
+                                                        axios.post(`/users/${displayUser?._id}/ban`, { days: parseInt(e.target.value) });
+                                                    }
                                                 }
                                             }}
                                             defaultValue=""
-                                            className="flex-1 px-4 py-3.5 bg-red-950/20 border border-red-500/20 rounded-2xl hover:bg-red-900/40 hover:border-red-500/50 transition-colors text-red-500 font-black text-[10px] uppercase tracking-widest appearance-none cursor-pointer"
+                                            className="w-full px-4 py-4 bg-gradient-to-br from-red-900/40 to-red-950/60 backdrop-blur-xl border-2 border-red-500/30 rounded-2xl hover:border-red-500/60 hover:from-red-900/60 hover:to-red-950/80 transition-all duration-300 text-white font-black text-[11px] uppercase tracking-[0.15em] appearance-none cursor-pointer relative shadow-[0_0_20px_rgba(239,68,68,0.15)] focus:outline-none focus:border-red-400 focus:shadow-[0_0_30px_rgba(239,68,68,0.3)]"
                                         >
-                                            <option value="" disabled>{t('BAN_DAYS') || 'BAN DAYS'}</option>
-                                            <option value="1">{t('BAN_1_DAY') || 'BAN 1 DAY'}</option>
-                                            <option value="3">{t('BAN_3_DAYS') || 'BAN 3 DAYS'}</option>
-                                            <option value="7">{t('BAN_7_DAYS') || 'BAN 7 DAYS'}</option>
-                                            <option value="30">{t('BAN_30_DAYS') || 'BAN 30 DAYS'}</option>
+                                            <option value="" disabled className="bg-gray-900 text-white">{t('BAN_DAYS') || 'BAN DAYS'}</option>
+                                            <option value="1" className="bg-gray-900 text-white">{t('BAN_1_DAY') || 'BAN 1 DAY'}</option>
+                                            <option value="3" className="bg-gray-900 text-white">{t('BAN_3_DAYS') || 'BAN 3 DAYS'}</option>
+                                            <option value="7" className="bg-gray-900 text-white">{t('BAN_7_DAYS') || 'BAN 7 DAYS'}</option>
+                                            <option value="30" className="bg-gray-900 text-white">{t('BAN_30_DAYS') || 'BAN 30 DAYS'}</option>
+                                            <option value="forever" className="bg-gray-900 text-red-400">{t('BAN_FOREVER') || '🚫 BAN FOREVER (DELETE USER)'}</option>
                                         </select>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-5 gap-1.5 sm:gap-1.5 p-1.5 bg-black/55 backdrop-blur-2xl border border-white/8 rounded-[22px] w-full mb-6 mt-4 shadow-[inset_0_0_16px_rgba(255,255,255,0.018),0_10px_28px_rgba(0,0,0,0.38)]">
-                                {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map(tab => {
+                            <div className="grid grid-cols-5 gap-1.5 sm:gap-1.5 p-2 bg-gradient-to-br from-black/70 via-black/60 to-black/80 backdrop-blur-3xl border border-white/10 rounded-[24px] w-full mb-6 mt-4 shadow-[inset_0_2px_10px_rgba(255,255,255,0.05),0_20px_60px_rgba(0,0,0,0.6)]">
+                                {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map((tab, index) => {
                                     const isActive = activeTab === tab;
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-5 h-5 shrink-0 transition-colors duration-200 ${isActive ? 'text-[#ffffff]' : 'text-gray-500'}`;
+                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-300 ${isActive ? 'text-[#ffffff] scale-110' : 'text-gray-400'}`;
                                         if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
                                         if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -4526,19 +4533,28 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`profile-tab-btn min-w-0 min-h-[48px] sm:min-h-[60px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1 sm:gap-1.5 transition-all duration-300 rounded-xl sm:rounded-2xl relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
-                                                ? 'profile-tab-btn-active bg-gradient-to-b from-white/18 to-white/[0.07] border border-white/18 text-white shadow-[0_6px_18px_rgba(0,0,0,0.28)] -translate-y-[1px] z-10'
-                                                : 'bg-transparent text-white/55 hover:text-white hover:bg-white/[0.06]'
+                                            className={`profile-tab-btn min-w-0 min-h-[52px] sm:min-h-[64px] px-1.5 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 sm:gap-2 transition-all duration-400 rounded-[18px] sm:rounded-[20px] relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
+                                                ? 'profile-tab-btn-active bg-gradient-to-br from-white/25 via-white/10 to-white/5 border border-white/30 text-white shadow-[0_8px_25px_rgba(255,255,255,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] -translate-y-[2px] z-10'
+                                                : 'bg-transparent text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 border border-transparent'
                                                 }`}
                                         >
-                                            {isActive && <div className="absolute inset-0 bg-gradient-to-t from-[var(--gold-primary)]/10 to-transparent opacity-50 pointer-events-none" />}
+                                            {/* Animated background for active tab */}
+                                            {isActive && (
+                                                <>
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/15 via-transparent to-[var(--gold-primary)]/10 opacity-70 animate-pulse" />
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
+                                                </>
+                                            )}
+                                            {/* Hover shimmer effect */}
+                                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                            
                                             <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 w-full">
                                                 {renderIcon(isActive)}
                                                 <span
-                                                    className={`max-w-full text-center leading-none transition-colors duration-200 whitespace-nowrap ${isLongTabLabel
-                                                        ? 'text-[7.5px] sm:text-[9px] md:text-[10px] tracking-[0.02em]'
-                                                        : 'text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.06em]'
-                                                        } ${isActive ? 'text-[#ffffff] drop-shadow-md' : 'text-gray-500'} font-bold`}
+                                                    className={`max-w-full text-center leading-none transition-all duration-300 whitespace-nowrap ${isLongTabLabel
+                                                        ? 'text-[7px] sm:text-[8px] md:text-[9px] tracking-[0.03em]'
+                                                        : 'text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.08em]'
+                                                        } ${isActive ? 'text-[#ffffff] drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-gray-400'} font-black`}
                                                 >
                                                     {tabLabel}
                                                 </span>
