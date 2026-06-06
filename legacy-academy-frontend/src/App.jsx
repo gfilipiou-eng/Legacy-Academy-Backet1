@@ -2046,7 +2046,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative p-3 sm:p-5 mb-5 transition-all duration-300 will-change-transform overflow-hidden transform-gpu touch-manipulation`}
+      className={`premium-post-card group relative p-2 sm:p-5 mb-4 transition-all duration-300 will-change-transform overflow-hidden transform-gpu touch-manipulation`}
     >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
@@ -2079,7 +2079,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className="flex gap-3 sm:gap-4">
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
+                        <div className="w-10 h-10 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
                             {/* Liquid Glass Background */}
                             <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                             {/* Inner Profile Avatar */}
@@ -2112,7 +2112,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className="text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
+                                    <p className="text-[14px] sm:text-[19px] text-white/95 leading-6 sm:leading-relaxed font-medium whitespace-pre-wrap break-words overflow-wrap-anywhere pr-1 sm:pr-2 pb-1" onClick={(e) => { e.stopPropagation(); }}>
                                         {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
                                             if (isReadOnly) return;
                                             const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
