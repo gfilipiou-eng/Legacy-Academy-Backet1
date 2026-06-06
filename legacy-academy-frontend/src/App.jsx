@@ -17,6 +17,68 @@ import BottomNavbar from './components/BottomNavbar';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
+const APP_ASSET_VERSION = '20260606b';
+const ASSET_PATHS = {
+    favicon: `/favicon.png?v=${APP_ASSET_VERSION}`,
+    applogo: `/Applogo.png?v=${APP_ASSET_VERSION}`,
+    logo: `/logo.png?v=${APP_ASSET_VERSION}`,
+    manifest: `/manifest.json?v=${APP_ASSET_VERSION}`,
+};
+const PUBLIC_PROFILE_CACHE_PREFIX = 'public-profile-cache-v3:';
+
+const upsertHeadLink = ({ rel, href, sizes, type = 'image/png' }) => {
+    if (typeof document === 'undefined' || !rel || !href) return;
+    const selector = sizes ? `link[rel="${rel}"][sizes="${sizes}"]` : `link[rel="${rel}"]`;
+    let link = document.head.querySelector(selector);
+    if (!link) {
+        link = document.createElement('link');
+        link.setAttribute('rel', rel);
+        if (sizes) link.setAttribute('sizes', sizes);
+        document.head.appendChild(link);
+    }
+    if (type) link.setAttribute('type', type);
+    link.setAttribute('href', href);
+};
+
+const applyHeadBranding = ({ title } = {}) => {
+    if (typeof document === 'undefined') return;
+    document.title = title || 'Legacy Academy Intel';
+    upsertHeadLink({ rel: 'icon', sizes: '16x16', href: ASSET_PATHS.favicon });
+    upsertHeadLink({ rel: 'icon', sizes: '32x32', href: ASSET_PATHS.favicon });
+    upsertHeadLink({ rel: 'icon', sizes: '192x192', href: ASSET_PATHS.applogo });
+    upsertHeadLink({ rel: 'icon', sizes: '512x512', href: ASSET_PATHS.applogo });
+    upsertHeadLink({ rel: 'apple-touch-icon', sizes: '180x180', href: ASSET_PATHS.applogo });
+    upsertHeadLink({ rel: 'manifest', href: ASSET_PATHS.manifest, type: 'application/manifest+json' });
+};
+
+const readPublicProfileCache = (username) => {
+    if (typeof window === 'undefined' || !username) return null;
+    try {
+        const raw = window.sessionStorage.getItem(`${PUBLIC_PROFILE_CACHE_PREFIX}${username}`);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return null;
+        return {
+            user: parsed.user || null,
+            posts: Array.isArray(parsed.posts) ? parsed.posts : [],
+        };
+    } catch {
+        return null;
+    }
+};
+
+const writePublicProfileCache = (username, payload) => {
+    if (typeof window === 'undefined' || !username || !payload) return;
+    try {
+        window.sessionStorage.setItem(`${PUBLIC_PROFILE_CACHE_PREFIX}${username}`, JSON.stringify({
+            user: payload.user || null,
+            posts: Array.isArray(payload.posts) ? payload.posts : [],
+            cachedAt: Date.now(),
+        }));
+    } catch {
+        // Ignore storage failures in private mode / quota errors.
+    }
+};
 
 const GREEK_PHONETIC = {
     'a': 'α', 'b': 'β', 'c': 'ψ', 'd': 'δ', 'e': 'ε', 'f': 'φ', 'g': 'γ', 'h': 'η', 'i': 'ι', 'j': 'ξ', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'o': 'ο', 'p': 'π', 'q': 'θ', 'r': 'ρ', 's': 'σ', 't': 'τ', 'u': 'υ', 'v': 'ω', 'w': 'ς', 'x': 'χ', 'y': 'υ', 'z': 'ζ',
@@ -1788,7 +1850,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
             {stories && stories.map((s, i) => {
                 const isYT = isYouTubeUrl(s.videoUrl);
                 const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
-                const authorPic = s.author?.profilePic ? resolveMediaUrl(s.author.profilePic, null, false, false, false) : '/logo.png';
+                const authorPic = s.author?.profilePic ? resolveMediaUrl(s.author.profilePic, null, false, false, false) : ASSET_PATHS.logo;
                 const authorName = s.author?.username || 'Agent';
                 const storyMediaUrl = s.thumbnailUrl || s.image || s.videoUrl;
 
@@ -5423,49 +5485,73 @@ const App = () => {
         const normalizedUsername = decoded.trim().replace(/^@+/, '');
 
         const loadPublicProfile = async () => {
+            const cachedProfile = readPublicProfileCache(normalizedUsername);
+            let latestUser = cachedProfile?.user || null;
+            let latestPosts = Array.isArray(cachedProfile?.posts) ? cachedProfile.posts : [];
+            const syncCachedProfile = () => {
+                writePublicProfileCache(normalizedUsername, {
+                    user: latestUser,
+                    posts: latestPosts,
+                });
+            };
             setPublicUserLoading(true);
             setPublicPostsLoading(true);
-            setPublicUser(null);
-            setPublicPosts([]);
 
-            let userRes = null;
-            let postsRes = null;
-            let retries = 3;
+            if (latestUser) setPublicUser(latestUser);
+            else setPublicUser(null);
 
-            while (retries > 0) {
-                const [userResult, postsResult] = await Promise.allSettled([
-                    axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 }),
-                    axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 })
-                ]);
-                
-                userRes = userResult;
-                postsRes = postsResult;
+            if (latestPosts.length) setPublicPosts(latestPosts);
+            else setPublicPosts([]);
 
-                if (userResult.status === 'fulfilled') {
-                    break;
+            const loadUser = async () => {
+                let retries = 3;
+                let lastError = null;
+
+                while (retries > 0 && isActive) {
+                    try {
+                        const res = await axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 12000 });
+                        latestUser = res?.data || null;
+                        if (!isActive) return;
+                        setPublicUser(latestUser);
+                        syncCachedProfile();
+                        break;
+                    } catch (error) {
+                        lastError = error;
+                        retries -= 1;
+                        if (retries > 0) await new Promise(r => setTimeout(r, 1200));
+                    }
                 }
-                retries--;
-                if (retries > 0) await new Promise(r => setTimeout(r, 1500));
-            }
 
-            if (!isActive) return;
+                if (isActive && !latestUser && lastError) {
+                    console.error("Failed to load public profile:", lastError);
+                    setPublicUser(null);
+                }
 
-            if (userRes.status === 'fulfilled') {
-                setPublicUser(userRes.value?.data || null);
-            } else {
-                console.error("Failed to load public profile:", userRes.reason);
-                setPublicUser(null);
-            }
+                if (isActive) setPublicUserLoading(false);
+            };
 
-            if (postsRes.status === 'fulfilled') {
-                setPublicPosts(Array.isArray(postsRes.value?.data) ? postsRes.value.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true') : []);
-            } else {
-                console.error("Failed to load public posts:", postsRes.reason);
-                setPublicPosts([]);
-            }
+            const loadPosts = async () => {
+                try {
+                    const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 });
+                    if (!isActive) return;
+                    const nextPosts = Array.isArray(res?.data)
+                        ? res.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true')
+                        : [];
+                    latestPosts = nextPosts;
+                    setPublicPosts(nextPosts);
+                    syncCachedProfile();
+                } catch (error) {
+                    if (isActive) {
+                        console.error("Failed to load public posts:", error);
+                        if (!cachedProfile?.posts?.length) setPublicPosts([]);
+                    }
+                } finally {
+                    if (isActive) setPublicPostsLoading(false);
+                }
+            };
 
-            setPublicUserLoading(false);
-            setPublicPostsLoading(false);
+            void loadUser();
+            void loadPosts();
         };
 
         loadPublicProfile();
@@ -5485,6 +5571,13 @@ const App = () => {
             i18n.changeLanguage(urlLang);
         }
     }, [urlLang, i18n]);
+
+    useEffect(() => {
+        const profileTitle = publicProfileUsername
+            ? `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy Academy Intel`
+            : 'Legacy Academy Intel';
+        applyHeadBranding({ title: profileTitle });
+    }, [publicProfileUsername, publicUser?.username]);
 
     const [uploadProgress, setUploadProgress] = useState(0);
     const [toasts, setToasts] = useState([]);
@@ -7121,7 +7214,7 @@ const App = () => {
                                         {/* Simple Soft Glow */}
                                         <div className="absolute inset-0 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full scale-90" />
                                         <img 
-                                            src="/logo.png?t=1780262935819" 
+                                            src={ASSET_PATHS.logo}
                                             alt="Legacy Academy" 
                                             className={`h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
                                             style={{ 
@@ -7487,7 +7580,7 @@ const App = () => {
                                     <div className="relative flex items-center justify-center">
                                         {/* Simple Soft Glow Removed */}
                                         <img 
-                                            src="/logo.png?t=1780262935819" 
+                                            src={ASSET_PATHS.logo}
                                             alt="Legacy Academy" 
                                             className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105" 
                                             style={{ 
