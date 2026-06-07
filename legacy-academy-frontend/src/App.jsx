@@ -3390,7 +3390,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
     const [isClosing, setIsClosing] = useState(false);
 
     // Calculate remaining subscription time with smart display
@@ -3447,8 +3447,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
             />
 
             <div className={`
-                nav-drawer-panel liquid-glass-nav fixed top-0 left-0 bottom-0 w-[min(88vw,320px)] sm:w-[300px]
+                nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(88vw,320px)] sm:w-[300px]
                 flex flex-col pointer-events-auto z-[101] overflow-hidden
+                border-r border-white/10 bg-black/80 backdrop-blur-xl
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}>
                 <div className="flex-none px-4 pt-6 pb-3 flex items-center justify-between border-b border-white/10">
@@ -3457,15 +3458,15 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         type="button"
                         onClick={handleClose}
                         aria-label="Close menu"
-                        className="w-10 h-10 rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
+                        className="min-w-[40px] min-h-[40px] rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.08] hover:border-white/20 active:scale-95 transition-all duration-200 touch-manipulation"
                     >
-                        <Icons.X className="w-5 h-5" />
+                        <Icons.X className="w-5 h-5 pointer-events-none" />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
                     <div
-                        className="nav-drawer-profile mx-4 mt-4 p-4 rounded-2xl cursor-pointer transition-colors duration-200 hover:bg-white/[0.05]"
+                        className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-white/[0.05] active:scale-[0.98] touch-manipulation"
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
                         <div className="flex items-center gap-3">
@@ -3497,7 +3498,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-1 px-3 py-4 relative z-10">
+                    <div className="flex flex-col gap-0.5 px-3 py-4 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
@@ -3516,20 +3517,30 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 isSubscription: true
                             },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
-                        ].map((item, index) => (
+                        ].map((item, index) => {
+                            const isActive = !item.action && activeTab === item.id;
+                            return (
                             <button
                                 key={item.id}
                                 onClick={() => {
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="nav-drawer-item w-full px-2 py-2.5 flex items-center gap-3 rounded-2xl hover:bg-white/[0.05] border border-transparent hover:border-white/10 transition-all menu-item-slide group"
+                                className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation ${
+                                    isActive
+                                        ? 'text-[#1D9BF0]'
+                                        : 'text-gray-500 hover:text-[#1D9BF0]/70 hover:bg-white/[0.04]'
+                                }`}
                                 style={{ animationDelay: `${index * 0.04}s` }}
                             >
-                                <div className="nav-drawer-item-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
-                                    <item.icon className="w-[22px] h-[22px] text-white shrink-0" strokeWidth={2} />
-                                </div>
-                                <span className="text-[15px] font-bold text-white tracking-wide text-left flex-1">{item.label}</span>
+                                <item.icon
+                                    className={`w-7 h-7 shrink-0 transition-all duration-300 pointer-events-none ${
+                                        isActive ? 'scale-105 drop-shadow-[0_4px_12px_rgba(29,155,240,0.4)]' : ''
+                                    }`}
+                                    fill={isActive ? 'currentColor' : 'none'}
+                                    strokeWidth={isActive ? '2.5' : '2'}
+                                />
+                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`}>{item.label}</span>
 
                                 {item.isSubscription && remainingDays !== null && (
                                     <div className="ml-auto flex flex-col items-end gap-1 shrink-0">
@@ -3571,23 +3582,21 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                 )}
 
                                 {item.badge > 0 && (
-                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[var(--gold-primary)] rounded-full flex items-center justify-center shrink-0">
-                                        <span className="text-[11px] font-bold text-black leading-none">
+                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0 border-2 border-black shadow-[0_0_10px_rgba(29,155,240,0.5)]">
+                                        <span className="text-[11px] font-black text-white leading-none">
                                             {item.badge > 9 ? '9+' : item.badge}
                                         </span>
                                     </div>
                                 )}
                             </button>
-                        ))}
+                        );})}
 
                         <button
                             onClick={() => { onLogout(); handleClose(); }}
-                            className="nav-drawer-item w-full px-2 py-2.5 mt-2 flex items-center gap-3 rounded-2xl hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all menu-item-slide group"
+                            className="nav-drawer-item w-full px-3 py-2.5 mt-2 flex items-center gap-3.5 rounded-[1.35rem] hover:bg-red-500/10 transition-all duration-300 menu-item-slide group touch-manipulation active:scale-[0.98]"
                             style={{ animationDelay: '0.24s' }}
                         >
-                            <div className="nav-drawer-item-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:border-red-500/20">
-                                <Icons.Logout className="w-[22px] h-[22px] text-white shrink-0 group-hover:text-red-400 transition-colors" strokeWidth={2} />
-                            </div>
+                            <Icons.Logout className="w-7 h-7 text-gray-500 group-hover:text-red-400 transition-colors shrink-0 pointer-events-none" strokeWidth={2} />
                             <span className="text-[15px] font-bold text-white tracking-wide group-hover:text-red-400 transition-colors">{t('LOGOUT')}</span>
                         </button>
                     </div>
@@ -7666,11 +7675,11 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 transition-all duration-300 z-50 p-2.5 -ml-2 group"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 active:scale-95 active:bg-white/[0.12] transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
                                         aria-label="Open menu"
-                                        sound={null}
-                                        scaleDown={1}
-                                        duration={0}
+                                        sound="nav_click"
+                                        scaleDown={0.95}
+                                        duration={150}
                                     >
                                         <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-[#ffffff] transition-colors duration-300 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
@@ -7987,6 +7996,7 @@ const App = () => {
                         user={user}
                         allUsers={users}
                         alerts={alerts}
+                        activeTab={activeTab}
                         onNavigate={(tab) => {
                             if (tab === 'chat') {
                                 setTimeout(() => setIsChatOpen(true), 150);

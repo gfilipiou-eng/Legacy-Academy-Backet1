@@ -51,7 +51,6 @@ const EnhancedButton = ({
         ...style,
         ...styles,
         outline: 'none',
-        border: 'none',
       }}
     >
       {children}

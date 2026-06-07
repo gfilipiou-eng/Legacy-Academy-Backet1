@@ -30,7 +30,6 @@ const TouchButton = ({
         ...style,
         ...styles,
         outline: 'none',
-        border: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
       }}
     >

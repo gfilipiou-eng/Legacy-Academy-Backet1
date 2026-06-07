@@ -76,8 +76,8 @@ export const useTouchFeedback = (options = {}) => {
     }
   }, []);
 
-  const transform = undefined;
-  const transition = undefined;
+  const transform = isPressed ? `scale(${scaleDown})` : undefined;
+  const transition = `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
 
   return {
     handlers: {
@@ -93,6 +93,8 @@ export const useTouchFeedback = (options = {}) => {
       WebkitTouchCallout: 'none',
       WebkitUserSelect: 'none',
       userSelect: 'none',
+      transform,
+      transition,
     },
     isPressed,
     isTouch,
