@@ -266,6 +266,32 @@ const formatDisplayUrl = (rawUrl) => {
     }
 };
 
+const BACKGROUND_MODES = [
+    { value: 'dark', labelKey: 'DARK_MODE', color: '#000000', className: 'bg-dark' },
+    { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14', className: 'bg-dark-blue' },
+    { value: 'midnight', labelKey: 'MIDNIGHT_MODE', color: '#0a0a12', className: 'bg-midnight' },
+    { value: 'purple-night', labelKey: 'PURPLE_NIGHT_MODE', color: '#0d0818', className: 'bg-purple-night' },
+    { value: 'forest', labelKey: 'FOREST_MODE', color: '#051208', className: 'bg-forest' },
+    { value: 'crimson', labelKey: 'CRIMSON_MODE', color: '#120508', className: 'bg-crimson' },
+    { value: 'slate', labelKey: 'SLATE_MODE', color: '#0f1115', className: 'bg-slate' },
+    { value: 'ocean', labelKey: 'OCEAN_MODE', color: '#041018', className: 'bg-ocean' },
+];
+
+const getBackgroundMode = (user) => user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
+
+const getBackgroundEntry = (mode) => BACKGROUND_MODES.find((entry) => entry.value === mode) || BACKGROUND_MODES.find((entry) => entry.value === 'dark-blue') || BACKGROUND_MODES[0];
+
+const getPostTextPreview = (text, maxLen = 110) => {
+    if (!text) return '';
+    const withoutUrls = String(text)
+        .replace(/(https?:\/\/[^\s]+|www\.[^\s]+)/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!withoutUrls) return 'Link post';
+    if (withoutUrls.length <= maxLen) return withoutUrls;
+    return `${withoutUrls.slice(0, maxLen).trim()}…`;
+};
+
 const parseText = (text, onHashtagClick, onMentionClick) => {
     if (!text) return [];
     
@@ -284,17 +310,14 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="my-1 inline-flex w-full max-w-full items-center gap-2 rounded-xl border border-sky-400/20 bg-sky-500/10 px-2.5 py-2 align-top text-left text-sky-100 no-underline transition-all duration-200 hover:border-sky-300/40 hover:bg-sky-500/15 hover:text-white sm:w-auto sm:max-w-[420px] sm:rounded-2xl sm:px-3"
+                    className="post-link-chip my-1 inline-flex max-w-full items-center gap-2 rounded-full border border-sky-400/25 bg-sky-500/10 px-3 py-1.5 align-middle text-left text-sky-100 no-underline transition-all duration-200 hover:border-sky-300/45 hover:bg-sky-500/18 hover:text-white sm:max-w-[420px] sm:rounded-2xl sm:px-3.5 sm:py-2"
                     onClick={(e) => e.stopPropagation()}
                     title={href}
                 >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-400/15 text-sky-300 sm:rounded-xl">
-                        <Icons.Link className="w-4 h-4" />
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-400/15 text-sky-300">
+                        <Icons.Link className="w-3.5 h-3.5" />
                     </span>
-                    <span className="min-w-0">
-                        <span className="block truncate text-[11px] font-black uppercase tracking-[0.12em] text-sky-200/75 sm:text-[12px]">Link</span>
-                        <span className="block truncate text-[12px] font-semibold normal-case tracking-normal text-white sm:text-[13px]">{displayUrl}</span>
-                    </span>
+                    <span className="min-w-0 truncate text-[12px] font-semibold normal-case tracking-normal text-white sm:text-[13px]">{displayUrl}</span>
                 </a>
             );
         }
@@ -3061,6 +3084,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             let payload = { [key]: val };
             if (key === 'language') payload = { settings: { language: val } };
             if (key === 'theme') payload = { settings: { theme: val } };
+            if (key === 'background') {
+                payload = { settings: { background: val } };
+                applyBackground(val);
+                onUpdateUser?.({
+                    ...(latestUserRef.current || user || {}),
+                    settings: {
+                        ...((latestUserRef.current || user || {})?.settings || {}),
+                        background: val
+                    }
+                });
+            }
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
@@ -3260,39 +3294,23 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
                                         {t('BACKGROUND')}
                                     </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {[
-                                            { value: 'dark', labelKey: 'DARK_MODE', color: '#000000' },
-                                            { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14' }
-                                        ].map(({ value, labelKey, color }) => {
-                                            const active = (user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark') === value;
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {BACKGROUND_MODES.map(({ value, labelKey, color, className }) => {
+                                            const active = getBackgroundMode(user) === value;
                                             return (
                                                 <button
                                                     key={value}
                                                     type="button"
-                                                    onClick={() => {
-                                                        applyBackground(value);
-                                                        handleSave('background', value);
-                                                    }}
+                                                    onClick={() => handleSave('background', value)}
                                                     className={`settings-tile-btn relative overflow-hidden rounded-2xl border transition-all duration-200 ${
-                                                        active 
-                                                            ? 'border-[var(--gold-primary)]' 
+                                                        active
+                                                            ? 'border-[var(--gold-primary)] shadow-[0_0_18px_rgba(255,215,0,0.12)]'
                                                             : 'border-white/10 hover:border-white/20'
                                                     }`}
                                                 >
-                                                    <div 
-                                                        className="w-full h-16 relative"
-                                                        style={{ backgroundColor: color }}
-                                                    >
-                                                        {value === 'dark-blue' && (
-                                                            <div className="absolute inset-0 opacity-50">
-                                                                <div className="absolute top-2 left-2 w-8 h-8 rounded-full bg-blue-500/20 blur-xl"></div>
-                                                                <div className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-blue-400/15 blur-2xl"></div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className={`p-2 text-center ${active ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
-                                                        <div className="text-[9px] font-bold uppercase tracking-wide">{t(labelKey)}</div>
+                                                    <div className={`w-full h-14 relative ${className}`} style={{ backgroundColor: color }} />
+                                                    <div className={`px-1.5 py-2 text-center ${active ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
+                                                        <div className="text-[8px] font-bold uppercase tracking-wide leading-tight">{t(labelKey, labelKey.replace(/_/g, ' '))}</div>
                                                     </div>
                                                 </button>
                                             );
@@ -3718,6 +3736,7 @@ const ProfileModal = ({
 
     const isMe = String(displayUser?._id || '') === String(currentUser?._id || '');
     const isFounderProfile = displayUser?.role === 'Founder';
+    const profileBackground = getBackgroundEntry(getBackgroundMode(currentUser));
     const canShowProfileShareButton = (isMe
         ? currentUser?.settings?.showProfileShareButton
         : displayUser?.settings?.showProfileShareButton) !== false;
@@ -3743,27 +3762,42 @@ const ProfileModal = ({
         return pId === uId && p.isStory;
     }), [posts, profileUser]);
 
-    const fetchUserPosts = async () => {
-        if (!profileUser?._id) return;
-        setLoadingPosts(true);
-        try {
-            const res = await axios.get(`/posts/user/${profileUser._id}`);
-            setUserSpecificPosts(res.data);
-        } catch (e) {
-            console.error("Profile posts fetch error:", e);
-        } finally {
-            setLoadingPosts(false);
-        }
-    };
 
     useEffect(() => {
-        if (isOpen) {
-            // INSTANT HYDRATION: prefill posts from global index before server responds
-            if (preloadedPosts && preloadedPosts.length > 0) {
-                setUserSpecificPosts(preloadedPosts);
-            }
-            fetchUserPosts();
+        if (!isOpen || !profileUser?._id) {
+            if (!isOpen) setLoadingPosts(false);
+            return;
         }
+
+        const targetUserId = profileUser._id;
+        let cancelled = false;
+
+        if (preloadedPosts?.length > 0) {
+            setUserSpecificPosts(preloadedPosts);
+        } else {
+            setUserSpecificPosts([]);
+        }
+
+        setLoadingPosts(true);
+
+        (async () => {
+            try {
+                const res = await axios.get(`/posts/user/${targetUserId}`, { timeout: 15000 });
+                if (cancelled || String(profileUser?._id || '') !== String(targetUserId)) return;
+                setUserSpecificPosts(Array.isArray(res.data) ? res.data : []);
+            } catch (e) {
+                console.error("Profile posts fetch error:", e);
+                if (!cancelled && String(profileUser?._id || '') === String(targetUserId) && !(preloadedPosts?.length > 0)) {
+                    setUserSpecificPosts([]);
+                }
+            } finally {
+                if (!cancelled && String(profileUser?._id || '') === String(targetUserId)) {
+                    setLoadingPosts(false);
+                }
+            }
+        })();
+
+        return () => { cancelled = true; };
     }, [isOpen, profileUser?._id]);
 
     // LIVE SYNC: React to global deletions if the profile is open
@@ -3910,8 +3944,8 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col bg-black border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in`}
-                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
+                className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
+                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] pointer-events-none" />
@@ -5141,15 +5175,11 @@ const applyTheme = (color) => {
 };
 
 const applyBackground = (mode) => {
-    // Remove existing classes
-    document.body.classList.remove('bg-dark', 'bg-dark-blue');
-    // Add new class
-    if (mode === 'dark-blue') {
-        document.body.classList.add('bg-dark-blue');
-    } else {
-        document.body.classList.add('bg-dark');
-    }
-    localStorage.setItem('backgroundMode', mode);
+    const entry = getBackgroundEntry(mode);
+    document.body.classList.remove(...BACKGROUND_MODES.map((item) => item.className));
+    document.body.classList.add(entry.className);
+    document.documentElement.style.setProperty('--app-bg', entry.color);
+    localStorage.setItem('backgroundMode', entry.value);
 };
 
 const applyDisplayMode = (mode) => {
@@ -5190,7 +5220,7 @@ const applyZoom = (zoom) => {
     localStorage.setItem('uiZoom', String(z));
 };
 
-const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, onClose, onNavigateProfile, onOpenPost, t }) => {
+const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, postsReady = false, onClose, onNavigateProfile, onOpenPost, t }) => {
     console.log("🔗 [PUBLIC PROFILE] username:", username);
     console.log("🔗 [PUBLIC PROFILE] publicUser:", publicUser);
     console.log("🔗 [PUBLIC PROFILE] publicPosts:", publicPosts?.map(p => ({ _id: p._id, isRepost: p.isRepost, repostedBy: p.repostedBy, author: p.author })));
@@ -5245,9 +5275,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const resolvedPublicProfilePic = resolveMediaUrl(publicUser.profilePic, 320, true);
     const resolvedPublicCoverPic = resolveMediaUrl(publicUser.coverPic);
     const publicFounderAffiliation = getFounderAffiliation(publicUser);
+    const publicBackground = getBackgroundEntry(getBackgroundMode(publicUser));
 
     return (
-        <div className="min-h-screen bg-black text-white relative overflow-x-hidden flex flex-col items-center select-text" style={{ '--gold-primary': themeColor }}>
+        <div className={`min-h-screen text-white relative overflow-x-hidden flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`} style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}>
             {/* AMBIENT BACKGROUND GLOWS FOR LIQUID GLASS AESTHETIC */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-[var(--gold-primary)]/10 blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }} />
@@ -5399,7 +5430,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* Posts with same style as regular profile */}
                 <div className="w-full space-y-6 pb-20">
-                    {loadingPosts ? (
+                    {loadingPosts || !postsReady ? (
                         <div className="flex flex-col items-center justify-center p-12 gap-4 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
                             <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)]" />
                             <div className="text-center text-xs text-white/35 font-bold uppercase tracking-widest">
@@ -5408,9 +5439,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         </div>
                     ) : (() => {
                         const uid = safeId(publicUser);
-                        const displayPosts = publicPosts.filter(p => 
-                            isSameId(p.author, uid) || (p.isRepost && isSameId(p.repostedBy, uid))
-                        );
+                        const displayPosts = publicPosts.filter(p => {
+                            if (p.isStory === true || String(p.isStory) === 'true') return false;
+                            return isSameId(p.author, uid) || (p.isRepost && isSameId(p.repostedBy, uid));
+                        });
                         return displayPosts.length === 0 ? (
                             <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
                                 {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
@@ -5516,6 +5548,7 @@ const App = () => {
     const [publicPosts, setPublicPosts] = useState([]);
     const [publicUserLoading, setPublicUserLoading] = useState(false);
     const [publicPostsLoading, setPublicPostsLoading] = useState(false);
+    const [publicPostsReady, setPublicPostsReady] = useState(false);
     const [viewPostId, setViewPostId] = useState(searchParams.get('postId'));
 
     const syncUrlState = useCallback(() => {
@@ -5568,6 +5601,7 @@ const App = () => {
             let latestUser = cachedProfile?.user || null;
             let latestPosts = Array.isArray(cachedProfile?.posts) ? cachedProfile.posts : [];
             const syncCachedProfile = () => {
+                if (!latestUser && !latestPosts.length) return;
                 writePublicProfileCache(normalizedUsername, {
                     user: latestUser,
                     posts: latestPosts,
@@ -5575,12 +5609,17 @@ const App = () => {
             };
             setPublicUserLoading(true);
             setPublicPostsLoading(true);
+            setPublicPostsReady(false);
 
             if (latestUser) setPublicUser(latestUser);
             else setPublicUser(null);
 
-            if (latestPosts.length) setPublicPosts(latestPosts);
-            else setPublicPosts([]);
+            if (latestPosts.length) {
+                setPublicPosts(latestPosts);
+                setPublicPostsReady(true);
+            } else {
+                setPublicPosts([]);
+            }
 
             const loadUser = async () => {
                 let retries = 3;
@@ -5610,27 +5649,36 @@ const App = () => {
             };
 
             const loadPosts = async () => {
-                try {
-                    const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 });
-                    if (!isActive) return;
-                    const nextPosts = Array.isArray(res?.data)
-                        ? res.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true')
-                        : [];
-                    latestPosts = nextPosts;
-                    setPublicPosts(nextPosts);
-                    syncCachedProfile();
-                } catch (error) {
-                    if (isActive) {
-                        console.error("Failed to load public posts:", error);
-                        if (!cachedProfile?.posts?.length) setPublicPosts([]);
+                for (let attempt = 0; attempt <= 2 && isActive; attempt += 1) {
+                    try {
+                        const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 });
+                        if (!isActive) return;
+                        const nextPosts = Array.isArray(res?.data)
+                            ? res.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true')
+                            : [];
+                        latestPosts = nextPosts;
+                        setPublicPosts(nextPosts);
+                        syncCachedProfile();
+                        break;
+                    } catch (error) {
+                        if (attempt === 2) {
+                            if (isActive) {
+                                console.error("Failed to load public posts:", error);
+                                if (!latestPosts.length) setPublicPosts([]);
+                            }
+                        } else {
+                            await new Promise(r => setTimeout(r, 900));
+                        }
                     }
-                } finally {
-                    if (isActive) setPublicPostsLoading(false);
+                }
+
+                if (isActive) {
+                    setPublicPostsLoading(false);
+                    setPublicPostsReady(true);
                 }
             };
 
-            void loadUser();
-            void loadPosts();
+            await Promise.allSettled([loadUser(), loadPosts()]);
         };
 
         loadPublicProfile();
@@ -7211,13 +7259,15 @@ const App = () => {
 
     // Optimization: memoize feed calculation to avoid flickering & re-running heavy filters
     const preloadedProfilePosts = useMemo(() => {
-        if (!profileUser?._id && !profileUser) return [];
-        const targetId = String(profileUser?._id || profileUser?.userId || profileUser);
-        return posts.filter(p =>
-            String(p.author?._id || p.author) === targetId ||
-            (Array.isArray(p.reposts) && p.reposts.some(id => String(id) === targetId))
-        );
-    }, [posts, profileUser]);
+        if (!profileUser?._id) return [];
+        const targetId = String(profileUser._id);
+        return posts.filter(p => {
+            if (p.isStory === true || String(p.isStory) === 'true') return false;
+            const authorId = String(p.author?._id || p.author || '');
+            const reposterId = String(p.repostedBy?._id || p.repostedBy || '');
+            return authorId === targetId || (p.isRepost && reposterId === targetId);
+        });
+    }, [posts, profileUser?._id]);
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
@@ -7239,6 +7289,7 @@ const App = () => {
                 publicPosts={publicPosts} 
                 loadingUser={publicUserLoading}
                 loadingPosts={publicPostsLoading}
+                postsReady={publicPostsReady}
                 onClose={() => {
                     const params = new URLSearchParams(window.location.search);
                     params.delete('profile');
@@ -7782,8 +7833,8 @@ const App = () => {
                                                                              />
                                                                          )
                                                                     ) : (
-                                                                        <div className="w-full h-full bg-black flex items-center justify-center p-6 text-center ">
-                                                                            <span className="font-black text-white/90 text-lg uppercase tracking-tighter leading-tight italic line-clamp-6">{post.desc}</span>
+                                                                        <div className="w-full h-full bg-gradient-to-br from-black via-[#0a0a0a] to-black flex items-center justify-center p-5 text-center">
+                                                                            <span className="font-semibold text-white/90 text-sm sm:text-base leading-snug line-clamp-6 break-words">{getPostTextPreview(post.content || post.desc)}</span>
                                                                         </div>
                                                                     )}
                                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
@@ -7797,7 +7848,7 @@ const App = () => {
                                                                                 {post.author?.username || 'Agent'}
                                                                             </span>
                                                                         </div>
-                                                                        <p className="text-xs text-white/90 font-medium line-clamp-2 leading-snug drop-shadow-md">{post.content || post.desc}</p>
+                                                                        <p className="text-xs text-white/90 font-medium line-clamp-2 leading-snug drop-shadow-md break-words">{getPostTextPreview(post.content || post.desc, 90)}</p>
                                                                         <div className="flex items-center gap-4 text-[10px] text-white font-black uppercase tracking-widest pt-1">
                                                                             <div className="flex items-center gap-1.5">
                                                                                 <Icons.Heart className="w-3.5 h-3.5" />

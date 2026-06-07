@@ -81,6 +81,7 @@ const UserSchema = new mongoose.Schema(
         settings: {
             theme: { type: String, default: '#ffd700' },
             language: { type: String, default: 'en' },
+            background: { type: String, default: 'dark-blue' },
             dmFollowersOnly: { type: Boolean, default: false },
             displayMode: { type: String, default: 'dark' },
             zoom: { type: Number, default: 1 },
