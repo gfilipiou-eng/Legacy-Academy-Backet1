@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Legacy Academy">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#121212"/>
+      <stop offset="100%" stop-color="#030303"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="18%" y1="8%" x2="82%" y2="92%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#ffd700" stop-opacity="0.14"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff2a8"/>
+      <stop offset="50%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#c9a227"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="58%">
+      <stop offset="0%" stop-color="#1d9bf0" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#1d9bf0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="url(#bg)"/>
+  <rect x="24" y="24" width="464" height="464" rx="104" fill="url(#glow)"/>
+  <rect x="40" y="40" width="432" height="432" rx="96" fill="url(#glass)" stroke="rgba(255,255,255,0.18)" stroke-width="3"/>
+  <ellipse cx="188" cy="156" rx="96" ry="44" fill="#ffffff" opacity="0.14" transform="rotate(-18 188 156)"/>
+  <circle cx="256" cy="256" r="148" fill="none" stroke="url(#gold)" stroke-width="10" opacity="0.92"/>
+  <circle cx="256" cy="256" r="118" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <path d="M196 332V196c0-18 14-32 32-32h24c38 0 62 24 62 58 0 34-24 58-62 58h-24v52h-32zm32-84h22c20 0 32-10 32-26s-12-26-32-26h-22v52z" fill="url(#gold)"/>
+</svg>

@@ -13,14 +13,17 @@ import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 import socket from './socket';
 import BottomNavbar from './components/BottomNavbar';
+import AppLogo from './components/AppLogo';
 
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
-const APP_ASSET_VERSION = '20260606b';
+const APP_ASSET_VERSION = '20260607b';
 const ASSET_PATHS = {
-    favicon: `/favicon.png?v=${APP_ASSET_VERSION}`,
-    applogo: `/Applogo.png?v=${APP_ASSET_VERSION}`,
+    favicon: `/favicon.svg?v=${APP_ASSET_VERSION}`,
+    faviconPng: `/favicon.png?v=${APP_ASSET_VERSION}`,
+    applogo: `/applogo-glass.svg?v=${APP_ASSET_VERSION}`,
+    applogoPng: `/Applogo.png?v=${APP_ASSET_VERSION}`,
     logo: `/logo.png?v=${APP_ASSET_VERSION}`,
     manifest: `/manifest.json?v=${APP_ASSET_VERSION}`,
 };
@@ -43,11 +46,12 @@ const upsertHeadLink = ({ rel, href, sizes, type = 'image/png' }) => {
 const applyHeadBranding = ({ title } = {}) => {
     if (typeof document === 'undefined') return;
     document.title = title || 'Legacy Academy Intel';
-    upsertHeadLink({ rel: 'icon', sizes: '16x16', href: ASSET_PATHS.favicon });
-    upsertHeadLink({ rel: 'icon', sizes: '32x32', href: ASSET_PATHS.favicon });
-    upsertHeadLink({ rel: 'icon', sizes: '192x192', href: ASSET_PATHS.applogo });
-    upsertHeadLink({ rel: 'icon', sizes: '512x512', href: ASSET_PATHS.applogo });
-    upsertHeadLink({ rel: 'apple-touch-icon', sizes: '180x180', href: ASSET_PATHS.applogo });
+    upsertHeadLink({ rel: 'icon', href: ASSET_PATHS.favicon, type: 'image/svg+xml' });
+    upsertHeadLink({ rel: 'icon', sizes: '16x16', href: ASSET_PATHS.faviconPng, type: 'image/png' });
+    upsertHeadLink({ rel: 'icon', sizes: '32x32', href: ASSET_PATHS.faviconPng, type: 'image/png' });
+    upsertHeadLink({ rel: 'icon', sizes: '192x192', href: ASSET_PATHS.applogo, type: 'image/svg+xml' });
+    upsertHeadLink({ rel: 'icon', sizes: '512x512', href: ASSET_PATHS.applogo, type: 'image/svg+xml' });
+    upsertHeadLink({ rel: 'apple-touch-icon', sizes: '180x180', href: ASSET_PATHS.applogoPng, type: 'image/png' });
     upsertHeadLink({ rel: 'manifest', href: ASSET_PATHS.manifest, type: 'application/manifest+json' });
 };
 
@@ -320,17 +324,19 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
     return parts.map((part, i) => {
         if (part.match(urlRegex)) {
             const href = part.startsWith('http') ? part : `https://${part}`;
+            const displayUrl = formatDisplayUrl(part);
             return (
                 <a
                     key={`url-${i}`}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#1D9BF0] font-medium hover:underline break-all"
+                    className="text-link-chip text-link-chip--url"
                     onClick={(e) => e.stopPropagation()}
                     title={href}
                 >
-                    {part}
+                    <Icons.Link className="w-3 h-3 shrink-0 opacity-80" />
+                    <span className="truncate max-w-[220px] sm:max-w-[280px]">{displayUrl}</span>
                 </a>
             );
         }
@@ -348,7 +354,7 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                             e.stopPropagation(); 
                             if (onHashtagClick) onHashtagClick(subPart);
                         }} 
-                        className="text-[#1D9BF0] font-medium hover:underline cursor-pointer"
+                        className="text-link-chip text-link-chip--tag"
                     >
                         {subPart}
                     </span>
@@ -361,7 +367,7 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                             e.stopPropagation(); 
                             if (onMentionClick) onMentionClick(subPart.slice(1));
                         }} 
-                        className="text-[#1D9BF0] font-medium hover:underline cursor-pointer"
+                        className="text-link-chip text-link-chip--mention"
                     >
                         {subPart}
                     </span>
@@ -7334,20 +7340,8 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
-                                    <div className="relative flex justify-center items-center w-full h-48 md:h-56 mb-2">
-                                        {/* Simple Soft Glow */}
-                                        <div className="absolute inset-0 bg-[var(--gold-primary)]/10 blur-3xl animate-pulse rounded-full scale-90" />
-                                        <img 
-                                            src={ASSET_PATHS.logo}
-                                            alt="Legacy Academy" 
-                                            className={`h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`} 
-                                            style={{ 
-                                                imageRendering: '-webkit-optimize-contrast', 
-                                                backfaceVisibility: 'hidden', 
-                                                transform: 'translateZ(0px)', 
-                                                willChange: 'transform' 
-                                            }} 
-                                        />
+                                    <div className="relative flex justify-center items-center w-full mb-2">
+                                        <AppLogo src={ASSET_PATHS.logo} variant="auth" loading={authLoading} />
                                     </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
@@ -7700,20 +7694,7 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <div className="relative flex items-center justify-center">
-                                        {/* Simple Soft Glow Removed */}
-                                        <img 
-                                            src={ASSET_PATHS.logo}
-                                            alt="Legacy Academy" 
-                                            className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105" 
-                                            style={{ 
-                                                imageRendering: '-webkit-optimize-contrast', 
-                                                backfaceVisibility: 'hidden', 
-                                                transform: 'translateZ(0px)', 
-                                                willChange: 'transform' 
-                                            }} 
-                                        />
-                                    </div>
+                                    <AppLogo src={ASSET_PATHS.logo} variant="header" />
                                 </div>
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
