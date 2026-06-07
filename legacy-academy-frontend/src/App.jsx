@@ -331,8 +331,8 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                     onClick={(e) => e.stopPropagation()}
                     title={href}
                 >
-                    <Icons.Link className="w-3 h-3 shrink-0 opacity-80" />
-                    <span className="truncate max-w-[220px] sm:max-w-[280px]">{displayUrl}</span>
+                    <Icons.Link className="w-3.5 h-3.5 shrink-0 opacity-80" />
+                    <span className="truncate max-w-[240px] sm:max-w-[300px]">{displayUrl}</span>
                 </a>
             );
         }
