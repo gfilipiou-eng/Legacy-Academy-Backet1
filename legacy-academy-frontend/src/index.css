@@ -818,9 +818,22 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   contain: none !important;
   content-visibility: visible;
   overflow: visible !important;
-  border-radius: 24px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 641px) {
+  .profile-feed-shell .premium-post-card {
+    border-radius: 16px;
+    padding: 0.75rem 0.875rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .profile-feed-shell .post-card-body-text {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
 }
 
 .post-card-avatar-col {
@@ -1087,12 +1100,12 @@ html, body {
   }
 
   .profile-feed-shell .premium-post-card {
-    border-radius: 24px;
-    padding: 0.875rem 0.75rem !important;
+    border-radius: 18px;
+    padding: 0.75rem !important;
   }
 
   .profile-feed-shell .post-card-avatar-ring {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+    display: none;
   }
 }
 

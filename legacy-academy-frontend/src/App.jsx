@@ -1868,36 +1868,18 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 
 const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     const { t } = useTranslation(user);
+    const storySizeClass = 'w-[74px] h-[74px] sm:w-[76px] sm:h-[76px]';
     return (
-        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-2 sm:px-4 border-b border-white/5 bg-transparent">
+        <div className="flex gap-3.5 sm:gap-4 overflow-x-auto no-scrollbar py-3.5 px-3 sm:px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
-            <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full overflow-hidden relative group">
-                    {/* Animated Bubbles */}
-                    <div className="absolute inset-0 overflow-hidden rounded-full">
-                        {[0,1,2,3,4].map(i => (
-                            <div 
-                                key={i}
-                                className="absolute rounded-full bg-white/10 animate-float"
-                                style={{ 
-                                    left: `${15 + i * 18}%`, 
-                                    width: `${6 + (i % 3) * 4}px`, 
-                                    height: `${6 + (i % 3) * 4}px`,
-                                    animationDelay: `${i * 0.6}s`, 
-                                    bottom: '-10px'
-                                }}
-                            />
-                        ))}
+            <div onClick={onAddStory} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+                <div className={`${storySizeClass} rounded-full relative group border-2 border-dashed border-white/25 bg-white/[0.03]`}>
+                    <div className="absolute inset-[3px] rounded-full overflow-hidden bg-[#050505]">
+                        <ProfileAvatar user={user} className="object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
+                        <div className="absolute inset-0 bg-black/30" />
                     </div>
-                    {/* Liquid Glass Background */}
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                    {/* Inner Profile Avatar */}
-                    <div className="absolute inset-[3px] rounded-full overflow-hidden">
-                        <ProfileAvatar user={user} className="opacity-60 object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
-                    </div>
-                    {/* Add Icon */}
                     <div className="absolute inset-0 flex items-center justify-center z-10">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 group-active:scale-95 transition-all duration-300">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -1909,42 +1891,35 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
             {stories && stories.map((s, i) => {
                 const isYT = isYouTubeUrl(s.videoUrl);
                 const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
-                const authorPic = s.author?.profilePic ? resolveMediaUrl(s.author.profilePic, null, false, false, false) : ASSET_PATHS.logo;
                 const authorName = s.author?.username || 'Agent';
                 const storyMediaUrl = s.thumbnailUrl || s.image || s.videoUrl;
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] relative transition-transform duration-300 group-hover:scale-105 transform-gpu">
-                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                            <div className="absolute inset-[3px] rounded-full overflow-hidden bg-black relative flex items-center justify-center">
+                        <div className={`${storySizeClass} rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transition-transform duration-300 group-hover:scale-105 group-active:scale-95 transform-gpu`}>
+                            <div className="w-full h-full rounded-full overflow-hidden bg-black border border-black">
                                 {storyMediaUrl ? (
                                     <img 
                                         src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
-                                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                                        className="w-full h-full object-cover object-center" 
                                         alt="" 
                                         onError={(e) => { e.target.style.display = 'none'; }} 
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-[#111] p-1 flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity">
+                                    <div className="w-full h-full bg-[#111] p-1.5 flex items-center justify-center">
                                         <span className="text-white text-[7px] font-bold text-center break-words line-clamp-4 leading-tight">
                                             {s.desc}
                                         </span>
                                     </div>
                                 )}
                             </div>
-                            {isNativeVideo && (
-                                <div className="absolute bottom-[-4px] right-[-4px] w-5 h-5 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
-                                    <Icons.Play className="w-2.5 h-2.5 fill-black pl-[0.5px]" />
-                                </div>
-                            )}
-                            {isYT && (
-                                <div className="absolute bottom-[-4px] right-[-4px] w-5 h-5 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
+                            {(isNativeVideo || isYT) && (
+                                <div className="absolute bottom-0 right-0 w-5 h-5 bg-white text-black rounded-full flex items-center justify-center border border-black z-10">
                                     <Icons.Play className="w-2.5 h-2.5 fill-black pl-[0.5px]" />
                                 </div>
                             )}
                         </div>
-                        <span className="text-[9px] font-black text-white/70 uppercase tracking-wider group-hover:text-white transition-colors max-w-[60px] truncate">{authorName}</span>
+                        <span className="text-[9px] font-bold text-white/70 uppercase tracking-wider group-hover:text-white transition-colors max-w-[68px] truncate text-center">{authorName}</span>
                     </div>
                 );
             })}
@@ -1987,12 +1962,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
     const canDelete = isOwner || isCurrentUserFounder;
-    const cardSpacingClass = compact ? 'p-2.5 sm:p-4 mb-3 sm:mb-4' : 'p-3 sm:p-5 mb-5';
+    const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
     const metaGapClass = compact ? 'gap-1.5 sm:gap-2' : 'gap-2';
     const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-snug hover:underline cursor-pointer break-words min-w-0 max-w-full' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full';
     const handleClass = compact ? 'text-sky-100/80 text-[11px] sm:text-[13px] leading-snug break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
-    const bodyTextClass = compact ? 'post-card-body-text text-[13px] sm:text-[15px] text-white/95 leading-[1.5] sm:leading-relaxed font-normal whitespace-pre-wrap break-words pb-0.5' : 'post-card-body-text text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
+    const bodyTextClass = compact ? 'post-card-body-text text-[13px] sm:text-[14px] text-white/95 leading-[1.5] font-normal whitespace-pre-wrap break-words pb-0.5' : 'post-card-body-text text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-normal whitespace-pre-wrap break-words pr-1 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-300 border border-transparent active:scale-[0.98]' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 border border-transparent';
     const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
@@ -2118,13 +2093,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
-                        <div className={`post-card-avatar ${compact ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} relative group cursor-pointer`} onClick={() => onViewProfile(author)}>
-                            {/* Liquid Glass Background */}
-                            <div className="post-card-avatar-ring absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                            {/* Inner Profile Avatar */}
-                            <div className="post-card-avatar-image-wrap absolute inset-[3px] rounded-full overflow-hidden">
-                                <ProfileAvatar user={author} className="opacity-90 object-cover w-full h-full" cacheKey={cacheKey} />
-                            </div>
+                        <div className={`post-card-avatar ${compact ? 'w-10 h-10 sm:w-11 sm:h-11' : 'w-11 h-11 sm:w-12 sm:h-12'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={() => onViewProfile(author)}>
+                            <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
                     </div>
 
@@ -3189,15 +3159,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 8 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative w-[92%] max-w-[380px] sm:max-w-[440px] max-h-[75dvh] sm:max-h-[86vh] rounded-2xl overflow-hidden flex flex-col border border-white/10 bg-[var(--app-bg)] shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+                className="relative w-[94%] max-w-[400px] sm:max-w-[440px] max-h-[80dvh] sm:max-h-[86vh] rounded-2xl overflow-hidden flex flex-col border border-white/10 bg-[var(--app-bg)] shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
             >
                 {/* HEADER */}
-                <div className="px-3.5 sm:px-5 py-2.5 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0">
+                <div className="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                         <Icons.Settings className="w-4 h-4 sm:w-5 sm:h-5 text-white/60 shrink-0" />
                         <div className="min-w-0">
-                            <h2 className="font-bold text-[14px] sm:text-[16px] text-white leading-none truncate">{t('SETTINGS')}</h2>
-                            <div className="hidden sm:block text-[10px] text-gray-500 mt-0.5 truncate">{t('SETTINGS_SUBTITLE')}</div>
+                            <h2 className="font-bold text-[15px] sm:text-[16px] text-white leading-none truncate">{t('SETTINGS')}</h2>
+                            <div className="text-[10px] text-gray-500 mt-0.5 truncate">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
                     <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center rounded-full hover:bg-white/[0.06] active:scale-95 transition-all touch-manipulation shrink-0">
@@ -3206,7 +3176,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-3 sm:px-5 py-2.5 sm:py-4 space-y-3 sm:space-y-4 relative z-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-5 py-3 sm:py-4 space-y-3.5 sm:space-y-4 relative z-10">
 
                     {/* ── PRIVACY ── */}
                     <section>
@@ -4609,32 +4579,13 @@ const ProfileModal = ({
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
                                                 {isMe && (
                                                     <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] rounded-full relative group">
-                                                            {/* Animated Bubbles */}
-                                                            <div className="absolute inset-0 overflow-hidden rounded-full">
-                                                                {[0,1,2,3,4].map(i => (
-                                                                    <div 
-                                                                        key={i}
-                                                                        className="absolute rounded-full bg-white/10 animate-float"
-                                                                        style={{ 
-                                                                            left: `${15 + i * 18}%`, 
-                                                                            width: `${6 + (i % 3) * 4}px`, 
-                                                                            height: `${6 + (i % 3) * 4}px`,
-                                                                            animationDelay: `${i * 0.6}s`, 
-                                                                            bottom: '-10px'
-                                                                        }}
-                                                                    />
-                                                                ))}
-                                                            </div>
-                                                            {/* Liquid Glass Background */}
-                                                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                                            {/* Inner Profile Avatar */}
+                                                        <div className="w-[68px] h-[68px] sm:w-[72px] sm:h-[72px] rounded-full relative group border-2 border-dashed border-white/25 bg-white/[0.03]">
                                                             <div className="absolute inset-[3px] rounded-full overflow-hidden bg-[#050505]">
-                                                                <ProfileAvatar user={currentUser} className="opacity-40 object-cover w-full h-full" />
+                                                                <ProfileAvatar user={currentUser} className="object-cover w-full h-full" />
+                                                                <div className="absolute inset-0 bg-black/30" />
                                                             </div>
-                                                            {/* Add Icon */}
                                                             <div className="absolute inset-0 flex items-center justify-center z-10">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 group-active:scale-95 transition-all duration-300">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
@@ -4654,8 +4605,8 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2px] bg-gradient-to-tr from-[var(--gold-primary)] via-white to-white/40 shadow-lg relative transition-transform duration-300 group-hover:scale-105 transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black relative">
+                                                            <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transition-transform duration-300 group-hover:scale-105 group-active:scale-95 transform-gpu cursor-pointer">
+                                                                <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
                                                                         <video
@@ -4716,8 +4667,8 @@ const ProfileModal = ({
                                         ) : (
                                             <div className="profile-feed-shell w-full">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
-                                                    <div key={dateLabel} className="animate-fade-in group mb-12 w-full">
-                                                        <div className="space-y-8">
+                                                    <div key={dateLabel} className="animate-fade-in group mb-8 w-full">
+                                                        <div className="space-y-4">
                                                             <AnimatePresence mode="popLayout">
                                                                 {groupPosts.map(p => (
                                                                     <motion.div
@@ -4738,6 +4689,7 @@ const ProfileModal = ({
                                                                             post={p}
                                                                             user={currentUser}
                                                                             allUsers={allUsers}
+                                                                            compact
                                                                             onLike={onLike}
                                                                             onDislike={onDislike}
                                                                             onRepost={onRepost}
@@ -5427,6 +5379,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         post={p} 
                                         user={null} 
                                         allUsers={[]} 
+                                        compact
                                         forcePause={false} 
                                         onHashtagClick={() => {}} 
                                         onLike={() => {}} 
