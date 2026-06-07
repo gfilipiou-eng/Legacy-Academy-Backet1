@@ -3001,18 +3001,15 @@ const ShareSettingLabel = ({ t }) => (
     </div>
 );
 
-const SectionHeader = ({ color, label }) => (
-    <div className="flex items-center gap-3 mb-4">
-        <div className={`w-1 h-4 rounded-full ${color}`} />
-        <h3 className="text-[10px] font-black text-white/50 uppercase tracking-[0.25em]">{label}</h3>
-    </div>
+const SectionHeader = ({ label }) => (
+    <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-2 px-0.5">{label}</h3>
 );
 
-const SettingRow = ({ label, desc, children, hoverColor = '' }) => (
-    <div className={`flex items-center justify-between gap-4 p-4 bg-white/[0.03] rounded-2xl border border-white/5 ${hoverColor} group`}>
+const SettingRow = ({ label, desc, children }) => (
+    <div className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02]">
         <div className="flex-1 min-w-0">
-            {typeof label === 'string' ? <div className="text-sm font-bold text-white truncate">{label}</div> : label}
-            {desc && <div className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">{desc}</div>}
+            {typeof label === 'string' ? <div className="text-[13px] font-semibold text-white truncate">{label}</div> : label}
+            {desc && <div className="text-[10px] text-gray-500 mt-0.5 leading-snug">{desc}</div>}
         </div>
         {children}
     </div>
@@ -3170,53 +3167,60 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     };
 
     if (!isOpen) return null;
+    const languageOptions = [
+        { id: 'en', flag: '🇺🇸', labelKey: 'LANG_EN' },
+        { id: 'el', flag: '🇬🇷', labelKey: 'LANG_EL' },
+        { id: 'de', flag: '🇩🇪', labelKey: 'LANG_DE' },
+        { id: 'ru', flag: '🇷🇺', labelKey: 'LANG_RU' },
+        { id: 'cy', flag: '🇨🇾', labelKey: 'LANG_CY' },
+        { id: 'es', flag: '🇪🇸', labelKey: 'LANG_ES' },
+        { id: 'tr', flag: '🇹🇷', labelKey: 'LANG_TR' },
+        { id: 'fr', flag: '🇫🇷', labelKey: 'LANG_FR' },
+    ];
     return (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 overflow-hidden">
+        <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center sm:p-4">
             <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose}
+                className="absolute inset-0 bg-black/75" onClick={onClose}
             />
 
             <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="relative w-[95%] sm:w-full max-w-[420px] max-h-[90vh]  rounded-[2rem] overflow-hidden flex flex-col backdrop-blur-3xl will-change-transform"
-                style={{ backgroundColor: 'var(--glass-bg)' }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 24 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                className="relative w-full sm:w-[95%] max-w-[420px] h-[92dvh] sm:h-auto sm:max-h-[88vh] rounded-t-[1.25rem] sm:rounded-[1.25rem] overflow-hidden flex flex-col border border-white/10 bg-[var(--app-bg)]"
             >
-
+                <div className="sm:hidden w-9 h-1 bg-white/15 rounded-full mx-auto mt-2.5 shrink-0" />
 
                 {/* HEADER */}
-                <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-[var(--gold-primary)]/10 rounded-xl">
-                            <Icons.Settings className="w-5 h-5 text-[var(--gold-primary)]" />
-                        </div>
-                        <div>
-                            <h2 className="font-black uppercase tracking-[0.2em] text-[13px] text-white leading-none">{t('SETTINGS')}</h2>
-                            <div className="text-[10px] font-medium text-gray-500 mt-0.5 tracking-wide">{t('SETTINGS_SUBTITLE')}</div>
+                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <Icons.Settings className="w-5 h-5 text-white/70 shrink-0" />
+                        <div className="min-w-0">
+                            <h2 className="font-bold text-[15px] text-white leading-none truncate">{t('SETTINGS')}</h2>
+                            <div className="text-[10px] text-gray-500 mt-0.5 truncate">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button onClick={() => { onClose(); }} className="p-0   touch-manipulation">
-                        <Icons.X className="w-4 h-4 text-white" />
+                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full hover:bg-white/[0.06] active:scale-95 transition-all touch-manipulation shrink-0">
+                        <Icons.X className="w-5 h-5 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
                     </button>
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-7 relative z-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-3 space-y-4 relative z-10">
 
-                    {/* ── ΙΔΙΩΤΙΚΟΤΗΤΑ ── */}
+                    {/* ── PRIVACY ── */}
                     <section>
-                        <SectionHeader color="bg-[var(--gold-primary)]" label={t('PRIVACY')} />
-                        <div className="space-y-2">
+                        <SectionHeader label={t('PRIVACY')} />
+                        <div className="space-y-1.5">
                             <SettingRow label={t('PRIVATE_TITLE')} desc={t('PRIVATE_DESC_SHORT')}>
                                 <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
                             </SettingRow>
-                            <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')} hoverColor="">
+                            <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')}>
                                 <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
                             </SettingRow>
-                            <SettingRow label={<ShareSettingLabel t={t} />} desc={t('SHARE_PROFILE_DESC', 'Turn this off if you want to hide the share button on your profile.')} hoverColor="">
+                            <SettingRow label={<ShareSettingLabel t={t} />} desc={t('SHARE_PROFILE_DESC')}>
                                 <Toggle
                                     active={showProfileShareButton}
                                     onToggle={() => {
@@ -3231,146 +3235,135 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         </div>
                     </section>
 
-                    {/* ── ΑΙΣΘΗΤΙΚΗ ── */}
+                    {/* ── AESTHETICS ── */}
                     <section>
-                        <SectionHeader color="bg-purple-500" label={t('AESTHETICS')} />
-                        <div className="p-5 bg-white/[0.02] rounded-2xl border border-white/5">
-                            <div className="space-y-4">
-                                <div className="space-y-2 mt-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex flex-col leading-tight">
-                                            <span>{t('UI_ZOOM')}</span>
-                                        </span>
-                                        <span className="text-[10px] font-black text-gray-400">
-                                            {Math.round(zoomLevel * 100)}%
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min="0.95"
-                                        max="1"
-                                        step="0.01"
-                                        value={zoomLevel}
-                                        onChange={(e) => {
-                                            const val = parseFloat(e.target.value);
-                                            setZoomLevel(val);
-                                            applyZoom(val);
-                                        }}
-                                        onPointerUp={() => handleSave('zoom', zoomLevel)}
-                                        onKeyUp={() => handleSave('zoom', zoomLevel)}
-                                        className="w-full accent-[var(--gold-primary)]"
-                                    />
+                        <SectionHeader label={t('AESTHETICS')} />
+                        <div className="space-y-3">
+                            <div className="px-1">
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('UI_ZOOM')}</span>
+                                    <span className="text-[10px] font-bold text-gray-400 tabular-nums">{Math.round(zoomLevel * 100)}%</span>
                                 </div>
-                                <div className="space-y-2">
-                                    <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
-                                        {t('THEME')}
-                                    </div>
-                                    <div className="theme-swatch-grid">
-                                        {THEME_PALETTE.map(({ value, labelKey }) => {
-                                            const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
-                                            return (
-                                                <button
-                                                    key={value}
-                                                    type="button"
-                                                    onClick={() => {
-                                                        applyTheme(value);
-                                                        handleSave('theme', value);
-                                                    }}
-                                                    className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-1.5"
-                                                >
-                                                    <span
-                                                        className={`theme-swatch-dot block w-10 h-10 rounded-full border-2 transition-all duration-200 ${active ? 'border-[var(--gold-primary)] border-[3px] scale-115' : 'border-white/25 opacity-85 hover:opacity-100 hover:scale-105'}`}
-                                                        style={{ backgroundColor: value }}
-                                                    />
-                                                    <span className={`text-[9px] font-bold uppercase tracking-wide text-center leading-tight max-w-[72px] ${active ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`}>
-                                                        {t(labelKey) || t('COLOR_WHITE')}
-                                                    </span>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+                                <input
+                                    type="range"
+                                    min="0.95"
+                                    max="1"
+                                    step="0.01"
+                                    value={zoomLevel}
+                                    onChange={(e) => {
+                                        const val = parseFloat(e.target.value);
+                                        setZoomLevel(val);
+                                        applyZoom(val);
+                                    }}
+                                    onPointerUp={() => handleSave('zoom', zoomLevel)}
+                                    onKeyUp={() => handleSave('zoom', zoomLevel)}
+                                    className="w-full accent-[var(--gold-primary)]"
+                                />
+                            </div>
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-0.5">{t('THEME')}</div>
+                                <div className="theme-swatch-grid">
+                                    {THEME_PALETTE.map(({ value, labelKey }) => {
+                                        const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
+                                        return (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                onClick={() => {
+                                                    applyTheme(value);
+                                                    handleSave('theme', value);
+                                                }}
+                                                className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-1"
+                                            >
+                                                <span
+                                                    className={`theme-swatch-dot block w-9 h-9 rounded-full border-2 transition-all duration-200 ${active ? 'border-white scale-110' : 'border-white/20 opacity-80 hover:opacity-100'}`}
+                                                    style={{ backgroundColor: value }}
+                                                />
+                                                <span className={`text-[8px] font-semibold uppercase tracking-wide text-center leading-tight max-w-[68px] truncate ${active ? 'text-white' : 'text-gray-500'}`}>
+                                                    {t(labelKey)}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
-                                <div className="space-y-2">
-                                    <div className="text-[11px] font-black text-gray-300 uppercase tracking-widest pl-1">
-                                        {t('BACKGROUND')}
-                                    </div>
-                                    <div className="grid grid-cols-4 gap-2">
-                                        {BACKGROUND_MODES.map(({ value, labelKey, color, className }) => {
-                                            const active = getBackgroundMode(user) === value;
-                                            return (
-                                                <button
-                                                    key={value}
-                                                    type="button"
-                                                    onClick={() => handleSave('background', value)}
-                                                    className={`settings-tile-btn relative overflow-hidden rounded-2xl border transition-all duration-200 ${
-                                                        active
-                                                            ? 'border-[var(--gold-primary)]'
-                                                            : 'border-white/10 hover:border-white/20'
-                                                    }`}
-                                                >
-                                                    <div className={`w-full h-14 relative ${className}`} style={{ backgroundColor: color }} />
-                                                    <div className={`px-1.5 py-2 text-center ${active ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>
-                                                        <div className="text-[8px] font-bold uppercase tracking-wide leading-tight">{t(labelKey, labelKey.replace(/_/g, ' '))}</div>
-                                                    </div>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+                            </div>
+                            <div>
+                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-0.5">{t('BACKGROUND')}</div>
+                                <div className="grid grid-cols-4 gap-1.5">
+                                    {BACKGROUND_MODES.map(({ value, labelKey, color, className }) => {
+                                        const active = getBackgroundMode(user) === value;
+                                        return (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                onClick={() => handleSave('background', value)}
+                                                className={`settings-tile-btn relative overflow-hidden rounded-xl border transition-all duration-200 ${
+                                                    active ? 'border-white/40' : 'border-white/10 hover:border-white/20'
+                                                }`}
+                                            >
+                                                <div className={`w-full h-10 relative ${className}`} style={{ backgroundColor: color }} />
+                                                <div className={`px-1 py-1.5 text-center ${active ? 'text-white' : 'text-gray-500'}`}>
+                                                    <div className="text-[7px] font-semibold uppercase tracking-wide leading-tight line-clamp-2">{t(labelKey)}</div>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {/* ── ΓΝΩΣΗ (Language) ── */}
+                    {/* ── LANGUAGE ── */}
                     <section>
-                        <SectionHeader color="bg-blue-500" label={t('COGNITION')} />
-                        <div className="grid grid-cols-4 gap-2">
-                            {[
-                                { id: 'en', flag: '🇺🇸', label: 'EN', name: 'English' }, { id: 'el', flag: '🇬🇷', label: 'EL', name: 'Ελληνικά' },
-                                { id: 'de', flag: '🇩🇪', label: 'DE', name: 'Deutsch' }, { id: 'ru', flag: '🇷🇺', label: 'RU', name: 'Русский' },
-                                { id: 'cy', flag: '🇨🇾', label: 'CY', name: 'Κυπριακά' }, { id: 'es', flag: '🇪🇸', label: 'ES', name: 'Español' },
-                                { id: 'tr', flag: '🇹🇷', label: 'TR', name: 'Türkçe' }, { id: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' }
-                            ].map(l => (
-                                <button key={l.id} type="button" style={{ WebkitTapHighlightColor: 'transparent' }} disabled={pendingLanguage === l.id} onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`settings-tile-btn py-3 rounded-[18px] border flex flex-col items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer touch-manipulation relative overflow-hidden ${pendingLanguage === l.id ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/20 shadow-[0_12px_24px_rgba(0,0,0,0.28)]' : 'border-white/5 bg-white/[0.02] hover:bg-white/10 hover:border-white/20'}`}
+                        <SectionHeader label={t('COGNITION')} />
+                        <div className="grid grid-cols-4 gap-1.5">
+                            {languageOptions.map(l => (
+                                <button
+                                    key={l.id}
+                                    type="button"
+                                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                                    disabled={pendingLanguage === l.id}
+                                    onClick={() => { void handleLanguageSelect(l.id); }}
+                                    className={`settings-tile-btn py-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all duration-200 cursor-pointer touch-manipulation ${
+                                        pendingLanguage === l.id
+                                            ? 'border-white/30 bg-white/[0.08]'
+                                            : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/15'
+                                    }`}
                                 >
-                                    <div className={`text-xl transition-all duration-300 ${pendingLanguage === l.id ? 'scale-110' : 'opacity-90'}`}>{l.flag}</div>
-                                    <div className={`text-[9px] font-black uppercase tracking-widest ${pendingLanguage === l.id ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{l.label}</div>
+                                    <div className="text-lg leading-none">{l.flag}</div>
+                                    <div className={`text-[8px] font-bold uppercase tracking-wide text-center leading-tight px-0.5 line-clamp-2 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-500'}`}>
+                                        {t(l.labelKey)}
+                                    </div>
                                 </button>
                             ))}
                         </div>
                     </section>
 
-                    {/* ── ΛΕΙΤΟΥΡΓΙΕΣ ── */}
-                    <section className="pt-2 border-t border-white/5">
-                        <SectionHeader color="bg-red-600" label={t('OPERATIONS')} />
-                        <div className="space-y-2">
+                    {/* ── OPERATIONS ── */}
+                    <section className="pt-1 border-t border-white/10">
+                        <SectionHeader label={t('OPERATIONS')} />
+                        <div className="space-y-1.5">
                             {showDanger ? (
-                                <div className="p-5 bg-red-950/20 rounded-2xl border border-red-500/20 text-center animate-pop-in">
-                                    <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-red-500"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
-                                        {t('DANGER_ZONE')}
-                                    </div>
+                                <div className="p-4 bg-red-950/20 rounded-xl border border-red-500/20 text-center">
+                                    <div className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-3">{t('DANGER_ZONE')}</div>
                                     <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                        className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-black text-[10px] tracking-widest hover:from-red-500 hover:to-red-700  shadow-lg  uppercase">
+                                        className="w-full py-2.5 bg-red-600 text-white rounded-xl font-bold text-[10px] tracking-wider uppercase active:scale-[0.98] transition-transform">
                                         {t('DELETE_FOREVER')}
                                     </button>
-                                    <button onClick={() => setShowDanger(false)} className="mt-3 text-[9px] font-black text-gray-500 uppercase tracking-widest  ">{t('CANCEL')}</button>
+                                    <button onClick={() => setShowDanger(false)} className="mt-2 text-[9px] font-bold text-gray-500 uppercase tracking-wider">{t('CANCEL')}</button>
                                 </div>
                             ) : (
-                                <button onClick={() => setShowDanger(true)} className="w-full py-4 bg-white/[0.02]  rounded-2xl border border-white/5 text-gray-500   text-[10px] font-black tracking-widest uppercase flex items-center justify-center gap-3">
+                                <button onClick={() => setShowDanger(true)} className="w-full py-3 rounded-xl border border-white/[0.06] bg-white/[0.02] text-gray-500 text-[10px] font-bold tracking-wider uppercase active:scale-[0.98] transition-transform">
                                     {t('UNCOVER_RESTRICTED_OPS')}
                                 </button>
                             )}
 
-                            <button onClick={logout} className="w-full flex items-center justify-between p-4 bg-white/[0.03]  rounded-2xl border border-white/5   group ">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:text-white">
-                                        <Icons.Logout className="w-4 h-4 text-red-500" />
-                                    </div>
-                                    <span className="text-xs font-black text-white/80 group-hover:text-white uppercase tracking-[0.2em]">{t('LOGOUT')}</span>
+                            <button onClick={logout} className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] group active:scale-[0.98] transition-transform">
+                                <div className="flex items-center gap-2.5">
+                                    <Icons.Logout className="w-4 h-4 text-red-500 shrink-0" />
+                                    <span className="text-[12px] font-bold text-white/80 group-hover:text-white uppercase tracking-wider">{t('LOGOUT')}</span>
                                 </div>
-                                <Icons.ArrowRight className="w-4 h-4 text-white/10 group-hover:text-white group-hover:translate-x-1" />
+                                <Icons.ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
                             </button>
                         </div>
                     </section>
@@ -3378,10 +3371,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 </div>
 
                 {saving && (
-                    <div className="absolute top-5 right-16 pointer-events-none">
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 backdrop-blur-md">
-                            <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full animate-ping" />
-                            <span className="text-[9px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">{t('SYNCING')}</span>
+                    <div className="absolute top-3 right-14 pointer-events-none">
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10">
+                            <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full animate-pulse" />
+                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{t('SYNCING')}</span>
                         </div>
                     </div>
                 )}
@@ -7705,7 +7698,7 @@ const App = () => {
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
                         </header>
-                        <div id="zoomable-content" className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto pb-[140px]">
+                        <div id="zoomable-content" className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto pb-[158px]">
                             {activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
@@ -7921,7 +7914,7 @@ const App = () => {
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
                         <button
                             onClick={scrollToTop}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-2xl border border-[#ffffff]/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] backdrop-blur-2xl border border-[#ffffff]/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
                             <Icons.ArrowUp className="w-8 h-8 sm:w-10 sm:h-10" />
                         </button>
@@ -7931,7 +7924,7 @@ const App = () => {
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
                         <button
                             onClick={() => { setIsCreateOpen(true); }}
-                            className="fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] shadow-[0_8px_32px_rgba(0,0,0,0.8)] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
                             <Icons.Compose className="w-8 h-8 sm:w-10 sm:h-10" />
                         </button>
