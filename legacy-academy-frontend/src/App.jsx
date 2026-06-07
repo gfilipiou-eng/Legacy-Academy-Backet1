@@ -3006,10 +3006,10 @@ const SectionHeader = ({ label }) => (
 );
 
 const SettingRow = ({ label, desc, children }) => (
-    <div className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+    <div className="flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg border border-white/[0.06] bg-white/[0.02]">
         <div className="flex-1 min-w-0">
-            {typeof label === 'string' ? <div className="text-[13px] font-semibold text-white truncate">{label}</div> : label}
-            {desc && <div className="text-[10px] text-gray-500 mt-0.5 leading-snug">{desc}</div>}
+            {typeof label === 'string' ? <div className="text-[12px] font-semibold text-white truncate">{label}</div> : label}
+            {desc && <div className="text-[9px] text-gray-500 mt-0.5 leading-snug line-clamp-2">{desc}</div>}
         </div>
         {children}
     </div>
@@ -3178,37 +3178,32 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         { id: 'fr', flag: '🇫🇷', labelKey: 'LANG_FR' },
     ];
     return (
-        <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center sm:p-4">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-3 sm:p-4">
             <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/75" onClick={onClose}
+                className="absolute inset-0 bg-black/70" onClick={onClose}
             />
 
             <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 24 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                className="relative w-full sm:w-[95%] max-w-[420px] h-[92dvh] sm:h-auto sm:max-h-[88vh] rounded-t-[1.25rem] sm:rounded-[1.25rem] overflow-hidden flex flex-col border border-white/10 bg-[var(--app-bg)]"
+                initial={{ opacity: 0, scale: 0.97, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97, y: 8 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                className="relative w-[92%] max-w-[380px] max-h-[75dvh] sm:max-h-[82vh] rounded-2xl overflow-hidden flex flex-col border border-white/10 bg-[var(--app-bg)] shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
             >
-                <div className="sm:hidden w-9 h-1 bg-white/15 rounded-full mx-auto mt-2.5 shrink-0" />
-
                 {/* HEADER */}
-                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                        <Icons.Settings className="w-5 h-5 text-white/70 shrink-0" />
-                        <div className="min-w-0">
-                            <h2 className="font-bold text-[15px] text-white leading-none truncate">{t('SETTINGS')}</h2>
-                            <div className="text-[10px] text-gray-500 mt-0.5 truncate">{t('SETTINGS_SUBTITLE')}</div>
-                        </div>
+                <div className="px-3.5 py-2.5 border-b border-white/10 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Icons.Settings className="w-4 h-4 text-white/60 shrink-0" />
+                        <h2 className="font-bold text-[14px] text-white leading-none truncate">{t('SETTINGS')}</h2>
                     </div>
-                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full hover:bg-white/[0.06] active:scale-95 transition-all touch-manipulation shrink-0">
-                        <Icons.X className="w-5 h-5 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
+                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full hover:bg-white/[0.06] active:scale-95 transition-all touch-manipulation shrink-0">
+                        <Icons.X className="w-4 h-4 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
                     </button>
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-3 space-y-4 relative z-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar px-3 py-2.5 space-y-3 relative z-10">
 
                     {/* ── PRIVACY ── */}
                     <section>
@@ -3276,7 +3271,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-1"
                                             >
                                                 <span
-                                                    className={`theme-swatch-dot block w-9 h-9 rounded-full border-2 transition-all duration-200 ${active ? 'border-white scale-110' : 'border-white/20 opacity-80 hover:opacity-100'}`}
+                                                    className={`theme-swatch-dot block w-7 h-7 rounded-full border-2 transition-all duration-200 ${active ? 'border-white scale-110' : 'border-white/20 opacity-80 hover:opacity-100'}`}
                                                     style={{ backgroundColor: value }}
                                                 />
                                                 <span className={`text-[8px] font-semibold uppercase tracking-wide text-center leading-tight max-w-[68px] truncate ${active ? 'text-white' : 'text-gray-500'}`}>
@@ -3301,9 +3296,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     active ? 'border-white/40' : 'border-white/10 hover:border-white/20'
                                                 }`}
                                             >
-                                                <div className={`w-full h-10 relative ${className}`} style={{ backgroundColor: color }} />
-                                                <div className={`px-1 py-1.5 text-center ${active ? 'text-white' : 'text-gray-500'}`}>
-                                                    <div className="text-[7px] font-semibold uppercase tracking-wide leading-tight line-clamp-2">{t(labelKey)}</div>
+                                                <div className={`w-full h-8 relative ${className}`} style={{ backgroundColor: color }} />
+                                                <div className={`px-0.5 py-1 text-center ${active ? 'text-white' : 'text-gray-500'}`}>
+                                                    <div className="text-[6.5px] font-semibold uppercase tracking-wide leading-tight line-clamp-2">{t(labelKey)}</div>
                                                 </div>
                                             </button>
                                         );
@@ -3324,14 +3319,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     style={{ WebkitTapHighlightColor: 'transparent' }}
                                     disabled={pendingLanguage === l.id}
                                     onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`settings-tile-btn py-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all duration-200 cursor-pointer touch-manipulation ${
+                                    className={`settings-tile-btn py-1.5 rounded-lg border flex flex-col items-center justify-center gap-0.5 transition-all duration-200 cursor-pointer touch-manipulation ${
                                         pendingLanguage === l.id
                                             ? 'border-white/30 bg-white/[0.08]'
                                             : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/15'
                                     }`}
                                 >
-                                    <div className="text-lg leading-none">{l.flag}</div>
-                                    <div className={`text-[8px] font-bold uppercase tracking-wide text-center leading-tight px-0.5 line-clamp-2 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-500'}`}>
+                                    <div className="text-base leading-none">{l.flag}</div>
+                                    <div className={`text-[7px] font-bold uppercase tracking-wide text-center leading-tight px-0.5 line-clamp-2 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-500'}`}>
                                         {t(l.labelKey)}
                                     </div>
                                 </button>
