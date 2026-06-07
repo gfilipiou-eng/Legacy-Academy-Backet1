@@ -2943,43 +2943,61 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 };
 
 const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
-    const colors = {
-        gold: { on: 'bg-white border-white', dot: '' },
-        blue: { on: 'bg-blue-600 border-blue-500', dot: '' },
-    };
-    const c = colors[color] || colors.gold;
+    const trackActive = color === 'blue'
+        ? 'bg-[#1D9BF0] border-[#1D9BF0]'
+        : 'bg-white border-white';
+    const knobActive = color === 'blue' ? 'bg-white' : 'bg-[#0a0a0a]';
+
     return (
-        <div
-            onClick={() => !saving && onToggle()}
-            className={`relative w-12 h-7 rounded-full transition-all duration-300 cursor-pointer border shrink-0 ${active ? c.on : 'bg-black border-white/20'}`}
+        <button
+            type="button"
+            role="switch"
+            aria-checked={active}
+            disabled={saving}
+            onClick={() => onToggle()}
+            className={`settings-toggle relative w-[58px] h-[34px] sm:w-[52px] sm:h-[30px] rounded-full border transition-all duration-300 ease-out shrink-0 touch-manipulation outline-none ${
+                active ? trackActive : 'bg-white/[0.12] border-white/15'
+            } ${saving ? 'opacity-45 cursor-not-allowed' : 'cursor-pointer active:scale-[0.96]'}`}
         >
-            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full ${active ? 'bg-black' : 'bg-white'} shadow-sm transition-all duration-300 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
-        </div>
+            <span
+                className={`settings-toggle-knob absolute top-[3px] left-[3px] w-[26px] h-[26px] sm:w-[22px] sm:h-[22px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                    active
+                        ? `translate-x-[24px] sm:translate-x-[22px] ${knobActive} shadow-[0_2px_8px_rgba(0,0,0,0.35)]`
+                        : 'translate-x-0 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.4)]'
+                }`}
+            />
+        </button>
     );
 };
 
 const ShareSettingLabel = ({ t }) => (
-    <div className="flex items-center gap-2 min-w-0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white shrink-0">
+    <div className="flex items-center gap-2.5 min-w-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/80 shrink-0">
             <circle cx="18" cy="5" r="3" />
             <circle cx="6" cy="12" r="3" />
             <circle cx="18" cy="19" r="3" />
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
         </svg>
-        <span className="text-sm font-bold text-white truncate">{t('SHARE_PROFILE_BUTTON', 'Share Button')}</span>
+        <span className="text-[16px] sm:text-[15px] font-normal text-white leading-snug">{t('SHARE_PROFILE_BUTTON', 'Share Button')}</span>
     </div>
 );
 
 const SectionHeader = ({ label }) => (
-    <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-2 px-0.5">{label}</h3>
+    <h3 className="settings-section-label text-[13px] sm:text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">{label}</h3>
+);
+
+const SettingsGroup = ({ children, className = '' }) => (
+    <div className={`settings-ios-group rounded-[14px] sm:rounded-2xl overflow-hidden bg-white/[0.06] border border-white/10 divide-y divide-white/10 ${className}`}>
+        {children}
+    </div>
 );
 
 const SettingRow = ({ label, desc, children }) => (
-    <div className="flex items-center justify-between gap-2.5 sm:gap-3 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl border border-white/[0.06] bg-white/[0.02]">
-        <div className="flex-1 min-w-0">
-            {typeof label === 'string' ? <div className="text-[12px] sm:text-[13px] font-semibold text-white truncate">{label}</div> : label}
-            {desc && <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 leading-snug line-clamp-2">{desc}</div>}
+    <div className="flex items-center justify-between gap-4 px-4 py-3.5 sm:py-3 min-h-[54px] sm:min-h-[48px]">
+        <div className="flex-1 min-w-0 pr-2">
+            {typeof label === 'string' ? <div className="text-[16px] sm:text-[15px] font-normal text-white leading-snug">{label}</div> : label}
+            {desc && <div className="text-[13px] sm:text-[12px] text-gray-400 mt-1 leading-snug">{desc}</div>}
         </div>
         {children}
     </div>
@@ -3159,29 +3177,29 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 8 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative w-[94%] max-w-[400px] sm:max-w-[440px] max-h-[80dvh] sm:max-h-[86vh] rounded-2xl overflow-hidden flex flex-col border border-white/10 bg-[var(--app-bg)] shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+                className="relative w-[96%] max-w-[420px] sm:max-w-[440px] max-h-[88dvh] sm:max-h-[86vh] rounded-[20px] sm:rounded-2xl overflow-hidden flex flex-col border border-white/10 bg-[#1c1c1e] sm:bg-[var(--app-bg)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]"
             >
                 {/* HEADER */}
-                <div className="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                        <Icons.Settings className="w-4 h-4 sm:w-5 sm:h-5 text-white/60 shrink-0" />
+                <div className="px-5 sm:px-5 py-4 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#1c1c1e] sm:bg-transparent">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <Icons.Settings className="w-5 h-5 text-[#1D9BF0] shrink-0" />
                         <div className="min-w-0">
-                            <h2 className="font-bold text-[15px] sm:text-[16px] text-white leading-none truncate">{t('SETTINGS')}</h2>
-                            <div className="text-[10px] text-gray-500 mt-0.5 truncate">{t('SETTINGS_SUBTITLE')}</div>
+                            <h2 className="font-bold text-[20px] sm:text-[17px] text-white leading-tight">{t('SETTINGS')}</h2>
+                            <div className="text-[13px] sm:text-[11px] text-gray-400 mt-0.5">{t('SETTINGS_SUBTITLE')}</div>
                         </div>
                     </div>
-                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center rounded-full hover:bg-white/[0.06] active:scale-95 transition-all touch-manipulation shrink-0">
-                        <Icons.X className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
+                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-white/[0.08] active:scale-95 transition-all touch-manipulation shrink-0">
+                        <Icons.X className="w-5 h-5 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
                     </button>
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-5 py-3 sm:py-4 space-y-3.5 sm:space-y-4 relative z-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-5 py-4 sm:py-4 space-y-5 sm:space-y-4 relative z-10">
 
                     {/* ── PRIVACY ── */}
                     <section>
                         <SectionHeader label={t('PRIVACY')} />
-                        <div className="space-y-1.5">
+                        <SettingsGroup>
                             <SettingRow label={t('PRIVATE_TITLE')} desc={t('PRIVATE_DESC_SHORT')}>
                                 <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
                             </SettingRow>
@@ -3200,17 +3218,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     color="blue"
                                 />
                             </SettingRow>
-                        </div>
+                        </SettingsGroup>
                     </section>
 
                     {/* ── AESTHETICS ── */}
                     <section>
                         <SectionHeader label={t('AESTHETICS')} />
-                        <div className="space-y-3">
-                            <div className="px-1">
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('UI_ZOOM')}</span>
-                                    <span className="text-[10px] font-bold text-gray-400 tabular-nums">{Math.round(zoomLevel * 100)}%</span>
+                        <SettingsGroup className="mb-3">
+                            <div className="px-4 py-4">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-[16px] sm:text-[14px] font-normal text-white">{t('UI_ZOOM')}</span>
+                                    <span className="text-[15px] sm:text-[13px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(zoomLevel * 100)}%</span>
                                 </div>
                                 <input
                                     type="range"
@@ -3225,12 +3243,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     }}
                                     onPointerUp={() => handleSave('zoom', zoomLevel)}
                                     onKeyUp={() => handleSave('zoom', zoomLevel)}
-                                    className="w-full accent-[var(--gold-primary)]"
+                                    className="settings-range w-full h-2 accent-[#1D9BF0]"
                                 />
                             </div>
+                        </SettingsGroup>
+                        <div className="space-y-4">
                             <div>
-                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-0.5">{t('THEME')}</div>
-                                <div className="theme-swatch-grid">
+                                <div className="settings-section-label text-[13px] font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">{t('THEME')}</div>
+                                <div className="theme-swatch-grid settings-theme-grid">
                                     {THEME_PALETTE.map(({ value, labelKey }) => {
                                         const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
                                         return (
@@ -3241,13 +3261,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     applyTheme(value);
                                                     handleSave('theme', value);
                                                 }}
-                                                className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-1"
+                                                className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-2 py-2"
                                             >
                                                 <span
-                                                    className={`theme-swatch-dot block w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 transition-all duration-200 ${active ? 'border-white scale-110' : 'border-white/20 opacity-80 hover:opacity-100'}`}
+                                                    className={`theme-swatch-dot block w-11 h-11 sm:w-9 sm:h-9 rounded-full border-[2.5px] transition-all duration-200 ${active ? 'border-white scale-105' : 'border-white/25'}`}
                                                     style={{ backgroundColor: value }}
                                                 />
-                                                <span className={`text-[8px] sm:text-[9px] font-semibold uppercase tracking-wide text-center leading-tight max-w-[68px] sm:max-w-[72px] truncate ${active ? 'text-white' : 'text-gray-500'}`}>
+                                                <span className={`text-[12px] sm:text-[10px] font-medium text-center leading-tight px-1 ${active ? 'text-white' : 'text-gray-400'}`}>
                                                     {t(labelKey)}
                                                 </span>
                                             </button>
@@ -3256,8 +3276,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </div>
                             </div>
                             <div>
-                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-0.5">{t('BACKGROUND')}</div>
-                                <div className="grid grid-cols-4 gap-1.5">
+                                <div className="settings-section-label text-[13px] font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">{t('BACKGROUND')}</div>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2">
                                     {BACKGROUND_MODES.map(({ value, labelKey, color, className }) => {
                                         const active = getBackgroundMode(user) === value;
                                         return (
@@ -3265,13 +3285,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 key={value}
                                                 type="button"
                                                 onClick={() => handleSave('background', value)}
-                                                className={`settings-tile-btn relative overflow-hidden rounded-xl border transition-all duration-200 ${
-                                                    active ? 'border-white/40' : 'border-white/10 hover:border-white/20'
+                                                className={`settings-tile-btn relative overflow-hidden rounded-[14px] border transition-all duration-200 min-h-[72px] sm:min-h-0 ${
+                                                    active ? 'border-[#1D9BF0] ring-1 ring-[#1D9BF0]/30' : 'border-white/10'
                                                 }`}
                                             >
-                                                <div className={`w-full h-8 sm:h-10 relative ${className}`} style={{ backgroundColor: color }} />
-                                                <div className={`px-0.5 sm:px-1 py-1 sm:py-1.5 text-center ${active ? 'text-white' : 'text-gray-500'}`}>
-                                                    <div className="text-[6.5px] sm:text-[7px] font-semibold uppercase tracking-wide leading-tight line-clamp-2">{t(labelKey)}</div>
+                                                <div className={`w-full h-12 sm:h-10 relative ${className}`} style={{ backgroundColor: color }} />
+                                                <div className={`px-2 py-2.5 sm:py-2 text-center ${active ? 'text-white' : 'text-gray-400'}`}>
+                                                    <div className="text-[13px] sm:text-[10px] font-medium leading-snug">{t(labelKey)}</div>
                                                 </div>
                                             </button>
                                         );
@@ -3284,7 +3304,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {/* ── LANGUAGE ── */}
                     <section>
                         <SectionHeader label={t('COGNITION')} />
-                        <div className="grid grid-cols-4 gap-1.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-2">
                             {languageOptions.map(l => (
                                 <button
                                     key={l.id}
@@ -3292,16 +3312,19 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     style={{ WebkitTapHighlightColor: 'transparent' }}
                                     disabled={pendingLanguage === l.id}
                                     onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`settings-tile-btn py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl border flex flex-col items-center justify-center gap-0.5 sm:gap-1 transition-all duration-200 cursor-pointer touch-manipulation ${
+                                    className={`settings-lang-btn settings-tile-btn min-h-[56px] sm:min-h-[52px] px-4 py-3.5 sm:py-3 rounded-[14px] border flex items-center gap-4 sm:gap-3 transition-all duration-200 cursor-pointer touch-manipulation ${
                                         pendingLanguage === l.id
-                                            ? 'border-white/30 bg-white/[0.08]'
-                                            : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/15'
+                                            ? 'border-[#1D9BF0] bg-[#1D9BF0]/15'
+                                            : 'border-white/10 bg-white/[0.04] active:bg-white/[0.08]'
                                     }`}
                                 >
-                                    <div className="text-base sm:text-lg leading-none">{l.flag}</div>
-                                    <div className={`text-[7px] sm:text-[8px] font-bold uppercase tracking-wide text-center leading-tight px-0.5 line-clamp-2 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-500'}`}>
+                                    <span className="text-[28px] sm:text-2xl leading-none shrink-0">{l.flag}</span>
+                                    <span className={`text-[16px] sm:text-[14px] font-medium text-left leading-snug flex-1 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-300'}`}>
                                         {t(l.labelKey)}
-                                    </div>
+                                    </span>
+                                    {pendingLanguage === l.id && (
+                                        <Icons.Check className="w-5 h-5 text-[#1D9BF0] shrink-0" strokeWidth={3} />
+                                    )}
                                 </button>
                             ))}
                         </div>
@@ -3310,28 +3333,28 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {/* ── OPERATIONS ── */}
                     <section className="pt-1 border-t border-white/10">
                         <SectionHeader label={t('OPERATIONS')} />
-                        <div className="space-y-1.5">
+                        <div className="space-y-2.5">
                             {showDanger ? (
-                                <div className="p-4 bg-red-950/20 rounded-xl border border-red-500/20 text-center">
-                                    <div className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-3">{t('DANGER_ZONE')}</div>
+                                <div className="p-5 bg-red-950/25 rounded-[14px] border border-red-500/25 text-center">
+                                    <div className="text-[14px] font-semibold text-red-400 mb-4">{t('DANGER_ZONE')}</div>
                                     <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                        className="w-full py-2.5 bg-red-600 text-white rounded-xl font-bold text-[10px] tracking-wider uppercase active:scale-[0.98] transition-transform">
+                                        className="w-full py-3.5 bg-red-600 text-white rounded-[14px] font-semibold text-[15px] active:scale-[0.98] transition-transform">
                                         {t('DELETE_FOREVER')}
                                     </button>
-                                    <button onClick={() => setShowDanger(false)} className="mt-2 text-[9px] font-bold text-gray-500 uppercase tracking-wider">{t('CANCEL')}</button>
+                                    <button onClick={() => setShowDanger(false)} className="mt-3 text-[14px] font-medium text-gray-400">{t('CANCEL')}</button>
                                 </div>
                             ) : (
-                                <button onClick={() => setShowDanger(true)} className="w-full py-3 rounded-xl border border-white/[0.06] bg-white/[0.02] text-gray-500 text-[10px] font-bold tracking-wider uppercase active:scale-[0.98] transition-transform">
+                                <button onClick={() => setShowDanger(true)} className="w-full py-4 rounded-[14px] border border-white/10 bg-white/[0.04] text-gray-400 text-[15px] font-medium active:scale-[0.98] transition-transform">
                                     {t('UNCOVER_RESTRICTED_OPS')}
                                 </button>
                             )}
 
-                            <button onClick={logout} className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] group active:scale-[0.98] transition-transform">
-                                <div className="flex items-center gap-2.5">
-                                    <Icons.Logout className="w-4 h-4 text-red-500 shrink-0" />
-                                    <span className="text-[12px] font-bold text-white/80 group-hover:text-white uppercase tracking-wider">{t('LOGOUT')}</span>
+                            <button onClick={logout} className="settings-ios-group w-full flex items-center justify-between px-4 py-4 rounded-[14px] border border-white/10 bg-white/[0.06] group active:scale-[0.98] transition-transform min-h-[56px]">
+                                <div className="flex items-center gap-3">
+                                    <Icons.Logout className="w-5 h-5 text-red-400 shrink-0" />
+                                    <span className="text-[16px] font-medium text-red-400">{t('LOGOUT')}</span>
                                 </div>
-                                <Icons.ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
+                                <Icons.ArrowRight className="w-5 h-5 text-white/25" />
                             </button>
                         </div>
                     </section>
