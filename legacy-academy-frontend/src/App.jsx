@@ -4150,7 +4150,7 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 touch-manipulation" placeholder={t('USERNAME_PH')} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white font-bold outline-none transition-colors duration-200 touch-manipulation" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left w-full max-w-full box-border">
@@ -4161,7 +4161,7 @@ const ProfileModal = ({
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none transition-all duration-300 whitespace-pre-wrap touch-manipulation"
+                                        className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed outline-none resize-none transition-colors duration-200 whitespace-pre-wrap touch-manipulation"
                                         placeholder={t('BIO_PH')}
                                     />
                                     <div className="text-right text-[10px] font-black text-white/20 uppercase tracking-widest pr-1">{bio?.length || 0} / 500</div>
@@ -4184,10 +4184,11 @@ const ProfileModal = ({
                                         </button>
                                     )}
                                 </div>
-                                <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-2">
-                                    {PROFILE_DESCRIPTOR_OPTIONS.map(option => {
+                                <div className="profile-descriptor-group">
+                                    {PROFILE_DESCRIPTOR_OPTIONS.map((option, idx) => {
                                         const isSelected = profileDescriptor === option.value;
                                         const OptionIcon = option.Icon;
+                                        const isLast = idx === PROFILE_DESCRIPTOR_OPTIONS.length - 1;
                                         return (
                                             <button
                                                 key={option.value}
@@ -4196,17 +4197,18 @@ const ProfileModal = ({
                                                     e.stopPropagation();
                                                     setProfileDescriptor(option.value);
                                                 }}
-                                                className={`settings-tile-btn text-left rounded-2xl border px-3 py-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer touch-manipulation relative z-10 ${isSelected ? 'border-white bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)]' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                                                className={`profile-descriptor-btn w-full text-left px-4 py-3.5 cursor-pointer relative z-10 flex items-center gap-3 ${isSelected ? 'profile-descriptor-btn-selected bg-white text-black' : 'bg-transparent text-white'} ${!isLast ? 'border-b border-white/[0.06]' : ''}`}
                                             >
-                                                <div className="flex items-center gap-3 min-w-0">
-                                                    <div className={`w-11 h-11 rounded-2xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black text-white' : option.accentClass}`}>
-                                                        <OptionIcon className="w-5 h-5" />
-                                                    </div>
-                                                    <div className="min-w-0 flex-1">
-                                                        <div className="font-black text-[12px] sm:text-[13px] uppercase tracking-wide truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
-                                                        <div className={`text-[10px] sm:text-[11px] leading-tight ${isSelected ? 'text-gray-700' : 'text-gray-400'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
-                                                    </div>
+                                                <div className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black/5 text-black' : option.accentClass}`}>
+                                                    <OptionIcon className="w-4 h-4" />
                                                 </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="font-semibold text-[15px] leading-tight truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
+                                                    <div className={`text-[13px] leading-snug mt-0.5 ${isSelected ? 'text-gray-600' : 'text-gray-500'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
+                                                </div>
+                                                {isSelected && (
+                                                    <Icons.Check className="w-5 h-5 text-[#1D9BF0] shrink-0" />
+                                                )}
                                             </button>
                                         );
                                     })}
@@ -4237,7 +4239,7 @@ const ProfileModal = ({
                                                     setFounderAffiliation(sanitizeAffiliation(e.target.value));
                                                 }}
                                                 placeholder="affiliated_username"
-                                                className="profile-edit-field w-full bg-black/25 border border-white/10 rounded-2xl py-3.5 pl-14 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 focus:border-[var(--gold-primary)] focus:bg-black/35 outline-none transition-all duration-300"
+                                                className="profile-edit-field w-full bg-black/25 border border-white/10 rounded-2xl py-3.5 pl-14 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 outline-none transition-colors duration-200"
                                             />
                                         </div>
                                         <div className="relative z-10 mt-3 flex items-start gap-2 text-[9px] text-white/42 font-bold uppercase tracking-wider">
@@ -4323,7 +4325,7 @@ const ProfileModal = ({
                                 } finally {
                                     setIsProfileSaving(false);
                                 }
-                            }} className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-neutral-200 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl">
+                            }} className="profile-edit-btn w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200">
                                 {isProfileSaving ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <div className="w-4 h-4 text-black/50">
@@ -4458,12 +4460,9 @@ const ProfileModal = ({
                             <div className="px-2 mb-6 space-y-3 mt-4 w-full">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="flex-1 relative overflow-hidden py-3.5 bg-white/[0.06] backdrop-blur-2xl rounded-2xl border border-white/10 text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white/[0.12] hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] shadow-lg flex items-center justify-center gap-2.5">
-                                            <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/20" />
-                                            <span className="relative z-10 flex items-center justify-center gap-2.5">
-                                                <Icons.Settings className="w-4 h-4" />
-                                                {t('EDIT_PROFILE')}
-                                            </span>
+                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-3.5 bg-white/[0.06] backdrop-blur-2xl rounded-2xl border border-white/10 text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] transition-colors duration-200 hover:bg-white/[0.1] hover:border-white/18 active:scale-[0.98] flex items-center justify-center gap-2.5">
+                                            <Icons.Settings className="w-4 h-4" />
+                                            {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
                                         <>

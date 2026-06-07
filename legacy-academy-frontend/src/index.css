@@ -342,6 +342,7 @@ button:active {
   text-size-adjust: 100%;
   text-align: left;
   isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
 }
 
 input.profile-edit-field {
@@ -377,6 +378,40 @@ textarea.profile-edit-field {
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+}
+
+input.profile-edit-field:focus,
+textarea.profile-edit-field:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.profile-edit-btn {
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: none !important;
+}
+
+.profile-descriptor-group {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.profile-descriptor-btn {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.profile-descriptor-btn:active {
+  transform: scale(0.985);
+}
+
+.profile-descriptor-btn:not(.profile-descriptor-btn-selected):active {
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 @media (min-width: 641px) {
