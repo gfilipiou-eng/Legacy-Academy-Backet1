@@ -816,9 +816,18 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 
 .profile-feed-shell {
   width: 100%;
+  align-self: stretch;
   background: transparent;
   max-width: 100%;
-  overflow-x: hidden;
+}
+
+.post-card-body-text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .mobile-os-action-btn:active {
@@ -1037,11 +1046,6 @@ html, body {
   .premium-post-card {
     border-radius: 14px;
     padding: 0.625rem !important;
-  }
-
-  .profile-feed-shell .premium-post-card {
-    border-radius: 12px;
-    contain-intrinsic-size: 1px 420px;
   }
 
   .profile-copy-block {

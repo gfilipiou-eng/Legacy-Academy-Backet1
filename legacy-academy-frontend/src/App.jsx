@@ -1971,7 +1971,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const metaGapClass = compact ? 'gap-1.5 sm:gap-2' : 'gap-2';
     const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-snug hover:underline cursor-pointer break-words min-w-0 max-w-full' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full';
     const handleClass = compact ? 'text-sky-100/80 text-[11px] sm:text-[13px] leading-snug break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
-    const bodyTextClass = compact ? 'text-[14px] sm:text-[16px] text-white/95 leading-[1.45] sm:leading-relaxed font-normal whitespace-pre-wrap break-words overflow-wrap-anywhere pr-0 sm:pr-2 pb-0.5' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
+    const bodyTextClass = compact ? 'post-card-body-text text-[13px] sm:text-[15px] text-white/95 leading-[1.5] sm:leading-relaxed font-normal whitespace-pre-wrap break-words pb-0.5' : 'post-card-body-text text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-300 border border-transparent active:scale-[0.98]' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 border border-transparent';
     const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
@@ -3965,7 +3965,7 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full max-w-full box-border`} style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden', overflowY: 'auto', overscrollBehaviorY: 'contain' }}>
+                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full max-w-full box-border app-main-scroll`} style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden', overflowY: 'auto', overscrollBehaviorY: 'contain' }}>
                     {activeList ? (
                         <div className="p-4 space-y-4 w-full max-w-full box-border">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -4689,7 +4689,7 @@ const ProfileModal = ({
                                         </div>
                                     )}
 
-                                    <div className="space-y-6 pb-20">
+                                    <div className="w-full self-stretch space-y-6 pb-20">
                                         {loadingPosts ? (
                                             <div className="flex flex-col items-center justify-center py-24 gap-4">
                                                 <Icons.Loader className="w-12 h-12 text-[var(--gold-primary)]" />
@@ -4703,10 +4703,10 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="profile-feed-shell flex flex-col w-full px-0.5 sm:px-0">
+                                            <div className="profile-feed-shell w-full self-stretch -mx-2 px-2 sm:mx-0 sm:px-0">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
-                                                    <div key={dateLabel} className="animate-fade-in group mb-6 sm:mb-12 w-full">
-                                                        <div className="space-y-3 sm:space-y-8">
+                                                    <div key={dateLabel} className="animate-fade-in group mb-12 w-full">
+                                                        <div className="space-y-8">
                                                             <AnimatePresence mode="popLayout">
                                                                 {groupPosts.map(p => (
                                                                     <motion.div
@@ -4721,7 +4721,7 @@ const ProfileModal = ({
                                                                             x: -20,
                                                                             transition: { duration: 0.4 }
                                                                         }}
-                                                                        className="relative px-0.5 sm:px-0"
+                                                                        className="relative"
                                                                     >
                                                                         <PostCard
                                                                             post={p}
@@ -4745,7 +4745,6 @@ const ProfileModal = ({
                                                                             forcePause={false}
                                                                             isDeleting={deletingPostIds?.has(p._id)}
                                                                             cacheKey={imgKey}
-                                                                            compact
                                                                         />
                                                                     </motion.div>
                                                                 ))}
