@@ -292,6 +292,24 @@ const getPostTextPreview = (text, maxLen = 110) => {
     return `${withoutUrls.slice(0, maxLen).trim()}…`;
 };
 
+const isPostMediaPath = (value) => {
+    const path = String(value || '').trim();
+    if (!path || path === 'undefined' || path === 'null' || path === '[object Object]') return false;
+    if (path.startsWith('blob:')) return true;
+    if (path.includes('cloudinary.com') && (path.includes('/image/upload/') || path.includes('/video/upload/'))) return true;
+    if (/^\/?uploads\//i.test(path) || path.includes('/uploads/')) return true;
+    if (isYouTubeUrl(path)) return true;
+    if (/\.(jpg|jpeg|png|gif|webp|bmp|svg|mp4|mov|webm|avi|m4v)(\?|#|$)/i.test(path)) return true;
+    if (/^https?:\/\//i.test(path)) return false;
+    if (!path.startsWith('http')) return true;
+    return false;
+};
+
+const postHasMedia = (post) => {
+    if (!post) return false;
+    return isPostMediaPath(post.image) || isPostMediaPath(post.videoUrl) || isPostMediaPath(post.thumbnailUrl);
+};
+
 const parseText = (text, onHashtagClick, onMentionClick) => {
     if (!text) return [];
     
@@ -301,29 +319,24 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
     
     return parts.map((part, i) => {
         if (part.match(urlRegex)) {
-            // It's a URL, render it directly
             const href = part.startsWith('http') ? part : `https://${part}`;
-            const displayUrl = formatDisplayUrl(part);
             return (
                 <a
                     key={`url-${i}`}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="post-link-chip my-1 inline-flex max-w-full items-center gap-2 rounded-full border border-sky-400/25 bg-sky-500/10 px-3 py-1.5 align-middle text-left text-sky-100 no-underline transition-all duration-200 hover:border-sky-300/45 hover:bg-sky-500/18 hover:text-white sm:max-w-[420px] sm:rounded-2xl sm:px-3.5 sm:py-2"
+                    className="text-[#1D9BF0] font-medium hover:underline break-all"
                     onClick={(e) => e.stopPropagation()}
                     title={href}
                 >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-400/15 text-sky-300">
-                        <Icons.Link className="w-3.5 h-3.5" />
-                    </span>
-                    <span className="min-w-0 truncate text-[12px] font-semibold normal-case tracking-normal text-white sm:text-[13px]">{displayUrl}</span>
+                    {part}
                 </a>
             );
         }
         
         // It's normal text, now we can safely parse hashtags and mentions
-        const tagRegex = /([#@][\p{L}\p{N}_]+)/gu;
+        const tagRegex = /([#@][\p{L}\p{N}_.]+)/gu;
         const subParts = part.split(tagRegex);
         
         return subParts.map((subPart, j) => {
@@ -1093,7 +1106,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     );
 });
 
-const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onRepost, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments, onViewProfile }) => {
+const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onRepost, onOpenChat, onComment, onDelete, onEdit, onDeleteComment, onEditComment, onShare, loadingActions, onClearComments, onViewProfile, onHashtagClick }) => {
     const { t, lang } = useTranslation(user);
 
     // Audio Comment State
@@ -1223,7 +1236,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
                 {/* Image Section */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
-                    {(post.image || post.videoUrl || post.thumbnailUrl) ? (
+                    {postHasMedia(post) ? (
                         (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                             <NeuralVideoPlayer
                                 src={resolveMediaUrl(post.videoUrl || post.image)}
@@ -1251,7 +1264,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </div>
                             )
                         )
-                    ) : <div className="p-10 text-center font-black text-2xl text-white italic bg-black  w-full h-full flex items-center justify-center uppercase tracking-tighter">{post.desc}</div>}
+                    ) : (
+                        <div className="p-10 text-center text-lg sm:text-2xl text-white bg-black w-full h-full flex items-center justify-center">
+                            <p className="font-medium leading-relaxed break-words whitespace-pre-wrap max-w-prose">
+                                {parseText(post.desc, (tag) => onHashtagClick?.(tag), (username) => {
+                                    const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                    if (u && onViewProfile) onViewProfile(u);
+                                })}
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Info Section */}
@@ -1892,13 +1914,14 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const isYT = isYouTubeUrl(s.videoUrl);
                 const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
                 const authorName = s.author?.username || 'Agent';
-                const storyMediaUrl = s.thumbnailUrl || s.image || s.videoUrl;
+                const hasStoryMedia = postHasMedia(s);
+                const storyMediaUrl = hasStoryMedia ? (s.thumbnailUrl || s.image || s.videoUrl) : null;
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
                         <div className={`${storySizeClass} rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transition-transform duration-300 group-hover:scale-105 group-active:scale-95 transform-gpu`}>
                             <div className="w-full h-full rounded-full overflow-hidden bg-black border border-black">
-                                {storyMediaUrl ? (
+                                {hasStoryMedia && storyMediaUrl ? (
                                     <img 
                                         src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
                                         className="w-full h-full object-cover object-center" 
@@ -1908,7 +1931,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                                 ) : (
                                     <div className="w-full h-full bg-[#111] p-1.5 flex items-center justify-center">
                                         <span className="text-white text-[7px] font-bold text-center break-words line-clamp-4 leading-tight">
-                                            {s.desc}
+                                            {getPostTextPreview(s.desc, 48)}
                                         </span>
                                     </div>
                                 )}
@@ -2141,7 +2164,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 </div>
                             )}
 
-                            {(post.image || post.videoUrl) && (
+                            {postHasMedia(post) && (
                                 <div className={mediaWrapClass}>
                                     {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                         <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh]' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause} />
@@ -3673,7 +3696,6 @@ const ProfileModal = ({
     const coverFileRef = useRef(null);
     const [coverUploading, setCoverUploading] = useState(false);
     const [profileUploading, setProfileUploading] = useState(false);
-    const [isProfileSaving, setIsProfileSaving] = useState(false);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -3733,8 +3755,8 @@ const ProfileModal = ({
     }, [displayUser, isEditing]);
 
     useEffect(() => {
-        if (!isEditing) {
-            setIsProfileSaving(false);
+        if (isEditing) {
+            profileSaveInFlightRef.current = false;
         }
     }, [isEditing]);
 
@@ -4256,8 +4278,10 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <button type="button" disabled={isProfileSaving} onClick={async () => {
-                                if (isProfileSaving || profileSaveInFlightRef.current) return;
+                            <button type="button" onClick={async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (profileSaveInFlightRef.current) return;
                                 const previousUserSnapshot = displayUser ? {
                                     ...displayUser,
                                     settings: {
@@ -4265,7 +4289,6 @@ const ProfileModal = ({
                                     }
                                 } : null;
                                 profileSaveInFlightRef.current = true;
-                                setIsProfileSaving(true);
                                 const trimmedBio = bio?.trim() || "";
                                 const trimmedUsername = editUsername?.trim() || "";
                                 const nextProfileDescriptor = normalizeProfileDescriptor(profileDescriptor || '');
@@ -4288,7 +4311,6 @@ const ProfileModal = ({
 
                                 setActiveList(null);
                                 setIsEditing(false);
-                                setIsProfileSaving(false);
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
 
                                 try {
@@ -4331,17 +4353,9 @@ const ProfileModal = ({
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
                                 } finally {
                                     profileSaveInFlightRef.current = false;
-                                    setIsProfileSaving(false);
                                 }
-                            }} className="profile-edit-btn w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200">
-                                {isProfileSaving ? (
-                                    <div className="flex items-center justify-center gap-2">
-                                        <div className="w-4 h-4 text-black/50">
-                                            <Icons.Loader />
-                                        </div>
-                                        {t('SAVING') || 'SAVING...'}
-                                    </div>
-                                ) : (t('SAVE') || 'SAVE')}
+                            }} className="profile-edit-btn w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200 touch-manipulation">
+                                {t('SAVE') || 'SAVE'}
                             </button>
                         </div>
                     ) : (
@@ -4412,7 +4426,14 @@ const ProfileModal = ({
 
                                 <div className="profile-copy-block mb-6 backdrop-blur-xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
                                     <p className="profile-copy-text text-[var(--app-text)] opacity-90 font-medium select-text italic">
-                                        {parseText(displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"))}
+                                        {parseText(
+                                            displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"),
+                                            (tag) => onHashtagClick?.(tag),
+                                            (username) => {
+                                                const u = allUsers?.find(user => String(user.username).toLowerCase() === String(username).toLowerCase());
+                                                if (u && onViewProfile) onViewProfile(u);
+                                            }
+                                        )}
                                     </p>
                                 </div>
 
@@ -4627,7 +4648,7 @@ const ProfileModal = ({
                                                 {userStories.map(s => {
                                                     const isYT = isYouTubeUrl(s.videoUrl);
                                                     const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
-                                                    const hasMedia = s.image || s.videoUrl || s.thumbnailUrl;
+                                                    const hasMedia = postHasMedia(s);
                                                     let ytThumb = null;
                                                     if (isYT) {
                                                         const yid = getYouTubeId(s.videoUrl);
@@ -4659,8 +4680,8 @@ const ProfileModal = ({
                                                                     )
                                                                 ) : (
                                                                     <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
-                                                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3">
-                                                                            {s.desc}
+                                                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3 break-words">
+                                                                            {getPostTextPreview(s.desc, 40)}
                                                                         </span>
                                                                     </div>
                                                                 )}
@@ -5191,6 +5212,23 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#ffd700';
     const [zoomImage, setZoomImage] = useState(null);
 
+    useEffect(() => {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        return () => {
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        };
+    }, []);
+
     const groupedPublicPosts = React.useMemo(() => {
         const groups = {};
         const langCode = urlLangParam || localStorage.getItem('language') || 'el';
@@ -5239,9 +5277,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const publicBackground = getBackgroundEntry(getBackgroundMode(publicUser));
 
     return (
-        <div className={`min-h-screen text-white relative overflow-x-hidden flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`} style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}>
+        <div className={`profile-page-scroll fixed inset-0 text-white overflow-y-auto overflow-x-hidden overscroll-y-contain flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`} style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color, WebkitOverflowScrolling: 'touch' }}>
             {resolvedPublicCoverPic && (
-                <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden pointer-events-none">
                     {String(resolvedPublicCoverPic).match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
                         <video src={resolvedPublicCoverPic} autoPlay loop muted playsInline preload="metadata" className="w-full h-full object-cover opacity-60" />
                     ) : (
@@ -5311,8 +5349,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* BIO CARD */}
                 {publicUser.bio && (
                     <div className="profile-copy-block mt-6 p-5 backdrop-blur-2xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
-                        <p className="profile-copy-text text-xs sm:text-sm text-[var(--app-text)] opacity-90 font-medium italic select-text">
-                            "{publicUser.bio}"
+                        <p className="profile-copy-text text-xs sm:text-sm text-[var(--app-text)] opacity-90 font-medium italic select-text whitespace-pre-wrap break-words">
+                            {parseText(publicUser.bio, null, (mention) => onNavigateProfile?.(mention))}
                         </p>
                     </div>
                 )}
@@ -5419,7 +5457,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         onDelete={() => {}} 
                                         onViewProfile={(author) => {
                                             if (author?.username) {
-                                                navigatePublicProfile(author.username);
+                                                onNavigateProfile?.(author.username);
                                             }
                                         }} 
                                         onOpenDetail={() => {}} 
@@ -6620,6 +6658,7 @@ const App = () => {
     const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || !!selectedPost;
 
     useEffect(() => {
+        if (publicProfileUsername || viewPostId) return;
         if (isAnyModalOpen) {
             const scrollY = window.scrollY;
             document.body.style.position = 'fixed';
@@ -6643,7 +6682,7 @@ const App = () => {
             document.body.style.right = '';
             document.body.style.overflow = '';
         };
-    }, [isAnyModalOpen]);
+    }, [isAnyModalOpen, publicProfileUsername, viewPostId]);
 
     const isValidObjectId = (id) => typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id);
     const sanitizeObjectId = (id) => {
@@ -7759,7 +7798,7 @@ const App = () => {
                                                                 <div className="hidden" />
                                                                 
                                                                 <div className="w-full aspect-[4/5] relative bg-black overflow-hidden">
-                                                                    {(post.image || post.videoUrl || post.thumbnailUrl) ? (
+                                                                    {postHasMedia(post) ? (
                                                                          isYouTubeUrl(post.videoUrl || post.thumbnailUrl || post.image || '') ? (
                                                                              <div className="w-full h-full relative">
                                                                                  <img src={`https://img.youtube.com/vi/${getYouTubeId(post.videoUrl || post.thumbnailUrl || post.image)}/maxresdefault.jpg`} className="w-full h-full object-cover" alt="" />
@@ -8113,6 +8152,10 @@ const App = () => {
                                 setSelectedPost(null);
                                 viewProfile(u);
                             }}
+                            onHashtagClick={(tag) => {
+                                setSelectedPost(null);
+                                handleHashtagClick(tag);
+                            }}
                         />
                     )}
                 </div>
@@ -8167,12 +8210,15 @@ const App = () => {
                             {/* Text */}
                             {shareModalPost.desc && (
                                 <div className="text-white text-base leading-relaxed mb-4 whitespace-pre-wrap break-words overflow-wrap-readable text-left w-full">
-                                    {parseText(shareModalPost.desc)}
+                                    {parseText(shareModalPost.desc, handleHashtagClick, (username) => {
+                                        const u = users?.find(user => String(user.username).toLowerCase() === String(username).toLowerCase());
+                                        if (u) viewProfile(u);
+                                    })}
                                 </div>
                             )}
                             
                             {/* Media - FULL COVER/CONTAIN */}
-                            {(shareModalPost.image || shareModalPost.thumbnailUrl || shareModalPost.videoUrl) && (
+                            {postHasMedia(shareModalPost) && (
                                 <div className="w-full rounded-[14px] overflow-hidden  bg-black mb-2 flex items-center justify-center">
                                     {shareModalPost.videoUrl && !shareModalPost.image && !shareModalPost.thumbnailUrl ? (
                                         <video 
