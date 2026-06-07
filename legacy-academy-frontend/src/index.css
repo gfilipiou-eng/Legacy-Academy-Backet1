@@ -414,6 +414,10 @@ textarea.profile-edit-field:focus {
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
+.profile-descriptor-btn-selected {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
 @media (min-width: 641px) {
   input.profile-edit-field {
     min-height: 54px;
@@ -1276,11 +1280,18 @@ input, textarea {
   }
 
   /* KILL STICKY HOVER STATES ON MOBILE (they stay styled after tap) */
-  button:hover, 
-  a:hover, 
-  .cursor-pointer:hover {
+  button:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge), 
+  a:hover:not(.profile-descriptor-badge), 
+  .cursor-pointer:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge) {
     background-color: transparent !important;
     color: inherit !important;
+  }
+
+  .profile-descriptor-btn:hover,
+  .profile-descriptor-btn:active,
+  .profile-descriptor-btn-selected:hover,
+  .profile-descriptor-btn-selected:active {
+    opacity: 1;
   }
 }
 

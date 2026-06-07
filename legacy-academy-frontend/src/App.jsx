@@ -379,42 +379,42 @@ const PROFILE_DESCRIPTOR_OPTIONS = [
         label: 'Entrepreneur',
         description: 'Building something big',
         Icon: Icons.Briefcase,
-        accentClass: 'bg-orange-500/10 text-orange-500 border-orange-400/20'
+        accentClass: '!bg-orange-500/10 !text-orange-500 !border-orange-400/20'
     },
     {
         value: 'creator',
         label: 'Creator',
         description: 'Making content and ideas',
         Icon: Icons.Camera,
-        accentClass: 'bg-sky-500/10 text-sky-500 border-sky-400/20'
+        accentClass: '!bg-sky-500/10 !text-sky-500 !border-sky-400/20'
     },
     {
         value: 'popular',
         label: 'Popular',
         description: 'Always in demand',
         Icon: Icons.Sparkles,
-        accentClass: 'bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-400/20'
+        accentClass: '!bg-fuchsia-500/10 !text-fuchsia-500 !border-fuchsia-400/20'
     },
     {
         value: 'pet-lover',
         label: 'Dog Lover',
         description: 'Pets are family',
         Icon: Icons.PawPrint,
-        accentClass: 'bg-emerald-500/10 text-emerald-500 border-emerald-400/20'
+        accentClass: '!bg-emerald-500/10 !text-emerald-500 !border-emerald-400/20'
     },
     {
         value: 'community',
         label: 'Community',
         description: 'People first energy',
         Icon: Icons.Users,
-        accentClass: 'bg-violet-500/10 text-violet-500 border-violet-400/20'
+        accentClass: '!bg-violet-500/10 !text-violet-500 !border-violet-400/20'
     },
     {
         value: 'visionary',
         label: 'Visionary',
         description: 'Future focused mindset',
         Icon: Icons.Zap,
-        accentClass: 'bg-amber-500/10 text-amber-500 border-amber-400/20'
+        accentClass: '!bg-amber-500/10 !text-amber-500 !border-amber-400/20'
     }
 ];
 const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
@@ -3634,6 +3634,7 @@ const ProfileModal = ({
     const [userData, setUserData] = useState(profileUser);
     const [activeList, setActiveList] = useState(null);
     const optimisticProfileEditRef = useRef(null);
+    const profileSaveInFlightRef = useRef(false);
 
     // 🔥 SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
     useEffect(() => {
@@ -3730,6 +3731,12 @@ const ProfileModal = ({
             setFounderAffiliation(getFounderAffiliation(displayUser));
         }
     }, [displayUser, isEditing]);
+
+    useEffect(() => {
+        if (!isEditing) {
+            setIsProfileSaving(false);
+        }
+    }, [isEditing]);
 
     useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
 
@@ -4197,17 +4204,17 @@ const ProfileModal = ({
                                                     e.stopPropagation();
                                                     setProfileDescriptor(option.value);
                                                 }}
-                                                className={`profile-descriptor-btn w-full text-left px-4 py-3.5 cursor-pointer relative z-10 flex items-center gap-3 ${isSelected ? 'profile-descriptor-btn-selected bg-white text-black' : 'bg-transparent text-white'} ${!isLast ? 'border-b border-white/[0.06]' : ''}`}
+                                                className={`profile-descriptor-btn w-full text-left px-4 py-4 relative z-10 flex items-center gap-3 min-h-[56px] border ${isSelected ? `profile-descriptor-btn-selected ${option.accentClass}` : `bg-transparent text-white border-transparent ${!isLast ? 'border-b border-white/[0.06]' : ''}`}`}
                                             >
-                                                <div className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 ${isSelected ? 'border-black/10 bg-black/5 text-black' : option.accentClass}`}>
+                                                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${option.accentClass} ${isSelected ? 'ring-1 ring-current/25' : 'opacity-75'}`}>
                                                     <OptionIcon className="w-4 h-4" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
                                                     <div className="font-semibold text-[15px] leading-tight truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
-                                                    <div className={`text-[13px] leading-snug mt-0.5 ${isSelected ? 'text-gray-600' : 'text-gray-500'} whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
+                                                    <div className={`text-[13px] leading-snug mt-0.5 opacity-80 whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
                                                 </div>
                                                 {isSelected && (
-                                                    <Icons.Check className="w-5 h-5 text-[#1D9BF0] shrink-0" />
+                                                    <Icons.Check className="w-5 h-5 shrink-0 opacity-90" />
                                                 )}
                                             </button>
                                         );
@@ -4251,46 +4258,47 @@ const ProfileModal = ({
                             </div>
 
                             <button type="button" disabled={isProfileSaving} onClick={async () => {
-                                if (isProfileSaving) return;
+                                if (isProfileSaving || profileSaveInFlightRef.current) return;
                                 const previousUserSnapshot = displayUser ? {
                                     ...displayUser,
                                     settings: {
                                         ...(displayUser?.settings || {})
                                     }
                                 } : null;
+                                profileSaveInFlightRef.current = true;
+                                setIsProfileSaving(true);
+                                const trimmedBio = bio?.trim() || "";
+                                const trimmedUsername = editUsername?.trim() || "";
+                                const nextProfileDescriptor = normalizeProfileDescriptor(profileDescriptor || '');
+                                const nextFounderAffiliation = sanitizeAffiliation(founderAffiliation);
+                                const optimisticUser = {
+                                    ...displayUser,
+                                    bio: trimmedBio,
+                                    username: trimmedUsername || displayUser?.username,
+                                    profileDescriptor: nextProfileDescriptor,
+                                    founderAffiliation: nextFounderAffiliation
+                                };
+                                optimisticProfileEditRef.current = {
+                                    user: optimisticUser,
+                                    until: Date.now() + 15000
+                                };
+                                setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
+                                if (isSameId(displayUser?._id, currentUser?._id)) {
+                                    onUpdateUser?.(optimisticUser);
+                                }
+
+                                setActiveList(null);
+                                setIsEditing(false);
+                                setIsProfileSaving(false);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+
                                 try {
-                                    setIsProfileSaving(true);
-                                    const trimmedBio = bio?.trim() || "";
-                                    const trimmedUsername = editUsername?.trim() || "";
-                                    const nextProfileDescriptor = normalizeProfileDescriptor(profileDescriptor || '');
-                                    const nextFounderAffiliation = sanitizeAffiliation(founderAffiliation);
-                                    const optimisticUser = {
-                                        ...displayUser,
-                                        bio: trimmedBio,
-                                        username: trimmedUsername || displayUser?.username,
-                                        profileDescriptor: nextProfileDescriptor,
-                                        founderAffiliation: nextFounderAffiliation
-                                    };
-                                    optimisticProfileEditRef.current = {
-                                        user: optimisticUser,
-                                        until: Date.now() + 15000
-                                    };
-                                    setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
-                                    if (isSameId(displayUser?._id, currentUser?._id)) {
-                                        onUpdateUser?.(optimisticUser);
-                                    }
-                                    
-                                    // Άμεσο κλείσιμο (optimistic navigation)
-                                    setActiveList(null);
-                                    setIsEditing(false);
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    
                                     const res = await axios.put(`/users/${displayUser?._id}`, {
                                         bio: trimmedBio,
                                         username: trimmedUsername,
                                         profileDescriptor: nextProfileDescriptor,
                                         founderAffiliation: nextFounderAffiliation
-                                    });
+                                    }, { timeout: 15000 });
                                     if (res.data) {
                                         const mergedUpdatedUser = {
                                             ...optimisticUser,
@@ -4323,6 +4331,7 @@ const ProfileModal = ({
                                     }
                                     if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
                                 } finally {
+                                    profileSaveInFlightRef.current = false;
                                     setIsProfileSaving(false);
                                 }
                             }} className="profile-edit-btn w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200">
@@ -4385,7 +4394,7 @@ const ProfileModal = ({
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
                                         <div className="mt-3 flex justify-center">
-                                            <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
+                                            <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
                                                 <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
                                                 <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
                                             </div>
