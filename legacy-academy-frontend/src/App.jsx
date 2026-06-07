@@ -2967,6 +2967,27 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     );
 };
 
+const PlatformLoadingPanel = ({ label, compact = false }) => (
+    <div className={`platform-loading ${compact ? 'platform-loading--compact' : ''}`}>
+        <div className="platform-loading__orb" aria-hidden="true">
+            <div className="platform-loading__ring" />
+            <Icons.Loader className="platform-loading__icon" />
+        </div>
+        {label ? <div className="platform-loading__label">{label}</div> : null}
+        <div className="platform-loading__skeletons" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+                <div key={i} className="platform-loading__skeleton" style={{ animationDelay: `${i * 120}ms` }}>
+                    <div className="platform-loading__skeleton-avatar" />
+                    <div className="platform-loading__skeleton-lines">
+                        <div className="platform-loading__skeleton-line platform-loading__skeleton-line--wide" />
+                        <div className="platform-loading__skeleton-line" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
 const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
     const trackActive = color === 'blue'
         ? 'bg-[#1D9BF0] border-[#1D9BF0]'
@@ -3698,6 +3719,7 @@ const ProfileModal = ({
     const coverFileRef = useRef(null);
     const [coverUploading, setCoverUploading] = useState(false);
     const [profileUploading, setProfileUploading] = useState(false);
+    const [profileSaving, setProfileSaving] = useState(false);
 
     const displayUser = React.useMemo(() => {
         if (!profileUser) return null;
@@ -3759,8 +3781,92 @@ const ProfileModal = ({
     useEffect(() => {
         if (isEditing) {
             profileSaveInFlightRef.current = false;
+            setProfileSaving(false);
         }
     }, [isEditing]);
+
+    const handleProfileSave = useCallback(async () => {
+        if (profileSaveInFlightRef.current || profileSaving) return;
+        const previousUserSnapshot = displayUser ? {
+            ...displayUser,
+            settings: {
+                ...(displayUser?.settings || {})
+            }
+        } : null;
+        profileSaveInFlightRef.current = true;
+        setProfileSaving(true);
+
+        const trimmedBio = bio?.trim() || "";
+        const trimmedUsername = editUsername?.trim() || "";
+        const nextProfileDescriptor = normalizeProfileDescriptor(profileDescriptor || '');
+        const nextFounderAffiliation = sanitizeAffiliation(founderAffiliation);
+        const optimisticUser = {
+            ...displayUser,
+            bio: trimmedBio,
+            username: trimmedUsername || displayUser?.username,
+            profileDescriptor: nextProfileDescriptor,
+            founderAffiliation: nextFounderAffiliation
+        };
+
+        try {
+            const res = await axios.put(`/users/${displayUser?._id}`, {
+                bio: trimmedBio,
+                username: trimmedUsername,
+                profileDescriptor: nextProfileDescriptor,
+                founderAffiliation: nextFounderAffiliation
+            }, { timeout: 15000 });
+
+            if (!res.data) return;
+
+            const mergedUpdatedUser = {
+                ...optimisticUser,
+                ...res.data,
+                settings: {
+                    ...(optimisticUser?.settings || {}),
+                    ...(res.data?.settings || {})
+                }
+            };
+            optimisticProfileEditRef.current = {
+                user: mergedUpdatedUser,
+                until: Date.now() + 5000
+            };
+            if (isSameId(displayUser?._id, currentUser?._id)) {
+                localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
+            }
+            setUserData(prev => ({ ...(prev || {}), ...mergedUpdatedUser }));
+            if (onUpdateUser) onUpdateUser(mergedUpdatedUser);
+            fetchSpecificUser?.(displayUser?._id);
+            setActiveList(null);
+            setIsEditing(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
+        } catch (e) {
+            console.error(e);
+            optimisticProfileEditRef.current = null;
+            if (displayUser) {
+                setUserData(prev => ({ ...(prev || {}), ...(previousUserSnapshot || {}) }));
+                if (isSameId(displayUser?._id, currentUser?._id) && previousUserSnapshot) {
+                    onUpdateUser?.(previousUserSnapshot);
+                }
+            }
+            if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
+        } finally {
+            profileSaveInFlightRef.current = false;
+            setProfileSaving(false);
+        }
+    }, [
+        addToast,
+        bio,
+        currentUser?._id,
+        displayUser,
+        editUsername,
+        fetchSpecificUser,
+        founderAffiliation,
+        onUpdateUser,
+        profileDescriptor,
+        profileSaving,
+        t
+    ]);
 
     useEffect(() => { setCoverPicError(false); }, [displayUser?.coverPic]);
 
@@ -3780,13 +3886,14 @@ const ProfileModal = ({
         const targetUserId = profileUser._id;
         let cancelled = false;
 
-        if (preloadedPosts?.length > 0) {
+        const hasPreloadedPosts = preloadedPosts?.length > 0;
+        if (hasPreloadedPosts) {
             setUserSpecificPosts(preloadedPosts);
+            setLoadingPosts(false);
         } else {
             setUserSpecificPosts([]);
+            setLoadingPosts(true);
         }
-
-        setLoadingPosts(true);
 
         (async () => {
             try {
@@ -4066,18 +4173,24 @@ const ProfileModal = ({
 
                             <div className="flex gap-3 w-full">
                                 <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
-                                    className="flex-1 py-4 bg-[#121212] rounded-2xl text-[11px] text-white font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/10 border border-white/10">
-                                    {profileUploading ? (
-                                        <div className="w-4 h-4 text-white/50">
-                                            <Icons.Loader />
-                                        </div>
-                                    ) : (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
-                                            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
-                                            <circle cx="12" cy="13" r="3"></circle>
-                                        </svg>
-                                    )}
-                                    {profileUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE')}
+                                    className={`profile-glass-btn profile-glass-btn--secondary flex-1 ${profileUploading ? 'profile-glass-btn--loading' : ''}`}>
+                                    <div className="profile-glass-btn__shine" aria-hidden="true" />
+                                    <span className="profile-glass-btn__content">
+                                        {profileUploading ? (
+                                            <>
+                                                <Icons.Loader className="w-4 h-4" />
+                                                {t('UPLOADING') || 'UPLOADING...'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                                                    <circle cx="12" cy="13" r="3"></circle>
+                                                </svg>
+                                                {t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE'}
+                                            </>
+                                        )}
+                                    </span>
                                 </button>
                                 {displayUser?.profilePic && (
                                     <button onClick={async (e) => {
@@ -4112,13 +4225,21 @@ const ProfileModal = ({
 
                             <div className="flex gap-3 w-full mt-4">
                                 <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className="flex-1 py-4 bg-[#121212] rounded-2xl text-[11px] text-white font-black uppercase tracking-[0.2em] cursor-pointer duration-300 flex items-center justify-center gap-3 disabled:opacity-50 group active:scale-95 hover:bg-white/10 border border-white/10">
-                                    {coverUploading ? (
-                                        <div className="w-4 h-4 text-white/50">
-                                            <Icons.Loader />
-                                        </div>
-                                    ) : <Icons.Image className="w-5 h-5 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />}
-                                    {coverUploading ? (t('UPLOADING') || 'UPLOADING...') : (t('CHANGE_COVER') || 'CHANGE BACKGROUND')}
+                                    className={`profile-glass-btn profile-glass-btn--secondary flex-1 ${coverUploading ? 'profile-glass-btn--loading' : ''}`}>
+                                    <div className="profile-glass-btn__shine" aria-hidden="true" />
+                                    <span className="profile-glass-btn__content">
+                                        {coverUploading ? (
+                                            <>
+                                                <Icons.Loader className="w-4 h-4" />
+                                                {t('UPLOADING') || 'UPLOADING...'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Icons.Image className="w-4 h-4" />
+                                                {t('CHANGE_COVER') || 'CHANGE BACKGROUND'}
+                                            </>
+                                        )}
+                                    </span>
                                 </button>
                                 {displayUser?.coverPic && (
                                     <button onClick={async (e) => {
@@ -4280,84 +4401,30 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <button type="button" onClick={async (e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (profileSaveInFlightRef.current) return;
-                                const previousUserSnapshot = displayUser ? {
-                                    ...displayUser,
-                                    settings: {
-                                        ...(displayUser?.settings || {})
-                                    }
-                                } : null;
-                                profileSaveInFlightRef.current = true;
-                                const trimmedBio = bio?.trim() || "";
-                                const trimmedUsername = editUsername?.trim() || "";
-                                const nextProfileDescriptor = normalizeProfileDescriptor(profileDescriptor || '');
-                                const nextFounderAffiliation = sanitizeAffiliation(founderAffiliation);
-                                const optimisticUser = {
-                                    ...displayUser,
-                                    bio: trimmedBio,
-                                    username: trimmedUsername || displayUser?.username,
-                                    profileDescriptor: nextProfileDescriptor,
-                                    founderAffiliation: nextFounderAffiliation
-                                };
-                                optimisticProfileEditRef.current = {
-                                    user: optimisticUser,
-                                    until: Date.now() + 15000
-                                };
-                                setUserData(prev => ({ ...(prev || {}), ...optimisticUser }));
-                                if (isSameId(displayUser?._id, currentUser?._id)) {
-                                    onUpdateUser?.(optimisticUser);
-                                }
-
-                                setActiveList(null);
-                                setIsEditing(false);
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                                try {
-                                    const res = await axios.put(`/users/${displayUser?._id}`, {
-                                        bio: trimmedBio,
-                                        username: trimmedUsername,
-                                        profileDescriptor: nextProfileDescriptor,
-                                        founderAffiliation: nextFounderAffiliation
-                                    }, { timeout: 15000 });
-                                    if (res.data) {
-                                        const mergedUpdatedUser = {
-                                            ...optimisticUser,
-                                            ...res.data,
-                                            settings: {
-                                                ...(optimisticUser?.settings || {}),
-                                                ...(res.data?.settings || {})
-                                            }
-                                        };
-                                        optimisticProfileEditRef.current = {
-                                            user: mergedUpdatedUser,
-                                            until: Date.now() + 5000
-                                        };
-                                        if (isSameId(displayUser?._id, currentUser?._id)) {
-                                            localStorage.setItem('user', JSON.stringify(mergedUpdatedUser));
-                                        }
-                                        setUserData(prev => ({ ...(prev || {}), ...mergedUpdatedUser }));
-                                        if (onUpdateUser) onUpdateUser(mergedUpdatedUser);
-                                        fetchUsers(displayUser?._id).catch(() => { });
-                                        if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
-                                    }
-                                } catch (e) {
-                                    console.error(e);
-                                    optimisticProfileEditRef.current = null;
-                                    if (displayUser) {
-                                        setUserData(prev => ({ ...(prev || {}), ...(previousUserSnapshot || {}) }));
-                                        if (isSameId(displayUser?._id, currentUser?._id) && previousUserSnapshot) {
-                                            onUpdateUser?.(previousUserSnapshot);
-                                        }
-                                    }
-                                    if (addToast) addToast(e.response?.data?.message || e.response?.data || "Update failed.", 'error');
-                                } finally {
-                                    profileSaveInFlightRef.current = false;
-                                }
-                            }} className="profile-edit-btn w-full py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-neutral-200 active:scale-[0.98] transition-all duration-200 touch-manipulation">
-                                {t('SAVE') || 'SAVE'}
+                            <button
+                                type="button"
+                                disabled={profileSaving}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleProfileSave();
+                                }}
+                                className={`profile-glass-btn profile-glass-btn--primary profile-edit-btn w-full ${profileSaving ? 'profile-glass-btn--loading' : ''}`}
+                            >
+                                <div className="profile-glass-btn__shine" aria-hidden="true" />
+                                <span className="profile-glass-btn__content">
+                                    {profileSaving ? (
+                                        <>
+                                            <Icons.Loader className="w-4 h-4" />
+                                            {t('SAVING') || 'SAVING...'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Icons.Check className="w-4 h-4" />
+                                            {t('SAVE') || 'SAVE'}
+                                        </>
+                                    )}
+                                </span>
                             </button>
                         </div>
                     ) : (
@@ -4491,9 +4558,12 @@ const ProfileModal = ({
                             <div className="px-2 mb-6 space-y-3 mt-4 w-full">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-3.5 bg-white/[0.06] backdrop-blur-2xl rounded-2xl border border-white/10 text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] transition-colors duration-200 hover:bg-white/[0.1] hover:border-white/18 active:scale-[0.98] flex items-center justify-center gap-2.5">
-                                            <Icons.Settings className="w-4 h-4" />
-                                            {t('EDIT_PROFILE')}
+                                        <button onClick={() => setIsEditing(true)} className="profile-glass-btn profile-glass-btn--secondary profile-edit-btn flex-1">
+                                            <div className="profile-glass-btn__shine" aria-hidden="true" />
+                                            <span className="profile-glass-btn__content">
+                                                <Icons.Settings className="w-4 h-4" />
+                                                {t('EDIT_PROFILE')}
+                                            </span>
                                         </button>
                                     ) : (
                                         <>
@@ -4706,10 +4776,7 @@ const ProfileModal = ({
 
                                     <div className="w-full self-stretch space-y-6 pb-20">
                                         {loadingPosts ? (
-                                            <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                <Icons.Loader className="w-12 h-12 text-[var(--gold-primary)]" />
-                                                <div className="text-white font-black uppercase tracking-[0.2em] text-[10px]">{t('DECRYPTING_FEED')}</div>
-                                            </div>
+                                            <PlatformLoadingPanel label={t('DECRYPTING_FEED')} compact />
                                         ) : userPosts.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
                                                 <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-2">
@@ -5205,31 +5272,50 @@ const applyZoom = (zoom) => {
 };
 
 const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, postsReady = false, onClose, onNavigateProfile, onOpenPost, t }) => {
-    console.log("🔗 [PUBLIC PROFILE] username:", username);
-    console.log("🔗 [PUBLIC PROFILE] publicUser:", publicUser);
-    console.log("🔗 [PUBLIC PROFILE] publicPosts:", publicPosts?.map(p => ({ _id: p._id, isRepost: p.isRepost, repostedBy: p.repostedBy, author: p.author })));
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
     const urlThemeParam = searchParams.get('theme');
     const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#ffd700';
     const [zoomImage, setZoomImage] = useState(null);
+    const profileScrollRef = useRef(null);
 
     useEffect(() => {
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
+        const scrollY = window.scrollY;
+        const prevHtmlOverflow = document.documentElement.style.overflow;
+        const prevBodyOverflow = document.body.style.overflow;
+        const prevBodyPosition = document.body.style.position;
+        const prevBodyTop = document.body.style.top;
+        const prevBodyLeft = document.body.style.left;
+        const prevBodyRight = document.body.style.right;
+        const prevBodyWidth = document.body.style.width;
+
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+
         return () => {
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
+            document.documentElement.style.overflow = prevHtmlOverflow;
+            document.body.style.overflow = prevBodyOverflow;
+            document.body.style.position = prevBodyPosition;
+            document.body.style.top = prevBodyTop;
+            document.body.style.left = prevBodyLeft;
+            document.body.style.right = prevBodyRight;
+            document.body.style.width = prevBodyWidth;
+            window.scrollTo(0, scrollY);
         };
     }, []);
+
+    useEffect(() => {
+        if (!publicUser) return;
+        const frame = requestAnimationFrame(() => {
+            profileScrollRef.current?.focus({ preventScroll: true });
+        });
+        return () => cancelAnimationFrame(frame);
+    }, [publicUser?._id]);
 
     const groupedPublicPosts = React.useMemo(() => {
         const groups = {};
@@ -5246,11 +5332,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
     if (loadingUser && !publicUser) {
         return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4" style={{ '--gold-primary': themeColor }}>
-                <div className="w-12 h-12 text-[var(--gold-primary)]">
-                    <Icons.Loader />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/50">GATHERING INTEL...</span>
+            <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor }}>
+                <PlatformLoadingPanel label="GATHERING INTEL..." />
             </div>
         );
     }
@@ -5279,7 +5362,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const publicBackground = getBackgroundEntry(getBackgroundMode(publicUser));
 
     return (
-        <div className={`profile-page-scroll fixed inset-0 text-white overflow-y-auto overflow-x-hidden overscroll-y-contain flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`} style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color, WebkitOverflowScrolling: 'touch' }}>
+        <div
+            ref={profileScrollRef}
+            tabIndex={-1}
+            className={`profile-page-scroll app-main-scroll custom-scrollbar fixed inset-0 text-white flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`}
+            style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}
+        >
             {resolvedPublicCoverPic && (
                 <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden pointer-events-none">
                     {String(resolvedPublicCoverPic).match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
@@ -5425,11 +5513,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* Posts with same style as regular profile */}
                 <div className="w-full space-y-6 pb-20">
                     {loadingPosts || !postsReady ? (
-                        <div className="flex flex-col items-center justify-center p-12 gap-4 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
-                            <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)]" />
-                            <div className="text-center text-xs text-white/35 font-bold uppercase tracking-widest">
-                                {t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')}
-                            </div>
+                        <div className="border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                            <PlatformLoadingPanel label={t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')} compact />
                         </div>
                     ) : (() => {
                         const uid = safeId(publicUser);
@@ -5819,7 +5904,7 @@ const App = () => {
     const lastScrollTime = useRef(0);
     const handleScroll = (e) => {
         const now = Date.now();
-        if (now - lastScrollTime.current < 100) return; // Throttle to 10fps
+        if (now - lastScrollTime.current < 48) return;
         lastScrollTime.current = now;
 
         if (e.target.scrollTop > 500) {
@@ -6442,8 +6527,8 @@ const App = () => {
         } catch (e) { }
         finally {
             const elapsed = Date.now() - startTime;
-            if (elapsed < 1000) {
-                await new Promise(resolve => setTimeout(resolve, 1000 - elapsed));
+            if (elapsed < 180) {
+                await new Promise(resolve => setTimeout(resolve, 180 - elapsed));
             }
             setIsLoadingFeed(false);
         }
@@ -7866,10 +7951,7 @@ const App = () => {
                                         )}
                                         <div className="space-y-6">
                                             {isLoadingFeed ? (
-                                                <div className="flex flex-col items-center justify-center py-24 gap-4">
-                                                    <Icons.Loader className="w-12 h-12 text-[var(--gold-primary)]" />
-                                                    <div className="text-white font-black uppercase tracking-[0.2em] text-xs">{t('DECRYPTING_FEED')}</div>
-                                                </div>
+                                                <PlatformLoadingPanel label={t('DECRYPTING_FEED')} />
                                             ) : activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
