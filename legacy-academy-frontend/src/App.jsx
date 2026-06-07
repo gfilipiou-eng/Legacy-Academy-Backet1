@@ -793,13 +793,11 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    let baseClass = 'w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 rounded-full';
-    if (className && className.includes('object-cover')) {
-        baseClass = className; // If they provide full classes, use them, otherwise add defaults.
-    } else if (className) {
+    let baseClass = 'w-full h-full object-cover rounded-full group-hover:scale-[1.02] transition-transform duration-500';
+    if (className) {
         baseClass = `${baseClass} ${className}`;
     }
-    const finalClassName = baseClass.replace(/rounded-none/g, ''); // Removed forced rounded-full
+    const finalClassName = baseClass.replace(/rounded-none/g, '');
 
     if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
 
@@ -2096,12 +2094,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 )}
                 <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
-                    <div className="shrink-0 flex flex-col items-center pl-0.5 sm:pl-0">
-                        <div className={`${compact ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} relative group cursor-pointer`} onClick={() => onViewProfile(author)}>
+                    <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
+                        <div className={`post-card-avatar ${compact ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} relative group cursor-pointer`} onClick={() => onViewProfile(author)}>
                             {/* Liquid Glass Background */}
-                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
+                            <div className="post-card-avatar-ring absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                             {/* Inner Profile Avatar */}
-                            <div className="absolute inset-[3px] rounded-full overflow-hidden">
+                            <div className="post-card-avatar-image-wrap absolute inset-[3px] rounded-full overflow-hidden">
                                 <ProfileAvatar user={author} className="opacity-90 object-cover w-full h-full" cacheKey={cacheKey} />
                             </div>
                         </div>
