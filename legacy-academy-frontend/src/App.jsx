@@ -1966,12 +1966,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
     const canDelete = isOwner || isCurrentUserFounder;
-    const cardSpacingClass = compact ? 'p-3 sm:p-4 mb-4' : 'p-3 sm:p-5 mb-5';
-    const headerGapClass = compact ? 'gap-3 sm:gap-4' : 'gap-3 sm:gap-4';
-    const metaGapClass = compact ? 'gap-2' : 'gap-2';
-    const nameClass = compact ? 'font-bold text-white text-[14px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full';
-    const handleClass = compact ? 'text-sky-100/80 text-[13px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
-    const bodyTextClass = compact ? 'text-[16px] sm:text-[19px] text-white leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
+    const cardSpacingClass = compact ? 'p-2.5 sm:p-4 mb-3 sm:mb-4' : 'p-3 sm:p-5 mb-5';
+    const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
+    const metaGapClass = compact ? 'gap-1.5 sm:gap-2' : 'gap-2';
+    const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-snug hover:underline cursor-pointer break-words min-w-0 max-w-full' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full';
+    const handleClass = compact ? 'text-sky-100/80 text-[11px] sm:text-[13px] leading-snug break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
+    const bodyTextClass = compact ? 'text-[14px] sm:text-[16px] text-white/95 leading-[1.45] sm:leading-relaxed font-normal whitespace-pre-wrap break-words overflow-wrap-anywhere pr-0 sm:pr-2 pb-0.5' : 'text-[16px] sm:text-[19px] text-white/95 leading-7 sm:leading-relaxed font-medium whitespace-pre-wrap break-words pr-1 sm:pr-2 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-300 border border-transparent active:scale-[0.98]' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-300 border border-transparent';
     const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
@@ -2097,7 +2097,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="shrink-0 flex flex-col items-center pl-0.5 sm:pl-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 relative group cursor-pointer" onClick={() => onViewProfile(author)}>
+                        <div className={`${compact ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} relative group cursor-pointer`} onClick={() => onViewProfile(author)}>
                             {/* Liquid Glass Background */}
                             <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                             {/* Inner Profile Avatar */}
@@ -3988,7 +3988,7 @@ const ProfileModal = ({
                             ))}
                         </div>
                     ) : isEditing ? (
-                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border profile-edit-form">
                             <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
@@ -4146,22 +4146,21 @@ const ProfileModal = ({
 
                             <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full min-h-[54px] block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 text-white text-base sm:text-sm font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 overflow-x-hidden overflow-y-auto align-middle touch-manipulation break-words" placeholder={t('USERNAME_PH')} style={{ overflowX: 'hidden', overflowY: 'auto', boxSizing: 'border-box', width: '100%', maxWidth: '100%', overscrollBehavior: 'contain', wordWrap: 'break-word', wordBreak: 'break-word' }} />
+                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white font-bold focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none transition-all duration-300 touch-manipulation" placeholder={t('USERNAME_PH')} />
                             </div>
 
                             <div className="space-y-2 text-left w-full max-w-full box-border">
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
-                                <div className="relative w-full max-w-full box-border" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+                                <div className="w-full max-w-full box-border space-y-1.5">
                                     <textarea
                                         value={bio}
                                         onChange={e => setBio(e.target.value)}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="profile-edit-field w-full block box-border bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-white text-base sm:text-sm leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none h-32 transition-all duration-300 overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap align-top touch-manipulation"
+                                        className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed focus:border-[var(--gold-primary)] focus:shadow-[0_0_20px_rgba(255,215,0,0.1)] outline-none resize-none transition-all duration-300 whitespace-pre-wrap touch-manipulation"
                                         placeholder={t('BIO_PH')}
-                                        style={{ overflowX: 'hidden', overflowY: 'auto', boxSizing: 'border-box', width: '100%', maxWidth: '100%', overscrollBehavior: 'contain', wordWrap: 'break-word', wordBreak: 'break-word' }}
                                     />
-                                    <div className="absolute bottom-3 right-3 text-[10px] font-black text-white/20 uppercase tracking-widest">{bio?.length || 0} / 500</div>
+                                    <div className="text-right text-[10px] font-black text-white/20 uppercase tracking-widest pr-1">{bio?.length || 0} / 500</div>
                                 </div>
                             </div>
 
@@ -4704,10 +4703,10 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="profile-feed-shell flex flex-col w-full px-1 sm:px-0">
+                                            <div className="profile-feed-shell flex flex-col w-full px-0.5 sm:px-0">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
-                                                    <div key={dateLabel} className="animate-fade-in group mb-8 sm:mb-12 w-full">
-                                                        <div className="space-y-6 sm:space-y-8">
+                                                    <div key={dateLabel} className="animate-fade-in group mb-6 sm:mb-12 w-full">
+                                                        <div className="space-y-3 sm:space-y-8">
                                                             <AnimatePresence mode="popLayout">
                                                                 {groupPosts.map(p => (
                                                                     <motion.div
@@ -4746,6 +4745,7 @@ const ProfileModal = ({
                                                                             forcePause={false}
                                                                             isDeleting={deletingPostIds?.has(p._id)}
                                                                             cacheKey={imgKey}
+                                                                            compact
                                                                         />
                                                                     </motion.div>
                                                                 ))}

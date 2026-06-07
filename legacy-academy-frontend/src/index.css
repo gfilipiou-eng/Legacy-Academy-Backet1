@@ -342,55 +342,78 @@ button:active {
   width: 100%;
   max-width: 100%;
   position: relative;
+  z-index: 1;
   transform: none !important;
   -webkit-transform: none !important;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  text-rendering: geometricPrecision;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  text-rendering: auto;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   text-align: left;
+  isolation: isolate;
 }
 
 input.profile-edit-field {
-  /* display:flex on <input> breaks cursor/text position in mobile Safari — must be block */
   display: block;
-  min-height: 54px;
+  min-height: 48px;
   height: auto;
-  /* Real padding keeps the caret inside the field more reliably on mobile keyboards */
-  padding-top: 0.875rem !important;
-  padding-bottom: 0.875rem !important;
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
-  vertical-align: middle;
-  line-height: 1.2 !important;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  transform-origin: left center;
-  -webkit-transform-origin: left center;
-  translate: 0 0;
-  /* Prevent iOS zoom on focus (font-size < 16px triggers auto-zoom) */
+  padding: 0.75rem 1rem !important;
+  line-height: 1.35 !important;
   font-size: 16px !important;
+  background: rgba(12, 12, 12, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 textarea.profile-edit-field {
   display: block;
   overflow-y: auto;
   overflow-x: hidden;
-  line-height: 1.55 !important;
+  line-height: 1.5 !important;
   box-sizing: border-box;
   font-size: 16px !important;
-  padding: 1rem 1rem 2.75rem !important;
-  vertical-align: top;
-  touch-action: auto;
+  padding: 0.875rem 1rem !important;
+  min-height: 7rem;
+  background: rgba(12, 12, 12, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  touch-action: manipulation;
   -webkit-overflow-scrolling: touch;
   text-align: left;
-  min-height: 8rem;
   word-break: break-word;
-  transform-origin: top left;
-  -webkit-transform-origin: top left;
-  translate: 0 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+@media (min-width: 641px) {
+  input.profile-edit-field {
+    min-height: 54px;
+    padding-top: 0.875rem !important;
+    padding-bottom: 0.875rem !important;
+    font-size: 0.875rem !important;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  textarea.profile-edit-field {
+    font-size: 0.875rem !important;
+    min-height: 8rem;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+}
+
+.profile-edit-form {
+  position: relative;
+  z-index: 25;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .profile-tab-btn {
@@ -1012,8 +1035,13 @@ html, body {
 
 @media (max-width: 640px) {
   .premium-post-card {
-    border-radius: 16px;
-    padding: 0.75rem !important;
+    border-radius: 14px;
+    padding: 0.625rem !important;
+  }
+
+  .profile-feed-shell .premium-post-card {
+    border-radius: 12px;
+    contain-intrinsic-size: 1px 420px;
   }
 
   .profile-copy-block {
@@ -1027,8 +1055,8 @@ html, body {
   }
 
   .profile-feed-shell {
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
