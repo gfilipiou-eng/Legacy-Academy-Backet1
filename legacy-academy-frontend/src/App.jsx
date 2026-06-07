@@ -3304,7 +3304,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     onClick={() => handleSave('background', value)}
                                                     className={`settings-tile-btn relative overflow-hidden rounded-2xl border transition-all duration-200 ${
                                                         active
-                                                            ? 'border-[var(--gold-primary)] shadow-[0_0_18px_rgba(255,215,0,0.12)]'
+                                                            ? 'border-[var(--gold-primary)]'
                                                             : 'border-white/10 hover:border-white/20'
                                                     }`}
                                                 >
@@ -3441,81 +3441,77 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
 
     return (
         <div className="fixed inset-0 z-[2000] flex pointer-events-none">
-            {/* BACKDROP */}
             <div
-                className={`absolute inset-0 bg-black/60 backdrop-blur-[4px] pointer-events-auto z-[100] ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
+                className={`absolute inset-0 bg-black/70 pointer-events-auto z-[100] ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
                 onClick={handleClose}
             />
 
-            {/* DRAWER CONTAINER - PREMIUM iOS GLASS */}
             <div className={`
-                fixed top-0 left-0 bottom-0 w-[65%] sm:w-[280px]
-                liquid-glass-nav backdrop-blur-[25px] border-r border-white/10 flex flex-col pointer-events-auto
-                shadow-[15px_0_60px_rgba(0,0,0,0.9)] z-[101] overflow-hidden
+                nav-drawer-panel liquid-glass-nav fixed top-0 left-0 bottom-0 w-[min(88vw,320px)] sm:w-[300px]
+                flex flex-col pointer-events-auto z-[101] overflow-hidden
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}>
-                <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
-                    {/* TOP ACCENT VERY SUBTLE HIGHLIGHT */}
-                    <div className="absolute top-0 left-0 w-full h-[250px] bg-gradient-to-b from-[#1D9BF0]/15 via-[var(--f1-red)]/5 to-transparent pointer-events-none" />
+                <div className="flex-none px-4 pt-6 pb-3 flex items-center justify-between border-b border-white/10">
+                    <span className="text-[11px] font-black uppercase tracking-[0.22em] text-white/45">Menu</span>
+                    <button
+                        type="button"
+                        onClick={handleClose}
+                        aria-label="Close menu"
+                        className="w-10 h-10 rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.08] transition-all duration-200"
+                    >
+                        <Icons.X className="w-5 h-5" />
+                    </button>
+                </div>
 
-                    {/* PROFILE SECTION - TWITTER STYLE CLEAN */}
+                <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
                     <div
-                        className="p-4 pt-8 flex flex-col cursor-pointer relative z-10 transition-colors duration-300 hover:bg-white/[0.02]"
+                        className="nav-drawer-profile mx-4 mt-4 p-4 rounded-2xl cursor-pointer transition-colors duration-200 hover:bg-white/[0.05]"
                         onClick={() => { onClose(); onViewProfile(user); }}
                     >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="w-[48px] h-[48px] relative group shrink-0">
-                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                <div className="absolute inset-[3px] rounded-full overflow-hidden">
-                                    <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0">
+                                <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                    <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
+                                    <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
                                 </div>
+                                <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
                         </div>
 
-                        <div className="flex flex-col mt-1">
-                            <div className="flex items-center gap-1">
-                                <span className="font-bold text-[17px] text-white leading-tight break-words">{user?.username}</span>
-                                <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
-                            </div>
-                            <span className="text-[15px] text-gray-500 leading-tight mt-0.5 break-words">@{user?.username?.toLowerCase().split(' ').join('')}</span>
-                        </div>
-
-                        <div className="flex items-center gap-4 mt-4">
-                            <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
+                        <div className="flex items-center gap-5 mt-4 pt-3 border-t border-white/10">
+                            <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[13px] tabular-nums">
                                     {[...new Set((user?.followers || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
                                 </span>
-                                <span className="text-[13px] text-gray-500 font-normal">
-                                    {t('FOLLOWERS') || 'Followers'}
-                                </span>
+                                <span className="text-[12px] text-gray-500">{t('FOLLOWERS') || 'Followers'}</span>
                             </div>
-                            <div className="flex items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
+                            <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[13px] tabular-nums">
                                     {[...new Set((user?.following || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
                                 </span>
-                                <span className="text-[13px] text-gray-500 font-normal">{t('FOLLOWING')}</span>
+                                <span className="text-[12px] text-gray-500">{t('FOLLOWING')}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="h-px bg-white/5 mx-6 mb-4" />
-
-                    {/* NAV ITEMS */}
-                    <div className="flex flex-col py-2 relative z-10">
+                    <div className="flex flex-col gap-1 px-3 py-4 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
-                            { 
-                                id: 'subscription', 
+                            {
+                                id: 'subscription',
                                 icon: (props) => (
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
                                         <rect x="2" y="5" width="20" height="14" rx="2" />
                                         <line x1="2" y1="10" x2="22" y2="10" />
                                     </svg>
-                                ), 
-                                label: t('SUBSCRIPTION') || 'Subscription', 
+                                ),
+                                label: t('SUBSCRIPTION') || 'Subscription',
                                 action: () => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05",
                                 isSubscription: true
                             },
@@ -3527,23 +3523,25 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
-                                className="w-full px-4 py-4 flex items-center gap-5 hover:bg-white/5 transition-colors menu-item-slide group"
-                                style={{ animationDelay: `${index * 0.05}s` }}
+                                className="nav-drawer-item w-full px-2 py-2.5 flex items-center gap-3 rounded-2xl hover:bg-white/[0.05] border border-transparent hover:border-white/10 transition-all menu-item-slide group"
+                                style={{ animationDelay: `${index * 0.04}s` }}
                             >
-                                <item.icon className="w-[26px] h-[26px] text-white shrink-0 group-hover:scale-105 transition-transform" strokeWidth={2} />
-                                <span className="text-xl font-bold text-white tracking-wide">{item.label}</span>
+                                <div className="nav-drawer-item-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+                                    <item.icon className="w-[22px] h-[22px] text-white shrink-0" strokeWidth={2} />
+                                </div>
+                                <span className="text-[15px] font-bold text-white tracking-wide text-left flex-1">{item.label}</span>
 
                                 {item.isSubscription && remainingDays !== null && (
-                                    <div className="ml-auto flex flex-col items-end gap-1">
+                                    <div className="ml-auto flex flex-col items-end gap-1 shrink-0">
                                         {remainingDays === 0 ? (
                                             <>
                                                 <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
                                                     {t('SUBSCRIPTION_EXPIRED') || 'Expired'}
                                                 </span>
-                                                <button 
-                                                    onClick={(e) => { 
-                                                        e.stopPropagation(); 
-                                                        window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"; 
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05";
                                                     }}
                                                     className="text-[9px] font-bold text-red-400 uppercase tracking-wider hover:text-red-300 transition-colors"
                                                 >
@@ -3552,40 +3550,28 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                                             </>
                                         ) : (
                                             <>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">
-                                                        {remainingDays > 0 
-                                                            ? `${remainingDays}d${remainingHours > 0 ? ` ${remainingHours}h` : ''}` 
-                                                            : `${remainingHours}h`
-                                                        }
-                                                    </span>
-                                                </div>
-                                                {/* Progress bar (smart based on subscription length) */}
-                                                <div className="w-20 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                                                    <div 
+                                                <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">
+                                                    {remainingDays > 0
+                                                        ? `${remainingDays}d${remainingHours > 0 ? ` ${remainingHours}h` : ''}`
+                                                        : `${remainingHours}h`
+                                                    }
+                                                </span>
+                                                <div className="w-16 h-1 rounded-full bg-white/10 overflow-hidden">
+                                                    <div
                                                         className="h-full rounded-full transition-all duration-1000"
-                                                        style={{ 
+                                                        style={{
                                                             width: `${Math.min(100, (remainingDays > 30 ? (remainingDays / 30) * 100 : 100))}%`,
                                                             backgroundColor: remainingDays <= 7 ? '#ef4444' : remainingDays <= 14 ? '#f59e0b' : 'var(--gold-primary)'
                                                         }}
                                                     />
                                                 </div>
-                                                <button 
-                                                    onClick={(e) => { 
-                                                        e.stopPropagation(); 
-                                                        window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"; 
-                                                    }}
-                                                    className="text-[9px] font-bold text-[var(--gold-primary)]/70 uppercase tracking-wider hover:text-[var(--gold-primary)] transition-colors"
-                                                >
-                                                    {t('EXTEND_SUBSCRIPTION')}
-                                                </button>
                                             </>
                                         )}
                                     </div>
                                 )}
 
                                 {item.badge > 0 && (
-                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[var(--gold-primary)] rounded-full flex items-center justify-center">
+                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[var(--gold-primary)] rounded-full flex items-center justify-center shrink-0">
                                         <span className="text-[11px] font-bold text-black leading-none">
                                             {item.badge > 9 ? '9+' : item.badge}
                                         </span>
@@ -3594,23 +3580,21 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, onNavigate,
                             </button>
                         ))}
 
-                        <div className="h-px bg-white/5 mx-2 my-2" />
-
-                        {/* LOGOUT ITEM - MATCHES NAV */}
                         <button
                             onClick={() => { onLogout(); handleClose(); }}
-                            className="w-full px-4 py-4 flex items-center gap-5 hover:bg-white/5 transition-colors menu-item-slide group"
-                            style={{ animationDelay: `0.25s` }}
+                            className="nav-drawer-item w-full px-2 py-2.5 mt-2 flex items-center gap-3 rounded-2xl hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all menu-item-slide group"
+                            style={{ animationDelay: '0.24s' }}
                         >
-                            <Icons.Logout className="w-[26px] h-[26px] text-white shrink-0 group-hover:text-red-500 transition-colors" strokeWidth={2} />
-                            <span className="text-xl font-bold text-white tracking-wide group-hover:text-red-500 transition-colors">{t('LOGOUT')}</span>
+                            <div className="nav-drawer-item-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:border-red-500/20">
+                                <Icons.Logout className="w-[22px] h-[22px] text-white shrink-0 group-hover:text-red-400 transition-colors" strokeWidth={2} />
+                            </div>
+                            <span className="text-[15px] font-bold text-white tracking-wide group-hover:text-red-400 transition-colors">{t('LOGOUT')}</span>
                         </button>
                     </div>
 
-                    {/* DISCREET BOTTOM LEGAL LINKS */}
-                    <div className="flex flex-col gap-3 px-6 pt-4 pb-10 mt-auto">
-                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[13px] whitespace-normal break-words leading-tight">{t('TERMS_OF_SERVICE')}</button>
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[13px] whitespace-normal break-words leading-tight">{t('PRIVACY_POLICY')}</button>
+                    <div className="flex flex-col gap-2 px-6 pt-2 pb-8 mt-auto border-t border-white/10">
+                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[12px]">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[12px]">{t('PRIVACY_POLICY')}</button>
                     </div>
                 </div>
             </div>
@@ -3946,11 +3930,6 @@ const ProfileModal = ({
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
                 className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
                 style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
-
-                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                    <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-[var(--gold-primary)]/10 blur-[100px] pointer-events-none" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] rounded-full bg-white/5 blur-[100px] pointer-events-none" />
-                </div>
 
                 {displayUser?.coverPic && !coverPicError && (
                     <div className="absolute top-0 left-0 right-0 h-[220px] z-0 pointer-events-none animate-fade-in overflow-hidden">
@@ -5279,13 +5258,6 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
     return (
         <div className={`min-h-screen text-white relative overflow-x-hidden flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`} style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}>
-            {/* AMBIENT BACKGROUND GLOWS FOR LIQUID GLASS AESTHETIC */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-[var(--gold-primary)]/10 blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }} />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-white/5 blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '12s' }} />
-            </div>
-
-            {/* DYNAMIC COVER BACKGROUND */}
             {resolvedPublicCoverPic && (
                 <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden">
                     {String(resolvedPublicCoverPic).match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
@@ -7689,13 +7661,12 @@ const App = () => {
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
-                        <div className="fixed top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none z-0" />
-                        <header className="relative w-full z-[20] bg-[#000000] text-[#ffffff] border-b border-white/20 shrink-0">
+                        <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[#ffffff] border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-[#000000] transition-all duration-300 z-50 p-2.5 -ml-2 group overflow-hidden"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 transition-all duration-300 z-50 p-2.5 -ml-2 group"
                                         aria-label="Open menu"
                                         sound={null}
                                         scaleDown={1}
