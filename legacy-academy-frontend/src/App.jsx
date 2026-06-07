@@ -3458,9 +3458,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         type="button"
                         onClick={handleClose}
                         aria-label="Close menu"
-                        className="min-w-[40px] min-h-[40px] rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.08] hover:border-white/20 active:scale-95 transition-all duration-200 touch-manipulation"
+                        className="group min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent hover:bg-white/[0.06] active:scale-95 transition-all duration-300 touch-manipulation"
                     >
-                        <Icons.X className="w-5 h-5 pointer-events-none" />
+                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
                     </button>
                 </div>
 
@@ -7675,7 +7675,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 active:scale-95 active:bg-white/[0.12] transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent hover:bg-white/[0.06] active:scale-95 transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
                                         aria-label="Open menu"
                                         sound="nav_click"
                                         scaleDown={0.95}
