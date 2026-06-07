@@ -4192,10 +4192,9 @@ const ProfileModal = ({
                                     )}
                                 </div>
                                 <div className="profile-descriptor-group">
-                                    {PROFILE_DESCRIPTOR_OPTIONS.map((option, idx) => {
+                                    {PROFILE_DESCRIPTOR_OPTIONS.map((option) => {
                                         const isSelected = profileDescriptor === option.value;
                                         const OptionIcon = option.Icon;
-                                        const isLast = idx === PROFILE_DESCRIPTOR_OPTIONS.length - 1;
                                         return (
                                             <button
                                                 key={option.value}
@@ -4204,7 +4203,7 @@ const ProfileModal = ({
                                                     e.stopPropagation();
                                                     setProfileDescriptor(option.value);
                                                 }}
-                                                className={`profile-descriptor-btn w-full text-left px-4 py-4 relative z-10 flex items-center gap-3 min-h-[56px] border ${isSelected ? `profile-descriptor-btn-selected ${option.accentClass}` : `bg-transparent text-white border-transparent ${!isLast ? 'border-b border-white/[0.06]' : ''}`}`}
+                                                className={`profile-descriptor-btn w-full text-left px-4 py-4 relative z-10 flex items-center gap-3 min-h-[56px] border ${isSelected ? `profile-descriptor-btn-selected ${option.accentClass}` : 'bg-transparent text-white border-transparent'}`}
                                             >
                                                 <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${option.accentClass} ${isSelected ? 'ring-1 ring-current/25' : 'opacity-75'}`}>
                                                     <OptionIcon className="w-4 h-4" />
