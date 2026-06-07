@@ -547,102 +547,46 @@ textarea.profile-edit-field:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 4.5rem 1rem 2rem;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 3.5rem 1rem 2rem;
 }
 
 .platform-loading--compact {
-  padding-top: 3rem;
-}
-
-.platform-loading__orb {
-  position: relative;
-  width: 4.5rem;
-  height: 4.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.platform-loading__ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: radial-gradient(circle at 50% 35%, rgba(212, 175, 55, 0.16), rgba(0, 0, 0, 0.2) 68%);
-  animation: pulse-slow 2.4s ease-in-out infinite;
+  padding: 2.5rem 1rem 1.5rem;
 }
 
 .platform-loading__icon {
-  position: relative;
-  z-index: 1;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   color: var(--gold-primary);
 }
 
 .platform-loading__label {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.2em;
+  font-weight: 800;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-.platform-loading__skeletons {
-  width: min(100%, 28rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
+@media (min-width: 641px) {
+  .profile-modal-shell {
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-.platform-loading__skeleton {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.03);
-  overflow: hidden;
-  position: relative;
-  animation: fade-in 0.45s ease both;
-}
+  .profile-page-inner {
+    width: 100%;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-.platform-loading__skeleton::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  animation: shimmer 2.2s infinite;
-}
-
-.platform-loading__skeleton-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.08);
-  flex-shrink: 0;
-}
-
-.platform-loading__skeleton-lines {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-
-.platform-loading__skeleton-line {
-  height: 0.55rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.08);
-  width: 72%;
-}
-
-.platform-loading__skeleton-line--wide {
-  width: 92%;
+  .profile-page-scroll {
+    padding-inline: 1rem;
+  }
 }
 
 @media (min-width: 640px) {

@@ -2969,22 +2969,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
 const PlatformLoadingPanel = ({ label, compact = false }) => (
     <div className={`platform-loading ${compact ? 'platform-loading--compact' : ''}`}>
-        <div className="platform-loading__orb" aria-hidden="true">
-            <div className="platform-loading__ring" />
-            <Icons.Loader className="platform-loading__icon" />
-        </div>
+        <Icons.Loader className="platform-loading__icon" />
         {label ? <div className="platform-loading__label">{label}</div> : null}
-        <div className="platform-loading__skeletons" aria-hidden="true">
-            {[0, 1, 2].map((i) => (
-                <div key={i} className="platform-loading__skeleton" style={{ animationDelay: `${i * 120}ms` }}>
-                    <div className="platform-loading__skeleton-avatar" />
-                    <div className="platform-loading__skeleton-lines">
-                        <div className="platform-loading__skeleton-line platform-loading__skeleton-line--wide" />
-                        <div className="platform-loading__skeleton-line" />
-                    </div>
-                </div>
-            ))}
-        </div>
     </div>
 );
 
@@ -4059,8 +4045,8 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`relative w-full max-w-lg h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
-                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
+                className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
+                style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
 
                 {displayUser?.coverPic && !coverPicError && (
                     <div className="absolute top-0 left-0 right-0 h-[220px] z-0 pointer-events-none animate-fade-in overflow-hidden">
@@ -4107,7 +4093,7 @@ const ProfileModal = ({
                     )}
                 </div>
 
-                <div className={`flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full max-w-full box-border app-main-scroll`} style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden', overflowY: 'auto', overscrollBehaviorY: 'contain' }}>
+                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative overscroll-y-contain pb-20 z-10 bg-transparent w-full box-border app-main-scroll">
                     {activeList ? (
                         <div className="p-4 space-y-4 w-full max-w-full box-border">
                             {getListUsers().length === 0 && !clickLock && <div className="p-10 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">{t('NO_AGENTS_FOUND')}</div>}
@@ -4431,7 +4417,7 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-stretch ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-28 h-28 sm:w-32 sm:h-32 relative group shrink-0">
+                                    <div className="w-24 h-24 sm:w-28 sm:h-28 relative group shrink-0">
                                         <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                         <div className="absolute inset-[4px] rounded-full overflow-hidden">
                                             <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -4443,7 +4429,7 @@ const ProfileModal = ({
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
-                                        <span className="profile-headline font-black text-white text-xl sm:text-2xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
+                                        <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
                                         <div className="flex items-center gap-1 shrink-0 flex-shrink-0">
                                             {isFounderProfile ? (
                                                 <svg
@@ -4644,28 +4630,18 @@ const ProfileModal = ({
                                             type="button"
                                             onClick={() => setActiveTab(tab)}
                                             style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`profile-tab-btn min-w-0 min-h-[52px] sm:min-h-[64px] px-1.5 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 sm:gap-2 transition-all duration-400 rounded-[18px] sm:rounded-[20px] relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
-                                                ? 'profile-tab-btn-active bg-gradient-to-br from-white/25 via-white/10 to-white/5 border border-white/30 text-white shadow-[0_8px_25px_rgba(255,255,255,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] -translate-y-[2px] z-10'
+                                            className={`profile-tab-btn min-w-0 min-h-[48px] sm:min-h-[52px] px-1.5 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-300 rounded-[16px] sm:rounded-[18px] relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
+                                                ? 'profile-tab-btn-active bg-white/10 border border-white/20 text-white z-10'
                                                 : 'bg-transparent text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 border border-transparent'
                                                 }`}
                                         >
-                                            {/* Animated background for active tab */}
-                                            {isActive && (
-                                                <>
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/15 via-transparent to-[var(--gold-primary)]/10 opacity-70 animate-pulse" />
-                                                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
-                                                </>
-                                            )}
-                                            {/* Hover shimmer effect */}
-                                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                            
                                             <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 w-full">
                                                 {renderIcon(isActive)}
                                                 <span
                                                     className={`max-w-full text-center leading-none transition-all duration-300 whitespace-nowrap ${isLongTabLabel
-                                                        ? 'text-[7px] sm:text-[8px] md:text-[9px] tracking-[0.03em]'
-                                                        : 'text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.08em]'
-                                                        } ${isActive ? 'text-[#ffffff] drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-gray-400'} font-black`}
+                                                        ? 'text-[7px] sm:text-[8px] tracking-[0.03em]'
+                                                        : 'text-[8px] sm:text-[9px] tracking-[0.08em]'
+                                                        } ${isActive ? 'text-white' : 'text-gray-400'} font-black`}
                                                 >
                                                     {tabLabel}
                                                 </span>
@@ -4678,9 +4654,8 @@ const ProfileModal = ({
                             {/* PRIVACY LOCK SCREEN */}
                             {displayUser?.isPrivate && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
-                                    <div className="w-24 h-24 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:text-white relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-[var(--gold-primary)]/10 to-transparent animate-pulse" />
-                                        <Icons.Shield className="w-12 h-12 text-gray-500 group-hover:text-white relative z-10" />
+                                    <div className="w-20 h-20 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:text-white relative overflow-hidden">
+                                        <Icons.Shield className="w-10 h-10 text-gray-500 group-hover:text-white relative z-10" />
                                     </div>
                                     <div className="space-y-3">
                                         <h3 className="font-black text-white text-xl uppercase tracking-[0.2em]">{t('PRIVATE_TITLE')}</h3>
@@ -5386,7 +5361,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
             )}
 
-            <div className="relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
+            <div className="profile-page-inner relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
                 <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center shadow-lg z-50">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
@@ -5399,7 +5374,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-28 h-28 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] relative group transition-all duration-500">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.55)] relative group transition-all duration-500">
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
@@ -5419,7 +5394,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                        <h1 className="profile-headline text-xl sm:text-2xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
+                        <h1 className="profile-headline text-lg sm:text-xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
                             <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
@@ -7792,7 +7767,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-40 sm:h-48 md:h-52 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
+                                            className="h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
