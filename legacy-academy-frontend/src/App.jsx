@@ -4331,7 +4331,7 @@ const ProfileModal = ({
                             </button>
                         </div>
                     ) : (
-                        <div className={`p-4 sm:p-6 pb-20 flex flex-col items-center ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
+                        <div className={`p-4 sm:p-6 pb-20 flex flex-col items-stretch ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
                                     <div className="w-28 h-28 sm:w-32 sm:h-32 relative group shrink-0">
@@ -4703,7 +4703,7 @@ const ProfileModal = ({
                                                 <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">{t('NO_INTEL') || 'SECURED AREA. NO INTEL FOUND.'}</div>
                                             </div>
                                         ) : (
-                                            <div className="profile-feed-shell w-full self-stretch -mx-2 px-2 sm:mx-0 sm:px-0">
+                                            <div className="profile-feed-shell w-full">
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
                                                     <div key={dateLabel} className="animate-fade-in group mb-12 w-full">
                                                         <div className="space-y-8">
