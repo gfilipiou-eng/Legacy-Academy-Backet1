@@ -1931,49 +1931,5 @@ input, textarea {
   margin: 0 0 6px;
 }
 
-/* Action buttons — simple row, left aligned, never clip */
-.x-comment__actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-  flex-wrap: nowrap;
-}
-/* Base action button */
-.x-cmt-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 9px;
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.38);
-  background: transparent;
-  border: 1px solid transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.x-cmt-btn:hover {
-  color: rgba(255,255,255,0.85);
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.08);
-}
-.x-cmt-btn:active { transform: scale(0.95); }
 
-/* Delete variant — always red-tinted */
-.x-cmt-btn--del {
-  color: rgba(248, 113, 113, 0.6);
-}
-.x-cmt-btn--del:hover {
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.1);
-  border-color: rgba(248, 113, 113, 0.15);
-}
 

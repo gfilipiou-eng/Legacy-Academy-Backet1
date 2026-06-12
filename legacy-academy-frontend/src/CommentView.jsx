@@ -122,6 +122,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState('');
+  const [activeMenuId, setActiveMenuId] = useState(null);
   const scrollRef = useRef(null);
 
   const fetchPost = async () => {
@@ -339,8 +340,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
           </div>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] pl-1">{post.comments?.length || 0} {t('INTEL_LOGS') || "INTEL LOGS"}</h3>
+        <div className="divide-y divide-white/[0.06] border-t border-white/[0.06] mt-4">
+          <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] py-3 pl-1">{post.comments?.length || 0} {t('INTEL_LOGS') || "INTEL LOGS"}</h3>
 
           {post.comments?.length === 0 ? (
             <div className="py-20 text-center">
@@ -355,78 +356,124 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               const canDelete = isCommentAuthor || isFounder;
 
               return (
-                <div key={i} className="flex gap-3 group animate-slide-down">
-                  <div className="shrink-0 w-10 h-10 relative group cursor-pointer hover:opacity-80 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                    <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
-                        <ProfileAvatar user={{ username: c.authorName, profilePic: c.authorProfilePic }} />
-                    </div>
+                <div key={i} className="py-3.5 flex gap-3 group relative animate-slide-down">
+                  {/* Avatar */}
+                  <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
+                    <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-black text-white transition-colors cursor-pointer tracking-tight hover:underline" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>{c.authorName}</span>
-                        {(c.user?.role === 'Founder') ? (
-                          <>
-                            <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0 text-[#FFD700] fill-current -ml-0.5" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
-                            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0 -ml-0.5" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                          </>
-                        ) : (
-                          <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 shrink-0 text-[#1D9BF0] fill-current -ml-0.5" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(c.createdAt, t, lang)}</span>
-                      </div>
-                    </div>
-                    <div className="bg-white/[0.03] backdrop-blur-lg rounded-2xl p-4 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all group/comment">
-                      {editingCommentId === c._id ? (
-                        <div className="flex flex-col gap-2">
-                          <textarea
-                            id={`edit-comment-${c._id}`}
-                            name="edit-comment"
-                            aria-label="Edit comment"
-                            value={editText}
-                            onChange={(e) => setEditText(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[var(--gold-primary)]/50 min-h-[60px] resize-none"
-                            autoFocus
-                          />
-                          <div className="flex gap-2">
-                            <button onClick={() => handleEdit(c._id, editText)} className="bg-[var(--gold-primary)] px-3 py-1 rounded-lg text-[9px] font-black text-black transition-colors uppercase">{t('SAVE') || "SAVE"}</button>
-                            <button onClick={() => setEditingCommentId(null)} className="bg-white/5 px-3 py-1 rounded-lg text-[9px] font-black text-gray-400 transition-colors uppercase">{t('CANCEL') || "CANCEL"}</button>
-                          </div>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0 pr-7">
+                    {/* Header: Name + Badge + Handle + Dot + Time */}
+                    <div className="flex items-center flex-wrap gap-x-1.5 gap-y-0.5 mb-0.5">
+                      <span className="x-comment__username font-bold text-[14px] text-white hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>{c.authorName}</span>
+                      {(c.user?.role === 'Founder') ? (
+                        <div className="flex items-center shrink-0">
+                          <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 text-[#FFD700] fill-current" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 -ml-0.5" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </div>
                       ) : (
-                        <>
-                          {c.text && <p className="text-white text-sm leading-snug break-words whitespace-pre-wrap">{c.text}</p>}
-                          {c.audioUrl && (
-                            <div className="mt-2 flex items-center justify-start max-w-[280px]">
-                              <VoiceNotePlayer src={resolveMediaUrl(c.audioUrl)} t={t} />
-                            </div>
-                          )}
+                        <svg viewBox="0 0 22 22" className="w-3.5 h-3.5 text-[#1D9BF0] fill-current shrink-0" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
+                      )}
+                      <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
+                        {`@${String(c.author?.username || c.authorName || 'user').toLowerCase().replace(/\s+/g, '')}`}
+                      </span>
+                      <span className="x-comment__dot">·</span>
+                      <span className="x-comment__time">{formatDate(c.createdAt, t, lang)}</span>
+                    </div>
 
-                          <div className="flex gap-3 mt-3 opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                    {/* Content area */}
+                    {editingCommentId === c._id ? (
+                      <div className="mt-2 flex flex-col gap-2">
+                        <textarea
+                          id={`edit-comment-${c._id}`}
+                          name="edit-comment"
+                          aria-label="Edit comment"
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2.5 text-[15px] text-white outline-none mb-2 focus:border-white/35 min-h-[72px] resize-none leading-relaxed"
+                          autoFocus
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <button onClick={() => setEditingCommentId(null)} className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/60 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all cursor-pointer">{t('CANCEL') || "CANCEL"}</button>
+                          <button onClick={() => handleEdit(c._id, editText)} className="px-4 py-1.5 rounded-full bg-white text-[12px] font-bold text-black hover:bg-gray-200 active:scale-95 uppercase tracking-wide transition-all cursor-pointer">{t('SAVE') || "SAVE"}</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {c.text && <p className="x-comment__text text-[15px] line-height-[1.55] color-white/90 whitespace-pre-wrap word-break-break-word m-0 mb-[6px]">{c.text}</p>}
+                        {c.audioUrl && (
+                          <div className="flex flex-col gap-1 mt-1 mb-2 w-full">
+                            <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
+                            </div>
+                            <VoiceNotePlayer src={resolveMediaUrl(c.audioUrl)} t={t} />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Options Dropdown (Edit/Delete) */}
+                  {(canEdit || canDelete) && editingCommentId !== c._id && (
+                    <div className="absolute right-0 top-3 z-30">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenuId(activeMenuId === c._id ? null : c._id);
+                        }}
+                        className="p-1.5 rounded-full text-white/30 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation"
+                        aria-label="Comment actions"
+                      >
+                        <Icons.MoreHorizontal className="w-4 h-4" />
+                      </button>
+
+                      {activeMenuId === c._id && (
+                        <>
+                          {/* Backdrop to close the menu on tap/click outside */}
+                          <div
+                            className="fixed inset-0 z-40 bg-transparent cursor-default"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveMenuId(null);
+                            }}
+                          />
+
+                          {/* Dropdown Menu */}
+                          <div className="absolute right-0 mt-1 w-36 bg-[#0f1419]/95 backdrop-blur-md border border-white/10 rounded-xl py-1 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
                             {canEdit && (
                               <button
-                                onClick={() => { setEditingCommentId(c._id); setEditText(c.text || ''); }}
-                                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[0_4px_15px_rgba(59,130,246,0.4)] transition-all hover:scale-105 active:scale-95"
+                                type="button"
+                                onClick={() => {
+                                  setActiveMenuId(null);
+                                  setEditingCommentId(c._id);
+                                  setEditText(c.text || '');
+                                }}
+                                className="w-full px-3.5 py-2.5 text-left text-[13px] font-bold text-white hover:bg-white/5 active:bg-white/10 transition-colors flex items-center gap-2 cursor-pointer touch-manipulation"
                               >
-                                <Icons.Edit className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('EDIT') || "EDIT"}</span>
+                                <Icons.Edit className="w-4 h-4 text-white/60" />
+                                <span>{t('EDIT') || 'Edit'}</span>
                               </button>
                             )}
                             {canDelete && (
                               <button
-                                onClick={() => handleDelete(c._id)}
-                                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-red-600 to-orange-600 text-white text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[0_4px_15px_rgba(220,38,38,0.4)] transition-all hover:scale-105 active:scale-95"
+                                type="button"
+                                onClick={() => {
+                                  setActiveMenuId(null);
+                                  handleDelete(c._id);
+                                }}
+                                className="w-full px-3.5 py-2.5 text-left text-[13px] font-bold text-red-500 hover:bg-red-500/10 active:bg-red-500/25 transition-colors flex items-center gap-2 border-t border-white/[0.06] cursor-pointer touch-manipulation"
                               >
-                                <Icons.Trash className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{t('DELETE') || "DELETE"}</span>
+                                <Icons.Trash className="w-4 h-4" />
+                                <span>{t('DELETE') || 'Delete'}</span>
                               </button>
                             )}
                           </div>
                         </>
                       )}
                     </div>
-                  </div>
+                  )}
                 </div>
               )
             })

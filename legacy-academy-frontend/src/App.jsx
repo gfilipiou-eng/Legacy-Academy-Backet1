@@ -957,6 +957,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const [editText, setEditText] = useState(comment.text);
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
     const isCommentAuthor = isSameId(currentCommentAuthorId, user?._id);
@@ -997,7 +998,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="x-comment"
+            className="x-comment relative group"
         >
             {/* Avatar */}
             <div
@@ -1008,17 +1009,20 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             </div>
 
             {/* Body */}
-            <div className="x-comment__body">
+            <div className="x-comment__body pr-7">
 
-                {/* Header: name + time on same line */}
-                <div className="x-comment__header">
+                {/* Header: Name + Badge + Handle + Dot + Time */}
+                <div className="x-comment__header flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
                     <span
-                        className="x-comment__username"
+                        className="x-comment__username font-bold text-[14px] text-white hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
                         onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" />
+                    <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
+                        {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
+                    </span>
                     <span className="x-comment__dot">·</span>
                     <span className="x-comment__time"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
                 </div>
@@ -1032,18 +1036,18 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             onChange={e => setEditText(e.target.value)}
                             className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2.5 text-[15px] text-white outline-none mb-2 focus:border-white/35 min-h-[72px] resize-none leading-relaxed"
                         />
-                        <div className="flex gap-2">
-                            <button
-                                onClick={handleSave}
-                                className="px-4 py-1.5 rounded-full bg-white text-[12px] font-bold text-black hover:bg-gray-200 active:scale-95 uppercase tracking-wide transition-all"
-                            >
-                                {t('SAVE')}
-                            </button>
+                        <div className="flex gap-2 justify-end">
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/60 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all"
+                                className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/60 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all cursor-pointer"
                             >
                                 {t('CANCEL')}
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                className="px-4 py-1.5 rounded-full bg-white text-[12px] font-bold text-black hover:bg-gray-200 active:scale-95 uppercase tracking-wide transition-all cursor-pointer"
+                            >
+                                {t('SAVE')}
                             </button>
                         </div>
                     </div>
@@ -1069,32 +1073,84 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             </div>
                         )}
 
-                        {/* Action buttons — all left-aligned, never wrapping */}
-                        {(canEdit || canDelete || (comment.text && comment.text.length > 3)) && (
-                            <div className="x-comment__actions">
-                                {comment.text && comment.text.length > 3 && (
-                                    <button onClick={handleTranslate} disabled={isTranslating} className="x-cmt-btn">
-                                        <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                        {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
-                                    </button>
-                                )}
-                                {canEdit && (
-                                    <button type="button" onClick={() => setIsEditing(true)} className="x-cmt-btn">
-                                        <Icons.Edit className="w-3.5 h-3.5" />
-                                        {t('EDIT')}
-                                    </button>
-                                )}
-                                {canDelete && (
-                                    <button type="button" onClick={() => onDelete?.(post._id, comment._id)} className="x-cmt-btn x-cmt-btn--del">
-                                        <Icons.Trash className="w-3.5 h-3.5" />
-                                        {t('DELETE')}
-                                    </button>
-                                )}
+                        {/* Translate link */}
+                        {comment.text && comment.text.length > 3 && (
+                            <div className="mt-1 flex items-center">
+                                <button
+                                    type="button"
+                                    onClick={handleTranslate}
+                                    disabled={isTranslating}
+                                    className="text-[12px] font-medium text-[#1d9bf0] hover:underline transition-all flex items-center gap-1 cursor-pointer touch-manipulation disabled:opacity-50"
+                                >
+                                    <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                    <span>{isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}</span>
+                                </button>
                             </div>
                         )}
                     </>
                 )}
             </div>
+
+            {/* Options Dropdown (Edit/Delete) */}
+            {(canEdit || canDelete) && !isEditing && (
+                <div className="absolute right-0 top-2.5 z-30">
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuOpen(!menuOpen);
+                        }}
+                        className="p-1.5 rounded-full text-white/30 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation"
+                        aria-label="Comment actions"
+                    >
+                        <Icons.MoreHorizontal className="w-4 h-4" />
+                    </button>
+
+                    {menuOpen && (
+                        <>
+                            {/* Backdrop to close the menu on tap/click outside */}
+                            <div
+                                className="fixed inset-0 z-40 cursor-default bg-transparent"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setMenuOpen(false);
+                                }}
+                            />
+
+                            {/* Dropdown Menu */}
+                            <div className="absolute right-0 mt-1 w-36 bg-[#0f1419]/95 backdrop-blur-md border border-white/10 rounded-xl py-1 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
+                                {canEdit && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            setIsEditing(true);
+                                            setEditText(comment.text || '');
+                                        }}
+                                        className="w-full px-3.5 py-2.5 text-left text-[13px] font-bold text-white hover:bg-white/5 active:bg-white/10 transition-colors flex items-center gap-2 cursor-pointer touch-manipulation"
+                                    >
+                                        <Icons.Edit className="w-4 h-4 text-white/60" />
+                                        <span>{t('EDIT') || 'Edit'}</span>
+                                    </button>
+                                )}
+                                {canDelete && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            onDelete?.(post._id, comment._id);
+                                        }}
+                                        className="w-full px-3.5 py-2.5 text-left text-[13px] font-bold text-red-500 hover:bg-red-500/10 active:bg-red-500/25 transition-colors flex items-center gap-2 border-t border-white/[0.06] cursor-pointer touch-manipulation"
+                                    >
+                                        <Icons.Trash className="w-4 h-4" />
+                                        <span>{t('DELETE') || 'Delete'}</span>
+                                    </button>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
         </motion.div>
     );
 });
@@ -1416,7 +1472,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
                         {/* Comments Section */}
                         <div className="p-3">
-                            <div className="w-full animate-fade-in space-y-4">
+                            <div className="w-full animate-fade-in border-t border-white/[0.06] mt-2">
                                 {!post.comments?.length ? (
                                     <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
                                 ) : (
@@ -2308,7 +2364,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         )}
                                     </div>
                                 </div>
-                                <div className="space-y-4 pt-4">
+                                <div className="border-t border-white/[0.06] mt-4">
                                     {(post.comments || []).slice().reverse().map(c => (
                                         <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} onViewProfile={onViewProfile} />
                                     ))}
