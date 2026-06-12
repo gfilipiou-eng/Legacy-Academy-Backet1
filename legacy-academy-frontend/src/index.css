@@ -1867,17 +1867,17 @@ input, textarea {
   cursor: wait;
 }
 
-/* ── X/Twitter-style comment item ───────────────────────────────────── */
+/* ── X/Twitter-style comment ─────────────────────────────────────────── */
 .x-comment {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 14px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 .x-comment__avatar {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 9999px;
   overflow: hidden;
   flex-shrink: 0;
@@ -1885,19 +1885,19 @@ input, textarea {
   background: rgba(255, 255, 255, 0.06);
   transition: opacity 0.15s ease;
 }
-.x-comment__avatar:hover { opacity: 0.8; }
+.x-comment__avatar:hover { opacity: 0.75; }
+
 .x-comment__body {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
 }
 .x-comment__header {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 6px;
-  margin-bottom: 3px;
+  gap: 5px;
+  margin-bottom: 4px;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 .x-comment__username {
   font-size: 14px;
@@ -1907,74 +1907,73 @@ input, textarea {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 160px;
+  max-width: 130px;
+  flex-shrink: 1;
 }
 .x-comment__username:hover { text-decoration: underline; }
-.x-comment__handle {
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.4);
-  white-space: nowrap;
-}
 .x-comment__dot {
-  font-size: 12px;
-  color: rgba(255,255,255,0.3);
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  flex-shrink: 0;
 }
 .x-comment__time {
-  font-size: 13px;
-  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .x-comment__text {
   font-size: 15px;
   line-height: 1.55;
-  color: rgba(255,255,255,0.92);
+  color: rgba(255,255,255,0.90);
   white-space: pre-wrap;
   word-break: break-word;
-  margin-bottom: 6px;
+  margin: 0 0 6px;
 }
+
+/* Action buttons — simple row, left aligned, never clip */
 .x-comment__actions {
   display: flex;
   align-items: center;
-  gap: 2px;
-  margin-top: 6px;
-  width: 100%;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: nowrap;
 }
-.x-comment__action-btn {
+/* Base action button */
+.x-cmt-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 8px;
+  padding: 4px 9px;
   border-radius: 9999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.38);
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition: color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  flex-shrink: 0;
 }
-.x-comment__action-btn:hover {
-  color: rgba(255,255,255,0.8);
+.x-cmt-btn:hover {
+  color: rgba(255,255,255,0.85);
   background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.08);
 }
-/* Delete — always visible in muted red so user can spot it */
-.x-comment__action-btn--delete {
-  color: rgba(248, 113, 113, 0.65);
+.x-cmt-btn:active { transform: scale(0.95); }
+
+/* Delete variant — always red-tinted */
+.x-cmt-btn--del {
+  color: rgba(248, 113, 113, 0.6);
 }
-.x-comment__action-btn--delete:hover {
+.x-cmt-btn--del:hover {
   color: #f87171;
-  background: rgba(248,113,113,0.12);
-}
-/* Hide label text on very small screens, show icon only */
-@media (max-width: 380px) {
-  .x-comment__action-label {
-    display: none;
-  }
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.15);
 }
 

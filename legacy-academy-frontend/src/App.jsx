@@ -1009,7 +1009,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
             {/* Body */}
             <div className="x-comment__body">
-                {/* Header: username · handle · time */}
+
+                {/* Header: name + time on same line */}
                 <div className="x-comment__header">
                     <span
                         className="x-comment__username"
@@ -1017,15 +1018,14 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5" />
-                    <span className="x-comment__handle">@{(commentAuthor?.username || 'user').toLowerCase()}</span>
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" />
                     <span className="x-comment__dot">·</span>
                     <span className="x-comment__time"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
                 </div>
 
                 {/* Edit mode */}
                 {isEditing ? (
-                    <div className="w-full mt-1">
+                    <div className="w-full mt-2">
                         <textarea
                             autoFocus
                             value={editText}
@@ -1041,7 +1041,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             </button>
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/70 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all"
+                                className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/60 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all"
                             >
                                 {t('CANCEL')}
                             </button>
@@ -1049,7 +1049,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     </div>
                 ) : (
                     <>
-                        {/* Text */}
+                        {/* Comment text */}
                         {comment.text && (
                             <p className="x-comment__text">
                                 {parseText(translatedText || comment.text, null, (username) => {
@@ -1061,7 +1061,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
                         {/* Voice note */}
                         {comment.audioUrl && (
-                            <div className="flex flex-col gap-1 mt-1 mb-1 w-full">
+                            <div className="flex flex-col gap-1 mt-1 mb-2 w-full">
                                 <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
                                     <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
                                 </div>
@@ -1069,47 +1069,29 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             </div>
                         )}
 
-                        {/* Action row */}
-                        <div className="x-comment__actions">
-                            {/* Translate — icon only */}
-                            {comment.text && comment.text.length > 3 && (
-                                <button
-                                    onClick={handleTranslate}
-                                    disabled={isTranslating}
-                                    className="x-comment__action-btn"
-                                    title={isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
-                                >
-                                    <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                    <span className="x-comment__action-label">{isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}</span>
-                                </button>
-                            )}
-                            {/* Edit — icon only */}
-                            {canEdit && (
-                                <button
-                                    type="button"
-                                    onClick={() => setIsEditing(true)}
-                                    className="x-comment__action-btn"
-                                    title={t('EDIT')}
-                                >
-                                    <Icons.Edit className="w-3.5 h-3.5" />
-                                    <span className="x-comment__action-label">{t('EDIT')}</span>
-                                </button>
-                            )}
-                            {/* Spacer pushes delete to the right */}
-                            <span style={{ flex: 1 }} />
-                            {/* Delete — always visible, red, right-aligned */}
-                            {canDelete && (
-                                <button
-                                    type="button"
-                                    onClick={() => onDelete?.(post._id, comment._id)}
-                                    className="x-comment__action-btn x-comment__action-btn--delete"
-                                    title={t('DELETE')}
-                                >
-                                    <Icons.Trash className="w-3.5 h-3.5" />
-                                    <span>{t('DELETE')}</span>
-                                </button>
-                            )}
-                        </div>
+                        {/* Action buttons — all left-aligned, never wrapping */}
+                        {(canEdit || canDelete || (comment.text && comment.text.length > 3)) && (
+                            <div className="x-comment__actions">
+                                {comment.text && comment.text.length > 3 && (
+                                    <button onClick={handleTranslate} disabled={isTranslating} className="x-cmt-btn">
+                                        <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                        {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                                    </button>
+                                )}
+                                {canEdit && (
+                                    <button type="button" onClick={() => setIsEditing(true)} className="x-cmt-btn">
+                                        <Icons.Edit className="w-3.5 h-3.5" />
+                                        {t('EDIT')}
+                                    </button>
+                                )}
+                                {canDelete && (
+                                    <button type="button" onClick={() => onDelete?.(post._id, comment._id)} className="x-cmt-btn x-cmt-btn--del">
+                                        <Icons.Trash className="w-3.5 h-3.5" />
+                                        {t('DELETE')}
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </>
                 )}
             </div>
