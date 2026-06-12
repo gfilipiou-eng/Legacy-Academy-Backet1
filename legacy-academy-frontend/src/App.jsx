@@ -1314,21 +1314,21 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'} sturdy-active touch-manipulation`}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'} sturdy-active touch-manipulation`}
                                 >
                                     <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'} sturdy-active touch-manipulation`}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'} sturdy-active touch-manipulation`}
                                 >
                                     <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'} sturdy-active touch-manipulation`}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'} sturdy-active touch-manipulation`}
                                 >
                                     <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
@@ -2215,7 +2215,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         e.stopPropagation();
                                         onRepost && onRepost(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} hover:bg-white/10 hover:border-white/10 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                    className={`${actionButtonBaseClass} hover:bg-green-500/10 hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
                                 >
                                     <Icons.RefreshCcw className={`${actionIconClass} transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
                                     <span className={actionCountClass}>{post.reposts?.length || 0}</span>
@@ -2229,7 +2229,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                         onLike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} hover:bg-white/10 hover:border-white/10 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                    className={`${actionButtonBaseClass} hover:bg-red-500/10 hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
                                 >
                                         <Icons.Heart className={`${actionIconClass} transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className={actionCountClass}>{post.likes?.length || 0}</span>
@@ -2243,7 +2243,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                         onDislike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} hover:bg-white/10 hover:border-white/10 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                    className={`${actionButtonBaseClass} hover:bg-blue-500/10 hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
                                 >
                                     <Icons.ThumbsDown className={`${actionIconClass} transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className={actionCountClass}>{post.dislikes?.length || 0}</span>
