@@ -1293,7 +1293,7 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   animation: slide-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* === MOBILE TOUCH INTERACTIONS ENHANCEMENT (BLUE SKY/PLATFORM STYLE) === */
+/* === MOBILE TOUCH INTERACTIONS ENHANCEMENT (BLUE SKY/X STYLE) === */
 /* Fix mobile zoom issue completely */
 html, body {
   -webkit-tap-highlight-color: transparent !important;
@@ -1312,7 +1312,7 @@ html, body {
   button {
     font-size: 16px !important;
   }
-  
+
   /* Make mobile experience feel more native/sturdy */
   body {
     -webkit-overflow-scrolling: touch;
@@ -1320,33 +1320,65 @@ html, body {
   }
 }
 
-/* KILL STICKY HOVER STATES ON MOBILE (they stay styled after tap) */
+/* === NO HOVER EFFECTS ON MOBILE === */
+/* This completely fixes the "sticky hover" issue when scrolling or tapping */
 @media (hover: none) {
-  button:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.sturdy-active), 
-  a:hover:not(.profile-descriptor-badge):not(.sturdy-active), 
+  .hover\:bg-white\/5:hover,
+  .hover\:bg-white\/10:hover,
+  .hover\:bg-white\/20:hover,
+  .hover\:bg-red-500\/10:hover,
+  .hover\:bg-blue-500\/10:hover,
+  .hover\:bg-green-500\/10:hover,
+  .hover\:border-red-500\/20:hover,
+  .hover\:border-blue-500\/20:hover,
+  .hover\:border-green-500\/20:hover,
+  .hover\:border-white\/10:hover,
+  .hover\:border-white\/20:hover,
+  .hover\:text-white:hover,
+  .hover\:text-red-400:hover,
+  .hover\:text-blue-400:hover,
+  .hover\:text-green-400:hover,
+  .hover\:underline:hover,
+  .hover\:brightness-90:hover,
+  .hover\:opacity-80:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+    border-color: transparent !important;
+    text-decoration: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  button:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.sturdy-active),
+  a:hover:not(.profile-descriptor-badge):not(.sturdy-active),
   .cursor-pointer:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.sturdy-active) {
     background-color: transparent !important;
     color: inherit !important;
     border-color: transparent !important;
+    transform: none !important;
+    box-shadow: none !important;
   }
 
-  /* Blue Sky/platform style active states on mobile (not hover) */
+  /* X/Bluesky style: only active state (while pressed) */
   button:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge),
-  .cursor-pointer:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge) {
-    transform: scale(0.97);
-    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  .cursor-pointer:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge),
+  .sturdy-active:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
-  
+
   /* Keep descriptor buttons working as intended */
   .profile-descriptor-btn:hover,
   .profile-descriptor-btn:active,
+  .profile-descriptor-badge:hover,
+  .profile-descriptor-badge:active,
   .profile-descriptor-btn-selected:hover,
   .profile-descriptor-btn-selected:active {
     opacity: 1;
   }
 }
 
-/* Desktop - allow hover effects normally */
+/* === DESKTOP: normal hover effects work === */
 @media (hover: hover) {
   .hover\:bg-white\/5:hover { background-color: rgba(255, 255, 255, 0.05) !important; }
   .hover\:bg-white\/10:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
@@ -1359,6 +1391,13 @@ html, body {
   .hover\:border-green-500\/20:hover { border-color: rgba(34, 197, 94, 0.2) !important; }
   .hover\:border-white\/10:hover { border-color: rgba(255, 255, 255, 0.1) !important; }
   .hover\:border-white\/20:hover { border-color: rgba(255, 255, 255, 0.2) !important; }
+  .hover\:text-white:hover { color: white !important; }
+  .hover\:text-red-400:hover { color: rgb(248 113 113) !important; }
+  .hover\:text-blue-400:hover { color: rgb(96 165 250) !important; }
+  .hover\:text-green-400:hover { color: rgb(74 222 128) !important; }
+  .hover\:underline:hover { text-decoration: underline !important; }
+  .hover\:brightness-90:hover { filter: brightness(0.9) !important; }
+  .hover\:opacity-80:hover { opacity: 0.8 !important; }
 }
 
 .group\/folder {
@@ -1452,8 +1491,6 @@ html, body {
 }
 
 @media (hover: hover) {
-
-
   .liquid-folder:hover {
     background: #050505;
     border-color: #3f4348;
@@ -1493,9 +1530,7 @@ html, body {
   animation: heart-beat 0.8s ease-in-out;
 }
 
-/* === ENHANCED TOUCH FEEDBACK SYSTEM === */
-/* COMPLETELY DISABLED PER USER REQUEST - NO VISUAL FEEDBACK ON TOUCH */
-
+/* === TAP HIGHLIGHT KILLER === */
 * {
   -webkit-tap-highlight-color: transparent !important;
   -webkit-touch-callout: none !important;
@@ -1518,65 +1553,11 @@ input, textarea {
   -webkit-tap-highlight-color: transparent !important;
 }
 
-/* Force disable default tap highlight and sticky hover states on mobile */
-@media (hover: none) {
-  * {
-    -webkit-tap-highlight-color: transparent !important;
-  }
-  
-  button, div, a, span, li {
-    -webkit-tap-highlight-color: transparent !important;
-  }
-
-  /* KILL STICKY HOVER STATES ON MOBILE (they stay styled after tap) */
-  button:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge), 
-  a:hover:not(.profile-descriptor-badge), 
-  .cursor-pointer:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge) {
-    background-color: transparent !important;
-    color: inherit !important;
-  }
-
-  .profile-descriptor-btn:hover,
-  .profile-descriptor-btn:active,
-  .profile-descriptor-btn-selected:hover,
-  .profile-descriptor-btn-selected:active {
-    opacity: 1;
-  }
-}
-
-/* On desktop, allow hover effects to work normally */
-@media (hover: hover) {
-  .hover\:bg-white\/5:hover { background-color: rgba(255, 255, 255, 0.05) !important; }
-  .hover\:bg-white\/10:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
-  .hover\:bg-white\/20:hover { background-color: rgba(255, 255, 255, 0.2) !important; }
-}
-
-/* More specific targeting to kill the tap highlight */
-button:active, 
-div:active, 
-a:active, 
-span:active,
-button:hover,
-div:hover,
-a:hover,
-span:hover {
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-.touch-active, 
-.touch-button, 
-.nav-touch-item, 
-.touch-card, 
-.touch-icon, 
-.button-enhanced-active, 
-.menu-button-touch {
-  transform: none !important;
-  transition: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-.touch-button::before {
-  display: none !important;
+/* Sturdy button feel */
+.sturdy-active:active {
+  transform: scale(0.97) !important;
+  opacity: 0.8;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s;
 }
 
 /* Twitter/X Style Drawer Animations */

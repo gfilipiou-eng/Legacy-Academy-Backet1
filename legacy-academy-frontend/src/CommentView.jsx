@@ -302,37 +302,37 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
-                <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 text-gray-400 cursor-pointer border border-transparent hover:border-white/10">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 text-gray-400 hover:text-white sturdy-active touch-manipulation">
                   <Icons.MessageSquare className="w-5 h-5" />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                </div>
-                <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 cursor-pointer border border-transparent ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:bg-green-500/10 hover:border-green-500/20 hover:text-green-400'}`} onClick={async () => {
+                </button>
+                <button className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'} sturdy-active touch-manipulation`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/repost`);
                     fetchPost();
                   } catch (e) { }
                 }}>
-                  <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.includes(currentUser?._id) ? 'scale-110 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : ''}`} />
+                  <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.includes(currentUser?._id) ? 'scale-110' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
-                </div>
-                <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 cursor-pointer border border-transparent ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400'}`} onClick={async () => {
+                </button>
+                <button className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'} sturdy-active touch-manipulation`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/like`);
                     fetchPost();
                   } catch (e) { }
                 }}>
-                  <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.includes(currentUser?._id) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]' : ''}`} />
+                  <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.includes(currentUser?._id) ? 'fill-current scale-110' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
-                </div>
-                <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 cursor-pointer border border-transparent ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:bg-blue-500/10 hover:border-blue-500/20 hover:text-blue-400'}`} onClick={async () => {
+                </button>
+                <button className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'} sturdy-active touch-manipulation`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/dislike`);
                     fetchPost();
                   } catch (e) { }
                 }}>
-                  <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.includes(currentUser?._id) ? 'fill-current scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]' : ''}`} />
+                  <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.includes(currentUser?._id) ? 'fill-current scale-110' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
-                </div>
+                </button>
               </div>
             </div>
           </div>
