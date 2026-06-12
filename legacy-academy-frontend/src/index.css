@@ -150,6 +150,43 @@ body.bg-ocean { --app-bg: #041018; }
   100% { transform: translateX(100%); }
 }
 
+@keyframes kenburns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+@keyframes rotate-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+.login-greek-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: float-gentle 15s ease-in-out infinite;
+}
+
+.login-greek-pillar {
+  position: absolute;
+  opacity: 0.08;
+  filter: blur(0.5px);
+  animation: rotate-slow 120s linear infinite;
+}
+
+/* Profile tab active state with Blue Sky style scale/opacity */
+.profile-tab-btn:active {
+  transform: scale(0.92);
+  transition: transform 0.12s ease-out;
+}
+
+
 .animate-shimmer {
   animation: shimmer 3s infinite;
 }

@@ -7370,21 +7370,22 @@ const App = () => {
                         {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
                         <img 
                             src="https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=2000&q=80"
-                            className="absolute inset-0 w-full h-full object-cover object-top opacity-80"
+                            className="absolute inset-0 w-full h-full object-cover object-top opacity-70"
                             style={{ 
-                                animation: 'kenburns 30s infinite alternate ease-in-out',
+                                animation: 'kenburns 40s infinite alternate ease-in-out',
                                 transformOrigin: 'top center'
                             }}
                             alt="Ancient Greece Background"
                         />
                         {/* Light overlays so the image is fully visible but text is readable */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-transparent" />
-                        <div className="absolute inset-0 bg-[var(--gold-primary)] opacity-[0.15] mix-blend-color" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
-                        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--gold-primary)]/20 blur-[100px] md:animate-pulse" style={{ animationDuration: '8s' }} />
-                        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--gold-primary)]/10 blur-[120px] md:animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+                        <div className="login-greek-orb top-[-10%] left-[-5%] w-[400px] h-[400px] bg-[var(--gold-primary)]/30" style={{ animationDuration: '8s' }} />
+                        <div className="login-greek-orb bottom-[-15%] right-[-5%] w-[500px] h-[500px] bg-[var(--gold-primary)]/20" style={{ animationDuration: '12s', animationDelay: '3s' }} />
+                        
+                        {/* Ancient Greek pattern overlay */}
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 30h60M30 0v60\" stroke=\"%23D4AF37\" stroke-width=\"1\" opacity=\"0.08\" fill=\"none\"/></svg>')]" />
                     </div>
 
                     {/* MAIN GLASS CARD */}
