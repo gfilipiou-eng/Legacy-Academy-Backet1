@@ -1710,3 +1710,86 @@ input, textarea {
 .animate-scan {
   animation: scan 2s linear infinite;
 }
+
+/* X-Style Action Buttons active/hover/focus states to prevent turning white */
+.action-btn-comment {
+  transition: all 0.2s ease;
+}
+.action-btn-comment:hover {
+  color: #1d9bf0 !important;
+  background-color: rgba(29, 155, 240, 0.1) !important;
+  border-color: rgba(29, 155, 240, 0.15) !important;
+}
+.action-btn-comment:active, .action-btn-comment:focus {
+  color: #1d9bf0 !important;
+  background-color: rgba(29, 155, 240, 0.18) !important;
+  border-color: rgba(29, 155, 240, 0.25) !important;
+}
+
+.action-btn-repost {
+  transition: all 0.2s ease;
+}
+.action-btn-repost:hover {
+  color: #00ba7c !important;
+  background-color: rgba(0, 186, 124, 0.1) !important;
+  border-color: rgba(0, 186, 124, 0.15) !important;
+}
+.action-btn-repost:active, .action-btn-repost:focus {
+  color: #00ba7c !important;
+  background-color: rgba(0, 186, 124, 0.18) !important;
+  border-color: rgba(0, 186, 124, 0.25) !important;
+}
+
+.action-btn-like {
+  transition: all 0.2s ease;
+}
+.action-btn-like:hover {
+  color: #f91880 !important;
+  background-color: rgba(249, 24, 128, 0.1) !important;
+  border-color: rgba(249, 24, 128, 0.15) !important;
+}
+.action-btn-like:active, .action-btn-like:focus {
+  color: #f91880 !important;
+  background-color: rgba(249, 24, 128, 0.18) !important;
+  border-color: rgba(249, 24, 128, 0.25) !important;
+}
+
+.action-btn-dislike {
+  transition: all 0.2s ease;
+}
+.action-btn-dislike:hover {
+  color: #3b82f6 !important;
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  border-color: rgba(59, 130, 246, 0.15) !important;
+}
+.action-btn-dislike:active, .action-btn-dislike:focus {
+  color: #3b82f6 !important;
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+/* Edit profile button styles */
+.profile-edit-btn {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 9999px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease;
+}
+.profile-edit-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+.profile-edit-btn:active {
+  transform: scale(0.97) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Tabs adjustment */
+.profile-tab-btn::after {
+  display: none !important; /* Remove the heavy radial gradient */
+}
+

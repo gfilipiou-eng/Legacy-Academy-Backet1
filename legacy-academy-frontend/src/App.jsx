@@ -1307,28 +1307,28 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             <div className="flex items-center justify-between mt-1 mb-3 w-full px-2">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 text-gray-400 hover:text-white sturdy-active touch-manipulation"
+                                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 border border-transparent text-gray-400 sturdy-active touch-manipulation action-btn-comment"
                                 >
                                     <Icons.MessageSquare className="w-5 h-5" />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'} sturdy-active touch-manipulation`}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 border border-transparent sturdy-active touch-manipulation action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'} sturdy-active touch-manipulation`}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 border border-transparent sturdy-active touch-manipulation action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'} sturdy-active touch-manipulation`}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 border border-transparent sturdy-active touch-manipulation action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
@@ -2203,7 +2203,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 {/* COMMENTS */}
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-                                    className={`${actionButtonBaseClass} hover:bg-white/10 hover:border-white/10 ${showComments ? 'text-white bg-white/10 border-white/20' : 'text-gray-400 hover:text-white'}`}
+                                    className={`${actionButtonBaseClass} action-btn-comment ${showComments ? 'text-sky-500 bg-sky-500/10 border-sky-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.MessageSquare className={actionIconClass} />
                                     <span className={actionCountClass}>{post.comments?.length || 0}</span>
@@ -2215,7 +2215,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         e.stopPropagation();
                                         onRepost && onRepost(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} hover:bg-green-500/10 hover:border-green-500/20 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`}
+                                    className={`${actionButtonBaseClass} action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.RefreshCcw className={`${actionIconClass} transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
                                     <span className={actionCountClass}>{post.reposts?.length || 0}</span>
@@ -2229,7 +2229,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                         onLike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} hover:bg-red-500/10 hover:border-red-500/20 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`}
+                                    className={`${actionButtonBaseClass} action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400'}`}
                                 >
                                         <Icons.Heart className={`${actionIconClass} transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className={actionCountClass}>{post.likes?.length || 0}</span>
@@ -2243,7 +2243,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                         onDislike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} hover:bg-blue-500/10 hover:border-blue-500/20 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`}
+                                    className={`${actionButtonBaseClass} action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.ThumbsDown className={`${actionIconClass} transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
                                     <span className={actionCountClass}>{post.dislikes?.length || 0}</span>
@@ -4544,12 +4544,9 @@ const ProfileModal = ({
                             <div className="px-2 mb-6 space-y-3 mt-4 w-full">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="profile-glass-btn profile-glass-btn--secondary profile-edit-btn flex-1">
-                                            <div className="profile-glass-btn__shine" aria-hidden="true" />
-                                            <span className="profile-glass-btn__content">
-                                                <Icons.Settings className="w-4 h-4" />
-                                                {t('EDIT_PROFILE')}
-                                            </span>
+                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-2.5 rounded-full border border-white/20 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer">
+                                            <Icons.Settings className="w-4 h-4" />
+                                            {t('EDIT_PROFILE')}
                                         </button>
                                     ) : (
                                         <>
@@ -4609,11 +4606,11 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-5 gap-1.5 sm:gap-1.5 p-2 bg-gradient-to-br from-black/70 via-black/60 to-black/80 backdrop-blur-3xl border border-white/10 rounded-[24px] w-full mb-6 mt-4 shadow-[inset_0_2px_10px_rgba(255,255,255,0.05),0_20px_60px_rgba(0,0,0,0.6)]">
+                            <div className="flex border-b border-white/10 w-full mb-6 mt-4 relative">
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map((tab, index) => {
                                     const isActive = activeTab === tab;
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-200 ${isActive ? 'text-[#ffffff] scale-105' : 'text-gray-400'}`;
+                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-200 ${isActive ? 'text-white scale-105' : 'text-gray-400'}`;
                                         if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
                                         if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -4628,14 +4625,14 @@ const ProfileModal = ({
                                         <EnhancedButton
                                             key={tab}
                                             onClick={() => setActiveTab(tab)}
-                                            scaleDown={0.92}
+                                            scaleDown={0.94}
                                             duration={120}
-                                            className={`profile-tab-btn min-w-0 min-h-[48px] sm:min-h-[52px] px-1.5 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-200 rounded-[14px] sm:rounded-[16px] relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
-                                                ? 'bg-white/15 border border-white/25 text-white z-10'
-                                                : 'bg-transparent text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/10'
+                                            className={`profile-tab-btn flex-1 min-w-0 min-h-[48px] sm:min-h-[52px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-200 relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation bg-transparent ${isActive
+                                                ? 'text-white font-extrabold z-10'
+                                                : 'text-white/50 hover:text-white hover:bg-white/5'
                                                 }`}
                                         >
-                                            <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 w-full">
+                                            <div className="relative z-10 flex flex-col items-center justify-center gap-1 w-full pb-1">
                                                 {renderIcon(isActive)}
                                                 <span
                                                     className={`max-w-full text-center leading-none transition-all duration-200 whitespace-nowrap ${isLongTabLabel
@@ -4646,6 +4643,9 @@ const ProfileModal = ({
                                                     {tabLabel}
                                                 </span>
                                             </div>
+                                            {isActive && (
+                                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 sm:w-12 h-[3px] bg-[var(--gold-primary)] rounded-full animate-fade-in" />
+                                            )}
                                         </EnhancedButton>
                                     );
                                 })}
