@@ -4613,7 +4613,7 @@ const ProfileModal = ({
                                 {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map((tab, index) => {
                                     const isActive = activeTab === tab;
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-300 ${isActive ? 'text-[#ffffff] scale-110' : 'text-gray-400'}`;
+                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-200 ${isActive ? 'text-[#ffffff] scale-105' : 'text-gray-400'}`;
                                         if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
                                         if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -4625,28 +4625,28 @@ const ProfileModal = ({
                                     const tabLabel = t('TAB_' + tab, tab);
                                     const isLongTabLabel = tabLabel.length >= 10;
                                     return (
-                                        <button
+                                        <EnhancedButton
                                             key={tab}
-                                            type="button"
                                             onClick={() => setActiveTab(tab)}
-                                            style={{ WebkitTapHighlightColor: 'transparent', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-                                            className={`profile-tab-btn min-w-0 min-h-[48px] sm:min-h-[52px] px-1.5 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-300 rounded-[16px] sm:rounded-[18px] relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
-                                                ? 'profile-tab-btn-active bg-white/10 border border-white/20 text-white z-10'
-                                                : 'bg-transparent text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 border border-transparent'
+                                            scaleDown={0.92}
+                                            duration={120}
+                                            className={`profile-tab-btn min-w-0 min-h-[48px] sm:min-h-[52px] px-1.5 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-200 rounded-[14px] sm:rounded-[16px] relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation ${isActive
+                                                ? 'bg-white/15 border border-white/25 text-white z-10'
+                                                : 'bg-transparent text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/10'
                                                 }`}
                                         >
                                             <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 w-full">
                                                 {renderIcon(isActive)}
                                                 <span
-                                                    className={`max-w-full text-center leading-none transition-all duration-300 whitespace-nowrap ${isLongTabLabel
+                                                    className={`max-w-full text-center leading-none transition-all duration-200 whitespace-nowrap ${isLongTabLabel
                                                         ? 'text-[7px] sm:text-[8px] tracking-[0.03em]'
                                                         : 'text-[8px] sm:text-[9px] tracking-[0.08em]'
-                                                        } ${isActive ? 'text-white' : 'text-gray-400'} font-black`}
+                                                        } ${isActive ? 'text-white font-extrabold' : 'text-gray-400'} font-black`}
                                                 >
                                                     {tabLabel}
                                                 </span>
                                             </div>
-                                        </button>
+                                        </EnhancedButton>
                                     );
                                 })}
                             </div>
