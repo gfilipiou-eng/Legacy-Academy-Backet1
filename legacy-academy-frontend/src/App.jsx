@@ -7383,9 +7383,6 @@ const App = () => {
                         {/* Animated Orbs for magical ancient vibe */}
                         <div className="login-greek-orb top-[-10%] left-[-5%] w-[400px] h-[400px] bg-[var(--gold-primary)]/30" style={{ animationDuration: '8s' }} />
                         <div className="login-greek-orb bottom-[-15%] right-[-5%] w-[500px] h-[500px] bg-[var(--gold-primary)]/20" style={{ animationDuration: '12s', animationDelay: '3s' }} />
-                        
-                        {/* Ancient Greek pattern overlay */}
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 30h60M30 0v60\" stroke=\"%23D4AF37\" stroke-width=\"1\" opacity=\"0.08\" fill=\"none\"/></svg>')]" />
                     </div>
 
                     {/* MAIN GLASS CARD */}
