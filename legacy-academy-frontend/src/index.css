@@ -186,22 +186,6 @@ body.bg-ocean { --app-bg: #041018; }
   transition: transform 0.12s ease-out;
 }
 
-/* 3D login card effect for login container */
-.login-perspective {
-  perspective: 1000px;
-}
-
-.login-3d-card {
-  transform-style: preserve-3d;
-  transition: transform 0.12s ease-out, box-shadow 0.3s ease;
-}
-
-.login-3d-glow {
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(212, 175, 55, 0.15);
-}
-
 
 .animate-shimmer {
   animation: shimmer 3s infinite;
