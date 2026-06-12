@@ -998,7 +998,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="x-comment relative group"
+            className={`x-comment relative group ${menuOpen ? 'z-50' : 'z-10'}`}
         >
             {/* Avatar */}
             <div

@@ -356,7 +356,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               const canDelete = isCommentAuthor || isFounder;
 
               return (
-                <div key={i} className="py-3.5 flex gap-3 group relative animate-slide-down">
+                <div key={i} className={`py-3.5 flex gap-3 group relative animate-slide-down ${activeMenuId === c._id ? 'z-50' : 'z-10'}`}>
                   {/* Avatar */}
                   <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
                     <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
