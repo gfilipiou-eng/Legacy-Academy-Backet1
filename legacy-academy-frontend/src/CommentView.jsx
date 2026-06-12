@@ -6,6 +6,7 @@ import { Icons } from './components/Icons';
 import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
 import { playSound } from './utils/sounds';
+import EnhancedButton from './components/EnhancedButton';
 
 const BASE_URL = axios.defaults.baseURL.replace('/api', '');
 
@@ -302,11 +303,11 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
-                <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 text-gray-400 hover:text-white sturdy-active touch-manipulation">
+                <EnhancedButton className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 text-gray-400 hover:text-white">
                   <Icons.MessageSquare className="w-5 h-5" />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                </button>
-                <button className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'} sturdy-active touch-manipulation`} onClick={async () => {
+                </EnhancedButton>
+                <EnhancedButton className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/repost`);
                     fetchPost();
@@ -314,8 +315,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                 }}>
                   <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.includes(currentUser?._id) ? 'scale-110' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
-                </button>
-                <button className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'} sturdy-active touch-manipulation`} onClick={async () => {
+                </EnhancedButton>
+                <EnhancedButton className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/like`);
                     fetchPost();
@@ -323,8 +324,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                 }}>
                   <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.includes(currentUser?._id) ? 'fill-current scale-110' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
-                </button>
-                <button className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'} sturdy-active touch-manipulation`} onClick={async () => {
+                </EnhancedButton>
+                <EnhancedButton className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`} onClick={async () => {
                   try {
                     await axios.put(`/posts/${post._id}/dislike`);
                     fetchPost();
@@ -332,7 +333,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                 }}>
                   <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.includes(currentUser?._id) ? 'fill-current scale-110' : ''}`} />
                   <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
-                </button>
+                </EnhancedButton>
               </div>
             </div>
           </div>

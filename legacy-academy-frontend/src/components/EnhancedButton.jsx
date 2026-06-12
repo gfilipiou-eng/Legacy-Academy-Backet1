@@ -1,61 +1,54 @@
-import React from 'react';
-import { useTouchFeedback } from '../hooks/useTouchFeedback';
+import React, { useState } from 'react';
 
-/**
- * EnhancedButton - Βελτιωμένο button με καλύτερο touch feedback
- * 
- * Χρήση:
- * <EnhancedButton 
- *   onClick={handleClick}
- *   sound="nav_click"  // ή "tap", "click", "pop"
- *   scaleDown={0.9}    // πόσο θα συρρικνωθεί (0.9 = 90%)
- *   duration={150}     // διάρκεια animation σε ms
- *   className="your-classes"
- * >
- *   Button Text
- * </EnhancedButton>
- */
 const EnhancedButton = ({ 
-  children, 
-  onClick, 
-  className = '', 
-  sound = null,
-  scaleDown = 0.95,
-  duration = 150,
-  disabled = false,
-  style = {},
-  ...props 
+    children, 
+    onClick, 
+    className = '', 
+    scaleDown = 0.95,
+    duration = 150,
+    disabled = false,
+    style = {},
+    ...props 
 }) => {
-  const { handlers, styles, isPressed } = useTouchFeedback({
-    onClick,
-    sound,
-    scaleDown,
-    duration,
-    disabled
-  });
+    const [isPressed, setIsPressed] = useState(false);
 
-  // Combine classes for better touch feedback
-  const combinedClasses = `
-    ${className}
-    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    select-none
-  `.trim();
+    const handlePressStart = () => {
+        if (!disabled) setIsPressed(true);
+    };
 
-  return (
-    <button
-      {...handlers}
-      {...props}
-      disabled={disabled}
-      className={combinedClasses}
-      style={{
-        ...style,
-        ...styles,
-        outline: 'none',
-      }}
-    >
-      {children}
-    </button>
-  );
+    const handlePressEnd = () => {
+        setIsPressed(false);
+    };
+
+    const combinedClasses = `
+        ${className}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        select-none
+    `.trim();
+
+    return (
+        <button
+            onClick={disabled ? undefined : onClick}
+            onMouseDown={handlePressStart}
+            onMouseUp={handlePressEnd}
+            onMouseLeave={handlePressEnd}
+            onTouchStart={handlePressStart}
+            onTouchEnd={handlePressEnd}
+            disabled={disabled}
+            className={combinedClasses}
+            style={{
+                ...style,
+                outline: 'none',
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation',
+                transform: isPressed ? `scale(${scaleDown})` : undefined,
+                transition: `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`
+            }}
+            {...props}
+        >
+            {children}
+        </button>
+    );
 };
 
 export default EnhancedButton;
