@@ -992,117 +992,123 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     };
 
     return (
-            <motion.div
-                layout
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className={`flex gap-3 items-start relative py-4 border-b border-white/5 ${isCommentAuthor ? 'flex-row-reverse' : ''}`}
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="x-comment"
+        >
+            {/* Avatar */}
+            <div
+                className="x-comment__avatar"
+                onClick={() => onViewProfile && onViewProfile(commentAuthor)}
             >
-                <div 
-                    className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => onViewProfile && onViewProfile(commentAuthor)}
-                >
-                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                    <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
-                        <ProfileAvatar
-                        user={commentAuthor}
-                        />
-                    </div>
-                </div>
+                <ProfileAvatar user={commentAuthor} />
+            </div>
 
-            <div className={`flex-1 min-w-0 flex flex-col ${isCommentAuthor ? 'items-end text-right' : 'items-start'}`}>
-                <div className="flex items-center gap-2 mb-1 max-w-full">
-                    <span 
-                        className={`font-bold text-sm truncate cursor-pointer hover:underline text-white`}
+            {/* Body */}
+            <div className="x-comment__body">
+                {/* Header: username · handle · time */}
+                <div className="x-comment__header">
+                    <span
+                        className="x-comment__username"
                         onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4" />
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5" />
+                    <span className="x-comment__handle">@{(commentAuthor?.username || 'user').toLowerCase()}</span>
+                    <span className="x-comment__dot">·</span>
+                    <span className="x-comment__time"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
                 </div>
 
+                {/* Edit mode */}
                 {isEditing ? (
                     <div className="w-full mt-1">
                         <textarea
                             autoFocus
                             value={editText}
                             onChange={e => setEditText(e.target.value)}
-                            className="w-full bg-transparent border border-white/15 rounded-xl px-4 py-3 text-sm text-white outline-none mb-2 focus:border-white/40 min-h-[80px] resize-none"
+                            className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2.5 text-[15px] text-white outline-none mb-2 focus:border-white/35 min-h-[72px] resize-none leading-relaxed"
                         />
-                        <div className="flex gap-2 mt-2 justify-end">
+                        <div className="flex gap-2">
                             <button
                                 onClick={handleSave}
-                                className="px-4 py-2 rounded-full bg-white text-[12px] font-bold text-black hover:brightness-90 uppercase tracking-wide"
+                                className="px-4 py-1.5 rounded-full bg-white text-[12px] font-bold text-black hover:bg-gray-200 active:scale-95 uppercase tracking-wide transition-all"
                             >
                                 {t('SAVE')}
                             </button>
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="px-4 py-2 rounded-full bg-white/10 text-[12px] font-bold text-white hover:bg-white/15 uppercase tracking-wide"
+                                className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/70 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all"
                             >
                                 {t('CANCEL')}
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-2 w-full">
+                    <>
+                        {/* Text */}
                         {comment.text && (
-                            <div className="group/cmt relative">
-                                <span className={`inline-block pb-1 text-[15px] text-white/95 leading-relaxed whitespace-pre-wrap break-words ${translatedText ? 'italic text-[var(--gold-primary)]/80' : ''}`}>
-                                    {parseText(translatedText || comment.text, null, (username) => {
-                                        const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
-                                        if (u && onViewProfile) onViewProfile(u);
-                                    })}
-                                </span>
-                                {comment.text.length > 3 && (
-                                    <button
-                                        onClick={handleTranslate}
-                                        disabled={isTranslating}
-                                        className="ml-2 inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 hover:text-white uppercase tracking-tight"
-                                    >
-                                        <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                        {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
-                                    </button>
-                                )}
-                            </div>
+                            <p className="x-comment__text">
+                                {parseText(translatedText || comment.text, null, (username) => {
+                                    const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                    if (u && onViewProfile) onViewProfile(u);
+                                })}
+                            </p>
                         )}
+
+                        {/* Voice note */}
                         {comment.audioUrl && (
-                            <div className="flex flex-col gap-1 mt-1 w-full">
+                            <div className="flex flex-col gap-1 mt-1 mb-1 w-full">
                                 <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
                                     <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
                                 </div>
                                 <VoiceNotePlayer src={resolveMediaUrl(comment.audioUrl)} t={t} />
                             </div>
                         )}
-                    </div>
-                )}
 
-                <div className="flex flex-wrap gap-4 mt-2 items-center text-[11px] text-gray-500">
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        <CyberDate date={comment.createdAt} t={t} lang={lang} />
-                    </div>
-                    {canEdit && !isEditing && (
-                        <button
-                            type="button"
-                            onClick={() => setIsEditing(true)}
-                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[11px] font-bold text-gray-500 hover:text-white hover:bg-white/10 transition-colors"
-                            title={t('EDIT')}
-                        >
-                            <Icons.Edit className="w-3.5 h-3.5" /> <span>{t('EDIT')}</span>
-                        </button>
-                    )}
-                    {canDelete && (
-                        <button
-                            type="button"
-                            onClick={() => onDelete?.(post._id, comment._id)}
-                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[11px] font-bold text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                            title={t('DELETE')}
-                        >
-                            <Icons.Trash className="w-3.5 h-3.5" /> <span>{t('DELETE')}</span>
-                        </button>
-                    )}
-                </div>
+                        {/* Action row */}
+                        <div className="x-comment__actions">
+                            {/* Translate */}
+                            {comment.text && comment.text.length > 3 && (
+                                <button
+                                    onClick={handleTranslate}
+                                    disabled={isTranslating}
+                                    className="x-comment__action-btn"
+                                >
+                                    <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                    {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                                </button>
+                            )}
+                            {/* Edit */}
+                            {canEdit && (
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditing(true)}
+                                    className="x-comment__action-btn"
+                                    title={t('EDIT')}
+                                >
+                                    <Icons.Edit className="w-3.5 h-3.5" />
+                                    {t('EDIT')}
+                                </button>
+                            )}
+                            {/* Delete */}
+                            {canDelete && (
+                                <button
+                                    type="button"
+                                    onClick={() => onDelete?.(post._id, comment._id)}
+                                    className="x-comment__action-btn x-comment__action-btn--delete"
+                                    title={t('DELETE')}
+                                >
+                                    <Icons.Trash className="w-3.5 h-3.5" />
+                                    {t('DELETE')}
+                                </button>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
         </motion.div>
     );
@@ -4128,7 +4134,7 @@ const ProfileModal = ({
                                     <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} />
                                 )}
                             </div>
-                            <input type="file" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
+                            <input type="file" id="profile-pic-input" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
@@ -4158,26 +4164,26 @@ const ProfileModal = ({
                             }} />
 
                             <div className="flex gap-3 w-full">
-                                <button onClick={e => { e.preventDefault(); !profileUploading && fileRef.current.click(); }} disabled={profileUploading}
-                                    className={`profile-glass-btn profile-glass-btn--secondary flex-1 ${profileUploading ? 'profile-glass-btn--loading' : ''}`}>
-                                    <div className="profile-glass-btn__shine" aria-hidden="true" />
-                                    <span className="profile-glass-btn__content">
-                                        {profileUploading ? (
-                                            <>
-                                                <Icons.Loader className="w-4 h-4" />
-                                                {t('UPLOADING') || 'UPLOADING...'}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                                                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
-                                                    <circle cx="12" cy="13" r="3"></circle>
-                                                </svg>
-                                                {t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE'}
-                                            </>
-                                        )}
-                                    </span>
-                                </button>
+                                <label
+                                    htmlFor="profile-pic-input"
+                                    className={`profile-upload-label${profileUploading ? ' disabled' : ''}`}
+                                    style={{ pointerEvents: profileUploading ? 'none' : 'auto' }}
+                                >
+                                    {profileUploading ? (
+                                        <>
+                                            <Icons.Loader className="w-4 h-4" />
+                                            {t('UPLOADING') || 'UPLOADING...'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                                                <circle cx="12" cy="13" r="3"></circle>
+                                            </svg>
+                                            {t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE'}
+                                        </>
+                                    )}
+                                </label>
                                 {displayUser?.profilePic && (
                                     <button onClick={async (e) => {
                                         e.preventDefault();
@@ -4210,23 +4216,23 @@ const ProfileModal = ({
                             </div>
 
                             <div className="flex gap-3 w-full mt-4">
-                                <button onClick={e => { e.preventDefault(); !coverUploading && coverFileRef.current.click(); }} disabled={coverUploading}
-                                    className={`profile-glass-btn profile-glass-btn--secondary flex-1 ${coverUploading ? 'profile-glass-btn--loading' : ''}`}>
-                                    <div className="profile-glass-btn__shine" aria-hidden="true" />
-                                    <span className="profile-glass-btn__content">
-                                        {coverUploading ? (
-                                            <>
-                                                <Icons.Loader className="w-4 h-4" />
-                                                {t('UPLOADING') || 'UPLOADING...'}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Icons.Image className="w-4 h-4" />
-                                                {t('CHANGE_COVER') || 'CHANGE BACKGROUND'}
-                                            </>
-                                        )}
-                                    </span>
-                                </button>
+                                <label
+                                    htmlFor="cover-pic-input"
+                                    className={`profile-upload-label${coverUploading ? ' disabled' : ''}`}
+                                    style={{ pointerEvents: coverUploading ? 'none' : 'auto' }}
+                                >
+                                    {coverUploading ? (
+                                        <>
+                                            <Icons.Loader className="w-4 h-4" />
+                                            {t('UPLOADING') || 'UPLOADING...'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Icons.Image className="w-4 h-4" />
+                                            {t('CHANGE_COVER') || 'CHANGE BACKGROUND'}
+                                        </>
+                                    )}
+                                </label>
                                 {displayUser?.coverPic && (
                                     <button onClick={async (e) => {
                                         e.preventDefault();
@@ -4257,7 +4263,7 @@ const ProfileModal = ({
                                     </button>
                                 )}
                             </div>
-                            <input type="file" ref={coverFileRef} hidden accept="image/*, video/*" onChange={async (e) => {
+                            <input type="file" id="cover-pic-input" ref={coverFileRef} hidden accept="image/*, video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
                                     // Ο Founder έχει όριο 500MB, οι άλλοι έχουν 90MB
@@ -4395,22 +4401,19 @@ const ProfileModal = ({
                                     e.stopPropagation();
                                     handleProfileSave();
                                 }}
-                                className={`profile-glass-btn profile-glass-btn--primary profile-edit-btn w-full ${profileSaving ? 'profile-glass-btn--loading' : ''}`}
+                                className="profile-save-btn mt-2"
                             >
-                                <div className="profile-glass-btn__shine" aria-hidden="true" />
-                                <span className="profile-glass-btn__content">
-                                    {profileSaving ? (
-                                        <>
-                                            <Icons.Loader className="w-4 h-4" />
-                                            {t('SAVING') || 'SAVING...'}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Icons.Check className="w-4 h-4" />
-                                            {t('SAVE') || 'SAVE'}
-                                        </>
-                                    )}
-                                </span>
+                                {profileSaving ? (
+                                    <>
+                                        <Icons.Loader className="w-4 h-4" />
+                                        {t('SAVING') || 'SAVING...'}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Icons.Check className="w-4 h-4" />
+                                        {t('SAVE') || 'SAVE'}
+                                    </>
+                                )}
                             </button>
                         </div>
                     ) : (
