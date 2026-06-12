@@ -5867,6 +5867,7 @@ const App = () => {
     const [showPaywall, setShowPaywall] = useState(false);
     const [chatTarget, setChatTarget] = useState(null);
     const registerFileRef = useRef(null);
+    const loginCardRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
     const [expandedDates, setExpandedDates] = useState({});
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -5900,6 +5901,31 @@ const App = () => {
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
     useEffect(() => { postsRef.current = posts; }, [posts]);
     useEffect(() => { usersRef.current = users; }, [users]);
+
+    // Login card 3D tilt effect
+    useEffect(() => {
+        if (!loginCardRef.current) return;
+        const card = loginCardRef.current;
+        const handleMouseMove = (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateY = (x - centerX) / 20;
+            const rotateX = (centerY - y) / 20;
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+        };
+        const handleMouseLeave = () => {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        };
+        card.addEventListener('mousemove', handleMouseMove);
+        card.addEventListener('mouseleave', handleMouseLeave);
+        return () => {
+            card.removeEventListener('mousemove', handleMouseMove);
+            card.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, []);
 
     // Track online users to show a toast when someone comes online
     useEffect(() => {
@@ -7386,8 +7412,8 @@ const App = () => {
                     </div>
 
                     {/* MAIN GLASS CARD */}
-                    <div className="relative w-[92%] sm:w-full max-w-[420px] mx-auto z-10 mt-safe-top pt-8 pb-12">
-                        <div className="relative bg-black/40 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div className="relative w-[92%] sm:w-full max-w-[420px] mx-auto z-10 mt-safe-top pt-8 pb-12 login-perspective">
+                        <div ref={loginCardRef} className="relative bg-black/40 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] overflow-hidden login-3d-card login-3d-glow">
                             <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                             <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
