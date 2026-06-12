@@ -3,7 +3,7 @@ import { playSound } from '../utils/sounds';
 
 export const useTouchFeedback = (options = {}) => {
   const {
-    sound = 'tap',
+    sound = null,
     scaleDown = 0.95,
     duration = 150,
     onClick,

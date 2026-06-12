@@ -19,7 +19,7 @@ const EnhancedButton = ({
   children, 
   onClick, 
   className = '', 
-  sound = 'tap',
+  sound = null,
   scaleDown = 0.95,
   duration = 150,
   disabled = false,
