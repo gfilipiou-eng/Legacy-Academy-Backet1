@@ -3551,7 +3551,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             >
                                 <item.icon
                                     className={`w-7 h-7 shrink-0 transition-all duration-300 pointer-events-none ${
-                                        isActive ? 'scale-105 drop-shadow-[0_4px_12px_rgba(29,155,240,0.4)]' : ''
+                                        isActive ? 'scale-105' : ''
                                     }`}
                                     fill={isActive ? 'currentColor' : 'none'}
                                     strokeWidth={isActive ? '2.5' : '2'}
@@ -3598,7 +3598,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 )}
 
                                 {item.badge > 0 && (
-                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0 border-2 border-black shadow-[0_0_10px_rgba(29,155,240,0.5)]">
+                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0 border-2 border-black">
                                         <span className="text-[11px] font-black text-white leading-none">
                                             {item.badge > 9 ? '9+' : item.badge}
                                         </span>
