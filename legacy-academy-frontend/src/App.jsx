@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo, useCallback, startTransition } from 'react';
 import { createPortal } from 'react-dom';
 import EnhancedButton from './components/EnhancedButton';
+import Athena3D from './components/Athena3D';
 // DEPLOYMENT_VERSION: V12_PORTAL_FIX
 
 import axios from './api';
@@ -7392,6 +7393,10 @@ const App = () => {
                             <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
+                                {/* 3D Athena Statue */}
+                                <div className="flex flex-col items-center mb-4 relative">
+                                    <Athena3D />
+                                </div>
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
                                     <div className="relative flex justify-center items-center w-full mb-2">
