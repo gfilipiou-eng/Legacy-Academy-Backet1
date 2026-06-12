@@ -1293,18 +1293,18 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   animation: slide-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Fix mobile zoom issue and double-tap delay */
-* {
-  -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation;
-}
-
+/* === MOBILE TOUCH INTERACTIONS ENHANCEMENT (BLUE SKY/PLATFORM STYLE) === */
+/* Fix mobile zoom issue completely */
 html, body {
   -webkit-tap-highlight-color: transparent !important;
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
+  touch-action: pan-y;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 
+/* Prevent accidental zooms on tap interactions */
 @media screen and (max-width: 768px) {
   input,
   textarea,
@@ -1313,11 +1313,52 @@ html, body {
     font-size: 16px !important;
   }
   
-  /* Make mobile experience feel more sturdy/native */
+  /* Make mobile experience feel more native/sturdy */
   body {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: none;
   }
+}
+
+/* KILL STICKY HOVER STATES ON MOBILE (they stay styled after tap) */
+@media (hover: none) {
+  button:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.sturdy-active), 
+  a:hover:not(.profile-descriptor-badge):not(.sturdy-active), 
+  .cursor-pointer:hover:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.sturdy-active) {
+    background-color: transparent !important;
+    color: inherit !important;
+    border-color: transparent !important;
+  }
+
+  /* Blue Sky/platform style active states on mobile (not hover) */
+  button:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge),
+  .cursor-pointer:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge) {
+    transform: scale(0.97);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Keep descriptor buttons working as intended */
+  .profile-descriptor-btn:hover,
+  .profile-descriptor-btn:active,
+  .profile-descriptor-btn-selected:hover,
+  .profile-descriptor-btn-selected:active {
+    opacity: 1;
+  }
+}
+
+/* Desktop - allow hover effects normally */
+@media (hover: hover) {
+  .hover\:bg-white\/5:hover { background-color: rgba(255, 255, 255, 0.05) !important; }
+  .hover\:bg-white\/10:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
+  .hover\:bg-white\/20:hover { background-color: rgba(255, 255, 255, 0.2) !important; }
+  .hover\:bg-red-500\/10:hover { background-color: rgba(239, 68, 68, 0.1) !important; }
+  .hover\:bg-blue-500\/10:hover { background-color: rgba(59, 130, 246, 0.1) !important; }
+  .hover\:bg-green-500\/10:hover { background-color: rgba(34, 197, 94, 0.1) !important; }
+  .hover\:border-red-500\/20:hover { border-color: rgba(239, 68, 68, 0.2) !important; }
+  .hover\:border-blue-500\/20:hover { border-color: rgba(59, 130, 246, 0.2) !important; }
+  .hover\:border-green-500\/20:hover { border-color: rgba(34, 197, 94, 0.2) !important; }
+  .hover\:border-white\/10:hover { border-color: rgba(255, 255, 255, 0.1) !important; }
+  .hover\:border-white\/20:hover { border-color: rgba(255, 255, 255, 0.2) !important; }
 }
 
 .group\/folder {
