@@ -1936,18 +1936,19 @@ input, textarea {
 .x-comment__actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   margin-top: 6px;
+  width: 100%;
 }
 .x-comment__action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   padding: 5px 8px;
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 700;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.35);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1955,14 +1956,25 @@ input, textarea {
   touch-action: manipulation;
   transition: color 0.15s ease, background 0.15s ease;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 .x-comment__action-btn:hover {
-  color: #fff;
+  color: rgba(255,255,255,0.8);
   background: rgba(255,255,255,0.07);
+}
+/* Delete — always visible in muted red so user can spot it */
+.x-comment__action-btn--delete {
+  color: rgba(248, 113, 113, 0.65);
 }
 .x-comment__action-btn--delete:hover {
   color: #f87171;
-  background: rgba(248,113,113,0.1);
+  background: rgba(248,113,113,0.12);
+}
+/* Hide label text on very small screens, show icon only */
+@media (max-width: 380px) {
+  .x-comment__action-label {
+    display: none;
+  }
 }
 

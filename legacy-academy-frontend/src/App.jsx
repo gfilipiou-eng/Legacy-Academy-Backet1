@@ -1071,18 +1071,19 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
                         {/* Action row */}
                         <div className="x-comment__actions">
-                            {/* Translate */}
+                            {/* Translate — icon only */}
                             {comment.text && comment.text.length > 3 && (
                                 <button
                                     onClick={handleTranslate}
                                     disabled={isTranslating}
                                     className="x-comment__action-btn"
+                                    title={isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
                                 >
                                     <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                    {isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}
+                                    <span className="x-comment__action-label">{isTranslating ? '...' : (translatedText ? t('SHOW_ORIGINAL') : t('SEE_TRANSLATION'))}</span>
                                 </button>
                             )}
-                            {/* Edit */}
+                            {/* Edit — icon only */}
                             {canEdit && (
                                 <button
                                     type="button"
@@ -1091,10 +1092,12 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                     title={t('EDIT')}
                                 >
                                     <Icons.Edit className="w-3.5 h-3.5" />
-                                    {t('EDIT')}
+                                    <span className="x-comment__action-label">{t('EDIT')}</span>
                                 </button>
                             )}
-                            {/* Delete */}
+                            {/* Spacer pushes delete to the right */}
+                            <span style={{ flex: 1 }} />
+                            {/* Delete — always visible, red, right-aligned */}
                             {canDelete && (
                                 <button
                                     type="button"
@@ -1103,7 +1106,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                     title={t('DELETE')}
                                 >
                                     <Icons.Trash className="w-3.5 h-3.5" />
-                                    {t('DELETE')}
+                                    <span>{t('DELETE')}</span>
                                 </button>
                             )}
                         </div>
