@@ -414,7 +414,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                     )}
                   </div>
 
-                  {/* Options Dropdown (Edit/Delete) */}
+                  {/* Options Dropdown / Bottom Sheet (Edit/Delete) */}
                   {(canEdit || canDelete) && editingCommentId !== c._id && (
                     <div className="absolute right-0 top-3 z-30">
                       <button
@@ -433,15 +433,18 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                         <>
                           {/* Backdrop to close the menu on tap/click outside */}
                           <div
-                            className="fixed inset-0 z-40 bg-transparent cursor-default"
+                            className="fixed inset-0 z-[99998] bg-black/60 backdrop-blur-sm cursor-default"
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveMenuId(null);
                             }}
                           />
 
-                          {/* Dropdown Menu */}
-                          <div className="absolute right-0 mt-1 w-36 bg-[#0f1419]/95 backdrop-blur-md border border-white/10 rounded-xl py-1 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
+                          {/* Dropdown / Bottom Sheet Menu */}
+                          <div className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-auto md:left-auto md:right-0 md:mt-1 w-full md:w-36 bg-[#0f1419] border-t md:border border-white/10 rounded-t-3xl md:rounded-xl py-4 md:py-1 shadow-2xl z-[99999] animate-in slide-in-from-bottom md:slide-in-from-top-1 duration-200">
+                            {/* Grab handle for mobile bottom sheet */}
+                            <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 md:hidden" />
+
                             {canEdit && (
                               <button
                                 type="button"
@@ -450,9 +453,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                                   setEditingCommentId(c._id);
                                   setEditText(c.text || '');
                                 }}
-                                className="w-full px-3.5 py-2.5 text-left text-[13px] font-bold text-white hover:bg-white/5 active:bg-white/10 transition-colors flex items-center gap-2 cursor-pointer touch-manipulation"
+                                className="w-full px-5 py-3 md:px-3.5 md:py-2.5 text-left text-base md:text-[13px] font-bold text-white hover:bg-white/5 active:bg-white/10 transition-colors flex items-center gap-3 cursor-pointer touch-manipulation"
                               >
-                                <Icons.Edit className="w-4 h-4 text-white/60" />
+                                <Icons.Edit className="w-5 h-5 md:w-4 md:h-4 text-white/60" />
                                 <span>{t('EDIT') || 'Edit'}</span>
                               </button>
                             )}
@@ -463,9 +466,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                                   setActiveMenuId(null);
                                   handleDelete(c._id);
                                 }}
-                                className="w-full px-3.5 py-2.5 text-left text-[13px] font-bold text-red-500 hover:bg-red-500/10 active:bg-red-500/25 transition-colors flex items-center gap-2 border-t border-white/[0.06] cursor-pointer touch-manipulation"
+                                className="w-full px-5 py-3 md:px-3.5 md:py-2.5 text-left text-base md:text-[13px] font-bold text-red-500 hover:bg-red-500/10 active:bg-red-500/25 transition-colors flex items-center gap-3 border-t border-white/[0.06] cursor-pointer touch-manipulation"
                               >
-                                <Icons.Trash className="w-4 h-4" />
+                                <Icons.Trash className="w-5 h-5 md:w-4 md:h-4" />
                                 <span>{t('DELETE') || 'Delete'}</span>
                               </button>
                             )}
