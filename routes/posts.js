@@ -167,7 +167,7 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
                 isStory: originalPost.isStory
             });
             await newRepostPost.save();
-            await newRepostPost.populate('author repostedBy', 'username profilePic role');
+            await newRepostPost.populate('author repostedBy', 'username profilePic role settings');
             console.log("🔄 [REPOST] Repost post created successfully:", newRepostPost._id);
         } else {
             // Delete repost post
@@ -488,8 +488,8 @@ router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 100;
         const posts = await Post.find()
-            .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
-            .populate('repostedBy', 'username profilePic role')
+            .populate('author', 'username profilePic role isPrivate isFollowersOnly followers settings')
+            .populate('repostedBy', 'username profilePic role settings')
             .sort({ createdAt: -1 })
             .lean();
 
@@ -529,8 +529,8 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
                 { repostedBy: userId }
             ]
         })
-            .populate('author', 'username profilePic role isPrivate isFollowersOnly followers')
-            .populate('repostedBy', 'username profilePic role')
+            .populate('author', 'username profilePic role isPrivate isFollowersOnly followers settings')
+            .populate('repostedBy', 'username profilePic role settings')
             .sort({ createdAt: -1 })
             .lean();
 
@@ -839,7 +839,7 @@ router.get("/feed", verifyToken, async (req, res) => {
 // GET SINGLE POST (With Privacy Filter)
 router.get("/:id", verifyToken, async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id).populate('author', 'username profilePic role isPrivate isFollowersOnly followers').populate('repostedBy', 'username profilePic role');
+        const post = await Post.findById(req.params.id).populate('author', 'username profilePic role isPrivate isFollowersOnly followers settings').populate('repostedBy', 'username profilePic role settings');
     if (!post) return res.status(404).json("Post not found");
 
     const currentUserId = req.user.id || req.user.userId;

@@ -292,7 +292,7 @@ router.get("/public/posts/:username", async (req, res) => {
                 { author: user._id },
                 { repostedBy: user._id }
             ]
-        }).populate('author repostedBy', 'username profilePic role isPrivate isFollowersOnly').sort({ createdAt: -1 });
+        }).populate('author repostedBy', 'username profilePic role isPrivate isFollowersOnly settings').sort({ createdAt: -1 });
         console.log("🔍 [PUBLIC POSTS] Found posts:", posts.length, posts.map(p => ({ _id: p._id, isRepost: p.isRepost, repostedBy: p.repostedBy, author: p.author })));
         res.status(200).json(posts);
     } catch (err) {
