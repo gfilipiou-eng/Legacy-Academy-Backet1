@@ -26,6 +26,12 @@ const ASSET_PATHS = {
 };
 const PUBLIC_PROFILE_CACHE_PREFIX = 'public-profile-cache-v3:';
 
+// Wake up Render.com backend immediately
+if (typeof window !== 'undefined') {
+    const pingEndpoint = (axios.defaults.baseURL || '') + '/health';
+    fetch(pingEndpoint).catch(() => {});
+}
+
 const upsertHeadLink = ({ rel, href, sizes, type = 'image/png' }) => {
     if (typeof document === 'undefined' || !rel || !href) return;
     const selector = sizes ? `link[rel="${rel}"][sizes="${sizes}"]` : `link[rel="${rel}"]`;
@@ -1119,9 +1125,19 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             />
 
                             {/* Dropdown / Bottom Sheet Menu */}
-                            <div className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-auto md:left-auto md:right-0 md:mt-1 w-full md:w-36 bg-[#0f1419] border-t md:border border-white/10 rounded-t-3xl md:rounded-xl py-4 md:py-1 shadow-2xl z-[99999] animate-in slide-in-from-bottom md:slide-in-from-top-1 duration-200">
+                            <div className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-auto md:left-auto md:right-0 md:mt-1 w-full md:w-36 bg-[#0f1419] border-t md:border border-white/10 rounded-t-3xl md:rounded-xl py-4 md:py-1 shadow-2xl z-[99999] animate-in slide-in-from-bottom md:slide-in-from-top-1 duration-200 pr-10 md:pr-0">
                                 {/* Grab handle for mobile bottom sheet */}
                                 <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 md:hidden" />
+
+                                {/* Close X button */}
+                                <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }}
+                                    className="absolute top-2 right-4 p-1.5 rounded-full bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/60 transition-colors"
+                                    aria-label="Close"
+                                >
+                                    <Icons.X className="w-4 h-4" />
+                                </button>
 
                                 {canEdit && (
                                     <button
@@ -1787,7 +1803,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             <div className="flex justify-start items-start gap-2.5">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); toggleMute(e); }}
-                                    className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl  text-white pointer-events-auto     group/btn shadow-xl"
+                                    className="p-3 rounded-2xl liquid-glass-control text-white pointer-events-auto group/btn"
                                 >
                                     {isMuted ? <Icons.VolumeX className="w-5 h-5 group-hover/btn:scale-110 " /> : <Icons.Volume2 className="w-5 h-5 group-hover/btn:scale-110 " />}
                                 </button>
@@ -1816,7 +1832,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                                 onExpand(); // Fallback for youtube or missing ref
                                             }
                                         }}
-                                        className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl  text-white pointer-events-auto     group/btn shadow-xl"
+                                        className="p-3 rounded-2xl liquid-glass-control text-white pointer-events-auto group/btn"
                                     >
                                         <Icons.Maximize className="w-5 h-5 group-hover/btn:scale-110 " />
                                     </button>
@@ -1847,12 +1863,12 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             >
                                 <div className="absolute inset-x-0 -inset-y-4 group-hover/seek:bg-white/5 rounded-full" />
                                 <motion.div
-                                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffea70] shadow-[0_0_15px_var(--gold-glow)] rounded-full"
+                                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffea70] rounded-full"
                                     style={{ width: `${progress}%` }}
                                     transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
                                 />
                                 <motion.div
-                                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_5px_rgba(255,255,255,0.8)] scale-0 group-hover/seek:scale-100 hidden sm:block"
+                                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full scale-0 group-hover/seek:scale-100 hidden sm:block"
                                     style={{ left: `${progress}%`, marginLeft: '-6px' }}
                                 />
                             </div>
@@ -1881,61 +1897,101 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 p-3 rounded-none cursor-pointer border-b border-white/5 group"
+            className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer border transition-all duration-200 mb-2.5 group ${
+                note.read ? 'bg-white/[0.01] border-white/5 hover:bg-white/[0.03] hover:border-white/10' : 'bg-white/[0.03] border-[var(--gold-primary)]/15 hover:bg-white/[0.05] hover:border-[var(--gold-primary)]/30'
+            }`}
             onClick={handleClick}
         >
-            <div className="relative">
-                <div className="w-12 h-12 rounded-none bg-black overflow-hidden  shadow-md">
+            <div className="relative shrink-0">
+                <div className="w-11 h-11 rounded-full overflow-hidden border border-white/10 relative">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
-                {note.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-red-600 rounded-none p-1 border-2 border-black"><Icons.Heart className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'comment' && <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-none p-1 border-2 border-black"><Icons.MessageSquare className="w-3 h-3 text-white fill-current" /></div>}
-                {note.type === 'message' && <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-none p-1 border-2 border-black"><Icons.Mail className="w-3 h-3 text-white" /></div>}
-                {note.type === 'follow' && <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-none p-1 border-2 border-black"><Icons.UserPlus className="w-3 h-3 text-black" /></div>}
-                {note.type === 'follow_request' && <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-none p-1 border-2 border-black"><Icons.Shield className="w-3 h-3 text-white" /></div>}
-                {note.type === 'security_alert' && <div className="absolute -bottom-1 -right-1 bg-orange-600 rounded-none p-1 border-2 border-black animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.6)]"><Icons.ShieldCheck className="w-3 h-3 text-white" /></div>}
+                {note.type === 'like' && (
+                    <div className="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-1 border border-black shadow-lg">
+                        <Icons.Heart className="w-2.5 h-2.5 text-white fill-current" />
+                    </div>
+                )}
+                {note.type === 'comment' && (
+                    <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1 border border-black shadow-lg">
+                        <Icons.MessageSquare className="w-2.5 h-2.5 text-white fill-current" />
+                    </div>
+                )}
+                {note.type === 'message' && (
+                    <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border border-black shadow-lg">
+                        <Icons.Mail className="w-2.5 h-2.5 text-white" />
+                    </div>
+                )}
+                {note.type === 'follow' && (
+                    <div className="absolute -bottom-1 -right-1 bg-[var(--gold-primary)] rounded-full p-1 border border-black shadow-lg">
+                        <Icons.UserPlus className="w-2.5 h-2.5 text-black" />
+                    </div>
+                )}
+                {note.type === 'follow_request' && (
+                    <div className="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-1 border border-black shadow-lg">
+                        <Icons.Shield className="w-2.5 h-2.5 text-white" />
+                    </div>
+                )}
+                {note.type === 'security_alert' && (
+                    <div className="absolute -bottom-1 -right-1 bg-orange-500 rounded-full p-1 border border-black shadow-lg animate-pulse">
+                        <Icons.ShieldCheck className="w-2.5 h-2.5 text-white" />
+                    </div>
+                )}
             </div>
-            <div className="flex-1">
-                <div className="text-sm flex items-center gap-1.5 flex-wrap">
-                    <span className="font-black text-white group-hover:text-white uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
-                    {note?.sender?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{note.sender.missionsStreak}</span>}
-                    <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5 ml-1" user={note.sender} />
+
+            <div className="flex-1 min-w-0 text-left">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-black text-white uppercase tracking-tight text-xs sm:text-sm">
+                        {(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}
+                    </span>
+                    {note?.sender?.missionsStreak > 0 && (
+                        <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{note.sender.missionsStreak}</span>
+                    )}
+                    <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5" user={note.sender} />
                     {note?.fromDescriptor && (
-                        <span className="text-gray-400 text-[10px] ml-1 uppercase tracking-widest font-bold">
-                            • {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
+                        <span className="text-[9px] text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-widest shrink-0">
+                            {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
                         </span>
                     )}
-                    <span className="text-gray-500 text-[10px] sm:text-[11px] uppercase tracking-widest font-bold">
-                        {note.type === 'follow' ? t('NOTIF_FOLLOW') :
-                            note.type === 'like' ? t('NOTIF_LIKE') :
-                                note.type === 'comment' ? t('NOTIF_COMMENT') :
-                                    note.type === 'message' ? t('NOTIF_MESSAGE') :
-                                        note.type === 'mention' ? t('NOTIF_MENTION') :
-                                            note.type === 'security_alert' ? (lang === 'el' ? 'ΑΝΕΥΡΕΣΗ ΑΝΩΜΑΛΙΑΣ' : 'SECURITY ANOMALY DETECTED') :
-                                                note.type === 'follow_request' ? t('NOTIF_REQUEST') : ''}
-                    </span>
                 </div>
-                {note.text && <div className="text-xs text-gray-400 mt-1 line-clamp-1 italic font-medium">"{note.text}"</div>}
-                <div className="flex items-center gap-3 mt-2">
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        <CyberDate date={note.createdAt} t={t} lang={lang} />
+
+                <div className="text-[11px] sm:text-xs text-gray-300 mt-1 uppercase font-bold tracking-wider leading-snug">
+                    {note.type === 'follow' ? t('NOTIF_FOLLOW') :
+                        note.type === 'like' ? t('NOTIF_LIKE') :
+                            note.type === 'comment' ? t('NOTIF_COMMENT') :
+                                note.type === 'message' ? t('NOTIF_MESSAGE') :
+                                    note.type === 'mention' ? t('NOTIF_MENTION') :
+                                        note.type === 'security_alert' ? (lang === 'el' ? 'ΑΝΕΥΡΕΣΗ ΑΝΩΜΑΛΙΑΣ' : 'SECURITY ANOMALY DETECTED') :
+                                            note.type === 'follow_request' ? t('NOTIF_REQUEST') : ''}
+                </div>
+
+                {note.text && (
+                    <div className="text-xs text-gray-400 mt-1.5 p-2 bg-white/[0.02] border border-white/5 rounded-lg italic font-medium max-w-full truncate">
+                        "{note.text}"
                     </div>
-                    {!note.read && <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full" />}
+                )}
+
+                <div className="flex items-center gap-3 mt-2">
+                    <CyberDate date={note.createdAt} t={t} lang={lang} />
+                    {!note.read && (
+                        <span className="text-[8px] font-black uppercase text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 px-1.5 py-0.5 rounded border border-[var(--gold-primary)]/20">NEW</span>
+                    )}
                 </div>
 
                 {note.type === 'follow_request' && (
                     <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-105 shadow-lg uppercase tracking-widest">{t('ACCEPT')}</button>
-                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5  text-gray-400 text-[10px] font-black rounded-lg    uppercase tracking-widest">{t('REJECT')}</button>
+                        <button onClick={() => onAcceptRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-[var(--gold-primary)] text-black text-[10px] font-black rounded-lg hover:scale-[1.02] active:scale-[0.98] transition-transform uppercase tracking-widest">{t('ACCEPT')}</button>
+                        <button onClick={() => onRejectRequest(note.sender?._id || note.from, note._id)} className="flex-1 py-1.5 bg-white/5 text-gray-400 text-[10px] font-black rounded-lg hover:bg-white/10 uppercase tracking-widest">{t('REJECT')}</button>
                     </div>
                 )}
             </div>
+
             {note.postImage && (
-                <div className="w-12 h-12 rounded-xl bg-gray-800  overflow-hidden shrink-0 group-hover:scale-105 ">
+                <div className="w-12 h-12 rounded-xl border border-white/10 overflow-hidden shrink-0 transition-transform group-hover:scale-105">
                     <img 
                         src={resolveMediaUrl(note.postImage)} 
-                        className="w-full h-full object-cover opacity-60" 
+                        className="w-full h-full object-cover opacity-80" 
                         onError={(e) => { e.target.style.display = 'none'; }} 
+                        alt=""
                     />
                 </div>
             )}
@@ -5212,7 +5268,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                         <audio src={preview} controls className="w-full mt-2" />
                                     </div>
                                 ) : (
-                                    <img src={preview} className="w-full h-full object-cover" />
+                                    <img src={preview} className="w-full h-full object-contain" />
                                 )}
                                 <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full  "><Icons.X className="w-3 h-3 text-white" /></button>
                             </div>
@@ -6158,6 +6214,13 @@ const App = () => {
     };
 
     // Keep refs correctly updated
+    useEffect(() => {
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+    }, []);
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
     useEffect(() => { postsRef.current = posts; }, [posts]);
     useEffect(() => { usersRef.current = users; }, [users]);
@@ -6489,6 +6552,18 @@ const App = () => {
             
             addToast(toastMsg, 'info');
 
+            // Trigger browser notification
+            if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+                try {
+                    new Notification("Legacy Academy Alert", {
+                        body: toastMsg,
+                        icon: '/favicon.ico'
+                    });
+                } catch (e) {
+                    console.error("Browser notification fail", e);
+                }
+            }
+
             fetchNotifications(true); // silent = true to ensure DB is perfectly synced
         };
 
@@ -6497,9 +6572,22 @@ const App = () => {
             if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
                 console.log("📨 [SOCKET] Live message sound trigger");
                 
+                const messageText = `${t('NOTIF_MESSAGE', 'New message from')} ${msg.senderName || 'Agent'}`;
                 // Show a toast if chat window is not open
                 if (!isChatOpen) {
-                    addToast(`${t('NOTIF_MESSAGE', 'New message from')} ${msg.senderName || 'Agent'}`, 'info');
+                    addToast(messageText, 'info');
+                }
+
+                // Trigger browser notification
+                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+                    try {
+                        new Notification("Legacy Academy Chat", {
+                            body: msg.text || messageText,
+                            icon: '/favicon.ico'
+                        });
+                    } catch (e) {
+                        console.error("Browser chat notification fail", e);
+                    }
                 }
             }
         };

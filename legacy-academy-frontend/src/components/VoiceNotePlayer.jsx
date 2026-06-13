@@ -59,44 +59,44 @@ export const VoiceNotePlayer = ({ src, t = (k) => k }) => {
     };
 
     return (
-        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-xl border border-white/5 hover:border-[var(--gold-primary)]/30 rounded-2xl p-2 px-3 w-full max-w-[280px] shadow-2xl transition-all group/voice" onClick={(e) => e.stopPropagation()}>
-            <button
-                type="button"
-                onClick={togglePlay}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 transition-all shadow-none group-hover/voice:shadow-none  ${isPlaying ? 'bg-white text-black' : 'bg-[var(--gold-primary)] text-black'}`}
-            >
-                {isPlaying ? <Icons.Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" /> : <Icons.Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-1" />}
-            </button>
-            <div className="flex-1 flex flex-col gap-1.5 min-w-0 pr-1">
+        <div className="flex items-center gap-3 bg-[#121212]/90 border border-white/10 hover:border-white/20 rounded-xl p-2.5 w-full max-w-[320px] shadow-2xl transition-all select-none group/voice" onClick={(e) => e.stopPropagation()}>
+            {/* Spotify Album Art */}
+            <div className="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 relative">
+                <Icons.Music className={`w-5 h-5 text-gray-400 ${isPlaying ? 'text-[var(--gold-primary)] animate-pulse' : ''}`} />
+            </div>
+
+            {/* Track metadata and seeker */}
+            <div className="flex-1 flex flex-col min-w-0">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-white truncate">{t('VOICE_NOTE', 'Voice Briefing')}</span>
+                    <span className="text-[9px] font-bold text-gray-500 font-mono tracking-wider shrink-0">{formatTime(currentTime)} / {formatTime(duration)}</span>
+                </div>
+
+                {/* Seeker Bar */}
                 <div
-                    className="h-2 w-full bg-white/10 rounded-full overflow-hidden relative cursor-pointer group/seek"
+                    className="h-1.5 w-full bg-white/10 rounded-full relative cursor-pointer group/seek flex items-center"
                     onClick={handleSeek}
                 >
                     <div
-                        className={`absolute top-0 left-0 h-full transition-all ease-linear relative ${isPlaying ? 'bg-gradient-to-r from-[var(--gold-primary)] to-white' : 'bg-[var(--gold-primary)]'}`}
-                        style={{ width: `${progress}%`, transitionDuration: isPlaying ? '100ms' : '300ms' }}
-                    >
-                        {/* Glow effect head */}
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full blur-[2px] opacity-70 group-hover/seek:opacity-100 transition-opacity" />
-                    </div>
-                </div>
-                <div className="flex items-center justify-between text-[9px] sm:text-[10px] uppercase font-bold tracking-widest font-mono">
-                    <span className={isPlaying ? 'text-white' : 'text-gray-400'}>{formatTime(currentTime)}</span>
-                    <div className="flex items-center gap-1 text-[var(--gold-primary)] opacity-80">
-                        {isPlaying ? (
-                            <div className="flex gap-0.5 items-end h-2.5 mx-0.5">
-                                <div className="w-0.5 bg-[var(--gold-primary)] animate-[wave_1s_infinite_ease-in-out_0.1s] rounded-full h-1" />
-                                <div className="w-0.5 bg-[var(--gold-primary)] animate-[wave_1s_infinite_ease-in-out_0.2s] rounded-full h-2.5" />
-                                <div className="w-0.5 bg-[var(--gold-primary)] animate-[wave_1s_infinite_ease-in-out_0.3s] rounded-full h-1.5" />
-                                <div className="w-0.5 bg-[var(--gold-primary)] animate-[wave_1s_infinite_ease-in-out_0.4s] rounded-full h-2" />
-                            </div>
-                        ) : (
-                            <Icons.Whisper className="w-3 h-3" />
-                        )}
-                        <span className={`text-[10px] font-black ${isPlaying ? 'text-[var(--gold-primary)] animate-pulse' : 'text-gray-500'}`}>-{formatTime(duration - currentTime)}</span>
-                    </div>
+                        className="absolute h-full rounded-full bg-[var(--gold-primary)]"
+                        style={{ width: `${progress}%` }}
+                    />
+                    <div
+                        className="absolute w-2 h-2 rounded-full bg-white opacity-0 group-hover/seek:opacity-100 transition-opacity"
+                        style={{ left: `calc(${progress}% - 4px)` }}
+                    />
                 </div>
             </div>
+
+            {/* Play/Pause Button */}
+            <button
+                type="button"
+                onClick={togglePlay}
+                className="w-9 h-9 rounded-full bg-white hover:scale-105 active:scale-95 text-black flex items-center justify-center shrink-0 transition-transform cursor-pointer"
+            >
+                {isPlaying ? <Icons.Pause className="w-4 h-4 fill-current text-black" /> : <Icons.Play className="w-4 h-4 fill-current text-black ml-0.5" />}
+            </button>
+
             <audio
                 ref={audioRef}
                 src={src}
