@@ -942,16 +942,64 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
 const AlertTriangle = p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 
-const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false }) => {
-    // If it's explicitly a normal user, use Blue. Otherwise, check if Founder or forced Gold.
-    const isGold = (isFounder || forceGold) && !isUser;
+const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user }) => {
+    // If user settings specify showBadge is false, don't show the badge!
+    if (user && user.settings && user.settings.showBadge === false) {
+        return null;
+    }
+
+    // Determine badge color
+    let badgeColor = '#1D9BF0'; // Default Blue
+    let isHolo = false;
+
+    // Check role from user object if available, otherwise fall back to isFounder
+    const resolvedRole = user?.role || (isFounder && !isUser ? 'Founder' : 'User');
+    const isGold = (resolvedRole === 'Founder' || forceGold);
+
+    if (isGold) {
+        badgeColor = '#FFD700'; // Default Gold for Founders
+    }
+
+    // Apply custom badge color from settings if available
+    if (user?.settings?.badgeColor) {
+        const customColor = user.settings.badgeColor;
+        if (customColor === 'gold') badgeColor = '#FFD700';
+        else if (customColor === 'crimson') badgeColor = '#FF0033';
+        else if (customColor === 'neon-purple') badgeColor = '#B026FF';
+        else if (customColor === 'holographic') isHolo = true;
+        else if (customColor === 'blue') badgeColor = '#1D9BF0';
+        else if (customColor === 'silver') badgeColor = '#C0C0C0';
+        else if (customColor === 'bronze') badgeColor = '#CD7F32';
+        else if (customColor === 'neon-green') badgeColor = '#39FF14';
+    }
+
+    if (isHolo) {
+        return (
+            <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+                <defs>
+                    <linearGradient id="holoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#ff007f" />
+                        <stop offset="25%" stopColor="#7f00ff" />
+                        <stop offset="50%" stopColor="#00f0ff" />
+                        <stop offset="75%" stopColor="#00ff7f" />
+                        <stop offset="100%" stopColor="#ff007f" />
+                    </linearGradient>
+                </defs>
+                <path
+                    fill="url(#holoGrad)"
+                    stroke="none"
+                    d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
+                />
+            </svg>
+        );
+    }
 
     return (
         <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
             <path
-                fill={isGold ? "#FFD700" : "#1D9BF0"}
+                fill={badgeColor}
                 stroke="none"
-                style={{ fill: isGold ? "#FFD700" : "#1D9BF0", stroke: 'none' }}
+                style={{ fill: badgeColor, stroke: 'none' }}
                 d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
             />
         </svg>
@@ -1841,13 +1889,14 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                         </div>
 
                         <div className="flex items-center justify-center">
-                            <motion.div
+                            <motion.button
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="w-16 h-16 rounded-full bg-[var(--gold-primary)]/90 flex items-center justify-center text-black shadow-2xl shadow-[var(--gold-primary)]/40 pointer-events-none"
+                                onClick={(e) => { e.stopPropagation(); togglePlay(e); }}
+                                className="w-16 h-16 rounded-full liquid-glass-control flex items-center justify-center text-black shadow-2xl pointer-events-auto"
                             >
-                                {isPlaying ? <Icons.Pause className="w-8 h-8 fill-black" /> : <Icons.Play className="w-8 h-8 fill-black ml-1" />}
-                            </motion.div>
+                                {isPlaying ? <Icons.Pause className="w-8 h-8 fill-white" /> : <Icons.Play className="w-8 h-8 fill-white ml-1" />}
+                            </motion.button>
                         </div>
 
                         <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
@@ -2071,7 +2120,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const discardRef = useRef(false);
     const [imgError, setImgError] = useState(false); // Handle broken images
     const [revealed, setRevealed] = useState(false);
-    const shouldBlur = post.is18Plus && (user?.settings?.blur18Plus !== false) && !revealed;
+    const shouldBlur = post.is18Plus && (user?.settings?.blur18Plus === true) && !revealed;
 
     const isCurrentUserFounder = user?.role === 'Founder';
 
@@ -3375,7 +3424,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-5 py-4 sm:py-4 space-y-5 sm:space-y-4 relative z-10">
+                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-5 py-4 sm:py-4 space-y-5 sm:space-y-4 relative z-10" style={{ maxHeight: '70vh', WebkitOverflowScrolling: 'touch' }}>
 
                     {/* ── PRIVACY ── */}
                     <section>
@@ -7695,6 +7744,7 @@ const App = () => {
                 loadingUser={publicUserLoading}
                 loadingPosts={publicPostsLoading}
                 postsReady={publicPostsReady}
+                user={user}
                 onClose={() => {
                     const params = new URLSearchParams(window.location.search);
                     params.delete('profile');
