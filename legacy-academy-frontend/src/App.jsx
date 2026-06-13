@@ -904,9 +904,9 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
     };
 
     return (
-        <div className="relative shrink-0">
-            <button ref={btnRef} onClick={toggle} className="p-1.5 sm:p-2 text-gray-500 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
-                <Icons.MoreHorizontal className="w-5 h-5" />
+        <div className="relative shrink-0 z-30">
+            <button ref={btnRef} onClick={toggle} className="p-2 sm:p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90 liquid-glass-control">
+                <Icons.MoreHorizontal className="w-6 h-6" />
             </button>
             {showMenu && createPortal(
                 <>
@@ -918,18 +918,18 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                             left: `${coords.left}px`,
                             zIndex: 10001
                         }}
-                        className="w-48 bg-[#1a1a1a]  rounded-2xl shadow-2xl overflow-hidden flex flex-col gap-1 p-1 animate-fade-in"
+                        className="w-56 liquid-glass-video-panel rounded-2xl overflow-hidden flex flex-col gap-1 p-2 animate-fade-in"
                     >
                         {isOwner && (
-                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl   w-full text-left group/item">
-                                <Icons.Edit className="w-4 h-4 text-blue-400 group-hover/item:scale-110 " />
-                                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
+                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10">
+                                <Icons.Edit className="w-5 h-5 text-blue-400 group-hover/item:scale-110" />
+                                <span className="text-xs font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
                             </button>
                         )}
                         {canDelete && (
-                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl   w-full text-left group/item">
-                                <Icons.Trash className="w-4 h-4 text-red-500 group-hover/item:scale-110 " />
-                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
+                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-red-500/10">
+                                <Icons.Trash className="w-5 h-5 text-red-500 group-hover/item:scale-110" />
+                                <span className="text-xs font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
                             </button>
                         )}
                     </div>
@@ -2369,12 +2369,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         )}
                                     </div>
                                     {shouldBlur && (
-                                        <div onClick={(e) => { e.stopPropagation(); setRevealed(true); }} className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center cursor-pointer p-4 transition-colors hover:bg-black/80">
-                                            <div className="w-10 h-10 rounded-full border border-red-500/30 flex items-center justify-center text-red-500 mb-2">
-                                                <Icons.EyeOff className="w-5 h-5" />
+                                        <div onClick={(e) => { e.stopPropagation(); setRevealed(true); }} className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center cursor-pointer p-4 transition-all hover:bg-black/90" style={{ touchAction: 'manipulation' }}>
+                                            <div className="w-14 h-14 rounded-full liquid-glass-control flex items-center justify-center text-red-400 mb-3 pointer-events-auto">
+                                                <Icons.EyeOff className="w-7 h-7" />
                                             </div>
-                                            <span className="text-xs font-bold text-red-500 uppercase tracking-widest">{t('NSFW_MEDIA_LOCKED')}</span>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">{t('REVEAL_MEDIA')}</span>
+                                            <span className="text-sm font-bold text-red-400 uppercase tracking-widest">{t('NSFW_MEDIA_LOCKED')}</span>
+                                            <span className="text-xs text-gray-300 font-bold uppercase tracking-wider mt-2">{t('REVEAL_MEDIA')}</span>
                                         </div>
                                     )}
                                 </div>
