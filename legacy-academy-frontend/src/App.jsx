@@ -1742,7 +1742,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 
     return (
         <div
-            className={`relative group/video overflow-hidden bg-black flex items-center justify-center pointer-events-auto ${className || ''}`}
+            className={`relative group/video overflow-hidden flex items-center justify-center pointer-events-auto ${className?.includes('liquid-glass-video-panel') ? 'liquid-glass-video-panel' : 'bg-black'} ${className || ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={(e) => {
@@ -2108,8 +2108,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-4 rounded-2xl sm:rounded-full transition-all duration-150 border border-transparent sturdy-active touch-manipulation' : 'flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 border border-transparent sturdy-active touch-manipulation';
     const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
     const actionCountClass = compact ? 'text-[11px] sm:text-[12px] font-bold tabular-nums tracking-wide' : 'text-[12px] font-bold tabular-nums tracking-wide';
-    const mediaWrapClass = compact ? 'rounded-[18px] overflow-hidden bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3' : 'rounded-none overflow-hidden bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3';
-    const mediaClass = compact ? 'w-full h-auto max-h-[65vh] object-contain bg-[#050505]' : 'w-full h-auto object-contain bg-[#050505]';
+    const mediaWrapClass = compact ? 'rounded-[18px] overflow-hidden bg-transparent relative shadow-none h-auto min-h-[100px] mt-3 liquid-glass-video-panel' : 'rounded-none overflow-hidden bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3';
+    const mediaClass = compact ? 'w-full h-auto max-h-[65vh] object-contain bg-transparent' : 'w-full h-auto object-contain bg-[#050505]';
 
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
@@ -2294,7 +2294,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <div className={`${mediaWrapClass} relative overflow-hidden group/media`}>
                                     <div className={shouldBlur ? 'blur-2xl pointer-events-none select-none transition-all duration-300' : 'transition-all duration-300'}>
                                         {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh]' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
+                                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh] liquid-glass-video-panel rounded-2xl' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
                                         ) : post.image && (
                                             imgError ? (
                                                 <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
