@@ -1019,7 +1019,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" />
+                    {commentAuthor?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{commentAuthor.missionsStreak}</span>}
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
                     <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>
@@ -1341,7 +1342,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             <div className="flex flex-col min-w-0 flex-1 pr-2">
                                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
                                     <span className="font-bold text-white text-[14px] leading-tight break-words">{author?.username}</span>
-                                    <VerifiedBadge isFounder={author?.role === 'Founder'} isUser={author?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
+                                    {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
+                                    <VerifiedBadge isFounder={author?.role === 'Founder'} isUser={author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={author} />
                                     <span className="text-gray-500 text-[12px] break-all">{formatUserHandle(author?.username)}</span>
                                 </div>
                             </div>
@@ -1896,7 +1898,8 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             <div className="flex-1">
                 <div className="text-sm flex items-center gap-1.5 flex-wrap">
                     <span className="font-black text-white group-hover:text-white uppercase tracking-tight">{(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}</span>
-                    <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5 ml-1" />
+                    {note?.sender?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{note.sender.missionsStreak}</span>}
+                    <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5 ml-1" user={note.sender} />
                     {note?.fromDescriptor && (
                         <span className="text-gray-400 text-[10px] ml-1 uppercase tracking-widest font-bold">
                             • {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
@@ -2011,6 +2014,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
     const [imgError, setImgError] = useState(false); // Handle broken images
+    const [revealed, setRevealed] = useState(false);
+    const shouldBlur = post.is18Plus && (user?.settings?.blur18Plus !== false) && !revealed;
 
     const isCurrentUserFounder = user?.role === 'Founder';
 
@@ -2181,7 +2186,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
-                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" />
+                                        {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
+                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -2196,52 +2202,75 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
-                                    <p className={bodyTextClass} onClick={(e) => { e.stopPropagation(); }}>
-                                        {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
-                                            if (isReadOnly) return;
-                                            const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
-                                            if (u && onViewProfile) onViewProfile(u);
-                                        })}
-                                    </p>
-                                    {!isReadOnly && (
-                                        <button
-                                            onClick={handleTranslate}
-                                            disabled={isTranslating}
-                                            className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
-                                        >
-                                            <Icons.Globe className={`w-3 h-3 ${isTranslating ? 'animate-spin' : ''}`} />
-                                            {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
-                                        </button>
+                                    {shouldBlur ? (
+                                        <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl cursor-pointer" onClick={() => setRevealed(true)}>
+                                            <Icons.Lock className="w-4 h-4 text-red-500 shrink-0" />
+                                            <div className="text-left">
+                                                <span className="text-xs font-black text-red-500 uppercase tracking-widest block">{t('NSFW_CONTENT_LOCKED')}</span>
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">{t('REVEAL_CONTENT')}</span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <p className={bodyTextClass} onClick={(e) => { e.stopPropagation(); }}>
+                                                {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
+                                                    if (isReadOnly) return;
+                                                    const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                                    if (u && onViewProfile) onViewProfile(u);
+                                                })}
+                                            </p>
+                                            {!isReadOnly && (
+                                                <button
+                                                    onClick={handleTranslate}
+                                                    disabled={isTranslating}
+                                                    className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Icons.Globe className={`w-3 h-3 ${isTranslating ? 'animate-spin' : ''}`} />
+                                                    {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
+                                                </button>
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             )}
 
                             {postHasMedia(post) && (
-                                <div className={mediaWrapClass}>
-                                    {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                        <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh]' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause} />
-                                    ) : post.image && (
-                                        imgError ? (
-                                            <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
-                                                <Icons.Image className="w-8 h-8 opacity-20" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
+                                <div className={`${mediaWrapClass} relative overflow-hidden group/media`}>
+                                    <div className={shouldBlur ? 'blur-2xl pointer-events-none select-none transition-all duration-300' : 'transition-all duration-300'}>
+                                        {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh]' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
+                                        ) : post.image && (
+                                            imgError ? (
+                                                <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
+                                                    <Icons.Image className="w-8 h-8 opacity-20" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={resolveMediaUrl(post.image)}
+                                                    alt="Media"
+                                                    className={mediaClass}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    onClick={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)}
+                                                    onDoubleClick={onMediaClick ? () => onMediaClick(post) : handleDoubleTap}
+                                                    onError={() => {
+                                                        setImgError(true);
+                                                        // Auto-cleanup broken link (Only for Author/Founder)
+                                                        if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
+                                                    }}
+                                                />
+                                            )
+                                        )}
+                                    </div>
+                                    {shouldBlur && (
+                                        <div onClick={(e) => { e.stopPropagation(); setRevealed(true); }} className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center cursor-pointer p-4 transition-colors hover:bg-black/80">
+                                            <div className="w-10 h-10 rounded-full border border-red-500/30 flex items-center justify-center text-red-500 mb-2">
+                                                <Icons.EyeOff className="w-5 h-5" />
                                             </div>
-                                        ) : (
-                                            <img
-                                                src={resolveMediaUrl(post.image)}
-                                                alt="Media"
-                                                className={mediaClass}
-                                                loading="lazy"
-                                                decoding="async"
-                                                onClick={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)}
-                                                onDoubleClick={onMediaClick ? () => onMediaClick(post) : handleDoubleTap}
-                                                onError={() => {
-                                                    setImgError(true);
-                                                    // Auto-cleanup broken link (Only for Author/Founder)
-                                                    if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
-                                                }}
-                                            />
-                                        )
+                                            <span className="text-xs font-bold text-red-500 uppercase tracking-widest">{t('NSFW_MEDIA_LOCKED')}</span>
+                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">{t('REVEAL_MEDIA')}</span>
+                                        </div>
                                     )}
                                 </div>
                             )}
@@ -2754,7 +2783,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div><div className="absolute inset-[3px] rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} {u?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0">🔥{u.missionsStreak}</span>} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -2804,7 +2833,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {chatUser?.username}
-                                        <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
+                                        {chatUser?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{chatUser.missionsStreak}</span>}
+                                        <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={chatUser} />
                                     </div>
                                     {(() => {
                                         const isChatUserOnline = isUserOnline(chatUser, user);
@@ -3091,6 +3121,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
+    const [showBadge, setShowBadge] = useState(user?.settings?.showBadge !== false);
+    const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
+    const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
@@ -3129,6 +3162,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     )
                 )
             );
+            setShowBadge(user.settings?.showBadge !== false);
+            setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
+            setBlur18Plus(user.settings?.blur18Plus !== false);
         }
     }, [user, isOpen]);
 
@@ -3165,6 +3201,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
+            if (key === 'showBadge') payload = { settings: { showBadge: Boolean(val) } };
+            if (key === 'badgeColor') payload = { settings: { badgeColor: String(val) } };
+            if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
             if (key === 'showProfileShareButton') {
                 const nextToggleValue = Boolean(val);
                 const baseUser = latestUserRef.current || user || {};
@@ -3194,12 +3233,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'isPrivate') setIsPrivate(val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(val);
             if (key === 'showProfileShareButton') setShowProfileShareButton(Boolean(val));
+            if (key === 'showBadge') setShowBadge(Boolean(val));
+            if (key === 'badgeColor') setBadgeColor(String(val));
+            if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
 
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
             if (key === 'isFollowersOnly') setIsFollowersOnly(!val);
             if (key === 'showProfileShareButton') setShowProfileShareButton(!Boolean(val));
+            if (key === 'showBadge') setShowBadge(!Boolean(val));
+            if (key === 'blur18Plus') setBlur18Plus(!Boolean(val));
         } finally {
             if (key === 'showProfileShareButton') pendingShareToggleRef.current = null;
             setSaving(false);
@@ -3383,6 +3427,73 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         </div>
                     </section>
 
+                    {/* ── BADGES & CONTENT ── */}
+                    <section>
+                        <SectionHeader label={t('BADGE_SETTINGS')} />
+                        <SettingsGroup>
+                            <SettingRow label={t('SHOW_BADGE')} desc={t('SHOW_BADGE_DESC')}>
+                                <Toggle active={showBadge} onToggle={() => { const v = !showBadge; setShowBadge(v); handleSave('showBadge', v); }} saving={saving} color="blue" />
+                            </SettingRow>
+                            {showBadge && (
+                                <div className="px-4 py-3.5 border-t border-white/5 text-left">
+                                    <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('BADGE_STYLE')}</div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {user?.role === 'Founder' ? (
+                                            <>
+                                                {[
+                                                    { id: 'gold', label: 'Gold', color: '#FFD700' },
+                                                    { id: 'crimson', label: 'Crimson', color: '#FF0033' },
+                                                    { id: 'neon-purple', label: 'Purple', color: '#B026FF' },
+                                                    { id: 'holographic', label: 'Holo', isHolo: true }
+                                                ].map(b => (
+                                                    <button
+                                                        key={b.id}
+                                                        type="button"
+                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                        className={`settings-tile-btn p-2 rounded-xl border flex items-center justify-center gap-2 transition-all ${
+                                                            badgeColor === b.id ? 'border-[#1D9BF0] bg-[#1D9BF0]/10' : 'border-white/10 bg-white/[0.02]'
+                                                        }`}
+                                                    >
+                                                        {b.isHolo ? (
+                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: 'linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff, #00ff7f, #ff007f)' }} />
+                                                        ) : (
+                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
+                                                        )}
+                                                        <span className="text-[11px] text-white font-bold uppercase tracking-wider">{b.label}</span>
+                                                    </button>
+                                                ))}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {[
+                                                    { id: 'blue', label: 'Blue', color: '#1D9BF0' },
+                                                    { id: 'silver', label: 'Silver', color: '#C0C0C0' },
+                                                    { id: 'bronze', label: 'Bronze', color: '#CD7F32' },
+                                                    { id: 'neon-green', label: 'Green', color: '#39FF14' }
+                                                ].map(b => (
+                                                    <button
+                                                        key={b.id}
+                                                        type="button"
+                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                        className={`settings-tile-btn p-2 rounded-xl border flex items-center justify-center gap-2 transition-all ${
+                                                            badgeColor === b.id ? 'border-[#1D9BF0] bg-[#1D9BF0]/10' : 'border-white/10 bg-white/[0.02]'
+                                                        }`}
+                                                    >
+                                                        <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
+                                                        <span className="text-[11px] text-white font-bold uppercase tracking-wider">{b.label}</span>
+                                                    </button>
+                                                ))}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            <SettingRow label={t('BLUR_18_PLUS')} desc={t('BLUR_18_PLUS_DESC')}>
+                                <Toggle active={blur18Plus} onToggle={() => { const v = !blur18Plus; setBlur18Plus(v); handleSave('blur18Plus', v); }} saving={saving} color="blue" />
+                            </SettingRow>
+                        </SettingsGroup>
+                    </section>
+
                     {/* ── LANGUAGE ── */}
                     <section>
                         <SectionHeader label={t('COGNITION')} />
@@ -3542,7 +3653,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
                                     <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
-                                    <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
+                                    {user?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{user.missionsStreak}</span>}
+                                    <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                                 </div>
                                 <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
@@ -3697,6 +3809,108 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
                         {t('GOT_IT')}
                     </button>
                 </div>
+            </div>
+        </div>
+    );
+};
+
+const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
+    const [submitting, setSubmitting] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    const hasCompletedToday = useMemo(() => {
+        if (!user?.lastMissionCompleted) return false;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const lastCompletedStr = new Date(user.lastMissionCompleted).toISOString().split('T')[0];
+        return todayStr === lastCompletedStr;
+    }, [user?.lastMissionCompleted]);
+
+    const handleCompleteMission = async (missionId) => {
+        if (submitting || hasCompletedToday) return;
+        setSubmitting(true);
+        setErrorMsg(null);
+        try {
+            const res = await axios.post('/users/mission/complete', {});
+            const updatedUser = res.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            if (onUpdateUser) onUpdateUser(updatedUser);
+        } catch (err) {
+            console.error(err);
+            const msg = err.response?.data?.message || err.response?.data?.error || "Failed to submit completion";
+            setErrorMsg(msg);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const missionsList = [
+        { id: '5am', titleKey: 'MISSION_5AM', descKey: 'MISSION_5AM_DESC', icon: '⏰' },
+        { id: 'gym', titleKey: 'MISSION_GYM', descKey: 'MISSION_GYM_DESC', icon: '💪' },
+        { id: 'read', titleKey: 'MISSION_READ', descKey: 'MISSION_READ_DESC', icon: '📚' },
+        { id: 'deep_work', titleKey: 'MISSION_DEEP_WORK', descKey: 'MISSION_DEEP_WORK_DESC', icon: '💻' }
+    ];
+
+    return (
+        <div className="p-4 sm:p-5 space-y-6 w-full max-w-full box-border text-left">
+            <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-black text-white uppercase tracking-wider">{t('DAILY_MISSIONS')}</h3>
+                    {user?.missionsStreak > 0 && (
+                        <span className="bg-orange-500/10 border border-orange-500/30 text-orange-500 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
+                            🔥 {user.missionsStreak} {t('MISSION_STREAK') || 'STREAK'}
+                        </span>
+                    )}
+                </div>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide leading-relaxed">{t('MISSIONS_DESC')}</p>
+            </div>
+
+            {hasCompletedToday && (
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-3 animate-fade-in">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center shrink-0">
+                        <Icons.Check className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1">
+                        <div className="text-xs font-black text-white uppercase tracking-widest">{t('MISSION_COMPLETED_TODAY')}</div>
+                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Come back tomorrow to keep your streak!</div>
+                    </div>
+                </div>
+            )}
+
+            {errorMsg && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-xs font-bold text-red-500 uppercase tracking-wide">
+                    {errorMsg}
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-3">
+                {missionsList.map(m => (
+                    <div
+                        key={m.id}
+                        className={`p-4 bg-white/[0.02] border rounded-2xl flex items-center justify-between gap-4 transition-all duration-200 ${
+                            hasCompletedToday ? 'border-white/5 opacity-65' : 'border-white/10 hover:border-white/20'
+                        }`}
+                    >
+                        <div className="flex items-center gap-3 min-w-0">
+                            <span className="text-2xl shrink-0">{m.icon}</span>
+                            <div className="min-w-0">
+                                <h4 className="text-sm font-black text-white uppercase tracking-wider">{t(m.titleKey)}</h4>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1 truncate">{t(m.descKey)}</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            disabled={submitting || hasCompletedToday}
+                            onClick={() => handleCompleteMission(m.id)}
+                            className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
+                                hasCompletedToday
+                                    ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
+                                    : 'bg-[var(--gold-primary)] hover:scale-105 active:scale-95 text-black'
+                            }`}
+                        >
+                            {submitting ? '...' : t('MISSION_COMPLETE')}
+                        </button>
+                    </div>
+                ))}
             </div>
         </div>
     );
@@ -4128,7 +4342,7 @@ const ProfileModal = ({
                     }} className="p-2.5 -ml-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 active:scale-95 text-white transition-all duration-300 flex items-center justify-center">
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
-                    <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : displayUser?.username)}</div>
+                    <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}{displayUser?.missionsStreak > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {displayUser.missionsStreak}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
@@ -4477,35 +4691,8 @@ const ProfileModal = ({
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
                                         <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        <div className="flex items-center gap-1 shrink-0 flex-shrink-0">
-                                            {isFounderProfile ? (
-                                                <svg
-                                                    aria-label="Verified Founder"
-                                                    viewBox="0 0 22 22"
-                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0"
-                                                    style={{ overflow: 'visible' }}
-                                                >
-                                                    <path
-                                                        fill="#FFD700"
-                                                        stroke="none"
-                                                        d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
-                                                    />
-                                                </svg>
-                                            ) : (
-                                                <svg
-                                                    aria-label="Verified User"
-                                                    viewBox="0 0 22 22"
-                                                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0"
-                                                    style={{ overflow: 'visible' }}
-                                                >
-                                                    <path
-                                                        fill="#1D9BF0"
-                                                        stroke="none"
-                                                        d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
-                                                    />
-                                                </svg>
-                                            )}
-                                        </div>
+                                        {displayUser?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {displayUser.missionsStreak}</span>}
+                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
                                         <div className="mt-3 flex justify-center">
@@ -4654,7 +4841,7 @@ const ProfileModal = ({
                             </div>
 
                             <div className="flex border-b border-white/10 w-full mb-6 mt-4 relative">
-                                {['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS'].map((tab, index) => {
+                                {(isMe ? ['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS', 'MISSIONS'] : ['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS']).map((tab, index) => {
                                     const isActive = activeTab === tab;
                                     const renderIcon = (isActive) => {
                                         const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-200 ${isActive ? 'text-white scale-105' : 'text-gray-400'}`;
@@ -4663,6 +4850,7 @@ const ProfileModal = ({
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
                                         if (tab === 'VIDEO') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconClass} fill-current`}><polygon points="5 3 19 12 5 21 5 3" /></svg>;
                                         if (tab === 'REPOSTS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" /><path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" /></svg>;
+                                        if (tab === 'MISSIONS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>;
                                         return null;
                                     };
                                     
@@ -4718,7 +4906,7 @@ const ProfileModal = ({
                                 </div>
                             ) : (
                                 <>
-                                    {(isMe || userStories.length > 0) && (
+                                    {activeTab !== 'MISSIONS' && (isMe || userStories.length > 0) && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
                                             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
@@ -4797,7 +4985,9 @@ const ProfileModal = ({
                                     )}
 
                                     <div className="w-full self-stretch space-y-6 pb-20">
-                                        {loadingPosts ? (
+                                        {activeTab === 'MISSIONS' && isMe ? (
+                                            <MissionsDashboard user={currentUser} onUpdateUser={onUpdateUser} t={t} lang={lang} />
+                                        ) : loadingPosts ? (
                                             <PlatformLoadingPanel label={t('DECRYPTING_FEED')} compact />
                                         ) : userPosts.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -4879,12 +5069,14 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
     const [isAudio, setIsAudio] = useState(false);
     const [audioName, setAudioName] = useState('');
     const [isStory, setIsStory] = useState(forceStory);
+    const [is18Plus, setIs18Plus] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             setDesc('');
             setIsStory(forceStory);
+            setIs18Plus(false);
             setIsSubmitting(false);
             setPreview(null);
             setIsVideo(false);
@@ -5032,14 +5224,24 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         )}
                         <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
                     </div>
-                    <div className="flex gap-4 items-center mb-4">
-                        <div onClick={() => setIsStory(!isStory)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl  border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10 '}`}>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center  ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
-                                {isStory && <Icons.Check className="w-4 h-4 text-black font-black" />}
+
+                    <div className="flex flex-wrap gap-2.5 mb-4">
+                        <div onClick={() => setIsStory(!isStory)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10'}`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
+                                {isStory && <Icons.Check className="w-3.5 h-3.5 text-black font-black" />}
                             </div>
-                            <div className="flex flex-col">
-                                <span className={`text-[11px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'}`}>{t('ADD_STORY')}</span>
-                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider mt-0.5">{t('STORY_DURATION')}</span>
+                            <div className="flex flex-col min-w-0">
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${isStory ? 'text-[var(--gold-primary)]' : 'text-gray-400'} truncate`}>{t('ADD_STORY')}</span>
+                                <span className="text-[9px] text-gray-500 font-black uppercase tracking-wider mt-0.5 truncate">{t('STORY_DURATION')}</span>
+                            </div>
+                        </div>
+                        <div onClick={() => setIs18Plus(!is18Plus)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${is18Plus ? 'border-red-500 bg-red-500 scale-110' : 'border-gray-500'}`}>
+                                {is18Plus && <Icons.Check className="w-3.5 h-3.5 text-white font-black" />}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${is18Plus ? 'text-red-500' : 'text-gray-400'} truncate`}>{t('NSFW_18_PLUS') || '18+ NSFW'}</span>
+                                <span className="text-[9px] text-gray-500 font-black uppercase tracking-wider mt-0.5 truncate">{t('NSFW_18_PLUS_DESC') || 'SENSITIVE CONTENT'}</span>
                             </div>
                         </div>
                     </div>
@@ -5057,6 +5259,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             fd.append('desc', desc);
                             if (file) fd.append('image', file);
                             fd.append('isStory', isStory);
+                            fd.append('is18Plus', is18Plus);
 
                             // Trigger optimistic upload
                             await onCreatePost(fd, preview, isStory);
@@ -5442,7 +5645,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                         <h1 className="profile-headline text-lg sm:text-xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
-                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" />
+                        {publicUser.missionsStreak > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {publicUser.missionsStreak}</span>}
+                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
                             <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
@@ -5457,7 +5661,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         </div>
                     )}
                 </div>
-
+ 
                 {/* BIO CARD */}
                 {publicUser.bio && (
                     <div className="profile-copy-block mt-6 p-5 backdrop-blur-2xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
@@ -5466,7 +5670,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         </p>
                     </div>
                 )}
-
+ 
                 {/* STATS GRID — 4 equal columns */}
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
@@ -5481,7 +5685,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         </span>
                         <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                     </div>
-
+ 
                     {/* REPOSTS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
@@ -5494,7 +5698,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         </span>
                         <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-400" />
                     </div>
-
+ 
                     {/* FOLLOWERS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
@@ -5504,7 +5708,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             {t('FOLLOWERS') || 'FOLLOWERS'}
                         </span>
                     </div>
-
+ 
                     {/* FOLLOWING */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
@@ -5513,14 +5717,24 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                     </div>
                 </div>
-
+ 
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-gradient-to-r from-white/[0.04] to-white/[0.01] backdrop-blur-2xl border border-[var(--gold-primary)]/30 rounded-2xl cursor-pointer hover:from-white/[0.08] hover:to-white/[0.03] hover:border-[var(--gold-primary)]/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-between gap-4 group shadow-[0_8px_32px_rgba(255,215,0,0.05)]">
-                    <div className="space-y-1 text-left">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--gold-primary)]">{t('JOIN_ELITE', 'JOIN THE ACADEMY')}</h3>
-                        <p className="text-xs font-bold leading-snug text-white/75">{t('CREATE_ACCOUNT_SUB', 'MEMBERSHIP • 4€ / MONTH')}</p>
+                <div onClick={onClose} className="w-full mt-6 p-5 bg-white/[0.02] border border-[var(--gold-primary)]/20 rounded-2xl cursor-pointer hover:bg-white/[0.05] hover:border-[var(--gold-primary)]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-between gap-4 group">
+                    <div className="space-y-1 text-left min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                            <h3 className="text-[11px] font-black uppercase tracking-[0.22em] text-[var(--gold-primary)]">{t('JOIN_ELITE', 'UNLEASH YOUR POTENTIAL')}</h3>
+                            <div className="inline-flex items-center gap-1 bg-green-500/10 border border-green-500/20 rounded-full px-2 py-0.5 shrink-0">
+                                <span className="relative flex h-1.5 w-1.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                                </span>
+                                <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">{t('PORTAL_LIVE') || 'LIVE'}</span>
+                            </div>
+                        </div>
+                        <p className="text-xs font-bold leading-snug text-white/80">{t('CREATE_ACCOUNT_SUB_PROFESSIONAL', 'ACCESS ALL PREMIUM INTEL & MASTERMIND NETWORK')}</p>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 4€ / MONTH')}</p>
                     </div>
-                    <div className="w-11 h-11 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 text-[var(--gold-primary)] flex items-center justify-center shadow-lg group-hover:bg-[var(--gold-primary)] group-hover:text-black transition-all duration-300 shrink-0">
+                    <div className="w-11 h-11 rounded-xl bg-[var(--gold-primary)] text-black flex items-center justify-center transition-all duration-300 shrink-0 group-hover:scale-110 active:scale-90">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </div>
                 </div>
@@ -7037,7 +7251,8 @@ const App = () => {
             isOptimistic: true,
             isUploading: true,
             uploadProgress: 0,
-            isStory: isStory
+            isStory: isStory,
+            is18Plus: formData.get('is18Plus') === 'true'
         };
 
         // Add to feed immediately
@@ -7986,7 +8201,8 @@ const App = () => {
                                                                     <div className="font-bold text-white text-xs sm:text-sm">
                                                                         {u.username}
                                                                     </div>
-                                                                    <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" />
+                                                                    {u.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{u.missionsStreak}</span>}
+                                                                    <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={u} />
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
@@ -8285,7 +8501,8 @@ const App = () => {
                                 <div className="flex flex-col items-start text-left max-w-[calc(100%-60px)]">
                                     <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none w-full">
                                         <span className="truncate">{shareModalPost.author?.username}</span>
-                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" />
+                                        {shareModalPost.author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{shareModalPost.author.missionsStreak}</span>}
+                                        <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={shareModalPost.author} />
                                     </div>
                                     {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
                                         <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold flex-wrap">
@@ -8394,7 +8611,8 @@ const App = () => {
                             <div className="flex flex-col items-center justify-center gap-2 mb-1">
                                 <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none">
                                     {shareModalProfile.username}
-                                    <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6 shrink-0" />
+                                    {shareModalProfile.missionsStreak > 0 && <span className="text-orange-500 font-bold text-lg shrink-0">🔥{shareModalProfile.missionsStreak}</span>}
+                                    <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6 shrink-0" user={shareModalProfile} />
                                 </div>
                                 {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
                                     <div className={`inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 ${PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].accentClass}`}>

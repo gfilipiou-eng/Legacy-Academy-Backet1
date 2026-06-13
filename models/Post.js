@@ -41,6 +41,7 @@ const PostSchema = new mongoose.Schema({
   isPrivate: { type: Boolean, default: false }, // Denormalized for quick feed filtering
   isFollowersOnly: { type: Boolean, default: false }, // Denormalized for quick feed filtering
   isStory: { type: Boolean, default: false }, // Temporary intelligence (Highlights)
+  is18Plus: { type: Boolean, default: false },
   // REPOST
   isRepost: { type: Boolean, default: false },
   repostedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

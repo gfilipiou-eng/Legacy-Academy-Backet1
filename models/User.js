@@ -40,8 +40,14 @@ const UserSchema = new mongoose.Schema({
     soundEnabled: { type: Boolean, default: true },
     notifications: { type: Boolean, default: true },
     dmFollowersOnly: { type: Boolean, default: false },
-    showProfileShareButton: { type: Boolean, default: true }
+    showProfileShareButton: { type: Boolean, default: true },
+    showBadge: { type: Boolean, default: true },
+    badgeColor: { type: String, default: 'blue' },
+    blur18Plus: { type: Boolean, default: false }
   },
+  missionsStreak: { type: Number, default: 0 },
+  lastMissionCompleted: { type: Date },
+  missionsCompletedCount: { type: Number, default: 0 },
 
   // Notifications
   notifications: [{

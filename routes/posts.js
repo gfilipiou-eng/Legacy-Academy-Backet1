@@ -612,7 +612,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
       visibility: visibility || 'public',
       isPrivate: author?.isPrivate || false,
       isFollowersOnly: author?.isFollowersOnly || false,
-      isStory: req.body.isStory === 'true' || req.body.isStory === true
+      isStory: req.body.isStory === 'true' || req.body.isStory === true,
+      is18Plus: req.body.is18Plus === 'true' || req.body.is18Plus === true
     });
 
     const savedPost = await newPost.save();
@@ -692,6 +693,9 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
     // Update basic fields
     if (req.body.title !== undefined) post.title = req.body.title;
     if (req.body.desc !== undefined) post.desc = req.body.desc;
+    if (req.body.is18Plus !== undefined) {
+      post.is18Plus = req.body.is18Plus === 'true' || req.body.is18Plus === true;
+    }
 
     // Explicitly handle visibility with fallback
     if (req.body.visibility) {

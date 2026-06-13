@@ -1457,7 +1457,7 @@ html, body {
   background: rgb(var(--c-white) / 0.03);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   box-shadow: none;
   border-radius: 24px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1495,8 +1495,8 @@ html, body {
   }
 
   .profile-feed-shell {
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   .profile-feed-shell .premium-post-card {
@@ -1512,7 +1512,8 @@ html, body {
 @media (hover: hover) {
   .premium-post-card:hover, .liquid-image-card:hover {
     background: rgb(var(--c-white) / 0.06);
-    border-color: rgb(var(--c-white) / 0.1);
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: none !important;
   }
 }
 
@@ -1770,8 +1771,8 @@ input, textarea {
 
 /* Edit profile button styles */
 .profile-edit-btn {
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(var(--gold-primary-rgb, 255, 255, 255), 0.2) !important;
   color: white !important;
   border-radius: 9999px !important;
   font-weight: 800 !important;
@@ -1780,12 +1781,14 @@ input, textarea {
   transition: all 0.2s ease;
 }
 .profile-edit-btn:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.08) !important;
+  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.4) !important;
+  box-shadow: none !important;
 }
 .profile-edit-btn:active {
-  transform: scale(0.97) !important;
-  background: rgba(255, 255, 255, 0.15) !important;
+  transform: scale(0.95) !important;
+  background: transparent !important;
+  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.6) !important;
 }
 
 /* Tabs adjustment */
