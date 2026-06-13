@@ -3110,7 +3110,7 @@ const PlatformLoadingPanel = ({ label, compact = false }) => (
     </div>
 );
 
-const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
+const Toggle = ({ active, onToggle, color = 'gold' }) => {
     const trackActive = color === 'blue'
         ? 'bg-[#1D9BF0] border-[#1D9BF0]'
         : 'bg-white border-white';
@@ -3121,11 +3121,10 @@ const Toggle = ({ active, onToggle, saving, color = 'gold' }) => {
             type="button"
             role="switch"
             aria-checked={active}
-            disabled={saving}
             onClick={() => onToggle()}
             className={`settings-toggle relative w-[58px] h-[34px] sm:w-[52px] sm:h-[30px] rounded-full border transition-all duration-300 ease-out shrink-0 touch-manipulation outline-none ${
                 active ? trackActive : 'bg-white/[0.12] border-white/15'
-            } ${saving ? 'opacity-45 cursor-not-allowed' : 'cursor-pointer active:scale-[0.96]'}`}
+            } cursor-pointer active:scale-[0.96]`}
         >
             <span
                 className={`settings-toggle-knob absolute top-[3px] left-[3px] w-[26px] h-[26px] sm:w-[22px] sm:h-[22px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
@@ -3177,9 +3176,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
-    const [showBadge, setShowBadge] = useState(user?.settings?.showBadge !== false);
+    const [showBadge, setShowBadge] = useState(user?.settings?.showBadge === true);
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
-    const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
+    const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus === true);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
@@ -3218,9 +3217,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     )
                 )
             );
-            setShowBadge(user.settings?.showBadge !== false);
+            setShowBadge(user.settings?.showBadge === true);
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
-            setBlur18Plus(user.settings?.blur18Plus !== false);
+            setBlur18Plus(user.settings?.blur18Plus === true);
         }
     }, [user, isOpen]);
 

@@ -1594,8 +1594,7 @@ input, textarea {
 /* Sturdy button feel */
 .sturdy-active:active {
   transform: scale(0.97) !important;
-  opacity: 0.8;
-  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Twitter/X Style Drawer Animations */
@@ -1670,8 +1669,7 @@ input, textarea {
 /* Sturdy button feel */
 .sturdy-active:active {
   transform: scale(0.97) !important;
-  opacity: 0.8;
-  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Smooth menu item animations */

@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema({
     notifications: { type: Boolean, default: true },
     dmFollowersOnly: { type: Boolean, default: false },
     showProfileShareButton: { type: Boolean, default: true },
-    showBadge: { type: Boolean, default: true },
+    showBadge: { type: Boolean, default: false },
     badgeColor: { type: String, default: 'blue' },
     blur18Plus: { type: Boolean, default: false }
   },
