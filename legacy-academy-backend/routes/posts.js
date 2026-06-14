@@ -49,9 +49,9 @@ router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
         const posts = await Post.find()
-            .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
-            .populate("repostedBy", "username profilePic role")
-            .populate("comments.user", "username profilePic role")
+            .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
+            .populate("repostedBy", "username profilePic role settings")
+            .populate("comments.user", "username profilePic role settings")
             .sort({ createdAt: -1 })
             .lean();
 
@@ -113,7 +113,7 @@ router.route("/:id/repost").all(verifyToken, async (req, res) => {
                 isStory: originalPost.isStory
             });
             await newRepost.save();
-            await newRepost.populate('author repostedBy', 'username profilePic role');
+            await newRepost.populate('author repostedBy', 'username profilePic role settings');
         } else {
             // Delete repost post
             await Post.deleteOne({ originalPost: targetId, repostedBy: userId, isRepost: true });
@@ -170,9 +170,9 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
                 { repostedBy: targetUserId }
             ]
         })
-            .populate("author", "username profilePic role isPrivate isFollowersOnly followers")
-            .populate("repostedBy", "username profilePic role")
-            .populate("comments.user", "username profilePic role")
+            .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
+            .populate("repostedBy", "username profilePic role settings")
+            .populate("comments.user", "username profilePic role settings")
             .sort({ createdAt: -1 })
             .lean();
 
@@ -204,7 +204,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
 
         const savedPost = await newPost.save();
-        await savedPost.populate("author", "username profilePic role isPrivate isFollowersOnly followers");
+        await savedPost.populate("author", "username profilePic role isPrivate isFollowersOnly followers settings");
 
         const io = req.app.get('io');
         if (io) {
@@ -342,7 +342,7 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
         const comment = { user: req.user.id, text: req.body.text || "", audioUrl, createdAt: new Date() };
         await post.updateOne({ $push: { comments: comment } });
 
-        const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+        const updatedPost = await Post.findById(req.params.id).populate("comments.user", "username profilePic role settings");
 
         const io = req.app.get('io');
         if (io) {
@@ -395,7 +395,7 @@ router.delete("/:id/comment/:commentId", verifyToken, async (req, res) => {
             // 🔥 REAL-TIME EMIT
             const io = req.app.get('io');
             if (io) {
-                const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+                const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role settings");
                 io.emit('comment.deleted', { postId: req.params.id, comments: updated?.comments || [] });
             }
 
@@ -425,7 +425,7 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
             );
 
             // Fetch the updated post to return correct comments array
-            const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role");
+            const updated = await Post.findById(req.params.id).populate("comments.user", "username profilePic role settings");
 
             // 🔥 REAL-TIME EMIT
             const io = req.app.get('io');
@@ -468,7 +468,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
                 req.params.id,
                 { $set: updateData },
                 { new: true }
-            ).populate("author", "username profilePic role isPrivate isFollowersOnly followers");
+            ).populate("author", "username profilePic role isPrivate isFollowersOnly followers settings");
 
             res.status(200).json(updatedPost);
         } else {
@@ -522,7 +522,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
 // GET POST BY ID (for Modal?)
 router.get("/find/:id", async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id).populate("author").populate("comments.user");
+        const post = await Post.findById(req.params.id).populate("author").populate("comments.user", "username profilePic role settings");
         res.status(200).json(post);
     } catch (err) {
         res.status(500).json(err);
