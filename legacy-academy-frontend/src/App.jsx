@@ -6576,26 +6576,33 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     {/* YouTube URL input */}
                     {/* YOUTUBE INPUT REMOVED PER USER REQUEST */}
 
-                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4">
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4 group">
                         {preview ? (
-                            <div className="w-full h-48 rounded-2xl overflow-hidden relative bg-black  shadow-inner flex items-center justify-center">
+                            <div className="w-full min-h-[250px] rounded-3xl overflow-hidden relative bg-gradient-to-br from-black/60 to-black/30 border border-white/10 shadow-2xl flex items-center justify-center transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:shadow-[var(--gold-primary)]/10">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain" controls />
                                 ) : isAudio ? (
-                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 gap-2 p-4">
-                                        <Icons.Music className="w-12 h-12 text-[var(--gold-primary)] animate-pulse" />
-                                        <span className="text-xs text-gray-400 font-bold truncate max-w-[200px]">{audioName}</span>
-                                        <audio src={preview} controls className="w-full mt-2" />
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/80 gap-4 p-6">
+                                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30">
+                                            <Icons.Music className="w-10 h-10 text-[var(--gold-primary)] animate-pulse" />
+                                        </div>
+                                        <span className="text-sm text-white/80 font-bold truncate max-w-[250px]">{audioName}</span>
+                                        <audio src={preview} controls className="w-full max-w-xs" />
                                     </div>
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full  "><Icons.X className="w-3 h-3 text-white" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); setAudioBlob(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-3 right-3 p-2 bg-black/70 hover:bg-black/90 rounded-full backdrop-blur-xl border border-white/10 transition-all duration-200 hover:scale-110">
+                                    <Icons.X className="w-4 h-4 text-white" />
+                                </button>
                             </div>
                         ) : (
-                            <div className="w-full py-8 border border-dashed border-gray-600 rounded-2xl flex flex-col items-center justify-center gap-2   text-gray-500 cursor-pointer">
-                                <Icons.Image className="w-8 h-8 opacity-50" />
-                                <span className="text-xs font-bold uppercase tracking-widest">{t('UPLOAD_MEDIA')}</span>
+                            <div className="w-full py-10 border-2 border-dashed border-white/15 bg-gradient-to-br from-white/5 to-black/20 rounded-3xl flex flex-col items-center justify-center gap-4 text-white/60 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:bg-white/8 hover:text-[var(--gold-primary)]/80">
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/20 group-hover:scale-110 transition-all duration-300">
+                                    <Icons.Upload className="w-8 h-8" />
+                                </div>
+                                <span className="text-sm font-bold uppercase tracking-widest">{t('UPLOAD_MEDIA')}</span>
+                                <span className="text-xs text-gray-500 font-bold uppercase tracking-widest">Image, Video, or Audio</span>
                             </div>
                         )}
                         <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
@@ -6661,19 +6668,28 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [desc, setDesc] = useState(post?.desc || '');
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
+    const [isAudio, setIsAudio] = useState(false);
     const [youtubeUrl, setYoutubeUrl] = useState('');
     const [is18Plus, setIs18Plus] = useState(post?.is18Plus || false);
     const [saving, setSaving] = useState(false);
     const fileRef = useRef(null);
+    const [audioName, setAudioName] = useState('');
 
     useEffect(() => {
         if (post) {
             setDesc(post.desc || '');
             setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
             const isYT = isYouTubeUrl(post.videoUrl);
-            setIsVideo(isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false)));
+            const isVid = isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
+            const isAud = post.image?.match(/\.(mp3|wav|ogg|webm|m4a)$/i) || false;
+            setIsVideo(isVid);
+            setIsAudio(isAud);
             setYoutubeUrl(isYT ? post.videoUrl : '');
             setIs18Plus(post.is18Plus || false);
+            if (post.image) {
+                const url = new URL(resolveMediaUrl(post.image));
+                setAudioName(url.pathname.split('/').pop() || '');
+            }
         }
     }, [post]);
 
@@ -6682,6 +6698,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
         if (file.type.startsWith('video')) {
             const url = URL.createObjectURL(file);
             const vid = document.createElement('video');
@@ -6698,9 +6715,16 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             }
             setPreview(URL.createObjectURL(file));
             setIsVideo(true);
+            setIsAudio(false);
+        } else if (file.type.startsWith('audio')) {
+            setPreview(URL.createObjectURL(file));
+            setIsVideo(false);
+            setIsAudio(true);
+            setAudioName(file.name);
         } else {
             setPreview(URL.createObjectURL(file));
             setIsVideo(false);
+            setIsAudio(false);
         }
     };
 
@@ -6776,18 +6800,38 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
                         {/* YouTube URL removed */}
 
-                        {/* Preview only, no file upload for edit */}
-                        {preview && (
-                            <div className="cursor-pointer mb-4">
-                                <div className="w-full min-h-[200px] aspect-video rounded-2xl overflow-hidden relative bg-black/60  shadow-2xl flex items-center justify-center group/preview">
+                        {/* Media Upload & Preview */}
+                        <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4 group">
+                            {preview ? (
+                                <div className="w-full min-h-[250px] rounded-3xl overflow-hidden relative bg-gradient-to-br from-black/60 to-black/30 border border-white/10 shadow-2xl flex items-center justify-center transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:shadow-[var(--gold-primary)]/10">
                                     {isVideo ? (
                                         <video src={preview} className="w-full h-full object-contain" controls />
+                                    ) : isAudio ? (
+                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/80 gap-4 p-6">
+                                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30">
+                                                <Icons.Music className="w-10 h-10 text-[var(--gold-primary)] animate-pulse" />
+                                            </div>
+                                            <span className="text-sm text-white/80 font-bold truncate max-w-[250px]">{audioName}</span>
+                                            <audio src={preview} controls className="w-full max-w-xs" />
+                                        </div>
                                     ) : (
                                         <img src={preview} className="w-full h-full object-contain" alt="Neural Preview" />
                                     )}
+                                    <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-3 right-3 p-2 bg-black/70 hover:bg-black/90 rounded-full backdrop-blur-xl border border-white/10 transition-all duration-200 hover:scale-110">
+                                        <Icons.X className="w-4 h-4 text-white" />
+                                    </button>
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="w-full py-10 border-2 border-dashed border-white/15 bg-gradient-to-br from-white/5 to-black/20 rounded-3xl flex flex-col items-center justify-center gap-4 text-white/60 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:bg-white/8 hover:text-[var(--gold-primary)]/80">
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/20 group-hover:scale-110 transition-all duration-300">
+                                        <Icons.Upload className="w-8 h-8" />
+                                    </div>
+                                    <span className="text-sm font-bold uppercase tracking-widest">{t('UPLOAD_MEDIA')}</span>
+                                    <span className="text-xs text-gray-500 font-bold uppercase tracking-widest">Image, Video, or Audio</span>
+                                </div>
+                            )}
+                            <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
+                        </div>
 
                         <div className="flex gap-4">
                             <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
