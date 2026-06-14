@@ -6684,28 +6684,28 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4 group">
                         {preview ? (
-                            <div className="w-full min-h-[200px] sm:min-h-[260px] rounded-3xl overflow-hidden relative bg-gradient-to-br from-gray-900/80 to-black/70 border border-white/10 shadow-2xl flex items-center justify-center transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:shadow-[var(--gold-primary)]/10">
+                            <div className="w-full min-h-[160px] sm:min-h-[200px] rounded-3xl overflow-hidden relative bg-gradient-to-br from-gray-900/80 to-black/70 border border-white/10 shadow-2xl flex items-center justify-center transition-all duration-300 hover:border-blue-400/40 hover:shadow-blue-400/10">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain" controls playsInline />
                                 ) : isAudio ? (
-                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/85 gap-4 p-5 sm:p-7">
-                                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/15 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30">
-                                            <Icons.Music className="w-10 h-10 sm:w-12 sm:h-12 text-[var(--gold-primary)] animate-pulse" />
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/85 gap-4 p-4 sm:p-6">
+                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-blue-400/20 to-transparent flex items-center justify-center border border-blue-400/30">
+                                            <Icons.Music className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400 animate-pulse" />
                                         </div>
                                         <span className="text-sm sm:text-base text-white/90 font-semibold text-center truncate max-w-[260px] sm:max-w-md">{audioName}</span>
-                                        <audio src={preview} controls className="w-full max-w-[220px] sm:max-w-sm" />
+                                        <audio src={preview} controls className="w-full max-w-[200px] sm:max-w-sm" />
                                     </div>
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain" alt="Preview" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); setAudioBlob(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2.5 bg-black/75 hover:bg-black/90 rounded-full backdrop-blur-xl border border-white/10 transition-all duration-200 hover:scale-110">
-                                    <Icons.X className="w-4.5 h-4.5 text-white" />
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); setAudioBlob(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-2 bg-black/75 hover:bg-black/90 rounded-full backdrop-blur-xl border border-white/10 transition-all duration-200 hover:scale-110">
+                                    <Icons.X className="w-4 h-4 text-white" />
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full py-10 sm:py-14 border-2 border-dashed border-white/15 bg-gradient-to-br from-white/5 to-black/25 rounded-3xl flex flex-col items-center justify-center gap-4 text-white/60 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:bg-white/10 hover:text-[var(--gold-primary)]/85">
-                                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/20 group-hover:scale-110 transition-all duration-300">
-                                    <Icons.Upload className="w-8 h-8 sm:w-10 sm:h-10" />
+                            <div className="w-full py-8 sm:py-12 border-2 border-dashed border-white/15 bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-black/25 rounded-3xl flex flex-col items-center justify-center gap-4 text-white/70 cursor-pointer transition-all duration-300 hover:border-blue-400/40 hover:bg-blue-400/15 hover:text-blue-300">
+                                <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-blue-400/15 to-transparent flex items-center justify-center border border-blue-400/25 group-hover:scale-110 transition-all duration-300">
+                                    <Icons.Upload className="w-7 h-7 sm:w-9 sm:h-9" />
                                 </div>
                                 <span className="text-sm sm:text-base font-semibold uppercase tracking-wide">{t('UPLOAD_MEDIA')}</span>
                                 <span className="text-xs sm:text-sm text-gray-400 font-semibold uppercase tracking-wide">Image, Video, or Audio</span>
@@ -6909,28 +6909,28 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         {/* Media Upload & Preview */}
                         <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4 group">
                             {preview ? (
-                                <div className="w-full min-h-[200px] sm:min-h-[260px] rounded-3xl overflow-hidden relative bg-gradient-to-br from-gray-900/80 to-black/70 border border-white/10 shadow-2xl flex items-center justify-center transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:shadow-[var(--gold-primary)]/10">
+                                <div className="w-full min-h-[160px] sm:min-h-[200px] rounded-3xl overflow-hidden relative bg-gradient-to-br from-gray-900/80 to-black/70 border border-white/10 shadow-2xl flex items-center justify-center transition-all duration-300 hover:border-blue-400/40 hover:shadow-blue-400/10">
                                     {isVideo ? (
                                         <video src={preview} className="w-full h-full object-contain" controls playsInline />
                                     ) : isAudio ? (
-                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/85 gap-4 p-5 sm:p-7">
-                                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/15 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30">
-                                                <Icons.Music className="w-10 h-10 sm:w-12 sm:h-12 text-[var(--gold-primary)] animate-pulse" />
+                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/85 gap-4 p-4 sm:p-6">
+                                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-blue-400/20 to-transparent flex items-center justify-center border border-blue-400/30">
+                                                <Icons.Music className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400 animate-pulse" />
                                             </div>
                                             <span className="text-sm sm:text-base text-white/90 font-semibold text-center truncate max-w-[260px] sm:max-w-md">{audioName}</span>
-                                            <audio src={preview} controls className="w-full max-w-[220px] sm:max-w-sm" />
+                                            <audio src={preview} controls className="w-full max-w-[200px] sm:max-w-sm" />
                                         </div>
                                     ) : (
                                         <img src={preview} className="w-full h-full object-contain" alt="Neural Preview" />
                                     )}
-                                    <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2.5 bg-black/75 hover:bg-black/90 rounded-full backdrop-blur-xl border border-white/10 transition-all duration-200 hover:scale-110">
-                                        <Icons.X className="w-4.5 h-4.5 text-white" />
+                                    <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2 right-2 p-2 bg-black/75 hover:bg-black/90 rounded-full backdrop-blur-xl border border-white/10 transition-all duration-200 hover:scale-110">
+                                        <Icons.X className="w-4 h-4 text-white" />
                                     </button>
                                 </div>
                             ) : (
-                                <div className="w-full py-10 sm:py-14 border-2 border-dashed border-white/15 bg-gradient-to-br from-white/5 to-black/25 rounded-3xl flex flex-col items-center justify-center gap-4 text-white/60 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/40 hover:bg-white/10 hover:text-[var(--gold-primary)]/85">
-                                    <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/20 group-hover:scale-110 transition-all duration-300">
-                                        <Icons.Upload className="w-8 h-8 sm:w-10 sm:h-10" />
+                                <div className="w-full py-8 sm:py-12 border-2 border-dashed border-white/15 bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-black/25 rounded-3xl flex flex-col items-center justify-center gap-4 text-white/70 cursor-pointer transition-all duration-300 hover:border-blue-400/40 hover:bg-blue-400/15 hover:text-blue-300">
+                                    <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-blue-400/15 to-transparent flex items-center justify-center border border-blue-400/25 group-hover:scale-110 transition-all duration-300">
+                                        <Icons.Upload className="w-7 h-7 sm:w-9 sm:h-9" />
                                     </div>
                                     <span className="text-sm sm:text-base font-semibold uppercase tracking-wide">{t('UPLOAD_MEDIA')}</span>
                                     <span className="text-xs sm:text-sm text-gray-400 font-semibold uppercase tracking-wide">Image, Video, or Audio</span>
