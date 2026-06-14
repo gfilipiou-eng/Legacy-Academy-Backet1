@@ -598,6 +598,56 @@ router.put("/heartbeat", verifyToken, async (req, res) => {
     }
 });
 
+// COMPLETE A DAILY MISSION - PUT BEFORE :id ROUTES!
+router.post("/mission/complete", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("User not found");
+
+        const now = new Date();
+        
+        // Check if they already completed a mission today
+        const todayStr = now.toISOString().split('T')[0];
+        const lastCompletedStr = user.lastMissionCompleted ? new Date(user.lastMissionCompleted).toISOString().split('T')[0] : null;
+
+        if (todayStr === lastCompletedStr) {
+            return res.status(400).json({ message: "Daily limit reached. You have already completed a mission today." });
+        }
+
+        // Calculate streak
+        if (user.lastMissionCompleted) {
+            const lastDate = new Date(user.lastMissionCompleted);
+            const diffTime = Math.abs(now - lastDate);
+            const diffHours = diffTime / (1000 * 60 * 60);
+
+            if (diffHours <= 48) {
+                user.missionsStreak = (user.missionsStreak || 0) + 1;
+            } else {
+                user.missionsStreak = 1;
+            }
+        } else {
+            user.missionsStreak = 1;
+        }
+
+        user.lastMissionCompleted = now;
+        user.missionsCompletedCount = (user.missionsCompletedCount || 0) + 1;
+
+        await user.save();
+
+        const updatedUser = await User.findById(userId).select('-password');
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('user.updated', updatedUser);
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Mission Complete Error:", err);
+        res.status(500).json({ error: "System failure during mission completion.", detail: err.message });
+    }
+});
+
 // UPDATE USER (Moved here to avoid conflict with /settings)
 router.put("/:id", verifyToken, async (req, res) => {
     if (req.user.id === req.params.id) {
@@ -712,56 +762,6 @@ router.delete("/:id", verifyToken, async (req, res) => {
         }
     } else {
         return res.status(403).json("You can delete only your account!");
-    }
-});
-
-// COMPLETE A DAILY MISSION
-router.post("/mission/complete", verifyToken, async (req, res) => {
-    try {
-        const userId = req.user.id || req.user.userId;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("User not found");
-
-        const now = new Date();
-        
-        // Check if they already completed a mission today
-        const todayStr = now.toISOString().split('T')[0];
-        const lastCompletedStr = user.lastMissionCompleted ? new Date(user.lastMissionCompleted).toISOString().split('T')[0] : null;
-
-        if (todayStr === lastCompletedStr) {
-            return res.status(400).json({ message: "Daily limit reached. You have already completed a mission today." });
-        }
-
-        // Calculate streak
-        if (user.lastMissionCompleted) {
-            const lastDate = new Date(user.lastMissionCompleted);
-            const diffTime = Math.abs(now - lastDate);
-            const diffHours = diffTime / (1000 * 60 * 60);
-
-            if (diffHours <= 48) {
-                user.missionsStreak = (user.missionsStreak || 0) + 1;
-            } else {
-                user.missionsStreak = 1;
-            }
-        } else {
-            user.missionsStreak = 1;
-        }
-
-        user.lastMissionCompleted = now;
-        user.missionsCompletedCount = (user.missionsCompletedCount || 0) + 1;
-
-        await user.save();
-
-        const updatedUser = await User.findById(userId).select('-password');
-        const io = req.app.get('io');
-        if (io) {
-            io.emit('user.updated', updatedUser);
-        }
-
-        res.status(200).json(updatedUser);
-    } catch (err) {
-        console.error("Mission Complete Error:", err);
-        res.status(500).json({ error: "System failure during mission completion.", detail: err.message });
     }
 });
 
