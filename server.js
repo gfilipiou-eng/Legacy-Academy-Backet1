@@ -41,6 +41,7 @@ import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 import messageRoutes from "./routes/messages.js";
 import resetPasswordRoutes from "./routes/resetPassword.js";
+import exchangeRoutes from "./routes/exchange.js";
 
 // Import email service AFTER dotenv.config() - non-critical
 console.log("Loading email service...");
@@ -263,6 +264,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/reset-password", resetPasswordRoutes);
+app.use("/api/exchange", exchangeRoutes);
 app.use("/reset-password", resetPasswordRoutes);
 
 // 404 Handler for API

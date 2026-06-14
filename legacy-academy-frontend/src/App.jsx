@@ -3498,6 +3498,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     onPointerUp={() => handleSave('zoom', zoomLevel)}
                                     onKeyUp={() => handleSave('zoom', zoomLevel)}
                                     className="settings-range w-full h-2 accent-[#1D9BF0]"
+                                    style={{
+                                        '--progress-width': `${((zoomLevel - 0.95) / 0.05) * 100}%`
+                                    }}
                                 />
                             </div>
                         </SettingsGroup>
