@@ -2126,7 +2126,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const discardRef = useRef(false);
     const [imgError, setImgError] = useState(false); // Handle broken images
     const [revealed, setRevealed] = useState(false);
-    const shouldBlur = post.is18Plus && (user?.settings?.blur18Plus === true) && !revealed;
+    const shouldBlur = post.is18Plus && Boolean(user?.settings?.blur18Plus) && !revealed;
 
     const isCurrentUserFounder = user?.role === 'Founder';
 
