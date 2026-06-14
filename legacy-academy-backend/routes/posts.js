@@ -200,7 +200,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             likes: [],
             dislikes: [],
             comments: [],
-            isStory: req.body.isStory === 'true'
+            isStory: req.body.isStory === 'true',
+            is18Plus: req.body.is18Plus === 'true'
         });
 
         const savedPost = await newPost.save();
@@ -451,6 +452,11 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
 
         if (post.author.toString() === req.user.id || req.user.role === "Founder" || req.user.role === "Admin") {
             let updateData = { desc: req.body.desc };
+
+            // Handle is18Plus
+            if (req.body.is18Plus !== undefined) {
+                updateData.is18Plus = req.body.is18Plus === 'true';
+            }
 
             // Handle Media Update if provided
             if (req.file) {

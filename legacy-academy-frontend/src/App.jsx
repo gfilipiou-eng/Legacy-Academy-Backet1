@@ -5395,6 +5395,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     const [preview, setPreview] = useState(post?.image ? resolveMediaUrl(post.image) : null);
     const [isVideo, setIsVideo] = useState(false);
     const [youtubeUrl, setYoutubeUrl] = useState('');
+    const [is18Plus, setIs18Plus] = useState(post?.is18Plus || false);
     const [saving, setSaving] = useState(false);
     const fileRef = useRef(null);
 
@@ -5405,6 +5406,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             const isYT = isYouTubeUrl(post.videoUrl);
             setIsVideo(isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false)));
             setYoutubeUrl(isYT ? post.videoUrl : '');
+            setIs18Plus(post.is18Plus || false);
         }
     }, [post]);
 
@@ -5439,6 +5441,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         if (saving) return;
         const fd = new FormData();
         fd.append('desc', desc);
+        fd.append('is18Plus', is18Plus);
         const file = fileRef.current?.files[0];
 
         if (file) {
@@ -5490,6 +5493,20 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* 18+ Toggle */}
+                        <div className="flex flex-wrap gap-2.5 mb-4">
+                            <div onClick={() => setIs18Plus(!is18Plus)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${is18Plus ? 'border-red-500 bg-red-500 scale-110' : 'border-gray-500'}`}>
+                                    {is18Plus && <Icons.Check className="w-3.5 h-3.5 text-white font-black" />}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <span className={`text-[11px] font-black uppercase tracking-widest ${is18Plus ? 'text-red-500' : 'text-gray-400'} truncate`}>{t('NSFW_18_PLUS') || '18+ NSFW'}</span>
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-0.5 truncate">{t('NSFW_18_PLUS_DESC') || 'Sensitive Content'}</span>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* YouTube URL removed */}
 
                         {/* Preview only, no file upload for edit */}
