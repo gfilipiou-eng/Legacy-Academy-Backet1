@@ -48,6 +48,7 @@ const PostSchema = new mongoose.Schema({
   isPrivate: { type: Boolean, default: false }, // Denormalized for quick feed filtering
   isFollowersOnly: { type: Boolean, default: false }, // Denormalized for quick feed filtering
   isStory: { type: Boolean, default: false }, // Temporary intelligence (Highlights)
+  is18Plus: { type: Boolean, default: false }, // NSFW 18+ content setting
   isFlagged: { type: Boolean, default: false }, // Flagged by Nova for review
   flagReason: { type: String, default: "" }    // Reason for flagging (e.g. 'NSFW', 'Spam')
 

@@ -2151,7 +2151,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
-    const shouldBlur = post.is18Plus && user?.settings?.blur18Plus !== false && !revealed && !isOwner;
+    const shouldBlur = post.is18Plus && user?.settings?.blur18Plus !== false && !revealed;
     const canDelete = isOwner || isCurrentUserFounder;
     const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
@@ -3233,7 +3233,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
     const [showBadge, setShowBadge] = useState(user?.settings?.showBadge === true);
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
-    const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus === true);
+    const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
@@ -3275,7 +3275,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             );
             setShowBadge(user.settings?.showBadge === true);
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
-            setBlur18Plus(user.settings?.blur18Plus === true);
+            setBlur18Plus(user.settings?.blur18Plus !== false);
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
         }
     }, [user, isOpen]);

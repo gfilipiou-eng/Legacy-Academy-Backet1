@@ -238,8 +238,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             likes: [],
             dislikes: [],
             comments: [],
-            isStory: req.body.isStory === 'true',
-            is18Plus: req.body.is18Plus === 'true'
+            isStory: req.body.isStory === 'true' || req.body.isStory === true,
+            is18Plus: req.body.is18Plus === 'true' || req.body.is18Plus === true
         });
 
         const savedPost = await newPost.save();
@@ -493,7 +493,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
 
             // Handle is18Plus
             if (req.body.is18Plus !== undefined) {
-                updateData.is18Plus = req.body.is18Plus === 'true';
+                updateData.is18Plus = req.body.is18Plus === 'true' || req.body.is18Plus === true;
             }
 
             // Handle Media Update if provided
