@@ -4107,7 +4107,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
-            setSuccessMsg(`Simulated withdrawal of ${amt.toFixed(6)} LΞC submitted to ledger!`);
+            setSuccessMsg(`Withdrawal of ${amt.toFixed(6)} LΞC completed successfully!`);
             setWithdrawAmount('');
             
             if (isFounder) {
