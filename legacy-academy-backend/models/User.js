@@ -85,7 +85,10 @@ const UserSchema = new mongoose.Schema(
             dmFollowersOnly: { type: Boolean, default: false },
             displayMode: { type: String, default: 'dark' },
             zoom: { type: Number, default: 1 },
-            showProfileShareButton: { type: Boolean, default: true }
+            showProfileShareButton: { type: Boolean, default: true },
+            showBadge: { type: Boolean, default: true },
+            badgeColor: { type: String, default: 'blue' },
+            blur18Plus: { type: Boolean, default: false }
         },
         subscriptionEndDate: {
             type: Date,
