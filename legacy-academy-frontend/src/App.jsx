@@ -3753,7 +3753,7 @@ const LECPriceChart = ({ currentPrice, timeframe }) => {
     const valRange = maxVal - minVal || 1;
     
     const width = 400;
-    const height = 120;
+    const height = 140;
     const padding = 10;
     
     const points = data.map((val, idx) => {
@@ -3781,16 +3781,16 @@ const LECPriceChart = ({ currentPrice, timeframe }) => {
         : '';
         
     return (
-        <div className="w-full h-[120px] relative overflow-hidden bg-black/40 border border-white/5 rounded-2xl p-2.5 my-3">
+        <div className="w-full h-[140px] relative overflow-hidden rounded-2xl my-3">
             <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#d97706" stopOpacity="0.25" />
-                        <stop offset="100%" stopColor="#d97706" stopOpacity="0.0" />
+                        <stop offset="0%" stopColor="#0A84FF" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#0A84FF" stopOpacity="0.0" />
                     </linearGradient>
                     <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#fbbf24" />
-                        <stop offset="100%" stopColor="#d97706" />
+                        <stop offset="0%" stopColor="#0A84FF" />
+                        <stop offset="100%" stopColor="#5AC8FA" />
                     </linearGradient>
                 </defs>
                 
@@ -3800,7 +3800,7 @@ const LECPriceChart = ({ currentPrice, timeframe }) => {
                         d={linePath} 
                         fill="none" 
                         stroke="url(#lineGrad)" 
-                        strokeWidth="2" 
+                        strokeWidth="3" 
                         strokeLinecap="round" 
                         strokeLinejoin="round"
                     />
@@ -3811,16 +3811,16 @@ const LECPriceChart = ({ currentPrice, timeframe }) => {
                         <circle 
                             cx={pt.x} 
                             cy={pt.y} 
-                            r="2.5" 
-                            fill="#fbbf24" 
+                            r="4" 
+                            fill="#0A84FF" 
                             className="opacity-0 group-hover/dot:opacity-100 transition-opacity duration-150"
                         />
                         <text 
                             x={pt.x} 
-                            y={pt.y - 8} 
+                            y={pt.y - 12} 
                             textAnchor="middle" 
                             fill="#fff" 
-                            fontSize="8" 
+                            fontSize="10" 
                             fontWeight="bold"
                             className="opacity-0 group-hover/dot:opacity-100 transition-opacity duration-150 font-mono"
                         >

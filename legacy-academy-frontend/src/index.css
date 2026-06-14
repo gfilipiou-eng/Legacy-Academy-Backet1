@@ -986,6 +986,51 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   box-shadow: 0 0 0 1px rgba(255, 85, 0, 0.5);
 }
 
+/* Apple-style liquid glass for Empire Capital */
+.empire-modal-glass {
+  background: rgba(30, 30, 35, 0.85);
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
+}
+
+.empire-panel-glass {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.empire-button-primary {
+  background: linear-gradient(135deg, #0A84FF, #5AC8FA);
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.4);
+}
+
+.empire-button-danger {
+  background: linear-gradient(135deg, #FF3B30, #FF6B6B);
+  box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+}
+
+.empire-button-primary:hover,
+.empire-button-danger:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.empire-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.empire-input:focus {
+  border-color: #0A84FF;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+
 .nav-item-btn {
   @apply p-3.5 rounded-full transition-all duration-300 flex items-center justify-center;
   color: #71767b;
