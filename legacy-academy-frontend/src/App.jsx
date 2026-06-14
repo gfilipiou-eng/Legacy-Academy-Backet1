@@ -3961,60 +3961,60 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
     ];
 
     return (
-        <div className="p-4 sm:p-5 space-y-6 w-full max-w-full box-border text-left">
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-black text-white uppercase tracking-wider">{t('DAILY_MISSIONS')}</h3>
+        <div className="p-4 sm:p-6 space-y-6 w-full max-w-full box-border text-left">
+            <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                    <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">{t('DAILY_MISSIONS')}</h3>
                     {user?.missionsStreak > 0 && (
-                        <span className="bg-orange-500/10 border border-orange-500/30 text-orange-500 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
+                        <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
                             🔥 {user.missionsStreak} {t('MISSION_STREAK') || 'STREAK'}
                         </span>
                     )}
                 </div>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wide leading-relaxed">{t('MISSIONS_DESC')}</p>
+                <p className="text-sm text-gray-300 font-bold uppercase tracking-wide leading-relaxed">{t('MISSIONS_DESC')}</p>
             </div>
 
             {hasCompletedToday && (
-                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-3 animate-fade-in liquid-glass-control">
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center shrink-0">
-                        <Icons.Check className="w-4 h-4" />
+                <div className="p-5 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-4 animate-fade-in liquid-glass-control">
+                    <div className="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0">
+                        <Icons.Check className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                        <div className="text-xs font-black text-white uppercase tracking-widest">{t('MISSION_COMPLETED_TODAY')}</div>
-                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Come back tomorrow to keep your streak!</div>
+                        <div className="text-sm font-black text-white uppercase tracking-widest">{t('MISSION_COMPLETED_TODAY')}</div>
+                        <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Come back tomorrow to keep your streak!</div>
                     </div>
                 </div>
             )}
 
             {errorMsg && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-xs font-bold text-red-500 uppercase tracking-wide">
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-sm font-black text-red-400 uppercase tracking-wide">
                     {errorMsg}
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-5">
                 {missionsList.map(m => (
                     <div
                         key={m.id}
-                        className={`p-4 border rounded-2xl flex items-center justify-between gap-4 transition-all duration-200 liquid-glass-video-panel ${
-                            hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01]'
+                        className={`p-5 sm:p-6 border rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
+                            hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
                         }`}
                     >
-                        <div className="flex items-center gap-4 min-w-0">
-                            <span className="text-3xl shrink-0">{m.icon}</span>
+                        <div className="flex items-center gap-5 min-w-0 flex-1 w-full sm:w-auto">
+                            <span className="text-4xl sm:text-5xl shrink-0">{m.icon}</span>
                             <div className="min-w-0 flex-1">
-                                <h4 className="text-base font-black text-white uppercase tracking-wider">{t(m.titleKey)}</h4>
-                                <p className="text-xs text-gray-300 font-bold uppercase tracking-wide mt-1">{t(m.descKey)}</p>
+                                <h4 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider truncate">{t(m.titleKey)}</h4>
+                                <p className="text-sm text-gray-300 font-bold uppercase tracking-wide mt-2 leading-relaxed">{t(m.descKey)}</p>
                             </div>
                         </div>
                         <button
                             type="button"
                             disabled={submitting || hasCompletedToday}
                             onClick={() => handleCompleteMission(m.id)}
-                            className={`px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all duration-300 shrink-0 ${
+                            className={`w-full sm:w-auto px-8 py-4 rounded-xl text-base font-black uppercase tracking-widest transition-all duration-300 touch-manipulation ${
                                 hasCompletedToday
                                     ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black shadow-lg shadow-[var(--gold-primary)]/30 hover:scale-105 active:scale-90'
+                                    : 'bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black shadow-xl shadow-[var(--gold-primary)]/40 hover:scale-105 active:scale-95'
                             }`}
                         >
                             {submitting ? '...' : t('MISSION_COMPLETE')}
