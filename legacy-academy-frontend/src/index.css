@@ -356,11 +356,8 @@ button:active {
 
 .bottom-nav-glass {
   position: relative;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(40px) saturate(1.8);
-  -webkit-backdrop-filter: blur(40px) saturate(1.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
@@ -809,113 +806,14 @@ body.theme-orange-black {
   overflow: visible;
 }
 
-.settings-range {
-  min-height: 28px;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 9999px;
-  outline: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.settings-range::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: var(--progress-width, 0%);
-  background: linear-gradient(90deg, #1D9BF0, #60A5FA);
-  border-radius: 9999px;
-  pointer-events: none;
-  transition: width 0.05s linear;
-}
-
-.settings-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  position: relative;
-  z-index: 10;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (max-width: 640px) {
-  .settings-range::-webkit-slider-thumb {
-    width: 22px;
-    height: 22px;
-  }
-}
-
-.settings-range::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.15);
-}
-
-.settings-range::-webkit-slider-thumb:active {
-  transform: scale(1.15);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
-}
-
-.settings-range::-moz-range-track {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 9999px;
-  outline: none;
-  cursor: pointer;
-}
-
-.settings-range::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (max-width: 640px) {
-  .settings-range::-moz-range-thumb {
-    width: 22px;
-    height: 22px;
-  }
-}
-
-.settings-range::-moz-range-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.15);
-}
-
 @media (max-width: 640px) {
   .settings-theme-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.85rem 0.5rem;
   }
 
-  .settings-range::-moz-range-thumb:active {
-    transform: scale(1.15);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  .settings-range {
+    min-height: 28px;
   }
 
   .settings-lang-btn {
@@ -952,35 +850,8 @@ body.theme-orange-black {
   transform: scale(0.98);
 }
 
-/* Apple-style Liquid Glass for Settings Modal */
-.settings-modal-glass {
-  background: rgba(30, 30, 32, 0.85);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
-}
-
-.settings-ios-group {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
 .settings-toggle {
   -webkit-tap-highlight-color: transparent;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.settings-toggle-knob {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
 }
 
 .settings-toggle:not(:disabled):hover {
@@ -998,51 +869,6 @@ body.theme-orange-black {
 body.theme-orange-black .theme-swatch-dot[style*="#ff5500"],
 body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   box-shadow: 0 0 0 1px rgba(255, 85, 0, 0.5);
-}
-
-/* Apple-style liquid glass for Empire Capital */
-.empire-modal-glass {
-  background: rgba(30, 30, 35, 0.85);
-  backdrop-filter: blur(50px);
-  -webkit-backdrop-filter: blur(50px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
-}
-
-.empire-panel-glass {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.empire-button-primary {
-  background: linear-gradient(135deg, #0A84FF, #5AC8FA);
-  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.4);
-}
-
-.empire-button-danger {
-  background: linear-gradient(135deg, #FF3B30, #FF6B6B);
-  box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
-}
-
-.empire-button-primary:hover,
-.empire-button-danger:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-
-.empire-input {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.empire-input:focus {
-  border-color: #0A84FF;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
 }
 
 .nav-item-btn {
