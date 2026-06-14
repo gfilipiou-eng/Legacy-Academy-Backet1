@@ -896,8 +896,14 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
         e.stopPropagation();
         if (!showMenu) {
             const rect = btnRef.current.getBoundingClientRect();
-            // Position exactly below the button (bottom + 8px gap) and align the right edge
-            setCoords({ top: rect.bottom + 8, left: rect.right - 192 });
+            const menuWidth = 180;
+            let left = rect.right - menuWidth;
+            // Ensure menu doesn't go off-screen on left
+            if (left < 8) left = 8;
+            // Ensure menu doesn't go off-screen on right
+            const maxLeft = window.innerWidth - menuWidth - 8;
+            if (left > maxLeft) left = maxLeft;
+            setCoords({ top: rect.bottom + 8, left });
         }
         setShowMenu(!showMenu);
 
@@ -905,8 +911,8 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
     return (
         <div className="relative shrink-0 z-30">
-            <button ref={btnRef} onClick={toggle} className="p-2 sm:p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-85 liquid-glass-control">
-                <Icons.MoreHorizontal className="w-6 h-6" />
+            <button ref={btnRef} onClick={toggle} className="p-1.5 sm:p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-85 liquid-glass-control">
+                <Icons.MoreHorizontal className="w-5 h-5" />
             </button>
             {showMenu && createPortal(
                 <>
@@ -918,7 +924,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                             left: `${coords.left}px`,
                             zIndex: 10001
                         }}
-                        className="w-56 liquid-glass-video-panel rounded-2xl overflow-hidden flex flex-col gap-1 p-2 animate-fade-in"
+                        className="w-[180px] liquid-glass-video-panel rounded-2xl overflow-hidden flex flex-col gap-1 p-2 animate-fade-in"
                     >
                         {isOwner && (
                             <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10 active:scale-95">
