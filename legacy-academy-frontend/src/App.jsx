@@ -3431,10 +3431,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 8 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative w-[96%] max-w-[420px] sm:max-w-[440px] max-h-[88dvh] sm:max-h-[86vh] rounded-[20px] sm:rounded-2xl overflow-hidden flex flex-col border border-white/10 bg-[#1c1c1e] sm:bg-[var(--app-bg)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]"
+                className="relative w-[96%] max-w-[420px] sm:max-w-[440px] max-h-[88dvh] sm:max-h-[86vh] rounded-[24px] sm:rounded-2xl overflow-hidden flex flex-col settings-modal-glass"
             >
                 {/* HEADER */}
-                <div className="px-5 sm:px-5 py-4 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#1c1c1e] sm:bg-transparent">
+                <div className="px-5 sm:px-5 py-4 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0 bg-black/20 backdrop-blur-xl">
                     <div className="flex items-center gap-3 min-w-0">
                         <Icons.Settings className="w-5 h-5 text-[#1D9BF0] shrink-0" />
                         <div className="min-w-0">
