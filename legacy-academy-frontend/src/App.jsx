@@ -7503,6 +7503,27 @@ const App = () => {
     const postsRef = useRef(posts);
     const usersRef = useRef(users);
     const onlineUsersRef = useRef(new Set());
+    
+    // Empire Capital
+    const [walletBalances, setWalletBalances] = useState({
+        BTC: 0,
+        ETH: 0,
+        USDT: 10000,
+        SOL: 0,
+        XRP: 0
+    });
+    const [cryptoPrices, setCryptoPrices] = useState({
+        BTC: 68000,
+        ETH: 3500,
+        SOL: 140,
+        XRP: 0.55,
+        USDT: 1
+    });
+    const [selectedCrypto, setSelectedCrypto] = useState('BTC');
+    const [tradeType, setTradeType] = useState('buy');
+    const [tradeAmount, setTradeAmount] = useState('');
+    const [is18PlusVerified, setIs18PlusVerified] = useState(false);
+    const [showAgeModal, setShowAgeModal] = useState(false);
 
     const lastScrollTime = useRef(0);
     const handleScroll = (e) => {
@@ -9442,7 +9463,119 @@ const App = () => {
                             </div>
                         </header>
                         <div id="zoomable-content" className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto pb-[158px]">
-                            {activeTab === 'alerts' ? (
+                            {activeTab === 'exchange' ? (
+                                <div className="animate-fade-in p-4 sm:p-8">
+                                    <div className="mb-6 px-2">
+                                        <h2 className="text-xl font-black text-white uppercase tracking-widest">Empire Capital</h2>
+                                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Crypto Exchange</div>
+                                    </div>
+
+                                    {/* Wallet Balances */}
+                                    <div className="mb-6 p-4 sm:p-6 rounded-[24px] bg-white/5 backdrop-blur-2xl border border-white/10 shadow-lg">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Portfolio Balance</div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {Object.entries(walletBalances).map(([coin, balance]) => (
+                                                <div key={coin} className="p-3 rounded-xl bg-black/40 border border-white/10">
+                                                    <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{coin}</div>
+                                                    <div className="text-lg font-black text-white">
+                                                        {balance.toFixed(4)} <span className="text-xs text-gray-400 font-bold">({coin !== 'USDT' ? `$${(balance * cryptoPrices[coin]).toFixed(2)}` : ''})</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Trade Section */}
+                                    <div className="mb-6 p-4 sm:p-6 rounded-[24px] bg-white/5 backdrop-blur-2xl border border-white/10 shadow-lg">
+                                        <div className="flex gap-2 mb-4">
+                                            <button
+                                                onClick={() => setTradeType('buy')}
+                                                className={`flex-1 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-black' : 'bg-white/5 text-white/50 hover:bg-white/10'}`}
+                                            >
+                                                Buy
+                                            </button>
+                                            <button
+                                                onClick={() => setTradeType('sell')}
+                                                className={`flex-1 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${tradeType === 'sell' ? 'bg-gradient-to-r from-red-500 to-rose-600 text-black' : 'bg-white/5 text-white/50 hover:bg-white/10'}`}
+                                            >
+                                                Sell
+                                            </button>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Select Coin</div>
+                                            <div className="flex gap-2">
+                                                {['BTC', 'ETH', 'SOL', 'XRP'].map((coin) => (
+                                                    <button
+                                                        key={coin}
+                                                        onClick={() => setSelectedCrypto(coin)}
+                                                        className={`flex-1 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${selectedCrypto === coin ? 'bg-gradient-to-r from-[#1D9BF0] to-[#60A5FA] text-black' : 'bg-white/5 text-white/50 hover:bg-white/10'}`}
+                                                    >
+                                                        {coin}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Amount</div>
+                                            <input
+                                                type="number"
+                                                value={tradeAmount}
+                                                onChange={(e) => setTradeAmount(e.target.value)}
+                                                placeholder="0.0000"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#1D9BF0] transition-all"
+                                            />
+                                        </div>
+
+                                        <div className="mb-4 p-3 rounded-xl bg-black/40 border border-white/10">
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-gray-400">Price</span>
+                                                <span className="text-white font-bold">${cryptoPrices[selectedCrypto].toFixed(2)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs mt-1">
+                                                <span className="text-gray-400">Total</span>
+                                                <span className="text-white font-bold">${(parseFloat(tradeAmount) || 0) * cryptoPrices[selectedCrypto].toFixed(2)}</span>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={() => {
+                                                const amount = parseFloat(tradeAmount) || 0;
+                                                if (amount <= 0) return;
+                                                if (tradeType === 'buy') {
+                                                    const cost = amount * cryptoPrices[selectedCrypto];
+                                                    if (walletBalances.USDT < cost) {
+                                                        addToast('Insufficient USDT balance', 'error');
+                                                        return;
+                                                    }
+                                                    setWalletBalances(prev => ({
+                                                        ...prev,
+                                                        USDT: prev.USDT - cost,
+                                                        [selectedCrypto]: prev[selectedCrypto] + amount
+                                                    }));
+                                                    addToast(`Bought ${amount} ${selectedCrypto}`, 'success');
+                                                } else {
+                                                    if (walletBalances[selectedCrypto] < amount) {
+                                                        addToast(`Insufficient ${selectedCrypto} balance`, 'error');
+                                                        return;
+                                                    }
+                                                    setWalletBalances(prev => ({
+                                                        ...prev,
+                                                        [selectedCrypto]: prev[selectedCrypto] - amount,
+                                                        USDT: prev.USDT + amount * cryptoPrices[selectedCrypto]
+                                                    }));
+                                                    addToast(`Sold ${amount} ${selectedCrypto}`, 'success');
+                                                }
+                                                setTradeAmount('');
+                                            }}
+                                            className="w-full py-3 rounded-[16px] bg-gradient-to-r from-[#1D9BF0] to-[#60A5FA] text-black font-black uppercase tracking-widest text-sm hover:scale-105 transition-all active:scale-95 shadow-lg"
+                                        >
+                                            {tradeType === 'buy' ? 'Buy' : 'Sell'} {selectedCrypto}
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : activeTab === 'alerts' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="flex items-center justify-between mb-6 px-2">
                                         <div className="flex flex-col">
@@ -9717,7 +9850,13 @@ const App = () => {
 
                     <BottomNavbar
                         activeTab={activeTab}
-                        onTabChange={setActiveTab}
+                        onTabChange={(tab) => {
+                            if (tab === 'exchange' && !is18PlusVerified) {
+                                setShowAgeModal(true);
+                            } else {
+                                setActiveTab(tab);
+                            }
+                        }}
                         alerts={alerts}
                         user={user}
                         onCreate={() => setIsCreateOpen(true)}
@@ -10065,6 +10204,35 @@ const App = () => {
                                 <Icons.Share className="w-5 h-5" />
                                 SHARE PROFILE
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Age Verification Modal */}
+            {showAgeModal && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
+                    <div className="bg-black rounded-[24px] max-w-[400px] w-full overflow-hidden shadow-2xl border border-white/10">
+                        <div className="p-8 text-center">
+                            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-2">WARNING</h2>
+                            <p className="text-gray-400 text-sm mb-6">You must be 18 years or older to access Empire Capital.</p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowAgeModal(false)}
+                                    className="flex-1 py-3 rounded-[14px] bg-white/5 border border-white/10 text-white font-bold text-sm uppercase tracking-wide hover:bg-white/10 transition-all active:scale-95"
+                                >
+                                    I'm Under 18
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIs18PlusVerified(true);
+                                        setShowAgeModal(false);
+                                    }}
+                                    className="flex-1 py-3 rounded-[14px] bg-gradient-to-r from-[#1D9BF0] to-[#60A5FA] text-black font-black text-sm uppercase tracking-wide hover:scale-105 transition-all active:scale-95 shadow-lg"
+                                >
+                                    I'm 18+
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
