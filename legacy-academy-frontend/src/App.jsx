@@ -4997,19 +4997,6 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
-                            {
-                                id: 'subscription',
-                                icon: (props) => (
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-                                        <circle cx="12" cy="12" r="10" />
-                                        <line x1="12" y1="8" x2="12" y2="16" />
-                                        <line x1="8" y1="12" x2="16" y2="12" />
-                                    </svg>
-                                ),
-                                label: 'LΞC Equity',
-                                action: onOpenSubscription,
-                                isSubscription: true
-                            },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
                         ].map((item, index) => {
                             const isActive = !item.action && activeTab === item.id;
