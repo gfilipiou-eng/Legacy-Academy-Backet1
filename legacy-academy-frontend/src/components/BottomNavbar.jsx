@@ -70,17 +70,6 @@ const BottomNavbar = memo(({
 
                 <button
                     type="button"
-                    onClick={() => onTabChange('exchange')}
-                    aria-label="Empire Capital"
-                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
-                >
-                    <div className={navItemClass(activeTab === 'exchange')}>      
-                        <Icons.Wallet className={iconClass(activeTab === 'exchange')} fill={activeTab === 'exchange' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'exchange' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
-                    </div>
-                </button>
-
-                <button
-                    type="button"
                     onClick={() => onTabChange('alerts')}
                     aria-label="Alerts"
                     className="flex items-center justify-center relative flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
