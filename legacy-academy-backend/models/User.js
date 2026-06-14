@@ -91,7 +91,7 @@ const UserSchema = new mongoose.Schema(
             showProfileShareButton: { type: Boolean, default: true },
             showBadge: { type: Boolean, default: true },
             badgeColor: { type: String, default: 'blue' },
-            blur18Plus: { type: Boolean, default: false },
+            blur18Plus: { type: Boolean, default: true },
             is18PlusProfile: { type: Boolean, default: false }
         },
         sharesBalance: {

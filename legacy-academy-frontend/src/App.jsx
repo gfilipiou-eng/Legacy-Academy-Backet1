@@ -2151,7 +2151,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
-    const shouldBlur = post.is18Plus && !revealed && !isOwner;
+    const shouldBlur = post.is18Plus && user?.settings?.blur18Plus !== false && !revealed && !isOwner;
     const canDelete = isOwner || isCurrentUserFounder;
     const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
