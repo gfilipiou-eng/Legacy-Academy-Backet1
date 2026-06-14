@@ -3716,6 +3716,13 @@ const formatLEC = (val, maxDec = 6) => {
     return `${parseFloat(val.toFixed(maxDec))} LΞC`;
 };
 
+const parseAmount = (val) => {
+    if (val === null || val === undefined) return 0;
+    const cleaned = val.toString().replace(/,/g, '');
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+};
+
 const generateHistoricalData = (currentPrice, timeframe) => {
     let points = 15;
     let stepAmount = 1.2;
@@ -3921,7 +3928,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                 label: 'paypal'
             },
             createOrder: (data, actions) => {
-                const amt = parseFloat(depositAmount);
+                const amt = parseAmount(depositAmount);
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
@@ -3935,7 +3942,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                 setProcessingStep('submitting');
                 try {
                     const details = await actions.order.capture();
-                    const amt = parseFloat(depositAmount);
+                    const amt = parseAmount(depositAmount);
                     
                     const res = await axios.post('/users/shares/deposit', { amountUSD: amt });
                     const updatedUser = res.data;
@@ -4019,7 +4026,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
 
     const initiateDeposit = (e) => {
         e.preventDefault();
-        const amt = parseFloat(depositAmount);
+        const amt = parseAmount(depositAmount);
         if (isNaN(amt) || amt <= 0) return;
         if (amt > 100000) {
             setErrorMsg("Maximum deposit limit is $100,000.00 USD per transaction.");
@@ -4041,7 +4048,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
     const executeActualDeposit = async (methodLabel) => {
         setProcessingStep('submitting');
         try {
-            const amt = parseFloat(depositAmount);
+            const amt = parseAmount(depositAmount);
             const res = await axios.post('/users/shares/deposit', { amountUSD: amt });
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -4097,7 +4104,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
 
     const handleWithdraw = async (e) => {
         e.preventDefault();
-        const amt = parseFloat(withdrawAmount);
+        const amt = parseAmount(withdrawAmount);
         if (isNaN(amt) || amt <= 0) return;
         setLoading(true);
         setErrorMsg(null);
@@ -4225,12 +4232,51 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                                     <span className="text-xs font-black uppercase tracking-widest">Pay with Credit / Debit Card</span>
                                                 </button>
 
+                                                {/* Stripe Checkout Portal Button */}
+                                                <button 
+                                                    onClick={() => {
+                                                        window.open("https://buy.stripe.com/aFabJ181BbbYe3u6ja6Na04", "_blank");
+                                                        setActivePaymentView('stripe-confirm');
+                                                    }}
+                                                    className="w-full h-12 bg-[#635bff] hover:bg-[#7a73ff] text-white rounded-xl font-bold flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/10 cursor-pointer border border-indigo-500/20"
+                                                >
+                                                    <Icons.Link className="w-4 h-4 text-white" />
+                                                    <span className="text-xs font-black uppercase tracking-widest">Pay with Card / G Pay (Stripe Live)</span>
+                                                </button>
+
                                                 {/* PayPal Button */}
                                                 <button 
                                                     onClick={() => setActivePaymentView('paypal')}
                                                     className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-md cursor-pointer"
                                                 >
                                                     <span className="text-xs font-black italic tracking-wide">PayPal Checkout</span>
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* VIEW: STRIPE CONFIRMATION */}
+                                        {activePaymentView === 'stripe-confirm' && (
+                                            <div className="bg-[#121212] rounded-2xl border border-white/5 p-4 flex flex-col items-center text-center space-y-4">
+                                                <div className="w-full flex justify-between items-center pb-2 border-b border-white/5">
+                                                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Stripe Secure Gateway</span>
+                                                    <span className="text-[9px] text-[#635bff] font-black tracking-widest uppercase">Live Checkout</span>
+                                                </div>
+                                                
+                                                <div className="space-y-2 text-left">
+                                                    <h4 className="text-xs font-black text-white uppercase tracking-wider">Sync Your Ledger</h4>
+                                                    <p className="text-[10px] text-zinc-400 leading-relaxed">
+                                                        We have opened the secure Stripe billing portal in a new tab. Please complete your card payment there.
+                                                    </p>
+                                                    <p className="text-[10px] text-zinc-400 leading-relaxed">
+                                                        Once your payment has been approved on Stripe, click the button below to credit your LΞC shares balance instantly.
+                                                    </p>
+                                                </div>
+
+                                                <button 
+                                                    onClick={() => executeActualDeposit('Stripe Portal')}
+                                                    className="w-full h-11 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-black uppercase tracking-widest text-xs rounded-xl cursor-pointer active:scale-[0.98] transition-transform shadow-lg shadow-green-500/10"
+                                                >
+                                                    Confirm Payment Completed
                                                 </button>
                                             </div>
                                         )}

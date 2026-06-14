@@ -680,7 +680,7 @@ router.get("/shares/price", verifyToken, (req, res) => {
 router.post("/shares/deposit", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const amountUSD = parseFloat(req.body.amountUSD);
+        const amountUSD = parseFloat((req.body.amountUSD || '').toString().replace(/,/g, ''));
         if (!amountUSD || isNaN(amountUSD) || amountUSD < 1) {
             return res.status(400).json("Minimum deposit amount is $1.00 USD.");
         }
@@ -720,7 +720,7 @@ router.post("/shares/deposit", verifyToken, async (req, res) => {
 router.post("/shares/withdraw", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
-        const sharesAmount = parseFloat(req.body.sharesAmount);
+        const sharesAmount = parseFloat((req.body.sharesAmount || '').toString().replace(/,/g, ''));
         if (!sharesAmount || isNaN(sharesAmount) || sharesAmount <= 0) {
             return res.status(400).json("Invalid withdrawal amount.");
         }
