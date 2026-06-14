@@ -4011,10 +4011,10 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                             type="button"
                             disabled={submitting || hasCompletedToday}
                             onClick={() => handleCompleteMission(m.id)}
-                            className={`px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
+                            className={`px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all duration-300 shrink-0 ${
                                 hasCompletedToday
                                     ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
-                                    : 'bg-[var(--gold-primary)] hover:scale-105 active:scale-90 text-black liquid-glass-control'
+                                    : 'bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black shadow-lg shadow-[var(--gold-primary)]/30 hover:scale-105 active:scale-90'
                             }`}
                         >
                             {submitting ? '...' : t('MISSION_COMPLETE')}
@@ -5829,23 +5829,16 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
  
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-5 bg-white/[0.02] border border-[var(--gold-primary)]/20 rounded-2xl cursor-pointer hover:bg-white/[0.05] hover:border-[var(--gold-primary)]/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-between gap-4 group">
-                    <div className="space-y-1 text-left min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.22em] text-[var(--gold-primary)]">{t('JOIN_ELITE', 'UNLEASH YOUR POTENTIAL')}</h3>
-                            <div className="inline-flex items-center gap-1 bg-green-500/10 border border-green-500/20 rounded-full px-2 py-0.5 shrink-0">
-                                <span className="relative flex h-1.5 w-1.5">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
-                                </span>
-                                <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">{t('PORTAL_LIVE') || 'LIVE'}</span>
-                            </div>
+                <div onClick={onClose} className="w-full mt-6 p-6 bg-gradient-to-r from-black/80 to-black/60 border border-[var(--gold-primary)]/30 rounded-2xl cursor-pointer hover:border-[var(--gold-primary)]/60 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-between gap-4 group liquid-glass-video-panel">
+                    <div className="space-y-2 text-left min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-xs font-black uppercase tracking-[0.25em] text-[var(--gold-primary)]">{t('JOIN_ELITE', 'ENTER THE LEGACY ACADEMY')}</h3>
                         </div>
-                        <p className="text-xs font-bold leading-snug text-white/80">{t('CREATE_ACCOUNT_SUB_PROFESSIONAL', 'ACCESS ALL PREMIUM INTEL & MASTERMIND NETWORK')}</p>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 4€ / MONTH')}</p>
+                        <p className="text-sm font-bold leading-tight text-white">EXCLUSIVE PREMIUM CONTENT & COMMUNITY</p>
+                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 4€ / MONTH')}</p>
                     </div>
-                    <div className="w-11 h-11 rounded-xl bg-[var(--gold-primary)] text-black flex items-center justify-center transition-all duration-300 shrink-0 group-hover:scale-110 active:scale-90">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black flex items-center justify-center transition-all duration-300 shrink-0 group-hover:scale-110 active:scale-90 shadow-lg shadow-[var(--gold-primary)]/40">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-6 h-6"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </div>
                 </div>
 
