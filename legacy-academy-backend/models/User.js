@@ -105,7 +105,7 @@ const UserSchema = new mongoose.Schema(
         transactionHistory: {
             type: [
                 {
-                    type: { type: String, enum: ['deposit', 'withdraw_pending', 'subscription_extend'] },
+                    type: { type: String },
                     amountUSD: { type: Number },
                     shares: { type: Number },
                     price: { type: Number },

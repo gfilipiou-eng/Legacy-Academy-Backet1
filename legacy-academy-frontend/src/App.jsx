@@ -3687,12 +3687,26 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
 const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
     const { t } = useTranslation(user);
-    const [sharesPrice, setSharesPrice] = useState(1.25);
+    const [sharesPrice, setSharesPrice] = useState(150.0);
     const [depositAmount, setDepositAmount] = useState('');
     const [withdrawAmount, setWithdrawAmount] = useState('');
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState(null);
     const [successMsg, setSuccessMsg] = useState(null);
+
+    // MOCK PAYMENT OVERLAYS STATE
+    const [showPaymentSelector, setShowPaymentSelector] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState(null); // 'applepay', 'googlepay', 'card'
+    const [processingStep, setProcessingStep] = useState(null); // 'auth', 'submitting', 'success'
+
+    // Mock Card form state
+    const [cardNumber, setCardNumber] = useState('');
+    const [cardExpiry, setCardExpiry] = useState('');
+    const [cardCvv, setCardCvv] = useState('');
+
+    // FOUNDER ADMIN STATE
+    const [globalPool, setGlobalPool] = useState(null);
+    const isFounder = user?.role === 'Founder' || user?.role === 'Admin';
 
     const fetchPrice = async () => {
         try {
@@ -3703,42 +3717,90 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
         }
     };
 
+    const fetchGlobalPool = async () => {
+        try {
+            const res = await axios.get('/users/shares/global-pool');
+            setGlobalPool(res.data);
+        } catch (e) {
+            console.error("Failed to fetch global pool data", e);
+        }
+    };
+
     useEffect(() => {
         if (isOpen) {
             fetchPrice();
-            const interval = setInterval(fetchPrice, 10000);
+            const interval = setInterval(fetchPrice, 5000); // Live price updates every 5 seconds
+            
+            if (isFounder) {
+                fetchGlobalPool();
+                const globalInterval = setInterval(fetchGlobalPool, 10000);
+                return () => {
+                    clearInterval(interval);
+                    clearInterval(globalInterval);
+                };
+            }
+            
             return () => clearInterval(interval);
         }
-    }, [isOpen]);
+    }, [isOpen, user]);
 
     if (!isOpen) return null;
 
-    const remainingDays = (() => {
-        if (!user?.subscriptionEndDate) return 0;
-        const diff = new Date(user.subscriptionEndDate) - new Date();
-        return diff > 0 ? Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24))) : 0;
-    })();
-
     const portfolioValue = parseFloat(((user?.sharesBalance || 0) * sharesPrice).toFixed(2));
 
-    const handleDeposit = async (e) => {
+    const initiateDeposit = (e) => {
         e.preventDefault();
         const amt = parseFloat(depositAmount);
         if (isNaN(amt) || amt <= 0) return;
-        setLoading(true);
         setErrorMsg(null);
         setSuccessMsg(null);
+        setShowPaymentSelector(true);
+    };
+
+    const completeDeposit = async (selectedMethod) => {
+        setPaymentMethod(selectedMethod);
+        setProcessingStep('auth');
+        
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        
+        if (selectedMethod === 'applepay') {
+            await delay(1200);
+            setProcessingStep('submitting');
+            await delay(1000);
+        } else if (selectedMethod === 'googlepay') {
+            await delay(1000);
+            setProcessingStep('submitting');
+            await delay(1000);
+        } else {
+            await delay(1500);
+            setProcessingStep('submitting');
+            await delay(800);
+        }
+
         try {
+            const amt = parseFloat(depositAmount);
             const res = await axios.post('/users/shares/deposit', { amountUSD: amt });
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
-            setSuccessMsg(`Simulated deposit of $${amt.toFixed(2)} completed successfully!`);
+            
+            setProcessingStep('success');
+            await delay(1200);
+            
+            setSuccessMsg(`Simulated deposit of $${amt.toFixed(2)} completed successfully via ${selectedMethod === 'applepay' ? 'Apple Pay' : selectedMethod === 'googlepay' ? 'Google Pay' : 'Credit Card'}!`);
             setDepositAmount('');
+            setShowPaymentSelector(false);
+            setPaymentMethod(null);
+            setProcessingStep(null);
+            
+            if (isFounder) {
+                fetchGlobalPool();
+            }
         } catch (err) {
             setErrorMsg(err.response?.data?.message || err.response?.data || "Deposit failed");
-        } finally {
-            setLoading(false);
+            setShowPaymentSelector(false);
+            setPaymentMethod(null);
+            setProcessingStep(null);
         }
     };
 
@@ -3754,8 +3816,12 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
-            setSuccessMsg(`Simulated withdrawal of ${amt.toFixed(4)} shares submitted!`);
+            setSuccessMsg(`Simulated withdrawal of ${amt.toFixed(6)} LΞC submitted to ledger!`);
             setWithdrawAmount('');
+            
+            if (isFounder) {
+                fetchGlobalPool();
+            }
         } catch (err) {
             setErrorMsg(err.response?.data?.message || err.response?.data || "Withdrawal failed");
         } finally {
@@ -3763,34 +3829,224 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
         }
     };
 
-    const handleExtend = async () => {
-        if ((user?.sharesBalance || 0) < 10) {
-            setErrorMsg("You need at least 10 Legacy Shares to extend subscription.");
-            return;
-        }
-        setLoading(true);
-        setErrorMsg(null);
-        setSuccessMsg(null);
-        try {
-            const res = await axios.post('/users/shares/buy-subscription');
-            const updatedUser = res.data;
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            if (onUpdateUser) onUpdateUser(updatedUser);
-            setSuccessMsg("Subscription successfully extended by 30 days!");
-        } catch (err) {
-            setErrorMsg(err.response?.data?.message || err.response?.data || "Redemption failed");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-in">
             <div className="bg-[#050505] border border-white/10 rounded-[28px] max-w-[480px] w-full max-h-[90vh] overflow-y-auto no-scrollbar relative flex flex-col p-6 sm:p-8 text-left box-border shadow-2xl">
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-80" />
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-80" />
+
+                {/* Secure Payment Overlay inside the Modal */}
+                {showPaymentSelector && (
+                    <div className="absolute inset-0 bg-black/95 z-50 flex flex-col p-6 sm:p-8 justify-between rounded-[28px] animate-fade-in">
+                        {paymentMethod === null ? (
+                            <div className="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-lg font-black text-white uppercase tracking-wider">Select Payment Method</h3>
+                                        <button onClick={() => setShowPaymentSelector(false)} className="p-2 rounded-full hover:bg-white/5 text-gray-400">
+                                            <Icons.X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
+                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Total Deposit</span>
+                                        <span className="text-2xl font-black text-white">${parseFloat(depositAmount).toFixed(2)} USD</span>
+                                    </div>
+
+                                    <div className="space-y-3.5">
+                                        {/* Apple Pay Button */}
+                                        <button 
+                                            onClick={() => completeDeposit('applepay')}
+                                            className="w-full h-12 bg-white text-black hover:bg-white/90 active:scale-[0.98] transition-all rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                                        >
+                                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C3.84 16.48 4.41 9.9 8.87 9.53c1.43.12 2.39.88 3.19.88.75 0 2.03-.97 3.63-.78 1.66.19 2.87.97 3.5 1.94-3.24 1.89-2.73 6.06.49 7.37-.62 1.63-1.63 3.34-2.63 4.34m-3.99-11.83c.78-.96 1.25-2.27 1.01-3.57-1.12.1-2.48.82-3.24 1.72-.68.79-1.25 2.13-.98 3.4 1.25.1 2.45-.63 3.21-1.55" />
+                                            </svg>
+                                            <span>Pay with Apple Pay</span>
+                                        </button>
+
+                                        {/* Google Pay Button */}
+                                        <button 
+                                            onClick={() => completeDeposit('googlepay')}
+                                            className="w-full h-12 bg-black border border-white/20 text-white hover:bg-white/5 active:scale-[0.98] transition-all rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                                        >
+                                            <svg className="w-5 h-5" viewBox="0 0 40 40">
+                                                <path fill="#4285F4" d="M36.3 20.27c0-1.21-.1-2.38-.3-3.52H20v6.69h9.14c-.39 2.06-1.54 3.8-3.27 4.96v4.13h5.3c3.1-2.86 4.88-7.07 4.88-12.26z" />
+                                                <path fill="#34A853" d="M20 36.82c4.54 0 8.35-1.51 11.13-4.09l-5.3-4.13c-1.47.98-3.35 1.57-5.83 1.57-4.49 0-8.29-3.03-9.65-7.1h-5.48v4.25C7.65 32.8 13.43 36.82 20 36.82z" />
+                                                <path fill="#FBBC05" d="M10.35 23.07c-.35-1.04-.55-2.14-.55-3.27s.2-2.23.55-3.27v-4.25H4.87C3.17 15.68 2.2 17.76 2.2 20s.97 4.32 2.67 7.72l5.48-4.25z" />
+                                                <path fill="#EA4335" d="M20 13.18c2.47 0 4.69.85 6.43 2.52l4.82-4.82C28.34 8.24 24.54 6.82 20 6.82c-6.57 0-12.35 4.02-15.13 9.77l5.48 4.25c1.36-4.07 5.16-7.1 9.65-7.1z" />
+                                            </svg>
+                                            <span>Pay with G Pay</span>
+                                        </button>
+
+                                        {/* Card Option Button */}
+                                        <button 
+                                            onClick={() => setPaymentMethod('card')}
+                                            className="w-full h-12 bg-gradient-to-r from-sky-600/80 to-blue-700/80 hover:from-sky-500 hover:to-blue-600 text-white font-bold active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                                        >
+                                            <Icons.Lock className="w-4 h-4" />
+                                            <span>Pay with Credit / Debit Card</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button onClick={() => setShowPaymentSelector(false)} className="w-full py-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors mt-6">
+                                    Cancel Deposit
+                                </button>
+                            </div>
+                        ) : paymentMethod === 'card' && processingStep === null ? (
+                            <div className="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-lg font-black text-white uppercase tracking-wider">Credit / Debit Card</h3>
+                                        <button onClick={() => setPaymentMethod(null)} className="p-2 rounded-full hover:bg-white/5 text-gray-400">
+                                            <Icons.ArrowLeft className="w-5 h-5" />
+                                        </button>
+                                    </div>
+
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
+                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Total Deposit</span>
+                                        <span className="text-2xl font-black text-white">${parseFloat(depositAmount).toFixed(2)} USD</span>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">Card Number</label>
+                                            <input 
+                                                type="text" 
+                                                maxLength="19"
+                                                placeholder="4000 1234 5678 9010"
+                                                value={cardNumber}
+                                                onChange={(e) => {
+                                                    let val = e.target.value.replace(/\D/g, '');
+                                                    let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
+                                                    setCardNumber(formatted);
+                                                }}
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-sky-500 font-mono tracking-widest"
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">Expiration</label>
+                                                <input 
+                                                    type="text" 
+                                                    maxLength="5"
+                                                    placeholder="MM/YY"
+                                                    value={cardExpiry}
+                                                    onChange={(e) => {
+                                                        let val = e.target.value.replace(/\D/g, '');
+                                                        if (val.length > 2) {
+                                                            val = val.substring(0, 2) + '/' + val.substring(2, 4);
+                                                        }
+                                                        setCardExpiry(val);
+                                                    }}
+                                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-sky-500 font-mono text-center"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">CVV</label>
+                                                <input 
+                                                    type="password" 
+                                                    maxLength="3"
+                                                    placeholder="•••"
+                                                    value={cardCvv}
+                                                    onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ''))}
+                                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-sky-500 font-mono text-center tracking-widest"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 space-y-3">
+                                    <button 
+                                        onClick={() => completeDeposit('card')}
+                                        disabled={cardNumber.length < 15 || cardExpiry.length < 5 || cardCvv.length < 3}
+                                        className="w-full h-12 bg-gradient-to-r from-sky-600/80 to-blue-700/80 hover:from-sky-500 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                                    >
+                                        <Icons.Lock className="w-4 h-4" />
+                                        <span>Confirm Deposit</span>
+                                    </button>
+                                    <button onClick={() => setPaymentMethod(null)} className="w-full py-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors">
+                                        Back
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex flex-col justify-center items-center text-center p-6">
+                                {processingStep === 'auth' && (
+                                    <div className="space-y-6 animate-pulse">
+                                        {paymentMethod === 'applepay' ? (
+                                            <>
+                                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white border border-white/20">
+                                                    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C3.84 16.48 4.41 9.9 8.87 9.53c1.43.12 2.39.88 3.19.88.75 0 2.03-.97 3.63-.78 1.66.19 2.87.97 3.5 1.94-3.24 1.89-2.73 6.06.49 7.37-.62 1.63-1.63 3.34-2.63 4.34m-3.99-11.83c.78-.96 1.25-2.27 1.01-3.57-1.12.1-2.48.82-3.24 1.72-.68.79-1.25 2.13-.98 3.4 1.25.1 2.45-.63 3.21-1.55" />
+                                                    </svg>
+                                                </div>
+                                                <h4 className="text-lg font-black text-white uppercase tracking-wider">Confirming Apple Pay</h4>
+                                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Verify with FaceID / TouchID...</p>
+                                            </>
+                                        ) : paymentMethod === 'googlepay' ? (
+                                            <>
+                                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white border border-white/20">
+                                                    <svg className="w-8 h-8" viewBox="0 0 40 40">
+                                                        <path fill="#4285F4" d="M36.3 20.27c0-1.21-.1-2.38-.3-3.52H20v6.69h9.14c-.39 2.06-1.54 3.8-3.27 4.96v4.13h5.3c3.1-2.86 4.88-7.07 4.88-12.26z" />
+                                                        <path fill="#34A853" d="M20 36.82c4.54 0 8.35-1.51 11.13-4.09l-5.3-4.13c-1.47.98-3.35 1.57-5.83 1.57-4.49 0-8.29-3.03-9.65-7.1h-5.48v4.25C7.65 32.8 13.43 36.82 20 36.82z" />
+                                                        <path fill="#FBBC05" d="M10.35 23.07c-.35-1.04-.55-2.14-.55-3.27s.2-2.23.55-3.27v-4.25H4.87C3.17 15.68 2.2 17.76 2.2 20s.97 4.32 2.67 7.72l5.48-4.25z" />
+                                                        <path fill="#EA4335" d="M20 13.18c2.47 0 4.69.85 6.43 2.52l4.82-4.82C28.34 8.24 24.54 6.82 20 6.82c-6.57 0-12.35 4.02-15.13 9.77l5.48 4.25c1.36-4.07 5.16-7.1 9.65-7.1z" />
+                                                    </svg>
+                                                </div>
+                                                <h4 className="text-lg font-black text-white uppercase tracking-wider">Google Pay Processing</h4>
+                                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Authorizing Payment Profile...</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-sky-400 border border-sky-500/20">
+                                                    <Icons.Globe className="w-7 h-7 animate-spin" />
+                                                </div>
+                                                <h4 className="text-lg font-black text-white uppercase tracking-wider">Securing Gateway</h4>
+                                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Validating card authenticity...</p>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+
+                                {processingStep === 'submitting' && (
+                                    <div className="space-y-6">
+                                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-green-400 border border-green-500/20">
+                                            <Icons.Lock className="w-6 h-6 animate-pulse" />
+                                        </div>
+                                        <h4 className="text-lg font-black text-white uppercase tracking-wider">Transferring Capital</h4>
+                                        <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Minting LΞC shares on ledger...</p>
+                                    </div>
+                                )}
+
+                                {processingStep === 'success' && (
+                                    <div className="space-y-6 animate-bounce">
+                                        <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center text-black shadow-lg shadow-green-500/20">
+                                            <Icons.Check className="w-8 h-8 font-black" />
+                                        </div>
+                                        <h4 className="text-lg font-black text-green-400 uppercase tracking-wider">Payment Approved</h4>
+                                        <p className="text-xs text-gray-300 font-bold uppercase tracking-widest">Capital registered successfully!</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">Empire Capital & Sub</h2>
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-full bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="16"/>
+                                <line x1="8" y1="12" x2="16" y2="12"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">Empire Capital</h2>
+                            <span className="text-[9px] text-sky-400 uppercase font-black tracking-widest block">LΞC Equity Exchange</span>
+                        </div>
+                    </div>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-white/5 text-red-500 hover:scale-105 active:scale-95 transition-all">
                         <Icons.X className="w-6 h-6" />
                     </button>
@@ -3807,57 +4063,44 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                     </div>
                 )}
 
-                <div className="mb-6 p-5 bg-white/[0.02] border border-white/5 rounded-2xl">
-                    <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Premium Membership Status</h3>
-                    <div className="flex justify-between items-center flex-wrap gap-3">
+                {/* Main LΞC Balance Panel */}
+                <div className="mb-6 p-5 bg-gradient-to-br from-[#101725] to-[#070b12] border border-sky-500/20 rounded-2xl relative overflow-hidden group shadow-lg">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl pointer-events-none" />
+                    <div className="flex justify-between items-start relative z-10">
                         <div>
-                            <span className="text-2xl font-black text-white">{remainingDays} <span className="text-sm text-gray-400 uppercase font-bold tracking-wider">Days left</span></span>
-                            <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-wider font-bold mt-1">
-                                {remainingDays > 0 ? "Active Premium Access" : "Access Expired"}
+                            <h3 className="text-xs font-black text-sky-400 uppercase tracking-widest mb-1.5">LΞC Equity Balance</h3>
+                            <div className="text-3xl font-black text-white tracking-tight flex items-baseline gap-1.5">
+                                {(user?.sharesBalance || 0).toFixed(6)}
+                                <span className="text-xs text-sky-300 font-black uppercase tracking-wider">LΞC</span>
                             </div>
-                        </div>
-                        <button 
-                            onClick={handleExtend}
-                            disabled={loading || (user?.sharesBalance || 0) < 10}
-                            className={`px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                (user?.sharesBalance || 0) >= 10
-                                    ? "bg-[var(--gold-primary)] hover:bg-[#ffb700] text-black hover:scale-105"
-                                    : "bg-white/5 text-gray-500 cursor-not-allowed border border-white/10"
-                            }`}
-                        >
-                            Redeem 30 Days (10 Shares)
-                        </button>
-                    </div>
-                </div>
-
-                <div className="mb-6 p-5 bg-gradient-to-br from-[#1A1A2E]/50 to-[#16213E]/50 border border-sky-500/15 rounded-2xl">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h3 className="text-xs font-black text-sky-400 uppercase tracking-widest mb-1">Legacy Shares (Crypto)</h3>
-                            <div className="text-3xl font-black text-white tracking-tight">{(user?.sharesBalance || 0).toFixed(4)} <span className="text-xs text-sky-300 font-bold uppercase tracking-wider">LGS</span></div>
                         </div>
                         <div className="text-right">
                             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Portfolio Value</h3>
-                            <div className="text-xl font-black text-green-400">${portfolioValue.toFixed(2)}</div>
+                            <div className="text-2xl font-black text-green-400">${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                         </div>
                     </div>
 
-                    <div className="flex justify-between items-center mt-5 pt-3 border-t border-white/5 flex-wrap gap-2">
+                    <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/5 flex-wrap gap-3 relative z-10">
                         <div>
-                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Live Price: </span>
-                            <span className="text-sm font-black text-white tracking-wide">${sharesPrice.toFixed(4)}</span>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Live LΞC Price</span>
+                            <span className="text-sm font-black text-white tracking-wide flex items-center gap-1.5 mt-0.5">
+                                ${sharesPrice.toFixed(2)}
+                                <span className="text-[9px] font-black text-green-400 flex items-center">
+                                    ▲ +{(Math.abs(Math.sin(Date.now() / 30000)) * 2.5).toFixed(2)}%
+                                </span>
+                            </span>
                         </div>
-                        <div>
-                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Invested: </span>
-                            <span className="text-sm font-bold text-gray-300">${(user?.totalDeposited || 0).toFixed(2)}</span>
+                        <div className="text-right">
+                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Total Capital Invested</span>
+                            <span className="text-sm font-bold text-gray-300 mt-0.5 block">${(user?.totalDeposited || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    <form onSubmit={handleDeposit} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl flex flex-col justify-between">
+                    <form onSubmit={initiateDeposit} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl flex flex-col justify-between hover:border-white/10 transition-colors">
                         <div>
-                            <h4 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest mb-2">Deposit (USD)</h4>
+                            <h4 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest mb-2">Buy LΞC (USD)</h4>
                             <input 
                                 type="number" 
                                 placeholder="Amount in USD"
@@ -3871,57 +4114,104 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                         <button 
                             type="submit"
                             disabled={loading || !depositAmount}
-                            className="mt-3 w-full py-2.5 bg-[var(--gold-primary)] text-black rounded-lg text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-transform"
+                            className="mt-3.5 w-full py-2.5 bg-[var(--gold-primary)] text-black rounded-lg text-[10px] font-black uppercase tracking-wider hover:scale-[1.03] active:scale-[0.98] transition-transform cursor-pointer"
                         >
-                            Deposit Funds
+                            Deposit Capital
                         </button>
                     </form>
 
-                    <form onSubmit={handleWithdraw} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl flex flex-col justify-between">
+                    <form onSubmit={handleWithdraw} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl flex flex-col justify-between hover:border-white/10 transition-colors">
                         <div>
-                            <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">Withdraw (Shares)</h4>
+                            <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">Sell LΞC (Coins)</h4>
                             <input 
                                 type="number" 
-                                placeholder="Shares to sell"
+                                placeholder="LΞC to sell"
                                 value={withdrawAmount}
                                 onChange={(e) => setWithdrawAmount(e.target.value)}
                                 className="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-red-400/50"
-                                min="0.0001"
+                                min="0.000001"
                                 step="any"
                             />
                         </div>
                         <button 
                             type="submit"
                             disabled={loading || !withdrawAmount}
-                            className="mt-3 w-full py-2.5 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-transform"
+                            className="mt-3.5 w-full py-2.5 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:scale-[1.03] active:scale-[0.98] transition-transform cursor-pointer"
                         >
-                            Withdraw Shares
+                            Withdraw Capital
                         </button>
                     </form>
                 </div>
 
+                {/* FOUNDER TREASURY PANEL */}
+                {isFounder && globalPool && (
+                    <div className="mb-6 p-5 bg-[#1a0f00]/40 border border-[var(--gold-primary)]/20 rounded-2xl shadow-lg relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--gold-primary)]/5 rounded-full blur-2xl pointer-events-none" />
+                        <h3 className="text-xs font-black text-[var(--gold-primary)] uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                            <VerifiedBadge isFounder={true} isUser={false} className="w-3.5 h-3.5" />
+                            Founder Treasury Dashboard
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4 pt-1">
+                            <div className="p-3 bg-black/40 rounded-xl border border-white/5">
+                                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider block">Global Invested Pool</span>
+                                <span className="text-lg font-black text-[var(--gold-primary)] tracking-tight">${globalPool.totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className="p-3 bg-black/40 rounded-xl border border-white/5">
+                                <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider block">Total LΞC in Circulation</span>
+                                <span className="text-lg font-black text-sky-400 tracking-tight">{globalPool.totalLEC.toLocaleString(undefined, { minimumFractionDigits: 2 })} LΞC</span>
+                            </div>
+                        </div>
+
+                        {/* Founder global ledger */}
+                        {globalPool.recentTransactions?.length > 0 && (
+                            <div className="mt-4">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Global Ledger Logs</span>
+                                <div className="space-y-1.5 max-h-[120px] overflow-y-auto no-scrollbar pr-1 bg-black/20 p-2 rounded-xl border border-white/5">
+                                    {globalPool.recentTransactions.map((tx, idx) => {
+                                        const isDep = tx.type === 'deposit';
+                                        return (
+                                            <div key={idx} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 text-[10px]">
+                                                <div>
+                                                    <span className="font-bold text-white block">@{tx.username}</span>
+                                                    <span className="text-gray-500 text-[8px] uppercase font-bold tracking-wider">{isDep ? 'Deposit' : 'Withdrawal'} • {new Date(tx.createdAt).toLocaleDateString()}</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className={`font-black ${isDep ? 'text-green-400' : 'text-red-400'}`}>
+                                                        {isDep ? `+$${tx.amountUSD.toFixed(2)}` : `-$${tx.amountUSD.toFixed(2)}`}
+                                                    </span>
+                                                    <span className="text-gray-500 block text-[8px] font-bold">({tx.shares.toFixed(4)} LΞC)</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* USER TRANSACTION HISTORY */}
                 {user?.transactionHistory?.length > 0 && (
                     <div className="flex-1 flex flex-col min-h-[120px]">
-                        <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Transaction History</h3>
+                        <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Your Capital Ledger</h3>
                         <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar pr-1">
                             {[...user.transactionHistory].reverse().map((tx, idx) => {
                                 const isDep = tx.type === 'deposit';
-                                const isExtend = tx.type === 'subscription_extend';
                                 return (
                                     <div key={idx} className="flex justify-between items-center p-2.5 bg-white/[0.01] border border-white/5 rounded-lg text-[11px]">
                                         <div>
-                                            <span className={`font-bold ${isDep ? 'text-green-400' : isExtend ? 'text-[var(--gold-primary)]' : 'text-red-400'} uppercase tracking-wider`}>
-                                                {isDep ? 'Deposit' : isExtend ? 'Membership Extend' : 'Withdrawal Pending'}
+                                            <span className={`font-bold ${isDep ? 'text-green-400' : 'text-red-400'} uppercase tracking-wider`}>
+                                                {isDep ? 'Capital Deposit' : 'Capital Withdrawal'}
                                             </span>
                                             <span className="text-gray-500 block text-[9px] mt-0.5">{new Date(tx.createdAt).toLocaleString()}</span>
                                         </div>
                                         <div className="text-right">
                                             <div className="font-bold text-white">
-                                                {isDep ? `+$${tx.amountUSD.toFixed(2)}` : isExtend ? '-10 Shares' : `-$${tx.amountUSD.toFixed(2)}`}
+                                                {isDep ? `+$${tx.amountUSD.toFixed(2)}` : `-$${tx.amountUSD.toFixed(2)}`}
                                             </div>
                                             {tx.shares > 0 && (
                                                 <span className="text-[9px] text-gray-400 font-bold uppercase mt-0.5 block">
-                                                    {isDep ? `+${tx.shares.toFixed(4)} Shares` : isExtend ? '+30 Days' : `-${tx.shares.toFixed(4)} Shares`}
+                                                    {isDep ? `+${tx.shares.toFixed(6)} LΞC` : `-${tx.shares.toFixed(6)} LΞC`}
                                                 </span>
                                             )}
                                         </div>
@@ -4055,11 +4345,12 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 id: 'subscription',
                                 icon: (props) => (
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-                                        <rect x="2" y="5" width="20" height="14" rx="2" />
-                                        <line x1="2" y1="10" x2="22" y2="10" />
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="12" y1="8" x2="12" y2="16" />
+                                        <line x1="8" y1="12" x2="16" y2="12" />
                                     </svg>
                                 ),
-                                label: t('SUBSCRIPTION') || 'Subscription',
+                                label: 'LΞC Equity',
                                 action: onOpenSubscription,
                                 isSubscription: true
                             },
@@ -4089,42 +4380,11 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 />
                                 <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`}>{item.label}</span>
 
-                                {item.isSubscription && remainingDays !== null && (
-                                    <div className="ml-auto flex flex-col items-end gap-1 shrink-0">
-                                        {remainingDays === 0 ? (
-                                            <>
-                                                <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
-                                                    {t('SUBSCRIPTION_EXPIRED') || 'Expired'}
-                                                </span>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05";
-                                                    }}
-                                                    className="text-[9px] font-bold text-red-400 uppercase tracking-wider hover:text-red-300 transition-colors"
-                                                >
-                                                    {t('RENEW_SUBSCRIPTION')}
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span className="text-[10px] font-bold text-[var(--gold-primary)] uppercase tracking-wider">
-                                                    {remainingDays > 0
-                                                        ? `${remainingDays}d${remainingHours > 0 ? ` ${remainingHours}h` : ''}`
-                                                        : `${remainingHours}h`
-                                                    }
-                                                </span>
-                                                <div className="w-16 h-1 rounded-full bg-white/10 overflow-hidden">
-                                                    <div
-                                                        className="h-full rounded-full transition-all duration-1000"
-                                                        style={{
-                                                            width: `${Math.min(100, (remainingDays > 30 ? (remainingDays / 30) * 100 : 100))}%`,
-                                                            backgroundColor: remainingDays <= 7 ? '#ef4444' : remainingDays <= 14 ? '#f59e0b' : 'var(--gold-primary)'
-                                                        }}
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
+                                {item.isSubscription && (
+                                    <div className="ml-auto shrink-0 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
+                                        <span className="text-[10px] font-black text-green-400 uppercase tracking-wider">
+                                            {(user?.sharesBalance || 0).toFixed(2)} LΞC
+                                        </span>
                                     </div>
                                 )}
 
@@ -8430,18 +8690,18 @@ const App = () => {
                                     <Icons.Lock className="w-8 h-8 text-[var(--gold-primary)]" />
                                 </div>
                                 
-                                <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-2">Restricted Access</h2>
+                                <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-2">Exclusive Network</h2>
                                 <p className="text-sm text-gray-400 font-medium leading-relaxed mb-8 px-4">
-                                    Legacy Academy Intel is a premium network. To create an account and access the intelligence feed, an active subscription is required.
+                                    Legacy Academy Intel is an elite entrepreneurial network. To access the intelligence feed, active LΞC Equity holdings are required.
                                 </p>
                                 
                                 <div className="bg-white/5  rounded-xl p-4 w-full mb-8">
-                                    <div className="text-3xl font-black text-white mb-1">4€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ month</span></div>
-                                    <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Premium Membership</div>
+                                    <div className="text-3xl font-black text-white mb-1">150€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ LΞC</span></div>
+                                    <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Legacy Equity Capital</div>
                                 </div>
                                 
                                 <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
-                                    Purchase Access
+                                    Acquire LΞC Equity
                                 </button>
                                 
                                 <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-widest font-black hover:text-white transition-colors">

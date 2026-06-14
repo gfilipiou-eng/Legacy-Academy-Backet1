@@ -655,12 +655,22 @@ router.post("/mission/complete", verifyToken, async (req, res) => {
 
 // SIMULATED STOCK/CRYPTO SHARES SYSTEM
 const getCurrentSharePrice = () => {
-    const basePrice = 1.25;
     const time = Date.now();
-    const dateFactor = Math.sin(time / (1000 * 60 * 60 * 24)) * 0.25; // daily cycle +/- 0.25
-    const hourlyFactor = Math.cos(time / (1000 * 60 * 60)) * 0.08;   // hourly cycle +/- 0.08
-    const noise = Math.sin(time / (1000 * 10)) * 0.01;              // mini noise every 10 seconds
-    return parseFloat((basePrice + dateFactor + hourlyFactor + noise).toFixed(4));
+    const basePrice = 150.0;
+    
+    // Growth over time since June 1, 2026
+    const baseTime = 1779926400000;
+    const elapsedSeconds = Math.max(0, (time - baseTime) / 1000);
+    // Linear growth trend (+$0.0005 per second, meaning ~$43.20 growth per day)
+    const growth = elapsedSeconds * 0.0005;
+    
+    // Volatility fluctuations
+    const wave1 = Math.sin(time / (1000 * 60 * 60 * 6)) * 8.5; // 6-hour cycle
+    const wave2 = Math.cos(time / (1000 * 60 * 60 * 24)) * 15.0; // 24-hour cycle
+    const miniNoise = Math.sin(time / (1000 * 15)) * 0.75; // 15-second noise
+    
+    const price = basePrice + growth + wave1 + wave2 + miniNoise;
+    return parseFloat(Math.max(1.0, price).toFixed(2));
 };
 
 router.get("/shares/price", verifyToken, (req, res) => {
@@ -744,42 +754,46 @@ router.post("/shares/withdraw", verifyToken, async (req, res) => {
     }
 });
 
-router.post("/shares/buy-subscription", verifyToken, async (req, res) => {
+router.get("/shares/global-pool", verifyToken, async (req, res) => {
     try {
-        const userId = req.user.id || req.user.userId;
-        const cost = 10; // 10 shares for 30 days
-
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json("User not found.");
-
-        if ((user.sharesBalance || 0) < cost) {
-            return res.status(400).json("Insufficient shares balance. You need 10 shares.");
+        if (req.user.role !== "Founder" && req.user.role !== "Admin") {
+            return res.status(403).json("Access denied: Founder authorization required.");
         }
 
-        user.sharesBalance = parseFloat(((user.sharesBalance || 0) - cost).toFixed(6));
+        const users = await User.find({}, 'username sharesBalance totalDeposited transactionHistory').lean();
+        
+        let totalUSD = 0;
+        let totalLEC = 0;
+        let allTransactions = [];
 
-        const daysMs = 30 * 24 * 60 * 60 * 1000;
-        const currentEnd = user.subscriptionEndDate ? new Date(user.subscriptionEndDate).getTime() : Date.now();
-        const newEnd = Math.max(currentEnd, Date.now()) + daysMs;
-        user.subscriptionEndDate = new Date(newEnd);
-
-        user.transactionHistory.push({
-            type: 'subscription_extend',
-            amountUSD: 0,
-            shares: cost,
-            price: 0,
-            createdAt: new Date()
+        users.forEach(u => {
+            totalUSD += (u.totalDeposited || 0);
+            totalLEC += (u.sharesBalance || 0);
+            if (Array.isArray(u.transactionHistory)) {
+                u.transactionHistory.forEach(tx => {
+                    allTransactions.push({
+                        username: u.username,
+                        type: tx.type,
+                        amountUSD: tx.amountUSD,
+                        shares: tx.shares,
+                        price: tx.price,
+                        createdAt: tx.createdAt
+                    });
+                });
+            }
         });
 
-        await user.save();
+        // Sort by date descending
+        allTransactions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const recentTransactions = allTransactions.slice(0, 50);
 
-        const updatedUser = await User.findById(userId).select('-password');
-        const io = req.app.get('io');
-        if (io) io.emit('user.updated', updatedUser);
-
-        res.status(200).json(updatedUser);
+        res.status(200).json({
+            totalUSD: parseFloat(totalUSD.toFixed(2)),
+            totalLEC: parseFloat(totalLEC.toFixed(6)),
+            recentTransactions
+        });
     } catch (err) {
-        console.error("Renew sub error:", err);
+        console.error("Global pool error:", err);
         res.status(500).json({ error: err.message });
     }
 });
