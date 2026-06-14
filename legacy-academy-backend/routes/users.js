@@ -681,8 +681,11 @@ router.post("/shares/deposit", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id || req.user.userId;
         const amountUSD = parseFloat(req.body.amountUSD);
-        if (!amountUSD || isNaN(amountUSD) || amountUSD <= 0) {
-            return res.status(400).json("Invalid deposit amount.");
+        if (!amountUSD || isNaN(amountUSD) || amountUSD < 1) {
+            return res.status(400).json("Minimum deposit amount is $1.00 USD.");
+        }
+        if (amountUSD > 100000) {
+            return res.status(400).json("Maximum deposit limit is $100,000.00 USD per transaction.");
         }
 
         const user = await User.findById(userId);
