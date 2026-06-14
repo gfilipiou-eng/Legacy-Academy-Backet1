@@ -840,8 +840,8 @@ body.theme-orange-black {
 .settings-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -852,6 +852,13 @@ body.theme-orange-black {
   position: relative;
   z-index: 10;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 640px) {
+  .settings-range::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 .settings-range::-webkit-slider-thumb:hover {
@@ -875,8 +882,8 @@ body.theme-orange-black {
 }
 
 .settings-range::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -886,6 +893,13 @@ body.theme-orange-black {
   cursor: pointer;
   border: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 640px) {
+  .settings-range::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 .settings-range::-moz-range-thumb:hover {
