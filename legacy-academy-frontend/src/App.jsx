@@ -2284,7 +2284,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
-                        <div className={`post-card-avatar ${compact ? 'w-10 h-10 sm:w-11 sm:h-11' : 'w-11 h-11 sm:w-12 sm:h-12'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={() => onViewProfile(author)}>
+                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={() => onViewProfile(author)}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
                     </div>
@@ -4491,7 +4491,7 @@ const ProfileModal = ({
                         </div>
                     ) : isEditing ? (
                         <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border profile-edit-form">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
+                            <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
                                 {profileUploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <div className="w-8 h-8 text-white/50">
@@ -4788,7 +4788,7 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-stretch ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-24 h-24 sm:w-28 sm:h-28 relative group shrink-0">
+                                    <div className="w-32 h-32 sm:w-40 sm:h-40 relative group shrink-0">
                                         <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
                                         <div className="absolute inset-[4px] rounded-full overflow-hidden">
                                             <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -5721,7 +5721,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
             )}
 
-            <div className="profile-page-inner relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-16 pb-24">
+            <div className="profile-page-inner relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-20 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
                 <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center shadow-lg z-50">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
@@ -5734,7 +5734,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.55)] relative group transition-all duration-500">
+                    <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.55)] relative group transition-all duration-500">
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 

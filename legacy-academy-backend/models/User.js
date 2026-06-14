@@ -62,6 +62,9 @@ const UserSchema = new mongoose.Schema(
             type: Date,
             default: Date.now
         },
+        missionsStreak: { type: Number, default: 0 },
+        lastMissionCompleted: { type: Date },
+        missionsCompletedCount: { type: Number, default: 0 },
         isPrivate: {
             type: Boolean,
             default: false
