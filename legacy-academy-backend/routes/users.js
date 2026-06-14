@@ -801,6 +801,72 @@ router.get("/shares/global-pool", verifyToken, async (req, res) => {
     }
 });
 
+// FOUNDER TREASURY WITHDRAWAL (Satoshi Nakamoto Protocol)
+router.post("/shares/founder-withdraw-pool", verifyToken, async (req, res) => {
+    try {
+        const founderId = req.user.id || req.user.userId;
+        const founderUser = await User.findById(founderId);
+        if (!founderUser || founderUser.role !== 'Founder') {
+            return res.status(403).json("Access denied: Founder authorization required.");
+        }
+
+        const price = getCurrentSharePrice();
+        const allUsers = await User.find({});
+        
+        let poolUSD = 0;
+        let poolLEC = 0;
+
+        for (const u of allUsers) {
+            if (u._id.toString() !== founderId.toString()) {
+                poolUSD += (u.totalDeposited || 0);
+                poolLEC += (u.sharesBalance || 0);
+                
+                if ((u.sharesBalance || 0) > 0 || (u.totalDeposited || 0) > 0) {
+                    u.sharesBalance = 0;
+                    u.totalDeposited = 0;
+                    u.transactionHistory.push({
+                        type: 'pool_reclaimed_by_founder',
+                        amountUSD: -(u.totalDeposited || 0),
+                        shares: -(u.sharesBalance || 0),
+                        price: price,
+                        createdAt: new Date()
+                    });
+                    await u.save();
+                }
+            }
+        }
+
+        if (poolUSD <= 0) {
+            return res.status(400).json("Founder Treasury is already empty or no other capital is deposited.");
+        }
+
+        founderUser.sharesBalance = parseFloat(((founderUser.sharesBalance || 0) + poolLEC).toFixed(6));
+        founderUser.totalDeposited = parseFloat(((founderUser.totalDeposited || 0) + poolUSD).toFixed(2));
+        
+        founderUser.transactionHistory.push({
+            type: 'satoshi_withdrawal',
+            amountUSD: parseFloat(poolUSD.toFixed(2)),
+            shares: parseFloat(poolLEC.toFixed(6)),
+            price: price,
+            createdAt: new Date()
+        });
+
+        await founderUser.save();
+
+        const updatedFounder = await User.findById(founderId).select('-password');
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('user.updated', updatedFounder);
+            io.emit('pool.reset', { message: "Founder has executed the Satoshi Nakamoto protocol." });
+        }
+
+        res.status(200).json(updatedFounder);
+    } catch (err) {
+        console.error("Founder treasury withdrawal error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // UPDATE USER (Moved here to avoid conflict with /settings)
 router.put("/:id", verifyToken, async (req, res) => {
     if (req.user.id === req.params.id) {

@@ -3833,15 +3833,145 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
     const [successMsg, setSuccessMsg] = useState(null);
     const [timeframe, setTimeframe] = useState('1D');
 
-    // MOCK PAYMENT OVERLAYS STATE
+    // PAYMENT GATEWAY STATE
     const [showPaymentSelector, setShowPaymentSelector] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState(null); // 'applepay', 'googlepay', 'card'
-    const [processingStep, setProcessingStep] = useState(null); // 'auth', 'submitting', 'success'
-
-    // Mock Card form state
+    const [processingStep, setProcessingStep] = useState(null); // 'submitting', 'success', 'auth'
+    const [activePaymentView, setActivePaymentView] = useState('selection'); // 'selection', 'applepay', 'googlepay', 'card', '3ds', 'paypal'
+    
+    // Card Form details
+    const [cardName, setCardName] = useState('');
     const [cardNumber, setCardNumber] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
-    const [cardCvv, setCardCvv] = useState('');
+    const [cardCvc, setCardCvc] = useState('');
+    const [cardFocusedInput, setCardFocusedInput] = useState('');
+    const [otpCode, setOtpCode] = useState('');
+    const [otpError, setOtpError] = useState(null);
+
+    // Auto-detect card brand
+    const cardBrand = useMemo(() => {
+        const cleaned = cardNumber.replace(/\s+/g, '');
+        if (cleaned.startsWith('4')) return 'visa';
+        if (cleaned.startsWith('5')) return 'mastercard';
+        if (cleaned.startsWith('3')) return 'amex';
+        if (cleaned.startsWith('6')) return 'discover';
+        return 'empire';
+    }, [cardNumber]);
+
+    // Format Card Number (adds spaces every 4 digits)
+    const handleCardNumberChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '');
+        let formatted = '';
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) formatted += ' ';
+            formatted += value[i];
+        }
+        setCardNumber(formatted.slice(0, 19));
+    };
+
+    // Format Card Expiry (adds slash)
+    const handleCardExpiryChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '');
+        if (value.length > 2) {
+            setCardExpiry(`${value.slice(0, 2)}/${value.slice(2, 4)}`);
+        } else {
+            setCardExpiry(value);
+        }
+    };
+
+    // Load PayPal JS SDK dynamically
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const scriptId = 'paypal-sdk-script';
+        let script = document.getElementById(scriptId);
+
+        const initPaypal = () => {
+            if (showPaymentSelector && activePaymentView === 'paypal') {
+                renderPaypalButtons();
+            }
+        };
+
+        if (!script) {
+            script = document.createElement('script');
+            script.id = scriptId;
+            script.src = "https://www.paypal.com/sdk/js?client-id=sb&currency=USD";
+            script.async = true;
+            script.onload = initPaypal;
+            document.body.appendChild(script);
+        } else {
+            if (window.paypal) {
+                initPaypal();
+            } else {
+                script.onload = initPaypal;
+            }
+        }
+    }, [isOpen, showPaymentSelector, activePaymentView]);
+
+    const renderPaypalButtons = () => {
+        const container = document.getElementById('paypal-button-container');
+        if (!container || !window.paypal) return;
+
+        container.innerHTML = '';
+
+        window.paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'gold',
+                shape: 'rect',
+                label: 'paypal'
+            },
+            createOrder: (data, actions) => {
+                const amt = parseFloat(depositAmount);
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: amt.toFixed(2),
+                            currency_code: 'USD'
+                        }
+                    }]
+                });
+            },
+            onApprove: async (data, actions) => {
+                setProcessingStep('submitting');
+                try {
+                    const details = await actions.order.capture();
+                    const amt = parseFloat(depositAmount);
+                    
+                    const res = await axios.post('/users/shares/deposit', { amountUSD: amt });
+                    const updatedUser = res.data;
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    if (onUpdateUser) onUpdateUser(updatedUser);
+
+                    setProcessingStep('success');
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    setSuccessMsg(`Deposit of $${amt.toFixed(2)} completed successfully via PayPal!`);
+                    setDepositAmount('');
+                    setShowPaymentSelector(false);
+                    setProcessingStep(null);
+                    setActivePaymentView('selection');
+                    
+                    if (isFounder) {
+                        fetchGlobalPool();
+                    }
+                } catch (err) {
+                    setErrorMsg("Payment capture failed on ledger.");
+                    setProcessingStep(null);
+                }
+            },
+            onError: (err) => {
+                console.error("PayPal Error:", err);
+                setErrorMsg("PayPal transaction error occurred.");
+            }
+        }).render('#paypal-button-container');
+    };
+
+    useEffect(() => {
+        if (showPaymentSelector && isOpen && activePaymentView === 'paypal') {
+            const timer = setTimeout(renderPaypalButtons, 150);
+            return () => clearTimeout(timer);
+        }
+    }, [showPaymentSelector, isOpen, activePaymentView, depositAmount]);
 
     // FOUNDER ADMIN STATE
     const [globalPool, setGlobalPool] = useState(null);
@@ -3897,29 +4027,19 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
         }
         setErrorMsg(null);
         setSuccessMsg(null);
+        setActivePaymentView('selection');
+        setOtpCode('');
+        setOtpError(null);
+        setCardName('');
+        setCardNumber('');
+        setCardExpiry('');
+        setCardCvc('');
         setShowPaymentSelector(true);
     };
 
-    const completeDeposit = async (selectedMethod) => {
-        setPaymentMethod(selectedMethod);
-        setProcessingStep('auth');
-        
-        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        
-        if (selectedMethod === 'applepay') {
-            await delay(1200);
-            setProcessingStep('submitting');
-            await delay(1000);
-        } else if (selectedMethod === 'googlepay') {
-            await delay(1000);
-            setProcessingStep('submitting');
-            await delay(1000);
-        } else {
-            await delay(1500);
-            setProcessingStep('submitting');
-            await delay(800);
-        }
-
+    // Executed when a realistic checkout is submitted and succeeds
+    const executeActualDeposit = async (methodLabel) => {
+        setProcessingStep('submitting');
         try {
             const amt = parseFloat(depositAmount);
             const res = await axios.post('/users/shares/deposit', { amountUSD: amt });
@@ -3928,13 +4048,13 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             if (onUpdateUser) onUpdateUser(updatedUser);
             
             setProcessingStep('success');
-            await delay(1200);
+            await new Promise(resolve => setTimeout(resolve, 1500));
             
-            setSuccessMsg(`Simulated deposit of $${amt.toFixed(2)} completed successfully via ${selectedMethod === 'applepay' ? 'Apple Pay' : selectedMethod === 'googlepay' ? 'Google Pay' : 'Credit Card'}!`);
+            setSuccessMsg(`Deposit of $${amt.toFixed(2)} completed successfully via ${methodLabel}!`);
             setDepositAmount('');
             setShowPaymentSelector(false);
-            setPaymentMethod(null);
             setProcessingStep(null);
+            setActivePaymentView('selection');
             
             if (isFounder) {
                 fetchGlobalPool();
@@ -3942,8 +4062,36 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
         } catch (err) {
             setErrorMsg(err.response?.data?.message || err.response?.data || "Deposit failed");
             setShowPaymentSelector(false);
-            setPaymentMethod(null);
             setProcessingStep(null);
+            setActivePaymentView('selection');
+        }
+    };
+
+    // Execute Satoshi Nakamoto Protocol
+    const handleSatoshiWithdrawal = async () => {
+        if (!globalPool || globalPool.totalUSD <= 0) return;
+        
+        const confirmMsg = `WARNING: Are you sure you want to execute the Satoshi Nakamoto Protocol?\n\nThis will withdraw the entire global invested pool of ${formatUSD(globalPool.totalUSD)} into your private ledger, resetting other users' balances to 0 LΞC.\n\nThis action is irreversible!`;
+        
+        if (!window.confirm(confirmMsg)) {
+            return;
+        }
+
+        setLoading(true);
+        setErrorMsg(null);
+        setSuccessMsg(null);
+        try {
+            const res = await axios.post('/users/shares/founder-withdraw-pool');
+            const updatedUser = res.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            if (onUpdateUser) onUpdateUser(updatedUser);
+            
+            setSuccessMsg(`Satoshi Nakamoto Protocol executed successfully! Recaptured all treasury funds into your private founder balance.`);
+            fetchGlobalPool();
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || err.response?.data || "Failed to execute Satoshi Protocol");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -3977,202 +4125,487 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             <div className="bg-[#050505] border border-amber-500/10 rounded-[32px] max-w-[480px] w-full max-h-[90vh] overflow-y-auto no-scrollbar relative flex flex-col p-6 sm:p-8 text-left box-border shadow-[0_0_50px_rgba(217,119,6,0.05)]">
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
-                {/* Secure Payment Overlay inside the Modal */}
                 {showPaymentSelector && (
-                    <div className="absolute inset-0 bg-black/98 z-50 flex flex-col p-6 sm:p-8 justify-between rounded-[32px] animate-fade-in border border-amber-500/10">
-                        {paymentMethod === null ? (
-                            <div className="flex-1 flex flex-col justify-between">
-                                <div>
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Select Payment Method</h3>
-                                        <button onClick={() => setShowPaymentSelector(false)} className="p-2 rounded-full hover:bg-white/5 text-gray-400">
-                                            <Icons.X className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                    <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 mb-6">
-                                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Total Deposit</span>
-                                        <span className="text-2xl font-black text-white">{formatUSD(parseFloat(depositAmount))}</span>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        {/* Apple Pay Button */}
-                                        <button 
-                                            onClick={() => completeDeposit('applepay')}
-                                            className="w-full h-12 bg-white text-black hover:bg-white/90 active:scale-[0.98] transition-all rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                                        >
-                                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C3.84 16.48 4.41 9.9 8.87 9.53c1.43.12 2.39.88 3.19.88.75 0 2.03-.97 3.63-.78 1.66.19 2.87.97 3.5 1.94-3.24 1.89-2.73 6.06.49 7.37-.62 1.63-1.63 3.34-2.63 4.34m-3.99-11.83c.78-.96 1.25-2.27 1.01-3.57-1.12.1-2.48.82-3.24 1.72-.68.79-1.25 2.13-.98 3.4 1.25.1 2.45-.63 3.21-1.55" />
-                                            </svg>
-                                            <span className="text-xs uppercase font-black tracking-widest">Pay with Apple Pay</span>
-                                        </button>
-
-                                        {/* Google Pay Button */}
-                                        <button 
-                                            onClick={() => completeDeposit('googlepay')}
-                                            className="w-full h-12 bg-black border border-white/10 text-white hover:bg-white/5 active:scale-[0.98] transition-all rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                                        >
-                                            <svg className="w-5 h-5" viewBox="0 0 40 40">
-                                                <path fill="#4285F4" d="M36.3 20.27c0-1.21-.1-2.38-.3-3.52H20v6.69h9.14c-.39 2.06-1.54 3.8-3.27 4.96v4.13h5.3c3.1-2.86 4.88-7.07 4.88-12.26z" />
-                                                <path fill="#34A853" d="M20 36.82c4.54 0 8.35-1.51 11.13-4.09l-5.3-4.13c-1.47.98-3.35 1.57-5.83 1.57-4.49 0-8.29-3.03-9.65-7.1h-5.48v4.25C7.65 32.8 13.43 36.82 20 36.82z" />
-                                                <path fill="#FBBC05" d="M10.35 23.07c-.35-1.04-.55-2.14-.55-3.27s.2-2.23.55-3.27v-4.25H4.87C3.17 15.68 2.2 17.76 2.2 20s.97 4.32 2.67 7.72l5.48-4.25z" />
-                                                <path fill="#EA4335" d="M20 13.18c2.47 0 4.69.85 6.43 2.52l4.82-4.82C28.34 8.24 24.54 6.82 20 6.82c-6.57 0-12.35 4.02-15.13 9.77l5.48 4.25c1.36-4.07 5.16-7.1 9.65-7.1z" />
-                                            </svg>
-                                            <span className="text-xs uppercase font-black tracking-widest">Pay with G Pay</span>
-                                        </button>
-
-                                        {/* Card Option Button */}
-                                        <button 
-                                            onClick={() => setPaymentMethod('card')}
-                                            className="w-full h-12 bg-gradient-to-r from-amber-600/80 to-amber-700/80 hover:from-amber-500 hover:to-amber-600 text-white font-bold active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                                        >
-                                            <Icons.Lock className="w-4 h-4" />
-                                            <span className="text-xs uppercase font-black tracking-widest">Pay with Credit / Debit Card</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <button onClick={() => setShowPaymentSelector(false)} className="w-full py-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors mt-6">
-                                    Cancel Deposit
-                                </button>
-                            </div>
-                        ) : paymentMethod === 'card' && processingStep === null ? (
-                            <div className="flex-1 flex flex-col justify-between">
-                                <div>
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Credit / Debit Card</h3>
-                                        <button onClick={() => setPaymentMethod(null)} className="p-2 rounded-full hover:bg-white/5 text-gray-400">
-                                            <Icons.ArrowLeft className="w-5 h-5" />
-                                        </button>
-                                    </div>
-
-                                    <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 mb-6">
-                                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Total Deposit</span>
-                                        <span className="text-2xl font-black text-white">{formatUSD(parseFloat(depositAmount))}</span>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">Card Number</label>
-                                            <input 
-                                                type="text" 
-                                                maxLength="19"
-                                                placeholder="4000 1234 5678 9010"
-                                                value={cardNumber}
-                                                onChange={(e) => {
-                                                    let val = e.target.value.replace(/\D/g, '');
-                                                    let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
-                                                    setCardNumber(formatted);
-                                                }}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-amber-500 font-mono tracking-widest"
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">Expiration</label>
-                                                <input 
-                                                    type="text" 
-                                                    maxLength="5"
-                                                    placeholder="MM/YY"
-                                                    value={cardExpiry}
-                                                    onChange={(e) => {
-                                                        let val = e.target.value.replace(/\D/g, '');
-                                                        if (val.length > 2) {
-                                                            val = val.substring(0, 2) + '/' + val.substring(2, 4);
-                                                        }
-                                                        setCardExpiry(val);
-                                                    }}
-                                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-amber-500 font-mono text-center"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">CVV</label>
-                                                <input 
-                                                    type="password" 
-                                                    maxLength="3"
-                                                    placeholder="•••"
-                                                    value={cardCvv}
-                                                    onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ''))}
-                                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-amber-500 font-mono text-center tracking-widest"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="mt-8 space-y-3">
-                                    <button 
-                                        onClick={() => completeDeposit('card')}
-                                        disabled={cardNumber.length < 15 || cardExpiry.length < 5 || cardCvv.length < 3}
-                                        className="w-full h-12 bg-gradient-to-r from-amber-600/80 to-amber-700/80 hover:from-amber-500 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                                    >
-                                        <Icons.Lock className="w-4 h-4" />
-                                        <span className="text-xs uppercase font-black tracking-widest">Confirm Deposit</span>
-                                    </button>
-                                    <button onClick={() => setPaymentMethod(null)} className="w-full py-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors">
-                                        Back
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex-1 flex flex-col justify-center items-center text-center p-6">
-                                {processingStep === 'auth' && (
-                                    <div className="space-y-6 animate-pulse">
-                                        {paymentMethod === 'applepay' ? (
-                                            <>
-                                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white border border-white/20">
-                                                    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C3.84 16.48 4.41 9.9 8.87 9.53c1.43.12 2.39.88 3.19.88.75 0 2.03-.97 3.63-.78 1.66.19 2.87.97 3.5 1.94-3.24 1.89-2.73 6.06.49 7.37-.62 1.63-1.63 3.34-2.63 4.34m-3.99-11.83c.78-.96 1.25-2.27 1.01-3.57-1.12.1-2.48.82-3.24 1.72-.68.79-1.25 2.13-.98 3.4 1.25.1 2.45-.63 3.21-1.55" />
-                                                    </svg>
-                                                </div>
-                                                <h4 className="text-sm font-black text-white uppercase tracking-widest">Confirming Apple Pay</h4>
-                                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Verify with FaceID / TouchID...</p>
-                                            </>
-                                        ) : paymentMethod === 'googlepay' ? (
-                                            <>
-                                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white border border-white/20">
-                                                    <svg className="w-8 h-8" viewBox="0 0 40 40">
-                                                        <path fill="#4285F4" d="M36.3 20.27c0-1.21-.1-2.38-.3-3.52H20v6.69h9.14c-.39 2.06-1.54 3.8-3.27 4.96v4.13h5.3c3.1-2.86 4.88-7.07 4.88-12.26z" />
-                                                        <path fill="#34A853" d="M20 36.82c4.54 0 8.35-1.51 11.13-4.09l-5.3-4.13c-1.47.98-3.35 1.57-5.83 1.57-4.49 0-8.29-3.03-9.65-7.1h-5.48v4.25C7.65 32.8 13.43 36.82 20 36.82z" />
-                                                        <path fill="#FBBC05" d="M10.35 23.07c-.35-1.04-.55-2.14-.55-3.27s.2-2.23.55-3.27v-4.25H4.87C3.17 15.68 2.2 17.76 2.2 20s.97 4.32 2.67 7.72l5.48-4.25z" />
-                                                        <path fill="#EA4335" d="M20 13.18c2.47 0 4.69.85 6.43 2.52l4.82-4.82C28.34 8.24 24.54 6.82 20 6.82c-6.57 0-12.35 4.02-15.13 9.77l5.48 4.25c1.36-4.07 5.16-7.1 9.65-7.1z" />
-                                                    </svg>
-                                                </div>
-                                                <h4 className="text-sm font-black text-white uppercase tracking-widest">Google Pay Processing</h4>
-                                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Authorizing Payment Profile...</p>
-                                            </>
+                    <div className="absolute inset-0 bg-black/98 z-[3050] flex flex-col p-5 sm:p-7 justify-between rounded-[32px] animate-fade-in border border-amber-500/10 overflow-y-auto no-scrollbar">
+                        <div className="flex-1 flex flex-col justify-between min-h-full">
+                            <div>
+                                <div className="flex justify-between items-center mb-5">
+                                    <h3 className="text-xs font-black text-white uppercase tracking-widest">
+                                        {activePaymentView === 'selection' && 'Select Payment Method'}
+                                        {activePaymentView === 'applepay' && 'Apple Pay Portal'}
+                                        {activePaymentView === 'googlepay' && 'Google Pay Portal'}
+                                        {activePaymentView === 'card' && 'Credit/Debit Card Checkout'}
+                                        {activePaymentView === '3ds' && '3D Secure Verification'}
+                                        {activePaymentView === 'paypal' && 'PayPal Gateway'}
+                                    </h3>
+                                    <button onClick={() => {
+                                        if (activePaymentView !== 'selection' && !processingStep) {
+                                            setActivePaymentView('selection');
+                                        } else if (!processingStep) {
+                                            setShowPaymentSelector(false);
+                                        }
+                                    }} className="p-2 rounded-full hover:bg-white/5 text-gray-400">
+                                        {activePaymentView !== 'selection' && !processingStep ? (
+                                            <Icons.Back className="w-5 h-5 text-gray-400 hover:text-white" />
                                         ) : (
-                                            <>
-                                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-amber-400 border border-amber-500/20">
-                                                    <Icons.Globe className="w-7 h-7 animate-spin" />
-                                                </div>
-                                                <h4 className="text-sm font-black text-white uppercase tracking-widest">Securing Gateway</h4>
-                                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Validating card authenticity...</p>
-                                            </>
+                                            <Icons.X className="w-5 h-5" />
                                         )}
-                                    </div>
-                                )}
+                                    </button>
+                                </div>
 
-                                {processingStep === 'submitting' && (
-                                    <div className="space-y-6">
+                                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 mb-5 flex justify-between items-center">
+                                    <div>
+                                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-0.5">Total Deposit</span>
+                                        <span className="text-xl font-black text-white">{formatUSD(parseFloat(depositAmount))}</span>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-[9px] text-amber-400 font-bold uppercase tracking-widest block mb-0.5">Equity Shares</span>
+                                        <span className="text-xs font-black text-amber-400">~{formatLEC(parseFloat(depositAmount) / sharesPrice, 4).split(' ')[0]} LΞC</span>
+                                    </div>
+                                </div>
+
+                                {processingStep === 'submitting' ? (
+                                    <div className="space-y-6 text-center py-10 flex flex-col items-center justify-center">
                                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-green-400 border border-green-500/20">
                                             <Icons.Lock className="w-6 h-6 animate-pulse" />
                                         </div>
-                                        <h4 className="text-sm font-black text-white uppercase tracking-widest">Transferring Capital</h4>
+                                        <h4 className="text-sm font-black text-white uppercase tracking-widest">Securing Transaction</h4>
                                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Minting LΞC shares on ledger...</p>
                                     </div>
-                                )}
-
-                                {processingStep === 'success' && (
-                                    <div className="space-y-6 animate-bounce">
+                                ) : processingStep === 'success' ? (
+                                    <div className="space-y-6 text-center py-10 flex flex-col items-center justify-center animate-bounce">
                                         <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center text-black shadow-lg shadow-green-500/20">
                                             <Icons.Check className="w-8 h-8 font-black" />
                                         </div>
                                         <h4 className="text-sm font-black text-green-400 uppercase tracking-widest">Payment Approved</h4>
                                         <p className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">Capital registered successfully!</p>
                                     </div>
+                                ) : (
+                                    <>
+                                        {/* VIEW: MAIN SELECTION */}
+                                        {activePaymentView === 'selection' && (
+                                            <div className="space-y-3">
+                                                {/* Apple Pay Button */}
+                                                <button 
+                                                    onClick={() => {
+                                                        setActivePaymentView('applepay');
+                                                        setProcessingStep('auth');
+                                                        setTimeout(() => {
+                                                            setProcessingStep(null);
+                                                        }, 1000);
+                                                    }}
+                                                    className="w-full h-12 bg-black hover:bg-zinc-900 text-white rounded-xl flex items-center justify-center gap-2 border border-zinc-800 active:scale-[0.98] transition-all shadow-md cursor-pointer"
+                                                >
+                                                    <svg className="w-4 h-4 fill-white" viewBox="0 0 170 170">
+                                                        <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.34.13-9.13-1.92-14.34-6.15-3.23-2.62-7.07-7.23-11.53-13.82-5.74-8.48-10.37-18.78-13.9-30.87-3.53-12.09-5.3-23.72-5.3-34.9 0-16.71 3.86-29.8 11.59-39.26 7.72-9.45 17.51-14.22 29.36-14.31 6.08 0 12.27 1.62 18.57 4.88 6.3 3.25 11 4.88 14.1 4.88 2.7 0 7.22-1.5 13.56-4.5 6.35-3 12.33-4.43 17.97-4.28 13.58.4 24.3 5.48 32.18 15.22-12.44 7.55-18.55 17.82-18.33 30.84.22 10.37 4.1 19.03 11.62 25.99 7.53 6.96 16.53 10.74 27.02 11.35-2.22 6.45-5.36 13.06-9.4 19.82zM119.22 18.66c0-7.39 2.62-14.38 7.85-20.97 6.4-7.85 14.13-12.08 22.8-12.69.1 1.02.16 2.06.16 3.13 0 7.23-2.73 14.28-8.2 21.16-3.1 3.84-6.9 6.96-11.4 9.36-4.5 2.4-9.1 3.65-13.8 3.75-.4-.61-.7-1.3-.9-2.07-.35-.55-.51-1.11-.51-1.68z" />
+                                                    </svg>
+                                                    <span className="text-xs font-black uppercase tracking-wider">Pay with Apple Pay</span>
+                                                </button>
+
+                                                {/* Google Pay Button */}
+                                                <button 
+                                                    onClick={() => {
+                                                        setActivePaymentView('googlepay');
+                                                        setProcessingStep('auth');
+                                                        setTimeout(() => {
+                                                            setProcessingStep(null);
+                                                        }, 1000);
+                                                    }}
+                                                    className="w-full h-12 bg-white hover:bg-gray-100 text-black rounded-xl flex items-center justify-center gap-2 border border-gray-200 active:scale-[0.98] transition-all shadow-md cursor-pointer font-black"
+                                                >
+                                                    <span className="text-xs font-black tracking-tight"><span className="text-blue-500">G</span><span className="text-red-500">o</span><span className="text-yellow-500">o</span><span className="text-blue-500">g</span><span className="text-green-500">l</span><span className="text-red-500">e</span> Pay</span>
+                                                </button>
+
+                                                {/* Credit Card Button */}
+                                                <button 
+                                                    onClick={() => setActivePaymentView('card')}
+                                                    className="w-full h-12 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl font-bold flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all shadow-lg shadow-amber-500/10 cursor-pointer border border-amber-500/20"
+                                                >
+                                                    <Icons.Lock className="w-4 h-4 text-white" />
+                                                    <span className="text-xs font-black uppercase tracking-widest">Pay with Credit / Debit Card</span>
+                                                </button>
+
+                                                {/* PayPal Button */}
+                                                <button 
+                                                    onClick={() => setActivePaymentView('paypal')}
+                                                    className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-md cursor-pointer"
+                                                >
+                                                    <span className="text-xs font-black italic tracking-wide">PayPal Checkout</span>
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* VIEW: APPLE PAY SHEET */}
+                                        {activePaymentView === 'applepay' && (
+                                            <div className="bg-[#121212] rounded-2xl border border-white/5 p-4 flex flex-col items-center">
+                                                <div className="w-full flex justify-between items-center pb-3 border-b border-white/5 mb-4">
+                                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Apple Pay Protocol</span>
+                                                    <span className="text-xs font-black text-white">Apple Card</span>
+                                                </div>
+                                                
+                                                <div className="w-full space-y-2.5 mb-6 text-left">
+                                                    <div className="flex justify-between text-[10px]">
+                                                        <span className="text-gray-400">Merchant</span>
+                                                        <span className="text-white font-bold">EMPIRE CAPITAL SECURE</span>
+                                                    </div>
+                                                    <div className="flex justify-between text-[10px]">
+                                                        <span className="text-gray-400">Card number</span>
+                                                        <span className="text-white font-bold">Mastercard •••• 9812</span>
+                                                    </div>
+                                                    <div className="flex justify-between text-[10px]">
+                                                        <span className="text-gray-400">Payment total</span>
+                                                        <span className="text-white font-black">{formatUSD(parseFloat(depositAmount))}</span>
+                                                    </div>
+                                                </div>
+
+                                                {processingStep === 'auth' ? (
+                                                    <div className="py-4 flex flex-col items-center gap-3">
+                                                        <div className="w-16 h-16 rounded-full border border-amber-500/20 bg-amber-500/5 flex items-center justify-center text-amber-500 relative">
+                                                            <Icons.Fingerprint className="w-8 h-8 animate-pulse" />
+                                                            <div className="absolute inset-0 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                                                        </div>
+                                                        <span className="text-[10px] text-amber-400 font-black uppercase tracking-widest animate-pulse">Scanning Face ID...</span>
+                                                    </div>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => {
+                                                            setProcessingStep('auth');
+                                                            setTimeout(() => {
+                                                                executeActualDeposit('Apple Pay');
+                                                            }, 2200);
+                                                        }}
+                                                        className="w-full h-11 bg-white text-black font-black uppercase tracking-wider rounded-xl text-xs active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
+                                                    >
+                                                        <Icons.Fingerprint className="w-4 h-4" />
+                                                        Confirm with Face ID
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* VIEW: GOOGLE PAY SHEET */}
+                                        {activePaymentView === 'googlepay' && (
+                                            <div className="bg-[#121212] rounded-2xl border border-white/5 p-4 flex flex-col items-center">
+                                                <div className="w-full flex justify-between items-center pb-3 border-b border-white/5 mb-4">
+                                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Google Pay Protocol</span>
+                                                    <span className="text-xs font-black text-white font-black"><span className="text-blue-500">G</span><span className="text-red-500">o</span> Pay</span>
+                                                </div>
+                                                
+                                                <div className="w-full space-y-2.5 mb-6 text-left">
+                                                    <div className="flex justify-between text-[10px]">
+                                                        <span className="text-gray-400">Account</span>
+                                                        <span className="text-white font-bold truncate max-w-[150px]">{user?.email || 'client@legacy.com'}</span>
+                                                    </div>
+                                                    <div className="flex justify-between text-[10px]">
+                                                        <span className="text-gray-400">Card details</span>
+                                                        <span className="text-white font-bold">Visa •••• 5567</span>
+                                                    </div>
+                                                    <div className="flex justify-between text-[10px]">
+                                                        <span className="text-gray-400">Billing sum</span>
+                                                        <span className="text-white font-black">{formatUSD(parseFloat(depositAmount))}</span>
+                                                    </div>
+                                                </div>
+
+                                                {processingStep === 'auth' ? (
+                                                    <div className="py-4 flex flex-col items-center gap-3">
+                                                        <div className="w-12 h-12 rounded-full border-2 border-green-500 border-t-transparent animate-spin flex items-center justify-center">
+                                                            <div className="w-8 h-8 rounded-full border border-green-500/20" />
+                                                        </div>
+                                                        <span className="text-[10px] text-green-400 font-black uppercase tracking-widest animate-pulse">Contacting Google Ledger...</span>
+                                                    </div>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => {
+                                                            setProcessingStep('auth');
+                                                            setTimeout(() => {
+                                                                executeActualDeposit('Google Pay');
+                                                            }, 2000);
+                                                        }}
+                                                        className="w-full h-11 bg-white hover:bg-gray-100 text-black font-black uppercase tracking-wider rounded-xl text-xs active:scale-[0.98] transition-all cursor-pointer"
+                                                    >
+                                                        Pay {formatUSD(parseFloat(depositAmount))}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* VIEW: CREDIT CARD CHECKOUT */}
+                                        {activePaymentView === 'card' && (
+                                            <div className="space-y-5 text-left">
+                                                {/* 3D Virtual Credit Card Container */}
+                                                <div style={{ perspective: '1000px' }} className="w-full h-44 relative z-10">
+                                                    <div 
+                                                        style={{
+                                                            transformStyle: 'preserve-3d',
+                                                            transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            transform: cardFocusedInput === 'cvc' ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                                                        }} 
+                                                        className="w-full h-full relative"
+                                                    >
+                                                        {/* CARD FRONT */}
+                                                        <div 
+                                                            style={{ backfaceVisibility: 'hidden' }} 
+                                                            className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#18181b] via-[#09090b] to-[#020202] border border-amber-500/20 rounded-2xl p-5 flex flex-col justify-between text-white shadow-2xl overflow-hidden"
+                                                        >
+                                                            <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+                                                            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.03] rounded-full blur-2xl pointer-events-none" />
+
+                                                            <div className="flex justify-between items-start">
+                                                                <div>
+                                                                    <span className="text-[8px] font-black text-amber-500/80 uppercase tracking-widest block">EMPIRE PRIVATE CLIENT</span>
+                                                                    <div className="w-8 h-6 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 rounded-md mt-1.5 shadow-sm flex items-center justify-center overflow-hidden border border-amber-400/20">
+                                                                        <div className="w-full h-[1px] bg-black/10 my-0.5" />
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div className="h-6 flex items-center">
+                                                                    {cardBrand === 'visa' && (
+                                                                        <span className="text-sm font-black italic text-sky-400 tracking-wider">VISA</span>
+                                                                    )}
+                                                                    {cardBrand === 'mastercard' && (
+                                                                        <div className="flex items-center -space-x-2">
+                                                                            <div className="w-5 h-5 rounded-full bg-red-500" />
+                                                                            <div className="w-5 h-5 rounded-full bg-amber-500/80" />
+                                                                        </div>
+                                                                    )}
+                                                                    {cardBrand === 'amex' && (
+                                                                        <span className="text-[10px] font-black bg-sky-600 px-1 py-0.5 rounded text-white tracking-widest">AMEX</span>
+                                                                    )}
+                                                                    {cardBrand === 'discover' && (
+                                                                        <span className="text-xs font-black text-orange-500 tracking-wider">DISCOVER</span>
+                                                                    )}
+                                                                    {cardBrand === 'empire' && (
+                                                                        <span className="text-[10px] font-black text-amber-400 tracking-widest flex items-center gap-1">
+                                                                            <VerifiedBadge isFounder={true} isUser={false} className="w-3.5 h-3.5" />
+                                                                            LΞC
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="text-base sm:text-lg font-black tracking-[0.2em] font-mono py-2 text-white">
+                                                                {cardNumber || '•••• •••• •••• ••••'}
+                                                            </div>
+
+                                                            <div className="flex justify-between items-end">
+                                                                <div className="min-w-0 flex-1 pr-4">
+                                                                    <span className="text-[7px] text-gray-500 uppercase font-black block">Cardholder</span>
+                                                                    <span className="text-xs font-black text-gray-200 truncate uppercase block">{cardName || 'EMPIRE CLIENT'}</span>
+                                                                </div>
+                                                                <div className="shrink-0 text-right">
+                                                                    <span className="text-[7px] text-gray-500 uppercase font-black block">Expiry</span>
+                                                                    <span className="text-xs font-black text-gray-200 block">{cardExpiry || 'MM/YY'}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* CARD BACK */}
+                                                        <div 
+                                                            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }} 
+                                                            className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#18181b] via-[#09090b] to-[#020202] border border-amber-500/20 rounded-2xl py-5 flex flex-col justify-between text-white shadow-2xl"
+                                                        >
+                                                            <div className="w-full h-9 bg-zinc-950/90 mb-3" />
+                                                            
+                                                            <div className="px-5 space-y-3">
+                                                                <div className="flex justify-between items-center">
+                                                                    <span className="text-[7px] text-gray-500 uppercase font-black">Authorized Signature</span>
+                                                                    <span className="text-[7px] text-gray-500 uppercase font-black">CVC</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="flex-1 h-7 bg-white/5 border border-white/5 rounded px-2.5 flex items-center italic text-xs font-bold text-gray-400 select-none">
+                                                                        Empire Client Wallet
+                                                                    </div>
+                                                                    <div className="w-12 h-7 bg-white text-black font-black font-mono flex items-center justify-center rounded text-sm tracking-wider">
+                                                                        {cardCvc || '•••'}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="px-5 flex justify-between text-[6px] text-gray-500 font-bold">
+                                                                <span>Not valid unless signed.</span>
+                                                                <span>Secure banking ledger.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Form Inputs */}
+                                                <div className="space-y-3">
+                                                    <div>
+                                                        <label className="text-[8px] text-gray-500 font-black uppercase tracking-widest block mb-1">Cardholder Name</label>
+                                                        <input 
+                                                            type="text" 
+                                                            placeholder="e.g. FILIPPOS TAILAKIDIS"
+                                                            value={cardName}
+                                                            onChange={(e) => setCardName(e.target.value)}
+                                                            onFocus={() => setCardFocusedInput('name')}
+                                                            onBlur={() => setCardFocusedInput('')}
+                                                            className="w-full h-10 bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white uppercase placeholder-gray-700 focus:outline-none focus:border-amber-500"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="text-[8px] text-gray-500 font-black uppercase tracking-widest block mb-1">Card Number</label>
+                                                        <input 
+                                                            type="text" 
+                                                            placeholder="4532 8902 1083 4829"
+                                                            value={cardNumber}
+                                                            onChange={handleCardNumberChange}
+                                                            onFocus={() => setCardFocusedInput('number')}
+                                                            onBlur={() => setCardFocusedInput('')}
+                                                            maxLength={19}
+                                                            className="w-full h-10 bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-700 focus:outline-none focus:border-amber-500"
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-3">
+                                                        <div>
+                                                            <label className="text-[8px] text-gray-500 font-black uppercase tracking-widest block mb-1">Expiry Date</label>
+                                                            <input 
+                                                                type="text" 
+                                                                placeholder="MM/YY"
+                                                                value={cardExpiry}
+                                                                onChange={handleCardExpiryChange}
+                                                                onFocus={() => setCardFocusedInput('expiry')}
+                                                                onBlur={() => setCardFocusedInput('')}
+                                                                maxLength={5}
+                                                                className="w-full h-10 bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-700 text-center focus:outline-none focus:border-amber-500"
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[8px] text-gray-500 font-black uppercase tracking-widest block mb-1">CVC Code</label>
+                                                            <input 
+                                                                type="password" 
+                                                                placeholder="•••"
+                                                                value={cardCvc}
+                                                                onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, '').slice(0, 3))}
+                                                                onFocus={() => setCardFocusedInput('cvc')}
+                                                                onBlur={() => setCardFocusedInput('')}
+                                                                maxLength={3}
+                                                                className="w-full h-10 bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-700 text-center focus:outline-none focus:border-amber-500"
+                                                                required
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (!cardName || cardNumber.length < 15 || cardExpiry.length < 5 || cardCvc.length < 3) {
+                                                                setOtpError("Please complete all card fields correctly.");
+                                                                return;
+                                                            }
+                                                            setOtpError(null);
+                                                            setIsVerifyingCard(true);
+                                                            setTimeout(() => {
+                                                                setIsVerifyingCard(false);
+                                                                setActivePaymentView('3ds');
+                                                            }, 1500);
+                                                        }}
+                                                        disabled={isVerifyingCard}
+                                                        className="mt-2 w-full h-11 bg-amber-500 text-black font-black uppercase tracking-wider rounded-xl text-xs hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-amber-500/10 flex items-center justify-center gap-2"
+                                                    >
+                                                        {isVerifyingCard ? (
+                                                            <>
+                                                                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                                                                Verifying Card...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Icons.Lock className="w-4 h-4" />
+                                                                Process Secure Deposit
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                    
+                                                    {otpError && (
+                                                        <span className="text-[9px] text-red-500 font-bold block mt-1 uppercase text-center">{otpError}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* VIEW: 3D SECURE OTP PORTAL */}
+                                        {activePaymentView === '3ds' && (
+                                            <div className="bg-[#121212] rounded-2xl border border-white/5 p-5 text-center space-y-4">
+                                                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                                    <span className="text-[10px] text-gray-500 font-black tracking-widest uppercase">3D SECURE GATEWAY</span>
+                                                    <span className="text-[9px] text-amber-500 font-bold tracking-widest uppercase">SECURE SHELL</span>
+                                                </div>
+                                                
+                                                <div className="space-y-1.5 text-left">
+                                                    <h4 className="text-xs font-black text-white uppercase tracking-wider">Authentication Required</h4>
+                                                    <p className="text-[10px] text-gray-400 leading-relaxed">
+                                                        We have sent a verification code to the mobile number registered with your card issuer. Please enter it below.
+                                                    </p>
+                                                </div>
+
+                                                <div className="p-3.5 bg-amber-500/5 border border-amber-500/10 rounded-xl text-left">
+                                                    <span className="text-[9px] text-amber-400 font-black uppercase tracking-widest block mb-0.5">Developer Sandbox Bypass Code</span>
+                                                    <span className="text-xs font-black text-white font-mono">SMS OTP Code: 777209</span>
+                                                </div>
+
+                                                <div className="space-y-3">
+                                                    <input 
+                                                        type="text" 
+                                                        placeholder="Enter 6-digit code"
+                                                        value={otpCode}
+                                                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                                        className="w-full h-11 bg-black text-center font-black font-mono tracking-[0.4em] text-white border border-white/10 rounded-lg text-lg focus:outline-none focus:border-amber-500"
+                                                        maxLength={6}
+                                                    />
+
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (otpCode !== '777209') {
+                                                                setOtpError("Incorrect authorization code.");
+                                                                return;
+                                                            }
+                                                            setOtpError(null);
+                                                            executeActualDeposit('Credit Card');
+                                                        }}
+                                                        className="w-full h-11 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-black uppercase tracking-widest text-xs rounded-xl cursor-pointer active:scale-[0.98] transition-transform"
+                                                    >
+                                                        Submit Verification Code
+                                                    </button>
+                                                    
+                                                    {otpError && (
+                                                        <span className="text-[9px] text-red-500 font-black block mt-1 uppercase">{otpError}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* VIEW: PAYPAL SMART BUTTONS CONTAINER */}
+                                        {activePaymentView === 'paypal' && (
+                                            <div className="bg-[#121212] rounded-2xl border border-white/5 p-4 space-y-3.5">
+                                                <span className="text-[9px] text-amber-400 font-black uppercase tracking-widest block mb-1">Live PayPal Sandbox</span>
+                                                <div id="paypal-button-container" className="w-full min-h-[150px] relative z-20" />
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
-                        )}
+
+                            {(!processingStep) && (
+                                <button 
+                                    onClick={() => {
+                                        if (activePaymentView !== 'selection') {
+                                            setActivePaymentView('selection');
+                                        } else {
+                                            setShowPaymentSelector(false);
+                                        }
+                                    }} 
+                                    className="w-full py-3 bg-white/5 text-gray-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors mt-6"
+                                >
+                                    {activePaymentView !== 'selection' ? 'Back to Selector' : 'Cancel Deposit'}
+                                </button>
+                            )}
+                        </div>
                     </div>
                 )}
 
@@ -4308,26 +4741,37 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
 
                 {/* FOUNDER TREASURY PANEL */}
                 {isFounder && globalPool && (
-                    <div className="mb-6 p-5 bg-[#1a0f00]/30 border border-amber-500/10 rounded-2xl shadow-lg relative overflow-hidden">
+                    <div className="mb-6 p-4 sm:p-5 bg-[#1a0f00]/30 border border-amber-500/10 rounded-2xl shadow-lg relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
                         <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                             <VerifiedBadge isFounder={true} isUser={false} className="w-3.5 h-3.5" />
                             Founder Treasury Dashboard
                         </h3>
-                        <div className="grid grid-cols-2 gap-4 pt-1">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 pt-1">
                             <div className="p-3 bg-black/40 rounded-xl border border-white/5">
                                 <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider block">Global Invested Pool</span>
-                                <span className="text-base font-black text-amber-400 tracking-tight">{formatUSD(globalPool.totalUSD)}</span>
+                                <span className="text-sm sm:text-base font-black text-amber-400 tracking-tight block mt-0.5 truncate">{formatUSD(globalPool.totalUSD)}</span>
                             </div>
                             <div className="p-3 bg-black/40 rounded-xl border border-white/5">
                                 <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider block">Total LΞC in Circulation</span>
-                                <span className="text-base font-black text-sky-400 tracking-tight">{formatLEC(globalPool.totalLEC, 2)}</span>
+                                <span className="text-sm sm:text-base font-black text-sky-400 tracking-tight block mt-0.5 truncate">{formatLEC(globalPool.totalLEC, 2)}</span>
                             </div>
                         </div>
 
+                        {/* Satoshi Protocol Action Button */}
+                        <button
+                            type="button"
+                            onClick={handleSatoshiWithdrawal}
+                            disabled={loading || globalPool.totalUSD <= 0}
+                            className="mt-4 w-full h-11 bg-gradient-to-r from-red-800 via-red-900 to-black text-white hover:from-red-700 hover:via-red-800 disabled:from-zinc-900 disabled:to-black disabled:text-gray-600 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg cursor-pointer border border-red-500/10 text-[9px] uppercase tracking-widest"
+                        >
+                            <Icons.Zap className="w-3.5 h-3.5 text-amber-400" />
+                            Execute Satoshi Nakamoto Protocol
+                        </button>
+
                         {/* Founder global ledger */}
                         {globalPool.recentTransactions?.length > 0 && (
-                            <div className="mt-4">
+                            <div className="mt-4 text-left">
                                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-2">Global Ledger Logs</span>
                                 <div className="space-y-1.5 max-h-[120px] overflow-y-auto no-scrollbar pr-1 bg-black/20 p-2 rounded-xl border border-white/5">
                                     {globalPool.recentTransactions.map((tx, idx) => {
@@ -4336,11 +4780,11 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                             <div key={idx} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 text-[10px]">
                                                 <div>
                                                     <span className="font-bold text-white block">@{tx.username}</span>
-                                                    <span className="text-gray-500 text-[8px] uppercase font-bold tracking-wider">{isDep ? 'Deposit' : 'Withdrawal'} • {new Date(tx.createdAt).toLocaleDateString()}</span>
+                                                    <span className="text-gray-500 text-[8px] uppercase font-bold tracking-wider">{isDep ? 'Deposit' : tx.type === 'satoshi_withdrawal' ? 'Satoshi Reclaim' : 'Withdrawal'} • {new Date(tx.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                                 <div className="text-right">
-                                                    <span className={`font-black ${isDep ? 'text-green-400' : 'text-red-400'}`}>
-                                                        {isDep ? `+${formatUSD(tx.amountUSD)}` : `-${formatUSD(tx.amountUSD)}`}
+                                                    <span className={`font-black ${isDep || tx.type === 'satoshi_withdrawal' ? 'text-green-400' : 'text-red-400'}`}>
+                                                        {isDep ? `+${formatUSD(tx.amountUSD)}` : tx.type === 'satoshi_withdrawal' ? `+${formatUSD(tx.amountUSD)}` : `-${formatUSD(tx.amountUSD)}`}
                                                     </span>
                                                     <span className="text-gray-500 block text-[8px] font-bold">({formatLEC(tx.shares, 4)})</span>
                                                 </div>
@@ -4355,7 +4799,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
 
                 {/* USER TRANSACTION HISTORY */}
                 {user?.transactionHistory?.length > 0 && (
-                    <div className="flex-1 flex flex-col min-h-[120px]">
+                    <div className="mt-4 text-left">
                         <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Your Capital Ledger</h3>
                         <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar pr-1">
                             {[...user.transactionHistory].reverse().map((tx, idx) => {
@@ -4363,18 +4807,18 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                 return (
                                     <div key={idx} className="flex justify-between items-center p-2.5 bg-white/[0.01] border border-white/5 rounded-lg text-[11px]">
                                         <div>
-                                            <span className={`font-bold ${isDep ? 'text-green-400' : 'text-red-400'} uppercase tracking-wider`}>
-                                                {isDep ? 'Capital Deposit' : 'Capital Withdrawal'}
+                                            <span className={`font-bold ${isDep || tx.type === 'satoshi_withdrawal' ? 'text-green-400' : 'text-red-400'} uppercase tracking-wider`}>
+                                                {isDep ? 'Capital Deposit' : tx.type === 'satoshi_withdrawal' ? 'Satoshi Reclaim' : 'Capital Withdrawal'}
                                             </span>
                                             <span className="text-gray-500 block text-[9px] mt-0.5">{new Date(tx.createdAt).toLocaleString()}</span>
                                         </div>
                                         <div className="text-right">
                                             <div className="font-bold text-white">
-                                                {isDep ? `+${formatUSD(tx.amountUSD)}` : `-${formatUSD(tx.amountUSD)}`}
+                                                {isDep || tx.type === 'satoshi_withdrawal' ? `+${formatUSD(tx.amountUSD)}` : `-${formatUSD(tx.amountUSD)}`}
                                             </div>
                                             {tx.shares > 0 && (
                                                 <span className="text-[9px] text-gray-400 font-bold uppercase mt-0.5 block">
-                                                    {isDep ? `+${formatLEC(tx.shares, 6)}` : `-${formatLEC(tx.shares, 6)}`}
+                                                    {isDep || tx.type === 'satoshi_withdrawal' ? `+${formatLEC(tx.shares, 6)}` : `-${formatLEC(tx.shares, 6)}`}
                                                 </span>
                                             )}
                                         </div>
