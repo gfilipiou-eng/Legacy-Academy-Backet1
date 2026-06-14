@@ -5115,51 +5115,126 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
         }
     };
 
-    const missionsList = [
-        { id: '5am', titleKey: 'MISSION_5AM', descKey: 'MISSION_5AM_DESC', icon: '⏰' },
-        { id: 'gym', titleKey: 'MISSION_GYM', descKey: 'MISSION_GYM_DESC', icon: '💪' },
-        { id: 'read', titleKey: 'MISSION_READ', descKey: 'MISSION_READ_DESC', icon: '📚' },
-        { id: 'deep_work', titleKey: 'MISSION_DEEP_WORK', descKey: 'MISSION_DEEP_WORK_DESC', icon: '💻' },
-        { id: 'cold_shower', titleKey: 'MISSION_COLD_SHOWER', descKey: 'MISSION_COLD_SHOWER_DESC', icon: '🥶' },
-        { id: 'healthy_meal', titleKey: 'MISSION_HEALTHY_MEAL', descKey: 'MISSION_HEALTHY_MEAL_DESC', icon: '🥩' },
-        { id: 'no_scrolling', titleKey: 'MISSION_NO_SCROLLING', descKey: 'MISSION_NO_SCROLLING_DESC', icon: '📵' },
-        { id: 'networking', titleKey: 'MISSION_NETWORKING', descKey: 'MISSION_NETWORKING_DESC', icon: '🤝' },
-        { id: 'planning', titleKey: 'MISSION_PLANNING', descKey: 'MISSION_PLANNING_DESC', icon: '📝' },
-        { id: 'cardio', titleKey: 'MISSION_CARDIO', descKey: 'MISSION_CARDIO_DESC', icon: '🏃‍♂️' },
-        // Adventure Missions
-        { id: 'adventure_hike', title: 'Συνάντηση με τη Φύση', desc: 'Κάνε μια βόλτα ή πεζοπορία στο πάρκο ή βουνό για τουλάχιστον 1 ώρα. Αποκτήσε ενέργεια από τη φύση.', icon: '🥾' },
-        { id: 'adventure_outdoor', title: 'Ενδοξοποίηση Ουρανού', desc: 'Βγες έξω για να δεις τον ήλιο ή τα αστέρια. Στοιχίσε με το φυσικό φως.', icon: '🌄' },
-        { id: 'adventure_new_place', title: 'Εξερεύνηση Νέου Τοπίου', desc: 'Πήγαινε σε ένα μέρος που δεν έχεις πάει ποτέ πριν, ακόμη κι αν είναι απλά μια γειτονιά.', icon: '🗺️' },
-        // Fitness Missions
-        { id: 'fitness_stretch', title: 'Άσκηση Επέκτασης', desc: 'Κάνε 15 λεπτά ενεργές επεκτάσεις ή γιόγκα για να χαλαρώσεις τους μυς σου και να βελτιώσεις την ευλυγισία.', icon: '🧘' },
-        { id: 'fitness_strength', title: 'Προπόνηση Δύναμης', desc: 'Κάνε μια προπόνηση σώματος χωρίς εξοπλισμό ή με βάρη για 30 λεπτά. Σωστό τεχνικό = καλύτερα αποτελέσματα.', icon: '🏋️' },
-        { id: 'fitness_walk', title: 'Μακρά Περίπατος', desc: 'Περπατήστε για τουλάχιστον 5.000 βήματα ή 3 χιλιόμετρα. Οι βήματες σωματικές δραστηριότητες είναι σημαντικές για την υγεία.', icon: '🚶' },
-        // Health Missions
-        { id: 'health_water', title: 'Υγρατική Ενέργεια', desc: 'Πιεί τουλάχιστον 2 λίτρα νερό το σημερινό. Το νερό βοηθά στη σωματική και διανοητική λειτουργία.', icon: '💧' },
-        { id: 'health_sleep', title: 'Χρόνος Αναπαύλεως', desc: 'Συντονίστε τον ύπνο σας για 7-9 ώρες. Το σωστό ύπνος είναι η βάση για μια υγιή ζωή.', icon: '😴' },
-        { id: 'health_veggies', title: 'Φυτικές Πηγές', desc: 'Φάτε τουλάχιστον 3 μερίδια λαχανικών ή φρούτων σήμερα. Φυτικά τροφικά = ενέργεια και υγεία.', icon: '🥗' },
-        // Cooking Missions
-        { id: 'cooking_meal', title: 'Συνταγή Επιστήμης', desc: 'Μαγειρέψε ένα γεύμα από το μηδέν, ακόμη κι αν είναι απλό. Η μαγειρική είναι μια τέχνη και επιστήμη.', icon: '👨‍🍳' },
-        { id: 'cooking_new_recipe', title: 'Νέα Συνταγή', desc: 'Δοκιμάστε μια νέα συνταγή ή τρόφο τροφής που δεν έχεις δοκιμάσει ποτέ πριν.', icon: '📖' },
-        { id: 'cooking_prep', title: 'Προετοιμασία Γεύματος', desc: 'Προετοιμάστε μερικά γεύματα για την ερχόμενη εβδομάδα. Ο οργάνωση = λιγότερο άγχος.', icon: '🍱' },
-        // Learning Missions
-        { id: 'learn_skill', title: 'Νέα Δεξιότητα', desc: 'Μάθε ένα νέο πράγμα για το ενδιαφέρον σου, ακόμη κι αν είναι μόνο 10 λεπτά. Η εκπαίδευση δεν τελειώνει ποτέ.', icon: '🎓' },
-        { id: 'learn_language', title: 'Γλωσσική Προσπάθεια', desc: 'Προσπάθησε να μάθεις 5 νέες λέξεις σε μια ξένη γλώσσα. Η γλώσσα ανοίγει πόρτες.', icon: '🌍' },
-        { id: 'learn_course', title: 'Μάθημα', desc: 'Δείτε ένα μάθημα ή μια διάλεξη για ένα θέμα που θέλετε να εξερευνήσετε περισσότερο.', icon: '🎥' },
-        // Meditation & Mindfulness
-        { id: 'meditation', title: 'Διανοητική Επίκεντρωση', desc: 'Κάνε 10 λεπτά διαλογισμού ή προσοχής. Η διανοητική ηρεμία = πιο σαφής σκέψη.', icon: '🧘‍♂️' },
-        { id: 'journaling', title: 'Ημερολόγιο', desc: 'Γράψε τις σκέψεις σου ή τρεις πράγματα για τα οποία είστε ευγνώμων σήμερα.', icon: '📔' },
-        { id: 'gratitude', title: 'Ευγνωμοσύνη', desc: 'Ευχαρίστησε κάποιον ή σκέφτου τρεις πράγματα για τα οποία είστε ευγνώμων.', icon: '🙏' },
-        // Creative Missions
-        { id: 'creative_art', title: 'Δημιουργικό Έργο', desc: 'Σχεδιάστε, ζωγραφίστε ή κάνε κάτι δημιουργικό, ακόμη κι αν είναι απλό.', icon: '🎨' },
-        { id: 'creative_music', title: 'Μουσική Εμπειρία', desc: 'Ακούστε μια νέα τραγουδιστή ή τύπο μουσικής, ή παίξτε ένα μουσικό όργανο.', icon: '🎵' },
-        { id: 'creative_write', title: 'Δημιουργική Γραφή', desc: 'Γράψε μια ιστορία, ένα ποίημα ή ένα κείμενο για οτιδήποτε θέλεις.', icon: '✍️' },
-        // Social Missions
-        { id: 'social_call', title: 'Φιλική κλήση', desc: 'Κάλεσε ή στείλε ένα μήνυμα σε ένα φίλο ή μέλος της οικογένειας που δεν έχεις μιλήσει από καιρό.', icon: '📞' },
-        { id: 'social_help', title: 'Βοήθεια', desc: 'Βοήθησε κάποιον με ένα μικρό πράγμα σήμερα. Η καλοσύνη κάνει τον κόσμο καλύτερο.', icon: '💖' },
-        { id: 'social_meet', title: 'Συνάντηση', desc: 'Συναντήστε με κάποιον πρόσωπο για ένα καφέ ή ένα βόλτα, αν μπορείτε.', icon: '☕' }
+    const missionCategories = [
+        {
+            id: 'core',
+            name: 'Πυρήνας',
+            description: 'Οι βασικές αποστολές που χρειάζεσαι για να ξεκινήσεις τη μέρα σου δυνατά!',
+            icon: '🔥',
+            color: 'from-orange-500 to-yellow-500',
+            missions: [
+                { id: '5am', titleKey: 'MISSION_5AM', descKey: 'MISSION_5AM_DESC', icon: '⏰' },
+                { id: 'gym', titleKey: 'MISSION_GYM', descKey: 'MISSION_GYM_DESC', icon: '💪' },
+                { id: 'read', titleKey: 'MISSION_READ', descKey: 'MISSION_READ_DESC', icon: '📚' },
+                { id: 'deep_work', titleKey: 'MISSION_DEEP_WORK', descKey: 'MISSION_DEEP_WORK_DESC', icon: '💻' },
+                { id: 'cold_shower', titleKey: 'MISSION_COLD_SHOWER', descKey: 'MISSION_COLD_SHOWER_DESC', icon: '🥶' },
+                { id: 'healthy_meal', titleKey: 'MISSION_HEALTHY_MEAL', descKey: 'MISSION_HEALTHY_MEAL_DESC', icon: '🥩' },
+                { id: 'no_scrolling', titleKey: 'MISSION_NO_SCROLLING', descKey: 'MISSION_NO_SCROLLING_DESC', icon: '📵' },
+                { id: 'networking', titleKey: 'MISSION_NETWORKING', descKey: 'MISSION_NETWORKING_DESC', icon: '🤝' },
+                { id: 'planning', titleKey: 'MISSION_PLANNING', descKey: 'MISSION_PLANNING_DESC', icon: '📝' },
+                { id: 'cardio', titleKey: 'MISSION_CARDIO', descKey: 'MISSION_CARDIO_DESC', icon: '🏃‍♂️' }
+            ]
+        },
+        {
+            id: 'adventure',
+            name: 'Περιπέτεια',
+            description: 'Ξεκινήστε να εξερευνάτε τον κόσμο και να ζήσετε απίστευτες εμπειρίες!',
+            icon: '🥾',
+            color: 'from-green-500 to-emerald-500',
+            missions: [
+                { id: 'adventure_hike', title: 'Συνάντηση με τη Φύση', desc: 'Κάνε μια βόλτα ή πεζοπορία στο πάρκο ή βουνό για τουλάχιστον 1 ώρα. Αποκτήσε ενέργεια από τη φύση.', icon: '🥾' },
+                { id: 'adventure_outdoor', title: 'Ενδοξοποίηση Ουρανού', desc: 'Βγες έξω για να δεις τον ήλιο ή τα αστέρια. Στοιχίσε με το φυσικό φως.', icon: '🌄' },
+                { id: 'adventure_new_place', title: 'Εξερεύνηση Νέου Τοπίου', desc: 'Πήγαινε σε ένα μέρος που δεν έχεις πάει ποτέ πριν, ακόμη κι αν είναι απλά μια γειτονιά.', icon: '🗺️' }
+            ]
+        },
+        {
+            id: 'fitness',
+            name: 'Φυσική Κατάσταση',
+            description: 'Φροντίστε το σώμα σας με συνειδητές σωματικές ασκήσεις!',
+            icon: '💪',
+            color: 'from-blue-500 to-cyan-500',
+            missions: [
+                { id: 'fitness_stretch', title: 'Άσκηση Επέκτασης', desc: 'Κάνε 15 λεπτά ενεργές επεκτάσεις ή γιόγκα για να χαλαρώσεις τους μυς σου και να βελτιώσεις την ευλυγισία.', icon: '🧘' },
+                { id: 'fitness_strength', title: 'Προπόνηση Δύναμης', desc: 'Κάνε μια προπόνηση σώματος χωρίς εξοπλισμό ή με βάρη για 30 λεπτά. Σωστό τεχνικό = καλύτερα αποτελέσματα.', icon: '🏋️' },
+                { id: 'fitness_walk', title: 'Μακρά Περίπατος', desc: 'Περπατήστε για τουλάχιστον 5.000 βήματα ή 3 χιλιόμετρα. Οι βήματες σωματικές δραστηριότητες είναι σημαντικές για την υγεία.', icon: '🚶' }
+            ]
+        },
+        {
+            id: 'health',
+            name: 'Υγεία',
+            description: 'Φροντίστε την υγεία σας με σωστά συνήθειες!',
+            icon: '💚',
+            color: 'from-green-400 to-teal-500',
+            missions: [
+                { id: 'health_water', title: 'Υγρατική Ενέργεια', desc: 'Πιεί τουλάχιστον 2 λίτρα νερό το σημερινό. Το νερό βοηθά στη σωματική και διανοητική λειτουργία.', icon: '💧' },
+                { id: 'health_sleep', title: 'Χρόνος Αναπαύλεως', desc: 'Συντονίστε τον ύπνο σας για 7-9 ώρες. Το σωστό ύπνος είναι η βάση για μια υγιή ζωή.', icon: '😴' },
+                { id: 'health_veggies', title: 'Φυτικές Πηγές', desc: 'Φάτε τουλάχιστον 3 μερίδια λαχανικών ή φρούτων σήμερα. Φυτικά τροφικά = ενέργεια και υγεία.', icon: '🥗' }
+            ]
+        },
+        {
+            id: 'cooking',
+            name: 'Μαγειρική',
+            description: 'Μάθε να μαγειρεύετε, είναι μια τέχνη που αξίζει να μάθετε!',
+            icon: '👨‍🍳',
+            color: 'from-orange-400 to-amber-500',
+            missions: [
+                { id: 'cooking_meal', title: 'Συνταγή Επιστήμης', desc: 'Μαγειρέψε ένα γεύμα από το μηδέν, ακόμη κι αν είναι απλό. Η μαγειρική είναι μια τέχνη και επιστήμη.', icon: '👨‍🍳' },
+                { id: 'cooking_new_recipe', title: 'Νέα Συνταγή', desc: 'Δοκιμάστε μια νέα συνταγή ή τρόφο τροφής που δεν έχεις δοκιμάσει ποτέ πριν.', icon: '📖' },
+                { id: 'cooking_prep', title: 'Προετοιμασία Γεύματος', desc: 'Προετοιμάστε μερικά γεύματα για την ερχόμενη εβδομάδα. Ο οργάνωση = λιγότερο άγχος.', icon: '🍱' }
+            ]
+        },
+        {
+            id: 'learning',
+            name: 'Εκπαίδευση',
+            description: 'Η εκπαίδευση δεν τελειώνει ποτέ! Μάθε νέα πράγματα κάθε μέρα!',
+            icon: '🎓',
+            color: 'from-violet-500 to-purple-500',
+            missions: [
+                { id: 'learn_skill', title: 'Νέα Δεξιότητα', desc: 'Μάθε ένα νέο πράγμα για το ενδιαφέρον σου, ακόμη κι αν είναι μόνο 10 λεπτά. Η εκπαίδευση δεν τελειώνει ποτέ.', icon: '🎓' },
+                { id: 'learn_language', title: 'Γλωσσική Προσπάθεια', desc: 'Προσπάθησε να μάθεις 5 νέες λέξεις σε μια ξένη γλώσσα. Η γλώσσα ανοίγει πόρτες.', icon: '🌍' },
+                { id: 'learn_course', title: 'Μάθημα', desc: 'Δείτε ένα μάθημα ή μια διάλεξη για ένα θέμα που θέλετε να εξερευνήσετε περισσότερο.', icon: '🎥' }
+            ]
+        },
+        {
+            id: 'mindfulness',
+            name: 'Προσοχή',
+            description: 'Φροντίστε την ψυχική σας υγεία με διαλογισμό και προσοχή!',
+            icon: '🧘‍♂️',
+            color: 'from-indigo-500 to-blue-500',
+            missions: [
+                { id: 'meditation', title: 'Διανοητική Επίκεντρωση', desc: 'Κάνε 10 λεπτά διαλογισμού ή προσοχής. Η διανοητική ηρεμία = πιο σαφής σκέψη.', icon: '🧘‍♂️' },
+                { id: 'journaling', title: 'Ημερολόγιο', desc: 'Γράψε τις σκέψεις σου ή τρεις πράγματα για τα οποία είστε ευγνώμων σήμερα.', icon: '📔' },
+                { id: 'gratitude', title: 'Ευγνωμοσύνη', desc: 'Ευχαρίστησε κάποιον ή σκέφτου τρεις πράγματα για τα οποία είστε ευγνώμων.', icon: '🙏' }
+            ]
+        },
+        {
+            id: 'creative',
+            name: 'Δημιουργικότητα',
+            description: 'Εξερευνάστε την δημιουργική σας πλευρά!',
+            icon: '🎨',
+            color: 'from-pink-500 to-rose-500',
+            missions: [
+                { id: 'creative_art', title: 'Δημιουργικό Έργο', desc: 'Σχεδιάστε, ζωγραφίστε ή κάνε κάτι δημιουργικό, ακόμη κι αν είναι απλό.', icon: '🎨' },
+                { id: 'creative_music', title: 'Μουσική Εμπειρία', desc: 'Ακούστε μια νέα τραγουδιστή ή τύπο μουσικής, ή παίξτε ένα μουσικό όργανο.', icon: '🎵' },
+                { id: 'creative_write', title: 'Δημιουργική Γραφή', desc: 'Γράψε μια ιστορία, ένα ποίημα ή ένα κείμενο για οτιδήποτε θέλεις.', icon: '✍️' }
+            ]
+        },
+        {
+            id: 'social',
+            name: 'Κοινωνία',
+            description: 'Συνδεθείτε με τους άλλους και δημιουργήστε ισχυρές σχέσεις!',
+            icon: '💖',
+            color: 'from-red-500 to-pink-500',
+            missions: [
+                { id: 'social_call', title: 'Φιλική κλήση', desc: 'Κάλεσε ή στείλε ένα μήνυμα σε ένα φίλο ή μέλος της οικογένειας που δεν έχεις μιλήσει από καιρό.', icon: '📞' },
+                { id: 'social_help', title: 'Βοήθεια', desc: 'Βοήθησε κάποιον με ένα μικρό πράγμα σήμερα. Η καλοσύνη κάνει τον κόσμο καλύτερο.', icon: '💖' },
+                { id: 'social_meet', title: 'Συνάντηση', desc: 'Συναντήστε με κάποιον πρόσωπο για ένα καφέ ή ένα βόλτα, αν μπορείτε.', icon: '☕' }
+            ]
+        }
     ];
 
+    const [expandedCategory, setExpandedCategory] = useState('core');
+    
     return (
         <div className="p-4 sm:p-6 space-y-6 w-full max-w-full box-border text-left">
             <div className="flex flex-col gap-3">
@@ -5192,36 +5267,67 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-5">
-                {missionsList.map(m => (
-                    <div
-                        key={m.id}
-                        className={`p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
-                            hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
+            {/* Category Tabs */}
+            <div className="flex flex-wrap gap-2">
+                {missionCategories.map((category) => (
+                    <button
+                        key={category.id}
+                        type="button"
+                        onClick={() => setExpandedCategory(category.id)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 touch-manipulation ${
+                            expandedCategory === category.id
+                                ? `bg-gradient-to-r ${category.color} text-black border-transparent shadow-lg`
+                                : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
                         }`}
                     >
-                        <div className="flex items-start gap-5 w-full">
-                            <span className="text-4xl sm:text-5xl shrink-0">{m.icon}</span>
-                            <div className="flex-1 w-full">
-                                <h4 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider">{m.titleKey ? t(m.titleKey) : m.title}</h4>
-                            <p className="text-sm text-gray-300 font-bold uppercase tracking-wide mt-2 leading-relaxed">{m.descKey ? t(m.descKey) : m.desc}</p>
-                            </div>
-                        </div>
-                        <button
-                            type="button"
-                            disabled={submitting || hasCompletedToday}
-                            onClick={() => handleCompleteMission(m.id)}
-                            className={`w-full px-8 py-4 rounded-xl text-base font-black uppercase tracking-widest transition-all duration-300 touch-manipulation ${
-                                hasCompletedToday
-                                    ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black shadow-xl shadow-[var(--gold-primary)]/40 hover:scale-105 active:scale-95'
-                            }`}
-                        >
-                            {submitting ? '...' : t('MISSION_COMPLETE')}
-                        </button>
-                    </div>
+                        <span className="text-lg">{category.icon}</span>
+                        <span className="font-bold text-sm uppercase tracking-wide">{category.name}</span>
+                    </button>
                 ))}
             </div>
+
+            {/* Active Category */}
+            {missionCategories.filter(cat => cat.id === expandedCategory).map(category => (
+                <div key={category.id} className="space-y-4">
+                    <div className="space-y-1">
+                        <h4 className="text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
+                            <span>{category.icon}</span>
+                            {category.name}
+                        </h4>
+                        <p className="text-sm text-gray-400 font-medium">{category.description}</p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                        {category.missions.map(m => (
+                            <div
+                                key={m.id}
+                                className={`p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
+                                    hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
+                                }`}
+                            >
+                                <div className="flex items-start gap-5 w-full">
+                                    <span className="text-4xl sm:text-5xl shrink-0">{m.icon}</span>
+                                    <div className="flex-1 w-full">
+                                        <h4 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider">{m.titleKey ? t(m.titleKey) : m.title}</h4>
+                                    <p className="text-sm text-gray-300 font-bold uppercase tracking-wide mt-2 leading-relaxed">{m.descKey ? t(m.descKey) : m.desc}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    disabled={submitting || hasCompletedToday}
+                                    onClick={() => handleCompleteMission(m.id)}
+                                    className={`w-full px-8 py-4 rounded-xl text-base font-black uppercase tracking-widest transition-all duration-300 touch-manipulation ${
+                                        hasCompletedToday
+                                            ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black shadow-xl shadow-[var(--gold-primary)]/40 hover:scale-105 active:scale-95'
+                                    }`}
+                                >
+                                    {submitting ? '...' : t('MISSION_COMPLETE')}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
