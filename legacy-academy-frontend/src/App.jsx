@@ -905,7 +905,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
     return (
         <div className="relative shrink-0 z-30">
-            <button ref={btnRef} onClick={toggle} className="p-2 sm:p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-90 liquid-glass-control">
+            <button ref={btnRef} onClick={toggle} className="p-2 sm:p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-85 liquid-glass-control">
                 <Icons.MoreHorizontal className="w-6 h-6" />
             </button>
             {showMenu && createPortal(
@@ -921,13 +921,13 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                         className="w-56 liquid-glass-video-panel rounded-2xl overflow-hidden flex flex-col gap-1 p-2 animate-fade-in"
                     >
                         {isOwner && (
-                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10">
+                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10 active:scale-95">
                                 <Icons.Edit className="w-5 h-5 text-blue-400 group-hover/item:scale-110" />
                                 <span className="text-xs font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
                             </button>
                         )}
                         {canDelete && (
-                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-red-500/10">
+                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-red-500/10 active:scale-95">
                                 <Icons.Trash className="w-5 h-5 text-red-500 group-hover/item:scale-110" />
                                 <span className="text-xs font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
                             </button>
@@ -3965,11 +3965,11 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         </span>
                     )}
                 </div>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide leading-relaxed">{t('MISSIONS_DESC')}</p>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wide leading-relaxed">{t('MISSIONS_DESC')}</p>
             </div>
 
             {hasCompletedToday && (
-                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-3 animate-fade-in">
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-3 animate-fade-in liquid-glass-control">
                     <div className="w-8 h-8 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center shrink-0">
                         <Icons.Check className="w-4 h-4" />
                     </div>
@@ -3986,29 +3986,29 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-4">
                 {missionsList.map(m => (
                     <div
                         key={m.id}
-                        className={`p-4 bg-white/[0.02] border rounded-2xl flex items-center justify-between gap-4 transition-all duration-200 ${
-                            hasCompletedToday ? 'border-white/5 opacity-65' : 'border-white/10 hover:border-white/20'
+                        className={`p-4 border rounded-2xl flex items-center justify-between gap-4 transition-all duration-200 liquid-glass-video-panel ${
+                            hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01]'
                         }`}
                     >
-                        <div className="flex items-center gap-3 min-w-0">
-                            <span className="text-2xl shrink-0">{m.icon}</span>
-                            <div className="min-w-0">
-                                <h4 className="text-sm font-black text-white uppercase tracking-wider">{t(m.titleKey)}</h4>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1 truncate">{t(m.descKey)}</p>
+                        <div className="flex items-center gap-4 min-w-0">
+                            <span className="text-3xl shrink-0">{m.icon}</span>
+                            <div className="min-w-0 flex-1">
+                                <h4 className="text-base font-black text-white uppercase tracking-wider">{t(m.titleKey)}</h4>
+                                <p className="text-xs text-gray-300 font-bold uppercase tracking-wide mt-1">{t(m.descKey)}</p>
                             </div>
                         </div>
                         <button
                             type="button"
                             disabled={submitting || hasCompletedToday}
                             onClick={() => handleCompleteMission(m.id)}
-                            className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
+                            className={`px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
                                 hasCompletedToday
                                     ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
-                                    : 'bg-[var(--gold-primary)] hover:scale-105 active:scale-95 text-black'
+                                    : 'bg-[var(--gold-primary)] hover:scale-105 active:scale-90 text-black liquid-glass-control'
                             }`}
                         >
                             {submitting ? '...' : t('MISSION_COMPLETE')}
