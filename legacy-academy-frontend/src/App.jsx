@@ -2126,7 +2126,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const discardRef = useRef(false);
     const [imgError, setImgError] = useState(false); // Handle broken images
     const [revealed, setRevealed] = useState(false);
-    const shouldBlur = post.is18Plus && Boolean(user?.settings?.blur18Plus) && !revealed;
 
     const isCurrentUserFounder = user?.role === 'Founder';
 
@@ -2152,6 +2151,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
+    const shouldBlur = post.is18Plus && Boolean(user?.settings?.blur18Plus) && !revealed && !isOwner;
     const canDelete = isOwner || isCurrentUserFounder;
     const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
