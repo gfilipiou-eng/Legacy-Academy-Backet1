@@ -5131,7 +5131,6 @@ const ProfileModal = ({
                                                                             post={p}
                                                                             user={currentUser}
                                                                             allUsers={allUsers}
-                                                                            compact
                                                                             onLike={onLike}
                                                                             onDislike={onDislike}
                                                                             onRepost={onRepost}
@@ -5872,8 +5871,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         key={p._id} 
                                         post={p} 
                                         user={null} 
-                                        allUsers={[]} 
-                                        compact
+                                        allUsers={[]}
                                         forcePause={false} 
                                         onHashtagClick={() => {}} 
                                         onLike={() => {}} 
