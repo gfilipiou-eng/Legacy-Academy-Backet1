@@ -5118,8 +5118,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
     const missionCategories = [
         {
             id: 'core',
-            name: 'Πυρήνας',
-            description: 'Οι βασικές αποστολές που χρειάζεσαι για να ξεκινήσεις τη μέρα σου δυνατά!',
+            nameKey: 'CAT_CORE',
+            descriptionKey: 'CAT_CORE_DESC',
             icon: '🔥',
             color: 'from-orange-500 to-yellow-500',
             missions: [
@@ -5137,98 +5137,98 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
         },
         {
             id: 'adventure',
-            name: 'Περιπέτεια',
-            description: 'Ξεκινήστε να εξερευνάτε τον κόσμο και να ζήσετε απίστευτες εμπειρίες!',
+            nameKey: 'CAT_ADVENTURE',
+            descriptionKey: 'CAT_ADVENTURE_DESC',
             icon: '🥾',
             color: 'from-green-500 to-emerald-500',
             missions: [
-                { id: 'adventure_hike', title: 'Συνάντηση με τη Φύση', desc: 'Κάνε μια βόλτα ή πεζοπορία στο πάρκο ή βουνό για τουλάχιστον 1 ώρα. Αποκτήσε ενέργεια από τη φύση.', icon: '🥾' },
-                { id: 'adventure_outdoor', title: 'Ενδοξοποίηση Ουρανού', desc: 'Βγες έξω για να δεις τον ήλιο ή τα αστέρια. Στοιχίσε με το φυσικό φως.', icon: '🌄' },
-                { id: 'adventure_new_place', title: 'Εξερεύνηση Νέου Τοπίου', desc: 'Πήγαινε σε ένα μέρος που δεν έχεις πάει ποτέ πριν, ακόμη κι αν είναι απλά μια γειτονιά.', icon: '🗺️' }
+                { id: 'adventure_hike', titleKey: 'MISSION_ADVENTURE_HIKE', descKey: 'MISSION_ADVENTURE_HIKE_DESC', icon: '🥾' },
+                { id: 'adventure_outdoor', titleKey: 'MISSION_ADVENTURE_OUTDOOR', descKey: 'MISSION_ADVENTURE_OUTDOOR_DESC', icon: '🌄' },
+                { id: 'adventure_new_place', titleKey: 'MISSION_ADVENTURE_NEW_PLACE', descKey: 'MISSION_ADVENTURE_NEW_PLACE_DESC', icon: '🗺️' }
             ]
         },
         {
             id: 'fitness',
-            name: 'Φυσική Κατάσταση',
-            description: 'Φροντίστε το σώμα σας με συνειδητές σωματικές ασκήσεις!',
+            nameKey: 'CAT_FITNESS',
+            descriptionKey: 'CAT_FITNESS_DESC',
             icon: '💪',
             color: 'from-blue-500 to-cyan-500',
             missions: [
-                { id: 'fitness_stretch', title: 'Άσκηση Επέκτασης', desc: 'Κάνε 15 λεπτά ενεργές επεκτάσεις ή γιόγκα για να χαλαρώσεις τους μυς σου και να βελτιώσεις την ευλυγισία.', icon: '🧘' },
-                { id: 'fitness_strength', title: 'Προπόνηση Δύναμης', desc: 'Κάνε μια προπόνηση σώματος χωρίς εξοπλισμό ή με βάρη για 30 λεπτά. Σωστό τεχνικό = καλύτερα αποτελέσματα.', icon: '🏋️' },
-                { id: 'fitness_walk', title: 'Μακρά Περίπατος', desc: 'Περπατήστε για τουλάχιστον 5.000 βήματα ή 3 χιλιόμετρα. Οι βήματες σωματικές δραστηριότητες είναι σημαντικές για την υγεία.', icon: '🚶' }
+                { id: 'fitness_stretch', titleKey: 'MISSION_FITNESS_STRETCH', descKey: 'MISSION_FITNESS_STRETCH_DESC', icon: '🧘' },
+                { id: 'fitness_strength', titleKey: 'MISSION_FITNESS_STRENGTH', descKey: 'MISSION_FITNESS_STRENGTH_DESC', icon: '🏋️' },
+                { id: 'fitness_walk', titleKey: 'MISSION_FITNESS_WALK', descKey: 'MISSION_FITNESS_WALK_DESC', icon: '🚶' }
             ]
         },
         {
             id: 'health',
-            name: 'Υγεία',
-            description: 'Φροντίστε την υγεία σας με σωστά συνήθειες!',
+            nameKey: 'CAT_HEALTH',
+            descriptionKey: 'CAT_HEALTH_DESC',
             icon: '💚',
             color: 'from-green-400 to-teal-500',
             missions: [
-                { id: 'health_water', title: 'Υγρατική Ενέργεια', desc: 'Πιεί τουλάχιστον 2 λίτρα νερό το σημερινό. Το νερό βοηθά στη σωματική και διανοητική λειτουργία.', icon: '💧' },
-                { id: 'health_sleep', title: 'Χρόνος Αναπαύλεως', desc: 'Συντονίστε τον ύπνο σας για 7-9 ώρες. Το σωστό ύπνος είναι η βάση για μια υγιή ζωή.', icon: '😴' },
-                { id: 'health_veggies', title: 'Φυτικές Πηγές', desc: 'Φάτε τουλάχιστον 3 μερίδια λαχανικών ή φρούτων σήμερα. Φυτικά τροφικά = ενέργεια και υγεία.', icon: '🥗' }
+                { id: 'health_water', titleKey: 'MISSION_HEALTH_WATER', descKey: 'MISSION_HEALTH_WATER_DESC', icon: '💧' },
+                { id: 'health_sleep', titleKey: 'MISSION_HEALTH_SLEEP', descKey: 'MISSION_HEALTH_SLEEP_DESC', icon: '😴' },
+                { id: 'health_veggies', titleKey: 'MISSION_HEALTH_VEGGIES', descKey: 'MISSION_HEALTH_VEGGIES_DESC', icon: '🥗' }
             ]
         },
         {
             id: 'cooking',
-            name: 'Μαγειρική',
-            description: 'Μάθε να μαγειρεύετε, είναι μια τέχνη που αξίζει να μάθετε!',
+            nameKey: 'CAT_COOKING',
+            descriptionKey: 'CAT_COOKING_DESC',
             icon: '👨‍🍳',
             color: 'from-orange-400 to-amber-500',
             missions: [
-                { id: 'cooking_meal', title: 'Συνταγή Επιστήμης', desc: 'Μαγειρέψε ένα γεύμα από το μηδέν, ακόμη κι αν είναι απλό. Η μαγειρική είναι μια τέχνη και επιστήμη.', icon: '👨‍🍳' },
-                { id: 'cooking_new_recipe', title: 'Νέα Συνταγή', desc: 'Δοκιμάστε μια νέα συνταγή ή τρόφο τροφής που δεν έχεις δοκιμάσει ποτέ πριν.', icon: '📖' },
-                { id: 'cooking_prep', title: 'Προετοιμασία Γεύματος', desc: 'Προετοιμάστε μερικά γεύματα για την ερχόμενη εβδομάδα. Ο οργάνωση = λιγότερο άγχος.', icon: '🍱' }
+                { id: 'cooking_meal', titleKey: 'MISSION_COOKING_MEAL', descKey: 'MISSION_COOKING_MEAL_DESC', icon: '👨‍🍳' },
+                { id: 'cooking_new_recipe', titleKey: 'MISSION_COOKING_NEW_RECIPE', descKey: 'MISSION_COOKING_NEW_RECIPE_DESC', icon: '📖' },
+                { id: 'cooking_prep', titleKey: 'MISSION_COOKING_PREP', descKey: 'MISSION_COOKING_PREP_DESC', icon: '🍱' }
             ]
         },
         {
             id: 'learning',
-            name: 'Εκπαίδευση',
-            description: 'Η εκπαίδευση δεν τελειώνει ποτέ! Μάθε νέα πράγματα κάθε μέρα!',
+            nameKey: 'CAT_LEARNING',
+            descriptionKey: 'CAT_LEARNING_DESC',
             icon: '🎓',
             color: 'from-violet-500 to-purple-500',
             missions: [
-                { id: 'learn_skill', title: 'Νέα Δεξιότητα', desc: 'Μάθε ένα νέο πράγμα για το ενδιαφέρον σου, ακόμη κι αν είναι μόνο 10 λεπτά. Η εκπαίδευση δεν τελειώνει ποτέ.', icon: '🎓' },
-                { id: 'learn_language', title: 'Γλωσσική Προσπάθεια', desc: 'Προσπάθησε να μάθεις 5 νέες λέξεις σε μια ξένη γλώσσα. Η γλώσσα ανοίγει πόρτες.', icon: '🌍' },
-                { id: 'learn_course', title: 'Μάθημα', desc: 'Δείτε ένα μάθημα ή μια διάλεξη για ένα θέμα που θέλετε να εξερευνήσετε περισσότερο.', icon: '🎥' }
+                { id: 'learn_skill', titleKey: 'MISSION_LEARN_SKILL', descKey: 'MISSION_LEARN_SKILL_DESC', icon: '🎓' },
+                { id: 'learn_language', titleKey: 'MISSION_LEARN_LANGUAGE', descKey: 'MISSION_LEARN_LANGUAGE_DESC', icon: '🌍' },
+                { id: 'learn_course', titleKey: 'MISSION_LEARN_COURSE', descKey: 'MISSION_LEARN_COURSE_DESC', icon: '🎥' }
             ]
         },
         {
             id: 'mindfulness',
-            name: 'Προσοχή',
-            description: 'Φροντίστε την ψυχική σας υγεία με διαλογισμό και προσοχή!',
+            nameKey: 'CAT_MINDFULNESS',
+            descriptionKey: 'CAT_MINDFULNESS_DESC',
             icon: '🧘‍♂️',
             color: 'from-indigo-500 to-blue-500',
             missions: [
-                { id: 'meditation', title: 'Διανοητική Επίκεντρωση', desc: 'Κάνε 10 λεπτά διαλογισμού ή προσοχής. Η διανοητική ηρεμία = πιο σαφής σκέψη.', icon: '🧘‍♂️' },
-                { id: 'journaling', title: 'Ημερολόγιο', desc: 'Γράψε τις σκέψεις σου ή τρεις πράγματα για τα οποία είστε ευγνώμων σήμερα.', icon: '📔' },
-                { id: 'gratitude', title: 'Ευγνωμοσύνη', desc: 'Ευχαρίστησε κάποιον ή σκέφτου τρεις πράγματα για τα οποία είστε ευγνώμων.', icon: '🙏' }
+                { id: 'meditation', titleKey: 'MISSION_MEDITATION', descKey: 'MISSION_MEDITATION_DESC', icon: '🧘‍♂️' },
+                { id: 'journaling', titleKey: 'MISSION_JOURNALING', descKey: 'MISSION_JOURNALING_DESC', icon: '📔' },
+                { id: 'gratitude', titleKey: 'MISSION_GRATITUDE', descKey: 'MISSION_GRATITUDE_DESC', icon: '🙏' }
             ]
         },
         {
             id: 'creative',
-            name: 'Δημιουργικότητα',
-            description: 'Εξερευνάστε την δημιουργική σας πλευρά!',
+            nameKey: 'CAT_CREATIVE',
+            descriptionKey: 'CAT_CREATIVE_DESC',
             icon: '🎨',
             color: 'from-pink-500 to-rose-500',
             missions: [
-                { id: 'creative_art', title: 'Δημιουργικό Έργο', desc: 'Σχεδιάστε, ζωγραφίστε ή κάνε κάτι δημιουργικό, ακόμη κι αν είναι απλό.', icon: '🎨' },
-                { id: 'creative_music', title: 'Μουσική Εμπειρία', desc: 'Ακούστε μια νέα τραγουδιστή ή τύπο μουσικής, ή παίξτε ένα μουσικό όργανο.', icon: '🎵' },
-                { id: 'creative_write', title: 'Δημιουργική Γραφή', desc: 'Γράψε μια ιστορία, ένα ποίημα ή ένα κείμενο για οτιδήποτε θέλεις.', icon: '✍️' }
+                { id: 'creative_art', titleKey: 'MISSION_CREATIVE_ART', descKey: 'MISSION_CREATIVE_ART_DESC', icon: '🎨' },
+                { id: 'creative_music', titleKey: 'MISSION_CREATIVE_MUSIC', descKey: 'MISSION_CREATIVE_MUSIC_DESC', icon: '🎵' },
+                { id: 'creative_write', titleKey: 'MISSION_CREATIVE_WRITE', descKey: 'MISSION_CREATIVE_WRITE_DESC', icon: '✍️' }
             ]
         },
         {
             id: 'social',
-            name: 'Κοινωνία',
-            description: 'Συνδεθείτε με τους άλλους και δημιουργήστε ισχυρές σχέσεις!',
+            nameKey: 'CAT_SOCIAL',
+            descriptionKey: 'CAT_SOCIAL_DESC',
             icon: '💖',
             color: 'from-red-500 to-pink-500',
             missions: [
-                { id: 'social_call', title: 'Φιλική κλήση', desc: 'Κάλεσε ή στείλε ένα μήνυμα σε ένα φίλο ή μέλος της οικογένειας που δεν έχεις μιλήσει από καιρό.', icon: '📞' },
-                { id: 'social_help', title: 'Βοήθεια', desc: 'Βοήθησε κάποιον με ένα μικρό πράγμα σήμερα. Η καλοσύνη κάνει τον κόσμο καλύτερο.', icon: '💖' },
-                { id: 'social_meet', title: 'Συνάντηση', desc: 'Συναντήστε με κάποιον πρόσωπο για ένα καφέ ή ένα βόλτα, αν μπορείτε.', icon: '☕' }
+                { id: 'social_call', titleKey: 'MISSION_SOCIAL_CALL', descKey: 'MISSION_SOCIAL_CALL_DESC', icon: '📞' },
+                { id: 'social_help', titleKey: 'MISSION_SOCIAL_HELP', descKey: 'MISSION_SOCIAL_HELP_DESC', icon: '💖' },
+                { id: 'social_meet', titleKey: 'MISSION_SOCIAL_MEET', descKey: 'MISSION_SOCIAL_MEET_DESC', icon: '☕' }
             ]
         }
     ];
@@ -5281,7 +5281,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         }`}
                     >
                         <span className="text-lg">{category.icon}</span>
-                        <span className="font-bold text-sm uppercase tracking-wide">{category.name}</span>
+                        <span className="font-bold text-sm uppercase tracking-wide">{t(category.nameKey)}</span>
                     </button>
                 ))}
             </div>
@@ -5292,9 +5292,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                     <div className="space-y-1">
                         <h4 className="text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
                             <span>{category.icon}</span>
-                            {category.name}
+                            {t(category.nameKey)}
                         </h4>
-                        <p className="text-sm text-gray-400 font-medium">{category.description}</p>
+                        <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
                     <div className="grid grid-cols-1 gap-4">
                         {category.missions.map(m => (
