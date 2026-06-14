@@ -2151,7 +2151,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
-    const shouldBlur = post.is18Plus && Boolean(user?.settings?.blur18Plus) && !revealed && !isOwner;
+    const shouldBlur = post.is18Plus && !revealed && !isOwner;
     const canDelete = isOwner || isCurrentUserFounder;
     const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
@@ -2314,7 +2314,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {post.desc && (
                                 <div className="space-y-2">
                                     {shouldBlur ? (
-                                        <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl cursor-pointer" onClick={() => setRevealed(true)}>
+                                        <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl cursor-pointer" onClick={(e) => { e.stopPropagation(); if (window.confirm("WARNING: This content is intended for audiences 18 years and older. Do you wish to proceed?")) { setRevealed(true); } }}>
                                             <Icons.Lock className="w-4 h-4 text-red-500 shrink-0" />
                                             <div className="text-left">
                                                 <span className="text-xs font-black text-red-500 uppercase tracking-widest block">{t('NSFW_CONTENT_LOCKED')}</span>
@@ -2375,7 +2375,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         )}
                                     </div>
                                     {shouldBlur && (
-                                        <div onClick={(e) => { e.stopPropagation(); setRevealed(true); }} className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center cursor-pointer p-4 transition-all hover:bg-black/90" style={{ touchAction: 'manipulation' }}>
+                                        <div onClick={(e) => { e.stopPropagation(); if (window.confirm("WARNING: This content is intended for audiences 18 years and older. Do you wish to proceed?")) { setRevealed(true); } }} className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center cursor-pointer p-4 transition-all hover:bg-black/90" style={{ touchAction: 'manipulation' }}>
                                             <div className="w-14 h-14 rounded-full liquid-glass-control flex items-center justify-center text-red-400 mb-3 pointer-events-auto">
                                                 <Icons.EyeOff className="w-7 h-7" />
                                             </div>
@@ -3234,6 +3234,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showBadge, setShowBadge] = useState(user?.settings?.showBadge === true);
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
     const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus === true);
+    const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
@@ -3275,6 +3276,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setShowBadge(user.settings?.showBadge === true);
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
             setBlur18Plus(user.settings?.blur18Plus === true);
+            setIs18PlusProfile(user.settings?.is18PlusProfile === true);
         }
     }, [user, isOpen]);
 
@@ -3314,6 +3316,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showBadge') payload = { settings: { showBadge: Boolean(val) } };
             if (key === 'badgeColor') payload = { settings: { badgeColor: String(val) } };
             if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
+            if (key === 'is18PlusProfile') payload = { settings: { is18PlusProfile: Boolean(val) } };
             if (key === 'showProfileShareButton') {
                 const nextToggleValue = Boolean(val);
                 const baseUser = latestUserRef.current || user || {};
@@ -3346,6 +3349,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showBadge') setShowBadge(Boolean(val));
             if (key === 'badgeColor') setBadgeColor(String(val));
             if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
+            if (key === 'is18PlusProfile') setIs18PlusProfile(Boolean(val));
 
         } catch (e) {
             console.error("Settings update failed", e);
@@ -3354,6 +3358,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showProfileShareButton') setShowProfileShareButton(!Boolean(val));
             if (key === 'showBadge') setShowBadge(!Boolean(val));
             if (key === 'blur18Plus') setBlur18Plus(!Boolean(val));
+            if (key === 'is18PlusProfile') setIs18PlusProfile(!Boolean(val));
         } finally {
             if (key === 'showProfileShareButton') pendingShareToggleRef.current = null;
             setSaving(false);
@@ -3601,6 +3606,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <SettingRow label={t('BLUR_18_PLUS')} desc={t('BLUR_18_PLUS_DESC')}>
                                 <Toggle active={blur18Plus} onToggle={() => { const v = !blur18Plus; setBlur18Plus(v); handleSave('blur18Plus', v); }} saving={saving} color="blue" />
                             </SettingRow>
+                            <SettingRow label={t('IS_18_PLUS_PROFILE', '18+ Profile (NSFW)')} desc={t('IS_18_PLUS_PROFILE_DESC', 'Require age verification for visitors')}>
+                                <Toggle active={is18PlusProfile} onToggle={() => { const v = !is18PlusProfile; setIs18PlusProfile(v); handleSave('is18PlusProfile', v); }} saving={saving} color="red" />
+                            </SettingRow>
                         </SettingsGroup>
                     </section>
 
@@ -3677,7 +3685,258 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, onNavigate, onViewProfile, onOpenSettings, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
+const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
+    const { t } = useTranslation(user);
+    const [sharesPrice, setSharesPrice] = useState(1.25);
+    const [depositAmount, setDepositAmount] = useState('');
+    const [withdrawAmount, setWithdrawAmount] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(null);
+    const [successMsg, setSuccessMsg] = useState(null);
+
+    const fetchPrice = async () => {
+        try {
+            const res = await axios.get('/users/shares/price');
+            setSharesPrice(res.data.price);
+        } catch (e) {
+            console.error("Failed to fetch share price", e);
+        }
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchPrice();
+            const interval = setInterval(fetchPrice, 10000);
+            return () => clearInterval(interval);
+        }
+    }, [isOpen]);
+
+    if (!isOpen) return null;
+
+    const remainingDays = (() => {
+        if (!user?.subscriptionEndDate) return 0;
+        const diff = new Date(user.subscriptionEndDate) - new Date();
+        return diff > 0 ? Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24))) : 0;
+    })();
+
+    const portfolioValue = parseFloat(((user?.sharesBalance || 0) * sharesPrice).toFixed(2));
+
+    const handleDeposit = async (e) => {
+        e.preventDefault();
+        const amt = parseFloat(depositAmount);
+        if (isNaN(amt) || amt <= 0) return;
+        setLoading(true);
+        setErrorMsg(null);
+        setSuccessMsg(null);
+        try {
+            const res = await axios.post('/users/shares/deposit', { amountUSD: amt });
+            const updatedUser = res.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            if (onUpdateUser) onUpdateUser(updatedUser);
+            setSuccessMsg(`Simulated deposit of $${amt.toFixed(2)} completed successfully!`);
+            setDepositAmount('');
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || err.response?.data || "Deposit failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleWithdraw = async (e) => {
+        e.preventDefault();
+        const amt = parseFloat(withdrawAmount);
+        if (isNaN(amt) || amt <= 0) return;
+        setLoading(true);
+        setErrorMsg(null);
+        setSuccessMsg(null);
+        try {
+            const res = await axios.post('/users/shares/withdraw', { sharesAmount: amt });
+            const updatedUser = res.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            if (onUpdateUser) onUpdateUser(updatedUser);
+            setSuccessMsg(`Simulated withdrawal of ${amt.toFixed(4)} shares submitted!`);
+            setWithdrawAmount('');
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || err.response?.data || "Withdrawal failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleExtend = async () => {
+        if ((user?.sharesBalance || 0) < 10) {
+            setErrorMsg("You need at least 10 Legacy Shares to extend subscription.");
+            return;
+        }
+        setLoading(true);
+        setErrorMsg(null);
+        setSuccessMsg(null);
+        try {
+            const res = await axios.post('/users/shares/buy-subscription');
+            const updatedUser = res.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            if (onUpdateUser) onUpdateUser(updatedUser);
+            setSuccessMsg("Subscription successfully extended by 30 days!");
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || err.response?.data || "Redemption failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
+            <div className="bg-[#050505] border border-white/10 rounded-[28px] max-w-[480px] w-full max-h-[90vh] overflow-y-auto no-scrollbar relative flex flex-col p-6 sm:p-8 text-left box-border shadow-2xl">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-80" />
+
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">Empire Capital & Sub</h2>
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-white/5 text-red-500 hover:scale-105 active:scale-95 transition-all">
+                        <Icons.X className="w-6 h-6" />
+                    </button>
+                </div>
+
+                {errorMsg && (
+                    <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-bold uppercase tracking-wider leading-relaxed">
+                        {errorMsg}
+                    </div>
+                )}
+                {successMsg && (
+                    <div className="mb-4 p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-xs font-bold uppercase tracking-wider leading-relaxed">
+                        {successMsg}
+                    </div>
+                )}
+
+                <div className="mb-6 p-5 bg-white/[0.02] border border-white/5 rounded-2xl">
+                    <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Premium Membership Status</h3>
+                    <div className="flex justify-between items-center flex-wrap gap-3">
+                        <div>
+                            <span className="text-2xl font-black text-white">{remainingDays} <span className="text-sm text-gray-400 uppercase font-bold tracking-wider">Days left</span></span>
+                            <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-wider font-bold mt-1">
+                                {remainingDays > 0 ? "Active Premium Access" : "Access Expired"}
+                            </div>
+                        </div>
+                        <button 
+                            onClick={handleExtend}
+                            disabled={loading || (user?.sharesBalance || 0) < 10}
+                            className={`px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                (user?.sharesBalance || 0) >= 10
+                                    ? "bg-[var(--gold-primary)] hover:bg-[#ffb700] text-black hover:scale-105"
+                                    : "bg-white/5 text-gray-500 cursor-not-allowed border border-white/10"
+                            }`}
+                        >
+                            Redeem 30 Days (10 Shares)
+                        </button>
+                    </div>
+                </div>
+
+                <div className="mb-6 p-5 bg-gradient-to-br from-[#1A1A2E]/50 to-[#16213E]/50 border border-sky-500/15 rounded-2xl">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="text-xs font-black text-sky-400 uppercase tracking-widest mb-1">Legacy Shares (Crypto)</h3>
+                            <div className="text-3xl font-black text-white tracking-tight">{(user?.sharesBalance || 0).toFixed(4)} <span className="text-xs text-sky-300 font-bold uppercase tracking-wider">LGS</span></div>
+                        </div>
+                        <div className="text-right">
+                            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Portfolio Value</h3>
+                            <div className="text-xl font-black text-green-400">${portfolioValue.toFixed(2)}</div>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-5 pt-3 border-t border-white/5 flex-wrap gap-2">
+                        <div>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Live Price: </span>
+                            <span className="text-sm font-black text-white tracking-wide">${sharesPrice.toFixed(4)}</span>
+                        </div>
+                        <div>
+                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Invested: </span>
+                            <span className="text-sm font-bold text-gray-300">${(user?.totalDeposited || 0).toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <form onSubmit={handleDeposit} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl flex flex-col justify-between">
+                        <div>
+                            <h4 className="text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest mb-2">Deposit (USD)</h4>
+                            <input 
+                                type="number" 
+                                placeholder="Amount in USD"
+                                value={depositAmount}
+                                onChange={(e) => setDepositAmount(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[var(--gold-primary)]"
+                                min="1"
+                                step="any"
+                            />
+                        </div>
+                        <button 
+                            type="submit"
+                            disabled={loading || !depositAmount}
+                            className="mt-3 w-full py-2.5 bg-[var(--gold-primary)] text-black rounded-lg text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-transform"
+                        >
+                            Deposit Funds
+                        </button>
+                    </form>
+
+                    <form onSubmit={handleWithdraw} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl flex flex-col justify-between">
+                        <div>
+                            <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2">Withdraw (Shares)</h4>
+                            <input 
+                                type="number" 
+                                placeholder="Shares to sell"
+                                value={withdrawAmount}
+                                onChange={(e) => setWithdrawAmount(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-red-400/50"
+                                min="0.0001"
+                                step="any"
+                            />
+                        </div>
+                        <button 
+                            type="submit"
+                            disabled={loading || !withdrawAmount}
+                            className="mt-3 w-full py-2.5 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:scale-105 active:scale-95 transition-transform"
+                        >
+                            Withdraw Shares
+                        </button>
+                    </form>
+                </div>
+
+                {user?.transactionHistory?.length > 0 && (
+                    <div className="flex-1 flex flex-col min-h-[120px]">
+                        <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Transaction History</h3>
+                        <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar pr-1">
+                            {[...user.transactionHistory].reverse().map((tx, idx) => {
+                                const isDep = tx.type === 'deposit';
+                                const isExtend = tx.type === 'subscription_extend';
+                                return (
+                                    <div key={idx} className="flex justify-between items-center p-2.5 bg-white/[0.01] border border-white/5 rounded-lg text-[11px]">
+                                        <div>
+                                            <span className={`font-bold ${isDep ? 'text-green-400' : isExtend ? 'text-[var(--gold-primary)]' : 'text-red-400'} uppercase tracking-wider`}>
+                                                {isDep ? 'Deposit' : isExtend ? 'Membership Extend' : 'Withdrawal Pending'}
+                                            </span>
+                                            <span className="text-gray-500 block text-[9px] mt-0.5">{new Date(tx.createdAt).toLocaleString()}</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-white">
+                                                {isDep ? `+$${tx.amountUSD.toFixed(2)}` : isExtend ? '-10 Shares' : `-$${tx.amountUSD.toFixed(2)}`}
+                                            </div>
+                                            {tx.shares > 0 && (
+                                                <span className="text-[9px] text-gray-400 font-bold uppercase mt-0.5 block">
+                                                    {isDep ? `+${tx.shares.toFixed(4)} Shares` : isExtend ? '+30 Days' : `-${tx.shares.toFixed(4)} Shares`}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, onNavigate, onViewProfile, onOpenSettings, onOpenSubscription, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
     const [isClosing, setIsClosing] = useState(false);
 
     // Calculate remaining subscription time with smart display
@@ -3801,7 +4060,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     </svg>
                                 ),
                                 label: t('SUBSCRIPTION') || 'Subscription',
-                                action: () => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05",
+                                action: onOpenSubscription,
                                 isSubscription: true
                             },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
@@ -3957,7 +4216,13 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
         { id: '5am', titleKey: 'MISSION_5AM', descKey: 'MISSION_5AM_DESC', icon: '⏰' },
         { id: 'gym', titleKey: 'MISSION_GYM', descKey: 'MISSION_GYM_DESC', icon: '💪' },
         { id: 'read', titleKey: 'MISSION_READ', descKey: 'MISSION_READ_DESC', icon: '📚' },
-        { id: 'deep_work', titleKey: 'MISSION_DEEP_WORK', descKey: 'MISSION_DEEP_WORK_DESC', icon: '💻' }
+        { id: 'deep_work', titleKey: 'MISSION_DEEP_WORK', descKey: 'MISSION_DEEP_WORK_DESC', icon: '💻' },
+        { id: 'cold_shower', titleKey: 'MISSION_COLD_SHOWER', descKey: 'MISSION_COLD_SHOWER_DESC', icon: '🥶' },
+        { id: 'healthy_meal', titleKey: 'MISSION_HEALTHY_MEAL', descKey: 'MISSION_HEALTHY_MEAL_DESC', icon: '🥩' },
+        { id: 'no_scrolling', titleKey: 'MISSION_NO_SCROLLING', descKey: 'MISSION_NO_SCROLLING_DESC', icon: '📵' },
+        { id: 'networking', titleKey: 'MISSION_NETWORKING', descKey: 'MISSION_NETWORKING_DESC', icon: '🤝' },
+        { id: 'planning', titleKey: 'MISSION_PLANNING', descKey: 'MISSION_PLANNING_DESC', icon: '📝' },
+        { id: 'cardio', titleKey: 'MISSION_CARDIO', descKey: 'MISSION_CARDIO_DESC', icon: '🏃‍♂️' }
     ];
 
     return (
@@ -4065,6 +4330,10 @@ const ProfileModal = ({
         }
     }, [profileUser, allUsers]);
     const [clickLock, setClickLock] = useState(false);
+    const [confirmed18Plus, setConfirmed18Plus] = useState(false);
+    useEffect(() => {
+        setConfirmed18Plus(false);
+    }, [profileUser?._id, isOpen]);
     const lastOpenedAt = useRef(Date.now());
     const [bio, setBio] = useState(profileUser?.bio || "");
     const [editUsername, setEditUsername] = useState(profileUser?.username || "");
@@ -4996,8 +5265,38 @@ const ProfileModal = ({
                                 })}
                             </div>
 
-                            {/* PRIVACY LOCK SCREEN */}
-                            {displayUser?.isPrivate && !isMe && !isFollowing ? (
+                            {/* 18+ WARNING LOCK SCREEN */}
+                            {displayUser?.settings?.is18PlusProfile && !isMe && !confirmed18Plus ? (
+                                <div className="p-12 text-center space-y-6 bg-red-950/20 border border-red-500/20 rounded-3xl mt-4 animate-fade-in group mx-2">
+                                    <div className="w-20 h-20 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-red-500/30 group-hover:text-red-400 relative overflow-hidden">
+                                        <Icons.AlertCircle className="w-10 h-10 text-red-500 group-hover:text-red-400 relative z-10" />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h3 className="font-black text-red-500 text-xl uppercase tracking-[0.2em]">18+ WARNING</h3>
+                                        <div className="h-0.5 w-12 bg-red-500 mx-auto opacity-50" />
+                                        <p className="text-gray-300 text-[12px] uppercase tracking-widest leading-relaxed mx-auto max-w-[280px] font-bold">
+                                            This profile contains 18+ (NSFW) content. You must be 18 years of age or older to view this profile.
+                                        </p>
+                                        <p className="text-gray-400 text-[11px] font-medium leading-relaxed mx-auto max-w-[280px]">
+                                            Are you 18 years or older?
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                                        <button 
+                                            onClick={() => setConfirmed18Plus(true)} 
+                                            className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase shadow-lg shadow-red-950/45 transition-all"
+                                        >
+                                            Yes, I am 18+
+                                        </button>
+                                        <button 
+                                            onClick={onClose} 
+                                            className="px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase transition-all"
+                                        >
+                                            No, go back
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : displayUser?.isPrivate && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
                                     <div className="w-20 h-20 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:text-white relative overflow-hidden">
                                         <Icons.Shield className="w-10 h-10 text-gray-500 group-hover:text-white relative z-10" />
@@ -6222,6 +6521,7 @@ const App = () => {
     const [createModeStory, setCreateModeStory] = useState(false);
     const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isTermsOpen, setIsTermsOpen] = useState(false);
     const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
@@ -8491,6 +8791,7 @@ const App = () => {
                         }}
                         onViewProfile={viewProfile}
                         onOpenSettings={() => setIsSettingsOpen(true)}
+                        onOpenSubscription={() => setIsSubscriptionOpen(true)}
                         onOpenTerms={() => setIsTermsOpen(true)}
                         onOpenPrivacy={() => setIsPrivacyOpen(true)}
                         onLogout={logout}
@@ -8498,6 +8799,7 @@ const App = () => {
                         t={t}
                     />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
+                    <SubscriptionModal isOpen={isSubscriptionOpen} onClose={() => setIsSubscriptionOpen(false)} user={user} onUpdateUser={handleUpdateUser} />
 
                     <LegalModal
                         isOpen={isTermsOpen}

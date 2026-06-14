@@ -180,6 +180,11 @@ router.get("/public/posts/:username", async (req, res) => {
         if (usernameParam.match(/^[0-9a-fA-F]{24}$/)) query.$or.push({ _id: usernameParam });
         const user = await User.findOne(query);
         if (!user) return res.status(404).json("Agent not found.");
+
+        if (user.isPrivate || user.isFollowersOnly) {
+            return res.status(403).json("Intel is encrypted. Profile is private.");
+        }
+
         const posts = await Post.find({
             isStory: { $ne: true },
             $or: [
@@ -645,6 +650,137 @@ router.post("/mission/complete", verifyToken, async (req, res) => {
     } catch (err) {
         console.error("Mission Complete Error:", err);
         res.status(500).json({ error: "System failure during mission completion.", detail: err.message });
+    }
+});
+
+// SIMULATED STOCK/CRYPTO SHARES SYSTEM
+const getCurrentSharePrice = () => {
+    const basePrice = 1.25;
+    const time = Date.now();
+    const dateFactor = Math.sin(time / (1000 * 60 * 60 * 24)) * 0.25; // daily cycle +/- 0.25
+    const hourlyFactor = Math.cos(time / (1000 * 60 * 60)) * 0.08;   // hourly cycle +/- 0.08
+    const noise = Math.sin(time / (1000 * 10)) * 0.01;              // mini noise every 10 seconds
+    return parseFloat((basePrice + dateFactor + hourlyFactor + noise).toFixed(4));
+};
+
+router.get("/shares/price", verifyToken, (req, res) => {
+    res.json({ price: getCurrentSharePrice() });
+});
+
+router.post("/shares/deposit", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const amountUSD = parseFloat(req.body.amountUSD);
+        if (!amountUSD || isNaN(amountUSD) || amountUSD <= 0) {
+            return res.status(400).json("Invalid deposit amount.");
+        }
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("User not found.");
+
+        const price = getCurrentSharePrice();
+        const sharesBought = parseFloat((amountUSD / price).toFixed(6));
+
+        user.sharesBalance = parseFloat(((user.sharesBalance || 0) + sharesBought).toFixed(6));
+        user.totalDeposited = parseFloat(((user.totalDeposited || 0) + amountUSD).toFixed(2));
+        user.transactionHistory.push({
+            type: 'deposit',
+            amountUSD: parseFloat(amountUSD.toFixed(2)),
+            shares: sharesBought,
+            price: price,
+            createdAt: new Date()
+        });
+
+        await user.save();
+
+        const updatedUser = await User.findById(userId).select('-password');
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Deposit error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post("/shares/withdraw", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const sharesAmount = parseFloat(req.body.sharesAmount);
+        if (!sharesAmount || isNaN(sharesAmount) || sharesAmount <= 0) {
+            return res.status(400).json("Invalid withdrawal amount.");
+        }
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("User not found.");
+
+        if ((user.sharesBalance || 0) < sharesAmount) {
+            return res.status(400).json("Insufficient shares balance.");
+        }
+
+        const price = getCurrentSharePrice();
+        const usdValue = parseFloat((sharesAmount * price).toFixed(2));
+
+        user.sharesBalance = parseFloat(((user.sharesBalance || 0) - sharesAmount).toFixed(6));
+        user.transactionHistory.push({
+            type: 'withdraw_pending',
+            amountUSD: usdValue,
+            shares: parseFloat(sharesAmount.toFixed(6)),
+            price: price,
+            createdAt: new Date()
+        });
+
+        await user.save();
+
+        const updatedUser = await User.findById(userId).select('-password');
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Withdrawal error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post("/shares/buy-subscription", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const cost = 10; // 10 shares for 30 days
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("User not found.");
+
+        if ((user.sharesBalance || 0) < cost) {
+            return res.status(400).json("Insufficient shares balance. You need 10 shares.");
+        }
+
+        user.sharesBalance = parseFloat(((user.sharesBalance || 0) - cost).toFixed(6));
+
+        const daysMs = 30 * 24 * 60 * 60 * 1000;
+        const currentEnd = user.subscriptionEndDate ? new Date(user.subscriptionEndDate).getTime() : Date.now();
+        const newEnd = Math.max(currentEnd, Date.now()) + daysMs;
+        user.subscriptionEndDate = new Date(newEnd);
+
+        user.transactionHistory.push({
+            type: 'subscription_extend',
+            amountUSD: 0,
+            shares: cost,
+            price: 0,
+            createdAt: new Date()
+        });
+
+        await user.save();
+
+        const updatedUser = await User.findById(userId).select('-password');
+        const io = req.app.get('io');
+        if (io) io.emit('user.updated', updatedUser);
+
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error("Renew sub error:", err);
+        res.status(500).json({ error: err.message });
     }
 });
 

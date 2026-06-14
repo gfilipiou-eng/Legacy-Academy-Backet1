@@ -341,5 +341,19 @@
   "MISSION_5AM_DESC": "Rise before 5:00 AM and dominate the day.",
   "MISSION_GYM_DESC": "Complete a heavy workout session in the gym.",
   "MISSION_READ_DESC": "Read at least 10 pages of a book.",
-  "MISSION_DEEP_WORK_DESC": "Work on your projects for 4 hours without distraction."
+  "MISSION_DEEP_WORK_DESC": "Work on your projects for 4 hours without distraction.",
+  "IS_18_PLUS_PROFILE": "18+ Profile (NSFW)",
+  "IS_18_PLUS_PROFILE_DESC": "Require visitors to verify they are 18+ before viewing your profile.",
+  "MISSION_COLD_SHOWER": "Cold Shower",
+  "MISSION_COLD_SHOWER_DESC": "Take a cold shower first thing in the morning to build mental toughness.",
+  "MISSION_HEALTHY_MEAL": "High-Protein Fuel",
+  "MISSION_HEALTHY_MEAL_DESC": "Eat a clean, high-protein meal. No junk food, no sugars, pure fuel.",
+  "MISSION_NO_SCROLLING": "Digital Detox",
+  "MISSION_NO_SCROLLING_DESC": "Avoid mindless scrolling on social media for at least 6 hours.",
+  "MISSION_NETWORKING": "High-Value Connection",
+  "MISSION_NETWORKING_DESC": "Reach out to one high-value person or business contact.",
+  "MISSION_PLANNING": "Strategic Planning",
+  "MISSION_PLANNING_DESC": "Write down your goals for tomorrow. Master your time, execute precisely.",
+  "MISSION_CARDIO": "Cardio Assault",
+  "MISSION_CARDIO_DESC": "Complete a 5km run or 30 minutes of intense cardio activity."
 }

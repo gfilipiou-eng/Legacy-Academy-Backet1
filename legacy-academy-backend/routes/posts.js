@@ -50,7 +50,7 @@ router.get("/", verifyToken, async (req, res) => {
         const limit = parseInt(req.query.limit) || 20;
         const posts = await Post.find()
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
-            .populate("repostedBy", "username profilePic role settings")
+            .populate("repostedBy", "username profilePic role isPrivate isFollowersOnly followers settings")
             .populate("comments.user", "username profilePic role settings")
             .sort({ createdAt: -1 })
             .lean();
@@ -58,11 +58,26 @@ router.get("/", verifyToken, async (req, res) => {
         const currentUserId = String(req.user?.id || req.user?.userId || '');
         const isFounder = req.user?.role === 'Founder';
         const filtered = posts.filter(p => {
+            // Check original author privacy
             const a = p.author || {};
-            const isOwner = String(a?._id || a) === currentUserId;
-            const isFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
-            const isPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
-            return !isPrivate || isOwner || isFollower || isFounder;
+            const isAuthorOwner = String(a?._id || a) === currentUserId;
+            const isAuthorFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+            const isAuthorPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+            const authorAllowed = !isAuthorPrivate || isAuthorOwner || isAuthorFollower || isFounder;
+
+            if (!authorAllowed) return false;
+
+            // If it is a repost, check reposter privacy
+            if (p.isRepost && p.repostedBy) {
+                const r = p.repostedBy || {};
+                const isReposterOwner = String(r?._id || r) === currentUserId;
+                const isReposterFollower = Array.isArray(r?.followers) && r.followers.some(id => String(id) === currentUserId);
+                const isReposterPrivate = !!(r?.isPrivate || r?.isFollowersOnly);
+                const reposterAllowed = !isReposterPrivate || isReposterOwner || isReposterFollower || isFounder;
+                if (!reposterAllowed) return false;
+            }
+
+            return true;
         });
         res.status(200).json(filtered.slice(0, limit));
     } catch (err) {
@@ -171,12 +186,35 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
             ]
         })
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
-            .populate("repostedBy", "username profilePic role settings")
+            .populate("repostedBy", "username profilePic role isPrivate isFollowersOnly followers settings")
             .populate("comments.user", "username profilePic role settings")
             .sort({ createdAt: -1 })
             .lean();
 
-        res.status(200).json(posts);
+        const filtered = posts.filter(p => {
+            // Check original author privacy
+            const a = p.author || {};
+            const isAuthorOwner = String(a?._id || a) === currentUserId;
+            const isAuthorFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+            const isAuthorPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+            const authorAllowed = !isAuthorPrivate || isAuthorOwner || isAuthorFollower || isFounder;
+
+            if (!authorAllowed) return false;
+
+            // If it is a repost, check reposter privacy
+            if (p.isRepost && p.repostedBy) {
+                const r = p.repostedBy || {};
+                const isReposterOwner = String(r?._id || r) === currentUserId;
+                const isReposterFollower = Array.isArray(r?.followers) && r.followers.some(id => String(id) === currentUserId);
+                const isReposterPrivate = !!(r?.isPrivate || r?.isFollowersOnly);
+                const reposterAllowed = !isReposterPrivate || isReposterOwner || isReposterFollower || isFounder;
+                if (!reposterAllowed) return false;
+            }
+
+            return true;
+        });
+
+        res.status(200).json(filtered);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -525,10 +563,42 @@ router.delete("/:id", verifyToken, async (req, res) => {
     }
 });
 
-// GET POST BY ID (for Modal?)
-router.get("/find/:id", async (req, res) => {
+// GET POST BY ID
+router.get("/find/:id", verifyToken, async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id).populate("author").populate("comments.user", "username profilePic role settings");
+        const post = await Post.findById(req.params.id)
+            .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
+            .populate("repostedBy", "username profilePic role isPrivate isFollowersOnly followers settings")
+            .populate("comments.user", "username profilePic role settings");
+
+        if (!post) return res.status(404).json("Post not found");
+
+        const currentUserId = String(req.user?.id || req.user?.userId || '');
+        const isFounder = req.user?.role === 'Founder';
+
+        // Check author privacy
+        const a = post.author || {};
+        const isAuthorOwner = String(a?._id || a) === currentUserId;
+        const isAuthorFollower = Array.isArray(a?.followers) && a.followers.some(id => String(id) === currentUserId);
+        const isAuthorPrivate = !!(a?.isPrivate || a?.isFollowersOnly);
+        const authorAllowed = !isAuthorPrivate || isAuthorOwner || isAuthorFollower || isFounder;
+
+        if (!authorAllowed) {
+            return res.status(403).json("Intel is encrypted. Clearance restricted.");
+        }
+
+        // Check reposter privacy (if it's a repost)
+        if (post.isRepost && post.repostedBy) {
+            const r = post.repostedBy || {};
+            const isReposterOwner = String(r?._id || r) === currentUserId;
+            const isReposterFollower = Array.isArray(r?.followers) && r.followers.some(id => String(id) === currentUserId);
+            const isReposterPrivate = !!(r?.isPrivate || r?.isFollowersOnly);
+            const reposterAllowed = !isReposterPrivate || isReposterOwner || isReposterFollower || isFounder;
+            if (!reposterAllowed) {
+                return res.status(403).json("Intel is encrypted. Clearance restricted.");
+            }
+        }
+
         res.status(200).json(post);
     } catch (err) {
         res.status(500).json(err);

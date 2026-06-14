@@ -91,11 +91,32 @@ const UserSchema = new mongoose.Schema(
             showProfileShareButton: { type: Boolean, default: true },
             showBadge: { type: Boolean, default: true },
             badgeColor: { type: String, default: 'blue' },
-            blur18Plus: { type: Boolean, default: false }
+            blur18Plus: { type: Boolean, default: false },
+            is18PlusProfile: { type: Boolean, default: false }
+        },
+        sharesBalance: {
+            type: Number,
+            default: 0
+        },
+        totalDeposited: {
+            type: Number,
+            default: 0
+        },
+        transactionHistory: {
+            type: [
+                {
+                    type: { type: String, enum: ['deposit', 'withdraw_pending', 'subscription_extend'] },
+                    amountUSD: { type: Number },
+                    shares: { type: Number },
+                    price: { type: Number },
+                    createdAt: { type: Date, default: Date.now }
+                }
+            ],
+            default: []
         },
         subscriptionEndDate: {
             type: Date,
-            default: null
+            default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         },
         notifications: [
             {
