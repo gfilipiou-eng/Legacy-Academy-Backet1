@@ -489,10 +489,12 @@ const fetchFounderAffiliationUser = async (username) => {
     }
 
     const request = axios
-        .get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 8000 })
+        .get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 3000 })
         .then((res) => {
             const user = res.data || null;
             founderAffiliationUserCache.set(normalizedUsername, user);
+            // Cache for 10 minutes
+            setTimeout(() => founderAffiliationUserCache.delete(normalizedUsername), 10 * 60 * 1000);
             return user;
         })
         .catch(() => null)
