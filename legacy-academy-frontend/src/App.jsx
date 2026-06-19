@@ -17,7 +17,7 @@ import BottomNavbar from './components/BottomNavbar';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
-const APP_ASSET_VERSION = '20260612a';
+const APP_ASSET_VERSION = '20260620a';
 const ASSET_PATHS = {
     favicon: `/favicon.png?v=${APP_ASSET_VERSION}`,
     applogo: `/Applogo.png?v=${APP_ASSET_VERSION}`,
@@ -9267,7 +9267,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-20 sm:h-24 md:h-28 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
+                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
@@ -9633,7 +9633,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-11 sm:h-12 md:h-13 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
+                                            className="h-16 sm:h-18 md:h-20 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
