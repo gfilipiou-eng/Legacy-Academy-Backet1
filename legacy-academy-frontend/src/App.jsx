@@ -1012,6 +1012,138 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     );
 };
 
+const playCyberSFX = (type = 'click') => {
+    if (localStorage.getItem('cyberSFX') === 'false') return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.04, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.08);
+        } else if (type === 'success') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(500, ctx.currentTime);
+            osc.frequency.setValueAtTime(800, ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+        }
+    } catch (e) {}
+};
+
+const MatrixBackground = () => {
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let animationId;
+
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const columns = Math.floor(canvas.width / 20);
+        const yPositions = Array(columns).fill(0);
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZΛΞC';
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#D4AF37'; // Gold
+            ctx.font = '12px monospace';
+
+            for (let i = 0; i < yPositions.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                const x = i * 20;
+                const y = yPositions[i];
+                ctx.fillText(char, x, y);
+
+                if (y > 100 + Math.random() * 10000) {
+                    yPositions[i] = 0;
+                } else {
+                    yPositions[i] += 20;
+                }
+            }
+            animationId = requestAnimationFrame(draw);
+        };
+
+        draw();
+
+        return () => {
+            window.removeEventListener('resize', resize);
+            cancelAnimationFrame(animationId);
+        };
+    }, []);
+
+    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none z-0" />;
+};
+
+const NeuralNarratorButton = ({ text }) => {
+    const [speaking, setSpeaking] = useState(false);
+
+    const handleNarrate = (e) => {
+        e.stopPropagation();
+        playCyberSFX('click');
+        if (speaking) {
+            window.speechSynthesis.cancel();
+            setSpeaking(false);
+            return;
+        }
+
+        const cleanText = String(text || '').replace(/#\w+/g, '').replace(/@\w+/g, '').trim();
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.onend = () => setSpeaking(false);
+        utterance.onerror = () => setSpeaking(false);
+        
+        utterance.rate = 1.05;
+        utterance.pitch = 0.95;
+
+        setSpeaking(true);
+        window.speechSynthesis.speak(utterance);
+    };
+
+    useEffect(() => {
+        return () => {
+            window.speechSynthesis.cancel();
+        };
+    }, []);
+
+    return (
+        <button
+            onClick={handleNarrate}
+            className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest hover:underline flex items-center gap-1.5 transition-all ${speaking ? 'text-[var(--gold-primary)] opacity-100 animate-pulse' : 'text-white opacity-60 hover:opacity-100'}`}
+        >
+            {speaking ? (
+                <>
+                    <Icons.Volume2 className="w-3.5 h-3.5 text-[var(--gold-primary)]" />
+                    Narrating...
+                </>
+            ) : (
+                <>
+                    <Icons.VolumeX className="w-3.5 h-3.5" />
+                    Narrate
+                </>
+            )}
+        </button>
+    );
+};
+
 const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang, onViewProfile }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
@@ -2002,10 +2134,18 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                         <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{note.sender.missionsStreak}</span>
                     )}
                     <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5" user={note.sender} />
-                    {note?.fromDescriptor && (
+                    {note.sender?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor] ? (
+                        <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].accentClass.replace(/rounded-none/g, '').replace(/!/g, '')}`}>
+                            {React.createElement(PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
+                            <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${note.sender.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].label)}</span>
+                        </div>
+                    ) : (note?.fromDescriptor && (
                         <span className="text-[9px] text-[var(--gold-primary)] bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/20 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-widest shrink-0">
                             {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
                         </span>
+                    ))}
+                    {getFounderAffiliation(note.sender) && (
+                        <FounderAffiliationBadge username={getFounderAffiliation(note.sender)} size="sm" className="scale-90 origin-left shrink-0" />
                     )}
                 </div>
 
@@ -2308,11 +2448,20 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0 w-full max-w-full">
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
-                                    <div className="flex flex-wrap items-start sm:items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
+                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
                                         {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
+                                        {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
+                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
+                                                {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
+                                                <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
+                                            </div>
+                                        )}
+                                        {getFounderAffiliation(author) && (
+                                            <FounderAffiliationBadge username={getFounderAffiliation(author)} size="sm" className="scale-90 origin-left shrink-0" />
+                                        )}
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <CyberDate date={post.createdAt} t={t} lang={lang} />
@@ -2344,14 +2493,19 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 })}
                                             </p>
                                             {!isReadOnly && (
-                                                <button
-                                                    onClick={handleTranslate}
-                                                    disabled={isTranslating}
-                                                    className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
-                                                >
-                                                    <Icons.Globe className={`w-3 h-3 ${isTranslating ? 'animate-spin' : ''}`} />
-                                                    {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
-                                                </button>
+                                                <div className="flex flex-wrap items-center gap-4 mt-1 pb-1">
+                                                    <button
+                                                        onClick={handleTranslate}
+                                                        disabled={isTranslating}
+                                                        className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <Icons.Translate className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                                        {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
+                                                    </button>
+                                                    {localStorage.getItem('neuralNarrator') === 'true' && (
+                                                        <NeuralNarratorButton text={translatedText || post.desc} />
+                                                    )}
+                                                </div>
                                             )}
                                         </>
                                     )}
@@ -3248,6 +3402,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
     const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
+    const [profileDescriptor, setProfileDescriptor] = useState(user?.profileDescriptor || '');
+    const [founderAffiliation, setFounderAffiliation] = useState(user?.founderAffiliation || '');
+    const [matrixOverlay, setMatrixOverlay] = useState(user?.settings?.matrixOverlay === true || localStorage.getItem('matrixOverlay') === 'true');
+    const [cyberSFX, setCyberSFX] = useState(user?.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
+    const [neuralNarrator, setNeuralNarrator] = useState(user?.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
     const [showDanger, setShowDanger] = useState(false);
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
@@ -3290,6 +3449,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
             setBlur18Plus(user.settings?.blur18Plus !== false);
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
+            setProfileDescriptor(user.profileDescriptor || '');
+            setFounderAffiliation(user.founderAffiliation || '');
+            setMatrixOverlay(user.settings?.matrixOverlay === true || localStorage.getItem('matrixOverlay') === 'true');
+            setCyberSFX(user.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
+            setNeuralNarrator(user.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
         }
     }, [user, isOpen]);
 
@@ -3309,7 +3473,30 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 setSaving(false);
                 return;
             }
+            if (key === 'profileDescriptor' || key === 'founderAffiliation') {
+                const res = await axios.put(`/users/${user._id || user.userId}`, { [key]: val });
+                onUpdateUser(res.data);
+                if (key === 'profileDescriptor') setProfileDescriptor(val);
+                if (key === 'founderAffiliation') setFounderAffiliation(val);
+                setSaving(false);
+                return;
+            }
             let payload = { [key]: val };
+            if (key === 'matrixOverlay') {
+                localStorage.setItem('matrixOverlay', String(val));
+                setMatrixOverlay(val);
+                payload = { settings: { matrixOverlay: Boolean(val) } };
+            }
+            if (key === 'cyberSFX') {
+                localStorage.setItem('cyberSFX', String(val));
+                setCyberSFX(val);
+                payload = { settings: { cyberSFX: Boolean(val) } };
+            }
+            if (key === 'neuralNarrator') {
+                localStorage.setItem('neuralNarrator', String(val));
+                setNeuralNarrator(val);
+                payload = { settings: { neuralNarrator: Boolean(val) } };
+            }
             if (key === 'language') payload = { settings: { language: val } };
             if (key === 'theme') payload = { settings: { theme: val } };
             if (key === 'background') {
@@ -3363,6 +3550,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'badgeColor') setBadgeColor(String(val));
             if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(Boolean(val));
+            if (key === 'matrixOverlay') setMatrixOverlay(Boolean(val));
+            if (key === 'cyberSFX') setCyberSFX(Boolean(val));
+            if (key === 'neuralNarrator') setNeuralNarrator(Boolean(val));
 
         } catch (e) {
             console.error("Settings update failed", e);
@@ -3372,6 +3562,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showBadge') setShowBadge(!Boolean(val));
             if (key === 'blur18Plus') setBlur18Plus(!Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(!Boolean(val));
+            if (key === 'matrixOverlay') setMatrixOverlay(!Boolean(val));
+            if (key === 'cyberSFX') setCyberSFX(!Boolean(val));
+            if (key === 'neuralNarrator') setNeuralNarrator(!Boolean(val));
         } finally {
             if (key === 'showProfileShareButton') pendingShareToggleRef.current = null;
             setSaving(false);
@@ -3624,6 +3817,66 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </SettingRow>
                             <SettingRow label={t('IS_18_PLUS_PROFILE', '18+ Profile (NSFW)')} desc={t('IS_18_PLUS_PROFILE_DESC', 'Require age verification for visitors')}>
                                 <Toggle active={is18PlusProfile} onToggle={() => { const v = !is18PlusProfile; setIs18PlusProfile(v); handleSave('is18PlusProfile', v); }} saving={saving} color="red" />
+                            </SettingRow>
+                            <div className="px-4 py-3.5 border-t border-white/5 text-left">
+                                <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('PROFILE_DESCRIPTOR', 'Identity Descriptor')}</div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {PROFILE_DESCRIPTOR_OPTIONS.map((option) => {
+                                        const isSelected = profileDescriptor === option.value;
+                                        const OptionIcon = option.Icon;
+                                        return (
+                                            <button
+                                                key={option.value}
+                                                type="button"
+                                                onClick={() => {
+                                                    const val = isSelected ? '' : option.value;
+                                                    setProfileDescriptor(val);
+                                                    handleSave('profileDescriptor', val);
+                                                }}
+                                                className={`settings-tile-btn p-2.5 rounded-xl border flex items-center gap-2 transition-all text-left ${
+                                                    isSelected ? `${option.accentClass} border-current` : 'border-white/10 bg-white/[0.02] text-white/70'
+                                                }`}
+                                            >
+                                                <OptionIcon className="w-4 h-4 shrink-0" />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className="px-4 py-3.5 border-t border-white/5 text-left">
+                                <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('FOUNDER_AFFILIATION', 'Founder Affiliation')}</div>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gold-primary)] font-black text-sm">@</div>
+                                    <input
+                                        type="text"
+                                        value={founderAffiliation}
+                                        onChange={(e) => setFounderAffiliation(sanitizeAffiliation(e.target.value))}
+                                        onBlur={() => handleSave('founderAffiliation', founderAffiliation)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSave('founderAffiliation', founderAffiliation); }}
+                                        placeholder="affiliated_username"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-8 pr-4 text-white text-sm font-bold placeholder:text-white/20 outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                    />
+                                </div>
+                                <div className="text-[9px] text-gray-500 mt-1.5 font-bold uppercase tracking-wide leading-relaxed pl-1">
+                                    Links your profile to a founder page (shows founder badge next to username).
+                                </div>
+                            </div>
+                        </SettingsGroup>
+                    </section>
+
+                    {/* ── NEURAL UPGRADES ── */}
+                    <section>
+                        <SectionHeader label={t('NEURAL_UPGRADES', 'NEURAL UPGRADES')} />
+                        <SettingsGroup>
+                            <SettingRow label={t('MATRIX_OVERLAY', 'HOLOGRAPHIC MATRIX')} desc={t('MATRIX_OVERLAY_DESC', 'Toggle a glowing matrix digital rain in the background')}>
+                                <Toggle active={matrixOverlay} onToggle={() => { const v = !matrixOverlay; setMatrixOverlay(v); handleSave('matrixOverlay', v); }} saving={saving} color="gold" />
+                            </SettingRow>
+                            <SettingRow label={t('CYBER_SFX', 'INTERFACE AUDIO')} desc={t('CYBER_SFX_DESC', 'Synthesize real-time cybernetic sound effects on action')}>
+                                <Toggle active={cyberSFX} onToggle={() => { const v = !cyberSFX; setCyberSFX(v); handleSave('cyberSFX', v); }} saving={saving} color="blue" />
+                            </SettingRow>
+                            <SettingRow label={t('NEURAL_NARRATOR', 'NEURAL NARRATOR')} desc={t('NEURAL_NARRATOR_DESC', 'Enable Text-To-Speech reader button next to translate button')}>
+                                <Toggle active={neuralNarrator} onToggle={() => { const v = !neuralNarrator; setNeuralNarrator(v); handleSave('neuralNarrator', v); }} saving={saving} color="blue" />
                             </SettingRow>
                         </SettingsGroup>
                     </section>
@@ -4941,7 +5194,6 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
             <div className={`
                 nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(88vw,320px)] sm:w-[300px]
                 flex flex-col pointer-events-auto z-[101] overflow-hidden
-                border-r border-white/10 bg-black/80 backdrop-blur-xl
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}>
                 <div className="flex-none px-4 pt-6 pb-3 flex items-center justify-between border-b border-white/10">
@@ -7588,6 +7840,7 @@ const App = () => {
 
     const isPublicExperience = Boolean(publicProfileUsername || viewPostId);
     const [user, setUser] = useState(null);
+    const [matrixOverlay, setMatrixOverlay] = useState(() => localStorage.getItem('matrixOverlay') === 'true');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
 
@@ -8070,6 +8323,12 @@ const App = () => {
             stopNotificationPoll();
         }
     }, [user, isPublicExperience]);
+
+    useEffect(() => {
+        if (user?.settings) {
+            setMatrixOverlay(user.settings.matrixOverlay === true);
+        }
+    }, [user?.settings?.matrixOverlay]);
 
     // Fetch posts on tab change only (login/refresh handled by user init effect)
     useEffect(() => {
@@ -9640,6 +9899,7 @@ const App = () => {
                 </>
             ) : (
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                    {matrixOverlay && <MatrixBackground />}
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
@@ -9648,7 +9908,7 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent hover:bg-white/[0.06] active:scale-95 transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent active:scale-95 transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
                                         aria-label="Open menu"
                                         scaleDown={0.95}
                                         duration={150}
@@ -9822,19 +10082,23 @@ const App = () => {
                                     {alerts.length === 0 ? (
                                         <div className="text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-xs">{t('NO_NOTIFS')}</div>
                                     ) : (
-                                        alerts.map((n, i) => (
-                                            <NotificationItem
-                                                key={n._id || i}
-                                                note={n}
-                                                onViewProfile={viewProfile}
-                                                onOpenChat={handleOpenChat}
-                                                onAcceptRequest={handleAcceptRequest}
-                                                onRejectRequest={handleRejectRequest}
-                                                onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }}
-                                                t={t}
-                                                lang={lang}
-                                            />
-                                        ))
+                                        alerts.map((n, i) => {
+                                            const resolvedSender = users?.find(u => isSameId(u._id, n.from)) || n.sender;
+                                            const enrichedNote = { ...n, sender: resolvedSender };
+                                            return (
+                                                <NotificationItem
+                                                    key={n._id || i}
+                                                    note={enrichedNote}
+                                                    onViewProfile={viewProfile}
+                                                    onOpenChat={handleOpenChat}
+                                                    onAcceptRequest={handleAcceptRequest}
+                                                    onRejectRequest={handleRejectRequest}
+                                                    onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }}
+                                                    t={t}
+                                                    lang={lang}
+                                                />
+                                            );
+                                        })
                                     )}
                                 </div>
                             ) : (

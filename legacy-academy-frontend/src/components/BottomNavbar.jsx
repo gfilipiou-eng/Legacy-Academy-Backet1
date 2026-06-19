@@ -2,6 +2,35 @@ import React, { memo, useMemo, useRef, useEffect } from 'react';
 import { Icons } from './Icons';
 import { motion } from 'framer-motion';
 
+const playCyberSFX = (type = 'click') => {
+    if (localStorage.getItem('cyberSFX') === 'false') return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.04, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.08);
+        } else if (type === 'success') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(500, ctx.currentTime);
+            osc.frequency.setValueAtTime(800, ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+        }
+    } catch (e) {}
+};
+
 const BottomNavbar = memo(({
     activeTab,
     onTabChange,
@@ -41,8 +70,10 @@ const BottomNavbar = memo(({
 
         if (currentIndex !== -1) {
             if (isLeftSwipe && currentIndex < tabs.length - 1) {
+                playCyberSFX('click');
                 onTabChange(tabs[currentIndex + 1]);
             } else if (isRightSwipe && currentIndex > 0) {
+                playCyberSFX('click');
                 onTabChange(tabs[currentIndex - 1]);
             }
         }
@@ -73,7 +104,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Home */}
                 <button
                     type="button"
-                    onClick={() => onTabChange('home')}
+                    onClick={() => { playCyberSFX('click'); onTabChange('home'); }}
                     aria-label="Home"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
@@ -92,7 +123,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Search */}
                 <button
                     type="button"
-                    onClick={() => onTabChange('search')}
+                    onClick={() => { playCyberSFX('click'); onTabChange('search'); }}
                     aria-label="Search"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
@@ -111,7 +142,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Create */}
                 <button
                     type="button"
-                    onClick={onCreate}
+                    onClick={() => { playCyberSFX('click'); onCreate(); }}
                     aria-label="Create"
                     className="flex items-center justify-center relative z-20 flex-1 min-w-0 group"
                 >
@@ -123,7 +154,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Alerts */}
                 <button
                     type="button"
-                    onClick={() => onTabChange('alerts')}
+                    onClick={() => { playCyberSFX('click'); onTabChange('alerts'); }}
                     aria-label="Alerts"
                     className="flex items-center justify-center relative flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
@@ -136,20 +167,21 @@ const BottomNavbar = memo(({
                             />
                         )}
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'alerts' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
+                        {unreadCount > 0 && (
+                            <div className="absolute top-[12px] right-[24%] sm:right-[28%] min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-red-500 to-rose-600 rounded-full flex items-center justify-center border border-black/40 shadow-[0_0_8px_rgba(239,68,68,0.5)] z-20">
+                                <span className="text-[9px] font-black text-white leading-none tracking-tighter">
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                                <span className="absolute -inset-0.5 rounded-full bg-red-500/30 animate-ping pointer-events-none z-[-1]" />
+                            </div>
+                        )}
                     </div>
-                    {unreadCount > 0 && (
-                        <div className="absolute top-1.5 right-[18%] sm:right-[22%] min-w-[20px] h-[20px] px-1 bg-[#1D9BF0] rounded-full flex items-center justify-center border-2 border-black z-20">
-                            <span className="text-[10px] font-black text-white leading-none tracking-tighter">
-                                {unreadCount > 9 ? '9+' : unreadCount}
-                            </span>
-                        </div>
-                    )}
                 </button>
 
                 {/* Tab: Profile */}
                 <button
                     type="button"
-                    onClick={onProfile}
+                    onClick={() => { playCyberSFX('click'); onTabChange('profile'); }}
                     aria-label="Profile"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
