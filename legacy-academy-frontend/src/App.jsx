@@ -6648,7 +6648,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
             <motion.div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-sm sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-t-[2rem] sm:rounded-3xl shadow-2xl flex flex-col h-[90dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-sm sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-t-[2rem] sm:rounded-3xl shadow-2xl flex flex-col h-[75dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between mb-4">
@@ -6875,92 +6875,104 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={onClose} />
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="relative w-full max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-6 sm:p-8 rounded-3xl  shadow-2xl flex flex-col max-h-[85vh]">
-                <div className="overflow-y-auto custom-scrollbar pr-1 flex-1 pb-6">
-                    <h2 className="text-xl font-black italic mb-4 text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-3">
-                            <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
-                            </div>
-                            <div className="relative group">
-                                <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
-                                <textarea
-                                    value={desc}
-                                    onChange={e => setDesc(e.target.value)}
-                                    maxLength={300}
-                                    placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                    className="relative w-full bg-black/60 backdrop-blur-3xl  rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[150px] max-h-[50vh] resize-y placeholder-gray-600 focus:border-[var(--gold-primary)]/40   custom-scrollbar shadow-inner"
-                                />
-                                <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
-                                    {desc.length} / 300
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 px-1">
-                                <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl group/note w-full">
-                                    <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
-                                    <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
-                                        {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
-                                    </span>
-                                </div>
-                            </div>
+        <div className="fixed inset-0 z-[3200] flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
+            <motion.div 
+                initial={{ scale: 0.95, y: 100 }} 
+                animate={{ scale: 1, y: 0 }} 
+                className="relative w-full max-w-sm sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-t-[2rem] sm:rounded-3xl shadow-2xl flex flex-col h-[75dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+            >
+                {/* Header */}
+                <div className="flex-none flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-black italic text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
+                    <button onClick={onClose} className="sm:hidden p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
+                        <Icons.X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
+                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
                         </div>
-
-                        {/* 18+ Toggle */}
-                        <div className="flex flex-wrap gap-2.5 mb-4">
-                            <div onClick={() => setIs18Plus(!is18Plus)} className={`flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
-                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${is18Plus ? 'border-red-500 bg-red-500 scale-110' : 'border-gray-500'}`}>
-                                    {is18Plus && <Icons.Check className="w-3.5 h-3.5 text-white font-black" />}
-                                </div>
-                                <div className="flex flex-col min-w-0">
-                                    <span className={`text-[11px] font-black uppercase tracking-widest ${is18Plus ? 'text-red-500' : 'text-gray-400'} truncate`}>{t('NSFW_18_PLUS') || '18+ NSFW'}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-0.5 truncate">{t('NSFW_18_PLUS_DESC') || 'Sensitive Content'}</span>
-                                </div>
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+                            <textarea
+                                value={desc}
+                                onChange={e => setDesc(e.target.value)}
+                                maxLength={300}
+                                placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
+                                className="relative w-full bg-black/50 border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[120px] resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/50 focus:ring-1 focus:ring-[var(--gold-primary)]/25 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
+                            />
+                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
+                                {desc.length} / 300
                             </div>
-                        </div>
-
-                        {/* YouTube URL removed */}
-
-                        {/* Media Upload & Preview */}
-                        <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-4 group">
-                            {preview ? (
-                                <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-sky-900/90 via-slate-900/85 to-slate-900/80 border border-sky-400/20 shadow-[0_10px_40px_rgba(56,189,248,0.08)] flex items-center justify-center transition-all duration-400 hover:border-sky-400/40 hover:shadow-[0_15px_50px_rgba(56,189,248,0.15)] hover:-translate-y-0.5">
-                                    {isVideo ? (
-                                        <video src={preview} className="w-full h-full object-contain" controls playsInline />
-                                    ) : isAudio ? (
-                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-sky-900/95 via-slate-900/90 to-slate-900/85 gap-4 p-5 sm:p-7">
-                                            <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-full bg-gradient-to-br from-sky-400/25 via-cyan-400/10 to-transparent flex items-center justify-center border border-sky-400/30 shadow-[0_4px_20px_rgba(56,189,248,0.15)]">
-                                                <Icons.Music className="w-9 h-9 sm:w-11 sm:h-11 text-sky-400 animate-pulse" />
-                                            </div>
-                                            <span className="text-sm sm:text-base text-white/90 font-semibold text-center truncate max-w-[260px] sm:max-w-md">{audioName}</span>
-                                            <audio src={preview} controls className="w-full max-w-[210px] sm:max-w-sm" />
-                                        </div>
-                                    ) : (
-                                        <img src={preview} className="w-full h-full object-contain" alt="Neural Preview" />
-                                    )}
-                                    <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2.5 bg-slate-900/85 hover:bg-slate-900/95 rounded-full backdrop-blur-xl border border-sky-200/15 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
-                                        <Icons.X className="w-4 h-4 text-slate-100" />
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="w-full py-9 sm:py-13 border-2 border-dashed border-sky-200/25 bg-gradient-to-br from-sky-500/12 via-sky-400/8 via-cyan-500/5 to-slate-900/20 rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-sky-100 cursor-pointer transition-all duration-400 hover:border-sky-400/45 hover:bg-gradient-to-br from-sky-500/18 via-sky-400/12 via-cyan-500/8 to-slate-900/22 hover:text-cyan-200 hover:-translate-y-0.5 shadow-[0_10px_40px_rgba(56,189,248,0.06)]">
-                                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-sky-400/20 via-cyan-400/12 to-transparent flex items-center justify-center border border-sky-400/30 shadow-[0_5px_20px_rgba(56,189,248,0.12)] group-hover:scale-112 transition-all duration-400">
-                                        <Icons.Upload className="w-8 h-8 sm:w-10 sm:h-10" />
-                                    </div>
-                                    <span className="text-sm sm:text-base font-semibold uppercase tracking-wide">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-xs sm:text-sm text-slate-300 font-semibold uppercase tracking-wide">Image, Video, or Audio</span>
-                                </div>
-                            )}
-                            <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
-                        </div>
-
-                        <div className="flex gap-4">
-                            <button onClick={onClose} className="flex-1 py-3 bg-white/5 rounded-xl font-bold text-xs  text-white uppercase tracking-widest">{t('CANCEL')}</button>
-                            <button disabled={saving} onClick={handleSave} className={`flex-1 py-3 ${saving ? 'opacity-60 cursor-wait' : 'bg-[var(--gold-primary)]'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg`}>{saving ? '...' : t('PUBLISH')}</button>
                         </div>
                     </div>
+
+                    <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note">
+                        <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
+                        <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
+                            {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
+                        </span>
+                    </div>
+
+                    {/* 18+ Toggle */}
+                    <div className="flex flex-wrap gap-2.5 mb-2">
+                        <div onClick={() => setIs18Plus(!is18Plus)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${is18Plus ? 'border-red-500 bg-red-500 scale-110' : 'border-gray-500'}`}>
+                                {is18Plus && <Icons.Check className="w-3.5 h-3.5 text-white font-black" />}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${is18Plus ? 'text-red-500' : 'text-gray-400'} truncate`}>{t('NSFW_18_PLUS') || '18+ NSFW'}</span>
+                                <span className="text-[9px] text-gray-500 font-black uppercase tracking-wider mt-0.5 truncate">{t('NSFW_18_PLUS_DESC') || 'SENSITIVE CONTENT'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Media Upload & Preview */}
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group">
+                        {preview ? (
+                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-[var(--gold-primary)]/20 shadow-[0_10px_40px_rgba(212,175,55,0.06)] flex items-center justify-center transition-all duration-400 hover:border-[var(--gold-primary)]/40 hover:shadow-[0_15px_50px_rgba(212,175,55,0.1)] hover:-translate-y-0.5">
+                                {isVideo ? (
+                                    <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
+                                ) : isAudio ? (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-950/25 via-slate-950/90 to-slate-900 gap-4 p-5 sm:p-7">
+                                        <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 via-amber-400/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30 shadow-[0_4px_20px_rgba(212,175,55,0.1)]">
+                                            <Icons.Music className="w-9 h-9 sm:w-10 sm:h-10 text-[var(--gold-primary)] animate-pulse" />
+                                        </div>
+                                        <span className="text-sm sm:text-base text-white/90 font-semibold text-center truncate max-w-[260px] sm:max-w-md">{audioName}</span>
+                                        <audio src={preview} controls className="w-full max-w-[210px] sm:max-w-sm" />
+                                    </div>
+                                ) : (
+                                    <img src={preview} className="w-full h-full object-contain max-h-[220px]" alt="Preview" />
+                                )}
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
+                                    <Icons.X className="w-4 h-4 text-slate-100" />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-[var(--gold-primary)]/20 bg-gradient-to-br from-[var(--gold-primary)]/8 via-amber-500/3 to-transparent rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-[var(--gold-primary)]/80 cursor-pointer transition-all duration-400 hover:border-[var(--gold-primary)]/50 hover:bg-gradient-to-br hover:from-[var(--gold-primary)]/15 hover:via-amber-500/6 hover:to-transparent hover:text-[var(--gold-primary)] hover:-translate-y-0.5 shadow-[0_10px_40px_rgba(212,175,55,0.04)]">
+                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 via-amber-400/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30 shadow-[0_5px_20px_rgba(212,175,55,0.1)] transition-transform duration-400 group-hover:scale-110">
+                                    <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8 text-[var(--gold-primary)]" />
+                                </div>
+                                <div className="flex flex-col items-center text-center gap-1">
+                                    <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
+                                </div>
+                            </div>
+                        )}
+                        <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
+                    </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="flex-none flex gap-4 pt-4 border-t border-white/5 mt-auto">
+                    <button onClick={onClose} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 rounded-xl font-bold text-xs text-white uppercase tracking-widest transition-colors duration-200">{t('CANCEL')}</button>
+                    <button disabled={saving} onClick={handleSave} className={`flex-1 py-3.5 ${saving ? 'bg-[var(--gold-primary)]/50 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 transition-all duration-200`}>
+                        {saving ? '...' : t('PUBLISH')}
+                    </button>
                 </div>
             </motion.div >
         </div>
