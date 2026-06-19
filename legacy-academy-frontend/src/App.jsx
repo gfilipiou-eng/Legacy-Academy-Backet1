@@ -510,64 +510,16 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
     const normalizedUsername = sanitizeAffiliation(username);
     if (!normalizedUsername) return null;
 
-    const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || founderAffiliationUserCache.get(normalizedUsername) || null);
-    useEffect(() => {
-        let cancelled = false;
-        if (linkedUser?._id || linkedUser?.profilePic || linkedUser?.username) {
-            founderAffiliationUserCache.set(normalizedUsername, linkedUser);
-            setResolvedLinkedUser(linkedUser);
-            return () => { };
-        }
-
-        const cachedUser = founderAffiliationUserCache.get(normalizedUsername);
-        if (cachedUser) {
-            setResolvedLinkedUser(cachedUser);
-            return () => { };
-        }
-
-        fetchFounderAffiliationUser(normalizedUsername)
-            .then((user) => {
-                if (!cancelled) setResolvedLinkedUser(user || null);
-            })
-            .catch(() => {
-                if (!cancelled) setResolvedLinkedUser(null);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [normalizedUsername, linkedUser]);
-
-    const avatarSizeClass = size === 'sm' ? 'w-3.5 h-3.5 rounded-full' : 'w-4 h-4 rounded-full';
-    const iconSizeClass = size === 'sm' ? 'w-2.5 h-2.5' : 'w-2.5 h-2.5';
-    const textSizeClass = size === 'sm' ? 'text-[9px]' : 'text-[10px]';
-    const buttonPadding = size === 'sm' ? 'pl-0.5 pr-2 py-0.5' : 'pl-1 pr-2.5 py-0.5';
-    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, size === 'large' ? 600 : 80, true);
-    const textMaxW = maxTextWidth || (size === 'sm' ? 'max-w-[80px] sm:max-w-[120px]' : 'max-w-[110px] sm:max-w-[160px]');
-
     return (
-        <button
-            type="button"
+        <span
             onClick={(e) => {
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex max-w-full items-center justify-center gap-1 rounded-full ${buttonPadding} bg-[#eff3f4]/10 hover:bg-[#eff3f4]/20 border border-transparent hover:border-white/10 text-[#eff3f4] font-semibold cursor-pointer transition-all duration-300 active:scale-[0.97] ${textSizeClass} ${className} overflow-hidden`}
+            className={`text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
         >
-            <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm`}>
-                {resolvedProfilePic ? (
-                    <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                ) : (
-                    <span className="text-[9px] font-bold text-white/80">
-                        {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                    </span>
-                )}
-            </div>
-            <div className="flex items-center gap-0.5 min-w-0 max-w-full overflow-hidden">
-                <span className={`relative z-10 min-w-0 truncate leading-tight text-white tracking-normal ${textMaxW}`}>@{normalizedUsername}</span>
-                <VerifiedBadge isFounder={resolvedLinkedUser?.role === 'Founder'} isUser={resolvedLinkedUser?.role !== 'Founder'} className={`${iconSizeClass} shrink-0 ml-0.5`} user={resolvedLinkedUser} />
-            </div>
-        </button>
+            @{normalizedUsername}
+        </span>
     );
 };
 

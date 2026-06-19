@@ -1981,6 +1981,201 @@ input, textarea {
   border-color: rgba(255, 255, 255, 0.4) !important;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.08) !important;
 }
+.action-btn-dislike:active, .action-btn-dislike:focus {
+  color: #3b82f6 !important;
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+/* Edit profile button styles */
+.profile-edit-btn {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(var(--gold-primary-rgb, 255, 255, 255), 0.2) !important;
+  color: white !important;
+  border-radius: 9999px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease;
+}
+.profile-edit-btn:hover {
+  background: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.08) !important;
+  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.4) !important;
+  box-shadow: none !important;
+}
+.profile-edit-btn:active {
+  transform: scale(0.95) !important;
+  background: transparent !important;
+  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.6) !important;
+}
+
+/* Tabs adjustment */
+.profile-tab-btn::after {
+  display: none !important; /* Remove the heavy radial gradient */
+}
+
+/* ── Profile edit: flat X-style upload buttons ─────────────────────── */
+.profile-upload-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1;
+  padding: 0.85rem 1rem;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.12s ease;
+  user-select: none;
+}
+.profile-upload-label:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.profile-upload-label:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.12);
+}
+.profile-upload-label.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Profile edit: flat X-style save button ─────────────────────────── */
+.profile-save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 9999px;
+  border: none;
+  background: #ffffff;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.18s ease, opacity 0.18s ease, transform 0.12s ease;
+  user-select: none;
+}
+.profile-save-btn:hover:not(:disabled) {
+  background: #e8e8e8;
+}
+.profile-save-btn:active:not(:disabled) {
+  transform: scale(0.97);
+  background: #d4d4d4;
+}
+.profile-save-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+/* ── X/Twitter-style comment ─────────────────────────────────────────── */
+.x-comment {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.x-comment__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.06);
+  transition: opacity 0.15s ease;
+}
+.x-comment__avatar:hover { opacity: 0.75; }
+
+.x-comment__body {
+  flex: 1;
+  min-width: 0;
+}
+.x-comment__header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+.x-comment__username {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+  flex-shrink: 1;
+}
+.x-comment__username:hover { text-decoration: underline; }
+.x-comment__dot {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+.x-comment__time {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.x-comment__text {
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.90);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0 0 6px;
+}
+
+/* Liquid Glass Refinement */
+.liquid-glass-video-panel {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(50px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.03) !important;
+}
+
+.liquid-glass-control {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.liquid-glass-control:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.08) !important;
+}
 .liquid-glass-control:active {
   transform: scale(0.93) !important;
   background: rgba(0, 0, 0, 0.5) !important;
@@ -2001,74 +2196,62 @@ button:active,
   color: #ff9f57 !important;
   background: linear-gradient(135deg, rgba(249, 115, 22, 0.16) 0%, rgba(249, 115, 22, 0.06) 100%) !important;
   border-color: rgba(249, 115, 22, 0.35) !important;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .descriptor-creator {
   color: #38bdf8 !important;
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(56, 189, 248, 0.06) 100%) !important;
   border-color: rgba(56, 189, 248, 0.35) !important;
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .descriptor-popular {
   color: #f472b6 !important;
   background: linear-gradient(135deg, rgba(236, 72, 153, 0.16) 0%, rgba(236, 72, 153, 0.06) 100%) !important;
   border-color: rgba(236, 72, 153, 0.35) !important;
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .descriptor-pet-lover {
   color: #34d399 !important;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.06) 100%) !important;
   border-color: rgba(16, 185, 129, 0.35) !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .descriptor-community {
   color: #a78bfa !important;
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.16) 0%, rgba(139, 92, 246, 0.06) 100%) !important;
   border-color: rgba(139, 92, 246, 0.35) !important;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .descriptor-visionary {
   color: #fbbf24 !important;
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
   border-color: rgba(245, 158, 11, 0.35) !important;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Micro-animations and Glow Boost on Hover */
+/* Micro-animations and Highlight on Hover */
 @media (hover: hover) {
   .descriptor-entrepreneur:hover {
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(249, 115, 22, 0.5) !important;
     transform: translateY(-1px) scale(1.02);
   }
   .descriptor-creator:hover {
-    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(56, 189, 248, 0.5) !important;
     transform: translateY(-1px) scale(1.02);
   }
   .descriptor-popular:hover {
-    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(236, 72, 153, 0.5) !important;
     transform: translateY(-1px) scale(1.02);
   }
   .descriptor-pet-lover:hover {
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(16, 185, 129, 0.5) !important;
     transform: translateY(-1px) scale(1.02);
   }
   .descriptor-community:hover {
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(139, 92, 246, 0.5) !important;
     transform: translateY(-1px) scale(1.02);
   }
   .descriptor-visionary:hover {
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(245, 158, 11, 0.5) !important;
     transform: translateY(-1px) scale(1.02);
   }
