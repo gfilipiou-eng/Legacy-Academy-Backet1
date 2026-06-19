@@ -9645,7 +9645,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-16 sm:h-18 md:h-20 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
+                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
