@@ -510,15 +510,54 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
     const normalizedUsername = sanitizeAffiliation(username);
     if (!normalizedUsername) return null;
 
+    const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || founderAffiliationUserCache.get(normalizedUsername) || null);
+    useEffect(() => {
+        let cancelled = false;
+        if (linkedUser?._id || linkedUser?.profilePic || linkedUser?.username) {
+            founderAffiliationUserCache.set(normalizedUsername, linkedUser);
+            setResolvedLinkedUser(linkedUser);
+            return () => { };
+        }
+
+        const cachedUser = founderAffiliationUserCache.get(normalizedUsername);
+        if (cachedUser) {
+            setResolvedLinkedUser(cachedUser);
+            return () => { };
+        }
+
+        fetchFounderAffiliationUser(normalizedUsername)
+            .then((user) => {
+                if (!cancelled) setResolvedLinkedUser(user || null);
+            })
+            .catch(() => {
+                if (!cancelled) setResolvedLinkedUser(null);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [normalizedUsername, linkedUser]);
+
+    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 80, true);
+
     return (
         <span
             onClick={(e) => {
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
+            className={`inline-flex items-center gap-1.5 text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
         >
-            @{normalizedUsername}
+            <div className="w-3.5 h-3.5 rounded-full overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm">
+                {resolvedProfilePic ? (
+                    <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                ) : (
+                    <span className="text-[8px] font-bold text-white/80">
+                        {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                    </span>
+                )}
+            </div>
+            <span>@{normalizedUsername}</span>
         </span>
     );
 };
@@ -6884,7 +6923,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <button 
                         disabled={isSubmitting} 
                         onClick={handleSubmit} 
-                        className="sm:hidden px-4 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-widest rounded-full shadow-md transition-all duration-200"
+                        className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wide rounded-full shadow-md transition-all duration-200"
                     >
                         {isSubmitting ? '...' : (isStory ? t('POST_STORY') : t('POST'))}
                     </button>
@@ -7104,7 +7143,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                     <button 
                         disabled={saving} 
                         onClick={handleSave} 
-                        className="sm:hidden px-4 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-widest rounded-full shadow-md transition-all duration-200"
+                        className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wide rounded-full shadow-md transition-all duration-200"
                     >
                         {saving ? '...' : t('PUBLISH')}
                     </button>
@@ -9583,21 +9622,6 @@ const App = () => {
                                                  <button type="button" onClick={() => setShowPaywall(true)} className="cursor-pointer hover:text-[var(--gold-primary)] transition-colors bg-transparent border-none outline-none p-0 font-bold text-[var(--gold-primary)]/80 uppercase tracking-widest text-[9px]">Create Account</button>
                                                  <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold uppercase tracking-widest text-[9px]">Forgot Password?</button>
                                             </div>
-                                            <div className="flex items-center my-3.5">
-                                                 <div className="flex-1 h-[1px] bg-white/5" />
-                                                 <span className="px-3 text-[9px] text-white/20 uppercase tracking-[0.2em] font-black">OR ENTER SYSTEM WITH</span>
-                                                 <div className="flex-1 h-[1px] bg-white/5" />
-                                             </div>
-                                             <button onClick={handleGoogleSignIn} disabled={authLoading} className="w-full relative group overflow-hidden rounded-2xl py-3.5 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] active:bg-white/[0.08] transition-all duration-300 flex items-center justify-center gap-3 text-white text-xs font-black uppercase tracking-[0.15em] hover:border-white/15">
-                                                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                 <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                                                     <path fill="#EA4335" d="M12 5.04c1.67 0 3.19.58 4.37 1.71l3.27-3.27C17.65 1.58 15.01 1 12 1 7.24 1 3.2 3.75 1.25 7.78l3.92 3.04C6.12 7.76 8.81 5.04 12 5.04z" />
-                                                     <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.43h6.45c-.28 1.48-1.12 2.74-2.38 3.59l3.71 2.87c2.17-2 3.71-4.94 3.71-8.55z" />
-                                                     <path fill="#FBBC05" d="M5.17 14.74a7.12 7.12 0 0 1 0-4.48L1.25 7.22A11.96 11.96 0 0 0 0 12c0 1.72.36 3.35 1.25 4.78l3.92-3.04z" />
-                                                     <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.71-2.87c-1.03.69-2.35 1.1-4.25 1.1-3.19 0-5.88-2.72-6.84-5.78L1.24 15.57C3.19 19.6 7.24 23 12 23z" />
-                                                 </svg>
-                                                 <span>GOOGLE SIGN-IN</span>
-                                             </button>
                                         </form>
                                     )}
                                     {authMode === 'register' && (
@@ -9699,21 +9723,6 @@ const App = () => {
                                                     </div>
                                                 ) : <span className="relative">CREATE ACCOUNT</span>}
                                             </button>
-                                            <div className="flex items-center my-3.5">
-                                                 <div className="flex-1 h-[1px] bg-white/5" />
-                                                 <span className="px-3 text-[9px] text-white/20 uppercase tracking-[0.2em] font-black">OR REGISTER WITH</span>
-                                                 <div className="flex-1 h-[1px] bg-white/5" />
-                                             </div>
-                                             <button onClick={handleGoogleSignIn} disabled={authLoading} className="w-full relative group overflow-hidden rounded-2xl py-3.5 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] active:bg-white/[0.08] transition-all duration-300 flex items-center justify-center gap-3 text-white text-xs font-black uppercase tracking-[0.15em] hover:border-white/15">
-                                                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                 <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                                                     <path fill="#EA4335" d="M12 5.04c1.67 0 3.19.58 4.37 1.71l3.27-3.27C17.65 1.58 15.01 1 12 1 7.24 1 3.2 3.75 1.25 7.78l3.92 3.04C6.12 7.76 8.81 5.04 12 5.04z" />
-                                                     <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.43h6.45c-.28 1.48-1.12 2.74-2.38 3.59l3.71 2.87c2.17-2 3.71-4.94 3.71-8.55z" />
-                                                     <path fill="#FBBC05" d="M5.17 14.74a7.12 7.12 0 0 1 0-4.48L1.25 7.22A11.96 11.96 0 0 0 0 12c0 1.72.36 3.35 1.25 4.78l3.92-3.04z" />
-                                                     <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.71-2.87c-1.03.69-2.35 1.1-4.25 1.1-3.19 0-5.88-2.72-6.84-5.78L1.24 15.57C3.19 19.6 7.24 23 12 23z" />
-                                                 </svg>
-                                                 <span>GOOGLE REGISTER</span>
-                                             </button>
                                             <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
                                         </>
                                     )}
