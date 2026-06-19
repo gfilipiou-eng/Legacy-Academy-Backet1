@@ -124,8 +124,9 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                     transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
                 } else if (isAvatar) {
-                    // 600px + q_auto:best for maximum quality as requested
-                    transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
+                    // Use requested width (fallback to 600px) + q_auto:best for maximum quality as requested
+                    const targetSize = width ? Math.min(width, 600) : 600;
+                    transform = `w_${targetSize},h_${targetSize},c_fill,g_face,q_auto:best,f_auto`;
                 } else if (width === 2000 || isCover) {
                     // Founder 4K Background / High-Res Cover
                     transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
@@ -538,7 +539,41 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 80, true);
+    // Request a ~100px image for retina clarity on a 28px container
+    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 100, true);
+
+    const hexagonClipPath = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+
+    const HexagonAvatar = () => (
+        <div className="relative w-[24px] h-[28px] shrink-0 transition-transform duration-300 hover:scale-110 drop-shadow-sm">
+            {/* Gold Border Base */}
+            <div 
+                className="absolute inset-0 bg-gradient-to-b from-[#D4AF37] via-[#AA7700] to-[#D4AF37]"
+                style={{ clipPath: hexagonClipPath }}
+            />
+            {/* Inner Image/Fallback Container */}
+            <div 
+                className="absolute inset-[1px] bg-[#111]"
+                style={{ clipPath: hexagonClipPath }}
+            >
+                {resolvedProfilePic ? (
+                    <img 
+                        src={resolvedProfilePic} 
+                        alt="" 
+                        className="w-full h-full object-cover" 
+                        loading="lazy" 
+                        decoding="async" 
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#111]">
+                        <span className="text-[12px] font-bold text-[#D4AF37]">
+                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                        </span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 
     if (iconOnly) {
         return (
@@ -550,15 +585,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 className={`inline-flex items-center cursor-pointer select-none ${className}`}
                 title={`Affiliated with @${normalizedUsername}`}
             >
-                <div className="w-[26px] h-[26px] rounded-[6px] overflow-hidden bg-[#111] shrink-0 flex items-center justify-center ring-1 ring-white/10 shadow-sm transition-all duration-200 hover:scale-105 hover:ring-white/20">
-                    {resolvedProfilePic ? (
-                        <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" style={{ imageRendering: '-webkit-optimize-contrast' }} loading="lazy" decoding="async" />
-                    ) : (
-                        <span className="text-[12px] font-bold text-white/80">
-                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                        </span>
-                    )}
-                </div>
+                <HexagonAvatar />
             </span>
         );
     }
@@ -569,18 +596,10 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex items-center gap-1.5 text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
+            className={`inline-flex items-center gap-2 text-[#D4AF37] hover:brightness-110 cursor-pointer font-bold transition-all select-none ${className}`}
         >
-            <div className="w-[26px] h-[26px] rounded-[6px] overflow-hidden bg-[#111] shrink-0 flex items-center justify-center ring-1 ring-white/10 shadow-sm">
-                {resolvedProfilePic ? (
-                    <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" style={{ imageRendering: '-webkit-optimize-contrast' }} loading="lazy" decoding="async" />
-                ) : (
-                    <span className="text-[12px] font-bold text-white/80">
-                        {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                    </span>
-                )}
-            </div>
-            <span>@{normalizedUsername}</span>
+            <HexagonAvatar />
+            <span className="text-[14px] uppercase tracking-wide">@{normalizedUsername}</span>
         </span>
     );
 };
