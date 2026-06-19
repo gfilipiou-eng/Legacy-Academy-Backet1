@@ -6642,18 +6642,48 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
             setIsAudio(false);
         }
     };
+    const handleSubmit = async () => {
+        if (isSubmitting) return;
+        const file = fileRef.current?.files?.[0];
+        if (!desc && !file) return;
+
+        setIsSubmitting(true);
+        const fd = new FormData();
+        fd.append('desc', desc);
+        if (file) fd.append('image', file);
+        fd.append('isStory', isStory);
+        fd.append('is18Plus', is18Plus);
+
+        await onCreatePost(fd, preview, isStory);
+
+        setPreview(null);
+        if (fileRef.current) fileRef.current.value = '';
+        setIsStory(false);
+        setIsSubmitting(false);
+    };
+
     return (
-        <div className="fixed inset-0 z-[3200] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[3200] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
             <motion.div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-sm sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-t-[2rem] sm:rounded-3xl shadow-2xl flex flex-col h-[75dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-none sm:rounded-3xl shadow-2xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
             >
                 {/* Header */}
-                <div className="flex-none flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-black italic text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
-                    <button onClick={onClose} className="sm:hidden p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
+                <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                    <button onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200">
+                        {t('CANCEL')}
+                    </button>
+                    <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
+                    <button 
+                        disabled={isSubmitting} 
+                        onClick={handleSubmit} 
+                        className="sm:hidden px-4 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-widest rounded-full shadow-md transition-all duration-200"
+                    >
+                        {isSubmitting ? '...' : (isStory ? t('POST_STORY') : t('POST'))}
+                    </button>
+                    <button onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
                         <Icons.X className="w-5 h-5" />
                     </button>
                 </div>
@@ -6752,32 +6782,10 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     </div>
                 </div>
 
-                {/* Footer Buttons */}
-                <div className="flex-none flex gap-4 pt-4 border-t border-white/5 mt-auto">
+                {/* Footer Buttons (Desktop only) */}
+                <div className="hidden sm:flex flex-none gap-4 pt-4 border-t border-white/5 mt-auto">
                     <button onClick={onClose} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 rounded-xl font-bold text-xs text-white uppercase tracking-widest transition-colors duration-200">{t('CANCEL')}</button>
-                    <button disabled={isSubmitting} onClick={async () => {
-                        if (isSubmitting) return;
-                        const file = fileRef.current?.files?.[0];
-
-                        if (!desc && !file) return;
-
-                        setIsSubmitting(true);
-                        const fd = new FormData();
-                        fd.append('desc', desc);
-                        if (file) fd.append('image', file);
-                        fd.append('isStory', isStory);
-                        fd.append('is18Plus', is18Plus);
-
-                        // Trigger optimistic upload
-                        await onCreatePost(fd, preview, isStory);
-
-                        // Reset logic safely
-
-                        setPreview(null);
-                        if (fileRef.current) fileRef.current.value = '';
-                        setIsStory(false);
-                        setIsSubmitting(false);
-                    }} className={`flex-1 py-3.5 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-50 transition-all duration-200`}>
+                    <button disabled={isSubmitting} onClick={handleSubmit} className="flex-1 py-3.5 bg-[var(--gold-primary)] hover:opacity-90 rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 disabled:opacity-50 transition-all duration-200">
                         {isSubmitting ? (isStory ? t('UPLOADING') || '...' : '...') : (isStory ? t('POST_STORY') : t('POST'))}
                     </button>
                 </div>
@@ -6875,17 +6883,27 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[3200] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[3200] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
             <motion.div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-sm sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-t-[2rem] sm:rounded-3xl shadow-2xl flex flex-col h-[75dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md glass-panel bg-black/40 backdrop-blur-3xl p-5 sm:p-6 rounded-none sm:rounded-3xl shadow-2xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
             >
                 {/* Header */}
-                <div className="flex-none flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-black italic text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
-                    <button onClick={onClose} className="sm:hidden p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
+                <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                    <button onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200">
+                        {t('CANCEL')}
+                    </button>
+                    <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
+                    <button 
+                        disabled={saving} 
+                        onClick={handleSave} 
+                        className="sm:hidden px-4 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-widest rounded-full shadow-md transition-all duration-200"
+                    >
+                        {saving ? '...' : t('PUBLISH')}
+                    </button>
+                    <button onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
                         <Icons.X className="w-5 h-5" />
                     </button>
                 </div>
@@ -6967,8 +6985,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                     </div>
                 </div>
 
-                {/* Footer Buttons */}
-                <div className="flex-none flex gap-4 pt-4 border-t border-white/5 mt-auto">
+                {/* Footer Buttons (Desktop only) */}
+                <div className="hidden sm:flex flex-none gap-4 pt-4 border-t border-white/5 mt-auto">
                     <button onClick={onClose} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 rounded-xl font-bold text-xs text-white uppercase tracking-widest transition-colors duration-200">{t('CANCEL')}</button>
                     <button disabled={saving} onClick={handleSave} className={`flex-1 py-3.5 ${saving ? 'bg-[var(--gold-primary)]/50 cursor-wait' : 'bg-[var(--gold-primary)] hover:opacity-90'} rounded-xl text-black font-black text-xs uppercase tracking-widest shadow-lg shadow-[var(--gold-primary)]/20 transition-all duration-200`}>
                         {saving ? '...' : t('PUBLISH')}
