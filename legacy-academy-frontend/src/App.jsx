@@ -550,11 +550,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 className={`inline-flex items-center cursor-pointer select-none ${className}`}
                 title={`Affiliated with @${normalizedUsername}`}
             >
-                <div className="w-[22px] h-[22px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm transition-transform duration-200 hover:scale-110">
+                <div className="w-[26px] h-[26px] rounded-[6px] overflow-hidden bg-[#111] shrink-0 flex items-center justify-center ring-1 ring-white/10 shadow-sm transition-all duration-200 hover:scale-105 hover:ring-white/20">
                     {resolvedProfilePic ? (
-                        <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                        <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" style={{ imageRendering: '-webkit-optimize-contrast' }} loading="lazy" decoding="async" />
                     ) : (
-                        <span className="text-[11px] font-bold text-white/80">
+                        <span className="text-[12px] font-bold text-white/80">
                             {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                         </span>
                     )}
@@ -571,11 +571,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             }}
             className={`inline-flex items-center gap-1.5 text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
         >
-            <div className="w-[22px] h-[22px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm">
+            <div className="w-[26px] h-[26px] rounded-[6px] overflow-hidden bg-[#111] shrink-0 flex items-center justify-center ring-1 ring-white/10 shadow-sm">
                 {resolvedProfilePic ? (
-                    <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                    <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" style={{ imageRendering: '-webkit-optimize-contrast' }} loading="lazy" decoding="async" />
                 ) : (
-                    <span className="text-[11px] font-bold text-white/80">
+                    <span className="text-[12px] font-bold text-white/80">
                         {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                     </span>
                 )}
@@ -9870,7 +9870,7 @@ const App = () => {
                                     <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Legacy Academy Membership</div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFabJ181BbbYe3u6ja6Na04"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
                                     Acquire Academy Membership
                                 </button>
                                 
