@@ -506,7 +506,7 @@ const fetchFounderAffiliationUser = async (username) => {
     return request;
 };
 
-const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth }) => {
+const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth, iconOnly = false }) => {
     const normalizedUsername = sanitizeAffiliation(username);
     if (!normalizedUsername) return null;
 
@@ -540,6 +540,29 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
 
     const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 80, true);
 
+    if (iconOnly) {
+        return (
+            <span
+                onClick={(e) => {
+                    e.stopPropagation();
+                    window.location.href = founderAffiliationHref(normalizedUsername);
+                }}
+                className={`inline-flex items-center cursor-pointer select-none ${className}`}
+                title={`Affiliated with @${normalizedUsername}`}
+            >
+                <div className="w-[18px] h-[18px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm transition-transform duration-200 hover:scale-110">
+                    {resolvedProfilePic ? (
+                        <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                    ) : (
+                        <span className="text-[9px] font-bold text-white/80">
+                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                        </span>
+                    )}
+                </div>
+            </span>
+        );
+    }
+
     return (
         <span
             onClick={(e) => {
@@ -548,7 +571,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             }}
             className={`inline-flex items-center gap-1.5 text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
         >
-            <div className="w-[18px] h-[18px] rounded-full overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm">
+            <div className="w-[18px] h-[18px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm">
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
@@ -2137,7 +2160,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                         </span>
                     ))}
                     {getFounderAffiliation(note.sender) && (
-                        <FounderAffiliationBadge username={getFounderAffiliation(note.sender)} size="sm" className="scale-90 origin-left shrink-0" />
+                        <FounderAffiliationBadge username={getFounderAffiliation(note.sender)} iconOnly={true} className="shrink-0" />
                     )}
                 </div>
 
@@ -2444,15 +2467,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
                                         {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
+                                        {getFounderAffiliation(author) && (
+                                            <FounderAffiliationBadge username={getFounderAffiliation(author)} iconOnly={true} className="shrink-0" />
+                                        )}
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                         {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
                                             <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
                                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
                                             </div>
-                                        )}
-                                        {getFounderAffiliation(author) && (
-                                            <FounderAffiliationBadge username={getFounderAffiliation(author)} size="sm" className="scale-90 origin-left shrink-0" />
                                         )}
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -6923,7 +6946,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <button 
                         disabled={isSubmitting} 
                         onClick={handleSubmit} 
-                        className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wide rounded-full shadow-md transition-all duration-200"
+                        className="sm:hidden px-2.5 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-[10px] uppercase tracking-normal rounded-full shadow-md transition-all duration-200 whitespace-nowrap shrink-0"
                     >
                         {isSubmitting ? '...' : (isStory ? t('POST_STORY') : t('POST'))}
                     </button>
@@ -7143,7 +7166,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                     <button 
                         disabled={saving} 
                         onClick={handleSave} 
-                        className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wide rounded-full shadow-md transition-all duration-200"
+                        className="sm:hidden px-2.5 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-[10px] uppercase tracking-normal rounded-full shadow-md transition-all duration-200 whitespace-nowrap shrink-0"
                     >
                         {saving ? '...' : t('PUBLISH')}
                     </button>
@@ -10490,20 +10513,15 @@ const App = () => {
                                         <span className="truncate">{shareModalPost.author?.username}</span>
                                         {shareModalPost.author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{shareModalPost.author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={shareModalPost.author} />
+                                        {getFounderAffiliation(shareModalPost.author) && (
+                                            <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} iconOnly={true} className="shrink-0" />
+                                        )}
                                     </div>
                                     {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
                                         <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold flex-wrap">
                                             {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3 shrink-0" })}
                                             <span className="truncate max-w-[120px]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
                                             <span className="opacity-50 mx-1 shrink-0">•</span>
-                                            <div className="flex items-center gap-2 shrink-0">
-                                                <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
-                                            </div>
-                                        </div>
-                                    ) : getFounderAffiliation(shareModalPost.author) ? (
-                                        <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                            <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} size="sm" />
-                                            <span className="text-gray-500 text-xs font-bold tracking-widest uppercase opacity-50 shrink-0">•</span>
                                             <div className="flex items-center gap-2 shrink-0">
                                                 <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
                                             </div>
