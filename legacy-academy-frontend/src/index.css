@@ -975,9 +975,14 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 }
 
 .glass-panel {
-  background: #000;
-  border: 1px solid #2f3336;
-  box-shadow: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(10, 10, 10, 0.45);
+  backdrop-filter: blur(30px) saturate(210%);
+  -webkit-backdrop-filter: blur(30px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.7), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .glass-input {
