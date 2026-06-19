@@ -9862,16 +9862,16 @@ const App = () => {
                                 
                                 <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-2">Exclusive Network</h2>
                                 <p className="text-sm text-gray-400 font-medium leading-relaxed mb-8 px-4">
-                                    Legacy Academy Intel is an elite entrepreneurial network. To access the intelligence feed, active LΞC Equity holdings are required.
+                                    Legacy Academy Intel is an elite entrepreneurial network. To access the intelligence feed, an active Academy membership is required.
                                 </p>
                                 
                                 <div className="bg-white/5  rounded-xl p-4 w-full mb-8">
-                                    <div className="text-3xl font-black text-white mb-1">150€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ LΞC</span></div>
-                                    <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Legacy Equity Capital</div>
+                                    <div className="text-3xl font-black text-white mb-1">4€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ MONTH</span></div>
+                                    <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Legacy Academy Membership</div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
-                                    Acquire LΞC Equity
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFabJ181BbbYe3u6ja6Na04"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
+                                    Acquire Academy Membership
                                 </button>
                                 
                                 <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-widest font-black hover:text-white transition-colors">
