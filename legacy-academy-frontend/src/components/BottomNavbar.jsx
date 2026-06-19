@@ -34,7 +34,7 @@ const BottomNavbar = memo(({
             className="fixed bottom-[calc(158px-7rem+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-2 sm:px-4"
             onTouchMove={(e) => e.preventDefault()}
         >
-            <div className="bottom-nav-glass w-full max-w-[680px] mx-auto rounded-full pointer-events-auto px-3 sm:px-4 py-2.5 flex items-center justify-between relative gap-2 sm:gap-2.5 border border-white/10 bg-black/85 backdrop-blur-xl">
+            <div className="bottom-nav-glass w-full max-w-[680px] mx-auto rounded-full pointer-events-auto px-3 sm:px-4 py-2.5 flex items-center justify-between relative gap-2 sm:gap-2.5">
                 <button
                     type="button"
                     onClick={() => onTabChange('home')}
