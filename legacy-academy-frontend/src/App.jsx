@@ -550,11 +550,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 className={`inline-flex items-center cursor-pointer select-none ${className}`}
                 title={`Affiliated with @${normalizedUsername}`}
             >
-                <div className="w-[18px] h-[18px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm transition-transform duration-200 hover:scale-110">
+                <div className="w-[22px] h-[22px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm transition-transform duration-200 hover:scale-110">
                     {resolvedProfilePic ? (
                         <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     ) : (
-                        <span className="text-[9px] font-bold text-white/80">
+                        <span className="text-[11px] font-bold text-white/80">
                             {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                         </span>
                     )}
@@ -571,11 +571,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             }}
             className={`inline-flex items-center gap-1.5 text-[#1D9BF0] hover:underline cursor-pointer font-bold transition-colors select-none ${className}`}
         >
-            <div className="w-[18px] h-[18px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm">
+            <div className="w-[22px] h-[22px] rounded-[4px] overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm">
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
-                    <span className="text-[9px] font-bold text-white/80">
+                    <span className="text-[11px] font-bold text-white/80">
                         {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                     </span>
                 )}
