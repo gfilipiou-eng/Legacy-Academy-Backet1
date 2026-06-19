@@ -9267,7 +9267,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-14 sm:h-18 md:h-22 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
+                                            className={`h-36 sm:h-44 md:h-48 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
@@ -9633,7 +9633,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-8 sm:h-9 md:h-10 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
+                                            className="h-32 sm:h-36 md:h-40 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
