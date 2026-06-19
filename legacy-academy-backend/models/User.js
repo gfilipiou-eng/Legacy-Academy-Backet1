@@ -92,7 +92,10 @@ const UserSchema = new mongoose.Schema(
             showBadge: { type: Boolean, default: true },
             badgeColor: { type: String, default: 'blue' },
             blur18Plus: { type: Boolean, default: true },
-            is18PlusProfile: { type: Boolean, default: false }
+            is18PlusProfile: { type: Boolean, default: false },
+            matrixOverlay: { type: Boolean, default: false },
+            cyberSFX: { type: Boolean, default: true },
+            neuralNarrator: { type: Boolean, default: false }
         },
         sharesBalance: {
             type: Number,

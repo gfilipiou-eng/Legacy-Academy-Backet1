@@ -43,7 +43,11 @@ const UserSchema = new mongoose.Schema({
     showProfileShareButton: { type: Boolean, default: true },
     showBadge: { type: Boolean, default: false },
     badgeColor: { type: String, default: 'blue' },
-    blur18Plus: { type: Boolean, default: false }
+    blur18Plus: { type: Boolean, default: false },
+    is18PlusProfile: { type: Boolean, default: false },
+    matrixOverlay: { type: Boolean, default: false },
+    cyberSFX: { type: Boolean, default: true },
+    neuralNarrator: { type: Boolean, default: false }
   },
   missionsStreak: { type: Number, default: 0 },
   lastMissionCompleted: { type: Date },

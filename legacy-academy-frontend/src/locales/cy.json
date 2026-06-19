@@ -25,7 +25,7 @@
   "SAVE": "ΑΠΟΘΗΚΕΥΣΗ",
   "UI_ZOOM": "ΣΜΙΚΡΥΝΣΗ UI",
   "THEME": "ΘΕΜΑ",
-  "BACKGROUND": "ΥΠΟΒΑΘΡΟ",
+  "BACKGROUND": "Υπόβαθρο",
   "DARK_MODE": "Σκούρο Φόντο",
   "DARK_BLUE_MODE": "Μπλε Σκούρο Φόντο",
   "MIDNIGHT_MODE": "Μεσάνυχτα",
@@ -259,7 +259,6 @@
   "COLOR_LIME": "Λαχανί",
   "COLOR_MAGENTA": "Ματζέντα",
   "COLOR_TANGERINE": "Μανταρινί",
-  "BACKGROUND": "Υπόβαθρο",
   "WHISPERS": "Ψίθυροι",
   "WHISPERS_SUBTITLE": "Ιδιωτικά κρυπτογραφημένα μηνύματα — ασφαλή & διακριτικά.",
   "DM_SAFE_DESC": "Ασφαλής γραμμή — κρυπτογραφημένη & ιδιωτική.",
@@ -389,5 +388,15 @@
   "MISSION_SOCIAL_HELP": "Help",
   "MISSION_SOCIAL_HELP_DESC": "Help someone with a small thing today. Kindness makes the world better.",
   "MISSION_SOCIAL_MEET": "Meeting",
-  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can."
+  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can.",
+  "PROFILE_DESCRIPTOR": "Disgrifydd Hunaniaeth",
+  "FOUNDER_AFFILIATION": "Cysylltiad Sylfaenydd",
+  "FOUNDER_AFFILIATION_DESC": "Yn cysylltu eich proffil â thudalen sylfaenydd (yn dangos bathodyn sylfaenydd wrth ymyl enw defnyddiwr).",
+  "NEURAL_UPGRADES": "Uwchraddiadau Niwral",
+  "MATRIX_OVERLAY": "Matrics Holograffig",
+  "MATRIX_OVERLAY_DESC": "Toglo glaw digidol matrics disglair yn y cefndir",
+  "CYBER_SFX": "Sain Rhyngwyneb",
+  "CYBER_SFX_DESC": "Syntheseiddio effeithiau sain seiberneitig amser-real ar weithrediad",
+  "NEURAL_NARRATOR": "Adroddwr Niwral",
+  "NEURAL_NARRATOR_DESC": "Galluogi botwm darllenydd Testun-i-Leferydd wrth ymyl botwm cyfieithu"
 }

@@ -400,42 +400,42 @@ const PROFILE_DESCRIPTOR_OPTIONS = [
         label: 'Entrepreneur',
         description: 'Building something big',
         Icon: Icons.Briefcase,
-        accentClass: '!bg-orange-500/10 !text-orange-500 !border-orange-400/20'
+        accentClass: 'descriptor-entrepreneur'
     },
     {
         value: 'creator',
         label: 'Creator',
         description: 'Making content and ideas',
         Icon: Icons.Camera,
-        accentClass: '!bg-sky-500/10 !text-sky-500 !border-sky-400/20'
+        accentClass: 'descriptor-creator'
     },
     {
         value: 'popular',
         label: 'Popular',
         description: 'Always in demand',
         Icon: Icons.Sparkles,
-        accentClass: '!bg-fuchsia-500/10 !text-fuchsia-500 !border-fuchsia-400/20'
+        accentClass: 'descriptor-popular'
     },
     {
         value: 'pet-lover',
         label: 'Dog Lover',
         description: 'Pets are family',
         Icon: Icons.PawPrint,
-        accentClass: '!bg-emerald-500/10 !text-emerald-500 !border-emerald-400/20'
+        accentClass: 'descriptor-pet-lover'
     },
     {
         value: 'community',
         label: 'Community',
         description: 'People first energy',
         Icon: Icons.Users,
-        accentClass: '!bg-violet-500/10 !text-violet-500 !border-violet-400/20'
+        accentClass: 'descriptor-community'
     },
     {
         value: 'visionary',
         label: 'Visionary',
         description: 'Future focused mindset',
         Icon: Icons.Zap,
-        accentClass: '!bg-amber-500/10 !text-amber-500 !border-amber-400/20'
+        accentClass: 'descriptor-visionary'
     }
 ];
 const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
@@ -506,7 +506,7 @@ const fetchFounderAffiliationUser = async (username) => {
     return request;
 };
 
-const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '' }) => {
+const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth }) => {
     const normalizedUsername = sanitizeAffiliation(username);
     if (!normalizedUsername) return null;
 
@@ -538,10 +538,12 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    const avatarSizeClass = size === 'sm' ? 'w-5 h-5 rounded-full' : 'w-6 h-6 rounded-full';
-    const iconSizeClass = size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5';
-    const textSizeClass = size === 'sm' ? 'text-[11px]' : 'text-[13px]';
+    const avatarSizeClass = size === 'sm' ? 'w-3.5 h-3.5 rounded-full' : 'w-4 h-4 rounded-full';
+    const iconSizeClass = size === 'sm' ? 'w-2.5 h-2.5' : 'w-2.5 h-2.5';
+    const textSizeClass = size === 'sm' ? 'text-[9px]' : 'text-[10px]';
+    const buttonPadding = size === 'sm' ? 'pl-0.5 pr-2 py-0.5' : 'pl-1 pr-2.5 py-0.5';
     const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, size === 'large' ? 600 : 80, true);
+    const textMaxW = maxTextWidth || (size === 'sm' ? 'max-w-[80px] sm:max-w-[120px]' : 'max-w-[110px] sm:max-w-[160px]');
 
     return (
         <button
@@ -550,20 +552,19 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex max-w-full items-center justify-center gap-1.5 rounded-full pl-1.5 pr-3 py-1.5 bg-[#eff3f4]/10 hover:bg-[#eff3f4]/20 border border-transparent hover:border-white/10 text-[#eff3f4] font-semibold cursor-pointer transition-all duration-300 active:scale-[0.97] ${textSizeClass} ${className} overflow-visible`}
-            style={{ overflow: 'visible' }}
+            className={`inline-flex max-w-full items-center justify-center gap-1 rounded-full ${buttonPadding} bg-[#eff3f4]/10 hover:bg-[#eff3f4]/20 border border-transparent hover:border-white/10 text-[#eff3f4] font-semibold cursor-pointer transition-all duration-300 active:scale-[0.97] ${textSizeClass} ${className} overflow-hidden`}
         >
             <div className={`relative z-10 ${avatarSizeClass} overflow-hidden bg-black shrink-0 flex items-center justify-center border border-white/10 shadow-sm`}>
                 {resolvedProfilePic ? (
                     <img src={resolvedProfilePic} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
-                    <span className="text-[10px] font-bold text-white/80">
+                    <span className="text-[9px] font-bold text-white/80">
                         {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                     </span>
                 )}
             </div>
-            <div className="flex items-center gap-0.5 min-w-0 max-w-full overflow-visible">
-                <span className="relative z-10 min-w-0 break-words leading-tight text-white tracking-normal">@{normalizedUsername}</span>
+            <div className="flex items-center gap-0.5 min-w-0 max-w-full overflow-hidden">
+                <span className={`relative z-10 min-w-0 truncate leading-tight text-white tracking-normal ${textMaxW}`}>@{normalizedUsername}</span>
                 <VerifiedBadge isFounder={resolvedLinkedUser?.role === 'Founder'} isUser={resolvedLinkedUser?.role !== 'Founder'} className={`${iconSizeClass} shrink-0 ml-0.5`} user={resolvedLinkedUser} />
             </div>
         </button>
@@ -3859,7 +3860,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     />
                                 </div>
                                 <div className="text-[9px] text-gray-500 mt-1.5 font-bold uppercase tracking-wide leading-relaxed pl-1">
-                                    Links your profile to a founder page (shows founder badge next to username).
+                                    {t('FOUNDER_AFFILIATION_DESC', 'Links your profile to a founder page (shows founder badge next to username).')}
                                 </div>
                             </div>
                         </SettingsGroup>
@@ -6356,7 +6357,7 @@ const ProfileModal = ({
                                     )}
                                     {displayFounderAffiliation && (
                                         <div className="mt-2">
-                                            <FounderAffiliationBadge username={displayFounderAffiliation} className="max-w-full" />
+                                            <FounderAffiliationBadge username={displayFounderAffiliation} size="sm" maxTextWidth="max-w-none" className="max-w-full" />
                                         </div>
                                     )}
                                     <div className="profile-handle-row text-gray-400 text-sm font-bold mt-1.5 flex items-center gap-2">
@@ -7499,7 +7500,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <span className="profile-headline text-xs text-gray-500 font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                     {publicFounderAffiliation && (
                         <div className="mt-2 flex justify-center">
-                            <FounderAffiliationBadge username={publicFounderAffiliation} />
+                            <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" maxTextWidth="max-w-none" />
                         </div>
                     )}
                 </div>
@@ -10333,6 +10334,8 @@ const App = () => {
                         onTabChange={(tab) => {
                             if (tab === 'exchange' && !is18PlusVerified) {
                                 setShowAgeModal(true);
+                            } else if (tab === 'profile') {
+                                if (user) viewProfile(user);
                             } else {
                                 setActiveTab(tab);
                             }
@@ -10342,6 +10345,7 @@ const App = () => {
                         onCreate={() => setIsCreateOpen(true)}
                         onProfile={() => user && viewProfile(user)}
                         ProfileAvatar={ProfileAvatar}
+                        isProfileActive={isProfileOpen && profileUser && user && isSameId(profileUser._id, user._id)}
                     />
 
                     <NavigationDrawer
@@ -10645,7 +10649,7 @@ const App = () => {
                             </div>
                             <div className="mb-4" />
                             {getFounderAffiliation(shareModalProfile) && (
-                                <FounderAffiliationBadge username={getFounderAffiliation(shareModalProfile)} className="mb-4" />
+                                <FounderAffiliationBadge username={getFounderAffiliation(shareModalProfile)} size="sm" maxTextWidth="max-w-none" className="mb-4" />
                             )}
                             
                             {/* Bio */}

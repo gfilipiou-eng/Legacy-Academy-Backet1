@@ -379,5 +379,15 @@
   "MISSION_SOCIAL_HELP": "Hilfe",
   "MISSION_SOCIAL_HELP_DESC": "Helfen Sie jemandem heute mit einer kleinen Sache. Freundlichkeit macht die Welt besser.",
   "MISSION_SOCIAL_MEET": "Treffen",
-  "MISSION_SOCIAL_MEET_DESC": "Treffen Sie sich mit jemandem persönlich zu einem Kaffee oder einem Spaziergang, wenn Sie können."
+  "MISSION_SOCIAL_MEET_DESC": "Treffen Sie sich mit jemandem persönlich zu einem Kaffee oder einem Spaziergang, wenn Sie können.",
+  "PROFILE_DESCRIPTOR": "Identitäts-Deskriptor",
+  "FOUNDER_AFFILIATION": "Gründer-Zugehörigkeit",
+  "FOUNDER_AFFILIATION_DESC": "Verknüpft Ihr Profil mit einer Gründer-Seite (zeigt Gründer-Badge neben dem Benutzernamen).",
+  "NEURAL_UPGRADES": "Neuronale Upgrades",
+  "MATRIX_OVERLAY": "Holografische Matrix",
+  "MATRIX_OVERLAY_DESC": "Aktiviert einen glühenden digitalen Matrix-Regen im Hintergrund",
+  "CYBER_SFX": "Interface-Audio",
+  "CYBER_SFX_DESC": "Synthetisiert cybernetische Echtzeit-Soundeffekte bei Aktionen",
+  "NEURAL_NARRATOR": "Neuronaler Erzähler",
+  "NEURAL_NARRATOR_DESC": "Aktiviert die Text-to-Speech-Vorleseschaltfläche neben der Übersetzung"
 }

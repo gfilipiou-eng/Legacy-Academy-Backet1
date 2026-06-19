@@ -382,5 +382,15 @@
   "MISSION_SOCIAL_HELP": "Help",
   "MISSION_SOCIAL_HELP_DESC": "Help someone with a small thing today. Kindness makes the world better.",
   "MISSION_SOCIAL_MEET": "Meeting",
-  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can."
+  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can.",
+  "PROFILE_DESCRIPTOR": "Descriptor de Identidad",
+  "FOUNDER_AFFILIATION": "Afiliación de Fundador",
+  "FOUNDER_AFFILIATION_DESC": "Vincula tu perfil a una página de fundador (muestra la insignia de fundador junto al nombre de usuario).",
+  "NEURAL_UPGRADES": "Actualizaciones Neuronales",
+  "MATRIX_OVERLAY": "Matriz Holográfica",
+  "MATRIX_OVERLAY_DESC": "Activa una lluvia digital brillante de Matrix en el fondo",
+  "CYBER_SFX": "Audio de Interfaz",
+  "CYBER_SFX_DESC": "Sintetiza efectos de sonido cibernéticos en tiempo real al actuar",
+  "NEURAL_NARRATOR": "Narrador Neuronal",
+  "NEURAL_NARRATOR_DESC": "Activa el botón del lector de texto a voz junto al de traducción"
 }

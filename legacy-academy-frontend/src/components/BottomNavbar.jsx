@@ -39,6 +39,7 @@ const BottomNavbar = memo(({
     onCreate,
     onProfile,
     ProfileAvatar,
+    isProfileActive = false,
 }) => {
     const unreadCount = useMemo(
         () => (alerts || []).filter((n) => !n.read).length,
@@ -181,19 +182,19 @@ const BottomNavbar = memo(({
                 {/* Tab: Profile */}
                 <button
                     type="button"
-                    onClick={() => { playCyberSFX('click'); onTabChange('profile'); }}
+                    onClick={() => { playCyberSFX('click'); onProfile(); }}
                     aria-label="Profile"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
-                    <div className={navItemClass(activeTab === 'profile')}>
-                        {activeTab === 'profile' && (
+                    <div className={navItemClass(isProfileActive)}>
+                        {isProfileActive && (
                             <motion.div 
                                 layoutId="navActiveIndicator"
                                 className="absolute inset-0 bottom-nav-item-active pointer-events-none"
                                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                             />
                         )}
-                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${activeTab === 'profile' ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

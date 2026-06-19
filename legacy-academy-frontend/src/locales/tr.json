@@ -382,5 +382,15 @@
   "MISSION_SOCIAL_HELP": "Help",
   "MISSION_SOCIAL_HELP_DESC": "Help someone with a small thing today. Kindness makes the world better.",
   "MISSION_SOCIAL_MEET": "Meeting",
-  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can."
+  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can.",
+  "PROFILE_DESCRIPTOR": "Kimlik Tanımlayıcı",
+  "FOUNDER_AFFILIATION": "Kurucu Rozeti İlişkisi",
+  "FOUNDER_AFFILIATION_DESC": "Profilinizi bir kurucu sayfasına bağlar (kullanıcı adının yanında kurucu rozeti gösterir).",
+  "NEURAL_UPGRADES": "Nöral Yükseltmeler",
+  "MATRIX_OVERLAY": "Holografik Matris",
+  "MATRIX_OVERLAY_DESC": "Arka planda parlayan bir matris dijital yağmurunu etkinleştirir",
+  "CYBER_SFX": "Arayüz Sesi",
+  "CYBER_SFX_DESC": "Eylem sırasında gerçek zamanlı sibernetik ses efektleri sentezler",
+  "NEURAL_NARRATOR": "Nöral Anlatıcı",
+  "NEURAL_NARRATOR_DESC": "Çeviri düğmesinin yanındaki metinden konuşmaya okuyucu düğmesini etkinleştirir"
 }

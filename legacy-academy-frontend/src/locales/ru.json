@@ -382,5 +382,15 @@
   "MISSION_SOCIAL_HELP": "Help",
   "MISSION_SOCIAL_HELP_DESC": "Help someone with a small thing today. Kindness makes the world better.",
   "MISSION_SOCIAL_MEET": "Meeting",
-  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can."
+  "MISSION_SOCIAL_MEET_DESC": "Meet up with someone in person for coffee or a walk if you can.",
+  "PROFILE_DESCRIPTOR": "Дескриптор Личности",
+  "FOUNDER_AFFILIATION": "Связь с Основателем",
+  "FOUNDER_AFFILIATION_DESC": "Связывает ваш профиль со страницей основателя (показывает значок основателя рядом с именем пользователя).",
+  "NEURAL_UPGRADES": "Нейроулучшения",
+  "MATRIX_OVERLAY": "Голографическая Матрица",
+  "MATRIX_OVERLAY_DESC": "Включает светящийся цифровой дождь Матрицы на заднем плане",
+  "CYBER_SFX": "Звуки Интерфейса",
+  "CYBER_SFX_DESC": "Синтезирует кибернетические звуковые эффекты в реальном времени при действиях",
+  "NEURAL_NARRATOR": "Нейрорассказчик",
+  "NEURAL_NARRATOR_DESC": "Включает кнопку чтения текста голосом рядом с переводом"
 }

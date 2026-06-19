@@ -1996,5 +1996,80 @@ button:active,
   opacity: 0.7 !important;
 }
 
+/* Premium Glassmorphic Identity Descriptors */
+.descriptor-entrepreneur {
+  color: #ff9f57 !important;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.16) 0%, rgba(249, 115, 22, 0.06) 100%) !important;
+  border-color: rgba(249, 115, 22, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.descriptor-creator {
+  color: #38bdf8 !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(56, 189, 248, 0.06) 100%) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.descriptor-popular {
+  color: #f472b6 !important;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.16) 0%, rgba(236, 72, 153, 0.06) 100%) !important;
+  border-color: rgba(236, 72, 153, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.descriptor-pet-lover {
+  color: #34d399 !important;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.06) 100%) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.descriptor-community {
+  color: #a78bfa !important;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.16) 0%, rgba(139, 92, 246, 0.06) 100%) !important;
+  border-color: rgba(139, 92, 246, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.descriptor-visionary {
+  color: #fbbf24 !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
 
-
+/* Micro-animations and Glow Boost on Hover */
+@media (hover: hover) {
+  .descriptor-entrepreneur:hover {
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(249, 115, 22, 0.5) !important;
+    transform: translateY(-1px) scale(1.02);
+  }
+  .descriptor-creator:hover {
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.5) !important;
+    transform: translateY(-1px) scale(1.02);
+  }
+  .descriptor-popular:hover {
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(236, 72, 153, 0.5) !important;
+    transform: translateY(-1px) scale(1.02);
+  }
+  .descriptor-pet-lover:hover {
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    transform: translateY(-1px) scale(1.02);
+  }
+  .descriptor-community:hover {
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(139, 92, 246, 0.5) !important;
+    transform: translateY(-1px) scale(1.02);
+  }
+  .descriptor-visionary:hover {
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(245, 158, 11, 0.5) !important;
+    transform: translateY(-1px) scale(1.02);
+  }
+}
