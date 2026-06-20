@@ -538,55 +538,47 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    // Request a 200px image for perfect clarity on any display (Retina/4K)
-    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 200, true);
-
-    const SquareAvatar = () => (
-        <div className="relative w-7 h-7 shrink-0 rounded-[8px] overflow-hidden border border-white/15 bg-[#111] shadow-sm transition-transform duration-200 hover:scale-105">
-            {resolvedProfilePic ? (
-                <img 
-                    src={resolvedProfilePic} 
-                    alt="" 
-                    className="w-full h-full object-cover" 
-                    loading="lazy" 
-                    decoding="async" 
-                />
-            ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#111]">
-                    <span className="text-[14px] font-bold text-[#D4AF37]">
-                        {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                    </span>
-                </div>
-            )}
-        </div>
-    );
-
-    if (iconOnly) {
-        return (
-            <span
-                onClick={(e) => {
-                    e.stopPropagation();
-                    window.location.href = founderAffiliationHref(normalizedUsername);
-                }}
-                className={`inline-flex items-center cursor-pointer select-none ${className}`}
-                title={`Affiliated with @${normalizedUsername}`}
-            >
-                <SquareAvatar />
-            </span>
-        );
-    }
+    // Request a 100px image for perfect clarity on a 24px circle (Retina/4K)
+    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 100, true);
 
     return (
-        <span
+        <div 
             onClick={(e) => {
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex items-center gap-2 text-[#D4AF37] hover:brightness-125 cursor-pointer font-bold transition-all select-none ${className}`}
+            className={`inline-flex items-center gap-2.5 bg-gradient-to-r from-[#111]/90 to-[#0a0a0a]/90 backdrop-blur-md border border-[#D4AF37]/30 pl-1 pr-4 py-1 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)] hover:border-[#D4AF37]/70 hover:shadow-[0_4px_15px_rgba(212,175,55,0.2)] transition-all cursor-pointer select-none ${className}`}
+            title={`Affiliated with @${normalizedUsername}`}
         >
-            <SquareAvatar />
-            <span className="text-[14px] tracking-wide">@{normalizedUsername}</span>
-        </span>
+            {/* The Circular Avatar */}
+            <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 border border-[#D4AF37]/50 shadow-inner">
+                {resolvedProfilePic ? (
+                    <img 
+                        src={resolvedProfilePic} 
+                        alt="" 
+                        className="w-full h-full object-cover" 
+                        loading="lazy" 
+                        decoding="async" 
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#111]">
+                        <span className="text-[12px] font-bold text-[#D4AF37]">
+                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                        </span>
+                    </div>
+                )}
+            </div>
+            
+            {/* The Text Info */}
+            <div className="flex flex-col justify-center">
+                <span className="text-[8px] font-bold text-[#D4AF37]/60 uppercase tracking-[0.2em] leading-none mb-0.5">
+                    Affiliated Founder
+                </span>
+                <span className="text-[12px] font-black text-[#D4AF37] leading-none tracking-wide">
+                    @{normalizedUsername}
+                </span>
+            </div>
+        </div>
     );
 };
 
@@ -2155,9 +2147,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                             {t(`DESC_${note.fromDescriptor.toUpperCase()}`, note.fromDescriptor)}
                         </span>
                     ))}
-                    {getFounderAffiliation(note.sender) && (
-                        <FounderAffiliationBadge username={getFounderAffiliation(note.sender)} iconOnly={true} className="shrink-0" />
-                    )}
+
                 </div>
 
                 <div className="text-[11px] sm:text-xs text-gray-300 mt-1 uppercase font-bold tracking-wider leading-snug">
@@ -2463,9 +2453,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
                                         {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
-                                        {getFounderAffiliation(author) && (
-                                            <FounderAffiliationBadge username={getFounderAffiliation(author)} iconOnly={true} className="shrink-0" />
-                                        )}
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                         {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
                                             <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
@@ -10509,9 +10496,6 @@ const App = () => {
                                         <span className="truncate">{shareModalPost.author?.username}</span>
                                         {shareModalPost.author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{shareModalPost.author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={shareModalPost.author} />
-                                        {getFounderAffiliation(shareModalPost.author) && (
-                                            <FounderAffiliationBadge username={getFounderAffiliation(shareModalPost.author)} iconOnly={true} className="shrink-0" />
-                                        )}
                                     </div>
                                     {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
                                         <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold flex-wrap">
