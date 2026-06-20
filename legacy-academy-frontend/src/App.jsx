@@ -8920,7 +8920,6 @@ const App = () => {
             document.body.style.left = '0';
             document.body.style.right = '0';
             document.body.style.overflow = 'hidden';
-            window.addEventListener('keydown', handleKeyDown);
         } else {
             const scrollY = document.body.style.top;
             document.body.style.position = '';
