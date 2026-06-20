@@ -550,11 +550,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex items-center gap-2.5 bg-gradient-to-r from-[#111]/90 to-[#0a0a0a]/90 backdrop-blur-md border border-[#D4AF37]/30 pl-1 pr-4 py-1 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)] hover:border-[#D4AF37]/70 hover:shadow-[0_4px_15px_rgba(212,175,55,0.2)] transition-all cursor-pointer select-none ${className}`}
+            className={`group inline-flex items-center gap-3 bg-gradient-to-r from-amber-950/40 via-black/80 to-black/90 backdrop-blur-xl border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 pl-1.5 pr-5 py-1.5 rounded-full shadow-[0_0_20px_rgba(212,175,55,0.05)] hover:shadow-[0_0_25px_rgba(212,175,55,0.15)] transition-all duration-400 cursor-pointer select-none ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
             {/* The Circular Avatar */}
-            <div className="relative w-7 h-7 rounded-full overflow-hidden shrink-0 border border-[#D4AF37]/50 shadow-inner">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#D4AF37]/40 shadow-[0_0_10px_rgba(212,175,55,0.2)] group-hover:scale-105 transition-transform duration-400">
                 {resolvedProfilePic ? (
                     <img 
                         src={resolvedProfilePic} 
@@ -574,10 +574,10 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             
             {/* The Text Info */}
             <div className="flex flex-col justify-center">
-                <span className="text-[8px] font-bold text-[#D4AF37]/60 uppercase tracking-[0.2em] leading-none mb-0.5">
-                    Affiliated Founder
+                <span className="text-[8px] font-black text-[#D4AF37]/70 uppercase tracking-[0.25em] leading-none mb-1">
+                    Affiliated
                 </span>
-                <span className="text-[12px] font-black text-[#D4AF37] leading-none tracking-wide">
+                <span className="text-[12px] font-black bg-gradient-to-r from-[#D4AF37] to-[#FFF8D6] bg-clip-text text-transparent leading-none tracking-wider">
                     @{normalizedUsername}
                 </span>
             </div>
@@ -6508,13 +6508,12 @@ const ProfileModal = ({
                                                     setTimeout(() => onOpenChat(displayUser), 50);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="flex items-center justify-center gap-2.5 px-5 py-3.5 bg-white/[0.06] backdrop-blur-2xl border border-white/10 rounded-2xl shrink-0 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-white hover:bg-white/[0.12] hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 relative overflow-hidden"
+                                                className="relative overflow-hidden py-2.5 px-6 rounded-full text-[13px] sm:text-[14px] font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm flex items-center justify-center bg-transparent border border-white/30 text-white hover:bg-white/10 shrink-0"
                                             >
-                                                <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/20" />
-                                                <div className="relative z-10 flex items-center justify-center">
-                                                    <Icons.MessageSquare className="w-5 h-5 text-white" />
-                                                </div>
-                                                <span className="relative z-10">{t('WHISPERS')}</span>
+                                                <span className="relative z-10 flex items-center justify-center gap-2">
+                                                    <Icons.MessageSquare className="w-4 h-4" />
+                                                    {t('WHISPERS')}
+                                                </span>
                                             </button>
                                         </>
                                     )}
