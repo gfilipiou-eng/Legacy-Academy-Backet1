@@ -663,21 +663,56 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 {window.location.origin}/?site={user?.username}&index={websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}
                             </span>
                             <button 
-                                onClick={() => {
-                                    navigator.clipboard.writeText(`${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`);
-                                    alert('Copied to clipboard!');
+                                type="button"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const url = `${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`;
+                                    try {
+                                        navigator.clipboard.writeText(url);
+                                    } catch (err) {
+                                        try {
+                                            const textArea = document.createElement("textarea");
+                                            textArea.value = url;
+                                            document.body.appendChild(textArea);
+                                            textArea.focus();
+                                            textArea.select();
+                                            document.execCommand('copy');
+                                            document.body.removeChild(textArea);
+                                        } catch(e2){}
+                                    }
+                                    alert(t('LINK_COPIED', 'Copied to clipboard!'));
                                 }}
-                                className="w-8 h-8 shrink-0 bg-white/10 hover:bg-white/20 rounded-md flex items-center justify-center transition-colors"
+                                onTouchEnd={(e) => {
+                                    e.preventDefault();
+                                    const url = `${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`;
+                                    try {
+                                        navigator.clipboard.writeText(url);
+                                    } catch (err) {
+                                        try {
+                                            const textArea = document.createElement("textarea");
+                                            textArea.value = url;
+                                            document.body.appendChild(textArea);
+                                            textArea.focus();
+                                            textArea.select();
+                                            document.execCommand('copy');
+                                            document.body.removeChild(textArea);
+                                        } catch(e2){}
+                                    }
+                                    alert(t('LINK_COPIED', 'Copied to clipboard!'));
+                                }}
+                                className="w-8 h-8 shrink-0 bg-white/10 hover:bg-white/20 rounded-md flex items-center justify-center transition-colors touch-manipulation"
                             >
                                 <Icons.Copy className="w-4 h-4 text-white" />
                             </button>
                         </div>
                         
                         <button 
-                            onClick={() => setShowPublishSuccess(false)}
-                            className="w-full py-4 rounded-xl bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-wider hover:opacity-90 transition-opacity"
+                            type="button"
+                            onClick={(e) => { e.preventDefault(); setShowPublishSuccess(false); }}
+                            onTouchEnd={(e) => { e.preventDefault(); setShowPublishSuccess(false); }}
+                            className="w-full py-4 rounded-xl bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-wider hover:opacity-90 transition-opacity touch-manipulation"
                         >
-                            Continue Editing
+                            {t('CONTINUE_EDITING', 'Continue Editing')}
                         </button>
                     </motion.div>
                 </div>

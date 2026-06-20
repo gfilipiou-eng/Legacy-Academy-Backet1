@@ -6052,6 +6052,9 @@ const ProfileModal = ({
                 className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
                 style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
 
+                {/* Ambient Glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--gold-primary)]/10 blur-[120px] rounded-full pointer-events-none z-0" />
+
                 {displayUser?.coverPic && !coverPicError && (
                     <div className="absolute top-0 left-0 right-0 h-[220px] z-0 pointer-events-none animate-fade-in overflow-hidden">
                         {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
@@ -7457,6 +7460,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
             className={`profile-page-scroll app-main-scroll custom-scrollbar fixed inset-0 text-white flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`}
             style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}
         >
+            {/* Ambient Background Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--gold-primary)]/10 blur-[120px] rounded-full pointer-events-none z-0" />
+
             {resolvedPublicCoverPic && (
                 <div className="absolute top-0 left-0 right-0 h-[220px] z-0 overflow-hidden pointer-events-none">
                     {String(resolvedPublicCoverPic).match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
