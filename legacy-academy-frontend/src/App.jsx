@@ -9938,55 +9938,55 @@ const App = () => {
 
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
-                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                        <div className="bg-[#0a0a0a] border border-white/10 rounded-[24px] max-w-[420px] w-full overflow-hidden relative shadow-[0_10px_50px_rgba(0,0,0,0.8)]">
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-3 sm:p-4 bg-black/95 backdrop-blur-xl">
+                        <div className="bg-[#0a0a0a] border border-white/10 rounded-[24px] max-w-[420px] w-full overflow-y-auto no-scrollbar max-h-[95dvh] relative shadow-[0_10px_50px_rgba(0,0,0,0.8)]">
                             {/* Decorative Top Line */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700]" />
                             
-                            <div className="p-8 text-center flex flex-col items-center">
-                                <div className="w-16 h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-4 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-                                    <Icons.Lock className="w-6 h-6 text-[var(--gold-primary)]" />
+                            <div className="p-6 sm:p-8 text-center flex flex-col items-center">
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-3 sm:mb-4 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+                                    <Icons.Lock className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--gold-primary)]" />
                                 </div>
                                 
-                                <h2 className="text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1">Exclusive Network</h2>
-                                <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-6">Legacy Academy Membership</div>
+                                <h2 className="text-lg sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1">Exclusive Network</h2>
+                                <div className="text-[9px] sm:text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-5 sm:mb-6">Legacy Academy Membership</div>
                                 
-                                <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-5 mb-6 text-left space-y-3">
+                                <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-4 sm:p-5 mb-5 sm:mb-6 text-left space-y-2.5 sm:space-y-3">
                                     <div className="flex items-start gap-3">
                                         <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Premium Intelligence Feed</div>
-                                            <div className="text-[10px] text-white/40">Exclusive daily insights and strategies.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Premium Intelligence Feed</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Exclusive daily insights and strategies.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
                                         <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
-                                            <div className="text-[10px] text-white/40">Entrepreneurs can build their own high-end websites.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Entrepreneurs can build their own high-end websites.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
                                         <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Elite Network Access</div>
-                                            <div className="text-[10px] text-white/40">Connect with a highly curated inner circle.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Elite Network Access</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Connect with a highly curated inner circle.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
                                         <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Private Messaging & Comms</div>
-                                            <div className="text-[10px] text-white/40">Secure P2P encrypted chat capabilities.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Private Messaging & Comms</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Secure P2P encrypted chat capabilities.</div>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div className="bg-white/5 rounded-xl p-4 w-full mb-6 border border-white/10">
-                                    <div className="text-3xl font-black text-white flex items-center justify-center gap-1">49€ <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">/ MONTH</span></div>
+                                <div className="bg-white/5 rounded-xl p-3 sm:p-4 w-full mb-4 sm:mb-6 border border-white/10">
+                                    <div className="text-2xl sm:text-3xl font-black text-white flex items-center justify-center gap-1">49€ <span className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mt-1">/ MONTH</span></div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-4 bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.25em] rounded-xl hover:bg-white/20 hover:border-white/20 active:scale-95 transition-all duration-300 mb-5 text-[11px]">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.25em] rounded-xl hover:bg-white/20 hover:border-white/20 active:scale-95 transition-all duration-300 mb-4 sm:mb-5 text-[10px] sm:text-[11px]">
                                     Unlock Access
                                 </button>
                                 
