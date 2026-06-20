@@ -8,6 +8,7 @@ import axios from '../../api';
 export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
     const { t } = useTranslation();
     const [activeWebsiteIndex, setActiveWebsiteIndex] = useState(null);
+    const [showCopyToast, setShowCopyToast] = useState(false);
 
     // Ensure it's an array
     let websites = [];
@@ -51,7 +52,8 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
         e.stopPropagation();
         const url = `${window.location.origin}/?site=${user?.username}&index=${index}`;
         navigator.clipboard.writeText(url);
-        alert("Public link copied to clipboard!");
+        setShowCopyToast(true);
+        setTimeout(() => setShowCopyToast(false), 2000);
     };
 
     if (activeWebsiteIndex !== null) {
@@ -84,10 +86,11 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {websites.map((site, idx) => (
-                        <div 
+                        <button 
                             key={idx} 
                             onClick={() => setActiveWebsiteIndex(idx)}
-                            className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold-primary)] transition-all hover:-translate-y-1 shadow-xl"
+                            type="button"
+                            className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold-primary)] transition-all hover:-translate-y-1 shadow-xl text-left touch-manipulation appearance-none"
                         >
                             <div>
                                 <div className="flex items-center justify-between mb-4">
@@ -102,15 +105,15 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                 <p className="text-sm text-gray-500 mb-6 line-clamp-2">{site.slogan}</p>
                             </div>
 
-                            <div className="flex items-center gap-2 pt-4 border-t border-white/5">
-                                <button onClick={(e) => handleCopyLink(idx, e)} className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white transition-all flex items-center justify-center gap-2">
+                            <div className="flex items-center gap-2 pt-4 border-t border-white/5 w-full">
+                                <button type="button" onClick={(e) => handleCopyLink(idx, e)} className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white transition-all flex items-center justify-center gap-2 touch-manipulation">
                                     <Icons.Link className="w-4 h-4" /> Copy Link
                                 </button>
-                                <button onClick={(e) => handleDelete(idx, e)} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs font-bold text-red-500 transition-all">
+                                <button type="button" onClick={(e) => handleDelete(idx, e)} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs font-bold text-red-500 transition-all touch-manipulation">
                                     <Icons.Trash className="w-4 h-4" />
                                 </button>
                             </div>
-                        </div>
+                        </button>
                     ))}
 
                     {websites.length < 2 && (
@@ -128,6 +131,21 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                     )}
                 </div>
             </div>
+
+            {/* Custom Toast for Copy Link */}
+            <AnimatePresence>
+                {showCopyToast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[3000] bg-[var(--gold-primary)] text-black px-6 py-3 rounded-full font-black text-sm flex items-center gap-2 shadow-2xl"
+                    >
+                        <Icons.Check className="w-4 h-4" />
+                        Link Copied!
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
