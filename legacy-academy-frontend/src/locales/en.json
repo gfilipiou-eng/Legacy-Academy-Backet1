@@ -484,5 +484,13 @@
   "MISSION_COMBAT_TACTICS": "Sniper Focus",
   "MISSION_COMBAT_TACTICS_DESC": "Practice precision targeting or intense focus drills for 30 mins.",
   "MISSION_COMBAT_SPAR": "Ring General",
-  "MISSION_COMBAT_SPAR_DESC": "Spar with a partner or hit the heavy bag for 5 rounds."
+  "MISSION_COMBAT_SPAR_DESC": "Spar with a partner or hit the heavy bag for 5 rounds.",
+  "CAT_CHALLENGES": "Epic Challenges",
+  "CAT_CHALLENGES_DESC": "Ultimate tests of endurance, discipline, and willpower.",
+  "MISSION_CHAL_FAST": "48-Hour Fast",
+  "MISSION_CHAL_FAST_DESC": "Consume zero calories for 48 hours to reset your biology.",
+  "MISSION_CHAL_MONK": "Monk Mode",
+  "MISSION_CHAL_MONK_DESC": "7 days of pure discipline: no alcohol, no junk food, intense focus.",
+  "MISSION_CHAL_MARATHON": "Iron Will Marathon",
+  "MISSION_CHAL_MARATHON_DESC": "Run or fast-walk a half-marathon (21km) in a single day."
 }

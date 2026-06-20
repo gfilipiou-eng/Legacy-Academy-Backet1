@@ -492,5 +492,13 @@
   "MISSION_COMBAT_TACTICS": "Συγκέντρωση Ελεύθερου Σκοπευτή",
   "MISSION_COMBAT_TACTICS_DESC": "Κάνε ασκήσεις απόλυτης συγκέντρωσης και ακρίβειας για 30 λεπτά.",
   "MISSION_COMBAT_SPAR": "Στρατηγός του Ρινγκ",
-  "MISSION_COMBAT_SPAR_DESC": "Κάνε sparring ή χτύπα τον σάκο με δύναμη για 5 γύρους."
+  "MISSION_COMBAT_SPAR_DESC": "Κάνε sparring ή χτύπα τον σάκο με δύναμη για 5 γύρους.",
+  "CAT_CHALLENGES": "Επικές Προκλήσεις",
+  "CAT_CHALLENGES_DESC": "Οι απόλυτες δοκιμασίες αντοχής, πειθαρχίας και θέλησης.",
+  "MISSION_CHAL_FAST": "Νηστεία 48 Ωρών",
+  "MISSION_CHAL_FAST_DESC": "Μηδέν θερμίδες για 48 ώρες για βιολογική επανεκκίνηση.",
+  "MISSION_CHAL_MONK": "Monk Mode (Μοναχός)",
+  "MISSION_CHAL_MONK_DESC": "7 μέρες απόλυτης πειθαρχίας: καθόλου αλκοόλ, junk food, απόλυτη εστίαση.",
+  "MISSION_CHAL_MARATHON": "Μαραθώνιος Θέλησης",
+  "MISSION_CHAL_MARATHON_DESC": "Τρέξε ή περπάτησε γρήγορα έναν Ημιμαραθώνιο (21χλμ) σε μία μέρα."
 }
