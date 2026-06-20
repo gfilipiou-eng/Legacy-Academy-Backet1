@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { useTranslation } from '../../translations';
 import axios from '../../api';
+import { simulateAIGeneration } from './aiSimulator';
 
 export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
     const { t } = useTranslation();
@@ -12,6 +13,10 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
 
     // Mobile specific tab (form vs preview)
     const [mobileTab, setMobileTab] = useState('form');
+
+    // AI Generator State
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
     const existingWebsite = user?.settings?.businessWebsite || {};
     
@@ -53,6 +58,21 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
         } finally {
             setSaving(false);
         }
+    };
+
+    const handleAIGenerate = () => {
+        if (!aiPrompt.trim()) return;
+        setIsGeneratingAI(true);
+        // Simulate network delay for AI thinking
+        setTimeout(() => {
+            const aiData = simulateAIGeneration(aiPrompt);
+            setConfig(prev => ({ ...prev, ...aiData }));
+            setIsGeneratingAI(false);
+            // On mobile, auto-switch to preview so they see the magic
+            if (window.innerWidth < 768) {
+                setMobileTab('preview');
+            }
+        }, 2000);
     };
 
     const themeColors = {
@@ -108,6 +128,42 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
 
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-8">
                     
+                    {/* AI Generator */}
+                    <div className="bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 p-5 rounded-2xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent" />
+                        <div className="flex items-center gap-2 mb-3">
+                            <Icons.Sparkles className="w-4 h-4 text-[var(--gold-primary)]" />
+                            <h3 className="text-[12px] font-black uppercase tracking-wider text-[var(--gold-primary)]">AI Website Generator</h3>
+                        </div>
+                        <p className="text-xs text-white/60 mb-3 leading-relaxed">
+                            {t('AI_BUILDER_DESC', 'Describe your business in any language, and our AI will build your website instantly.')}
+                        </p>
+                        <textarea 
+                            value={aiPrompt}
+                            onChange={(e) => setAiPrompt(e.target.value)}
+                            placeholder="e.g. A premium fitness gym in Athens, Greece"
+                            rows="2"
+                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none mb-3"
+                        />
+                        <button 
+                            onClick={handleAIGenerate}
+                            disabled={isGeneratingAI || !aiPrompt.trim()}
+                            className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--gold-primary)] to-yellow-600 text-black font-black text-[11px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            {isGeneratingAI ? (
+                                <>
+                                    <Icons.Loader className="w-4 h-4 animate-spin" /> 
+                                    {t('AI_GENERATING', 'Generating Magic...')}
+                                </>
+                            ) : (
+                                <>
+                                    <Icons.Zap className="w-4 h-4" /> 
+                                    {t('GENERATE_NOW', 'Generate Now')}
+                                </>
+                            )}
+                        </button>
+                    </div>
+
                     {/* Basic Info */}
                     <div className="space-y-4">
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2"><Icons.Building className="w-3 h-3" /> Basic Info</div>
