@@ -282,8 +282,8 @@ const BACKGROUND_MODES = [
     { value: 'slate', labelKey: 'SLATE_MODE', color: '#0f1115', className: 'bg-slate' },
     { value: 'ocean', labelKey: 'OCEAN_MODE', color: '#041018', className: 'bg-ocean' },
     { value: 'obsidian', labelKey: 'OBSIDIAN_MODE', color: '#09090b', className: 'bg-obsidian' },
-    { value: 'pink-aesthetic', labelKey: 'PINK_AESTHETIC_MODE', color: '#ff69b4', className: 'bg-pink-aesthetic' },
-    { value: 'razer-green', labelKey: 'RAZER_GREEN_MODE', color: '#44d62c', className: 'bg-razer-green' },
+    { value: 'pink-aesthetic', labelKey: 'PINK_AESTHETIC_MODE', color: '#4a0d2a', className: 'bg-pink-aesthetic' },
+    { value: 'razer-green', labelKey: 'RAZER_GREEN_MODE', color: '#092e11', className: 'bg-razer-green' },
 ];
 
 const getBackgroundMode = (user) => user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
