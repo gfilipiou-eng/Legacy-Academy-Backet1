@@ -34,6 +34,37 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
 
     const updateConfig = (key, value) => setConfig(prev => ({ ...prev, [key]: value }));
 
+    const handleImageUpload = (e, key, maxWidth) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Compress to WebP or JPEG
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                updateConfig(key, dataUrl);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handlePublish = async () => {
         if (!user?._id) return;
         setSaving(true);
@@ -86,10 +117,10 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
     const activeTheme = themeColors[config.palette];
 
     return (
-        <div className="absolute inset-0 z-50 bg-[#09090b] flex flex-col md:flex-row overflow-hidden font-sans">
+        <div className="fixed inset-0 z-[3000] bg-[#09090b] flex flex-col md:flex-row overflow-hidden font-sans h-[100dvh]">
             
             {/* MOBILE TABS (Only visible on small screens) */}
-            <div className="md:hidden flex border-b border-white/10 shrink-0 bg-black z-30 pt-2">
+            <div className="md:hidden flex border-b border-white/10 shrink-0 bg-black z-30 pt-safe">
                 <button 
                     onClick={() => setMobileTab('form')}
                     className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'form' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
@@ -126,7 +157,7 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-8">
+                <div className="flex-1 overflow-y-auto p-6 pb-40 custom-scrollbar space-y-8">
                     
                     {/* AI Generator */}
                     <div className="bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 p-5 rounded-2xl relative overflow-hidden">
@@ -200,22 +231,34 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
                     <div className="space-y-4">
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 pt-4 border-t border-white/10"><Icons.Image className="w-3 h-3" /> Media & Images</div>
                         <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Logo URL (Optional)</label>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 flex items-center justify-between">
+                                Logo
+                                <label className="cursor-pointer text-[var(--gold-primary)] hover:underline flex items-center gap-1">
+                                    <Icons.Upload className="w-3 h-3" /> Upload
+                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logo', 300)} />
+                                </label>
+                            </label>
                             <input 
                                 type="text" 
                                 value={config.logo}
                                 onChange={(e) => updateConfig('logo', e.target.value)}
-                                placeholder="https://"
+                                placeholder="https:// or Base64"
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Cover / Hero Image URL</label>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 flex items-center justify-between">
+                                Cover / Hero Image
+                                <label className="cursor-pointer text-[var(--gold-primary)] hover:underline flex items-center gap-1">
+                                    <Icons.Upload className="w-3 h-3" /> Upload
+                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'coverImage', 1000)} />
+                                </label>
+                            </label>
                             <input 
                                 type="text" 
                                 value={config.coverImage}
                                 onChange={(e) => updateConfig('coverImage', e.target.value)}
-                                placeholder="https://"
+                                placeholder="https:// or Base64"
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                             />
                         </div>
@@ -312,7 +355,7 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
                 </div>
 
                 {/* Workspace / Live Preview */}
-                <div className="flex-1 overflow-auto p-0 md:p-8 flex justify-center items-start custom-scrollbar relative">
+                <div className="flex-1 overflow-y-auto p-0 md:p-8 flex justify-center items-start custom-scrollbar relative pb-32">
                     {/* The Website Preview Container */}
                     <motion.div 
                         layout
