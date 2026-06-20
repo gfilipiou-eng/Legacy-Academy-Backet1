@@ -41,9 +41,9 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <span className="font-black tracking-tight text-lg">{config.businessName}</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                    <span className="cursor-pointer hover:opacity-100">Services</span>
-                    <span className="cursor-pointer hover:opacity-100">About</span>
-                    <span className="cursor-pointer hover:opacity-100">Contact</span>
+                    <span className="cursor-pointer hover:opacity-100">{config.navLink1 || 'Services'}</span>
+                    <span className="cursor-pointer hover:opacity-100">{config.navLink2 || 'About'}</span>
+                    <span className="cursor-pointer hover:opacity-100">{config.navLink3 || 'Contact'}</span>
                 </div>
             </nav>
 
@@ -82,7 +82,7 @@ export const PublicWebsiteViewer = ({ config }) => {
 
             {/* Feature Cards */}
             <div id="services" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                <h3 className="text-4xl font-black mb-16 text-center tracking-tight">Why Choose Us</h3>
+                <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle || 'Why Choose Us'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {[1, 2, 3].map(i => (
                         <div key={i} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>

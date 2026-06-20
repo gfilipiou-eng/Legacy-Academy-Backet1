@@ -33,6 +33,10 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         font: existingWebsite.font || 'Inter',
         ctaText: existingWebsite.ctaText || 'Get in Touch',
         ctaLink: existingWebsite.ctaLink || '#',
+        navLink1: existingWebsite.navLink1 || 'Services',
+        navLink2: existingWebsite.navLink2 || 'About',
+        navLink3: existingWebsite.navLink3 || 'Contact',
+        featuresTitle: existingWebsite.featuresTitle || 'Why Choose Us',
         hasStore: existingWebsite.hasStore || false,
         products: existingWebsite.products || []
     });
@@ -241,6 +245,23 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none"
                             />
                         </div>
+                        <div className="pt-2 border-t border-white/5">
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Navigation Links</label>
+                            <div className="flex gap-2">
+                                <input type="text" value={config.navLink1} onChange={(e) => updateConfig('navLink1', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 1" />
+                                <input type="text" value={config.navLink2} onChange={(e) => updateConfig('navLink2', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 2" />
+                                <input type="text" value={config.navLink3} onChange={(e) => updateConfig('navLink3', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 3" />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Features Title</label>
+                            <input 
+                                type="text" 
+                                value={config.featuresTitle}
+                                onChange={(e) => updateConfig('featuresTitle', e.target.value)}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                            />
+                        </div>
                     </div>
 
                     {/* Media */}
@@ -352,24 +373,6 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
             {/* MAIN CANVAS - Live Preview */}
             <div className={`flex-1 bg-[#151518] flex-col relative overflow-hidden ${mobileTab === 'form' ? 'hidden md:flex' : 'flex'}`}>
-                {/* Desktop Toolbar */}
-                <div className="hidden md:flex h-16 border-b border-white/5 items-center justify-center px-6 bg-black/40 backdrop-blur-xl z-10 shadow-lg shrink-0">
-                    <div className="flex items-center gap-2 bg-black/80 border border-white/10 rounded-lg p-1">
-                        <button 
-                            onClick={() => setPreviewMode('desktop')}
-                            className={`px-6 py-1.5 rounded-md text-[11px] uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${previewMode === 'desktop' ? 'bg-white/10 text-white shadow-sm' : 'text-gray-500 hover:text-white/80'}`}
-                        >
-                            <Icons.Monitor className="w-3.5 h-3.5" /> Desktop
-                        </button>
-                        <button 
-                            onClick={() => setPreviewMode('mobile')}
-                            className={`px-6 py-1.5 rounded-md text-[11px] uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${previewMode === 'mobile' ? 'bg-white/10 text-white shadow-sm' : 'text-gray-500 hover:text-white/80'}`}
-                        >
-                            <Icons.Smartphone className="w-3.5 h-3.5" /> Mobile
-                        </button>
-                    </div>
-                </div>
-
                 {/* Workspace / Live Preview */}
                 <div className="flex-1 overflow-y-auto overscroll-contain p-0 md:p-8 flex justify-center items-start custom-scrollbar relative pb-32 w-full touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {/* The Website Preview Container */}
@@ -397,9 +400,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <span className="font-black tracking-tight text-lg">{config.businessName}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                <span>Services</span>
-                                <span>About</span>
-                                <span>Contact</span>
+                                <span>{config.navLink1 || 'Services'}</span>
+                                <span>{config.navLink2 || 'About'}</span>
+                                <span>{config.navLink3 || 'Contact'}</span>
                             </div>
                         </nav>
 
@@ -438,7 +441,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
                         {/* Feature Cards (Auto-generated mock) */}
                         <div className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                            <h3 className="text-2xl font-black mb-10 text-center">Why Choose Us</h3>
+                            <h3 className="text-2xl font-black mb-10 text-center">{config.featuresTitle || 'Why Choose Us'}</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {[1, 2, 3].map(i => (
                                     <div key={i} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>
