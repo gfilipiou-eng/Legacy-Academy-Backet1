@@ -870,7 +870,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
-    let baseClass = 'w-full h-full object-cover rounded-full group-hover:scale-[1.02] transition-transform duration-500';
+    let baseClass = 'w-full h-full object-cover rounded-full';
     if (className) {
         baseClass = `${baseClass} ${className}`;
     }
@@ -906,7 +906,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
             onClick={onClick}
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : undefined}
-            decoding="async"
+            decoding={priority ? 'sync' : 'async'}
             alt=""
             onError={() => setImgError(true)}
         />
@@ -9964,6 +9964,13 @@ const App = () => {
                                         <div>
                                             <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
                                             <div className="text-[9px] sm:text-[10px] text-white/40">Entrepreneurs can build their own high-end websites.</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
+                                        <div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Verified Badge</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Receive the exclusive blue verified checkmark on your profile.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
