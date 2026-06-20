@@ -114,16 +114,17 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                     ))}
 
                     {websites.length < 2 && (
-                        <div 
+                        <button 
+                            type="button"
                             onClick={handleCreateNew}
-                            className="border-2 border-dashed border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 hover:bg-white/[0.02] transition-all min-h-[250px] group"
+                            className="border-2 border-dashed border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 hover:bg-white/[0.02] transition-all min-h-[250px] group w-full touch-manipulation appearance-none"
                         >
                             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Icons.Plus className="w-8 h-8 text-white/50 group-hover:text-white" />
                             </div>
                             <h3 className="text-lg font-bold text-white mb-1">Create New Website</h3>
                             <p className="text-sm text-gray-500">You can create up to {2 - websites.length} more</p>
-                        </div>
+                        </button>
                     )}
                 </div>
             </div>
