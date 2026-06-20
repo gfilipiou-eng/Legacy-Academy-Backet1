@@ -514,26 +514,37 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
     if (!normalizedUsername) return null;
 
     const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || founderAffiliationUserCache.get(normalizedUsername) || null);
+    const [isLoading, setIsLoading] = useState(() => !resolvedLinkedUser);
+
     useEffect(() => {
         let cancelled = false;
         if (linkedUser?._id || linkedUser?.profilePic || linkedUser?.username) {
             founderAffiliationUserCache.set(normalizedUsername, linkedUser);
             setResolvedLinkedUser(linkedUser);
+            setIsLoading(false);
             return () => { };
         }
 
         const cachedUser = founderAffiliationUserCache.get(normalizedUsername);
         if (cachedUser) {
             setResolvedLinkedUser(cachedUser);
+            setIsLoading(false);
             return () => { };
         }
 
+        setIsLoading(true);
         fetchFounderAffiliationUser(normalizedUsername)
             .then((user) => {
-                if (!cancelled) setResolvedLinkedUser(user || null);
+                if (!cancelled) {
+                    setResolvedLinkedUser(user || null);
+                    setIsLoading(false);
+                }
             })
             .catch(() => {
-                if (!cancelled) setResolvedLinkedUser(null);
+                if (!cancelled) {
+                    setResolvedLinkedUser(null);
+                    setIsLoading(false);
+                }
             });
 
         return () => {
