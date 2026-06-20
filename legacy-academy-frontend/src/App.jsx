@@ -3865,24 +3865,26 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     })}
                                 </div>
                             </div>
-                            <div className="px-4 py-3.5 border-t border-white/5 text-left">
-                                <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('FOUNDER_AFFILIATION', 'Founder Affiliation')}</div>
-                                <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gold-primary)] font-black text-sm">@</div>
-                                    <input
-                                        type="text"
-                                        value={founderAffiliation}
-                                        onChange={(e) => setFounderAffiliation(sanitizeAffiliation(e.target.value))}
-                                        onBlur={() => handleSave('founderAffiliation', founderAffiliation)}
-                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSave('founderAffiliation', founderAffiliation); }}
-                                        placeholder="affiliated_username"
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-8 pr-4 text-white text-sm font-bold placeholder:text-white/20 outline-none focus:border-[var(--gold-primary)] transition-colors"
-                                    />
+                            {user?.role === 'Founder' && (
+                                <div className="px-4 py-3.5 border-t border-white/5 text-left">
+                                    <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('FOUNDER_AFFILIATION', 'Founder Affiliation')}</div>
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gold-primary)] font-black text-sm">@</div>
+                                        <input
+                                            type="text"
+                                            value={founderAffiliation}
+                                            onChange={(e) => setFounderAffiliation(sanitizeAffiliation(e.target.value))}
+                                            onBlur={() => handleSave('founderAffiliation', founderAffiliation)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') handleSave('founderAffiliation', founderAffiliation); }}
+                                            placeholder="affiliated_username"
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-8 pr-4 text-white text-sm font-bold placeholder:text-white/20 outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                        />
+                                    </div>
+                                    <div className="text-[9px] text-gray-500 mt-1.5 font-bold uppercase tracking-wide leading-relaxed pl-1">
+                                        {t('FOUNDER_AFFILIATION_DESC', 'Links your profile to a founder page (shows founder badge next to username).')}
+                                    </div>
                                 </div>
-                                <div className="text-[9px] text-gray-500 mt-1.5 font-bold uppercase tracking-wide leading-relaxed pl-1">
-                                    {t('FOUNDER_AFFILIATION_DESC', 'Links your profile to a founder page (shows founder badge next to username).')}
-                                </div>
-                            </div>
+                            )}
                         </SettingsGroup>
                     </section>
 
@@ -5893,20 +5895,24 @@ const ProfileModal = ({
 
     // 🔥 PERFORMANCE FIX: Efficiently sync and update local profile posts with any global changes
     useEffect(() => {
-        if (!isOpen || !posts?.length || !userSpecificPosts?.length) return;
+        if (!isOpen || !posts || !userSpecificPosts) return;
 
         // Use a Map for O(1) lookups during sync
         const globalPostMap = new Map(posts.map(p => [String(p._id), p]));
 
         let hasChanges = false;
-        const synced = userSpecificPosts.map(localPost => {
-            const globalPost = globalPostMap.get(String(localPost._id));
-            if (!globalPost) return localPost;
+        
+        // First filter out posts that no longer exist globally (deleted)
+        const validLocalPosts = userSpecificPosts.filter(localPost => globalPostMap.has(String(localPost._id)));
+        if (validLocalPosts.length !== userSpecificPosts.length) hasChanges = true;
 
-            // Shallow comparison check before updating to prevent infinite React cycles if needed
-            if (localPost.likes?.length !== globalPost.likes?.length ||
-                localPost.comments?.length !== globalPost.comments?.length ||
-                localPost.reposts?.length !== globalPost.reposts?.length) {
+        const synced = validLocalPosts.map(localPost => {
+            const globalPost = globalPostMap.get(String(localPost._id));
+
+            // Deep array reference check is sufficient because App.jsx uses immutable state updates
+            if (localPost.likes !== globalPost.likes ||
+                localPost.comments !== globalPost.comments ||
+                localPost.reposts !== globalPost.reposts) {
                 hasChanges = true;
                 return {
                     ...localPost,
