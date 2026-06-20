@@ -539,39 +539,26 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    // Request a ~100px image for retina clarity on a 28px container
-    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 100, true);
+    // Request a 200px image for perfect clarity on any display (Retina/4K)
+    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 200, true);
 
-    const hexagonClipPath = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
-
-    const HexagonAvatar = () => (
-        <div className="relative w-[24px] h-[28px] shrink-0 transition-transform duration-300 hover:scale-110 drop-shadow-sm">
-            {/* Gold Border Base */}
-            <div 
-                className="absolute inset-0 bg-gradient-to-b from-[#D4AF37] via-[#AA7700] to-[#D4AF37]"
-                style={{ clipPath: hexagonClipPath }}
-            />
-            {/* Inner Image/Fallback Container */}
-            <div 
-                className="absolute inset-[1px] bg-[#111]"
-                style={{ clipPath: hexagonClipPath }}
-            >
-                {resolvedProfilePic ? (
-                    <img 
-                        src={resolvedProfilePic} 
-                        alt="" 
-                        className="w-full h-full object-cover" 
-                        loading="lazy" 
-                        decoding="async" 
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#111]">
-                        <span className="text-[12px] font-bold text-[#D4AF37]">
-                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                        </span>
-                    </div>
-                )}
-            </div>
+    const SquareAvatar = () => (
+        <div className="relative w-7 h-7 shrink-0 rounded-[8px] overflow-hidden border border-white/15 bg-[#111] shadow-sm transition-transform duration-200 hover:scale-105">
+            {resolvedProfilePic ? (
+                <img 
+                    src={resolvedProfilePic} 
+                    alt="" 
+                    className="w-full h-full object-cover" 
+                    loading="lazy" 
+                    decoding="async" 
+                />
+            ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#111]">
+                    <span className="text-[14px] font-bold text-[#D4AF37]">
+                        {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                    </span>
+                </div>
+            )}
         </div>
     );
 
@@ -585,7 +572,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 className={`inline-flex items-center cursor-pointer select-none ${className}`}
                 title={`Affiliated with @${normalizedUsername}`}
             >
-                <HexagonAvatar />
+                <SquareAvatar />
             </span>
         );
     }
@@ -596,10 +583,10 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`inline-flex items-center gap-2 text-[#D4AF37] hover:brightness-110 cursor-pointer font-bold transition-all select-none ${className}`}
+            className={`inline-flex items-center gap-2 text-[#D4AF37] hover:brightness-125 cursor-pointer font-bold transition-all select-none ${className}`}
         >
-            <HexagonAvatar />
-            <span className="text-[14px] uppercase tracking-wide">@{normalizedUsername}</span>
+            <SquareAvatar />
+            <span className="text-[14px] tracking-wide">@{normalizedUsername}</span>
         </span>
     );
 };
