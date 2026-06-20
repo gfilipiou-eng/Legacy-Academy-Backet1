@@ -282,7 +282,7 @@ const BACKGROUND_MODES = [
     { value: 'slate', labelKey: 'SLATE_MODE', color: '#0f1115', className: 'bg-slate' },
     { value: 'ocean', labelKey: 'OCEAN_MODE', color: '#041018', className: 'bg-ocean' },
     { value: 'obsidian', labelKey: 'OBSIDIAN_MODE', color: '#09090b', className: 'bg-obsidian' },
-    { value: 'cyber-matrix', labelKey: 'CYBER_MATRIX_MODE', color: '#05110a', className: 'bg-cyber-matrix' },
+    { value: 'pink-aesthetic', labelKey: 'PINK_AESTHETIC_MODE', color: '#1c0f13', className: 'bg-pink-aesthetic' },
     { value: 'gold-onyx', labelKey: 'GOLD_ONYX_MODE', color: '#141209', className: 'bg-gold-onyx' },
 ];
 
