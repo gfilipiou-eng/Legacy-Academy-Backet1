@@ -7594,7 +7594,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* FOLLOWERS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {publicUser.followers?.length || 0}
+                            {[...new Set((publicUser.followers || []).filter(id => users.length === 0 || users.some(u => isSameId(u._id, id))))].length}
                         </span>
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
                             {t('FOLLOWERS') || 'FOLLOWERS'}
@@ -7604,7 +7604,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* FOLLOWING */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {publicUser.following?.length || 0}
+                            {[...new Set((publicUser.following || []).filter(id => users.length === 0 || users.some(u => isSameId(u._id, id))))].length}
                         </span>
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                     </div>
@@ -10327,7 +10327,7 @@ const App = () => {
                                                                     {u.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{u.missionsStreak}</span>}
                                                                     <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={u} />
                                                                 </div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{u.followers?.length || 0} {t('FOLLOWERS_COUNT')}</div>
+                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{[...new Set((u.followers || []).filter(id => users.some(us => isSameId(us._id, id))))].length} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest">{t('VIEW')}</button>
                                                         </div>
