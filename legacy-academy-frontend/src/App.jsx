@@ -9951,61 +9951,61 @@ const App = () => {
                             {/* Decorative Top Line */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700]" />
                             
-                            <div className="p-6 sm:p-8 text-center flex flex-col items-center">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-3 sm:mb-4 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-                                    <Icons.Lock className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--gold-primary)]" />
+                            <div className="p-4 sm:p-8 text-center flex flex-col items-center">
+                                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-2 sm:mb-4 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+                                    <Icons.Lock className="w-4 h-4 sm:w-6 sm:h-6 text-[var(--gold-primary)]" />
                                 </div>
                                 
-                                <h2 className="text-lg sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1">Exclusive Network</h2>
-                                <div className="text-[9px] sm:text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-5 sm:mb-6">Legacy Academy Membership</div>
+                                <h2 className="text-base sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-0.5 sm:mb-1">Exclusive Network</h2>
+                                <div className="text-[8px] sm:text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-4 sm:mb-6">Legacy Academy Membership</div>
                                 
-                                <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-4 sm:p-5 mb-5 sm:mb-6 text-left space-y-2.5 sm:space-y-3">
+                                <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-3 sm:p-5 mb-4 sm:mb-6 text-left space-y-2 sm:space-y-3">
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Private Members Network</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">An elite social ecosystem designed strictly for verified individuals.</div>
+                                            <div className="text-[10px] sm:text-xs text-white font-bold tracking-wide uppercase">Private Members Network</div>
+                                            <div className="text-[8px] sm:text-[10px] text-white/40 leading-tight">An elite social ecosystem designed strictly for verified individuals.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Strategic Insights</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Curated knowledge and high-value strategies reserved for the inner circle.</div>
+                                            <div className="text-[10px] sm:text-xs text-white font-bold tracking-wide uppercase">Strategic Insights</div>
+                                            <div className="text-[8px] sm:text-[10px] text-white/40 leading-tight">Curated knowledge and high-value strategies reserved for the inner circle.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Daily Missions & Rankings</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Complete strategic missions to build your streak and rank up.</div>
+                                            <div className="text-[10px] sm:text-xs text-white font-bold tracking-wide uppercase">Daily Missions & Rankings</div>
+                                            <div className="text-[8px] sm:text-[10px] text-white/40 leading-tight">Complete strategic missions to build your streak and rank up.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Entrepreneurs can launch their own high-end custom websites.</div>
+                                            <div className="text-[10px] sm:text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
+                                            <div className="text-[8px] sm:text-[10px] text-white/40 leading-tight">Entrepreneurs can launch their own high-end custom websites.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Encrypted P2P Comms</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Secure chat, blue verified badge, and elite inner circle access.</div>
+                                            <div className="text-[10px] sm:text-xs text-white font-bold tracking-wide uppercase">Encrypted P2P Comms</div>
+                                            <div className="text-[8px] sm:text-[10px] text-white/40 leading-tight">Secure chat, blue verified badge, and elite inner circle access.</div>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div className="bg-white/5 rounded-xl p-3 sm:p-4 w-full mb-4 sm:mb-6 border border-white/10">
-                                    <div className="text-2xl sm:text-3xl font-black text-white flex items-center justify-center gap-1">49€ <span className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mt-1">/ MONTH</span></div>
+                                <div className="bg-white/5 rounded-xl p-2.5 sm:p-4 w-full mb-3 sm:mb-6 border border-white/10">
+                                    <div className="text-xl sm:text-3xl font-black text-white flex items-center justify-center gap-1">49€ <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase tracking-widest mt-1">/ MONTH</span></div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.25em] rounded-xl hover:bg-white/20 hover:border-white/20 active:scale-95 transition-all duration-300 mb-4 sm:mb-5 text-[10px] sm:text-[11px]">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.25em] rounded-xl hover:bg-white/20 hover:border-white/20 active:scale-95 transition-all duration-300 mb-3 sm:mb-5 text-[9px] sm:text-[11px]">
                                     Unlock Access
                                 </button>
                                 
-                                <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold hover:text-white transition-colors underline decoration-white/20 underline-offset-4">
+                                <button onClick={() => setShowPaywall(false)} className="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold hover:text-white transition-colors underline decoration-white/20 underline-offset-4 pb-1">
                                     Return to Login
                                 </button>
                             </div>
