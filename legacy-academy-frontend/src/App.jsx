@@ -9661,11 +9661,11 @@ const App = () => {
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
-                                    <div className="relative flex justify-center items-center w-full mb-2">
+                                    <div className="relative flex justify-center items-center w-full mb-2 transition-transform duration-300 hover:scale-105">
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
+                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
                                             loading="eager"
@@ -10019,13 +10019,14 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <div className="relative flex items-center justify-center">
+                                    <div className="relative flex items-center justify-center transition-transform duration-300 hover:scale-[1.02]">
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain transition-all duration-300 hover:scale-105"
-                                            decoding="async"
-                                            loading="lazy"
+                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain"
+                                            decoding="sync"
+                                            loading="eager"
+                                            fetchPriority="high"
                                         />
                                     </div>
                                 </div>
