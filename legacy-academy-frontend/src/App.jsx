@@ -7615,7 +7615,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
  
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem] cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 group shadow-lg relative overflow-hidden">
+                <div className="w-full mt-6 p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem] group shadow-lg relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="w-full h-full bg-[#080808] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden">
                         <div className="space-y-2.5 text-center sm:text-left min-w-0 flex-1 w-full">
@@ -7631,7 +7631,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 {t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 49€ / MONTH')}
                             </p>
                         </div>
-                        <div className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-3 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 group-hover:bg-white/20">
+                        <div onClick={(e) => { e.stopPropagation(); window.location.href = '/?paywall=true'; }} className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-3 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/20 cursor-pointer">
                             {t('UNLOCK_ACCESS', 'UNLOCK ACCESS')}
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </div>
@@ -8039,7 +8039,13 @@ const App = () => {
         }
         return 'login';
     });
-    const [showPaywall, setShowPaywall] = useState(false);
+    const [showPaywall, setShowPaywall] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('paywall') === 'true';
+        }
+        return false;
+    });
     const [chatTarget, setChatTarget] = useState(null);
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
@@ -9947,21 +9953,21 @@ const App = () => {
                                 
                                 <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-5 mb-6 text-left space-y-3">
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.CheckCircle className="w-4 h-4 text-green-500" /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
                                             <div className="text-xs text-white font-bold tracking-wide uppercase">Premium Intelligence Feed</div>
                                             <div className="text-[10px] text-white/40">Exclusive daily insights and strategies.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.CheckCircle className="w-4 h-4 text-green-500" /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
                                             <div className="text-xs text-white font-bold tracking-wide uppercase">Elite Network Access</div>
                                             <div className="text-[10px] text-white/40">Connect with a highly curated inner circle.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.CheckCircle className="w-4 h-4 text-green-500" /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
                                         <div>
                                             <div className="text-xs text-white font-bold tracking-wide uppercase">Private Messaging & Comms</div>
                                             <div className="text-[10px] text-white/40">Secure P2P encrypted chat capabilities.</div>
