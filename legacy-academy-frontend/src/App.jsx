@@ -550,11 +550,14 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center gap-3 bg-gradient-to-r from-amber-950/40 via-black/80 to-black/90 backdrop-blur-xl border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 pl-1.5 pr-5 py-1.5 rounded-full shadow-[0_0_20px_rgba(212,175,55,0.05)] hover:shadow-[0_0_25px_rgba(212,175,55,0.15)] transition-all duration-400 cursor-pointer select-none ${className}`}
+            className={`group inline-flex items-center gap-2.5 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-[#D4AF37]/40 pl-1.5 pr-4 py-1.5 rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_4px_24px_rgba(212,175,55,0.15)] transition-all duration-500 cursor-pointer select-none relative overflow-hidden ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
+            {/* Liquid Glass Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/[0.04] to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
             {/* The Circular Avatar */}
-            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#D4AF37]/40 shadow-[0_0_10px_rgba(212,175,55,0.2)] group-hover:scale-105 transition-transform duration-400">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/20 group-hover:border-[#D4AF37]/50 shadow-inner group-hover:scale-105 transition-all duration-500 z-10">
                 {resolvedProfilePic ? (
                     <img 
                         src={resolvedProfilePic} 
@@ -564,8 +567,8 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                         decoding="async" 
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#111]">
-                        <span className="text-[12px] font-bold text-[#D4AF37]">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-950">
+                        <span className="text-[12px] font-bold text-white/80 group-hover:text-[#D4AF37] transition-colors duration-500">
                             {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                         </span>
                     </div>
@@ -573,11 +576,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             </div>
             
             {/* The Text Info */}
-            <div className="flex flex-col justify-center">
-                <span className="text-[8px] font-black text-[#D4AF37]/70 uppercase tracking-[0.25em] leading-none mb-1">
+            <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
+                <span className="text-[8px] font-bold text-white/50 group-hover:text-[#D4AF37]/80 uppercase tracking-[0.2em] leading-tight mb-0.5 transition-colors duration-500">
                     Affiliated
                 </span>
-                <span className="text-[12px] font-black bg-gradient-to-r from-[#D4AF37] to-[#FFF8D6] bg-clip-text text-transparent leading-none tracking-wider">
+                <span className="text-[12px] sm:text-[13px] font-black text-white/90 group-hover:text-[#D4AF37] leading-tight tracking-wide transition-colors duration-500">
                     @{normalizedUsername}
                 </span>
             </div>
