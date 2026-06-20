@@ -991,8 +991,6 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (customColor === 'silver') { baseColor = '#E0E0E0'; darkColor = '#888888'; gradId = 'silver3DGrad'; }
         else if (customColor === 'bronze') { baseColor = '#CD7F32'; darkColor = '#8B4513'; gradId = 'bronze3DGrad'; }
         else if (customColor === 'neon-green') { baseColor = '#39FF14'; darkColor = '#008000'; gradId = 'green3DGrad'; }
-        // Fallback the holographic to a very intense neon gradient
-        else if (customColor === 'holographic') { baseColor = '#00f0ff'; darkColor = '#7f00ff'; gradId = 'holoReplacedGrad'; }
     }
 
     return (
@@ -3765,8 +3763,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 {[
                                                     { id: 'gold', label: 'Gold', color: '#FFD700' },
                                                     { id: 'crimson', label: 'Crimson', color: '#FF0033' },
-                                                    { id: 'neon-purple', label: 'Purple', color: '#B026FF' },
-                                                    { id: 'holographic', label: 'Holo', isHolo: true }
+                                                    { id: 'neon-purple', label: 'Purple', color: '#B026FF' }
                                                 ].map(b => (
                                                     <button
                                                         key={b.id}
@@ -3776,11 +3773,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             badgeColor === b.id ? 'border-[#1D9BF0] bg-[#1D9BF0]/10' : 'border-white/10 bg-white/[0.02]'
                                                         }`}
                                                     >
-                                                        {b.isHolo ? (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: 'linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff, #00ff7f, #ff007f)' }} />
-                                                        ) : (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
-                                                        )}
+                                                        <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
                                                         <span className="text-[11px] text-white font-bold uppercase tracking-wider">{b.label}</span>
                                                     </button>
                                                 ))}
