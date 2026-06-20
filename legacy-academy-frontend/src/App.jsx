@@ -3629,7 +3629,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 await i18n.changeLanguage(normalizedLanguage);
             }
             await handleSave('language', normalizedLanguage);
+            
+            // Force a reload to ensure the new language is fully applied without React freezing
+            setTimeout(() => {
+                window.location.reload();
+            }, 400);
         } catch (error) {
+            console.error("Language change error:", error);
             setPendingLanguage(activeLanguage);
         }
     };
