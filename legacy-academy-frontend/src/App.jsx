@@ -281,6 +281,9 @@ const BACKGROUND_MODES = [
     { value: 'crimson', labelKey: 'CRIMSON_MODE', color: '#120508', className: 'bg-crimson' },
     { value: 'slate', labelKey: 'SLATE_MODE', color: '#0f1115', className: 'bg-slate' },
     { value: 'ocean', labelKey: 'OCEAN_MODE', color: '#041018', className: 'bg-ocean' },
+    { value: 'obsidian', labelKey: 'OBSIDIAN_MODE', color: '#09090b', className: 'bg-obsidian' },
+    { value: 'cyber-matrix', labelKey: 'CYBER_MATRIX_MODE', color: '#05110a', className: 'bg-cyber-matrix' },
+    { value: 'gold-onyx', labelKey: 'GOLD_ONYX_MODE', color: '#141209', className: 'bg-gold-onyx' },
 ];
 
 const getBackgroundMode = (user) => user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
@@ -1238,7 +1241,6 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         {commentAuthor?.username || 'User'}
                     </span>
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
-                    {commentAuthor?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{commentAuthor.missionsStreak}</span>}
                     <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>
@@ -3364,7 +3366,7 @@ const Toggle = ({ active, onToggle, color = 'gold' }) => {
             type="button"
             role="switch"
             aria-checked={active}
-            onClick={() => onToggle()}
+            onClick={() => { playCyberSFX('click'); onToggle(); }}
             className={`settings-toggle relative w-[58px] h-[34px] sm:w-[52px] sm:h-[30px] rounded-full border transition-all duration-300 ease-out shrink-0 touch-manipulation outline-none ${
                 active ? trackActive : 'bg-white/[0.12] border-white/15'
             } cursor-pointer active:scale-[0.96]`}
@@ -5369,6 +5371,25 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
         return todayStr === lastCompletedStr;
     }, [user?.lastMissionCompleted]);
 
+    const [timeLeft, setTimeLeft] = useState('');
+
+    useEffect(() => {
+        const updateTimer = () => {
+            const now = new Date();
+            const tomorrow = new Date();
+            tomorrow.setUTCHours(24, 0, 0, 0); // Next UTC midnight
+            const diff = tomorrow - now;
+            
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+        };
+        updateTimer();
+        const interval = setInterval(updateTimer, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleCompleteMission = async (missionId) => {
         if (submitting || hasCompletedToday) return;
         setSubmitting(true);
@@ -5513,9 +5534,14 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">{t('DAILY_MISSIONS')}</h3>
                     {user?.missionsStreak > 0 && (
-                        <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
-                            🔥 {user.missionsStreak} {t('MISSION_STREAK') || 'STREAK'}
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
+                                🔥 {user.missionsStreak} {t('MISSION_STREAK') || 'STREAK'}
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest shrink-0 border border-white/5 bg-white/5 rounded-full px-2 py-1">
+                                ⏳ {hasCompletedToday ? 'Next in' : 'Reset in'} {timeLeft}
+                            </span>
+                        </div>
                     )}
                 </div>
                 <p className="text-sm text-gray-300 font-bold uppercase tracking-wide leading-relaxed">{t('MISSIONS_DESC')}</p>
@@ -6463,11 +6489,9 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 relative overflow-hidden py-3.5 rounded-2xl text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] border transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg flex items-center justify-center gap-2.5 ${isFollowing ? 'bg-black/70 backdrop-blur-xl border-white/15 text-white hover:bg-red-500/10 hover:border-red-500/40' : 'bg-white border-white text-black hover:bg-neutral-200'}`}
+                                                className={`flex-1 relative overflow-hidden py-2.5 rounded-full text-[13px] sm:text-[14px] font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm flex items-center justify-center ${isFollowing ? 'bg-transparent border border-white/30 text-white hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5' : 'bg-white border border-transparent text-black hover:bg-neutral-200'}`}
                                             >
-                                                <div className={`pointer-events-none absolute inset-x-3 top-0 h-px ${isFollowing ? 'bg-white/20' : 'bg-black/10'}`} />
-                                                <span className="relative z-10 flex items-center justify-center gap-2.5">
-                                                    {isFollowing ? <Icons.UserMinus className="w-4 h-4" /> : (hasRequested ? <Icons.Clock className="w-4 h-4" /> : <Icons.UserPlus className="w-4 h-4" />)}
+                                                <span className="relative z-10 flex items-center justify-center">
                                                     {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
                                                 </span>
                                             </button>
@@ -9900,7 +9924,7 @@ const App = () => {
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
-                                        onClick={() => { setIsDrawerOpen(true); }}
+                                        onClick={() => { playCyberSFX('click'); setIsDrawerOpen(true); }}
                                         className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent active:scale-95 transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
                                         aria-label="Open menu"
                                         scaleDown={0.95}
@@ -9912,16 +9936,20 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <div className="relative flex items-center justify-center">
+                                    <div 
+                                        className="relative flex items-center justify-center w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-110 hover:bg-white/10 hover:border-white/20 cursor-pointer active:scale-95 overflow-hidden group"
+                                        onClick={() => { playCyberSFX('click'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl sm:rounded-2xl"></div>
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
+                                            className="h-6 sm:h-7 w-auto object-contain transform-gpu transition-transform duration-300 group-hover:scale-105 relative z-10"
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
                                                 transform: 'translateZ(0px)',
-                                                willChange: 'transform',
+                                                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
                                             }}
                                             decoding="async"
                                             loading="lazy"
