@@ -262,39 +262,82 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </div>
                         </div>
                         <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Features Title</label>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide block">Features / Posts</label>
+                                <button 
+                                    onClick={() => updateConfig('features', [...(config.features || []), { title: 'New Post', desc: '', image: '' }])}
+                                    className="text-[10px] bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-full uppercase tracking-widest font-bold transition-colors"
+                                >
+                                    + Add Post
+                                </button>
+                            </div>
                             <input 
                                 type="text" 
                                 value={config.featuresTitle}
                                 onChange={(e) => updateConfig('featuresTitle', e.target.value)}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors mb-2"
+                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors mb-3"
+                                placeholder="Section Title (e.g. Why Choose Us)"
                             />
-                            {config.features?.map((feat, idx) => (
-                                <div key={idx} className="flex gap-2 mb-2">
-                                    <input 
-                                        type="text" 
-                                        value={feat.title}
-                                        onChange={(e) => {
-                                            const updated = [...config.features];
-                                            updated[idx].title = e.target.value;
-                                            updateConfig('features', updated);
-                                        }}
-                                        className="w-1/2 bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" 
-                                        placeholder={`Feature ${idx + 1} Title`} 
-                                    />
-                                    <input 
-                                        type="text" 
-                                        value={feat.desc}
-                                        onChange={(e) => {
-                                            const updated = [...config.features];
-                                            updated[idx].desc = e.target.value;
-                                            updateConfig('features', updated);
-                                        }}
-                                        className="w-1/2 bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" 
-                                        placeholder={`Feature ${idx + 1} Description`} 
-                                    />
-                                </div>
-                            ))}
+                            <div className="space-y-3">
+                                {config.features?.map((feat, idx) => (
+                                    <div key={idx} className="bg-black/50 p-3 rounded-lg border border-white/5 space-y-2 relative group">
+                                        <button 
+                                            onClick={() => {
+                                                const updated = [...config.features];
+                                                updated.splice(idx, 1);
+                                                updateConfig('features', updated);
+                                            }}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 z-10"
+                                        >
+                                            <Icons.X className="w-3 h-3" />
+                                        </button>
+                                        <input 
+                                            type="text" 
+                                            value={feat.title}
+                                            onChange={(e) => {
+                                                const updated = [...config.features];
+                                                updated[idx].title = e.target.value;
+                                                updateConfig('features', updated);
+                                            }}
+                                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                            placeholder="Title" 
+                                        />
+                                        <textarea 
+                                            value={feat.desc}
+                                            onChange={(e) => {
+                                                const updated = [...config.features];
+                                                updated[idx].desc = e.target.value;
+                                                updateConfig('features', updated);
+                                            }}
+                                            rows="2"
+                                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors resize-none" 
+                                            placeholder="Description" 
+                                        />
+                                        <div className="flex items-center justify-between mt-1">
+                                            <span className="text-[10px] text-white/40 uppercase font-bold">Image (Optional)</span>
+                                            <label className="cursor-pointer text-[10px] text-[var(--gold-primary)] hover:underline flex items-center gap-1 font-bold uppercase tracking-wider">
+                                                <Icons.Upload className="w-3 h-3" /> Upload
+                                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                                    const file = e.target.files[0];
+                                                    if (!file) return;
+                                                    const reader = new FileReader();
+                                                    reader.onload = (event) => {
+                                                        const updated = [...config.features];
+                                                        updated[idx].image = event.target.result;
+                                                        updateConfig('features', updated);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }} />
+                                            </label>
+                                        </div>
+                                        {feat.image && (
+                                            <div className="w-full h-16 rounded overflow-hidden mt-1 relative group/img">
+                                                <img src={feat.image} alt="Feature" className="w-full h-full object-cover opacity-80" />
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                         <div className="pt-2 border-t border-white/5">
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">About Section Text</label>
@@ -481,7 +524,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     {config.description}
                                 </p>
                                 <a 
-                                    href={config.ctaLink}
+                                    href={config.ctaLink === '#' ? '#contact' : config.ctaLink}
                                     className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl"
                                     style={{ 
                                         backgroundColor: activeTheme.primary, 
@@ -501,21 +544,30 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </div>
                         </div>
 
-                        {/* Feature Cards */}
-                        <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                            <h3 className="text-2xl font-black mb-10 text-center">{config.featuresTitle || 'Why Choose Us'}</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {config.features?.map((feat, idx) => (
-                                    <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>
-                                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
-                                            <Icons.Star className="w-6 h-6" />
+                        {/* Feature Cards / Posts */}
+                        {config.features && config.features.length > 0 && (
+                            <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                                <h3 className="text-2xl font-black mb-10 text-center">{config.featuresTitle || 'Features'}</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {config.features?.map((feat, idx) => (
+                                        <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
+                                            {feat.image ? (
+                                                <div className="-mx-8 -mt-8 mb-4 h-40 overflow-hidden relative">
+                                                    <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
+                                                    <Icons.Star className="w-6 h-6" />
+                                                </div>
+                                            )}
+                                            <h4 className="text-xl font-bold relative z-10">{feat.title}</h4>
+                                            <p className="opacity-60 text-sm leading-relaxed relative z-10">{feat.desc}</p>
                                         </div>
-                                        <h4 className="text-xl font-bold">{feat.title}</h4>
-                                        <p className="opacity-60 text-sm leading-relaxed">{feat.desc}</p>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* About Section */}
                         {config.aboutText && (
@@ -528,23 +580,25 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         )}
 
                         {/* Contact Section */}
-                        <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                            <h3 className="text-2xl font-black mb-8 text-center">{config.navLink3 || 'Contact'}</h3>
-                            <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
-                                {config.contactEmail && (
-                                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
-                                        <Icons.Mail className="w-5 h-5 opacity-50" />
-                                        <span className="font-bold">{config.contactEmail}</span>
-                                    </div>
-                                )}
-                                {config.contactPhone && (
-                                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
-                                        <Icons.Phone className="w-5 h-5 opacity-50" />
-                                        <span className="font-bold">{config.contactPhone}</span>
-                                    </div>
-                                )}
+                        {(config.contactEmail || config.contactPhone) && (
+                            <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                                <h3 className="text-2xl font-black mb-8 text-center">{config.navLink3 || 'Contact'}</h3>
+                                <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
+                                    {config.contactEmail && (
+                                        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                            <Icons.Mail className="w-5 h-5 opacity-50" />
+                                            <span className="font-bold">{config.contactEmail}</span>
+                                        </div>
+                                    )}
+                                    {config.contactPhone && (
+                                        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                            <Icons.Phone className="w-5 h-5 opacity-50" />
+                                            <span className="font-bold">{config.contactPhone}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Footer */}
                         <footer className={`w-full px-6 md:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-4 ${config.palette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
