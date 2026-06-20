@@ -10757,11 +10757,11 @@ const App = () => {
                             {/* Stats */}
                             <div className="flex items-center justify-center gap-8 w-full border-t border-white/10 pt-6">
                                 <div className="flex flex-col items-center">
-                                    <div className="font-black text-white text-xl">{shareModalProfile.followers?.length || 0}</div>
+                                    <div className="font-black text-white text-xl">{[...new Set((shareModalProfile.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}</div>
                                     <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Followers</div>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <div className="font-black text-white text-xl">{shareModalProfile.following?.length || 0}</div>
+                                    <div className="font-black text-white text-xl">{[...new Set((shareModalProfile.following || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}</div>
                                     <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Following</div>
                                 </div>
                             </div>
