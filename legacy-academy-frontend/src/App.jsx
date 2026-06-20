@@ -5452,123 +5452,68 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
 
     const missionCategories = [
         {
-            id: 'core',
-            nameKey: 'CAT_CORE',
-            descriptionKey: 'CAT_CORE_DESC',
-            icon: '🔥',
-            color: 'from-orange-500 to-yellow-500',
+            id: 'gym',
+            nameKey: 'CAT_GYM',
+            descriptionKey: 'CAT_GYM_DESC',
+            icon: '🏋️‍♂️',
+            color: 'from-orange-500 to-red-600',
             missions: [
-                { id: '5am', titleKey: 'MISSION_5AM', descKey: 'MISSION_5AM_DESC', icon: '⏰' },
-                { id: 'gym', titleKey: 'MISSION_GYM', descKey: 'MISSION_GYM_DESC', icon: '💪' },
-                { id: 'read', titleKey: 'MISSION_READ', descKey: 'MISSION_READ_DESC', icon: '📚' },
-                { id: 'deep_work', titleKey: 'MISSION_DEEP_WORK', descKey: 'MISSION_DEEP_WORK_DESC', icon: '💻' },
-                { id: 'cold_shower', titleKey: 'MISSION_COLD_SHOWER', descKey: 'MISSION_COLD_SHOWER_DESC', icon: '🥶' },
-                { id: 'healthy_meal', titleKey: 'MISSION_HEALTHY_MEAL', descKey: 'MISSION_HEALTHY_MEAL_DESC', icon: '🥩' },
-                { id: 'no_scrolling', titleKey: 'MISSION_NO_SCROLLING', descKey: 'MISSION_NO_SCROLLING_DESC', icon: '📵' },
-                { id: 'networking', titleKey: 'MISSION_NETWORKING', descKey: 'MISSION_NETWORKING_DESC', icon: '🤝' },
-                { id: 'planning', titleKey: 'MISSION_PLANNING', descKey: 'MISSION_PLANNING_DESC', icon: '📝' },
-                { id: 'cardio', titleKey: 'MISSION_CARDIO', descKey: 'MISSION_CARDIO_DESC', icon: '🏃‍♂️' }
+                { id: 'gym_spartan', titleKey: 'MISSION_GYM_SPARTAN', descKey: 'MISSION_GYM_SPARTAN_DESC', icon: '⚔️' },
+                { id: 'gym_lift', titleKey: 'MISSION_GYM_LIFT', descKey: 'MISSION_GYM_LIFT_DESC', icon: '🦍' },
+                { id: 'gym_cardio', titleKey: 'MISSION_GYM_CARDIO', descKey: 'MISSION_GYM_CARDIO_DESC', icon: '🔥' }
             ]
         },
         {
             id: 'adventure',
             nameKey: 'CAT_ADVENTURE',
             descriptionKey: 'CAT_ADVENTURE_DESC',
-            icon: '🥾',
-            color: 'from-green-500 to-emerald-500',
+            icon: '🗺️',
+            color: 'from-emerald-400 to-teal-600',
             missions: [
-                { id: 'adventure_hike', titleKey: 'MISSION_ADVENTURE_HIKE', descKey: 'MISSION_ADVENTURE_HIKE_DESC', icon: '🥾' },
-                { id: 'adventure_outdoor', titleKey: 'MISSION_ADVENTURE_OUTDOOR', descKey: 'MISSION_ADVENTURE_OUTDOOR_DESC', icon: '🌄' },
-                { id: 'adventure_new_place', titleKey: 'MISSION_ADVENTURE_NEW_PLACE', descKey: 'MISSION_ADVENTURE_NEW_PLACE_DESC', icon: '🗺️' }
+                { id: 'adv_jungle', titleKey: 'MISSION_ADV_JUNGLE', descKey: 'MISSION_ADV_JUNGLE_DESC', icon: '🌴' },
+                { id: 'adv_unknown', titleKey: 'MISSION_ADV_UNKNOWN', descKey: 'MISSION_ADV_UNKNOWN_DESC', icon: '🧭' },
+                { id: 'adv_mountain', titleKey: 'MISSION_ADV_MOUNTAIN', descKey: 'MISSION_ADV_MOUNTAIN_DESC', icon: '⛰️' }
             ]
         },
         {
-            id: 'fitness',
-            nameKey: 'CAT_FITNESS',
-            descriptionKey: 'CAT_FITNESS_DESC',
-            icon: '💪',
-            color: 'from-blue-500 to-cyan-500',
+            id: 'survival',
+            nameKey: 'CAT_SURVIVAL',
+            descriptionKey: 'CAT_SURVIVAL_DESC',
+            icon: '🏕️',
+            color: 'from-amber-600 to-yellow-500',
             missions: [
-                { id: 'fitness_stretch', titleKey: 'MISSION_FITNESS_STRETCH', descKey: 'MISSION_FITNESS_STRETCH_DESC', icon: '🧘' },
-                { id: 'fitness_strength', titleKey: 'MISSION_FITNESS_STRENGTH', descKey: 'MISSION_FITNESS_STRENGTH_DESC', icon: '🏋️' },
-                { id: 'fitness_walk', titleKey: 'MISSION_FITNESS_WALK', descKey: 'MISSION_FITNESS_WALK_DESC', icon: '🚶' }
+                { id: 'surv_fire', titleKey: 'MISSION_SURV_FIRE', descKey: 'MISSION_SURV_FIRE_DESC', icon: '🔥' },
+                { id: 'surv_detox', titleKey: 'MISSION_SURV_DETOX', descKey: 'MISSION_SURV_DETOX_DESC', icon: '📵' },
+                { id: 'surv_cold', titleKey: 'MISSION_SURV_COLD', descKey: 'MISSION_SURV_COLD_DESC', icon: '🧊' }
             ]
         },
         {
-            id: 'health',
-            nameKey: 'CAT_HEALTH',
-            descriptionKey: 'CAT_HEALTH_DESC',
-            icon: '💚',
-            color: 'from-green-400 to-teal-500',
+            id: 'mind',
+            nameKey: 'CAT_MIND',
+            descriptionKey: 'CAT_MIND_DESC',
+            icon: '🧠',
+            color: 'from-blue-500 to-indigo-600',
             missions: [
-                { id: 'health_water', titleKey: 'MISSION_HEALTH_WATER', descKey: 'MISSION_HEALTH_WATER_DESC', icon: '💧' },
-                { id: 'health_sleep', titleKey: 'MISSION_HEALTH_SLEEP', descKey: 'MISSION_HEALTH_SLEEP_DESC', icon: '😴' },
-                { id: 'health_veggies', titleKey: 'MISSION_HEALTH_VEGGIES', descKey: 'MISSION_HEALTH_VEGGIES_DESC', icon: '🥗' }
+                { id: 'mind_strategy', titleKey: 'MISSION_MIND_STRATEGY', descKey: 'MISSION_MIND_STRATEGY_DESC', icon: '♟️' },
+                { id: 'mind_read', titleKey: 'MISSION_MIND_READ', descKey: 'MISSION_MIND_READ_DESC', icon: '📜' },
+                { id: 'mind_puzzle', titleKey: 'MISSION_MIND_PUZZLE', descKey: 'MISSION_MIND_PUZZLE_DESC', icon: '🧩' }
             ]
         },
         {
-            id: 'cooking',
-            nameKey: 'CAT_COOKING',
-            descriptionKey: 'CAT_COOKING_DESC',
-            icon: '👨‍🍳',
-            color: 'from-orange-400 to-amber-500',
+            id: 'combat',
+            nameKey: 'CAT_COMBAT',
+            descriptionKey: 'CAT_COMBAT_DESC',
+            icon: '🥋',
+            color: 'from-red-600 to-rose-700',
             missions: [
-                { id: 'cooking_meal', titleKey: 'MISSION_COOKING_MEAL', descKey: 'MISSION_COOKING_MEAL_DESC', icon: '👨‍🍳' },
-                { id: 'cooking_new_recipe', titleKey: 'MISSION_COOKING_NEW_RECIPE', descKey: 'MISSION_COOKING_NEW_RECIPE_DESC', icon: '📖' },
-                { id: 'cooking_prep', titleKey: 'MISSION_COOKING_PREP', descKey: 'MISSION_COOKING_PREP_DESC', icon: '🍱' }
-            ]
-        },
-        {
-            id: 'learning',
-            nameKey: 'CAT_LEARNING',
-            descriptionKey: 'CAT_LEARNING_DESC',
-            icon: '🎓',
-            color: 'from-violet-500 to-purple-500',
-            missions: [
-                { id: 'learn_skill', titleKey: 'MISSION_LEARN_SKILL', descKey: 'MISSION_LEARN_SKILL_DESC', icon: '🎓' },
-                { id: 'learn_language', titleKey: 'MISSION_LEARN_LANGUAGE', descKey: 'MISSION_LEARN_LANGUAGE_DESC', icon: '🌍' },
-                { id: 'learn_course', titleKey: 'MISSION_LEARN_COURSE', descKey: 'MISSION_LEARN_COURSE_DESC', icon: '🎥' }
-            ]
-        },
-        {
-            id: 'mindfulness',
-            nameKey: 'CAT_MINDFULNESS',
-            descriptionKey: 'CAT_MINDFULNESS_DESC',
-            icon: '🧘‍♂️',
-            color: 'from-indigo-500 to-blue-500',
-            missions: [
-                { id: 'meditation', titleKey: 'MISSION_MEDITATION', descKey: 'MISSION_MEDITATION_DESC', icon: '🧘‍♂️' },
-                { id: 'journaling', titleKey: 'MISSION_JOURNALING', descKey: 'MISSION_JOURNALING_DESC', icon: '📔' },
-                { id: 'gratitude', titleKey: 'MISSION_GRATITUDE', descKey: 'MISSION_GRATITUDE_DESC', icon: '🙏' }
-            ]
-        },
-        {
-            id: 'creative',
-            nameKey: 'CAT_CREATIVE',
-            descriptionKey: 'CAT_CREATIVE_DESC',
-            icon: '🎨',
-            color: 'from-pink-500 to-rose-500',
-            missions: [
-                { id: 'creative_art', titleKey: 'MISSION_CREATIVE_ART', descKey: 'MISSION_CREATIVE_ART_DESC', icon: '🎨' },
-                { id: 'creative_music', titleKey: 'MISSION_CREATIVE_MUSIC', descKey: 'MISSION_CREATIVE_MUSIC_DESC', icon: '🎵' },
-                { id: 'creative_write', titleKey: 'MISSION_CREATIVE_WRITE', descKey: 'MISSION_CREATIVE_WRITE_DESC', icon: '✍️' }
-            ]
-        },
-        {
-            id: 'social',
-            nameKey: 'CAT_SOCIAL',
-            descriptionKey: 'CAT_SOCIAL_DESC',
-            icon: '💖',
-            color: 'from-red-500 to-pink-500',
-            missions: [
-                { id: 'social_call', titleKey: 'MISSION_SOCIAL_CALL', descKey: 'MISSION_SOCIAL_CALL_DESC', icon: '📞' },
-                { id: 'social_help', titleKey: 'MISSION_SOCIAL_HELP', descKey: 'MISSION_SOCIAL_HELP_DESC', icon: '💖' },
-                { id: 'social_meet', titleKey: 'MISSION_SOCIAL_MEET', descKey: 'MISSION_SOCIAL_MEET_DESC', icon: '☕' }
+                { id: 'combat_shadow', titleKey: 'MISSION_COMBAT_SHADOW', descKey: 'MISSION_COMBAT_SHADOW_DESC', icon: '🥷' },
+                { id: 'combat_tactics', titleKey: 'MISSION_COMBAT_TACTICS', descKey: 'MISSION_COMBAT_TACTICS_DESC', icon: '🎯' },
+                { id: 'combat_spar', titleKey: 'MISSION_COMBAT_SPAR', descKey: 'MISSION_COMBAT_SPAR_DESC', icon: '🥊' }
             ]
         }
     ];
 
-    const [expandedCategory, setExpandedCategory] = useState('core');
+    const [expandedCategory, setExpandedCategory] = useState('gym');
     
     return (
         <div className="p-4 sm:p-6 space-y-6 w-full max-w-full box-border text-left">
@@ -5578,7 +5523,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                     {getActiveStreak(user) > 0 && (
                         <div className="flex items-center gap-2 flex-wrap">
                             <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
-                                🔥 {getActiveStreak(user)} {t('MISSION_STREAK') || 'STREAK'}
+                                🔥 {getActiveStreak(user)} {t('MISSION_STREAK')}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest shrink-0 border border-white/5 bg-white/5 rounded-full px-2 py-1">
                                 ⏳ {hasCompletedToday ? 'Next in' : 'Reset in'} {timeLeft}
@@ -5590,13 +5535,13 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             </div>
 
             {hasCompletedToday && (
-                <div className="p-5 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-4 animate-fade-in liquid-glass-control">
+                <div className="p-5 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center gap-4 animate-fade-in">
                     <div className="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0">
                         <Icons.Check className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
                         <div className="text-sm font-black text-white uppercase tracking-widest">{t('MISSION_COMPLETED_TODAY')}</div>
-                        <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Come back tomorrow to keep your streak!</div>
+                        <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">{t('MISSION_COME_BACK_TOMORROW')}</div>
                     </div>
                 </div>
             )}
