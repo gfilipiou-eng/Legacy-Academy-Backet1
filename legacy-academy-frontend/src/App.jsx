@@ -8889,10 +8889,6 @@ const App = () => {
     const stopHeartbeat = () => { if (_hbInterval.current) { clearInterval(_hbInterval.current); _hbInterval.current = null; } };
 
     const startUserPoll = () => {
-        // Also disable generic key listeners on public
-        useEffect(() => {
-            if (publicProfileUsername || viewPostId || publicSiteUsername) return;
-        }, []);
         if (!user || isPublicExperience) return;
         if (_userInterval.current) clearInterval(_userInterval.current);
         _userInterval.current = setInterval(fetchUsers, 30000); // 30s — was 4s (too aggressive!)
