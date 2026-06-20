@@ -3,6 +3,12 @@ import { createPortal } from 'react-dom';
 import EnhancedButton from './components/EnhancedButton';
 // DEPLOYMENT_VERSION: V12_PORTAL_FIX
 
+export const getActiveStreak = (u) => {
+    if (!u || !u.missionsStreak || !u.lastMissionCompleted) return 0;
+    const diffHours = Math.abs(new Date() - new Date(u.lastMissionCompleted)) / 3600000;
+    return diffHours <= 48 ? u.missionsStreak : 0;
+};
+
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -2177,8 +2183,8 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                         {(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}
                     </span>
                     <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5" user={note.sender} />
-                    {note?.getActiveStreak(sender) > 0 && (
-                        <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{note.getActiveStreak(sender)}</span>
+                    {getActiveStreak(note?.sender) > 0 && (
+                        <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{getActiveStreak(note?.sender)}</span>
                     )}
                     {note.sender?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor] ? (
                         <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].accentClass.replace(/rounded-none/g, '').replace(/!/g, '')}`}>
@@ -10599,7 +10605,7 @@ const App = () => {
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
                                             </div>
                                         )}
-                                        {shareModalPost.getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{shareModalPost.getActiveStreak(author)}</span>}
+                                        {getActiveStreak(shareModalPost?.author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(shareModalPost?.author)}</span>}
                                     </div>
                                     <div className="flex items-center gap-2 mt-1.5 shrink-0 text-gray-400 text-xs">
                                         <div className="truncate">{formatUserHandle(shareModalPost.author?.username)}</div>
