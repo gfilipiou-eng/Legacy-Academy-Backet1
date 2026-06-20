@@ -1212,8 +1212,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
-                    {commentAuthor?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{commentAuthor.missionsStreak}</span>}
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
+                    {commentAuthor?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{commentAuthor.missionsStreak}</span>}
                     <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>
@@ -2131,10 +2131,10 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                     <span className="font-black text-white uppercase tracking-tight text-xs sm:text-sm">
                         {(note.fromUsername && note.fromUsername !== 'Unknown' && note.fromUsername !== 'Someone') ? note.fromUsername : 'Agent'}
                     </span>
-                    {note?.sender?.missionsStreak > 0 && (
-                        <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{note.sender.missionsStreak}</span>
-                    )}
                     <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5" user={note.sender} />
+                    {note?.sender?.missionsStreak > 0 && (
+                        <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{note.sender.missionsStreak}</span>
+                    )}
                     {note.sender?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor] ? (
                         <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].accentClass.replace(/rounded-none/g, '').replace(/!/g, '')}`}>
                             {React.createElement(PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
@@ -2449,15 +2449,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
                                         <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
-                                        {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
-                                        <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                         {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
                                             <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
                                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
                                             </div>
                                         )}
+                                        {author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{author.missionsStreak}</span>}
+                                        <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <CyberDate date={post.createdAt} t={t} lang={lang} />
@@ -3057,7 +3057,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div><div className="absolute inset-[3px] rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-2 truncate">{u?.username} {u?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0">🔥{u.missionsStreak}</span>} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /></div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {u?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0">🔥{u.missionsStreak}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -10485,25 +10485,22 @@ const App = () => {
                                     <ProfileAvatar user={shareModalPost.author} />
                                 </div>
                                 <div className="flex flex-col items-start text-left max-w-[calc(100%-60px)]">
-                                    <div className="font-bold text-white text-base flex items-center gap-1.5 leading-none w-full">
+                                    <div className="font-bold text-white text-base flex flex-wrap items-center gap-1.5 leading-none w-full">
                                         <span className="truncate">{shareModalPost.author?.username}</span>
-                                        {shareModalPost.author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{shareModalPost.author.missionsStreak}</span>}
                                         <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={shareModalPost.author} />
-                                    </div>
-                                    {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] ? (
-                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1 uppercase tracking-widest font-bold flex-wrap">
-                                            {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-3 h-3 shrink-0" })}
-                                            <span className="truncate max-w-[120px]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
-                                            <span className="opacity-50 mx-1 shrink-0">•</span>
-                                            <div className="flex items-center gap-2 shrink-0">
-                                                <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
+                                        {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] && (
+                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
+                                                {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
+                                                <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-2 mt-1 shrink-0">
-                                            <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
-                                        </div>
-                                    )}
+                                        )}
+                                        {shareModalPost.author?.missionsStreak > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{shareModalPost.author.missionsStreak}</span>}
+                                    </div>
+                                    <div className="flex items-center gap-2 mt-1.5 shrink-0 text-gray-400 text-xs">
+                                        <div className="truncate">{formatUserHandle(shareModalPost.author?.username)}</div>
+                                        <span className="opacity-50 mx-1 shrink-0">•</span>
+                                        <CyberDate date={shareModalPost.createdAt} t={t} lang={currentLanguage} />
+                                    </div>
                                 </div>
                             </div>
                             
