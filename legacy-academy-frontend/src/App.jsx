@@ -7019,30 +7019,15 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note">
-                        <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
-                        <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
-                            {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
-                        </span>
-                    </div>
-
-                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group">
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group mt-2">
                         {preview ? (
                             <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-[var(--gold-primary)]/20 shadow-[0_10px_40px_rgba(212,175,55,0.06)] flex items-center justify-center transition-all duration-400 hover:border-[var(--gold-primary)]/40 hover:shadow-[0_15px_50px_rgba(212,175,55,0.1)] hover:-translate-y-0.5">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
-                                ) : isAudio ? (
-                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-950/25 via-slate-950/90 to-slate-900 gap-4 p-5 sm:p-7">
-                                        <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 via-amber-400/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30 shadow-[0_4px_20px_rgba(212,175,55,0.1)]">
-                                            <Icons.Music className="w-9 h-9 sm:w-10 sm:h-10 text-[var(--gold-primary)] animate-pulse" />
-                                        </div>
-                                        <span className="text-sm sm:text-base text-white/90 font-semibold text-center truncate max-w-[260px] sm:max-w-md">{audioName}</span>
-                                        <audio src={preview} controls className="w-full max-w-[210px] sm:max-w-sm" />
-                                    </div>
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain max-h-[220px]" alt="Preview" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); setAudioBlob(null); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
                                     <Icons.X className="w-4 h-4 text-slate-100" />
                                 </button>
                             </div>
@@ -7053,11 +7038,11 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image or Video</span>
                                 </div>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/*, video/*" hidden onChange={handleFileChange} />
                     </div>
 
                     <div className="flex flex-wrap gap-2.5 mb-2">
@@ -7229,44 +7214,16 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 px-4 py-2.5 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.1)] group/note">
-                        <Icons.Info className="w-5 h-5 text-red-500 shrink-0 group-hover/note:animate-pulse" />
-                        <span className="text-[11px] font-black text-red-500 uppercase tracking-wider leading-snug">
-                            {t('VIDEO_LIMIT_NOTE') || 'ONLY VIDEOS UP TO 20 MINUTES ALLOWED'}
-                        </span>
-                    </div>
-
-                    {/* 18+ Toggle */}
-                    <div className="flex flex-wrap gap-2.5 mb-2">
-                        <div onClick={() => setIs18Plus(!is18Plus)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${is18Plus ? 'border-red-500 bg-red-500 scale-110' : 'border-gray-500'}`}>
-                                {is18Plus && <Icons.Check className="w-3.5 h-3.5 text-white font-black" />}
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${is18Plus ? 'text-red-500' : 'text-gray-400'} truncate`}>{t('NSFW_18_PLUS') || '18+ NSFW'}</span>
-                                <span className="text-[9px] text-gray-500 font-black uppercase tracking-wider mt-0.5 truncate">{t('NSFW_18_PLUS_DESC') || 'SENSITIVE CONTENT'}</span>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Media Upload & Preview */}
-                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group">
+                    <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group mt-2">
                         {preview ? (
                             <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-[var(--gold-primary)]/20 shadow-[0_10px_40px_rgba(212,175,55,0.06)] flex items-center justify-center transition-all duration-400 hover:border-[var(--gold-primary)]/40 hover:shadow-[0_15px_50px_rgba(212,175,55,0.1)] hover:-translate-y-0.5">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
-                                ) : isAudio ? (
-                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-950/25 via-slate-950/90 to-slate-900 gap-4 p-5 sm:p-7">
-                                        <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 via-amber-400/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30 shadow-[0_4px_20px_rgba(212,175,55,0.1)]">
-                                            <Icons.Music className="w-9 h-9 sm:w-10 sm:h-10 text-[var(--gold-primary)] animate-pulse" />
-                                        </div>
-                                        <span className="text-sm sm:text-base text-white/90 font-semibold text-center truncate max-w-[260px] sm:max-w-md">{audioName}</span>
-                                        <audio src={preview} controls className="w-full max-w-[210px] sm:max-w-sm" />
-                                    </div>
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain max-h-[220px]" alt="Preview" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsAudio(false); setIsVideo(false); setAudioName(''); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
                                     <Icons.X className="w-4 h-4 text-slate-100" />
                                 </button>
                             </div>
@@ -7277,11 +7234,11 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image or Video</span>
                                 </div>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="*/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/*, video/*" hidden onChange={handleFileChange} />
                     </div>
                 </div>
 
