@@ -5,6 +5,12 @@ import { useTranslation } from '../../translations';
 import axios from '../../api';
 import { simulateAIGeneration } from './aiSimulator';
 
+const XIcon = ({ className }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+);
+
 export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUpdateUser, websitesArray }) => {
     const { t } = useTranslation();
     const [saving, setSaving] = useState(false);
@@ -45,6 +51,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         aboutText: existingWebsite.aboutText || 'We are a leading agency specializing in high-end digital solutions. Our team is dedicated to pushing the boundaries of what is possible on the web.',
         contactEmail: existingWebsite.contactEmail || 'contact@example.com',
         contactPhone: existingWebsite.contactPhone || '+1 (555) 123-4567',
+        socialX: existingWebsite.socialX || 'https://x.com',
+        socialInstagram: existingWebsite.socialInstagram || 'https://instagram.com',
+        socialLinkedin: existingWebsite.socialLinkedin || 'https://linkedin.com',
         hasStore: existingWebsite.hasStore || false,
         products: existingWebsite.products || []
     });
@@ -365,6 +374,23 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
                                     placeholder="Phone Number" 
                                 />
+                            </div>
+                        </div>
+                        <div className="pt-2 border-t border-white/5">
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Social Links (Leave empty to hide)</label>
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <XIcon className="w-4 h-4 text-white/50" />
+                                    <input type="text" value={config.socialX} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="X (Twitter) URL" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icons.Instagram className="w-4 h-4 text-white/50" />
+                                    <input type="text" value={config.socialInstagram} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Instagram URL" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icons.Linkedin className="w-4 h-4 text-white/50" />
+                                    <input type="text" value={config.socialLinkedin} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="LinkedIn URL" />
+                                </div>
                             </div>
                         </div>
                     </div>

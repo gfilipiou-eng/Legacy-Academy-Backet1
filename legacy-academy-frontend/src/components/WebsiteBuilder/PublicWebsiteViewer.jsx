@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 
+const XIcon = ({ className }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+);
+
 export const PublicWebsiteViewer = ({ config }) => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [buyerEmail, setBuyerEmail] = useState('');
@@ -182,9 +188,21 @@ export const PublicWebsiteViewer = ({ config }) => {
             <footer className={`w-full px-6 md:px-12 py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${config.palette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
                 <div className="text-sm font-bold opacity-50">© {new Date().getFullYear()} {config.businessName}. All rights reserved.</div>
                 <div className="flex gap-6 opacity-50">
-                    <Icons.Twitter className="w-6 h-6 cursor-pointer hover:opacity-100" />
-                    <Icons.Instagram className="w-6 h-6 cursor-pointer hover:opacity-100" />
-                    <Icons.Linkedin className="w-6 h-6 cursor-pointer hover:opacity-100" />
+                    {config.socialX && (
+                        <a href={config.socialX} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <XIcon className="w-6 h-6" />
+                        </a>
+                    )}
+                    {config.socialInstagram && (
+                        <a href={config.socialInstagram} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <Icons.Instagram className="w-6 h-6" />
+                        </a>
+                    )}
+                    {config.socialLinkedin && (
+                        <a href={config.socialLinkedin} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <Icons.Linkedin className="w-6 h-6" />
+                        </a>
+                    )}
                 </div>
             </footer>
 
