@@ -131,7 +131,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
     return (
         <>
-        <div className="fixed inset-0 z-[3000] bg-[#09090b] flex flex-col md:flex-row overflow-hidden font-sans h-[100dvh]">
+        <div className="fixed inset-0 z-[3000] bg-[#09090b] flex flex-col md:flex-row font-sans w-full h-[100dvh] sm:h-screen overscroll-none touch-none">
             
             {/* MOBILE TABS (Only visible on small screens) */}
             <div className="md:hidden flex border-b border-white/10 shrink-0 bg-black z-30 pt-safe">
@@ -150,7 +150,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             </div>
 
             {/* LEFT SIDEBAR - Form Inputs */}
-            <div className={`w-full md:w-[400px] bg-[#09090b] border-r border-white/10 flex flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}>
+            <div className={`w-full md:w-[400px] bg-[#09090b] border-r border-white/10 flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}>
                 {/* Header */}
                 <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 shrink-0 bg-white/[0.02]">
                     <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 pb-40 custom-scrollbar space-y-8">
+                <div className="flex-1 overflow-y-auto overscroll-contain p-6 pb-40 custom-scrollbar space-y-8 touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
                     
                     {/* AI Generator */}
                     <div className="bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 p-5 rounded-2xl relative overflow-hidden">
@@ -369,7 +369,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 </div>
 
                 {/* Workspace / Live Preview */}
-                <div className="flex-1 overflow-y-auto p-0 md:p-8 flex justify-center items-start custom-scrollbar relative pb-32">
+                <div className="flex-1 overflow-y-auto overscroll-contain p-0 md:p-8 flex justify-center items-start custom-scrollbar relative pb-32 w-full touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {/* The Website Preview Container */}
                     <motion.div 
                         layout
