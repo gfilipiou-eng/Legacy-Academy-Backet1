@@ -9963,15 +9963,15 @@ const App = () => {
                                     <div className="flex items-start gap-3">
                                         <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">X-Style Exclusive Platform</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">An elite social network built like X, strictly for verified members.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Private Members Network</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">An elite social ecosystem designed strictly for verified individuals.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
                                         <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Top-Tier Intelligence Feed</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Direct access to high-value information inside the exclusive network.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Strategic Insights</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Curated knowledge and high-value strategies reserved for the inner circle.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
