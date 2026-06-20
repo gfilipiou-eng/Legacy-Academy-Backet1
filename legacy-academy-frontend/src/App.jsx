@@ -7604,13 +7604,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
  
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-[2px] bg-gradient-to-br from-[var(--gold-primary)] via-[#ffb700] to-yellow-900 rounded-[1.5rem] cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group shadow-[0_10px_40px_rgba(212,175,55,0.15)] relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="w-full h-full bg-[#050505] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--gold-primary)]/10 blur-[40px] rounded-full pointer-events-none" />
+                <div onClick={onClose} className="w-full mt-6 p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem] cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 group shadow-lg relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="w-full h-full bg-[#080808] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden">
                         <div className="space-y-2.5 text-center sm:text-left min-w-0 flex-1 w-full">
                             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-                                <span className="px-2.5 py-1 rounded-md bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">
+                                <span className="px-2 py-0.5 rounded border border-[var(--gold-primary)]/30 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">
                                     {t('ELITE_TIER', 'ELITE TIER')}
                                 </span>
                             </div>
@@ -7621,7 +7620,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 {t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 49€ / MONTH')}
                             </p>
                         </div>
-                        <div className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(212,175,55,0.4)]">
+                        <div className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-3 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 group-hover:bg-white/20">
                             {t('UNLOCK_ACCESS', 'UNLOCK ACCESS')}
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </div>
@@ -9721,8 +9720,8 @@ const App = () => {
                                     )}
                                     {authMode === 'register' && (
                                         <>
-                                            <div onClick={() => registerFileRef.current.click()} className="w-20 h-20 mx-auto rounded-[18px] bg-white/5  overflow-hidden cursor-pointer relative group mb-2 flex items-center justify-center">
-                                                {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover" /> : (
+                                            <div onClick={() => registerFileRef.current.click()} className="w-20 h-20 mx-auto rounded-full bg-white/5 overflow-hidden cursor-pointer relative group mb-2 flex items-center justify-center border border-white/10 hover:border-white/20 transition-colors">
+                                                {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover rounded-full" /> : (
                                                     <div className="flex flex-col items-center gap-1 text-white/20 group-hover:text-white/40 transition-colors">
                                                         <Icons.Camera className="w-6 h-6" />
                                                         <span className="text-[8px] uppercase tracking-wider font-black">Photo</span>
@@ -9923,30 +9922,51 @@ const App = () => {
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
                     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-                        <div className="bg-[#050505]  rounded-[20px] max-w-[400px] w-full overflow-hidden relative">
+                        <div className="bg-[#0a0a0a] border border-white/10 rounded-[24px] max-w-[420px] w-full overflow-hidden relative shadow-[0_10px_50px_rgba(0,0,0,0.8)]">
                             {/* Decorative Top Line */}
-                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700]" />
                             
                             <div className="p-8 text-center flex flex-col items-center">
-                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center  mb-6 relative">
-                                    <Icons.Lock className="w-8 h-8 text-[var(--gold-primary)]" />
+                                <div className="w-16 h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-4 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+                                    <Icons.Lock className="w-6 h-6 text-[var(--gold-primary)]" />
                                 </div>
                                 
-                                <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-2">Exclusive Network</h2>
-                                <p className="text-sm text-gray-400 font-medium leading-relaxed mb-8 px-4">
-                                    Legacy Academy Intel is an elite entrepreneurial network. To access the intelligence feed, an active Academy membership is required.
-                                </p>
+                                <h2 className="text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1">Exclusive Network</h2>
+                                <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-6">Legacy Academy Elite Tier</div>
                                 
-                                <div className="bg-white/5  rounded-xl p-4 w-full mb-8">
-                                    <div className="text-3xl font-black text-white mb-1">4€ <span className="text-sm text-gray-500 uppercase tracking-widest">/ MONTH</span></div>
-                                    <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-widest font-bold">Legacy Academy Membership</div>
+                                <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-5 mb-6 text-left space-y-3">
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.CheckCircle className="w-4 h-4 text-green-500" /></div>
+                                        <div>
+                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Premium Intelligence Feed</div>
+                                            <div className="text-[10px] text-white/40">Exclusive daily insights and strategies.</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.CheckCircle className="w-4 h-4 text-green-500" /></div>
+                                        <div>
+                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Elite Network Access</div>
+                                            <div className="text-[10px] text-white/40">Connect with a highly curated inner circle.</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.CheckCircle className="w-4 h-4 text-green-500" /></div>
+                                        <div>
+                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Private Messaging & Comms</div>
+                                            <div className="text-[10px] text-white/40">Secure P2P encrypted chat capabilities.</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/3cI9ATa9J3Jw0cE22U6Na05"} className="w-full py-4 bg-[var(--gold-primary)] text-white font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 transition-transform duration-300 mb-4 text-xs">
-                                    Acquire Academy Membership
+                                <div className="bg-white/5 rounded-xl p-4 w-full mb-6 border border-white/10">
+                                    <div className="text-3xl font-black text-white flex items-center justify-center gap-1">49€ <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">/ MONTH</span></div>
+                                </div>
+                                
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-4 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black font-black uppercase tracking-[0.25em] rounded-xl hover:scale-[1.02] active:scale-95 transition-all duration-300 mb-5 text-[11px] shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                                    Unlock Elite Access
                                 </button>
                                 
-                                <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-widest font-black hover:text-white transition-colors">
+                                <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold hover:text-white transition-colors underline decoration-white/20 underline-offset-4">
                                     Return to Login
                                 </button>
                             </div>
