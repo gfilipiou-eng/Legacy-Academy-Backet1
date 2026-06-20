@@ -7621,7 +7621,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         <div className="space-y-2.5 text-center sm:text-left min-w-0 flex-1 w-full">
                             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                                 <span className="px-2 py-0.5 rounded border border-[var(--gold-primary)]/30 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">
-                                    {t('ELITE_TIER', 'ELITE TIER')}
+                                    {t('MEMBERSHIP', 'MEMBERSHIP')}
                                 </span>
                             </div>
                             <h3 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-white leading-tight">
@@ -9949,7 +9949,7 @@ const App = () => {
                                 </div>
                                 
                                 <h2 className="text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1">Exclusive Network</h2>
-                                <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-6">Legacy Academy Elite Tier</div>
+                                <div className="text-[10px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-6">Legacy Academy Membership</div>
                                 
                                 <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-5 mb-6 text-left space-y-3">
                                     <div className="flex items-start gap-3">
@@ -9957,6 +9957,13 @@ const App = () => {
                                         <div>
                                             <div className="text-xs text-white font-bold tracking-wide uppercase">Premium Intelligence Feed</div>
                                             <div className="text-[10px] text-white/40">Exclusive daily insights and strategies.</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
+                                        <div>
+                                            <div className="text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
+                                            <div className="text-[10px] text-white/40">Entrepreneurs can build their own high-end websites.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
@@ -9979,8 +9986,8 @@ const App = () => {
                                     <div className="text-3xl font-black text-white flex items-center justify-center gap-1">49€ <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">/ MONTH</span></div>
                                 </div>
                                 
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-4 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black font-black uppercase tracking-[0.25em] rounded-xl hover:scale-[1.02] active:scale-95 transition-all duration-300 mb-5 text-[11px] shadow-[0_0_20px_rgba(212,175,55,0.3)]">
-                                    Unlock Elite Access
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-4 bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.25em] rounded-xl hover:bg-white/20 hover:border-white/20 active:scale-95 transition-all duration-300 mb-5 text-[11px]">
+                                    Unlock Access
                                 </button>
                                 
                                 <button onClick={() => setShowPaywall(false)} className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold hover:text-white transition-colors underline decoration-white/20 underline-offset-4">
