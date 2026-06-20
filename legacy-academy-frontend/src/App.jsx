@@ -7594,7 +7594,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* FOLLOWERS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {[...new Set((publicUser.followers || []).filter(id => users.length === 0 || users.some(u => isSameId(u._id, id))))].length}
+                            {publicUser.followers?.length || 0}
                         </span>
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
                             {t('FOLLOWERS') || 'FOLLOWERS'}
@@ -7604,7 +7604,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* FOLLOWING */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {[...new Set((publicUser.following || []).filter(id => users.length === 0 || users.some(u => isSameId(u._id, id))))].length}
+                            {publicUser.following?.length || 0}
                         </span>
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                     </div>
