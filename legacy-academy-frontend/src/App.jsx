@@ -2282,7 +2282,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null, compact = false, onOpenSubscription = null }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null, compact = false, onOpenSubscription = null, openCommentsInModal = false }) => {
     console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
     const [commentAudio, setCommentAudio] = useState(null);
@@ -2582,7 +2582,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className={actionBarClass}>
                                 {/* COMMENTS */}
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (openCommentsInModal && onOpenDetail) {
+                                            onOpenDetail(post);
+                                        } else {
+                                            setShowComments(!showComments);
+                                        }
+                                    }}
                                     className={`${actionButtonBaseClass} action-btn-comment ${showComments ? 'text-sky-500 bg-sky-500/10 border-sky-500/20' : 'text-gray-400'}`}
                                 >
                                     <Icons.MessageSquare className={actionIconClass} />
@@ -6801,6 +6808,7 @@ const ProfileModal = ({
                                                                             isDeleting={deletingPostIds?.has(p._id)}
                                                                             cacheKey={imgKey}
                                                                             onOpenSubscription={onOpenSubscription}
+                                                                            openCommentsInModal={true}
                                                                         />
                                                                     </motion.div>
                                                                 ))}
@@ -9893,20 +9901,16 @@ const App = () => {
                                     </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
-                                    <div 
-                                        className="relative flex items-center justify-center w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-110 hover:bg-white/10 hover:border-white/20 cursor-pointer active:scale-95 overflow-hidden group"
-                                        onClick={() => { playCyberSFX('click'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                    >
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl sm:rounded-2xl"></div>
+                                    <div className="relative flex items-center justify-center">
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-6 sm:h-7 w-auto object-contain transform-gpu transition-transform duration-300 group-hover:scale-105 relative z-10"
+                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
                                             style={{
                                                 imageRendering: '-webkit-optimize-contrast',
                                                 backfaceVisibility: 'hidden',
                                                 transform: 'translateZ(0px)',
-                                                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
+                                                willChange: 'transform',
                                             }}
                                             decoding="async"
                                             loading="lazy"
