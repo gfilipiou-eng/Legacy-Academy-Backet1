@@ -392,5 +392,16 @@
   "CYBER_SFX": "Interface-Audio",
   "CYBER_SFX_DESC": "Synthetisiert cybernetische Echtzeit-Soundeffekte bei Aktionen",
   "NEURAL_NARRATOR": "Neuronaler Erzähler",
-  "NEURAL_NARRATOR_DESC": "Aktiviert die Text-to-Speech-Vorleseschaltfläche neben der Übersetzung"
+  "NEURAL_NARRATOR_DESC": "Aktiviert die Text-to-Speech-Vorleseschaltfläche neben der Übersetzung",
+  "WEBSITE_BUILDER": "Website-Builder",
+  "SELECT_TEMPLATE": "Vorlage Auswählen",
+  "START_BUILDING": "Mit Dem Bauen Beginnen",
+  "TPL_AGENCY_TITLE": "Digitalagentur",
+  "TPL_AGENCY_DESC": "Schlank, dunkel und minimalistisch. Perfekt für kreative Portfolios.",
+  "TPL_CONSULTING_TITLE": "Beratung",
+  "TPL_CONSULTING_DESC": "Professionelles Design mit hohem Kontrast für Coaches und Redner.",
+  "TPL_ECOMMERCE_TITLE": "E-Commerce",
+  "TPL_ECOMMERCE_DESC": "Sauberes und produktorientiertes Layout für maximale Verkäufe.",
+  "TPL_BLANK_TITLE": "Leere Leinwand",
+  "TPL_BLANK_DESC": "Beginnen Sie komplett von vorne und bauen Sie Ihr ultimatives Erlebnis."
 }

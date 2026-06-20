@@ -13,7 +13,7 @@ import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 import socket from './socket';
 import BottomNavbar from './components/BottomNavbar';
-
+import { WebsiteTemplates, WebsiteBuilder } from './components/WebsiteBuilder';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
@@ -5173,7 +5173,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
     );
 };
 
-const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, onNavigate, onViewProfile, onOpenSettings, onOpenSubscription, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
+const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, onNavigate, onViewProfile, onOpenSettings, onOpenWebsiteBuilder, onOpenSubscription, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, t }) => {
     const [isClosing, setIsClosing] = useState(false);
 
     // Calculate remaining subscription time with smart display
@@ -5287,6 +5287,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
+                            { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: onOpenWebsiteBuilder, highlight: true },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
                         ].map((item, index) => {
                             const isActive = !item.action && activeTab === item.id;
@@ -7960,6 +7961,8 @@ const App = () => {
     const [createModeStory, setCreateModeStory] = useState(false);
     const [postToEdit, setPostToEdit] = useState(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isWebsiteBuilderOpen, setIsWebsiteBuilderOpen] = useState(false);
+    const [selectedWebsiteTemplate, setSelectedWebsiteTemplate] = useState(null);
     const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isTermsOpen, setIsTermsOpen] = useState(false);
@@ -10353,6 +10356,7 @@ const App = () => {
                         }}
                         onViewProfile={viewProfile}
                         onOpenSettings={() => setIsSettingsOpen(true)}
+                        onOpenWebsiteBuilder={() => setIsWebsiteBuilderOpen(true)}
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
                         onOpenTerms={() => setIsTermsOpen(true)}
                         onOpenPrivacy={() => setIsPrivacyOpen(true)}
@@ -10362,6 +10366,24 @@ const App = () => {
                     />
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <SubscriptionModal isOpen={isSubscriptionOpen} onClose={() => setIsSubscriptionOpen(false)} user={user} onUpdateUser={handleUpdateUser} />
+
+                    <AnimatePresence>
+                        {isWebsiteBuilderOpen && !selectedWebsiteTemplate && (
+                            <WebsiteTemplates 
+                                onSelectTemplate={setSelectedWebsiteTemplate}
+                                onBack={() => setIsWebsiteBuilderOpen(false)}
+                            />
+                        )}
+                        {isWebsiteBuilderOpen && selectedWebsiteTemplate && (
+                            <WebsiteBuilder 
+                                templateId={selectedWebsiteTemplate}
+                                onExit={() => {
+                                    setIsWebsiteBuilderOpen(false);
+                                    setSelectedWebsiteTemplate(null);
+                                }}
+                            />
+                        )}
+                    </AnimatePresence>
 
                     <LegalModal
                         isOpen={isTermsOpen}

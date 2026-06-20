@@ -434,5 +434,16 @@
   "CYBER_SFX": "Interface Audio",
   "CYBER_SFX_DESC": "Synthesize real-time cybernetic sound effects on action",
   "NEURAL_NARRATOR": "Neural Narrator",
-  "NEURAL_NARRATOR_DESC": "Enable Text-To-Speech reader button next to translate button"
+  "NEURAL_NARRATOR_DESC": "Enable Text-To-Speech reader button next to translate button",
+  "WEBSITE_BUILDER": "Website Builder",
+  "SELECT_TEMPLATE": "Select a Template",
+  "START_BUILDING": "Start Building",
+  "TPL_AGENCY_TITLE": "Digital Agency",
+  "TPL_AGENCY_DESC": "Sleek, dark, and minimal. Perfect for creative portfolios and marketing agencies.",
+  "TPL_CONSULTING_TITLE": "Consulting",
+  "TPL_CONSULTING_DESC": "High-contrast, professional design built for coaches, consultants, and speakers.",
+  "TPL_ECOMMERCE_TITLE": "E-Commerce",
+  "TPL_ECOMMERCE_DESC": "Clean and product-focused layout optimized for conversions and sales.",
+  "TPL_BLANK_TITLE": "Blank Canvas",
+  "TPL_BLANK_DESC": "Start entirely from scratch and build your ultimate custom experience."
 }
