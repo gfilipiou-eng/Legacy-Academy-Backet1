@@ -9949,38 +9949,38 @@ const App = () => {
                                 
                                 <div className="w-full bg-[#111] border border-white/5 rounded-[16px] p-4 sm:p-5 mb-5 sm:mb-6 text-left space-y-2.5 sm:space-y-3">
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Premium Intelligence Feed</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Exclusive daily insights and strategies.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">X-Style Exclusive Platform</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">An elite social network built like X, strictly for verified members.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Top-Tier Intelligence Feed</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Direct access to high-value information inside the exclusive network.</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Daily Missions & Rankings</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Complete strategic missions to build your streak and rank up.</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
                                             <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Website Builder</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Entrepreneurs can build their own high-end websites.</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Entrepreneurs can launch their own high-end custom websites.</div>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
+                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                         <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Verified Badge</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Receive the exclusive blue verified checkmark on your profile.</div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
-                                        <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Elite Network Access</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Connect with a highly curated inner circle.</div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <div className="mt-0.5"><Icons.Check className="w-4 h-4 text-green-500" strokeWidth={3} /></div>
-                                        <div>
-                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Private Messaging & Comms</div>
-                                            <div className="text-[9px] sm:text-[10px] text-white/40">Secure P2P encrypted chat capabilities.</div>
+                                            <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">Encrypted P2P Comms</div>
+                                            <div className="text-[9px] sm:text-[10px] text-white/40">Secure chat, blue verified badge, and elite inner circle access.</div>
                                         </div>
                                     </div>
                                 </div>
