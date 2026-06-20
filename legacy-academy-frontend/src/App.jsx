@@ -550,15 +550,19 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center gap-2.5 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-[#D4AF37]/40 pl-1.5 pr-4 py-1.5 rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_4px_24px_rgba(212,175,55,0.15)] transition-all duration-500 cursor-pointer select-none relative overflow-hidden ${className}`}
+            className={`group inline-flex items-center gap-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 pl-1.5 pr-4 py-1.5 rounded-[100px] shadow-sm transition-all duration-300 cursor-pointer select-none relative overflow-hidden ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
             {/* Liquid Glass Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/[0.04] to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             {/* The Circular Avatar */}
-            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/20 group-hover:border-[#D4AF37]/50 shadow-inner group-hover:scale-105 transition-all duration-500 z-10">
-                {resolvedProfilePic ? (
+            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/20 shadow-inner group-hover:scale-[1.03] transition-all duration-300 z-10">
+                {isLoading ? (
+                    <div className="w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm animate-pulse">
+                        <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
+                    </div>
+                ) : resolvedProfilePic ? (
                     <img 
                         src={resolvedProfilePic} 
                         alt="" 
@@ -568,7 +572,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-950">
-                        <span className="text-[12px] font-bold text-white/80 group-hover:text-[#D4AF37] transition-colors duration-500">
+                        <span className="text-[12px] font-bold text-white/80 transition-colors duration-500">
                             {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                         </span>
                     </div>
@@ -577,10 +581,10 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             
             {/* The Text Info */}
             <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
-                <span className="text-[8px] font-bold text-white/50 group-hover:text-[#D4AF37]/80 uppercase tracking-[0.2em] leading-tight mb-0.5 transition-colors duration-500">
+                <span className="text-[8px] font-bold text-white/50 uppercase tracking-[0.2em] leading-tight mb-0.5">
                     Affiliated
                 </span>
-                <span className="text-[12px] sm:text-[13px] font-black text-white/90 group-hover:text-[#D4AF37] leading-tight tracking-wide transition-colors duration-500">
+                <span className="text-[12px] sm:text-[13px] font-black text-white/95 leading-tight tracking-wide">
                     @{normalizedUsername}
                 </span>
             </div>
@@ -8079,13 +8083,6 @@ const App = () => {
     };
 
     // Keep refs correctly updated
-    useEffect(() => {
-        if (typeof window !== 'undefined' && 'Notification' in window) {
-            if (Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-        }
-    }, []);
     useEffect(() => { selectedPostRef.current = selectedPost; }, [selectedPost]);
     useEffect(() => { postsRef.current = posts; }, [posts]);
     useEffect(() => { usersRef.current = users; }, [users]);
