@@ -3359,9 +3359,23 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 };
 
 const PlatformLoadingPanel = ({ label, compact = false }) => (
-    <div className={`platform-loading ${compact ? 'platform-loading--compact' : ''}`}>
-        <Icons.Loader className="platform-loading__icon" />
-        {label ? <div className="platform-loading__label">{label}</div> : null}
+    <div className={`flex flex-col items-center justify-center gap-6 ${compact ? 'py-10' : 'py-20'} relative`}>
+        <div className="relative flex items-center justify-center w-16 h-16">
+            {/* Outer spinning ring */}
+            <div className="absolute inset-0 rounded-full border-[2px] border-t-[var(--gold-primary)] border-r-[var(--gold-primary)]/30 border-b-transparent border-l-transparent animate-spin" style={{ animationDuration: '1.5s' }} />
+            {/* Inner pulsing core */}
+            <div className="w-10 h-10 rounded-full bg-[var(--gold-primary)]/10 animate-pulse flex items-center justify-center backdrop-blur-sm border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                <Icons.Loader className="w-4 h-4 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '2s', animationDirection: 'reverse' }} />
+            </div>
+        </div>
+        {label && (
+            <div className="flex flex-col items-center gap-2">
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)] relative z-10 shadow-black drop-shadow-md">
+                    {label}
+                </div>
+                <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
+            </div>
+        )}
     </div>
 );
 
@@ -7487,10 +7501,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
-                {/* SIGN UP CALL TO ACTION */}
-                <button onClick={onClose} className="absolute top-4 right-4 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/15 text-white font-black text-[10px] uppercase tracking-widest rounded-full hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg z-50">
-                    {t('JOIN_ACADEMY_PRICE', 'JOIN ACADEMY • 4€/MO')}
-                </button>
+                {/* SIGN UP CALL TO ACTION (Removed floating button) */}
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
@@ -7589,16 +7600,27 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
  
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div onClick={onClose} className="w-full mt-6 p-6 bg-gradient-to-r from-black/80 to-black/60 border border-[var(--gold-primary)]/30 rounded-2xl cursor-pointer hover:border-[var(--gold-primary)]/60 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-between gap-4 group liquid-glass-video-panel">
-                    <div className="space-y-2 text-left min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-xs font-black uppercase tracking-[0.25em] text-[var(--gold-primary)]">{t('JOIN_ELITE', 'ENTER THE LEGACY ACADEMY')}</h3>
+                <div onClick={onClose} className="w-full mt-6 p-[2px] bg-gradient-to-br from-[var(--gold-primary)] via-[#ffb700] to-yellow-900 rounded-[1.5rem] cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group shadow-[0_10px_40px_rgba(212,175,55,0.15)] relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="w-full h-full bg-[#050505] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--gold-primary)]/10 blur-[40px] rounded-full pointer-events-none" />
+                        <div className="space-y-2.5 text-center sm:text-left min-w-0 flex-1 w-full">
+                            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                                <span className="px-2.5 py-1 rounded-md bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">
+                                    {t('ELITE_TIER', 'ELITE TIER')}
+                                </span>
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-white leading-tight">
+                                {t('JOIN_ELITE', 'ENTER THE LEGACY ACADEMY')}
+                            </h3>
+                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em]">
+                                {t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 49€ / MONTH')}
+                            </p>
                         </div>
-                        <p className="text-sm font-bold leading-tight text-white">EXCLUSIVE PREMIUM CONTENT & COMMUNITY</p>
-                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 4€ / MONTH')}</p>
-                    </div>
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black flex items-center justify-center transition-all duration-300 shrink-0 group-hover:scale-110 active:scale-90 shadow-lg shadow-[var(--gold-primary)]/40">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-6 h-6"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        <div className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(212,175,55,0.4)]">
+                            {t('UNLOCK_ACCESS', 'UNLOCK ACCESS')}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        </div>
                     </div>
                 </div>
 
@@ -9630,13 +9652,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
-                                            style={{
-                                                imageRendering: '-webkit-optimize-contrast',
-                                                backfaceVisibility: 'hidden',
-                                                transform: 'translateZ(0px)',
-                                                willChange: 'transform',
-                                            }}
+                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain transition-all duration-300 hover:scale-105 ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
                                             loading="eager"
@@ -9966,13 +9982,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain transform-gpu transition-all duration-300 hover:scale-105"
-                                            style={{
-                                                imageRendering: '-webkit-optimize-contrast',
-                                                backfaceVisibility: 'hidden',
-                                                transform: 'translateZ(0px)',
-                                                willChange: 'transform',
-                                            }}
+                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain transition-all duration-300 hover:scale-105"
                                             decoding="async"
                                             loading="lazy"
                                         />
