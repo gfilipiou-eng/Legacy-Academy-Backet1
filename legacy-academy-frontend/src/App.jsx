@@ -124,9 +124,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                     transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
                 } else if (isAvatar) {
-                    // Use requested width (fallback to 600px) + q_auto:best for maximum quality as requested
-                    const targetSize = width ? Math.min(width, 600) : 600;
-                    transform = `w_${targetSize},h_${targetSize},c_fill,g_face,q_auto:best,f_auto`;
+                    // 600px + q_auto:best for maximum quality as requested
+                    transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
                 } else if (width === 2000 || isCover) {
                     // Founder 4K Background / High-Res Cover
                     transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
