@@ -32,7 +32,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         palette: existingWebsite.palette || 'gold',
         font: existingWebsite.font || 'Inter',
         ctaText: existingWebsite.ctaText || 'Get in Touch',
-        ctaLink: existingWebsite.ctaLink || '#'
+        ctaLink: existingWebsite.ctaLink || '#',
+        hasStore: existingWebsite.hasStore || false,
+        products: existingWebsite.products || []
     });
 
     const updateConfig = (key, value) => setConfig(prev => ({ ...prev, [key]: value }));

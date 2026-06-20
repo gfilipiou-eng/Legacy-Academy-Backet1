@@ -19,6 +19,10 @@ export const simulateAIGeneration = (prompt) => {
         : `We provide industry-leading services in ${coreTopic}. Driven by quality, innovation, and absolute customer satisfaction, we raise the bar in every project. Trust the experts.`;
     let cta = isGreek ? 'Ξεκινήστε Τώρα' : 'Get Started';
     let palette = 'gold';
+    
+    // E-commerce logic
+    let hasStore = false;
+    let products = [];
 
     // Keyword matching for better contextual generation
     if (p.includes('gym') || p.includes('γυμναστηριο') || p.includes('fitness')) {
@@ -50,11 +54,40 @@ export const simulateAIGeneration = (prompt) => {
         palette = 'light';
     }
 
+    // Explicit Store / Shop detection
+    if (p.includes('store') || p.includes('shop') || p.includes('καταστημα') || p.includes('μαγαζι') || p.includes('eshop') || p.includes('e-shop') || p.includes('αγορες')) {
+        hasStore = true;
+        cta = isGreek ? 'Δείτε τα Προϊόντα' : 'Shop Now';
+        
+        if (p.includes('electrical') || p.includes('ηλεκτρικ') || p.includes('tech') || p.includes('gadget')) {
+            products = [
+                { id: Date.now() + 1, name: isGreek ? 'Smart TV 55" 4K' : 'Smart TV 55" 4K', price: '499.00', image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=400' },
+                { id: Date.now() + 2, name: isGreek ? 'Gaming Laptop Pro' : 'Gaming Laptop Pro', price: '1299.00', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=400' },
+                { id: Date.now() + 3, name: isGreek ? 'Ασύρματα Ακουστικά' : 'Wireless Earbuds', price: '149.00', image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=400' }
+            ];
+        } else if (p.includes('cloth') || p.includes('fashion') || p.includes('ρουχ') || p.includes('boutique')) {
+            products = [
+                { id: Date.now() + 1, name: isGreek ? 'Premium Δερμάτινο Μπουφάν' : 'Premium Leather Jacket', price: '199.00', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=400' },
+                { id: Date.now() + 2, name: isGreek ? 'Minimal Λευκό T-Shirt' : 'Minimal White T-Shirt', price: '29.00', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=400' },
+                { id: Date.now() + 3, name: isGreek ? 'Classic Denim Παντελόνι' : 'Classic Denim Jeans', price: '89.00', image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&q=80&w=400' }
+            ];
+        } else {
+            // Generic store products
+            products = [
+                { id: Date.now() + 1, name: isGreek ? 'Premium Προϊόν 1' : 'Premium Product 1', price: '99.00', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=400' },
+                { id: Date.now() + 2, name: isGreek ? 'Premium Προϊόν 2' : 'Premium Product 2', price: '149.00', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400' },
+                { id: Date.now() + 3, name: isGreek ? 'Premium Προϊόν 3' : 'Premium Product 3', price: '199.00', image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&q=80&w=400' }
+            ];
+        }
+    }
+
     return {
         businessName: name,
         slogan,
         description: desc,
         ctaText: cta,
-        palette
+        palette,
+        hasStore,
+        products
     };
 };

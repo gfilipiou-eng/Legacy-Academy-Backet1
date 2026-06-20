@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 
 export const PublicWebsiteViewer = ({ config }) => {
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [buyerEmail, setBuyerEmail] = useState('');
+    const [orderComplete, setOrderComplete] = useState(false);
+
     if (!config) return <div className="min-h-screen bg-black flex items-center justify-center text-white">Website not found</div>;
 
     const themeColors = {
@@ -76,7 +81,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             </div>
 
             {/* Feature Cards */}
-            <div className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+            <div id="services" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
                 <h3 className="text-4xl font-black mb-16 text-center tracking-tight">Why Choose Us</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {[1, 2, 3].map(i => (
@@ -91,6 +96,47 @@ export const PublicWebsiteViewer = ({ config }) => {
                 </div>
             </div>
 
+            {/* Shop Section */}
+            {config.hasStore && config.products && config.products.length > 0 && (
+                <div id="shop" className={`w-full px-6 md:px-12 py-24 border-t ${config.palette === 'light' ? 'border-black/5' : 'border-white/5'}`}>
+                    <h3 className="text-4xl font-black mb-4 text-center tracking-tight">Our Products</h3>
+                    <p className="text-center opacity-60 max-w-2xl mx-auto mb-16">Premium selection of our best items.</p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                        {config.products.map(product => (
+                            <div key={product.id} className="group rounded-3xl overflow-hidden shadow-2xl transition-all hover:-translate-y-2 flex flex-col" style={{ backgroundColor: activeTheme.card }}>
+                                <div className="w-full aspect-square overflow-hidden relative bg-black/20">
+                                    {product.image ? (
+                                        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <Icons.Image className="w-12 h-12 opacity-20" />
+                                        </div>
+                                    )}
+                                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+                                        <span className="text-white font-black">€{product.price}</span>
+                                    </div>
+                                </div>
+                                <div className="p-6 flex-1 flex flex-col">
+                                    <h4 className="text-xl font-bold mb-4">{product.name}</h4>
+                                    <div className="flex-1"></div>
+                                    <button 
+                                        onClick={() => setSelectedProduct(product)}
+                                        className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-colors mt-auto"
+                                        style={{ 
+                                            backgroundColor: activeTheme.primary, 
+                                            color: config.palette === 'light' ? '#fff' : '#000' 
+                                        }}
+                                    >
+                                        Buy Now
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Footer */}
             <footer className={`w-full px-6 md:px-12 py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${config.palette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
                 <div className="text-sm font-bold opacity-50">© {new Date().getFullYear()} {config.businessName}. All rights reserved.</div>
@@ -100,6 +146,93 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <Icons.Linkedin className="w-6 h-6 cursor-pointer hover:opacity-100" />
                 </div>
             </footer>
+
+            {/* Buy Modal */}
+            <AnimatePresence>
+                {selectedProduct && (
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedProduct(null)}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl"
+                            style={{ backgroundColor: activeTheme.card, color: config.palette === 'light' ? '#000' : '#fff' }}
+                        >
+                            {!orderComplete ? (
+                                <div className="p-8">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <h3 className="text-2xl font-black">Complete Purchase</h3>
+                                        <button onClick={() => setSelectedProduct(null)} className="opacity-50 hover:opacity-100">
+                                            <Icons.X className="w-6 h-6" />
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-4 mb-8 p-4 rounded-xl" style={{ backgroundColor: config.palette === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }}>
+                                        {selectedProduct.image && (
+                                            <img src={selectedProduct.image} alt="Product" className="w-16 h-16 rounded-lg object-cover" />
+                                        )}
+                                        <div>
+                                            <h4 className="font-bold">{selectedProduct.name}</h4>
+                                            <p className="opacity-70 font-mono">€{selectedProduct.price}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 mb-8">
+                                        <div>
+                                            <label className="text-xs font-bold uppercase tracking-wider opacity-70 mb-2 block">Your Email</label>
+                                            <input 
+                                                type="email" 
+                                                value={buyerEmail}
+                                                onChange={(e) => setBuyerEmail(e.target.value)}
+                                                placeholder="john@example.com"
+                                                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--gold-primary)]"
+                                                style={{ color: 'inherit' }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        onClick={() => {
+                                            if (!buyerEmail.includes('@')) return;
+                                            setOrderComplete(true);
+                                            // In a real app, this would send an email via backend.
+                                            // For now we simulate success.
+                                            setTimeout(() => {
+                                                setSelectedProduct(null);
+                                                setOrderComplete(false);
+                                                setBuyerEmail('');
+                                            }, 3000);
+                                        }}
+                                        disabled={!buyerEmail}
+                                        className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        style={{ 
+                                            backgroundColor: activeTheme.primary, 
+                                            color: config.palette === 'light' ? '#fff' : '#000' 
+                                        }}
+                                    >
+                                        Pay €{selectedProduct.price}
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="p-12 text-center flex flex-col items-center">
+                                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
+                                        <Icons.Check className="w-10 h-10" />
+                                    </div>
+                                    <h3 className="text-2xl font-black mb-2">Order Confirmed!</h3>
+                                    <p className="opacity-70">A receipt has been sent to {buyerEmail}. The store owner will contact you shortly.</p>
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
