@@ -5,7 +5,7 @@ import { useTranslation } from '../../translations';
 import axios from '../../api';
 import { simulateAIGeneration } from './aiSimulator';
 
-export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
+export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUpdateUser, websitesArray }) => {
     const { t } = useTranslation();
     const [saving, setSaving] = useState(false);
     const [published, setPublished] = useState(false);
@@ -17,8 +17,11 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
     // AI Generator State
     const [aiPrompt, setAiPrompt] = useState('');
     const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+    
+    // Publish success state
+    const [showPublishSuccess, setShowPublishSuccess] = useState(false);
 
-    const existingWebsite = user?.settings?.businessWebsite || {};
+    const existingWebsite = initialConfig || {};
     
     const [config, setConfig] = useState({
         businessName: existingWebsite.businessName || user?.username || 'My Business',
@@ -69,7 +72,16 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
         if (!user?._id) return;
         setSaving(true);
         try {
-            const payload = { settings: { businessWebsite: { ...config, lastUpdated: new Date() } } };
+            const newWebsites = [...(websitesArray || [])];
+            const updatedConfig = { ...config, lastUpdated: new Date() };
+            
+            if (websiteIndex !== undefined && websiteIndex !== null && websiteIndex < newWebsites.length) {
+                newWebsites[websiteIndex] = updatedConfig;
+            } else {
+                newWebsites.push(updatedConfig);
+            }
+
+            const payload = { settings: { businessWebsites: newWebsites } };
             const res = await axios.put('/users/settings', payload);
             
             if (onUpdateUser) {
@@ -77,12 +89,13 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
                     ...user,
                     settings: {
                         ...(user.settings || {}),
-                        businessWebsite: { ...config, lastUpdated: new Date() }
+                        businessWebsites: newWebsites
                     }
                 });
             }
             
             setPublished(true);
+            setShowPublishSuccess(true);
             setTimeout(() => setPublished(false), 3000);
         } catch (e) {
             console.error("Failed to publish website", e);
@@ -117,6 +130,7 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
     const activeTheme = themeColors[config.palette];
 
     return (
+        <>
         <div className="fixed inset-0 z-[3000] bg-[#09090b] flex flex-col md:flex-row overflow-hidden font-sans h-[100dvh]">
             
             {/* MOBILE TABS (Only visible on small screens) */}
@@ -450,5 +464,49 @@ export const WebsiteBuilder = ({ templateId, onExit, user, onUpdateUser }) => {
                 </div>
             </div>
         </div>
+
+        {/* Publish Success Modal */}
+        <AnimatePresence>
+            {showPublishSuccess && (
+                <div className="fixed inset-0 z-[4000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="bg-[#111113] border border-[var(--gold-primary)]/50 rounded-3xl p-8 max-w-md w-full text-center relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent" />
+                        <div className="w-20 h-20 mx-auto bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-6">
+                            <Icons.CheckCircle className="w-10 h-10 text-[var(--gold-primary)]" />
+                        </div>
+                        <h2 className="text-2xl font-black text-white mb-2">Website Published!</h2>
+                        <p className="text-gray-400 text-sm mb-8">Your automated website is now live and can be shared with the world.</p>
+                        
+                        <div className="bg-black border border-white/10 rounded-xl p-4 flex items-center justify-between mb-8">
+                            <span className="text-xs text-white/80 font-mono truncate mr-4">
+                                {window.location.origin}/?site={user?.username}&index={websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}
+                            </span>
+                            <button 
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`);
+                                    alert('Copied to clipboard!');
+                                }}
+                                className="w-8 h-8 shrink-0 bg-white/10 hover:bg-white/20 rounded-md flex items-center justify-center transition-colors"
+                            >
+                                <Icons.Copy className="w-4 h-4 text-white" />
+                            </button>
+                        </div>
+                        
+                        <button 
+                            onClick={() => setShowPublishSuccess(false)}
+                            className="w-full py-4 rounded-xl bg-[var(--gold-primary)] text-black font-black text-xs uppercase tracking-wider hover:opacity-90 transition-opacity"
+                        >
+                            Continue Editing
+                        </button>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+        </>
     );
 };

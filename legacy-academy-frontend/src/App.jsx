@@ -13,7 +13,7 @@ import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 import socket from './socket';
 import BottomNavbar from './components/BottomNavbar';
-import { WebsiteTemplates, WebsiteBuilder } from './components/WebsiteBuilder';
+import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
@@ -7722,11 +7722,17 @@ const App = () => {
     const [publicPostsLoading, setPublicPostsLoading] = useState(false);
     const [publicPostsReady, setPublicPostsReady] = useState(false);
     const [viewPostId, setViewPostId] = useState(searchParams.get('postId'));
+    
+    // Public Website Viewer state
+    const [publicSiteUsername, setPublicSiteUsername] = useState(searchParams.get('site'));
+    const [publicSiteIndex, setPublicSiteIndex] = useState(searchParams.get('index') || 0);
 
     const syncUrlState = useCallback(() => {
         const params = new URLSearchParams(window.location.search);
         setPublicProfileUsername(params.get('profile'));
         setViewPostId(params.get('postId'));
+        setPublicSiteUsername(params.get('site'));
+        setPublicSiteIndex(params.get('index') || 0);
     }, []);
 
     const navigatePublicProfile = useCallback((username) => {
@@ -7761,11 +7767,12 @@ const App = () => {
     }, [syncUrlState]);
 
     useEffect(() => {
-        if (!publicProfileUsername) return;
+        const targetUsername = publicProfileUsername || publicSiteUsername;
+        if (!targetUsername) return;
 
         let isActive = true;
         let decoded = '';
-        try { decoded = decodeURIComponent(String(publicProfileUsername || '')); } catch(e) { decoded = String(publicProfileUsername || ''); }
+        try { decoded = decodeURIComponent(String(targetUsername || '')); } catch(e) { decoded = String(targetUsername || ''); }
         const normalizedUsername = decoded.trim().replace(/^@+/, '');
 
         const loadPublicProfile = async () => {
@@ -7858,26 +7865,31 @@ const App = () => {
         return () => {
             isActive = false;
         };
-    }, [publicProfileUsername]);
+    }, [publicProfileUsername, publicSiteUsername]);
 
-    const isPublicExperience = Boolean(publicProfileUsername || viewPostId);
+    const isPublicExperience = Boolean(publicProfileUsername || viewPostId || publicSiteUsername);
     const [user, setUser] = useState(null);
     const [matrixOverlay, setMatrixOverlay] = useState(() => localStorage.getItem('matrixOverlay') === 'true');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
 
     useEffect(() => {
+        let title = 'Legacy Academy Intel';
+        if (publicProfileUsername) {
+            title = `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy Academy Intel`;
+        } else if (publicSiteUsername) {
+            title = `${publicUser?.settings?.businessWebsites?.[publicSiteIndex]?.businessName || 'Business Website'} | Legacy Academy Intel`;
+        } else if (viewPostId) {
+            title = `Post | Legacy Academy Intel`;
+        }
+        document.title = title;
+    }, [publicProfileUsername, publicSiteUsername, publicSiteIndex, publicUser?.username, publicUser?.settings, viewPostId]);
+
+    useEffect(() => {
         if (urlLang && ['en', 'el', 'de', 'ru', 'es', 'tr', 'fr', 'cy'].includes(urlLang)) {
             i18n.changeLanguage(urlLang);
         }
     }, [urlLang, i18n]);
-
-    useEffect(() => {
-        const profileTitle = publicProfileUsername
-            ? `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy Academy Intel`
-            : 'Legacy Academy Intel';
-        applyHeadBranding({ title: profileTitle });
-    }, [publicProfileUsername, publicUser?.username]);
 
     const [uploadProgress, setUploadProgress] = useState(0);
     const [toasts, setToasts] = useState([]);
@@ -8877,6 +8889,10 @@ const App = () => {
     const stopHeartbeat = () => { if (_hbInterval.current) { clearInterval(_hbInterval.current); _hbInterval.current = null; } };
 
     const startUserPoll = () => {
+        // Also disable generic key listeners on public
+        useEffect(() => {
+            if (publicProfileUsername || viewPostId || publicSiteUsername) return;
+        }, []);
         if (!user || isPublicExperience) return;
         if (_userInterval.current) clearInterval(_userInterval.current);
         _userInterval.current = setInterval(fetchUsers, 30000); // 30s — was 4s (too aggressive!)
@@ -8900,7 +8916,7 @@ const App = () => {
     const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || !!selectedPost;
 
     useEffect(() => {
-        if (publicProfileUsername || viewPostId) return;
+        if (publicProfileUsername || viewPostId || publicSiteUsername) return;
         if (isAnyModalOpen) {
             const scrollY = window.scrollY;
             document.body.style.position = 'fixed';
@@ -8908,6 +8924,7 @@ const App = () => {
             document.body.style.left = '0';
             document.body.style.right = '0';
             document.body.style.overflow = 'hidden';
+            window.addEventListener('keydown', handleKeyDown);
         } else {
             const scrollY = document.body.style.top;
             document.body.style.position = '';
@@ -9505,6 +9522,38 @@ const App = () => {
             return authorId === targetId || (p.isRepost && reposterId === targetId);
         });
     }, [posts, profileUser?._id]);
+
+    // IF DIRECT LINK TO PUBLIC WEBSITE VIEWER
+    if (publicSiteUsername) {
+        if (publicUserLoading) {
+            return <div className="min-h-screen w-full bg-[#09090b] flex items-center justify-center">
+                <Icons.Loader className="w-8 h-8 text-[var(--gold-primary)] animate-spin" />
+            </div>;
+        }
+
+        if (!publicUser || !publicUser.settings) {
+            return <div className="min-h-screen w-full bg-[#09090b] flex items-center justify-center text-white font-bold">
+                Website not found.
+            </div>;
+        }
+        
+        let websites = [];
+        if (publicUser.settings.businessWebsites && Array.isArray(publicUser.settings.businessWebsites)) {
+            websites = publicUser.settings.businessWebsites;
+        } else if (publicUser.settings.businessWebsite) {
+            websites = [publicUser.settings.businessWebsite];
+        }
+
+        const siteConfig = websites[parseInt(publicSiteIndex) || 0];
+
+        if (!siteConfig) {
+            return <div className="min-h-screen w-full bg-[#09090b] flex items-center justify-center text-white font-bold">
+                Website configuration not found for this index.
+            </div>;
+        }
+
+        return <PublicWebsiteViewer config={siteConfig} />;
+    }
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
@@ -10368,19 +10417,11 @@ const App = () => {
                     <SubscriptionModal isOpen={isSubscriptionOpen} onClose={() => setIsSubscriptionOpen(false)} user={user} onUpdateUser={handleUpdateUser} />
 
                     <AnimatePresence>
-                        {isWebsiteBuilderOpen && !selectedWebsiteTemplate && (
-                            <WebsiteTemplates 
-                                onSelectTemplate={setSelectedWebsiteTemplate}
+                        {isWebsiteBuilderOpen && (
+                            <WebsiteManager 
+                                user={user}
+                                onUpdateUser={handleUpdateUser}
                                 onBack={() => setIsWebsiteBuilderOpen(false)}
-                            />
-                        )}
-                        {isWebsiteBuilderOpen && selectedWebsiteTemplate && (
-                            <WebsiteBuilder 
-                                templateId={selectedWebsiteTemplate}
-                                onExit={() => {
-                                    setIsWebsiteBuilderOpen(false);
-                                    setSelectedWebsiteTemplate(null);
-                                }}
                             />
                         )}
                     </AnimatePresence>
