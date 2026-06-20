@@ -41,9 +41,9 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <span className="font-black tracking-tight text-lg">{config.businessName}</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                    <span className="cursor-pointer hover:opacity-100">{config.navLink1 || 'Services'}</span>
-                    <span className="cursor-pointer hover:opacity-100">{config.navLink2 || 'About'}</span>
-                    <span className="cursor-pointer hover:opacity-100">{config.navLink3 || 'Contact'}</span>
+                    <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 || 'Services'}</a>
+                    <a href="#about" className="cursor-pointer hover:opacity-100">{config.navLink2 || 'About'}</a>
+                    <a href="#contact" className="cursor-pointer hover:opacity-100">{config.navLink3 || 'Contact'}</a>
                 </div>
             </nav>
 
@@ -84,15 +84,48 @@ export const PublicWebsiteViewer = ({ config }) => {
             <div id="services" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
                 <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle || 'Why Choose Us'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    {[1, 2, 3].map(i => (
-                        <div key={i} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>
+                    {(config.features || [
+                        { title: 'Premium Quality 1', desc: 'We deliver nothing but the absolute best results for our clients.' },
+                        { title: 'Premium Quality 2', desc: 'We deliver nothing but the absolute best results for our clients.' },
+                        { title: 'Premium Quality 3', desc: 'We deliver nothing but the absolute best results for our clients.' }
+                    ]).map((feat, idx) => (
+                        <div key={idx} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>
                             <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
                                 <Icons.Star className="w-8 h-8" />
                             </div>
-                            <h4 className="text-2xl font-bold">Premium Quality {i}</h4>
-                            <p className="opacity-60 text-base leading-relaxed">We deliver nothing but the absolute best results for our clients, ensuring perfection in every detail.</p>
+                            <h4 className="text-2xl font-bold">{feat.title}</h4>
+                            <p className="opacity-60 text-base leading-relaxed">{feat.desc}</p>
                         </div>
                     ))}
+                </div>
+            </div>
+
+            {/* About Section */}
+            {config.aboutText && (
+                <div id="about" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
+                    <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 || 'About'}</h3>
+                    <p className="text-center max-w-3xl mx-auto opacity-70 leading-relaxed text-xl">
+                        {config.aboutText}
+                    </p>
+                </div>
+            )}
+
+            {/* Contact Section */}
+            <div id="contact" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 || 'Contact'}</h3>
+                <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-3xl mx-auto">
+                    {config.contactEmail && (
+                        <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
+                            <Icons.Mail className="w-6 h-6 opacity-50" />
+                            <span className="font-bold text-lg">{config.contactEmail}</span>
+                        </div>
+                    )}
+                    {config.contactPhone && (
+                        <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
+                            <Icons.Phone className="w-6 h-6 opacity-50" />
+                            <span className="font-bold text-lg">{config.contactPhone}</span>
+                        </div>
+                    )}
                 </div>
             </div>
 

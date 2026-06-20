@@ -37,6 +37,14 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         navLink2: existingWebsite.navLink2 || 'About',
         navLink3: existingWebsite.navLink3 || 'Contact',
         featuresTitle: existingWebsite.featuresTitle || 'Why Choose Us',
+        features: existingWebsite.features || [
+            { title: 'Premium Quality 1', desc: 'We deliver nothing but the absolute best results for our clients.' },
+            { title: 'Premium Quality 2', desc: 'We deliver nothing but the absolute best results for our clients.' },
+            { title: 'Premium Quality 3', desc: 'We deliver nothing but the absolute best results for our clients.' }
+        ],
+        aboutText: existingWebsite.aboutText || 'We are a leading agency specializing in high-end digital solutions. Our team is dedicated to pushing the boundaries of what is possible on the web.',
+        contactEmail: existingWebsite.contactEmail || 'contact@example.com',
+        contactPhone: existingWebsite.contactPhone || '+1 (555) 123-4567',
         hasStore: existingWebsite.hasStore || false,
         products: existingWebsite.products || []
     });
@@ -259,8 +267,62 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 type="text" 
                                 value={config.featuresTitle}
                                 onChange={(e) => updateConfig('featuresTitle', e.target.value)}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors mb-2"
                             />
+                            {config.features?.map((feat, idx) => (
+                                <div key={idx} className="flex gap-2 mb-2">
+                                    <input 
+                                        type="text" 
+                                        value={feat.title}
+                                        onChange={(e) => {
+                                            const updated = [...config.features];
+                                            updated[idx].title = e.target.value;
+                                            updateConfig('features', updated);
+                                        }}
+                                        className="w-1/2 bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                        placeholder={`Feature ${idx + 1} Title`} 
+                                    />
+                                    <input 
+                                        type="text" 
+                                        value={feat.desc}
+                                        onChange={(e) => {
+                                            const updated = [...config.features];
+                                            updated[idx].desc = e.target.value;
+                                            updateConfig('features', updated);
+                                        }}
+                                        className="w-1/2 bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                        placeholder={`Feature ${idx + 1} Description`} 
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="pt-2 border-t border-white/5">
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">About Section Text</label>
+                            <textarea 
+                                value={config.aboutText}
+                                onChange={(e) => updateConfig('aboutText', e.target.value)}
+                                rows="3"
+                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none"
+                            />
+                        </div>
+                        <div className="pt-2 border-t border-white/5">
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Contact Information</label>
+                            <div className="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    value={config.contactEmail}
+                                    onChange={(e) => updateConfig('contactEmail', e.target.value)}
+                                    className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                    placeholder="Email Address" 
+                                />
+                                <input 
+                                    type="text" 
+                                    value={config.contactPhone}
+                                    onChange={(e) => updateConfig('contactPhone', e.target.value)}
+                                    className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                    placeholder="Phone Number" 
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -400,9 +462,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <span className="font-black tracking-tight text-lg">{config.businessName}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                <span>{config.navLink1 || 'Services'}</span>
-                                <span>{config.navLink2 || 'About'}</span>
-                                <span>{config.navLink3 || 'Contact'}</span>
+                                <a href="#services" className="hover:opacity-100">{config.navLink1 || 'Services'}</a>
+                                <a href="#about" className="hover:opacity-100">{config.navLink2 || 'About'}</a>
+                                <a href="#contact" className="hover:opacity-100">{config.navLink3 || 'Contact'}</a>
                             </div>
                         </nav>
 
@@ -439,19 +501,48 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </div>
                         </div>
 
-                        {/* Feature Cards (Auto-generated mock) */}
-                        <div className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                        {/* Feature Cards */}
+                        <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
                             <h3 className="text-2xl font-black mb-10 text-center">{config.featuresTitle || 'Why Choose Us'}</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {[1, 2, 3].map(i => (
-                                    <div key={i} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>
+                                {config.features?.map((feat, idx) => (
+                                    <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2" style={{ backgroundColor: activeTheme.card }}>
                                         <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
                                             <Icons.Star className="w-6 h-6" />
                                         </div>
-                                        <h4 className="text-xl font-bold">Premium Quality {i}</h4>
-                                        <p className="opacity-60 text-sm leading-relaxed">We deliver nothing but the absolute best results for our clients.</p>
+                                        <h4 className="text-xl font-bold">{feat.title}</h4>
+                                        <p className="opacity-60 text-sm leading-relaxed">{feat.desc}</p>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* About Section */}
+                        {config.aboutText && (
+                            <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
+                                <h3 className="text-2xl font-black mb-6 text-center">{config.navLink2 || 'About'}</h3>
+                                <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg">
+                                    {config.aboutText}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Contact Section */}
+                        <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                            <h3 className="text-2xl font-black mb-8 text-center">{config.navLink3 || 'Contact'}</h3>
+                            <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
+                                {config.contactEmail && (
+                                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                        <Icons.Mail className="w-5 h-5 opacity-50" />
+                                        <span className="font-bold">{config.contactEmail}</span>
+                                    </div>
+                                )}
+                                {config.contactPhone && (
+                                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                        <Icons.Phone className="w-5 h-5 opacity-50" />
+                                        <span className="font-bold">{config.contactPhone}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
