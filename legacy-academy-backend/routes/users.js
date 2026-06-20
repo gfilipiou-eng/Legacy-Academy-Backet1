@@ -163,8 +163,19 @@ router.get("/username/:username", async (req, res) => {
         const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
         const query = { $or: [{ username: { $regex: safeRegex } }] };
         if (usernameParam.match(/^[0-9a-fA-F]{24}$/)) query.$or.push({ _id: usernameParam });
-        const user = await User.findOne(query).select('-password');
+        
+        const user = await User.findOne(query).select('-password').lean();
         if (!user) return res.status(404).json("User not found");
+        
+        // Filter out deleted users from followers and following lists
+        const validFollowers = await User.find({ _id: { $in: user.followers || [] } }).select('_id').lean();
+        const validFollowerIds = new Set(validFollowers.map(u => u._id.toString()));
+        user.followers = (user.followers || []).filter(id => validFollowerIds.has(id.toString()));
+
+        const validFollowing = await User.find({ _id: { $in: user.following || [] } }).select('_id').lean();
+        const validFollowingIds = new Set(validFollowing.map(u => u._id.toString()));
+        user.following = (user.following || []).filter(id => validFollowingIds.has(id.toString()));
+
         res.status(200).json(user);
     } catch (err) {
         res.status(500).json(err);
