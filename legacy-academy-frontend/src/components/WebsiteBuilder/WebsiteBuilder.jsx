@@ -26,6 +26,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     
     // Publish success state
     const [showPublishSuccess, setShowPublishSuccess] = useState(false);
+    const [showSaveSuccess, setShowSaveSuccess] = useState(false);
     const [copyToast, setCopyToast] = useState(false);
 
     const handleCopyUrl = (e) => {
@@ -139,7 +140,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             }
             
             setPublished(true);
-            setShowPublishSuccess(true);
+            if (isDraft) {
+                setShowSaveSuccess(true);
+                setTimeout(() => setShowSaveSuccess(false), 3000);
+            } else {
+                setShowPublishSuccess(true);
+            }
             setTimeout(() => setPublished(false), 3000);
         } catch (e) {
             console.error("Failed to publish website", e);
@@ -200,13 +206,13 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                     disabled={saving}
                     className="flex-1 py-3.5 rounded-xl border border-white/20 text-white font-bold text-[12px] uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                    <Icons.Save className="w-4 h-4" /> Save Draft
+                    <Icons.Save className="w-4 h-4" /> {t('wb_saveDraft', 'Save Draft')}
                 </button>
                 <button 
                     onClick={() => handlePublish(false)}
                     className="flex-1 py-3.5 rounded-xl bg-[var(--builder-primary)] text-white font-black text-[12px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
                 >
-                    <Icons.Globe className="w-4 h-4" /> {saving ? 'Publishing...' : 'Publish Live'}
+                    <Icons.Globe className="w-4 h-4" /> {saving ? t('wb_publishing', 'Publishing...') : t('wb_publishLive', 'Publish Live')}
                 </button>
             </div>
 
@@ -266,7 +272,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                     <div className="space-y-4">
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2"><Icons.Building className="w-3 h-3" /> Basic Info</div>
                         <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Business Name</label>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">{t('wb_businessName', 'Business Name')}</label>
                             <input 
                                 type="text" 
                                 value={config.businessName || ''}
@@ -284,7 +290,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             />
                         </div>
                         <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Description</label>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">{t('wb_description', 'Description')}</label>
                             <textarea 
                                 value={config.description || ''}
                                 onChange={(e) => updateConfig('description', e.target.value)}
@@ -293,7 +299,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             />
                         </div>
                         <div className="pt-2 border-t border-white/5">
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Navigation Links</label>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">{t('wb_navLinks', 'Navigation Links')}</label>
                             <div className="flex gap-2">
                                 <input type="text" value={config.navLink1 || ''} onChange={(e) => updateConfig('navLink1', e.target.value)} className="w-1/3 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Link 1" />
                                 <input type="text" value={config.navLink2 || ''} onChange={(e) => updateConfig('navLink2', e.target.value)} className="w-1/3 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Link 2" />
@@ -339,7 +345,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                 updateConfig('features', updated);
                                             }}
                                             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)] transition-colors" 
-                                            placeholder="Title" 
+                                            placeholder={t('wb_ph_title', 'Title')} 
                                         />
                                         <textarea 
                                             value={feat.desc}
@@ -350,7 +356,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                             }}
                                             rows="2"
                                             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)] transition-colors resize-none" 
-                                            placeholder="Description" 
+                                            placeholder={t('wb_ph_description', 'Description')} 
                                         />
                                         <div className="flex items-center justify-between mt-1">
                                             <span className="text-[10px] text-white/40 uppercase font-bold">Image (Optional)</span>
@@ -467,7 +473,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 pt-4 border-t border-white/10"><Icons.MousePointerClick className="w-3 h-3" /> Action Button</div>
                         <div className="flex gap-3">
                             <div className="flex-1">
-                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Button Text</label>
+                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">{t('wb_buttonText', 'Button Text')}</label>
                                 <input 
                                     type="text" 
                                     value={config.ctaText || ''}
@@ -476,7 +482,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 />
                             </div>
                             <div className="flex-1">
-                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Button Link</label>
+                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">{t('wb_buttonLink', 'Button Link')}</label>
                                 <input 
                                     type="text" 
                                     value={config.ctaLink || ''}
@@ -508,7 +514,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         </div>
 
                         <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Typography</label>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">{t('wb_typography', 'Typography')}</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {['Inter', 'Playfair Display', 'Space Mono', 'Outfit'].map(f => (
                                     <button
@@ -669,7 +675,19 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             </div>
         </div>
 
-        {/* Publish Success Modal */}
+        
+            {/* Save Success Toast */}
+            {showSaveSuccess && (
+                <div className="fixed top-4 right-4 z-[5000] bg-green-500/20 border border-green-500/50 backdrop-blur-xl text-green-400 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4">
+                    <Icons.CheckCircle className="w-6 h-6" />
+                    <div>
+                        <div className="font-bold">Draft Saved</div>
+                        <div className="text-sm opacity-80">You can continue editing safely.</div>
+                    </div>
+                </div>
+            )}
+
+            {/* Publish Success Modal */}
         <AnimatePresence>
             {showPublishSuccess && (
                 <div className="fixed inset-0 z-[4000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">

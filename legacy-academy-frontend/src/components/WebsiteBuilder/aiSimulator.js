@@ -53,8 +53,17 @@ export const simulateAIGeneration = (prompt) => {
         desc = isGreek ? 'Μεγιστοποιήστε τα κέρδη και την επιρροή σας. Σχεδιάζουμε marketing plans που απογειώνουν τις πωλήσεις σας.' : 'Maximize your profits and influence. We design custom marketing campaigns that skyrocket your brand visibility and sales.';
         palette = 'light';
     }
-
-    else if (p.includes('farm') || p.includes('φαρμα') || p.includes('αγρο') || p.includes('agriculture') || p.includes('γεωργικ') || p.includes('κτημα')) {
+    else if (p.includes('car') || p.includes('auto') || p.includes('αυτοκινητο') || p.includes('συνεργειο') || p.includes('οχημα') || p.includes('dealership')) {
+        name = isGreek ? 'Auto Elite' : 'Elite Auto Motors';
+        slogan = isGreek ? 'Η δύναμη της τέλειας οδήγησης.' : 'The Power of Perfect Driving.';
+        desc = isGreek ? 'Προσφέρουμε κορυφαία οχήματα και υπηρεσίες συντήρησης. Από πολυτελή μοντέλα μέχρι καθημερινά αυτοκίνητα, εξασφαλίζουμε την ασφάλεια και την άνεσή σας στο δρόμο.' : 'We provide top-tier vehicles and maintenance services. From luxury models to everyday cars, we ensure your safety and comfort on the road.';
+        palette = 'red';
+    } else if (p.includes('3d') || p.includes('model') || p.includes('μοντελο') || p.includes('render') || p.includes('animation') || p.includes('γραφικ')) {
+        name = isGreek ? 'Nexus 3D Studios' : 'Nexus 3D Studios';
+        slogan = isGreek ? 'Δίνουμε ζωή στη φαντασία σας.' : 'Bringing Your Imagination to Life.';
+        desc = isGreek ? 'Εξειδικευόμαστε σε 3D modelling, rendering και animation κορυφαίας ποιότητας. Δημιουργούμε ρεαλιστικούς κόσμους και εντυπωσιακά γραφικά για κάθε project.' : 'We specialize in high-quality 3D modelling, rendering, and animation. We create realistic worlds and stunning visuals for any project.';
+        palette = 'pink';
+    } else if (p.includes('farm') || p.includes('φαρμα') || p.includes('αγρο') || p.includes('agriculture') || p.includes('γεωργικ') || p.includes('κτημα')) {
         name = isGreek ? 'Green Acres Farm' : 'Harvest Valley';
         slogan = isGreek ? 'Αγνά προϊόντα από τη φύση.' : 'Pure Products from Nature.';
         desc = isGreek ? 'Καλλιεργούμε με αγάπη και σεβασμό προς τη γη. Φρέσκα, βιολογικά προϊόντα κατευθείαν από το αγρόκτημά μας στο τραπέζι σας.' : 'Cultivated with love and respect for the earth. Fresh, organic produce straight from our farm to your table.';
