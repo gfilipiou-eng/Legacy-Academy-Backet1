@@ -5519,9 +5519,9 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                     <ProfileAvatar user={u} className="border-2 border-white/10" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="font-black text-white text-sm sm:text-base truncate flex items-center gap-2">
-                                        {u.username}
-                                        {u._id === currentUser?._id && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">{t('YOU', 'You')}</span>}
+                                    <div className="font-black text-white text-sm sm:text-base flex items-center gap-2 min-w-0">
+                                        <span className="truncate">{u.username}</span>
+                                        {u._id === currentUser?._id && <span className="shrink-0 text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">{t('YOU', 'You')}</span>}
                                     </div>
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-0.5 sm:gap-4 mt-0.5">
                                         <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
