@@ -9753,23 +9753,8 @@ const App = () => {
         }
     }, [user?.settings?.language]);
 
-    // AUTO-REQUEST NOTIFICATIONS ON FIRST CLICK
-    useEffect(() => {
-        const askForNotifs = () => {
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-            document.removeEventListener('click', askForNotifs);
-            document.removeEventListener('touchstart', askForNotifs);
-        };
-        document.addEventListener('click', askForNotifs);
-        document.addEventListener('touchstart', askForNotifs);
-        return () => {
-            document.removeEventListener('click', askForNotifs);
-            document.removeEventListener('touchstart', askForNotifs);
-        };
-    }, []);
-
+    // AUTO-REQUEST NOTIFICATIONS ON FIRST CLICK REMOVED (User request: too spammy)
+    
 
 
     // iOS PWA FIX: Blur active inputs when app goes to background to prevent freezing
