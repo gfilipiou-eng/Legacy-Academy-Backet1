@@ -5783,6 +5783,12 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                     </div>
                 </div>
             ))}
+            <MissionsLeaderboardModal 
+                isOpen={showLeaderboard}
+                onClose={() => setShowLeaderboard(false)}
+                currentUser={user}
+                t={t}
+            />
         </div>
     );
 };
