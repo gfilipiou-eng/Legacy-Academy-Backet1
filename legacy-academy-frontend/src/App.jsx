@@ -3442,14 +3442,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 const PlatformLoadingPanel = ({ label, compact = false }) => (
     <div className={`flex flex-col items-center justify-center gap-6 ${compact ? 'py-10' : 'py-20'} relative animate-fade-in`}>
         <div className="relative flex items-center justify-center w-12 h-12">
-            <Icons.Loader className="w-8 h-8 text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]" />
+            <Icons.Loader className="w-8 h-8 text-[var(--gold-primary)]" />
         </div>
         {label && (
             <div className="flex flex-col items-center gap-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)] relative z-10 shadow-black drop-shadow-md">
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)] relative z-10">
                     {label}
                 </div>
-                <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-[var(--gold-primary)] to-transparent opacity-50" />
             </div>
         )}
     </div>
@@ -10546,7 +10545,6 @@ const App = () => {
                                                     {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5" /> Δημοφιλή</>}
                                                     {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5" /> Παλαιότερα</>}
                                                     <Icons.ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isFeedSortMenuOpen ? 'rotate-180' : ''}`} />
-                                                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)] w-1/2" />
                                                 </button>
 
                                                 {/* Mobile Dropdown Menu */}
@@ -10586,7 +10584,6 @@ const App = () => {
                                                 >
                                                     <Icons.Sparkles className="w-4 h-4" />
                                                     <span>Νεότερα</span>
-                                                    {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
                                                 
                                                 <button 
@@ -10595,7 +10592,6 @@ const App = () => {
                                                 >
                                                     <Icons.Hash className="w-4 h-4" strokeWidth={2.5} />
                                                     <span>Hashtags</span>
-                                                    {feedSortOrder === 'hashtags' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
 
                                                 <button 
@@ -10604,7 +10600,6 @@ const App = () => {
                                                 >
                                                     <Icons.TrendingUp className="w-4 h-4" />
                                                     <span>Δημοφιλή</span>
-                                                    {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
 
                                                 <button 
@@ -10613,7 +10608,6 @@ const App = () => {
                                                 >
                                                     <Icons.Clock className="w-4 h-4" />
                                                     <span>Παλαιότερα</span>
-                                                    {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
                                             </div>
                                         </div>
