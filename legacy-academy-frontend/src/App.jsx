@@ -5520,20 +5520,20 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                 <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl drop-shadow-[0_0_10px_rgba(250,204,21,0.8)]' : idx === 1 ? 'text-gray-300 text-xl' : idx === 2 ? 'text-amber-600 text-xl' : 'text-white/30 text-base'}`}>
                                     #{idx + 1}
                                 </div>
-                                <div className="w-12 h-12 rounded-full bg-[#111] border-2 border-white/10 overflow-hidden shrink-0 relative">
-                                    <img src={u.profileImage || `/api/placeholder/150/150`} alt={u.username} className="w-full h-full object-cover" />
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#111] border-2 border-white/10 overflow-hidden shrink-0 relative">
+                                    <img src={u.profilePic || `/api/placeholder/150/150`} alt={u.username} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="font-black text-white text-base truncate flex items-center gap-2">
+                                    <div className="font-black text-white text-sm sm:text-base truncate flex items-center gap-2">
                                         {u.username}
                                         {u._id === currentUser?._id && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">{t('YOU', 'You')}</span>}
                                     </div>
-                                    <div className="flex items-center gap-4 mt-0.5">
-                                        <div className={`font-black text-sm flex items-center gap-1.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
-                                            {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-0.5 sm:gap-4 mt-0.5">
+                                        <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
+                                            {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
                                         </div>
-                                        <div className="font-black text-sm flex items-center gap-1.5 text-blue-400">
-                                            🎯 {u.missionsCompletedCount || 0} <span className="text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
+                                        <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
+                                            🎯 {u.missionsCompletedCount || 0} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
                                         </div>
                                     </div>
                                 </div>
