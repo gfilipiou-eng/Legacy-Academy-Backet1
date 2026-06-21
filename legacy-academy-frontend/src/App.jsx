@@ -8464,6 +8464,7 @@ const App = () => {
             setUser(merged);
             localStorage.setItem('user', JSON.stringify(merged));
             setImgKey(Date.now());
+            try { window.sessionStorage.removeItem(`public-profile-cache-v3:${updatedUser.username}`); } catch (e) {}
         }
 
         // Update profile view IMMEDIATELY

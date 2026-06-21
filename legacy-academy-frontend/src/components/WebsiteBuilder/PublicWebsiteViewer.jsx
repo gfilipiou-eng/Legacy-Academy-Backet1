@@ -47,9 +47,9 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <span className="font-black tracking-tight text-lg">{config.businessName}</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                    <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 || 'Services'}</a>
-                    <a href="#about" className="cursor-pointer hover:opacity-100">{config.navLink2 || 'About'}</a>
-                    <a href="#contact" className="cursor-pointer hover:opacity-100">{config.navLink3 || 'Contact'}</a>
+                    {config.navLink1 !== '' && <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 ?? 'Services'}</a>}
+                    {config.navLink2 !== '' && <a href="#about" className="cursor-pointer hover:opacity-100">{config.navLink2 ?? 'About'}</a>}
+                    {config.navLink3 !== '' && <a href="#contact" className="cursor-pointer hover:opacity-100">{config.navLink3 ?? 'Contact'}</a>}
                 </div>
             </nav>
 
@@ -65,17 +65,19 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <p className={`text-lg md:text-2xl mb-10 leading-relaxed ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                         {config.description}
                     </p>
-                    <a 
-                        href={config.ctaLink === '#' ? '#contact' : (config.ctaLink || '#contact')}
-                        className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl"
-                        style={{ 
-                            backgroundColor: activeTheme.primary, 
-                            color: config.palette === 'light' ? '#fff' : '#000',
-                            boxShadow: `0 0 30px ${activeTheme.primary}40`
-                        }}
-                    >
-                        {config.ctaText || 'Get Started'}
-                    </a>
+                    {config.ctaText !== '' && (
+                        <a 
+                            href={config.ctaLink === '#' ? '#contact' : (config.ctaLink || '#contact')}
+                            className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl"
+                            style={{ 
+                                backgroundColor: activeTheme.primary, 
+                                color: config.palette === 'light' ? '#fff' : '#000',
+                                boxShadow: `0 0 30px ${activeTheme.primary}40`
+                            }}
+                        >
+                            {config.ctaText ?? 'Get Started'}
+                        </a>
+                    )}
                 </div>
 
                 <div className="flex-1 w-full z-10">
