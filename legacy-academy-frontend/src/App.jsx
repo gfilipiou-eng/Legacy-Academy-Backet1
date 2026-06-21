@@ -8908,6 +8908,12 @@ const App = () => {
     }, [posts, searchQuery]);
 
     const groupedPosts = React.useMemo(() => {
+        if (feedSortOrder === 'hashtags') {
+            const hashtagPosts = filteredPosts.filter(p => p.text?.includes('#') || p.title?.includes('#'));
+            const sorted = [...hashtagPosts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            return [{ key: 'Hashtags', posts: sorted, dateVal: Date.now() }];
+        }
+
         if (feedSortOrder === 'popular') {
             const sorted = [...filteredPosts].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
             return [{ key: 'Δημοφιλέστερα', posts: sorted, dateVal: Date.now() }];
@@ -9939,16 +9945,6 @@ const App = () => {
 
     return (
         <div className="app-container">
-            {/* Forced Portrait Lock for Mobile/Android via CSS */}
-            <div className="mobile-landscape-blocker fixed inset-0 z-[10000] bg-black text-white items-center justify-center p-8 text-center flex-col gap-4 font-sans border-8 border-[var(--gold-primary)] pointer-events-auto">
-                <Icons.Smartphone className="w-20 h-20 animate-pulse text-[var(--gold-primary)]" style={{ transform: 'rotate(90deg)' }} />
-                <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]">Rotate Device</h2>
-                <p className="text-sm font-bold text-white/50 uppercase tracking-widest leading-relaxed max-w-sm">
-                    Legacy Academy is designed strictly for portrait mode.<br/><br/>
-                    Please rotate your device back to vertical to continue.
-                </p>
-            </div>
-
             {!user ? (
                 <>
                     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
@@ -10528,8 +10524,8 @@ const App = () => {
                                     
                                     {/* Feed Sort Tabs */}
                                     {activeTab !== 'search' && (
-                                        <div className="flex items-center justify-between w-full px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent">
-                                            <div className="flex items-center gap-2 sm:gap-5">
+                                        <div className="flex items-center justify-between w-full px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent overflow-x-auto scrollbar-hide">
+                                            <div className="flex items-center gap-3 sm:gap-5 w-max pr-4">
                                                 <button 
                                                     onClick={() => setFeedSortOrder('newest')}
                                                     className={`flex items-center gap-1.5 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
@@ -10538,6 +10534,16 @@ const App = () => {
                                                     <span>Νεότερα</span>
                                                     {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
+                                                
+                                                <button 
+                                                    onClick={() => setFeedSortOrder('hashtags')}
+                                                    className={`flex items-center gap-1 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'hashtags' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                >
+                                                    <Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} />
+                                                    <span>Hashtags</span>
+                                                    {feedSortOrder === 'hashtags' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                </button>
+
                                                 <button 
                                                     onClick={() => setFeedSortOrder('popular')}
                                                     className={`flex items-center gap-1.5 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
@@ -10546,6 +10552,7 @@ const App = () => {
                                                     <span>Δημοφιλή</span>
                                                     {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
+
                                                 <button 
                                                     onClick={() => setFeedSortOrder('oldest')}
                                                     className={`flex items-center gap-1.5 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
@@ -10555,12 +10562,6 @@ const App = () => {
                                                     {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                                 </button>
                                             </div>
-                                            <button 
-                                                onClick={() => { setActiveTab('search'); window.scrollTo(0,0); }}
-                                                className="flex items-center justify-center p-1.5 transition-all text-gray-500 hover:text-white"
-                                            >
-                                                <Icons.Hash className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
-                                            </button>
                                         </div>
                                     )}
 
