@@ -54,6 +54,18 @@ export const simulateAIGeneration = (prompt) => {
         palette = 'light';
     }
 
+    else if (p.includes('farm') || p.includes('φαρμα') || p.includes('αγρο') || p.includes('agriculture') || p.includes('γεωργικ') || p.includes('κτημα')) {
+        name = isGreek ? 'Green Acres Farm' : 'Harvest Valley';
+        slogan = isGreek ? 'Αγνά προϊόντα από τη φύση.' : 'Pure Products from Nature.';
+        desc = isGreek ? 'Καλλιεργούμε με αγάπη και σεβασμό προς τη γη. Φρέσκα, βιολογικά προϊόντα κατευθείαν από το αγρόκτημά μας στο τραπέζι σας.' : 'Cultivated with love and respect for the earth. Fresh, organic produce straight from our farm to your table.';
+        palette = 'green';
+    } else if (p.includes('office') || p.includes('γραφειο') || p.includes('corporate') || p.includes('business') || p.includes('εταιρεια') || p.includes('λογιστικ')) {
+        name = isGreek ? 'Elite Corporate Services' : 'Prime Office Solutions';
+        slogan = isGreek ? 'Η επαγγελματική σας επιτυχία, προτεραιότητά μας.' : 'Your Professional Success, Our Priority.';
+        desc = isGreek ? 'Ολοκληρωμένες λύσεις γραφείου και εταιρικής διαχείρισης. Απλοποιούμε τις διαδικασίες σας για να εστιάσετε στην ανάπτυξη.' : 'Comprehensive office and corporate management solutions. We streamline your processes so you can focus on growth.';
+        palette = 'blue';
+    }
+
     // Explicit Store / Shop detection
     if (p.includes('store') || p.includes('shop') || p.includes('καταστημα') || p.includes('μαγαζι') || p.includes('eshop') || p.includes('e-shop') || p.includes('αγορες')) {
         hasStore = true;

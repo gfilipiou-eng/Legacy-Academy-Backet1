@@ -35,7 +35,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             }}
         >
             {/* Navbar */}
-            <nav className={`w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+            <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                 <div className="flex items-center gap-3">
                     {config.logo ? (
                         <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain" />
@@ -54,7 +54,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             </nav>
 
             {/* Hero Section */}
-            <div className="w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative min-h-[80vh]">
+            <div className="shrink-0 w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative min-h-[80vh]">
                 {/* Decorative Blur */}
                 <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
                 

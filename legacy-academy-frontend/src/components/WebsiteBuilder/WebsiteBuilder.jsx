@@ -52,8 +52,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     
     const [config, setConfig] = useState({
         businessName: existingWebsite.businessName || user?.username || 'My Business',
-        slogan: existingWebsite.slogan || 'Building the future of digital excellence.',
-        description: existingWebsite.description || 'We provide premium services to help your business grow and achieve unprecedented success in the modern digital landscape.',
+        slogan: existingWebsite.slogan ?? 'Building the future of digital excellence.',
+        description: existingWebsite.description ?? 'We provide premium services to help your business grow and achieve unprecedented success in the modern digital landscape.',
         logo: existingWebsite.logo || '',
         coverImage: existingWebsite.coverImage || 'https://res.cloudinary.com/ddehek3eo/image/upload/v1781296353/legacyacademy/g2cp4zxk3ro1vqxrnwkt.jpg',
         palette: existingWebsite.palette || 'gold',
@@ -69,12 +69,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             { title: 'Premium Quality 2', desc: 'We deliver nothing but the absolute best results for our clients.' },
             { title: 'Premium Quality 3', desc: 'We deliver nothing but the absolute best results for our clients.' }
         ],
-        aboutText: existingWebsite.aboutText || 'We are a leading agency specializing in high-end digital solutions. Our team is dedicated to pushing the boundaries of what is possible on the web.',
-        contactEmail: existingWebsite.contactEmail || 'contact@example.com',
-        contactPhone: existingWebsite.contactPhone || '+1 (555) 123-4567',
-        socialX: existingWebsite.socialX || 'https://x.com',
-        socialInstagram: existingWebsite.socialInstagram || 'https://instagram.com',
-        socialLinkedin: existingWebsite.socialLinkedin || 'https://linkedin.com',
+        aboutText: existingWebsite.aboutText ?? 'We are a leading agency specializing in high-end digital solutions. Our team is dedicated to pushing the boundaries of what is possible on the web.',
+        contactEmail: existingWebsite.contactEmail ?? 'contact@example.com',
+        contactPhone: existingWebsite.contactPhone ?? '+1 (555) 123-4567',
+        socialX: existingWebsite.socialX ?? 'https://x.com',
+        socialInstagram: existingWebsite.socialInstagram ?? 'https://instagram.com',
+        socialLinkedin: existingWebsite.socialLinkedin ?? 'https://linkedin.com',
         hasStore: existingWebsite.hasStore || false,
         products: existingWebsite.products || []
     });
