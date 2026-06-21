@@ -3839,12 +3839,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 key={value}
                                                 type="button"
                                                 onClick={() => handleSave('background', value)}
-                                                className={`settings-tile-btn relative overflow-hidden rounded-[14px] border transition-all duration-200 min-h-[72px] sm:min-h-0 ${
+                                                className={`settings-tile-btn relative overflow-hidden flex flex-col rounded-[14px] border transition-all duration-200 min-h-[72px] sm:min-h-0 h-full ${
                                                     active ? 'border-[#1D9BF0] ring-1 ring-[#1D9BF0]/30' : 'border-white/10'
                                                 }`}
                                             >
-                                                <div className={`w-full h-12 sm:h-10 relative ${className}`} style={{ backgroundColor: color }} />
-                                                <div className={`px-2 py-2.5 sm:py-2 text-center ${active ? 'text-white' : 'text-gray-400'}`}>
+                                                <div className={`w-full h-12 sm:h-10 shrink-0 relative ${className}`} style={{ backgroundColor: color }} />
+                                                <div className={`flex-1 flex items-center justify-center px-2 py-2.5 sm:py-2 text-center w-full ${active ? 'text-white' : 'text-gray-400'}`}>
                                                     <div className="text-[13px] sm:text-[10px] font-medium leading-snug">{t(labelKey)}</div>
                                                 </div>
                                             </button>
