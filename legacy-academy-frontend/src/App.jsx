@@ -3699,6 +3699,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             }
             await handleSave('language', normalizedLanguage);
             
+            // Force reload to guarantee language applies across all PWA views
+            setTimeout(() => {
+                window.location.reload();
+            }, 150);
+            
         } catch (error) {
             console.error("Language change error:", error);
             setPendingLanguage(activeLanguage);
@@ -5676,14 +5681,14 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3 flex-wrap">
                     
-                    <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider flex items-center gap-4">
-                        {t('DAILY_MISSIONS')}
+                    <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                        <span className="whitespace-normal sm:whitespace-nowrap">{t('DAILY_MISSIONS')}</span>
                         <button 
                             onClick={() => setShowLeaderboard(true)}
-                            className="relative overflow-hidden bg-[#111] hover:bg-black border border-[#bf953f]/50 text-[#bf953f] px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-black tracking-widest flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 group shrink-0"
+                            className="relative overflow-hidden bg-[#111] hover:bg-black border border-[#bf953f]/50 text-[#bf953f] px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-black tracking-widest flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 group shrink-0 w-fit whitespace-nowrap"
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-[#bf953f]/0 via-[#bf953f]/10 to-[#bf953f]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <Icons.Trophy className="w-3.5 h-3.5 text-[#bf953f] group-hover:rotate-12 transition-transform duration-300" />
+                            <Icons.Trophy className="w-3.5 h-3.5 shrink-0 text-[#bf953f] group-hover:rotate-12 transition-transform duration-300" />
                             {t('RANK_LIST')}
                         </button>
                     </h3>
