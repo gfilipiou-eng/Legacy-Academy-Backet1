@@ -59,7 +59,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                 <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
                 
                 <div className="flex-1 flex flex-col items-start z-10 max-w-2xl">
-                    <h1 className="break-words hyphens-auto text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6">
+                    <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6">
                         {config.slogan}
                     </h1>
                     <p className={`text-lg md:text-2xl mb-10 leading-relaxed ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>

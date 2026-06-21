@@ -551,7 +551,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         {/* Auto-Generated Website Layout */}
                         
                         {/* Navbar */}
-                        <nav className={`w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+                        <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3">
                                 {config.logo ? (
                                     <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
@@ -575,7 +575,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
                             
                             <div className="flex-1 flex flex-col items-start z-10">
-                                <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6" style={{ fontFamily: config.font }}>
+                                <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6" style={{ fontFamily: config.font }}>
                                     {config.slogan}
                                 </h1>
                                 <p className={`text-lg md:text-xl mb-10 leading-relaxed max-w-lg ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
