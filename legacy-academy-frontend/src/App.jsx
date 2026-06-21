@@ -1027,15 +1027,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (customColor === 'neon-green') { baseColor = '#39FF14'; darkColor = '#008000'; gradId = 'green3DGrad'; }
         else if (customColor === 'holographic') isHolo = true;
         else if (customColor === 'live-gold' && resolvedRole === 'Founder') {
-            return (
-                <div className={`${className} flex items-center justify-center shrink-0`}>
-                    <div className="relative w-full h-full rounded-full animate-spin" style={{ animationDuration: '4s', background: 'conic-gradient(from 0deg, #F6E27A, #CB9B51, #FFF7B0, #CB9B51, #F6E27A)' }}>
-                        <div className="absolute inset-[15%] bg-black rounded-full flex items-center justify-center">
-                            <Icons.Check className="w-[80%] h-[80%] text-[#F6E27A]" strokeWidth={3} />
-                        </div>
-                    </div>
-                </div>
-            );
+            baseColor = '#F6E27A'; darkColor = '#CB9B51'; gradId = 'gold3DGrad';
         }
     }
 
@@ -5451,10 +5443,13 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                 console.error(err);
                 // Fallback: fetch all and sort
                 try {
-                    const allRes = await axios.get('/users/all');
+                    const allRes = await axios.get('/users');
                     const sorted = (allRes.data || [])
-                        .filter(u => getActiveStreak(u) > 0)
-                        .sort((a, b) => getActiveStreak(b) - getActiveStreak(a))
+                        .sort((a, b) => {
+                            const completedDiff = (b.missionsCompletedCount || 0) - (a.missionsCompletedCount || 0);
+                            if (completedDiff !== 0) return completedDiff;
+                            return getActiveStreak(b) - getActiveStreak(a);
+                        })
                         .slice(0, 50);
                     setLeaders(sorted);
                 } catch(e) {}
@@ -5483,7 +5478,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         </div>
                         <div>
                             <h2 className="text-xl font-black text-white uppercase tracking-widest">{t('RANK_LIST', 'Rank List')}</h2>
-                            <p className="text-xs text-orange-500 font-bold uppercase tracking-wider">Top Warriors</p>
+                            <p className="text-xs text-orange-500 font-bold uppercase tracking-wider">{t('TOP_WARRIORS', 'Top Warriors')}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all text-white/70 hover:text-white">
@@ -5498,7 +5493,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         </div>
                     ) : leaders.length === 0 ? (
                         <div className="text-center py-10 text-white/50 font-bold uppercase tracking-widest text-sm">
-                            No active streaks yet
+                            {t('NO_ACTIVE_STREAKS', 'No active streaks yet')}
                         </div>
                     ) : (
                         leaders.map((u, idx) => (
@@ -5512,10 +5507,15 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                 <div className="flex-1 min-w-0">
                                     <div className="font-black text-white text-base truncate flex items-center gap-2">
                                         {u.username}
-                                        {u._id === currentUser?._id && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">You</span>}
+                                        {u._id === currentUser?._id && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">{t('YOU', 'You')}</span>}
                                     </div>
-                                    <div className={`font-black text-sm flex items-center gap-1.5 mt-0.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
-                                        {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[10px] text-white/50 uppercase tracking-widest">Streak</span>
+                                    <div className="flex items-center gap-4 mt-0.5">
+                                        <div className={`font-black text-sm flex items-center gap-1.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
+                                            {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
+                                        </div>
+                                        <div className="font-black text-sm flex items-center gap-1.5 text-blue-400">
+                                            🎯 {u.missionsCompletedCount || 0} <span className="text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

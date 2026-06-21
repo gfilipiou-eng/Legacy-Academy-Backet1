@@ -403,5 +403,11 @@
   "TPL_ECOMMERCE_TITLE": "E-Commerce",
   "TPL_ECOMMERCE_DESC": "Sauberes und produktorientiertes Layout für maximale Verkäufe.",
   "TPL_BLANK_TITLE": "Leere Leinwand",
-  "TPL_BLANK_DESC": "Beginnen Sie komplett von vorne und bauen Sie Ihr ultimatives Erlebnis."
+  "TPL_BLANK_DESC": "Beginnen Sie komplett von vorne und bauen Sie Ihr ultimatives Erlebnis.",
+  "RANK_LIST": "Rangliste",
+  "TOP_WARRIORS": "Top-Krieger",
+  "NO_ACTIVE_STREAKS": "Noch keine aktiven Serien",
+  "STREAK": "Serie",
+  "MISSIONS_COMPLETED": "Missionen",
+  "YOU": "Du"
 }

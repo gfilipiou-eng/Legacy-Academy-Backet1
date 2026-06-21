@@ -392,5 +392,11 @@
   "CYBER_SFX": "Audio de l'Interface",
   "CYBER_SFX_DESC": "Synthétise des effets sonores cybernétiques en temps réel lors de l'action",
   "NEURAL_NARRATOR": "Narrateur Neuronal",
-  "NEURAL_NARRATOR_DESC": "Active le bouton de lecture texte-parole à côté du bouton de traduction"
+  "NEURAL_NARRATOR_DESC": "Active le bouton de lecture texte-parole à côté du bouton de traduction",
+  "RANK_LIST": "Liste de classement",
+  "TOP_WARRIORS": "Meilleurs guerriers",
+  "NO_ACTIVE_STREAKS": "Aucune série active pour le moment",
+  "STREAK": "Série",
+  "MISSIONS_COMPLETED": "Missions",
+  "YOU": "Toi"
 }

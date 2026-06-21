@@ -392,5 +392,11 @@
   "CYBER_SFX": "Arayüz Sesi",
   "CYBER_SFX_DESC": "Eylem sırasında gerçek zamanlı sibernetik ses efektleri sentezler",
   "NEURAL_NARRATOR": "Nöral Anlatıcı",
-  "NEURAL_NARRATOR_DESC": "Çeviri düğmesinin yanındaki metinden konuşmaya okuyucu düğmesini etkinleştirir"
+  "NEURAL_NARRATOR_DESC": "Çeviri düğmesinin yanındaki metinden konuşmaya okuyucu düğmesini etkinleştirir",
+  "RANK_LIST": "Sıralama Listesi",
+  "TOP_WARRIORS": "En İyi Savaşçılar",
+  "NO_ACTIVE_STREAKS": "Henüz aktif seri yok",
+  "STREAK": "Seri",
+  "MISSIONS_COMPLETED": "Görevler",
+  "YOU": "Sen"
 }
