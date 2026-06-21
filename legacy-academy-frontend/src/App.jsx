@@ -10457,30 +10457,30 @@ const App = () => {
                                     
                                     {/* Feed Sort Tabs */}
                                     {activeTab !== 'search' && (
-                                        <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-6 px-3 sm:px-4 pt-4 pb-2 border-b border-white/5 bg-transparent w-full">
+                                        <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-5 px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent w-full">
                                             <button 
                                                 onClick={() => setFeedSortOrder('newest')}
-                                                className={`flex items-center gap-1.5 pb-3 font-bold text-[10px] sm:text-[13px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                className={`flex items-center gap-1 pb-2.5 font-bold text-[9px] sm:text-[11px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                             >
-                                                <Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <Icons.Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                                 <span>Νεότερα</span>
-                                                {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_6px_var(--gold-primary)]" />}
                                             </button>
                                             <button 
                                                 onClick={() => setFeedSortOrder('popular')}
-                                                className={`flex items-center gap-1.5 pb-3 font-bold text-[10px] sm:text-[13px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                className={`flex items-center gap-1 pb-2.5 font-bold text-[9px] sm:text-[11px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                             >
-                                                <Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <Icons.TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                                 <span>Δημοφιλή</span>
-                                                {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_6px_var(--gold-primary)]" />}
                                             </button>
                                             <button 
                                                 onClick={() => setFeedSortOrder('oldest')}
-                                                className={`flex items-center gap-1.5 pb-3 font-bold text-[10px] sm:text-[13px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                className={`flex items-center gap-1 pb-2.5 font-bold text-[9px] sm:text-[11px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                             >
-                                                <Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <Icons.Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                                 <span>Παλαιότερα</span>
-                                                {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_6px_var(--gold-primary)]" />}
                                             </button>
                                         </div>
                                     )}
