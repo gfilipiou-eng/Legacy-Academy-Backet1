@@ -5678,7 +5678,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         {t('DAILY_MISSIONS')}
                         <button 
                             onClick={() => setShowLeaderboard(true)}
-                            className="relative overflow-hidden bg-[#111] hover:bg-black border border-[#bf953f]/50 text-[#bf953f] px-4 py-2 rounded-full text-xs font-black tracking-widest flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 group"
+                            className="relative overflow-hidden bg-[#111] hover:bg-black border border-[#bf953f]/50 text-[#bf953f] px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-black tracking-widest flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 group shrink-0"
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-[#bf953f]/0 via-[#bf953f]/10 to-[#bf953f]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             <Icons.Trophy className="w-3.5 h-3.5 text-[#bf953f] group-hover:rotate-12 transition-transform duration-300" />
