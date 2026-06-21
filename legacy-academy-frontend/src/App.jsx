@@ -5511,8 +5511,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         </div>
                     ) : (
                         leaders.map((u, idx) => (
-                            <div key={u._id} className={`p-4 rounded-2xl flex items-center gap-4 border transition-all ${u._id === currentUser?._id ? 'bg-orange-500/10 border-orange-500/30 shadow-[0_0_20px_rgba(249,115,22,0.1)]' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
-                                <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl drop-shadow-[0_0_10px_rgba(250,204,21,0.8)]' : idx === 1 ? 'text-gray-300 text-xl' : idx === 2 ? 'text-amber-600 text-xl' : 'text-white/30 text-base'}`}>
+                            <div key={u._id} className={`p-4 rounded-2xl flex items-center gap-4 border transition-all ${u._id === currentUser?._id ? 'bg-[#bf953f]/10 border-[#bf953f]/30' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
+                                <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl' : idx === 1 ? 'text-gray-300 text-xl' : idx === 2 ? 'text-amber-600 text-xl' : 'text-white/30 text-base'}`}>
                                     #{idx + 1}
                                 </div>
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 relative">
@@ -5678,10 +5678,11 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         {t('DAILY_MISSIONS')}
                         <button 
                             onClick={() => setShowLeaderboard(true)}
-                            className="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-black tracking-widest flex items-center gap-2 transition-all active:scale-95"
+                            className="relative overflow-hidden bg-[#111] hover:bg-black border border-[#bf953f]/50 text-[#bf953f] px-4 py-2 rounded-full text-xs font-black tracking-widest flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 group"
                         >
-                            <Icons.Trophy className="w-3.5 h-3.5 text-orange-400" />
-                            RANK LIST
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#bf953f]/0 via-[#bf953f]/10 to-[#bf953f]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <Icons.Trophy className="w-3.5 h-3.5 text-[#bf953f] group-hover:rotate-12 transition-transform duration-300" />
+                            {t('RANK_LIST')}
                         </button>
                     </h3>
 
