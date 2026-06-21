@@ -9540,7 +9540,7 @@ const App = () => {
         
         let websites = [];
         if (publicUser.settings.businessWebsites && Array.isArray(publicUser.settings.businessWebsites)) {
-            websites = publicUser.settings.businessWebsites;
+            websites = publicUser.settings.businessWebsites.filter(site => !site.isDraft);
         } else if (publicUser.settings.businessWebsite) {
             websites = [publicUser.settings.businessWebsite];
         }

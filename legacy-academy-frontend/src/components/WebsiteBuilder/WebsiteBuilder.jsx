@@ -91,12 +91,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         reader.readAsDataURL(file);
     };
 
-    const handlePublish = async () => {
+    const handlePublish = async (isDraft = false) => {
         if (!user?._id) return;
         setSaving(true);
         try {
             const newWebsites = [...(websitesArray || [])];
-            const updatedConfig = { ...config, lastUpdated: new Date() };
+            const updatedConfig = { ...config, lastUpdated: new Date(), isDraft };
             
             if (websiteIndex !== undefined && websiteIndex !== null && websiteIndex < newWebsites.length) {
                 newWebsites[websiteIndex] = updatedConfig;
@@ -158,40 +158,24 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             
             {/* MOBILE TABS (Only visible on small screens) */}
             <div className="md:hidden flex border-b border-white/10 shrink-0 bg-black z-30 pt-safe">
-                <button 
-                    onClick={() => setMobileTab('form')}
-                    className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'form' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
-                >
-                    Edit Details
-                </button>
-                <button 
-                    onClick={() => setMobileTab('preview')}
-                    className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'preview' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
-                >
-                    Live Preview
-                </button>
-            </div>
-
-            {/* LEFT SIDEBAR - Form Inputs */}
-            <div className={`w-full md:w-[400px] bg-[#09090b] border-r border-white/10 flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}>
-                {/* Header */}
-                <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 shrink-0 bg-white/[0.02]">
-                    <div className="flex items-center gap-3">
-                        <button onClick={onExit} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors -ml-2">
-                            <Icons.ArrowLeft className="w-5 h-5 text-white/70" />
+                
+                    <div className="flex items-center gap-2">
+                        <button 
+                            onClick={() => handlePublish(true)}
+                            disabled={saving}
+                            className="px-4 py-1.5 rounded-full border border-white/20 text-white font-black text-[10px] uppercase tracking-wider hover:bg-white/10 transition-all flex items-center gap-2"
+                        >
+                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-3 h-3" /> : t('SAVE_DRAFT', 'Save Draft'))}
                         </button>
-                        <span className="text-[var(--gold-primary)] font-black uppercase tracking-widest text-[11px]">
-                            Website Setup
-                        </span>
+                        <button 
+                            onClick={() => handlePublish(false)}
+                            disabled={saving}
+                            className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all flex items-center gap-2"
+                        >
+                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published && !config.isDraft ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
+                        </button>
                     </div>
-                    
-                    <button 
-                        onClick={handlePublish}
-                        disabled={saving}
-                        className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2"
-                    >
-                        {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
-                    </button>
+
                 </div>
 
                 <div className="flex-1 overflow-y-auto overscroll-contain p-6 pb-40 custom-scrollbar space-y-8 touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -239,7 +223,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Business Name</label>
                             <input 
                                 type="text" 
-                                value={config.businessName}
+                                value={config.businessName || ''}
                                 onChange={(e) => updateConfig('businessName', e.target.value)}
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                             />
@@ -248,7 +232,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Catchy Slogan</label>
                             <input 
                                 type="text" 
-                                value={config.slogan}
+                                value={config.slogan || ''}
                                 onChange={(e) => updateConfig('slogan', e.target.value)}
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                             />
@@ -256,7 +240,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Description</label>
                             <textarea 
-                                value={config.description}
+                                value={config.description || ''}
                                 onChange={(e) => updateConfig('description', e.target.value)}
                                 rows="3"
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none"
@@ -265,9 +249,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div className="pt-2 border-t border-white/5">
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Navigation Links</label>
                             <div className="flex gap-2">
-                                <input type="text" value={config.navLink1} onChange={(e) => updateConfig('navLink1', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 1" />
-                                <input type="text" value={config.navLink2} onChange={(e) => updateConfig('navLink2', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 2" />
-                                <input type="text" value={config.navLink3} onChange={(e) => updateConfig('navLink3', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 3" />
+                                <input type="text" value={config.navLink1 || ''} onChange={(e) => updateConfig('navLink1', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 1" />
+                                <input type="text" value={config.navLink2 || ''} onChange={(e) => updateConfig('navLink2', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 2" />
+                                <input type="text" value={config.navLink3 || ''} onChange={(e) => updateConfig('navLink3', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 3" />
                             </div>
                         </div>
                         <div>
@@ -282,7 +266,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </div>
                             <input 
                                 type="text" 
-                                value={config.featuresTitle}
+                                value={config.featuresTitle || ''}
                                 onChange={(e) => updateConfig('featuresTitle', e.target.value)}
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors mb-3"
                                 placeholder="Section Title (e.g. Why Choose Us)"
@@ -351,7 +335,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div className="pt-2 border-t border-white/5">
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">About Section Text</label>
                             <textarea 
-                                value={config.aboutText}
+                                value={config.aboutText || ''}
                                 onChange={(e) => updateConfig('aboutText', e.target.value)}
                                 rows="3"
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none"
@@ -362,14 +346,14 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <div className="flex gap-2">
                                 <input 
                                     type="text" 
-                                    value={config.contactEmail}
+                                    value={config.contactEmail || ''}
                                     onChange={(e) => updateConfig('contactEmail', e.target.value)}
                                     className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
                                     placeholder="Email Address" 
                                 />
                                 <input 
                                     type="text" 
-                                    value={config.contactPhone}
+                                    value={config.contactPhone || ''}
                                     onChange={(e) => updateConfig('contactPhone', e.target.value)}
                                     className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
                                     placeholder="Phone Number" 
@@ -381,15 +365,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <XIcon className="w-4 h-4 text-white/50" />
-                                    <input type="text" value={config.socialX} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="X (Twitter) URL" />
+                                    <input type="text" value={config.socialX || ''} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="X (Twitter) URL" />
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Icons.Instagram className="w-4 h-4 text-white/50" />
-                                    <input type="text" value={config.socialInstagram} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Instagram URL" />
+                                    <input type="text" value={config.socialInstagram || ''} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Instagram URL" />
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Icons.Linkedin className="w-4 h-4 text-white/50" />
-                                    <input type="text" value={config.socialLinkedin} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="LinkedIn URL" />
+                                    <input type="text" value={config.socialLinkedin || ''} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="LinkedIn URL" />
                                 </div>
                             </div>
                         </div>
@@ -408,7 +392,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </label>
                             <input 
                                 type="text" 
-                                value={config.logo}
+                                value={config.logo || ''}
                                 onChange={(e) => updateConfig('logo', e.target.value)}
                                 placeholder="https:// or Base64"
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
@@ -424,7 +408,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </label>
                             <input 
                                 type="text" 
-                                value={config.coverImage}
+                                value={config.coverImage || ''}
                                 onChange={(e) => updateConfig('coverImage', e.target.value)}
                                 placeholder="https:// or Base64"
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
@@ -440,7 +424,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Button Text</label>
                                 <input 
                                     type="text" 
-                                    value={config.ctaText}
+                                    value={config.ctaText || ''}
                                     onChange={(e) => updateConfig('ctaText', e.target.value)}
                                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                                 />
@@ -449,7 +433,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Button Link</label>
                                 <input 
                                     type="text" 
-                                    value={config.ctaLink}
+                                    value={config.ctaLink || ''}
                                     onChange={(e) => updateConfig('ctaLink', e.target.value)}
                                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
                                 />

@@ -93,7 +93,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
             <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">
                 <div className="flex items-center justify-between mb-12">
                     <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
+                        <button onClick={onBack} className="w-10 h-10 shrink-0 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
                             <Icons.ArrowLeft className="w-5 h-5 text-white/70" />
                         </button>
                         <h1 className="text-3xl font-black text-white">{t('MY_WEBSITES', 'My Websites')}</h1>
@@ -112,16 +112,20 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold-primary)] transition-all hover:-translate-y-1 shadow-xl text-left touch-manipulation appearance-none"
                         >
                             <div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
-                                        {site.businessName?.charAt(0) || 'W'}
-                                    </div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 bg-green-500/10 px-3 py-1 rounded-full flex items-center gap-1">
-                                        <Icons.Globe className="w-3 h-3" /> {t('PUBLISHED', 'Published')}
-                                    </span>
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
+                                    {site.businessName?.charAt(0) || 'W'}
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">{site.businessName || 'Untitled Website'}</h3>
-                                <p className="text-sm text-gray-500 mb-6 line-clamp-2">{site.slogan}</p>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 bg-green-500/10 px-3 py-1 rounded-full flex items-center gap-1">
+                                    <Icons.Globe className="w-3 h-3" /> {t('PUBLISHED', 'Published')}
+                                </span>
+                            </div>
+                            <div className="flex-1 flex flex-col items-start gap-2 min-w-0 mb-6">
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-xl font-black text-white truncate">{site.businessName || t('UNTITLED', 'Untitled')}</h3>
+                                    {site.isDraft && <span className="px-2 py-0.5 bg-gray-500/20 text-gray-400 text-[10px] font-black uppercase rounded border border-gray-500/30">DRAFT</span>}
+                                </div>
+                                <p className="text-sm text-white/50 truncate w-full text-left">{site.slogan || t('NO_SLOGAN', 'No slogan yet')}</p>
                             </div>
 
                             <div className="flex items-center gap-2 pt-4 border-t border-white/5 w-full">
