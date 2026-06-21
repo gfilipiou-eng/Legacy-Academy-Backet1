@@ -9892,8 +9892,9 @@ const App = () => {
         }
 
         const siteConfig = websites[parseInt(publicSiteIndex) || 0];
+        const isOwner = user && publicUser && (user._id === publicUser._id || user.username === publicUser.username);
 
-        if (!siteConfig || siteConfig.isDraft) {
+        if (!siteConfig || (siteConfig.isDraft && !isOwner)) {
             return <div className="min-h-screen w-full bg-[#09090b] flex flex-col items-center justify-center text-center gap-4 p-6">
                 <Icons.Globe className="w-16 h-16 text-white/10" />
                 <h2 className="text-xl font-black text-white uppercase tracking-widest">Website Unavailable</h2>
@@ -10565,9 +10566,9 @@ const App = () => {
                                             </div>
                                             <button 
                                                 onClick={() => { setActiveTab('search'); window.scrollTo(0,0); }}
-                                                className="flex items-center gap-1 pb-2.5 transition-all text-gray-500 hover:text-white"
+                                                className="flex items-center justify-center p-1.5 transition-all text-gray-500 hover:text-white"
                                             >
-                                                <Icons.Hash className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)] drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]" strokeWidth={3} />
+                                                <Icons.Hash className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
                                             </button>
                                         </div>
                                     )}
