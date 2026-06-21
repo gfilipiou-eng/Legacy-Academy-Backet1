@@ -39,44 +39,44 @@ export const PublicWebsiteViewer = ({ config }) => {
             <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                 <div className="flex items-center gap-3">
                     {config.logo ? (
-                        <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain" />
+                        <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
                     ) : (
-                        <div className="w-8 h-8 rounded bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center font-black text-white">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center font-black text-white shadow-lg">
                             {config.businessName?.charAt(0) || 'W'}
                         </div>
                     )}
-                    <span className="break-words hyphens-auto font-black tracking-tight text-lg">{config.businessName}</span>
+                    <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName}</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                    {config.navLink1 !== '' && <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
-                    {config.navLink2 !== '' && <a href="#about" className="cursor-pointer hover:opacity-100">{config.navLink2 ?? 'Σχετικά'}</a>}
-                    {config.navLink3 !== '' && <a href="#contact" className="cursor-pointer hover:opacity-100">{config.navLink3 ?? 'Επικοινωνία'}</a>}
+                    {config.navLink1 !== '' && <a href="#services" className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
+                    {config.navLink2 !== '' && <a href="#about" className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
+                    {config.navLink3 !== '' && <a href="#contact" className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <div className="shrink-0 w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative min-h-[80vh]">
+            <div className="w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative min-h-[80vh]">
                 {/* Decorative Blur */}
-                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
+                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
                 
-                <div className="flex-1 flex flex-col items-start z-10 max-w-2xl">
-                    <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6">
+                <div className="flex-1 flex flex-col items-start z-10">
+                    <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6" style={{ fontFamily: config.font }}>
                         {config.slogan}
                     </h1>
-                    <p className={`text-lg md:text-2xl mb-10 leading-relaxed ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <p className={`text-lg md:text-xl mb-10 leading-relaxed max-w-lg ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                         {config.description}
                     </p>
                     {config.ctaText !== '' && (
                         <a 
                             href={config.ctaLink === '#' ? '#contact' : (config.ctaLink || '#contact')}
-                            className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl"
+                            className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl active:scale-95"
                             style={{ 
                                 backgroundColor: activeTheme.primary, 
                                 color: config.palette === 'light' ? '#fff' : '#000',
                                 boxShadow: `0 0 30px ${activeTheme.primary}40`
                             }}
                         >
-                            {config.ctaText ?? 'Get Started'}
+                            {config.ctaText ?? 'Επικοινωνήστε Μαζί Μας'}
                         </a>
                     )}
                 </div>
@@ -95,36 +95,35 @@ export const PublicWebsiteViewer = ({ config }) => {
                 </div>
             </div>
 
-            {/* Feature Cards */}
             {/* Feature Cards / Posts */}
             {config.features && config.features.length > 0 && (
-                <div id="services" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.featuresTitle !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                        {config.features.map((feat, idx) => (
-                            <div key={idx} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
+                <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                    {config.featuresTitle !== '' && <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                        {config.features?.map((feat, idx) => (
+                            <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                 {feat.image ? (
-                                    <div className="-mx-10 -mt-10 mb-6 h-[250px] flex justify-center items-center bg-black/5 overflow-hidden">
+                                    <div className="-mx-8 -mt-8 mb-4 h-[200px] flex justify-center items-center bg-black/5 overflow-hidden">
                                         <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                     </div>
                                 ) : (
-                                    <div className="w-16 h-16 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
-                                        <Icons.Star className="w-8 h-8" />
+                                    <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
+                                        <Icons.Star className="w-6 h-6" />
                                     </div>
                                 )}
-                                <h4 className="text-2xl font-bold relative z-10 break-words hyphens-auto">{feat.title}</h4>
-                                <p className="break-words hyphens-auto opacity-60 text-base leading-relaxed relative z-10">{feat.desc}</p>
+                                <h4 className="text-xl font-bold relative z-10 break-words hyphens-auto">{feat.title}</h4>
+                                <p className="opacity-60 text-sm leading-relaxed relative z-10 break-words hyphens-auto">{feat.desc}</p>
                                 {feat.link && feat.link.trim() !== '' && (
                                     <div className="mt-4">
                                         <a 
                                             href={feat.link.startsWith('http') ? feat.link : `https://${feat.link}`} 
-                                            target="_blank" 
+                                            target="_blank"
                                             rel="noopener noreferrer"
-                                            className="relative z-10 inline-flex items-center justify-center px-8 py-3.5 rounded-full font-black text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl"
+                                            className="relative z-10 inline-flex items-center justify-center px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg"
                                             style={{ 
                                                 backgroundColor: activeTheme.primary, 
                                                 color: config.palette === 'light' ? '#fff' : '#000',
-                                                boxShadow: `0 8px 25px -5px ${activeTheme.primary}60`
+                                                boxShadow: `0 6px 20px -5px ${activeTheme.primary}60`
                                             }}
                                         >
                                             {feat.linkText || 'Learn More'}
@@ -139,9 +138,9 @@ export const PublicWebsiteViewer = ({ config }) => {
 
             {/* About Section */}
             {config.aboutText && (
-                <div id="about" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                    {config.navLink2 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
-                    <p className="break-words hyphens-auto text-center max-w-3xl mx-auto opacity-70 leading-relaxed text-xl">
+                <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
+                    {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
+                    <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg">
                         {config.aboutText}
                     </p>
                 </div>
@@ -149,19 +148,19 @@ export const PublicWebsiteViewer = ({ config }) => {
 
             {/* Contact Section */}
             {(config.contactEmail || config.contactPhone) && (
-                <div id="contact" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.navLink3 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-3xl mx-auto">
+                <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                    {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
                         {config.contactEmail && (
-                            <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
-                                <Icons.Mail className="w-6 h-6 opacity-50" />
-                                <span className="break-words hyphens-auto font-bold text-lg">{config.contactEmail}</span>
+                            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                <Icons.Mail className="w-5 h-5 opacity-50" />
+                                <span className="font-bold">{config.contactEmail}</span>
                             </div>
                         )}
                         {config.contactPhone && (
-                            <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
-                                <Icons.Phone className="w-6 h-6 opacity-50" />
-                                <span className="break-words hyphens-auto font-bold text-lg">{config.contactPhone}</span>
+                            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                <Icons.Phone className="w-5 h-5 opacity-50" />
+                                <span className="font-bold">{config.contactPhone}</span>
                             </div>
                         )}
                     </div>

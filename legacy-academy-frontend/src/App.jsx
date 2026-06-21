@@ -8090,7 +8090,7 @@ const App = () => {
 
                 while (retries > 0 && isActive) {
                     try {
-                        const res = await axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 12000 });
+                        const res = await axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}?t=${Date.now()}`, { timeout: 12000 });
                         latestUser = res?.data || null;
                         if (!isActive) return;
                         setPublicUser(latestUser);
@@ -8114,7 +8114,7 @@ const App = () => {
             const loadPosts = async () => {
                 for (let attempt = 0; attempt <= 2 && isActive; attempt += 1) {
                     try {
-                        const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}`, { timeout: 15000 });
+                        const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}?t=${Date.now()}`, { timeout: 15000 });
                         if (!isActive) return;
                         const nextPosts = Array.isArray(res?.data)
                             ? res.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true')

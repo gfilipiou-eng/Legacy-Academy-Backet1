@@ -114,9 +114,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         reader.readAsDataURL(file);
     };
 
-    const handlePublish = async (isDraft = false) => {
+    const handlePublish = async (isDraft = false, quiet = false) => {
         if (!user?._id) return;
-        setSaving(true);
+        if (!quiet) setSaving(true);
         try {
             const newWebsites = [...(websitesArray || [])];
             const updatedConfig = { ...config, lastUpdated: new Date(), isDraft };
@@ -140,20 +140,31 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 });
             }
             
-            setPublished(true);
-            if (isDraft) {
-                setShowSaveSuccess(true);
-                setTimeout(() => setShowSaveSuccess(false), 3000);
-            } else {
-                setShowPublishSuccess(true);
+            if (!quiet) {
+                setPublished(true);
+                if (isDraft) {
+                    setShowSaveSuccess(true);
+                    setTimeout(() => setShowSaveSuccess(false), 3000);
+                } else {
+                    setShowPublishSuccess(true);
+                }
+                setTimeout(() => setPublished(false), 3000);
             }
-            setTimeout(() => setPublished(false), 3000);
         } catch (e) {
             console.error("Failed to publish website", e);
         } finally {
-            setSaving(false);
+            if (!quiet) setSaving(false);
         }
     };
+
+    // Auto-save debounced
+    useEffect(() => {
+        if (!config || Object.keys(config).length === 0) return;
+        const timer = setTimeout(() => {
+            handlePublish(true, true);
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, [config]);
 
     const handleAIGenerate = () => {
         if (!aiPrompt.trim()) return;
@@ -566,7 +577,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                     {/* The Website Preview Container */}
                     <motion.div 
                         layout
-                        className={`shadow-2xl relative z-10 flex flex-col overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-500 ${previewMode === 'mobile' ? 'w-full md:w-[375px] h-full md:h-[812px] md:mt-4 md:rounded-[40px] md:border-8 md:border-gray-900' : 'w-full max-w-6xl h-full md:rounded-2xl md:border md:border-white/10'}`}
+                        className={`shadow-2xl relative z-10 flex flex-col overflow-x-hidden custom-scrollbar transition-all duration-500 ${previewMode === 'mobile' ? 'w-full md:w-[375px] h-full md:h-[812px] md:mt-4 md:rounded-[40px] md:border-8 md:border-gray-900 overflow-y-auto shrink-0' : 'w-full max-w-6xl min-h-full md:rounded-2xl md:border md:border-white/10'}`}
                         style={{ 
                             fontFamily: config.font,
                             backgroundColor: activeTheme.bg,
