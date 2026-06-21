@@ -1576,11 +1576,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
+        <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-md flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
             <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full z-[2600] transition-all duration-300 group">
                 <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-3xl rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
+            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-md rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
                 {/* Image Section */}
                 <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
                     {postHasMedia(post) ? (
@@ -1627,7 +1627,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Info Section */}
-                <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-3xl border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
+                <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-md border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
                     <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div className="w-11 h-11 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
@@ -1792,7 +1792,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             {/* FULL SCREEN IMAGE ZOOM MODAL FOR POST DETAIL */}
             {zoomImage && (
                 <div 
-                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 cursor-zoom-out"
+                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
                     onClick={(e) => { e.stopPropagation(); setZoomImage(null); }}
                 >
                     <button 
@@ -7897,7 +7897,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
             {/* FULL SCREEN IMAGE ZOOM MODAL */}
             {zoomImage && (
                 <div 
-                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 cursor-zoom-out"
+                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
                     onClick={() => setZoomImage(null)}
                 >
                     <button 

@@ -10,6 +10,7 @@ const XIcon = ({ className }) => (
 
 export const PublicWebsiteViewer = ({ config }) => {
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [zoomImage, setZoomImage] = useState(null);
     const [buyerEmail, setBuyerEmail] = useState('');
     const [orderComplete, setOrderComplete] = useState(false);
     const [activeTab, setActiveTab] = useState('newest');
@@ -56,8 +57,8 @@ export const PublicWebsiteViewer = ({ config }) => {
 
             {/* Hero Section */}
             <div className="w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative min-h-[80vh]">
-                {/* Decorative Blur */}
-                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
+                {/* Decorative Blur - Hidden on mobile to prevent Safari pixelation bugs */}
+                <div className="hidden md:block absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transform-gpu" style={{ backgroundColor: activeTheme.primary }} />
                 
                 <div className="flex-1 flex flex-col items-start z-10">
                     <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6" style={{ fontFamily: config.font }}>
@@ -103,8 +104,11 @@ export const PublicWebsiteViewer = ({ config }) => {
                         {config.features?.map((feat, idx) => (
                             <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                 {feat.image ? (
-                                    <div className="-mx-8 -mt-8 mb-4 h-[200px] flex justify-center items-center bg-black/5 overflow-hidden">
-                                        <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    <div 
+                                        className="-mx-8 -mt-8 mb-4 h-[200px] flex justify-center items-center bg-black/5 overflow-hidden cursor-pointer"
+                                        onClick={() => setZoomImage(feat.image)}
+                                    >
+                                        <img src={feat.image} alt={feat.title} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" />
                                     </div>
                                 ) : (
                                     <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
@@ -316,6 +320,26 @@ export const PublicWebsiteViewer = ({ config }) => {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* FULL SCREEN IMAGE ZOOM MODAL FOR PUBLIC VIEWER */}
+            {zoomImage && (
+                <div 
+                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
+                    onClick={() => setZoomImage(null)}
+                >
+                    <button 
+                        onClick={() => setZoomImage(null)} 
+                        className="absolute top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 z-50 group"
+                    >
+                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
+                    </button>
+                    <img 
+                        src={zoomImage} 
+                        className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
+                        alt="Zoomed"
+                    />
+                </div>
+            )}
         </div>
     );
 };
