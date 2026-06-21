@@ -9,6 +9,12 @@ export const getActiveStreak = (u) => {
     return diffHours <= 48 ? u.missionsStreak : 0;
 };
 
+export const isTopStreak = (u) => {
+    if (!u || u.isPrivate || !window.topStreakValue) return false;
+    const streak = getActiveStreak(u);
+    return streak > 0 && streak === window.topStreakValue;
+};
+
 import axios from './api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
