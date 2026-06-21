@@ -656,10 +656,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                         <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                             {feat.image ? (
                                                 <div 
-                                                    className="-mx-8 -mt-8 mb-4 h-[200px] flex justify-center items-center bg-black/5 overflow-hidden cursor-pointer"
+                                                    className="-mx-8 -mt-8 mb-6 h-[250px] md:h-[280px] flex justify-center items-center overflow-hidden cursor-pointer relative group/img"
                                                     onClick={() => setZoomImage(feat.image)}
                                                 >
-                                                    <img src={feat.image} alt={feat.title} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" />
+                                                    {/* Premium blurred background layer to fill empty spaces */}
+                                                    <div className="absolute inset-0 bg-black/20 z-0"></div>
+                                                    <img src={feat.image} className="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110 z-0" alt="blur-bg" />
+                                                    
+                                                    {/* The actual image, completely visible */}
+                                                    <img src={feat.image} alt={feat.title} className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover/img:scale-105 drop-shadow-2xl" />
                                                 </div>
                                             ) : (
                                                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
